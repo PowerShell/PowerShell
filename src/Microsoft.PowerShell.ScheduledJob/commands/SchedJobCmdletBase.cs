@@ -45,9 +45,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns a single ScheduledJobDefinition object from the local
         /// scheduled job definition repository corresponding to the provided id.
         /// </summary>
-        /// <param name="id">Local repository scheduled job definition id</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>ScheduledJobDefinition object</returns>
+        /// <param name="id">Local repository scheduled job definition id.</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
+        /// <returns>ScheduledJobDefinition object.</returns>
         internal ScheduledJobDefinition GetJobDefinitionById(
             Int32 id,
             bool writeErrorsAndWarnings = true)
@@ -76,9 +76,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns an array of ScheduledJobDefinition objects from the local
         /// scheduled job definition repository corresponding to the provided Ids.
         /// </summary>
-        /// <param name="ids">Local repository scheduled job definition ids</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>List of ScheduledJobDefinition objects</returns>
+        /// <param name="ids">Local repository scheduled job definition ids.</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
+        /// <returns>List of ScheduledJobDefinition objects.</returns>
         internal List<ScheduledJobDefinition> GetJobDefinitionsById(
             Int32[] ids,
             bool writeErrorsAndWarnings = true)
@@ -112,9 +112,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Makes delegate callback call for each scheduledjob definition object found.
         /// </summary>
-        /// <param name="ids">Local repository scheduled job definition ids</param>
+        /// <param name="ids">Local repository scheduled job definition ids.</param>
         /// <param name="itemFound">Callback delegate for each discovered item.</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
         internal void FindJobDefinitionsById(
             Int32[] ids,
             Action<ScheduledJobDefinition> itemFound,
@@ -146,9 +146,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns an array of ScheduledJobDefinition objects from the local
         /// scheduled job definition repository corresponding to the given name.
         /// </summary>
-        /// <param name="name">Scheduled job definition name</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>ScheduledJobDefinition object</returns>
+        /// <param name="name">Scheduled job definition name.</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
+        /// <returns>ScheduledJobDefinition object.</returns>
         internal ScheduledJobDefinition GetJobDefinitionByName(
             string name,
             bool writeErrorsAndWarnings = true)
@@ -187,9 +187,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns an array of ScheduledJobDefinition objects from the local
         /// scheduled job definition repository corresponding to the given names.
         /// </summary>
-        /// <param name="names">Scheduled job definition names</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>List of ScheduledJobDefinition objects</returns>
+        /// <param name="names">Scheduled job definition names.</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
+        /// <returns>List of ScheduledJobDefinition objects.</returns>
         internal List<ScheduledJobDefinition> GetJobDefinitionsByName(
             string[] names,
             bool writeErrorsAndWarnings = true)
@@ -234,9 +234,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Makes delegate callback call for each scheduledjob definition object found.
         /// </summary>
-        /// <param name="names">Scheduled job definition names</param>
+        /// <param name="names">Scheduled job definition names.</param>
         /// <param name="itemFound">Callback delegate for each discovered item.</param>
-        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
+        /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host.</param>
         internal void FindJobDefinitionsByName(
             string[] names,
             Action<ScheduledJobDefinition> itemFound,
@@ -292,9 +292,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Writes a "Trigger not found" error to host.
         /// </summary>
-        /// <param name="notFoundId">Trigger Id not found</param>
-        /// <param name="definitionName">ScheduledJobDefinition name</param>
-        /// <param name="errorObject">Error object</param>
+        /// <param name="notFoundId">Trigger Id not found.</param>
+        /// <param name="definitionName">ScheduledJobDefinition name.</param>
+        /// <param name="errorObject">Error object.</param>
         internal void WriteTriggerNotFoundError(
             Int32 notFoundId,
             string definitionName,
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Writes a "Definition not found for Id" error to host.
         /// </summary>
-        /// <param name="defId">Definition Id</param>
+        /// <param name="defId">Definition Id.</param>
         internal void WriteDefinitionNotFoundByIdError(
             Int32 defId)
         {
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Writes a "Definition not found for Name" error to host.
         /// </summary>
-        /// <param name="name">Definition Name</param>
+        /// <param name="name">Definition Name.</param>
         internal void WriteDefinitionNotFoundByNameError(
             string name)
         {
@@ -335,8 +335,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Writes a "Load from job store" error to host.
         /// </summary>
-        /// <param name="name">Scheduled job definition name</param>
-        /// <param name="error">Exception thrown during loading</param>
+        /// <param name="name">Scheduled job definition name.</param>
+        /// <param name="error">Exception thrown during loading.</param>
         internal void WriteErrorLoadingDefinition(string name, Exception error)
         {
             string msg = StringUtil.Format(ScheduledJobErrorStrings.CantLoadDefinitionFromStore, name);
@@ -350,9 +350,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// infinite duration, and adds the trigger to the provided scheduled job
         /// definition object.
         /// </summary>
-        /// <param name="definition">ScheduledJobDefinition</param>
-        /// <param name="repInterval">rep interval</param>
-        /// <param name="save">save definition change</param>
+        /// <param name="definition">ScheduledJobDefinition.</param>
+        /// <param name="repInterval">Rep interval.</param>
+        /// <param name="save">Save definition change.</param>
         internal static void AddRepetitionJobTriggerToDefinition(
             ScheduledJobDefinition definition,
             TimeSpan repInterval,
@@ -370,10 +370,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionParamValues);
             }
+
             if (repInterval < TimeSpan.FromMinutes(1))
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionIntervalValue);
             }
+
             if (repInterval > repDuration)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionInterval);

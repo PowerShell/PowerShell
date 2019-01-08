@@ -174,7 +174,7 @@ Describe "Adapter Tests" -tags "CI" {
             $x.Count | Should -Be 1
             $x[0].foo | Should -BeExactly "bar"
 
-            $x = ([pscustomobject]@{ foo = 'bar' }).Foreach({$_ | Add-Member -NotePropertyName "foo2" -NotePropertyValue "bar2" -PassThru})
+            $x = ([pscustomobject]@{ foo = 'bar' }).ForEach({$_ | Add-Member -NotePropertyName "foo2" -NotePropertyValue "bar2" -PassThru})
             $x.Count | Should -Be 1
             $x[0].foo | Should -BeExactly "bar"
             $x[0].foo2 | Should -BeExactly "bar2"

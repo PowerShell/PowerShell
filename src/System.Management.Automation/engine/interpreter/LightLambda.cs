@@ -73,6 +73,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return fastCtor;
                 }
+
                 return MakeRunDelegateCtor(delegateType);
             }
         }
@@ -156,10 +157,10 @@ namespace System.Management.Automation.Interpreter
             return s_runCache[delegateType] = lambda => targetMethod.CreateDelegate(delegateType, lambda);
         }
 
-        //TODO enable sharing of these custom delegates
+        // TODO enable sharing of these custom delegates
         private Delegate CreateCustomDelegate(Type delegateType)
         {
-            //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Synchronously compiling a custom delegate");
+            // PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Synchronously compiling a custom delegate");
 
             var method = delegateType.GetMethod("Invoke");
             var paramInfos = method.GetParameters();
@@ -251,10 +252,10 @@ namespace System.Management.Automation.Interpreter
 
         internal void RunVoidRef2<T0, T1>(ref T0 arg0, ref T1 arg1)
         {
-            //if (_compiled != null || TryGetCompiled()) {
+            // if (_compiled != null || TryGetCompiled()) {
             //    ((ActionRef<T0, T1>)_compiled)(ref arg0, ref arg1);
             //    return;
-            //}
+            // }
 
             // copy in and copy out for today...
             var frame = MakeFrame();
@@ -285,6 +286,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Data[i] = arguments[i];
             }
+
             var currentFrame = frame.Enter();
             try
             {
@@ -294,6 +296,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Leave(currentFrame);
             }
+
             return frame.Pop();
         }
     }

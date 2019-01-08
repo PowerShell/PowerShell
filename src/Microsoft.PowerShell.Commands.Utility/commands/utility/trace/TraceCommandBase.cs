@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool matchFound = false;
 
-                if (String.IsNullOrEmpty(patternToMatch))
+                if (string.IsNullOrEmpty(patternToMatch))
                 {
                     notMatched.Add(patternToMatch);
                     continue;

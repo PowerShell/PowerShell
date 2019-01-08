@@ -29,7 +29,7 @@ namespace System.Diagnostics.Eventing.Reader
         private ProviderMetadata _pmReference;
         private object _syncObject;
 
-        //called from EventMetadata
+        // called from EventMetadata
         internal EventTask(int value, ProviderMetadata pmReference)
         {
             _value = value;
@@ -37,7 +37,7 @@ namespace System.Diagnostics.Eventing.Reader
             _syncObject = new object();
         }
 
-        //called from ProviderMetadata
+        // called from ProviderMetadata
         internal EventTask(string name, int value, string displayName, Guid guid)
         {
             _value = value;

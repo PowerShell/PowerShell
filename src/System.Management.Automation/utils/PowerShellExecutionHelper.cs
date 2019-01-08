@@ -78,7 +78,7 @@ namespace System.Management.Automation
 
             // we got back one or more objects. Pick off the first result.
             if (streamResults[0] == null)
-                return String.Empty;
+                return string.Empty;
 
             // And convert the base object into a string. We can't use the proxied
             // ToString() on the PSObject because there is no default runspace
@@ -113,7 +113,7 @@ namespace System.Management.Automation
             try
             {
                 // blocks until all results are retrieved.
-                //results = this.ExecuteCommand(cmd);
+                // results = this.ExecuteCommand(cmd);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
                 // untill the next completion
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts an object to a string safely...
         /// </summary>
-        /// <param name="obj">The object to convert</param>
+        /// <param name="obj">The object to convert.</param>
         /// <returns>The result of the conversion...</returns>
         internal static string SafeToString(object obj)
         {
@@ -198,6 +198,7 @@ namespace System.Management.Automation
                 {
                     result = obj.ToString();
                 }
+
                 return result;
             }
             catch (Exception)
@@ -208,9 +209,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts an object to a string adn, if the string is not empty, adds it to the list
+        /// Converts an object to a string adn, if the string is not empty, adds it to the list.
         /// </summary>
-        /// <param name="list">The list to update</param>
+        /// <param name="list">The list to update.</param>
         /// <param name="obj">The object to convert to a string...</param>
         internal static void SafeAddToStringList(List<string> list, object obj)
         {
@@ -235,7 +236,7 @@ namespace System.Management.Automation
         internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
         {
             Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
-            Diagnostics.Assert(!String.IsNullOrWhiteSpace(command),
+            Diagnostics.Assert(!string.IsNullOrWhiteSpace(command),
                 "the passed-in command name should not be null or whitespaces");
 
             if (type != null)
@@ -248,6 +249,7 @@ namespace System.Management.Automation
             {
                 powershell.AddCommand(command);
             }
+
             powershell
                 .AddParameter("ErrorAction", ActionPreference.Ignore)
                 .AddParameter("WarningAction", ActionPreference.Ignore)

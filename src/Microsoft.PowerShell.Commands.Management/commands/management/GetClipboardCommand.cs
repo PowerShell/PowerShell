@@ -41,11 +41,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
-    [OutputType(typeof(String), typeof(FileInfo), typeof(Image), typeof(Stream))]
+    [OutputType(typeof(string), typeof(FileInfo), typeof(Image), typeof(Stream))]
     public class GetClipboardCommand : PSCmdlet
     {
         /// <summary>
-        /// Property that sets clipboard type. This will return the required format from clipboard
+        /// Property that sets clipboard type. This will return the required format from clipboard.
         /// </summary>
         [Parameter]
         public ClipboardFormat Format { get; set; }
@@ -58,12 +58,14 @@ namespace Microsoft.PowerShell.Commands
         public TextDataFormat TextFormatType
         {
             get { return _textFormat; }
+
             set
             {
                 _isTextFormatTypeSet = true;
                 _textFormat = value;
             }
         }
+
         private TextDataFormat _textFormat = TextDataFormat.UnicodeText;
         private bool _isTextFormatTypeSet = false;
 
@@ -74,17 +76,19 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Raw
         {
             get { return _raw; }
+
             set
             {
                 _isRawSet = true;
                 _raw = value;
             }
         }
+
         private bool _raw;
         private bool _isRawSet = false;
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Get-Clipboard command
+        /// This method implements the ProcessRecord method for Get-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -92,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
             if (Format != ClipboardFormat.Text && _isTextFormatTypeSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-                    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidTypeCombine)),
+                    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidTypeCombine)),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -100,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             if (Format != ClipboardFormat.Text && Format != ClipboardFormat.FileDropList && _isRawSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-                    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidRawCombine)),
+                    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidRawCombine)),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -140,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             List<string> result = new List<string>();
 
             // TextFormat default value is Text, by default it is same as Clipboard.GetText()
@@ -153,6 +158,7 @@ namespace Microsoft.PowerShell.Commands
                 string[] splitSymbol = { Environment.NewLine };
                 result.AddRange(textContent.Split(splitSymbol, StringSplitOptions.None));
             }
+
             return result;
         }
 
@@ -166,12 +172,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             List<PSObject> result = new List<PSObject>();
             foreach (string filePath in Clipboard.GetFileDropList())
             {
                 FileInfo file = new FileInfo(filePath);
                 result.Add(WrapOutputInPSObject(file, filePath));
             }
+
             return result;
         }
 
@@ -199,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
                 string childName = item.Name;
                 result.AddOrSetProperty("PSChildName", childName);
             }
+
             return result;
         }
     }

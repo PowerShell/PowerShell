@@ -34,6 +34,7 @@ namespace mvc.Controllers
                     {"NotBefore"   , HttpContext.Connection.ClientCertificate.NotBefore}
                 };
             }
+
             return Json(output);
         }
 

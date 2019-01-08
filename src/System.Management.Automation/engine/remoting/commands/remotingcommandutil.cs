@@ -16,11 +16,11 @@ namespace Microsoft.PowerShell.Commands
     internal enum RunspaceParameterSet
     {
         /// <summary>
-        /// Use ComputerName parameter set
+        /// Use ComputerName parameter set.
         /// </summary>
         ComputerName,
         /// <summary>
-        /// Use Runspace Parameter set
+        /// Use Runspace Parameter set.
         /// </summary>
         Runspace
     }
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Checks the prerequisites for a cmdlet and terminates if the cmdlet
-        /// is not valid
+        /// is not valid.
         /// </summary>
         internal static void CheckRemotingCmdletPrerequisites()
         {
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             return;
 #else
             bool notSupported = true;
-            String WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
+            string WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
 
             CheckHostRemotingPrerequisites();
 
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
             if (isWinPEHost)
             {
                 // WSMan is not supported on this platform
-                //throw new InvalidOperationException(
+                // throw new InvalidOperationException(
                 //     "WinPE does not support Windows PowerShell remoting");
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.WinPERemotingNotSupported)), null, ErrorCategory.InvalidOperation, null);
                 throw new InvalidOperationException(errorRecord.ToString());
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if the specified version of PowerShell is installed
+        /// Checks if the specified version of PowerShell is installed.
         /// </summary>
         /// <param name="version"></param>
         internal static void CheckIfPowerShellVersionIsInstalled(Version version)

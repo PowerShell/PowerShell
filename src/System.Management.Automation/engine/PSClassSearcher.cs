@@ -73,7 +73,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the Enumerator
+        /// Get the Enumerator.
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return the current PSClassInfo
+        /// Return the current PSClassInfo.
         /// </summary>
         PSClassInfo IEnumerator<PSClassInfo>.Current
         {
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return the current PSClassInfo as object
+        /// Return the current PSClassInfo as object.
         /// </summary>
         object IEnumerator.Current
         {
@@ -166,7 +166,7 @@ namespace System.Management.Automation
 
                 if (cachedClasses != null)
                 {
-                    //Exact match
+                    // Exact match
                     if (!_useWildCards)
                     {
                         if (cachedClasses.ContainsKey(_className))
@@ -317,7 +317,7 @@ namespace System.Management.Automation
             if (ast.GetHelpContent() != null)
                 mamlHelpFile = ast.GetHelpContent().MamlHelpFile;
 
-            if (!String.IsNullOrEmpty(mamlHelpFile))
+            if (!string.IsNullOrEmpty(mamlHelpFile))
                 classInfo.HelpFile = mamlHelpFile;
 
             return classInfo;

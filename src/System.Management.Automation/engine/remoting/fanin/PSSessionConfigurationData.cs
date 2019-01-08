@@ -40,12 +40,13 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        public String PrivateData
+        public string PrivateData
         {
             get
             {
                 return _privateData;
             }
+
             internal set
             {
                 _privateData = value;
@@ -75,7 +76,7 @@ namespace System.Management.Automation.Remoting
         {
             PSSessionConfigurationData configuration = new PSSessionConfigurationData();
 
-            if (String.IsNullOrEmpty(configurationData)) return configuration;
+            if (string.IsNullOrEmpty(configurationData)) return configuration;
 
             configurationData = Unescape(configurationData);
 
@@ -106,7 +107,7 @@ namespace System.Management.Automation.Remoting
 
                         string optionName = reader.Value;
 
-                        if (String.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
                         {
                             // this is a PrivateData element which we
                             // need to process
@@ -152,7 +153,7 @@ namespace System.Management.Automation.Remoting
         private string _privateData;
 
         /// <summary>
-        /// Checks if the originalValue is empty. If not throws an exception
+        /// Checks if the originalValue is empty. If not throws an exception.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
@@ -169,7 +170,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Using optionName and optionValue updates the current object
+        /// Using optionName and optionValue updates the current object.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>
@@ -206,11 +207,13 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "Unknown option specified");
                     }
+
                     break;
             }
         }

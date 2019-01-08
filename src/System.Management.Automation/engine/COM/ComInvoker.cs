@@ -26,10 +26,10 @@ namespace System.Management.Automation
         private static readonly int s_variantSize = Marshal.SizeOf<Variant>();
 
         /// <summary>
-        /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument
+        /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument.
         /// </summary>
-        /// <param name="srcVariantPtr">The source Variant pointer</param>
-        /// <param name="destVariantPtr">The destination Variant pointer</param>
+        /// <param name="srcVariantPtr">The source Variant pointer.</param>
+        /// <param name="destVariantPtr">The destination Variant pointer.</param>
         private static unsafe void MakeByRefVariant(IntPtr srcVariantPtr, IntPtr destVariantPtr)
         {
             var srcVariant = (Variant*)srcVariantPtr;
@@ -73,8 +73,8 @@ namespace System.Management.Automation
         /// Alloc memory for a VARIANT array with the specified length.
         /// Also initialize the VARIANT elements to be the type 'VT_EMPTY'.
         /// </summary>
-        /// <param name="length">Array length</param>
-        /// <returns>Pointer to the array</returns>
+        /// <param name="length">Array length.</param>
+        /// <returns>Pointer to the array.</returns>
         private static unsafe IntPtr NewVariantArray(int length)
         {
             IntPtr variantArray = Marshal.AllocCoTaskMem(s_variantSize * length);
@@ -92,9 +92,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Generate the ByRef array indicating whether the corresponding argument is by-reference.
         /// </summary>
-        /// <param name="parameters">Parameters retrieved from metadata</param>
-        /// <param name="argumentCount">Count of arguments to pass in IDispatch.Invoke</param>
-        /// <param name="isPropertySet">Indicate if we are handling arguments for PropertyPut/PropertyPutRef</param>
+        /// <param name="parameters">Parameters retrieved from metadata.</param>
+        /// <param name="argumentCount">Count of arguments to pass in IDispatch.Invoke.</param>
+        /// <param name="isPropertySet">Indicate if we are handling arguments for PropertyPut/PropertyPutRef.</param>
         /// <returns></returns>
         internal static bool[] GetByRefArray(ParameterInformation[] parameters, int argumentCount, bool isPropertySet)
         {
@@ -126,13 +126,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invoke the COM member
+        /// Invoke the COM member.
         /// </summary>
-        /// <param name="target">IDispatch object</param>
-        /// <param name="dispId">Dispatch identifier that identifies the member</param>
-        /// <param name="args">Arguments passed in</param>
-        /// <param name="byRef">Boolean array that indicates by-Ref parameters</param>
-        /// <param name="invokeKind">Invocation kind</param>
+        /// <param name="target">IDispatch object.</param>
+        /// <param name="dispId">Dispatch identifier that identifies the member.</param>
+        /// <param name="args">Arguments passed in.</param>
+        /// <param name="byRef">Boolean array that indicates by-Ref parameters.</param>
+        /// <param name="invokeKind">Invocation kind.</param>
         /// <returns></returns>
         internal static object Invoke(IDispatch target, int dispId, object[] args, bool[] byRef, COM.INVOKEKIND invokeKind)
         {
@@ -241,6 +241,7 @@ namespace System.Management.Automation
                         {
                             Marshal.FreeBSTR(info.bstrSource);
                         }
+
                         if (info.bstrHelpFile != IntPtr.Zero)
                         {
                             Marshal.FreeBSTR(info.bstrHelpFile);
@@ -280,6 +281,7 @@ namespace System.Management.Automation
                     {
                         VariantClear(variantArgArray + s_variantSize * i);
                     }
+
                     Marshal.FreeCoTaskMem(variantArgArray);
                 }
 
@@ -296,6 +298,7 @@ namespace System.Management.Automation
                     {
                         VariantClear(tmpVariants + s_variantSize * i);
                     }
+
                     Marshal.FreeCoTaskMem(tmpVariants);
                 }
             }
@@ -328,7 +331,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// VARIANT type used for passing arguments in COM interop
+        /// VARIANT type used for passing arguments in COM interop.
         /// </summary>
         [StructLayout(LayoutKind.Explicit)]
         internal struct Variant

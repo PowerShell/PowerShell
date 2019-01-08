@@ -43,7 +43,7 @@ function Get-ClassCoverageData([xml.xmlelement]$element)
     return $classes
 }
 
-# region FileCoverage
+#region FileCoverage
 
 class FileCoverage
 {

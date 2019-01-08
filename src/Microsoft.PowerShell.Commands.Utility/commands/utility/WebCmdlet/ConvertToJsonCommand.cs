@@ -134,6 +134,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return;
                 }
+
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.None,
@@ -144,10 +145,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     jsonSettings.Converters.Add(new StringEnumConverter());
                 }
+
                 if (!Compress)
                 {
                     jsonSettings.Formatting = Formatting.Indented;
                 }
+
                 string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
                 WriteObject(output);
             }
@@ -160,9 +163,9 @@ namespace Microsoft.PowerShell.Commands
         /// that properties that cannot be evaluated are treated as having the value null.
         /// Primitive types are returned verbatim.  Aggregate types are processed recursively.
         /// </summary>
-        /// <param name="obj">The object to be processed</param>
-        /// <param name="depth">The current depth into the object graph</param>
-        /// <returns>An object suitable for serializing to JSON</returns>
+        /// <param name="obj">The object to be processed.</param>
+        /// <param name="depth">The current depth into the object graph.</param>
+        /// <returns>An object suitable for serializing to JSON.</returns>
         private object ProcessValue(object obj, int depth)
         {
             if (Stopping)
@@ -175,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
             if (pso != null)
                 obj = pso.BaseObject;
 
-            Object rv = obj;
+            object rv = obj;
             bool isPurePSObj = false;
             bool isCustomObj = false;
 
@@ -270,11 +273,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Add to a base object any properties that might have been added to an object (via PSObject) through the Add-Member cmdlet.
         /// </summary>
-        /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject</param>
-        /// <param name="obj">The base object that might have been decorated with additional properties</param>
-        /// <param name="depth">The current depth into the object graph</param>
-        /// <param name="isPurePSObj">the processed object is a pure PSObject</param>
-        /// <param name="isCustomObj">the processed object is a custom object</param>
+        /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject.</param>
+        /// <param name="obj">The base object that might have been decorated with additional properties.</param>
+        /// <param name="depth">The current depth into the object graph.</param>
+        /// <param name="isPurePSObj">The processed object is a pure PSObject.</param>
+        /// <param name="isCustomObj">The processed object is a custom object.</param>
         /// <returns>
         /// The original base object if no additional properties had been added,
         /// otherwise a dictionary containing the value of the original base object in the "value" key
@@ -316,10 +319,10 @@ namespace Microsoft.PowerShell.Commands
         /// When the object is a pure PSObject, it also gets processed in "ProcessCustomObject" before reaching this method, so we will
         /// iterate both extended and adapted properties for it. Since it's a pure PSObject, there will be no adapted properties.
         /// </summary>
-        /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject</param>
-        /// <param name="receiver">The dictionary to which any additional properties will be appended</param>
-        /// <param name="depth">The current depth into the object graph</param>
-        /// <param name="isCustomObject">The processed object is a custom object</param>
+        /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject.</param>
+        /// <param name="receiver">The dictionary to which any additional properties will be appended.</param>
+        /// <param name="depth">The current depth into the object graph.</param>
+        /// <param name="isCustomObject">The processed object is a custom object.</param>
         private void AppendPsProperties(PSObject psobj, IDictionary receiver, int depth, bool isCustomObject)
         {
             // serialize only Extended and Adapted properties..
@@ -450,6 +453,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 

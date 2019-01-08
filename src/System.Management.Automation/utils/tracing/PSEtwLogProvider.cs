@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// ETW log provider implementation
+    /// ETW log provider implementation.
     /// </summary>
     internal class PSEtwLogProvider : LogProvider
     {
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Tracing
         private static EventDescriptor _xferEventDescriptor = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         static PSEtwLogProvider()
         {
@@ -44,13 +44,13 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging health event
+        /// Provider interface function for logging health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
             StringBuilder payload = new StringBuilder();
 
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging engine lifecycle event
+        /// Provider interface function for logging engine lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging command health event
+        /// Provider interface function for logging command health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging command lifecycle event
+        /// Provider interface function for logging command lifecycle event.
         /// </summary>
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
@@ -144,13 +144,13 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
             StringBuilder payload = new StringBuilder();
 
             if (pipelineExecutionDetail != null)
             {
-                foreach (String detail in pipelineExecutionDetail)
+                foreach (string detail in pipelineExecutionDetail)
                 {
                     payload.AppendLine(detail);
                 }
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging provider health event
+        /// Provider interface function for logging provider health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Tracing
             AppendException(payload, exception);
             payload.AppendLine();
 
-            Dictionary<String, String> additionalInfo = new Dictionary<string, string>();
+            Dictionary<string, string> additionalInfo = new Dictionary<string, string>();
 
             additionalInfo.Add(EtwLoggingStrings.ProviderNameString, providerName);
 
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging provider lifecycle event
+        /// Provider interface function for logging provider lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging settings event
+        /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="variableName"></param>
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// The ETW provider does not use logging variables
+        /// The ETW provider does not use logging variables.
         /// </summary>
         /// <returns></returns>
         internal override bool UseLoggingVariables()
@@ -242,13 +242,13 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Writes a single event
+        /// Writes a single event.
         /// </summary>
-        /// <param name="id">event id</param>
+        /// <param name="id">Event id.</param>
         /// <param name="channel"></param>
         /// <param name="opcode"></param>
         /// <param name="task"></param>
-        /// <param name="logContext">log context</param>
+        /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Writes an event
+        /// Writes an event.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="channel"></param>
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Writes an activity transfer event
+        /// Writes an activity transfer event.
         /// </summary>
         internal void WriteTransferEvent(Guid parentActivityId)
         {

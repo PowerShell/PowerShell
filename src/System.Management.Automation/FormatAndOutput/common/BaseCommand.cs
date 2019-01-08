@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// facade class to provide context information to process
-    /// exceptions
+    /// exceptions.
     /// </summary>
     internal sealed class TerminatingErrorContext
     {
@@ -33,16 +33,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// helper class to invoke a command in a secondary pipeline.
     /// NOTE: this implementation does not return any error messages
-    /// that invoked pipelines might generate
+    /// that invoked pipelines might generate.
     /// </summary>
     internal sealed class CommandWrapper : IDisposable
     {
         /// <summary>
-        /// Initialize the command before executing
+        /// Initialize the command before executing.
         /// </summary>
-        /// <param name="execContext">ExecutionContext used to create sub pipeline</param>
-        /// <param name="nameOfCommand">name of the command to run</param>
-        /// <param name="typeOfCommand">Type of the command to run</param>
+        /// <param name="execContext">ExecutionContext used to create sub pipeline.</param>
+        /// <param name="nameOfCommand">Name of the command to run.</param>
+        /// <param name="typeOfCommand">Type of the command to run.</param>
         internal void Initialize(ExecutionContext execContext, string nameOfCommand, Type typeOfCommand)
         {
             _context = execContext;
@@ -52,10 +52,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// add a parameter to the command invocation.
-        /// It needs to be called before any execution takes place
+        /// It needs to be called before any execution takes place.
         /// </summary>
-        /// <param name="parameterName">name of the parameter</param>
-        /// <param name="parameterValue">value of the parameter</param>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <param name="parameterValue">Value of the parameter.</param>
         internal void AddNamedParameter(string parameterName, object parameterValue)
         {
             _commandParameterList.Add(
@@ -66,10 +66,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// send an object to the pipeline
+        /// send an object to the pipeline.
         /// </summary>
-        /// <param name="o">object to process</param>
-        /// <returns>Array of objects out of the success pipeline</returns>
+        /// <param name="o">Object to process.</param>
+        /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array Process(object o)
         {
             if (_pp == null)
@@ -83,9 +83,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// shut down the pipeline
+        /// shut down the pipeline.
         /// </summary>
-        /// <returns>Array of objects out of the success pipeline</returns>
+        /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array ShutDown()
         {
             if (_pp == null)
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// just dispose the pipeline processor
+        /// just dispose the pipeline processor.
         /// </summary>
         public void Dispose()
         {
@@ -141,13 +141,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// base class for the command-let's we expose
     /// it contains a reference to the implementation
-    /// class it wraps
+    /// class it wraps.
     /// </summary>
     public abstract class FrontEndCommandBase : PSCmdlet, IDisposable
     {
         #region Command Line Switches
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation
+        /// call the implementation.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation
+        /// call the implementation.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation
+        /// call the implementation.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -195,18 +195,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback for the implementation to obtain a reference to the Cmdlet object
+        /// callback for the implementation to obtain a reference to the Cmdlet object.
         /// </summary>
-        /// <returns>Cmdlet reference</returns>
+        /// <returns>Cmdlet reference.</returns>
         protected virtual PSCmdlet OuterCmdletCall()
         {
             return this;
         }
 
         /// <summary>
-        /// callback for the implementation to get the current pipeline object
+        /// callback for the implementation to get the current pipeline object.
         /// </summary>
-        /// <returns>current object from the pipeline</returns>
+        /// <returns>Current object from the pipeline.</returns>
         protected virtual PSObject InputObjectCall()
         {
             // just bind to the input object parameter
@@ -214,9 +214,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback for the implementation to write objects
+        /// callback for the implementation to write objects.
         /// </summary>
-        /// <param name="value">object to be written</param>
+        /// <param name="value">Object to be written.</param>
         protected virtual void WriteObjectCall(object value)
         {
             // just call Monad API
@@ -225,14 +225,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// reference to the implementation command that this class
-        /// is wrapping
+        /// is wrapping.
         /// </summary>
         internal ImplementationCommandBase implementation = null;
 
         #region IDisposable Implementation
 
         /// <summary>
-        /// default implementation just delegates to internal helper
+        /// default implementation just delegates to internal helper.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Dispose pattern implementation
+        /// Dispose pattern implementation.
         /// </summary>
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Do-nothing implementation: derived classes will override as see fit
+        /// Do-nothing implementation: derived classes will override as see fit.
         /// </summary>
         protected virtual void InternalDispose()
         {
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// implementation class to be called by the outer command
-    /// In order to properly work, the callbacks have to be properly set by the outer command
+    /// In order to properly work, the callbacks have to be properly set by the outer command.
     /// </summary>
     internal class ImplementationCommandBase : IDisposable
     {
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// retrieve the current input pipeline object
+        /// retrieve the current input pipeline object.
         /// </summary>
         internal virtual PSObject ReadObject()
         {
@@ -313,9 +313,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write an object to the pipeline
+        /// write an object to the pipeline.
         /// </summary>
-        /// <param name="o">object to write to the pipeline</param>
+        /// <param name="o">Object to write to the pipeline.</param>
         internal virtual void WriteObject(object o)
         {
             // delegate to the front end object
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         // callback methods to get to the outer Monad Cmdlet
         /// <summary>
-        /// get a hold of the Monad outer Cmdlet
+        /// get a hold of the Monad outer Cmdlet.
         /// </summary>
         /// <returns></returns>
         internal virtual PSCmdlet OuterCmdlet()
@@ -343,40 +343,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// delegate definition to get to the outer command-let
+        /// delegate definition to get to the outer command-let.
         /// </summary>
         internal delegate PSCmdlet OuterCmdletCallback();
 
         /// <summary>
-        /// callback to get to the outer command-let
+        /// callback to get to the outer command-let.
         /// </summary>
         internal OuterCmdletCallback OuterCmdletCall;
 
         // callback to the methods to get an object and write an object
         /// <summary>
-        /// delegate definition to get to the current pipeline input object
+        /// delegate definition to get to the current pipeline input object.
         /// </summary>
         internal delegate PSObject InputObjectCallback();
 
         /// <summary>
-        /// delegate definition to write object
+        /// delegate definition to write object.
         /// </summary>
         internal delegate void WriteObjectCallback(object o);
 
         /// <summary>
-        /// callback to read object
+        /// callback to read object.
         /// </summary>
         internal InputObjectCallback InputObjectCall;
 
         /// <summary>
-        /// callback to write object
+        /// callback to write object.
         /// </summary>
         internal WriteObjectCallback WriteObjectCall;
 
         #region IDisposable Implementation
 
         /// <summary>
-        /// default implementation just delegates to internal helper
+        /// default implementation just delegates to internal helper.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Do-nothing implementation: derived classes will override as see fit
+        /// Do-nothing implementation: derived classes will override as see fit.
         /// </summary>
         protected virtual void InternalDispose()
         {

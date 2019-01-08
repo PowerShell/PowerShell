@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell
     internal class NullHostUserInterface : PSHostUserInterface
     {
         /// <summary>
-        /// RawUI
+        /// RawUI.
         /// </summary>
         public override PSHostRawUserInterface RawUI
         {
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Prompt
+        /// Prompt.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForChoice
+        /// PromptForChoice.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLine
+        /// ReadLine.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLineAsSecureString
+        /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
         public override SecureString ReadLineAsSecureString()
@@ -105,14 +105,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Write
+        /// Write.
         /// </summary>
         /// <param name="value"></param>
         public override void Write(string value)
         { }
 
         /// <summary>
-        /// Write
+        /// Write.
         /// </summary>
         /// <param name="foregroundColor"></param>
         /// <param name="backgroundColor"></param>
@@ -121,14 +121,14 @@ namespace Microsoft.PowerShell
         { }
 
         /// <summary>
-        /// WriteDebugLine
+        /// WriteDebugLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteDebugLine(string message)
         { }
 
         /// <summary>
-        /// WriteErrorLine
+        /// WriteErrorLine.
         /// </summary>
         /// <param name="value"></param>
         public override void WriteErrorLine(string value)
@@ -137,14 +137,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// WriteLine
+        /// WriteLine.
         /// </summary>
         /// <param name="value"></param>
         public override void WriteLine(string value)
         { }
 
         /// <summary>
-        /// WriteProgress
+        /// WriteProgress.
         /// </summary>
         /// <param name="sourceId"></param>
         /// <param name="record"></param>
@@ -152,14 +152,14 @@ namespace Microsoft.PowerShell
         { }
 
         /// <summary>
-        /// WriteVerboseLine
+        /// WriteVerboseLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteVerboseLine(string message)
         { }
 
         /// <summary>
-        /// WriteWarningLine
+        /// WriteWarningLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteWarningLine(string message)
@@ -195,6 +195,7 @@ namespace Microsoft.PowerShell
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
             if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
+
             _hostUI = hostUI;
 
             _bannerText = bannerText;
@@ -478,6 +479,7 @@ namespace Microsoft.PowerShell
 
                 return false;
             }
+
             PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
             return true;
         }
@@ -609,7 +611,7 @@ namespace Microsoft.PowerShell
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
             Dbg.Assert(switchKey != null, "need a value");
-            Dbg.Assert(!String.IsNullOrEmpty(match), "need a value");
+            Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
             Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
@@ -629,13 +631,14 @@ namespace Microsoft.PowerShell
             {
                 _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
             }
+
             _hostUI.WriteLine(string.Empty);
         }
 
         private void DisplayBanner()
         {
             // If banner text is not supplied do nothing.
-            if (!String.IsNullOrEmpty(_bannerText))
+            if (!string.IsNullOrEmpty(_bannerText))
             {
                 _hostUI.WriteLine(_bannerText);
                 _hostUI.WriteLine();
@@ -865,8 +868,10 @@ namespace Microsoft.PowerShell
                             ConsoleHost.DefaultInitialSessionState.ImportPSModule(new string[] { arg });
                             moduleCount++;
                         }
+
                         ++i;
                     }
+
                     if (moduleCount < 1)
                     {
                         _hostUI.WriteErrorLine("No modules specified for -module option");
@@ -901,7 +906,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-
                 else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error
@@ -1068,6 +1072,7 @@ namespace Microsoft.PowerShell
                     boolValue = false;
                     return true;
                 }
+
                 boolValue = false;
                 return false;
             }
@@ -1137,6 +1142,7 @@ namespace Microsoft.PowerShell
                                 possibleParameters.Append(validParameter);
                             }
                         }
+
                         if (possibleParameters.Length > 0)
                         {
                             WriteCommandLineError(
@@ -1146,6 +1152,7 @@ namespace Microsoft.PowerShell
                             return false;
                         }
                     }
+
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
                         showHelp: true);
@@ -1200,9 +1207,11 @@ namespace Microsoft.PowerShell
                     {
                         _collectedArgs.Add(new CommandParameter(null, arg));
                     }
+
                     ++i;
                 }
             }
+
             return true;
         }
 
@@ -1284,11 +1293,13 @@ namespace Microsoft.PowerShell
                     cmdLineCmdSB.Append(args[i] + " ");
                     ++i;
                 }
+
                 if (cmdLineCmdSB.Length > 0)
                 {
                     // remove the last blank
                     cmdLineCmdSB.Remove(cmdLineCmdSB.Length - 1, 1);
                 }
+
                 _commandLineCommand = cmdLineCmdSB.ToString();
             }
 

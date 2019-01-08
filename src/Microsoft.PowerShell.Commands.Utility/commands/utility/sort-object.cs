@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Descending
         {
             get { return DescendingOrder; }
+
             set { DescendingOrder = value; }
         }
         /// <summary>
@@ -33,8 +34,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Unique
         {
             get { return _unique; }
+
             set { _unique = value; }
         }
+
         private bool _unique;
         #endregion
 
@@ -156,6 +159,7 @@ namespace Microsoft.PowerShell.Commands
                         dataToSort[dataIndex] = dataToSort[dataToSort.Count - discardedDuplicates];
                         dataIndex--;
                     }
+
                     continue;
                 }
 
@@ -178,6 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
                     childIndex = parentIndex;
                 }
+
                 heapCount++;
 
                 // If the heap size is too large, remove the root and rearrange the heap

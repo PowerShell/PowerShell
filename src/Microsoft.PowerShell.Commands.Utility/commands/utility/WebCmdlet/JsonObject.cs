@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="input">The json text to convert.</param>
         /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
-        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/></param>
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>

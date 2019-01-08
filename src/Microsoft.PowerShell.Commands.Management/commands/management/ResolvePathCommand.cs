@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -73,6 +73,7 @@ namespace Microsoft.PowerShell.Commands
                 _relative = value;
             }
         }
+
         private SwitchParameter _relative;
 
         #endregion Parameters
@@ -80,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameter data
 
         /// <summary>
-        /// The path to resolve
+        /// The path to resolve.
         /// </summary>
         private string[] _paths;
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
                             }
+
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
                             // Do not insert './' if result path is not relative
@@ -124,6 +126,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
                     }

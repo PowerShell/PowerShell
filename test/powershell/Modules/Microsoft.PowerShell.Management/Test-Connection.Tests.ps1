@@ -252,7 +252,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Quiet works" {
-            $result = Test-Connection $hostName -TraceRoute -Quiet 6>$null
+            $result = Test-Connection $hostName -TraceRoute -Quiet 6> $null
 
             $result | Should -BeTrue
         }
