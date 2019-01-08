@@ -26,4 +26,4 @@ namespace PSTests.YourNameSpace
 }
 ```
 
-[xunit-filter]: https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
+[xunit-filter]: https://docs.microsoft.com/dotnet/core/testing/selective-unit-tests
