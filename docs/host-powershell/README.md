@@ -13,20 +13,17 @@ Please see the [.NET Core Sample Application](#net-core-sample-application) sect
 
 Note: The .NET Core `2.1` runtime and .NET Core SDK `2.1` or higher is required for the examples below:
 
-- [sample-windows](./sample-windows)
-- [sample-crossplatform](./sample-crossplatform)
+- [sample](./sample)
 
-You can find the sample application project `MyApp` in each of the above 2 sample folders.
-To build the sample project, run the following commands (make sure the required .NET Core SDK is in use):
+You can find the sample application project `MyApp` in each of the above 2 sample folders. You can quickly test-run it using `dotnet run`.
+To build the sample project properly for distribution, run the following command (make sure the required .NET Core SDK is in use):
 
 ```powershell
-dotnet publish .\MyApp -c release -r win10-x64
+dotnet publish .\MyApp --configuration release
 ```
 
-For cross platform project there is no need to specify `-r win10-x64`.
-The runtime for the build machine's platform will automatically be selected.
-
-Then you can run `MyApp.exe` from the publish folder and see the results:
+This builds it for the runtimes specified by the `RuntimeIdentifiers` property in the `.csproj` file.
+Then you can run the `MyApp` binary from the publish folder and see the results:
 
 ```none
 PS:> .\MyApp.exe
@@ -41,7 +38,7 @@ System.Management.Automation.ActionPreference
 System.Management.Automation.AliasAttribute
 ```
 
-## PowerShell Core v6.0.0-beta.2 and Prior
+## Special Hosting scenarios and PowerShell Core v6.0.0-beta.2 and Prior
 
 Due to the lack of necessary APIs for manipulating assemblies in .NET Core 1.1 and prior,	
 PowerShell Core needs to control assembly loading via our customized `AssemblyLoadContext` ([CorePsAssemblyLoadContext.cs][]) in order to do tasks like type resolution.	
