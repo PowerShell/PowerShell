@@ -78,7 +78,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
             & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
-            Get-Content $redirectFile -Raw | Should -Match "usage: ping"
+            Get-Content $redirectFile -Raw | Should -Match "usage: ping|ping:"
         }
     }
 
