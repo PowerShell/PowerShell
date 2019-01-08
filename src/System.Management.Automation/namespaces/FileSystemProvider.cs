@@ -2434,9 +2434,16 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, (isDirectory ? 1 : 0));
-            bool success = (created == 1) ? true : false;
-            return success;
+            // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
+            var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
+            if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 14972 ||
+                Environment.OSVersion.Version.Major >= 11)
+            {
+                flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
+            }
+
+            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
+            return (created == 1) ? true : false;
         }
 
         private static bool WinCreateHardLink(string path, string strTargetPath)
@@ -7014,10 +7021,32 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="name">Path of the symbolic link.</param>
             /// <param name="destination">Path of the target of the symbolic link.</param>
-            /// <param name="destinationType">0 for destination as file and 1 for destination as directory.</param>
+            /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
             /// <returns>1 on successful creation.</returns>
             [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int CreateSymbolicLink(string name, string destination, int destinationType);
+            internal static extern int CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
+
+            /// <summary>
+            /// Flags used when creating a symbolic link.
+            /// </summary>
+            [Flags]
+            internal enum SymbolicLinkFlags
+            {
+                /// <summary>
+                /// Symbolic link is a file.
+                /// </summary>
+                File = 0,
+
+                /// <summary>
+                /// Symbolic link is a directory.
+                /// </summary>
+                Directory = 1,
+
+                /// <summary>
+                /// Allow creation of symbolic link without elevation.  Requires Developer mode.
+                /// </summary>
+                AllowUnprivilegedCreate = 2
+            }
 
             /// <summary>
             /// Creates a hard link using the native API.
