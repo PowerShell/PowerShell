@@ -477,3 +477,14 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         $helpObj.description | Out-String | Should -Match $CmdletName
     }
 }
+
+Describe "Help failure cases" -Tags Feature {
+    It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
+        @{ command = "help" },
+        @{ command = "get-help" }
+    ){
+        param($command)
+
+        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+    }
+}
