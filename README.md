@@ -199,18 +199,15 @@ See [working with the PowerShell repository](https://github.com/PowerShell/Power
 ## Developing and Contributing
 
 Please see the [Contribution Guide][] for how to develop and contribute.
-
-If you have any problems, please consult the [known issues][], developer [FAQ][], and [GitHub issues][].
-If you do not see your problem captured, please file a [new issue][] and follow the provided template.
 If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
 Also make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
+[Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
 [check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
-[Contribution Guide]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
-[known issues]: https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6
-[GitHub issues]: https://github.com/PowerShell/PowerShell/issues
-[new issue]:https://github.com/PowerShell/PowerShell/issues/new
+
+## Support  
+For support please see [Support Section][].  
 
 ## Legal and Licensing
 
@@ -242,7 +239,7 @@ Governance policy for PowerShell project is described [here][].
 This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code].
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
-[conduct-code]: http://opensource.microsoft.com/codeofconduct/
-[conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
+[conduct-code]: https://opensource.microsoft.com/codeofconduct/
+[conduct-FAQ]: https://opensource.microsoft.com/codeofconduct/faq/
 [conduct-email]: mailto:opencode@microsoft.com
 [conduct-md]: https://github.com/PowerShell/PowerShell/tree/master/CODE_OF_CONDUCT.md
