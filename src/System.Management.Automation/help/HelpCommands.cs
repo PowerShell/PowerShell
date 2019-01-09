@@ -431,13 +431,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the parameter info for patterns identified Parameter property.
-        /// Writes the parameter info(s) to the output stream. An error is thrown
-        /// if a parameter with a given pattern is not found.
         /// </summary>
         /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
-        private void GetAndWriteParameterInfo(HelpInfo helpInfo)
+        private PSObject[] GetParameterInfo(HelpInfo helpInfo)
         {
-            s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
             List<PSObject> pInfosList = new List<PSObject>(Parameter.Length);
 
             foreach (var parameter in Parameter)
@@ -448,7 +445,20 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            PSObject[] pInfos = pInfosList.ToArray();
+            return pInfosList.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the parameter info for patterns identified Parameter property.
+        /// Writes the parameter info(s) to the output stream. An error is thrown
+        /// if a parameter with a given pattern is not found.
+        /// </summary>
+        /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
+        private void GetAndWriteParameterInfo(HelpInfo helpInfo)
+        {
+            s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
+
+            PSObject[] pInfos = GetParameterInfo(helpInfo);
 
             if ((pInfos == null) || (pInfos.Length == 0))
             {
@@ -562,17 +572,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (Parameter != null)
                         {
-                            List<PSObject> pInfosList = new List<PSObject>(Parameter.Length);
-
-                            foreach (var parameter in Parameter)
-                            {
-                                foreach (var pInfo in helpInfo.GetParameter(parameter))
-                                {
-                                    pInfosList.Add(pInfo);
-                                }
-                            }
-
-                            PSObject[] pInfos = pInfosList.ToArray();
+                            PSObject[] pInfos = GetParameterInfo(helpInfo);
 
                             if ((pInfos == null) || (pInfos.Length == 0))
                             {
