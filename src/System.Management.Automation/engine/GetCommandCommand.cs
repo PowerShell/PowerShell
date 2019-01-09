@@ -715,6 +715,11 @@ namespace Microsoft.PowerShell.Commands
                 options |= SearchResolutionOptions.UseAbbreviationExpansion;
             }
 
+            if (UseFuzzyMatching)
+            {
+                options |= SearchResolutionOptions.FuzzyMatch;
+            }
+
             if ((this.CommandType & CommandTypes.Alias) != 0)
             {
                 options |= SearchResolutionOptions.ResolveAliasPatterns;
@@ -742,13 +747,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleName = this.Module[0];
                     }
 
-                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
-                    if (UseFuzzyMatching)
-                    {
-                        options |= SearchResolutionOptions.FuzzyMatch;
-                        isPattern = true;
-                    }
-
+                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName) || UseAbbreviationExpansion || UseFuzzyMatching;
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
@@ -812,7 +811,8 @@ namespace Microsoft.PowerShell.Commands
                                         this.Context,
                                         this.MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
-                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified);
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified,
+                                        useAbbreviationExpansion: UseAbbreviationExpansion);
                                 }
 
                                 foreach (CommandInfo command in commands)

@@ -726,8 +726,7 @@ namespace System.Management.Automation
         {
             CommandInfo result = null;
 
-            if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns) ||
-                _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+            if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns))
             {
                 if (_matchingFunctionEnumerator == null)
                 {
@@ -1010,8 +1009,7 @@ namespace System.Management.Automation
                 else
                 {
                     _matchingCmdlet = _context.CommandDiscovery.GetCmdletInfo(_commandName,
-                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.SearchAllScopes),
-                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion));
+                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.SearchAllScopes));
                 }
             }
 

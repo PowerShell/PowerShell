@@ -176,10 +176,10 @@ namespace System.Management.Automation
                     .AddParameter("All")
                     .AddParameter("Name", commandName);
 
-                    if (ExperimentalFeature.IsEnabled("PSUseAbbreviationExpansion"))
-                    {
-                        powershell.AddParameter("UseAbbreviationExpansion");
-                    }
+                if (ExperimentalFeature.IsEnabled("PSUseAbbreviationExpansion"))
+                {
+                    powershell.AddParameter("UseAbbreviationExpansion");
+                }
 
                 if (moduleName != null)
                 {

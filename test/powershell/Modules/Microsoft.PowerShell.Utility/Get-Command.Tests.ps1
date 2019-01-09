@@ -23,6 +23,15 @@ Describe "Get-Command CI tests" -Tag Feature {
 
     Context "-UseAbbreviationExpansion tests" {
         BeforeAll {
+            $testModulesPath = Join-Path $testdrive "Modules"
+            $testPSModulePath = [System.IO.Path]::PathSeparator + $testModulesPath
+            $null = New-Item -ItemType Directory -Path $testModulesPath
+            $null = New-Item -ItemType Directory -Path (Join-Path $testModulesPath "test1")
+            $null = New-Item -ItemType Directory -Path (Join-Path $testModulesPath "test2")
+
+            Set-Content -Path (Join-Path $testModulesPath "test1/test1.psm1") -Value "function Import-FooZedZed {}"
+            Set-Content -Path (Join-Path $testModulesPath "test2/test2.psm1") -Value "function Invoke-FooZedZed {}"
+
             $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
 
             @"
@@ -33,6 +42,13 @@ Describe "Get-Command CI tests" -Tag Feature {
             }
 "@ > $configFilePath
 
+        }
+
+        It "Can return multiple results relying on auto module loading" {
+            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
+            $results | Should -HaveCount 2
+            $results.Name | Should -Contain "Invoke-FooZedZed"
+            $results.Name | Should -Contain "Import-FooZedZed"
         }
 
         It "Valid cmdlets works with name <name> and module <module>" -TestCases @(
@@ -49,17 +65,18 @@ Describe "Get-Command CI tests" -Tag Feature {
                 $command += " -Module $module"
             }
 
-            $results = pwsh -settingsfile $configFilePath -c "$command | ConvertTo-Json" | ConvertFrom-Json
+            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "$command"
             $results | Should -HaveCount 1
             $results.Name | Should -BeExactly $expected
         }
 
         It "Can return multiple results for cmdlets matching abbreviation" {
-            $results = pwsh -settingsfile $configFilePath -c "Get-Command i-C -UseAbbreviationExpansion | ConvertTo-Json" | ConvertFrom-Json
+            # use mixed casing to validate case insensitivity
+            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Get-Command i-C -UseAbbreviationExpansion"
             $results | Should -HaveCount 3
-            $results[0].Name | Should -BeExactly "Invoke-Command"
-            $results[1].Name | Should -BeExactly "Import-Clixml"
-            $results[2].Name | Should -BeExactly "Import-Csv"
+            $results.Name | Should -Contain "Invoke-Command"
+            $results.Name | Should -Contain "Import-Clixml"
+            $results.Name | Should -Contain "Import-Csv"
         }
 
         It "Will return multiple results for functions matching abbreviation" {
@@ -72,18 +89,18 @@ Describe "Get-Command CI tests" -Tag Feature {
             function Get-FB { "fb" }
 "@ > $modulePath
 
-            $results = pwsh -settingsfile $configFilePath -c "Import-Module $manifestPath; Get-Command g-fb -UseAbbreviationExpansion | ConvertTo-Json" | ConvertFrom-Json
+            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Import-Module $manifestPath; Get-Command g-fb -UseAbbreviationExpansion"
             $results | Should -HaveCount 2
             $results[0].Name | Should -BeExactly "Get-FB"
             $results[1].Name | Should -BeExactly "Get-FooBar"
         }
 
         It "Non-existing cmdlets returns non-terminating error" {
-            pwsh -settingsfile $configFilePath -c 'try { get-command g-adf -ea stop } catch { $_.fullyqualifiederrorid }' | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+            pwsh -settingsfile $configFilePath -command 'try { get-command g-adf -ea stop } catch { $_.fullyqualifiederrorid }' | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
         }
 
         It "No results if wildcard is used" {
-            pwsh -settingsfile $configFilePath -c Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
+            pwsh -settingsfile $configFilePath -command Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
         }
     }
 }

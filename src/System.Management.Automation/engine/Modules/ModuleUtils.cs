@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -411,8 +412,9 @@ namespace System.Management.Automation.Internal
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
         /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
+        /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
         /// <returns>Returns CommandInfo IEnumerable.</returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false)
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -449,8 +451,10 @@ namespace System.Management.Automation.Internal
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
+                                string abbreviatedCmdlet = new string(entry.Value.Name.Where(c => char.IsUpper(c) || c == '-').ToArray());
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                 (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)))
+                                    (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
+                                    (useAbbreviationExpansion && string.Equals(pattern, abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -507,9 +511,11 @@ namespace System.Management.Automation.Internal
                     {
                         string commandName = pair.Key;
                         CommandTypes commandTypes = pair.Value;
+                        string abbreviatedCmdlet = new string(commandName.Where(c => char.IsUpper(c) || c == '-').ToArray());
 
                         if (commandPattern.IsMatch(commandName) ||
-                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)))
+                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
+                            (useAbbreviationExpansion && string.Equals(pattern, abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
 
