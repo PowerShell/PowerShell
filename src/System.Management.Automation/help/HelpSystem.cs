@@ -543,7 +543,7 @@ namespace System.Management.Automation
         private ArrayList _helpProviders = new ArrayList();
 
         /// <summary>
-        /// return the list of help providers initialized.
+        /// Return the list of help providers initialized.
         /// </summary>
         /// <value>a list of help providers</value>
         internal ArrayList HelpProviders

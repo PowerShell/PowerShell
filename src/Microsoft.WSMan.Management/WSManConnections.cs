@@ -111,7 +111,7 @@ namespace Microsoft.WSMan.Management
 
     #region Connect-WsMan
     /// <summary>
-    /// connect wsman cmdlet.
+    /// Connect wsman cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
@@ -325,7 +325,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -335,7 +335,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void

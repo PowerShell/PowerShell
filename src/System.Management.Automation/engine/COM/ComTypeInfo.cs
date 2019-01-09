@@ -27,7 +27,7 @@ namespace System.Management.Automation
         internal const int DISPID_DEFAULTMEMBER = 0;
 
         /// <summary>
-        ///  Member variables.
+        /// Member variables.
         /// </summary>
         private Dictionary<string, ComProperty> _properties = null;
         private Dictionary<string, ComMethod> _methods = null;
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         private Guid _guid = Guid.Empty;
 
         /// <summary>
-        ///  Constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="info">ITypeInfo object being wrapped by this object.</param>
         internal ComTypeInfo(COM.ITypeInfo info)
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Collection of properties in the COM object.
+        /// Collection of properties in the COM object.
         /// </summary>
         internal Dictionary<string, ComProperty> Properties
         {
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Collection of methods in the COM object.
+        /// Collection of methods in the COM object.
         /// </summary>
         internal Dictionary<string, ComMethod> Methods
         {
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Returns the string of the GUID for the type information.
+        /// Returns the string of the GUID for the type information.
         /// </summary>
         internal string Clsid
         {
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Get the typeinfo interface for the given comobject.
+        /// Get the typeinfo interface for the given comobject.
         /// </summary>
         /// <param name="comObject">Reference to com object for which we are getting type information.</param>
         /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object.</returns>
@@ -204,7 +204,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Get TypeAttr for the given type information.
+        /// Get TypeAttr for the given type information.
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>

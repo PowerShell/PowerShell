@@ -2637,14 +2637,14 @@ namespace System.Management.Automation.Runspaces
                 /*concurrency*/3, /*capacity*/300, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// points to a Hashtable from type name to type converter.
+        /// Points to a Hashtable from type name to type converter.
         /// </summary>
         private readonly ConcurrentDictionary<string, object> _typeConverters
             = new ConcurrentDictionary<string, object>(
                 /*concurrency*/1, /*capacity*/5, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// points to a Hashtable from type name to type adapter.
+        /// Points to a Hashtable from type name to type adapter.
         /// </summary>
         private readonly ConcurrentDictionary<string, PSObject.AdapterSet> _typeAdapters =
             new ConcurrentDictionary<string, PSObject.AdapterSet>(

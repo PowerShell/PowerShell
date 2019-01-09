@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// class that represents the results from evaluating a PSPropertyExpression against an object.
+    /// Class that represents the results from evaluating a PSPropertyExpression against an object.
     /// </summary>
     public class PSPropertyExpressionResult
     {
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
     public class PSPropertyExpression
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="s">Expression.</param>
         /// <exception cref="ArgumentNullException"></exception>

@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// association between SigningOption.* values and the
+        /// Association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
         private static readonly SigningOptionInfo[] s_sigOptionInfo =
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// get SigningOption value corresponding to a string name.
+        /// Get SigningOption value corresponding to a string name.
         /// </summary>
         /// <param name="optionName">Name of option.</param>
         /// <returns>SigningOption.</returns>

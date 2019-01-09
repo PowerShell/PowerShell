@@ -141,19 +141,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract class LineOutput
     {
         /// <summary>
-        /// whether the device requires full buffering of formatting
+        /// Whether the device requires full buffering of formatting
         /// objects before any processing.
         /// </summary>
         internal virtual bool RequiresBuffering { get { return false; } }
 
         /// <summary>
-        /// delegate the implementor of ExecuteBufferPlayBack should
+        /// Delegate the implementor of ExecuteBufferPlayBack should
         /// call to cause the playback to happen when ready to execute.
         /// </summary>
         internal delegate void DoPlayBackCall();
 
         /// <summary>
-        /// if RequiresBuffering = true, this call will be made to
+        /// If RequiresBuffering = true, this call will be made to
         /// start the playback.
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// handle the stop processing signal.
+        /// Handle the stop processing signal.
         /// Set a flag that will be checked during operations.
         /// </summary>
         internal void StopProcessing()
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// return an instance of the display helper tear off.
+        /// Return an instance of the display helper tear off.
         /// </summary>
         /// <value></value>
         internal virtual DisplayCells DisplayCells
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// singleton used for the default implementation.
+        /// Singleton used for the default implementation.
         /// NOTE: derived classes may chose to provide a different
         /// implementation by overriding.
         /// </summary>
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// helper class to provide line breaking (based on device width)
+    /// Helper class to provide line breaking (based on device width)
     /// and embedded newline processing
     /// It needs to be provided with two callbacks for line processing.
     /// </summary>
@@ -232,19 +232,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region callbacks
 
         /// <summary>
-        /// delegate definition.
+        /// Delegate definition.
         /// </summary>
         /// <param name="s">String to write.</param>
         internal delegate void WriteCallback(string s);
 
         /// <summary>
-        /// instance of the delegate previously defined
+        /// Instance of the delegate previously defined
         /// for line that has EXACTLY this.ncols characters.
         /// </summary>
         private WriteCallback _writeCall = null;
 
         /// <summary>
-        /// instance of the delegate previously defined
+        /// Instance of the delegate previously defined
         /// for generic line, less that this.ncols characters.
         /// </summary>
         private WriteCallback _writeLineCall = null;
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _lineWrap;
 
         /// <summary>
-        /// construct an instance, given the two callbacks
+        /// Construct an instance, given the two callbacks
         /// NOTE: if the underlying device treats the two cases as the
         /// same, the same delegate can be passed twice.
         /// </summary>
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// main entry point to process a line.
+        /// Main entry point to process a line.
         /// </summary>
         /// <param name="s">String to process.</param>
         /// <param name="cols">Width of the device.</param>
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper, needed because it might make recursive calls to itself.
+        /// Internal helper, needed because it might make recursive calls to itself.
         /// </summary>
         /// <param name="val">String to process.</param>
         /// <param name="cols">Width of the device.</param>
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region ILineOutput methods
 
         /// <summary>
-        /// get the columns on the screen
+        /// Get the columns on the screen
         /// for files, it is settable at creation time.
         /// </summary>
         internal override int ColumnNumber
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// get the # of rows on the screen: for files
+        /// Get the # of rows on the screen: for files
         /// we return -1, meaning infinite.
         /// </summary>
         internal override int RowNumber
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write a line by delegating to the writer underneath.
+        /// Write a line by delegating to the writer underneath.
         /// </summary>
         /// <param name="s"></param>
         internal override void WriteLine(string s)
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// initialization of the object. It must be called before
+        /// Initialization of the object. It must be called before
         /// attempting any operation.
         /// </summary>
         /// <param name="writer">TextWriter to write to.</param>
@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// initialization of the object. It must be called before
+        /// Initialization of the object. It must be called before
         /// attempting any operation.
         /// </summary>
         /// <param name="writer">TextWriter to write to.</param>
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         /// <summary>
-        /// create an instance by passing a delegate.
+        /// Create an instance by passing a delegate.
         /// </summary>
         /// <param name="writeCall">Delegate to write to.</param>
         /// <param name="culture">Culture for this TextWriter.</param>
@@ -474,13 +474,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// delegate definition.
+        /// Delegate definition.
         /// </summary>
         /// <param name="s">String to write.</param>
         internal delegate void WriteLineCallback(string s);
 
         /// <summary>
-        /// instance of the delegate previously defined.
+        /// Instance of the delegate previously defined.
         /// </summary>
         private WriteLineCallback _writeCall = null;
     }

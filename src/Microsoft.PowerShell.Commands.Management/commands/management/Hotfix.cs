@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// to implement ^C.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {

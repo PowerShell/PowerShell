@@ -21,7 +21,7 @@ namespace System.Management.Automation
     internal class AssertException : SystemException
     {
         /// <summary>
-        /// calls the base class with message and sets the stack frame.
+        /// Calls the base class with message and sets the stack frame.
         /// </summary>
         /// <param name="message">Repassed to the base class.</param>
         internal AssertException(string message) : base(message)
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// returns the stack trace set in the constructor.
+        /// Returns the stack trace set in the constructor.
         /// </summary>
         /// <value>the constructor's stackTrace</value>
         public override string StackTrace { get; }

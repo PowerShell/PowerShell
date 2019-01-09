@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region IDisposable
         /// <summary>
-        ///  Dispose method of IDisposable interface.
+        /// Dispose method of IDisposable interface.
         /// </summary>
         public void Dispose()
         {

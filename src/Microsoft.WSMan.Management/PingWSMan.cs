@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -188,7 +188,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void

@@ -322,7 +322,7 @@ namespace System.Management.Automation.Runspaces
         #region properties
 
         /// <summary>
-        /// gets the runspace this pipeline is created on.
+        /// Gets the runspace this pipeline is created on.
         /// </summary>
         public abstract Runspace Runspace { get; }
 
@@ -346,7 +346,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// gets input writer for this pipeline.
+        /// Gets input writer for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Input.Write(), the caller writes to the
@@ -368,7 +368,7 @@ namespace System.Management.Automation.Runspaces
         public abstract PipelineReader<PSObject> Output { get; }
 
         /// <summary>
-        /// gets the error output reader for this pipeline.
+        /// Gets the error output reader for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Error.Read(), the caller reads from the
@@ -408,13 +408,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// gets the unique identifier for this pipeline. This identifier is unique with in
+        /// Gets the unique identifier for this pipeline. This identifier is unique with in
         /// the scope of Runspace.
         /// </summary>
         public long InstanceId { get; }
 
         /// <summary>
-        /// gets the collection of commands for this pipeline.
+        /// Gets the collection of commands for this pipeline.
         /// </summary>
         public CommandCollection Commands { get; private set; }
 

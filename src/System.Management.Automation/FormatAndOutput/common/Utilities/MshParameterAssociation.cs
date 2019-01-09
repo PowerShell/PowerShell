@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// helper class to hold a resolved expression and its
+    /// Helper class to hold a resolved expression and its
     /// originating parameter.
     /// </summary>
     internal sealed class MshResolvedExpressionParameterAssociation

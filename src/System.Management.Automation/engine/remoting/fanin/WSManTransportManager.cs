@@ -1658,7 +1658,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// receive/send operation handles and callback handles should be released/disposed from
+        /// Receive/send operation handles and callback handles should be released/disposed from
         /// receive/send callback only. Releasing them after CloseOperation() may not cover all
         /// the scenarios, as WSMan does not guarantee that a rcv/send callback is not called after
         /// Close completed callback.
@@ -3197,7 +3197,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// receive/send operation handles and callback handles should be released/disposed from
+        /// Receive/send operation handles and callback handles should be released/disposed from
         /// receive/send callback only. Releasing them after CloseOperation() may not cover all
         /// the scenarios, as WSMan does not guarantee that a rcv/send callback is not called after
         /// Close completed callback.

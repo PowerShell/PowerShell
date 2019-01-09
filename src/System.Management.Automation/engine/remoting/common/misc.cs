@@ -176,7 +176,7 @@ namespace System.Management.Automation
         EstablishedAndKeyReceived = 13,
 
         /// <summary>
-        /// for Server - Have sent a request to the remote end to
+        /// For Server - Have sent a request to the remote end to
         /// send a public key
         /// for Client - have received a PK request from server.
         /// </summary>

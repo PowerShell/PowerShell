@@ -751,7 +751,7 @@ namespace Microsoft.PowerShell.Commands
         #region private
 
         /// <summary>
-        /// list of incoming objects to compare.
+        /// List of incoming objects to compare.
         /// </summary>
         private bool _isTHWritten;
         private StringCollection _propertyCollector;

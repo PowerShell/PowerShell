@@ -152,7 +152,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// used by powershell DS handler. notifies transport that powershell is back to running state
+        /// Used by powershell DS handler. notifies transport that powershell is back to running state
         /// no payload.
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// if flush is true, data will be sent immediately to the client. This is accomplished
+        /// If flush is true, data will be sent immediately to the client. This is accomplished
         /// by using WSMAN_FLAG_RECEIVE_FLUSH flag provided by WSMan API.
         /// </summary>
         /// <param name="data"></param>

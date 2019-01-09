@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
+        /// Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
         /// The powerShell instance passed need to have a non null Runspace.
         /// </summary>
         /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>

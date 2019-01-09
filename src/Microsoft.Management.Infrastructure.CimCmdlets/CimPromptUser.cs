@@ -119,7 +119,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// prompt message.
+        /// Prompt message.
         /// </summary>
         public string Message
         {
@@ -132,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string message;
 
         /// <summary>
-        /// prompt type -Normal or Critical.
+        /// Prompt type -Normal or Critical.
         /// </summary>
         private CimPromptType prompt;
 

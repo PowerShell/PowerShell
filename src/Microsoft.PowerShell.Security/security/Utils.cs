@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell
     internal static class SecurityUtils
     {
         /// <summary>
-        /// gets the size of a file.
+        /// Gets the size of a file.
         /// </summary>
         /// <param name="filePath">Path to file.</param>
         /// <returns>File size.</returns>
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// present a prompt for a SecureString data.
+        /// Present a prompt for a SecureString data.
         /// </summary>
         /// <param name="hostUI">Ref to host ui interface.</param>
         /// <param name="prompt">Prompt text.</param>
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// convert the specified provider path to a provider path
+        /// Convert the specified provider path to a provider path
         /// and make sure that all of the following is true:
         /// -- it represents a FileSystem path
         /// -- it points to a file

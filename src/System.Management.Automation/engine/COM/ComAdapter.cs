@@ -205,7 +205,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  get the property signature.
+        /// Get the property signature.
         /// </summary>
         /// <param name="property">Property object whose signature we want.</param>
         /// <returns>String representing the signature of the property.</returns>

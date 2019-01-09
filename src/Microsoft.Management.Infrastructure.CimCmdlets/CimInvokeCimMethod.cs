@@ -461,12 +461,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// operation target.
+        /// Operation target.
         /// </summary>
         private const string targetClass = @"{0}";
 
         /// <summary>
-        /// action.
+        /// Action.
         /// </summary>
         private const string actionTemplate = @"Invoke-CimMethod: {0}";
         #endregion

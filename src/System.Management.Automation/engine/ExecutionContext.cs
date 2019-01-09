@@ -375,7 +375,7 @@ namespace System.Management.Automation
         private PSLanguageMode _languageMode = PSLanguageMode.FullLanguage;
 
         /// <summary>
-        ///  True if this runspace has ever used constrained language mode.
+        /// True if this runspace has ever used constrained language mode.
         /// </summary>
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 

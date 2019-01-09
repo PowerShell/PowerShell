@@ -1838,7 +1838,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the RunspacePool state info from the
+        /// Decode and obtain the RunspacePool state info from the
         /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -1857,7 +1857,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the application private data from the
+        /// Decode and obtain the application private data from the
         /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -1903,7 +1903,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the RunspacePool state info from the
+        /// Decode and obtain the RunspacePool state info from the
         /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -1943,7 +1943,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the minimum runspaces to create in the
+        /// Decode and obtain the minimum runspaces to create in the
         /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -1959,7 +1959,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the maximum runspaces to create in the
+        /// Decode and obtain the maximum runspaces to create in the
         /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -1975,7 +1975,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the thread options for the runspaces in the
+        /// Decode and obtain the thread options for the runspaces in the
         /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -2011,7 +2011,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the thread options for the runspaces in the
+        /// Decode and obtain the thread options for the runspaces in the
         /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// decode and obtain the host info for the host
+        /// Decode and obtain the host info for the host
         /// associated with the runspace pool.
         /// </summary>
         /// <param name="dataAsPSObject">DataAsPSObject object to decode.</param>

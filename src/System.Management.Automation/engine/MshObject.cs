@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         internal const string PSObjectMemberSetName = "psobject";
 
         /// <summary>
-        /// a shortcut to .PSObject.TypeNames.
+        /// A shortcut to .PSObject.TypeNames.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.

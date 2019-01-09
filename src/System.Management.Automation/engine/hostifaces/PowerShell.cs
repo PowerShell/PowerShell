@@ -508,7 +508,7 @@ namespace System.Management.Automation
         // a BeginStop operation.
 
         /// <summary>
-        /// true if AsyncResult monitors Async BeginInvoke().
+        /// True if AsyncResult monitors Async BeginInvoke().
         /// false otherwise.
         /// </summary>
         internal bool IsAssociatedWithAsyncInvoke { get; }
@@ -4157,7 +4157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// clear the internal reference to remote powershell.
+        /// Clear the internal reference to remote powershell.
         /// </summary>
         internal void ClearRemotePowerShell()
         {

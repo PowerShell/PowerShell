@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
         private RemoteRunspacePoolInternal _remoteRunspacePool;
 
         /// <summary>
-        /// remote runspace pool if used, for this session.
+        /// Remote runspace pool if used, for this session.
         /// </summary>
         internal RemoteRunspacePoolInternal RemoteRunspacePoolInternal
         {

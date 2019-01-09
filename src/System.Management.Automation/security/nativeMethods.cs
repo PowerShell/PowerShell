@@ -136,7 +136,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// pinvoke methods from crypt32.dll.
+    /// Pinvoke methods from crypt32.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Security
                                  CertEnumSystemStoreCallBackProto fn);
 
         /// <summary>
-        /// signature of call back function used by CertEnumSystemStore.
+        /// Signature of call back function used by CertEnumSystemStore.
         /// </summary>
         internal delegate
         bool CertEnumSystemStoreCallBackProto([MarshalAs(UnmanagedType.LPWStr)]
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Security
                                                IntPtr notUsed3);
 
         /// <summary>
-        /// signature of cert enumeration function.
+        /// Signature of cert enumeration function.
         /// </summary>
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Security
                                             IntPtr certContext);
 
         /// <summary>
-        /// signature of cert find function.
+        /// Signature of cert find function.
         /// </summary>
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// pinvoke methods from certca.dll.
+    /// Pinvoke methods from certca.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation.Security
     #endregion SAFER_APIs
 
     /// <summary>
-    /// pinvoke methods from advapi32.dll.
+    /// Pinvoke methods from advapi32.dll.
     /// </summary>
     internal static partial class NativeMethods
     {
@@ -1957,7 +1957,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// pinvoke methods from wintrust.dll
+    /// Pinvoke methods from wintrust.dll
     /// These are added to Generate and Validate Window Catalog Files.
     /// </summary>
     internal static partial class NativeMethods
@@ -2151,7 +2151,7 @@ namespace System.Management.Automation.Security
         );
 
         /// <summary>
-        /// signature of call back function used by CryptCATCDFOpen.
+        /// Signature of call back function used by CryptCATCDFOpen.
         /// </summary>
         internal delegate
         void CryptCATCDFOpenCallBack(DWORD NotUsedDWORD1,
@@ -2160,7 +2160,7 @@ namespace System.Management.Automation.Security
                                       string NotUsedString);
 
         /// <summary>
-        /// signature of call back function used by CryptCATCDFEnumMembersByCDFTagEx.
+        /// Signature of call back function used by CryptCATCDFEnumMembersByCDFTagEx.
         /// </summary>
         internal delegate
         void CryptCATCDFEnumMembersByCDFTagExErrorCallBack(DWORD NotUsedDWORD1,

@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// id of the cimsession.
+        /// Id of the cimsession.
         /// </summary>
         public uint SessionId
         {
@@ -35,7 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private uint sessionId;
 
         /// <summary>
-        /// instanceId of the cimsession.
+        /// InstanceId of the cimsession.
         /// </summary>
         public Guid InstanceId
         {
@@ -48,7 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Guid instanceId;
 
         /// <summary>
-        /// name of the cimsession.
+        /// Name of the cimsession.
         /// </summary>
         public string Name
         {
@@ -61,7 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string name;
 
         /// <summary>
-        /// computer name of the cimsession.
+        /// Computer name of the cimsession.
         /// </summary>
         public string ComputerName
         {
@@ -74,7 +74,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string computerName;
 
         /// <summary>
-        /// wrapped cimsession object.
+        /// Wrapped cimsession object.
         /// </summary>
         public CimSession CimSession
         {
@@ -87,7 +87,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession cimSession;
 
         /// <summary>
-        /// computer name of the cimsession.
+        /// Computer name of the cimsession.
         /// </summary>
         public string Protocol
         {
@@ -1126,7 +1126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1208,7 +1208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         public CimRemoveSession() : base()
         {

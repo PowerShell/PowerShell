@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Updated from Hashtable to IDictionary to support the work around ordered hashtables.
         /// <summary>
-        /// gets the properties to be set.
+        /// Gets the properties to be set.
         /// </summary>
         [Parameter]
         [ValidateTrustedData]

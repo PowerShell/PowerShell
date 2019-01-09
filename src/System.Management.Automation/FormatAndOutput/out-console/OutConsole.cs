@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// implementation for the out-default command
+    /// Implementation for the out-default command
     /// this command it implicitly inject by the
     /// powershell host at the end of the pipeline as the
     /// default sink (display to console screen)
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Transcript { get; set; }
 
         /// <summary>
-        /// set inner command.
+        /// Set inner command.
         /// </summary>
         public OutDefaultCommand()
         {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// just hook up the LineOutput interface.
+        /// Just hook up the LineOutput interface.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// implementation for the out-host command.
+    /// Implementation for the out-host command.
     /// </summary>
     [Cmdlet(VerbsData.Out, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113365", RemotingCapability = RemotingCapability.None)]
     public class OutHostCommand : FrontEndCommandBase
@@ -174,14 +174,14 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Parameters
 
         /// <summary>
-        /// non positional parameter to specify paging.
+        /// Non positional parameter to specify paging.
         /// </summary>
         private bool _paging;
 
         #endregion
 
         /// <summary>
-        /// constructor of OutHostCommand.
+        /// Constructor of OutHostCommand.
         /// </summary>
         public OutHostCommand()
         {
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// optional, non positional parameter to specify paging
+        /// Optional, non positional parameter to specify paging
         /// FALSE: names only
         /// TRUE: full info.
         /// </summary>
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// just hook up the LineOutput interface.
+        /// Just hook up the LineOutput interface.
         /// </summary>
         protected override void BeginProcessing()
         {

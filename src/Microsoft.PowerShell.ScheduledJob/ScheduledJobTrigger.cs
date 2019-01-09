@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        ///  Trigger frequency.
+        /// Trigger frequency.
         /// </summary>
         public TriggerFrequency Frequency
         {

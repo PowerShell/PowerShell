@@ -270,7 +270,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// dispatch the message to the associated powershell data structure handler.
+        /// Dispatch the message to the associated powershell data structure handler.
         /// </summary>
         /// <param name="rcvdData">Message received.</param>
         internal void DispatchMessageToPowerShell(RemoteDataObject<PSObject> rcvdData)
@@ -288,7 +288,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// send the host response to the server.
+        /// Send the host response to the server.
         /// </summary>
         /// <param name="hostResponse">Host response object to send.</param>
         internal void SendHostResponseToServer(RemoteHostResponse hostResponse)
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// sent a message to modify the max runspaces of the runspace pool.
+        /// Sent a message to modify the max runspaces of the runspace pool.
         /// </summary>
         /// <param name="maxRunspaces">New maxrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
@@ -951,7 +951,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// public interface for dispose.
+        /// Public interface for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -988,7 +988,7 @@ namespace System.Management.Automation.Internal
         #region Data Structure Handler events
 
         /// <summary>
-        /// this event is raised when the state of associated
+        /// This event is raised when the state of associated
         /// powershell is terminal and the runspace pool has
         /// to detach the association.
         /// </summary>
@@ -1517,7 +1517,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// transport manager used by this data structure handler.
+        /// Transport manager used by this data structure handler.
         /// </summary>
         internal BaseClientCommandTransportManager TransportManager { get; }
 

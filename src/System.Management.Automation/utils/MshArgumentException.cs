@@ -140,7 +140,7 @@ namespace System.Management.Automation
         private string _errorId = "Argument";
 
         /// <summary>
-        /// see <see cref="System.Exception.Message"/>
+        /// See <see cref="System.Exception.Message"/>
         /// </summary>
         /// <remarks>
         /// Exception.Message is get-only, but you can effectively

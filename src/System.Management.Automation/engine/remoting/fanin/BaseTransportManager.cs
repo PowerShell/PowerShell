@@ -346,7 +346,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// copy the DataReceived event handlers to the supplied transport Manager.
+        /// Copy the DataReceived event handlers to the supplied transport Manager.
         /// </summary>
         /// <param name="transportManager"></param>
         public void MigrateDataReadyEventHandlers(BaseTransportManager transportManager)

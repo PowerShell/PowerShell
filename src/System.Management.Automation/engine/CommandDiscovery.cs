@@ -513,7 +513,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// used to determine compatibility between the versions in the requires statement and
+        /// Used to determine compatibility between the versions in the requires statement and
         /// the installed version. The version can be PSSnapin or msh.
         /// </summary>
         /// <param name="requires">Versions in the requires statement.</param>

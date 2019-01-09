@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// release waiting for jobs.
+        /// Release waiting for jobs.
         /// </summary>
         protected override void StopProcessing()
         {

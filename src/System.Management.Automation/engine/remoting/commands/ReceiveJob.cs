@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// if we are not stopping, continue writing output
+        /// If we are not stopping, continue writing output
         /// as and when they are available.
         /// </summary>
         protected override void EndProcessing()

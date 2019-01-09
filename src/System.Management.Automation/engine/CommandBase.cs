@@ -229,7 +229,7 @@ namespace System.Management.Automation.Internal
         #endregion Override
 
         /// <summary>
-        /// throws if the pipeline is stopping.
+        /// Throws if the pipeline is stopping.
         /// </summary>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         internal void ThrowIfStopping()

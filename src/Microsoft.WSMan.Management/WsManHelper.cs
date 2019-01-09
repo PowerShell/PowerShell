@@ -91,7 +91,7 @@ namespace Microsoft.WSMan.Management
         internal class Sessions
         {
             /// <summary>
-            /// dictionary object to store the connection.
+            /// Dictionary object to store the connection.
             /// </summary>
             internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
@@ -200,7 +200,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// add a session to dictionary.
+        /// Add a session to dictionary.
         /// </summary>
         /// <param name="key">Connection string.</param>
         /// <param name="value">Session object.</param>

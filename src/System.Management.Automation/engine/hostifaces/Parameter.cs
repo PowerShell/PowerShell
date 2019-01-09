@@ -68,12 +68,12 @@ namespace System.Management.Automation.Runspaces
         #region Public properties
 
         /// <summary>
-        /// gets the parameter name.
+        /// Gets the parameter name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// gets the value of the parameter.
+        /// Gets the value of the parameter.
         /// </summary>
         public object Value { get; }
 

@@ -31,7 +31,7 @@ namespace System.Management.Automation
     internal abstract class LogProvider
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         internal LogProvider()
         {
@@ -283,7 +283,7 @@ namespace System.Management.Automation
     internal class DummyLogProvider : LogProvider
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         internal DummyLogProvider()
         {
