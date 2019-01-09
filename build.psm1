@@ -680,6 +680,9 @@ Fix steps:
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
     }
+
+    # Remove .nupkg.metadata files
+    Get-ChildItem $publishPath -Filter '.nupkg.metadata' -Recurse | ForEach-Object { Remove-Item $_.FullName -ErrorAction SilentlyContinue -Force }
 }
 
 function Restore-PSPackage
