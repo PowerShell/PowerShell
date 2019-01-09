@@ -11,6 +11,12 @@ Describe "Join-String" -Tags "CI" {
         { Join-String -InputObject $testObject } | Should -Not -Throw
     }
 
+    It "'Input | Join-String' should be equal to 'Join-String -InputObject Input'" {
+        $result1 = $testObject | Join-String
+        $result2 = Join-String -InputObject $testObject
+        $result1 | Should -BeExactly $result2
+    }
+
     It "Should return a single string" {
         $actual = $testObject | Join-String
 
