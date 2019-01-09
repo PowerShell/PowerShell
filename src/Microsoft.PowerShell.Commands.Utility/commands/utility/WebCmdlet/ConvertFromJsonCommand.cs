@@ -36,6 +36,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter AsHashtable { get; set; }
 
+        /// <summary>
+        /// The maximum depth the json input is allowed to have. By default, it is 1024. For no maximum, set to 0.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(ValidateRangeKind.NonNegative)]
+        public int Depth { get; set; } = 1024;
+
         #endregion parameters
 
         #region overrides
@@ -100,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ConvertFromJsonHelper(string input)
         {
             ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth != 0 ? Depth : (int?) null, out error);
 
             if (error != null)
             {
