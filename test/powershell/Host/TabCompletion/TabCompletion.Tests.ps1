@@ -33,7 +33,7 @@ Describe "TabCompletion" -Tags CI {
 
         It 'Should complete abbreviated function' {
             $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
-            $res | Should -HaveCount 1
+            $res.Count | Should -BeGreaterOrEqual 1
             $res | Should -BeExactly 'PSConsoleHostReadLine'
         }
 
