@@ -47,10 +47,44 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
         ){
         param($expectedHeader, $file, $content, $delimiter)
-        Set-Content testdrive:/$file -Value $content
-        $returnObject = Get-ChildItem -Path testdrive:/$file | Import-Csv -Delimiter $delimiter
+
+        $testPath = Join-Path $TestDrive $file
+        Set-Content $testPath -Value $content
+
+        $returnObject = Get-ChildItem -Path $testPath | Import-Csv -Delimiter $delimiter
         $actualHeader = $returnObject[0].psobject.Properties.name -join ','
-        $actualHeader | Should -Be $expectedHeader
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = [pscustomobject]@{ LiteralPath = $testPath } | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+    }
+
+    It "Should handle <name> and bind to Path from pipeline" -TestCases @(
+        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
+        @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
+        @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
+        ){
+        param($expectedHeader, $file, $content, $delimiter)
+
+        $testPath = Join-Path $TestDrive $file
+        Set-Content $testPath -Value $content
+
+        $returnObject = Get-ChildItem -Path $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = [pscustomobject]@{ Path = $testPath } | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
     }
 }
 
