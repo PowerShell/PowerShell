@@ -430,26 +430,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the parameter info for patterns identified Parameter property.
+        /// Gets the parameter info for patterns identified by Parameter property.
         /// </summary>
         /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
+        /// <returns>Array of parameter infos.</returns>
         private PSObject[] GetParameterInfo(HelpInfo helpInfo)
         {
-            List<PSObject> pInfosList = new List<PSObject>(Parameter.Length);
+            List<PSObject> parameterInfosList = new List<PSObject>(Parameter.Length);
 
             foreach (var parameter in Parameter)
             {
-                foreach (var pInfo in helpInfo.GetParameter(parameter))
+                foreach (var parameterInfo in helpInfo.GetParameter(parameter))
                 {
-                    pInfosList.Add(pInfo);
+                    parameterInfosList.Add(parameterInfo);
                 }
             }
 
-            return pInfosList.ToArray();
+            return parameterInfosList.ToArray();
         }
 
         /// <summary>
-        /// Gets the parameter info for patterns identified Parameter property.
+        /// Gets the parameter info for patterns identified by Parameter property.
         /// Writes the parameter info(s) to the output stream. An error is thrown
         /// if a parameter with a given pattern is not found.
         /// </summary>
