@@ -207,6 +207,7 @@ Also make sure to check out our [PowerShell-RFC repository](https://github.com/p
 [check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 
 ## Support  
+
 For support please see [Support Section][].  
 
 ## Legal and Licensing
