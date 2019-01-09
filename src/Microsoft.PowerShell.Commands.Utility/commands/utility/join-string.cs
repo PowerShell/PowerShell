@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <inheritdoc />
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
+            if (inputObject != null && inputObject != AutomationNull.Value)
             {
                 foreach (PSObject inputObject in InputObject)
                 {
