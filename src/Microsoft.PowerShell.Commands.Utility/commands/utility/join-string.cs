@@ -106,42 +106,45 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <inheritdoc />
         protected override void ProcessRecord()
         {
-            foreach (PSObject inputObject in InputObject)
+            if (InputObject != null)
             {
-                if (inputObject != null && inputObject != AutomationNull.Value)
+                foreach (PSObject inputObject in InputObject)
                 {
-                    var inputValue = Property == null
-                                        ? inputObject
-                                        : Property.GetValues(inputObject, false, true).FirstOrDefault()?.Result;
+                    if (inputObject != null && inputObject != AutomationNull.Value)
+                    {
+                        var inputValue = Property == null
+                                            ? inputObject
+                                            : Property.GetValues(inputObject, false, true).FirstOrDefault()?.Result;
 
-                    // conversion to string always succeeds.
-                    if (!LanguagePrimitives.TryConvertTo<string>(inputValue, _cultureInfo, out var stringValue))
-                    {
-                        throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", ExtendedTypeSystem.InvalidCastCannotRetrieveString, null);
-                    }
+                        // conversion to string always succeeds.
+                        if (!LanguagePrimitives.TryConvertTo<string>(inputValue, _cultureInfo, out var stringValue))
+                        {
+                            throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", ExtendedTypeSystem.InvalidCastCannotRetrieveString, null);
+                        }
 
-                    if (_firstInputObject)
-                    {
-                        _firstInputObject = false;
-                    }
-                    else
-                    {
-                        _outputBuilder.Append(Separator);
-                    }
+                        if (_firstInputObject)
+                        {
+                            _firstInputObject = false;
+                        }
+                        else
+                        {
+                            _outputBuilder.Append(Separator);
+                        }
 
-                    if (_quoteChar != char.MinValue)
-                    {
-                        _outputBuilder.Append(_quoteChar);
-                        _outputBuilder.Append(stringValue);
-                        _outputBuilder.Append(_quoteChar);
-                    }
-                    else if (string.IsNullOrEmpty(FormatString))
-                    {
-                        _outputBuilder.Append(stringValue);
-                    }
-                    else
-                    {
-                        _outputBuilder.AppendFormat(_cultureInfo, FormatString, inputValue);
+                        if (_quoteChar != char.MinValue)
+                        {
+                            _outputBuilder.Append(_quoteChar);
+                            _outputBuilder.Append(stringValue);
+                            _outputBuilder.Append(_quoteChar);
+                        }
+                        else if (string.IsNullOrEmpty(FormatString))
+                        {
+                            _outputBuilder.Append(stringValue);
+                        }
+                        else
+                        {
+                            _outputBuilder.AppendFormat(_cultureInfo, FormatString, inputValue);
+                        }
                     }
                 }
             }
