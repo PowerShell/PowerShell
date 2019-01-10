@@ -190,7 +190,7 @@ Additional references:
 * Make sure you follow the [Common Engineering Practices](#common-engineering-practices)
   and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md).
 * After submitting your pull request,
-  our [CI system (Travis CI and AppVeyor)][ci-system]
+  our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
 * Our CI contains automated spellchecking. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
