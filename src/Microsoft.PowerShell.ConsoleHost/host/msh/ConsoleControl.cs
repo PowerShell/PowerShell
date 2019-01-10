@@ -2542,19 +2542,16 @@ namespace Microsoft.PowerShell
         /// Wrap Win32 WriteConsole.
         /// </summary>
         /// <param name="consoleHandle">
-        /// handle for the console where the string is written
+        /// Handle for the console where the string is written.
         /// </param>
         /// <param name="output">
-        /// string that is written
+        /// String that is written.
         /// </param>
         /// <param name="newLine">
-        ///
-        /// New line is written
-        ///
+        /// New line is written.
         /// </param>
         /// <exception cref="HostException">
-        ///
-        /// if the Win32's WriteConsole fails
+        /// If the Win32's WriteConsole fails.
         /// </exception>
         internal static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> output, bool newLine)
         {
