@@ -126,6 +126,9 @@
   <data name="Suggestion_CommandExistsInCurrentDirectory" xml:space="preserve">
     <value>The command {0} was not found, but does exist in the current location. PowerShell does not load commands from the current location by default. If you trust this command, instead type: "{1}". See "get-help about_Command_Precedence" for more details.</value>
   </data>
+  <data name="Suggestion_CommandNotFound" xml:space="preserve">
+    <value>The most similar commands are: {0}.</value>
+  </data>
   <data name="RuleMustBeScriptBlock" xml:space="preserve">
     <value>Rule must be a ScriptBlock for dynamic match types.</value>
   </data>

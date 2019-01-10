@@ -382,15 +382,37 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets a list of fuzzy matching commands and their scores.
+        /// </summary>
+        /// <param name="pattern">Command pattern.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
+        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
+        /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
+        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        {
+            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
+            {
+                int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
+                if (score <= FuzzyMatcher.MinimumDistance)
+                {
+                    yield return new CommandScore(command, score);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets a list of matching commands.
         /// </summary>
         /// <param name="pattern">Command pattern.</param>
-        /// <param name="commandOrigin"></param>
-        /// <param name="context"></param>
-        /// <param name="rediscoverImportedModules"></param>
-        /// <param name="moduleVersionRequired"></param>
-        /// <returns></returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        /// <param name="context">Execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
+        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
+        /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
+        /// <returns>Returns CommandInfo IEnumerable.</returns>
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -400,9 +422,7 @@ namespace System.Management.Automation.Internal
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = CommandDiscovery.GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
             if ((moduleAutoLoadingPreference != PSModuleAutoLoadingPreference.None) &&
-                    ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))
-                    )
-                )
+                ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
             {
                 foreach (string modulePath in GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, context))
                 {
@@ -429,7 +449,8 @@ namespace System.Management.Automation.Internal
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
-                                if (commandPattern.IsMatch(entry.Value.Name))
+                                if (commandPattern.IsMatch(entry.Value.Name) ||
+                                 (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -487,7 +508,8 @@ namespace System.Management.Automation.Internal
                         string commandName = pair.Key;
                         CommandTypes commandTypes = pair.Value;
 
-                        if (commandPattern.IsMatch(commandName))
+                        if (commandPattern.IsMatch(commandName) ||
+                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)))
                         {
                             bool shouldExportCommand = true;
 
@@ -556,6 +578,18 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
+    }
+
+    internal struct CommandScore
+    {
+        public CommandScore(CommandInfo command, int score)
+        {
+            Command = command;
+            Score =  score;
+        }
+
+        public CommandInfo Command;
+        public int Score;
     }
 }
 

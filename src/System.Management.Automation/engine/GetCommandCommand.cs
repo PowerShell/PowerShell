@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Reflection;
@@ -349,6 +350,14 @@ namespace Microsoft.PowerShell.Commands
 
         private PSTypeName[] _parameterTypes;
 
+        /// <summary>
+        /// Gets or sets the parameter that enables using fuzzy matching.
+        /// </summary>
+        [Parameter(ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseFuzzyMatching { get; set; }
+
+        private List<CommandScore> _commandScores = new List<CommandScore>();
+
         #endregion Definitions of cmdlet parameters
 
         #region Overrides
@@ -418,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // We do not show the pithy aliases (not of the format Verb-Noun) and applications by default.
             // We will show them only if the Name, All and totalCount are not specified.
-            if ((this.Name == null) && (!_all) && TotalCount == -1)
+            if ((this.Name == null) && (!_all) && TotalCount == -1 && !UseFuzzyMatching)
             {
                 CommandTypes commandTypesToIgnore = 0;
 
@@ -498,6 +507,11 @@ namespace Microsoft.PowerShell.Commands
         private void OutputResultsHelper(IEnumerable<CommandInfo> results)
         {
             CommandOrigin origin = this.MyInvocation.CommandOrigin;
+
+            if (UseFuzzyMatching)
+            {
+                results = _commandScores.OrderBy(x => x.Score).Select(x => x.Command).ToList();
+            }
 
             int count = 0;
             foreach (CommandInfo result in results)
@@ -715,6 +729,12 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
+                    if (UseFuzzyMatching)
+                    {
+                        options |= SearchResolutionOptions.FuzzyMatch;
+                        isPattern = true;
+                    }
+
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
@@ -756,7 +776,32 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                foreach (CommandInfo command in System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(plainCommandName, this.Context, this.MyInvocation.CommandOrigin, rediscoverImportedModules: true, moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                IEnumerable<CommandInfo> commands;
+                                if (UseFuzzyMatching)
+                                {
+                                    foreach (var commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                    {
+                                        _commandScores.Add(commandScore);
+                                    }
+
+                                    commands = _commandScores.Select(x => x.Command).ToList();
+                                }
+                                else
+                                {
+                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified);
+                                }
+
+                                foreach (CommandInfo command in commands)
                                 {
                                     // Cannot pass in "command" by ref (foreach iteration variable)
                                     CommandInfo current = command;
@@ -900,6 +945,12 @@ namespace Microsoft.PowerShell.Commands
                         if (TotalCount >= 0 && currentCount > TotalCount)
                         {
                             break;
+                        }
+
+                        if (UseFuzzyMatching)
+                        {
+                            int score = FuzzyMatcher.GetDamerauLevenshteinDistance(current.Name, commandName);
+                            _commandScores.Add(new CommandScore(current, score));
                         }
 
                         _accumulatedResults.Add(current);
