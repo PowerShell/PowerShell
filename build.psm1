@@ -680,9 +680,6 @@ Fix steps:
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
     }
-
-    # Remove .nupkg.metadata files
-    Get-ChildItem $publishPath -Filter '.nupkg.metadata' -Recurse | ForEach-Object { Remove-Item $_.FullName -ErrorAction SilentlyContinue -Force }
 }
 
 function Restore-PSPackage
@@ -758,6 +755,9 @@ function Restore-PSModuleToBuild
     Write-Log "Restore PowerShell modules to $publishPath"
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
     Copy-PSGalleryModules -Destination $modulesDir
+
+    # Remove .nupkg.metadata files
+    Get-ChildItem $PublishPath -Filter '.nupkg.metadata' -Recurse | ForEach-Object { Remove-Item $_.FullName -ErrorAction SilentlyContinue -Force }
 }
 
 function Restore-PSPester
