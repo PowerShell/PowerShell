@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the parameter info for patterns identified by Parameter property.
         /// </summary>
-        /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
+        /// <param name="helpInfo">HelpInfo object to look for the parameter.</param>
         /// <returns>Array of parameter infos.</returns>
         private PSObject[] GetParameterInfo(HelpInfo helpInfo)
         {
