@@ -2570,18 +2570,17 @@ namespace Microsoft.PowerShell
 
             // Native WriteConsole doesn't support output buffer longer than 64K.
             // We need to chop the output string if it is too long.
-
             int cursor = 0; // This records the chopping position in output string
-            const int maxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
 
             while (cursor < output.Length)
             {
                 ReadOnlySpan<char> outBuffer;
 
-                if (cursor + maxBufferSize < output.Length)
+                if (cursor + MaxBufferSize < output.Length)
                 {
-                    outBuffer = output.Slice(cursor, maxBufferSize);
-                    cursor += maxBufferSize;
+                    outBuffer = output.Slice(cursor, MaxBufferSize);
+                    cursor += MaxBufferSize;
                 }
                 else
                 {
@@ -2602,7 +2601,6 @@ namespace Microsoft.PowerShell
                 {
                     WriteConsole(consoleHandle, outBuffer);
                 }
-
             }
         }
 
