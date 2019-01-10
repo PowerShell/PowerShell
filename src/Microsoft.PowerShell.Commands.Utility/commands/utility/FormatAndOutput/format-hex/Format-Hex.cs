@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (isBool)
                         {
-                            // bool is 4 bytes apparently
-                            toBytes = Convert.ToInt32(obj);
+                            // bool is 1 byte apparently
+                            toBytes = Convert.ToByte(obj);
                         }
                         else
                         {
