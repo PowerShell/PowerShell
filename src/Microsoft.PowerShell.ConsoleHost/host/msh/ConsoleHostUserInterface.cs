@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell
 #else
                 // Ensure that we're in the proper line-input mode.
 
-                ConsoleControl.ConsoleModes desiredMode =
+                const ConsoleControl.ConsoleModes DesiredMode =
                     ConsoleControl.ConsoleModes.Extended |
                     ConsoleControl.ConsoleModes.QuickEdit;
 
@@ -278,13 +278,13 @@ namespace Microsoft.PowerShell
                 bool shouldUnsetMouseInput = shouldUnsetMode(ConsoleControl.ConsoleModes.MouseInput, ref m);
                 bool shouldUnsetProcessInput = shouldUnsetMode(ConsoleControl.ConsoleModes.ProcessedInput, ref m);
 
-                if ((m & desiredMode) != desiredMode ||
+                if ((m & DesiredMode) != DesiredMode ||
                     shouldUnsetMouseInput ||
                     shouldUnsetEchoInput ||
                     shouldUnsetLineInput ||
                     shouldUnsetProcessInput)
                 {
-                    m |= desiredMode;
+                    m |= DesiredMode;
                     ConsoleControl.SetMode(handle, m);
                 }
                 else
@@ -566,16 +566,15 @@ namespace Microsoft.PowerShell
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
             // attempt to set the mode from multiple threads at once.
-
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
-                    ConsoleControl.ConsoleModes.ProcessedOutput
+            const ConsoleControl.ConsoleModes DesiredMode =
+                ConsoleControl.ConsoleModes.ProcessedOutput
                 | ConsoleControl.ConsoleModes.WrapEndOfLine;
 
-            if ((m & desiredMode) != desiredMode)
+            if ((m & DesiredMode) != DesiredMode)
             {
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
@@ -583,7 +582,6 @@ namespace Microsoft.PowerShell
             PreWrite();
 
             // This is atomic, so we don't lock here...
-
 #if !UNIX
             ConsoleControl.WriteConsole(handle, value, newLine);
 #else
@@ -755,15 +753,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
-        /// See base class
-        ///
+        /// See base class.
         /// </summary>
         /// <param name="foregroundColor"></param>
         /// <param name="backgroundColor"></param>
         /// <param name="value"></param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -775,7 +770,6 @@ namespace Microsoft.PowerShell
         ///    Win32's SetConsoleMode fails
         ///    OR
         ///    Win32's WriteConsole fails
-        ///
         /// </exception>
         public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
@@ -831,12 +825,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
-        /// See base class
-        ///
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
-        ///
         ///    Win32's CreateFile fails
         ///    OR
         ///    Win32's GetConsoleMode fails
@@ -844,7 +835,6 @@ namespace Microsoft.PowerShell
         ///    Win32's SetConsoleMode fails
         ///    OR
         ///    Win32's WriteConsole fails
-        ///
         /// </exception>
         public override void WriteLine()
         {
@@ -1539,15 +1529,15 @@ namespace Microsoft.PowerShell
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
+            const ConsoleControl.ConsoleModes DesiredMode =
                 ConsoleControl.ConsoleModes.LineInput
                 | ConsoleControl.ConsoleModes.EchoInput
                 | ConsoleControl.ConsoleModes.ProcessedInput;
 
-            if ((m & desiredMode) != desiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
+            if ((m & DesiredMode) != DesiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
             {
                 m &= ~ConsoleControl.ConsoleModes.MouseInput;
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
