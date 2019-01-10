@@ -65,15 +65,15 @@ namespace Microsoft.PowerShell
 
         public override
         void
-        Write(Boolean b)
+        Write(bool b)
         {
             if (b)
             {
-                _ui.WriteToConsole(Boolean.TrueString.AsSpan(), transcribeResult: true);
+                _ui.WriteToConsole(bool.TrueString.AsSpan(), transcribeResult: true);
             }
             else
             {
-                _ui.WriteToConsole(Boolean.FalseString.AsSpan(), transcribeResult: true);
+                _ui.WriteToConsole(bool.FalseString.AsSpan(), transcribeResult: true);
             }
 
         }
