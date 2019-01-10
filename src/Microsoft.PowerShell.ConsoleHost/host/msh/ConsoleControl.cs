@@ -2591,9 +2591,11 @@ namespace Microsoft.PowerShell
 
                 if (newLine)
                 {
-                    Span<char> outBufferLine = stackalloc char[outBuffer.Length + 2];
+                    var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
+                    var endOfLineLength = endOfLine.Length;
+                    Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
                     outBuffer.CopyTo(outBufferLine);
-                    ConsoleHostUserInterface.Crlf.AsSpan().CopyTo(outBufferLine.Slice(outBufferLine.Length-2));
+                    endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
                     WriteConsole(consoleHandle, outBufferLine);
                 }
                 else

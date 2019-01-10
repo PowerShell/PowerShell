@@ -637,11 +637,11 @@ namespace Microsoft.PowerShell
                 {
                     if (newLine)
                     {
-                        WriteLineToConsole(text, true);
+                        WriteLineToConsole(text, transcribeResult: true);
                     }
                     else
                     {
-                        WriteToConsole(text, true);
+                        WriteToConsole(text, transcribeResult: true);
                     }
                 }
                 finally
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine()
         {
-            this.WriteHelper("", newLine: true);
+            this.WriteHelper(string.Empty, newLine: true);
         }
 
         #region Word Wrapping
