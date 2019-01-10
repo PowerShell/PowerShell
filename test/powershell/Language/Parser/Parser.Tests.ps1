@@ -667,7 +667,7 @@ foo``u{2195}abc
                 #Exponential
                 @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
                 @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }
-                @{ Script = "-0e2"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "-0e2"; ExpectedValue = "-0"; ExpectedType = [double] }
                 @{ Script = "3e0"; ExpectedValue = "3"; ExpectedType = [double] }
                 @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
                 @{ Script = "5e2"; ExpectedValue = "500"; ExpectedType = [double] }

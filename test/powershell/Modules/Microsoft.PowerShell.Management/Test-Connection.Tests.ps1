@@ -76,12 +76,15 @@ Describe "Test-Connection" -tags "CI" {
         It "Ping fake host" {
 
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } | Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            # Error code = 11001 - Host not found.
+            # Error code = Host not found.
             if (!$isWindows) {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 6
-            } else {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
+                $errorCode = -131073
             }
+            else {
+                $errorCode = 11001
+            }
+
+            $Error[0].Exception.InnerException.ErrorCode | Should -Be $errorCode
         }
 
         # In VSTS, address is 0.0.0.0

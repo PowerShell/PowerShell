@@ -413,7 +413,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
-                @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
+                @{ inputStr = '[math]::Co'; expected = 'CopySign('; setup = $null }
                 @{ inputStr = '[math]::PI.GetT'; expected = 'GetType('; setup = $null }
                 @{ inputStr = '[math]'; expected = '::E'; setup = $null }
                 @{ inputStr = '[math].'; expected = 'Assembly'; setup = $null }
