@@ -42,6 +42,9 @@ Describe 'ConvertTo-Json' -tags 'CI' {
         # Wait until there is output in the verbose stream.
         Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds 1000 -IntervalInMilliseconds 10
 
+        # Wait to ensure ConvertTo-Json has started processing.
+        Start-Sleep -Milliseconds 200
+
         # Not using synchronous Stop() to avoid blocking Pester.
         [void]$ps.BeginStop($null, $null)
 
