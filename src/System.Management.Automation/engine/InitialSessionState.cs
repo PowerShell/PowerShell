@@ -4069,12 +4069,30 @@ End
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
-            return @"
-[Console]::Clear()
+            if (Platform.IsWindows)
+            {
+                // use $RawUI so this works over remoting where there isn't a physical console
+                return @"
+$RawUI = $Host.UI.RawUI
+$RawUI.CursorPosition = @{X=0;Y=0}
+$RawUI.SetBufferContents(
+    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
+            }
+            else
+            {
+                // Porting note: non-Windows platforms use `clear`
+                return @"
+& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+# .Link
+# https://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
+            }
         }
 
         /// <summary>
