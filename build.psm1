@@ -1415,7 +1415,7 @@ function Start-PSxUnit {
             }
         }
 
-        dotnet build --configuration $Options.configuration 
+        dotnet build --configuration $Options.configuration
 
         if (Test-Path $ParallelTestResultsFile) {
             Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
@@ -1690,7 +1690,7 @@ function Start-PSBootstrap {
             if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
             {
                 Write-Log "Install RCEdit for modifying exe resources"
-                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
+                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
                 New-Item -Path "~/.rcedit" -Type Directory -Force > $null
 
                 ## need to specify TLS version 1.2 since GitHub API requires it

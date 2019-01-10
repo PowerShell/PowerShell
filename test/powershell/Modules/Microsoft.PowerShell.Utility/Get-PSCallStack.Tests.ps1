@@ -3,7 +3,7 @@
 Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $scriptFileName = "GetTryCatchCallStack.ps1"
-        $scriptFilePath = Join-Path $TestDrive -ChildPath $scriptFileName
+        $scriptFilePath = [System.IO.FileInfo]::new((Join-Path $TestDrive -ChildPath $scriptFileName)).FullName
     }
     It "Verifies that the script block of a catch clause does not show up on the call stack" {
         $fileStream = @"

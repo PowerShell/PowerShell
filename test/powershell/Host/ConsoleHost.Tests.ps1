@@ -599,7 +599,7 @@ foo
                 $out = pwsh -workingdirectory ~ -c '(Get-Location).Path'
                 $out | Should -HaveCount 2
                 $out[0] | Should -BeExactly (Get-Item ~).FullName
-                $out[1] | Should -BeExactly "$testdrive"
+                $out[1] | Should -BeExactly ([System.IO.FileInfo]::new($testdrive).FullName)
             }
             finally {
                 if ($currentProfile) {
