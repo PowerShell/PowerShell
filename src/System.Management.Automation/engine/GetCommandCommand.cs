@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
 
                             try
                             {
-                                CommandDiscovery.LookupCommandInfo(tempCommandName, CommandTypes.All, options, this.MyInvocation.CommandOrigin, this.Context);
+                                CommandDiscovery.LookupCommandInfo(tempCommandName, this.MyInvocation.CommandOrigin, this.Context);
                             }
                             catch (CommandNotFoundException)
                             {

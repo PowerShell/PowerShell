@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -591,7 +590,8 @@ namespace System.Management.Automation.Internal
         /// <returns>Abbreviated version of the command name.</returns>
         internal static string AbbreviateName(string commandName)
         {
-            StringBuilder abbreviation = new StringBuilder();
+            // Use default size of 6 which represents expected average abbreviation length
+            StringBuilder abbreviation = new StringBuilder(6);
             foreach (char c in commandName)
             {
                 if (char.IsUpper(c) || c == '-')
