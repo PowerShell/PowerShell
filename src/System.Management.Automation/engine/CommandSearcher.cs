@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -748,8 +749,7 @@ namespace System.Management.Automation
                         }
                         else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                         {
-                            string abbreviatedFunction = new string(((string)functionEntry.Key).Where(c => char.IsUpper(c) || c == '-').ToArray());
-                            if (_commandName.Equals(abbreviatedFunction, StringComparison.OrdinalIgnoreCase))
+                            if (_commandName.Equals(ModuleUtils.AbbreviateName((string)functionEntry.Key), StringComparison.OrdinalIgnoreCase))
                             {
                                 matchingFunction.Add((CommandInfo)functionEntry.Value);
                             }
@@ -955,17 +955,18 @@ namespace System.Management.Automation
         private CmdletInfo GetNextCmdlet()
         {
             CmdletInfo result = null;
+            bool useAbbreviationExpansion = _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion);
 
             if (_matchingCmdlet == null)
             {
-                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || useAbbreviationExpansion)
                 {
                     Collection<CmdletInfo> matchingCmdletInfo = new Collection<CmdletInfo>();
 
                     PSSnapinQualifiedName PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
 
-                    if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion) && PSSnapinQualifiedCommandName == null)
+                    if (!useAbbreviationExpansion && PSSnapinQualifiedCommandName == null)
                     {
                         return null;
                     }
@@ -993,10 +994,9 @@ namespace System.Management.Automation
                                     matchingCmdletInfo.Add(cmdlet);
                                 }
                             }
-                            else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+                            else if (useAbbreviationExpansion)
                             {
-                                string abbreviatedCmdlet = new string(cmdlet.Name.Where(c => char.IsUpper(c) || c == '-').ToArray());
-                                if (_commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
+                                if (_commandName.Equals(ModuleUtils.AbbreviateName(cmdlet.Name), StringComparison.OrdinalIgnoreCase))
                                 {
                                     matchingCmdletInfo.Add(cmdlet);
                                 }

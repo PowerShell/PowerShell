@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -413,7 +414,7 @@ namespace System.Management.Automation.Internal
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
         /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
         /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
-        /// <returns>Returns CommandInfo IEnumerable.</returns>
+        /// <returns>Returns matching CommandInfo IEnumerable.</returns>
         internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
@@ -451,10 +452,9 @@ namespace System.Management.Automation.Internal
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
-                                string abbreviatedCmdlet = new string(entry.Value.Name.Where(c => char.IsUpper(c) || c == '-').ToArray());
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
                                     (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
-                                    (useAbbreviationExpansion && string.Equals(pattern, abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase)))
+                                    (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -511,11 +511,10 @@ namespace System.Management.Automation.Internal
                     {
                         string commandName = pair.Key;
                         CommandTypes commandTypes = pair.Value;
-                        string abbreviatedCmdlet = new string(commandName.Where(c => char.IsUpper(c) || c == '-').ToArray());
 
                         if (commandPattern.IsMatch(commandName) ||
                             (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
-                            (useAbbreviationExpansion && string.Equals(pattern, abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase)))
+                            (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
 
@@ -583,6 +582,25 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns abbreviated version of a command name.
+        /// </summary>
+        /// <param name="commandName">Name of the command to transform.</param>
+        /// <returns>Abbreviated version of the command name.</returns>
+        internal static string AbbreviateName(string commandName)
+        {
+            StringBuilder abbreviation = new StringBuilder();
+            foreach (char c in commandName)
+            {
+                if (char.IsUpper(c) || c == '-')
+                {
+                    abbreviation.Append(c);
+                }
+            }
+
+            return abbreviation.ToString();
         }
     }
 

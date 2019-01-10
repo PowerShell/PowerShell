@@ -1131,32 +1131,11 @@ namespace System.Management.Automation
                                 }
 
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
-
-                                if (result != null)
-                                {
-                                    break;
-                                }
                             }
 
                             if (result != null)
                             {
                                 break;
-                            }
-                            else if (searchResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
-                            {
-                                foreach (var cmdlet in exportedCommands)
-                                {
-                                    string abbreviatedCmdlet = new string(cmdlet.Key.Where(c => char.IsUpper(c) || c == '-').ToArray());
-                                    if (commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        // take only the first found command
-                                        result = LookupCommandInfo(cmdlet.Key, commandOrigin, context);
-                                        if (result != null)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                }
                             }
                         }
 

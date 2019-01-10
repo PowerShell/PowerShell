@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Only for this case, the loop should exit
                     // Get-Command Foo
-                    if (UseAbbreviationExpansion || isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
+                    if (isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
                     {
                         continue;
                     }
