@@ -6,9 +6,6 @@ The runtime assemblies for Windows, Linux and OSX are now published in NuGet pac
 
 Please see the [.NET Core Sample Application](#net-core-sample-application) section for an example that uses PowerShell Core NuGet packages.
 
-[SetPowerShellAssemblyLoadContext]: https://docs.microsoft.com/dotnet/api/system.management.automation.powershellassemblyloadcontextinitializer.setpowershellassemblyloadcontext
-[Resolving]: https://github.com/dotnet/corefx/blob/d6678e9653defe3cdfff26b2ff62135b6b22c77f/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L38
-
 ## .NET Core Sample Application
 
 Note: The .NET Core `2.1` runtime and .NET Core SDK `2.1` or higher is required for the examples below:
@@ -44,6 +41,6 @@ There is a special hosting scenario for native hosts,
 where Trusted Platform Assemblies (TPA) do not include PowerShell assemblies,
 such as the in-box `powershell.exe` in Nano Server and the Azure DSC host.
 
-For such hosting scenarios, the native host needs to bootstrap from `PowerShellAssemblyLoadContextInitializer` by calling [SetPowerShellAssemblyLoadContext][].
+For such hosting scenarios, the native host needs to bootstrap by calling [`PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext`](https://docs.microsoft.com/dotnet/api/system.management.automation.powershellassemblyloadcontextinitializer.setpowershellassemblyloadcontext).
 When using this API, the native host can pass in the path to the directory that contains PowerShell assemblies.
-A handler will then be registered to the [Resolving][] event of the default load context to deal with the loading of assemblies from that directory.
+A handler will then be registered to the [`Resolving`](https://github.com/dotnet/corefx/blob/d6678e9653defe3cdfff26b2ff62135b6b22c77f/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L38) event of the default load context to deal with the loading of assemblies from that directory.
