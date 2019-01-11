@@ -1990,7 +1990,7 @@ namespace System.Management.Automation
 
         public override int GetHashCode()
         {
-            // algorithm based on http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
             unchecked
             {
                 int result = 61;

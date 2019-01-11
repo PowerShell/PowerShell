@@ -112,7 +112,7 @@ if [ ! -z "$DEBUG" ] ; then
 fi
 
 THIS="$0"
-args=("$@") # http://stackoverflow.com/questions/3190818/
+args=("$@") # https://stackoverflow.com/questions/3190818/
 NUMBER_OF_ARGS="$#"
 
 # Please do not change $VENDORPREFIX as it will allow for desktop files
@@ -167,7 +167,7 @@ trap atexit EXIT
 # Note that the following handles 0, 1 or more arguments (file paths)
 # which can include blanks but uses a bashism; can the same be achieved
 # in POSIX-shell? (FIXME)
-# http://stackoverflow.com/questions/3190818
+# https://stackoverflow.com/questions/3190818
 atexit()
 {
   if [ -z "$SKIP" ] ; then
