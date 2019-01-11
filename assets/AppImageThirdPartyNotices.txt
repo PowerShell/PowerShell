@@ -87,7 +87,7 @@ property of their respective owners.
  # provided under other licenses, as set forth below.
  #
  #  The BSD License
- #  http://opensource.org/licenses/bsd-license.php
+ #  https://opensource.org/licenses/bsd-license.php
  #  Copyright (C) 2006-2008, Google Inc.
  #
  #  All rights reserved.
