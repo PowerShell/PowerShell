@@ -310,7 +310,7 @@ Using semantic line feeds (breaks that separate ideas)
 is also appropriate, as is using Markdown syntax.
 ```
 
-* These are based on Tim Pope's [guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
+* These are based on Tim Pope's [guidelines](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
   Git SCM [submitting patches](https://git.kernel.org/cgit/git/git.git/tree/Documentation/SubmittingPatches),
   Brandon Rhodes' [semantic linefeeds][],
   and John Gruber's [Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
