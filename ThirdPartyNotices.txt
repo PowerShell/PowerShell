@@ -2639,7 +2639,7 @@ runtime.win-x86.runtime.native.system.data.sqlclient.sni
 runtime.win7-x64.microsoft.netcore.windows.apisets
 ---------------------------------------------
 
-http://go.microsoft.com/fwlink/?LinkId=529443
+https://go.microsoft.com/fwlink/?LinkId=529443
 
 MICROSOFT SOFTWARE LICENSE TERMS
 
@@ -2684,7 +2684,7 @@ iii.   Distribution Restrictions. You may not
 
 4.    DATA.
 a.     Data Collection. The software may collect information about you and your use of the software, and send that to Microsoft. Microsoft may use this information to provide services and improve our products and services.  You may opt-out of many of these scenarios, but not all, as described in the product documentation.  There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft’s privacy statement. Our privacy statement is located at https://go.microsoft.com/fwlink/?LinkID=824704. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.
-b.    Processing of Personal Data. To the extent Microsoft is a processor or subprocessor of personal data in connection with the software, Microsoft makes the commitments in the European Union General Data Protection Regulation Terms of the Online Services Terms to all customers effective May 25, 2018, at http://go.microsoft.com/?linkid=9840733.
+b.    Processing of Personal Data. To the extent Microsoft is a processor or subprocessor of personal data in connection with the software, Microsoft makes the commitments in the European Union General Data Protection Regulation Terms of the Online Services Terms to all customers effective May 25, 2018, at https://go.microsoft.com/?linkid=9840733.
 5.    SCOPE OF LICENSE. The software is licensed, not sold. This agreement only gives you some rights to use the software. Microsoft reserves all other rights. Unless applicable law gives you more rights despite this limitation, you may use the software only as expressly permitted in this agreement. In doing so, you must comply with any technical limitations in the software that only allow you to use it in certain ways. You may not
 ·        work around any technical limitations in the software;
 
