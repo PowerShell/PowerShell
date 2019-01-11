@@ -358,6 +358,15 @@ namespace Microsoft.PowerShell.Commands
 
         private List<CommandScore> _commandScores = new List<CommandScore>();
 
+        /// <summary>
+        /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
+        /// This means it matches cmdlets where the uppercase characters for the noun match
+        /// the given characters.  i.e., g-sgc would match Get-SomeGreatCmdlet.
+        /// </summary>
+        [Experimental("PSUseAbbreviationExpansion", ExperimentAction.Show)]
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseAbbreviationExpansion { get; set; }
+
         #endregion Definitions of cmdlet parameters
 
         #region Overrides
@@ -701,6 +710,16 @@ namespace Microsoft.PowerShell.Commands
                 options = SearchResolutionOptions.SearchAllScopes;
             }
 
+            if (UseAbbreviationExpansion)
+            {
+                options |= SearchResolutionOptions.UseAbbreviationExpansion;
+            }
+
+            if (UseFuzzyMatching)
+            {
+                options |= SearchResolutionOptions.FuzzyMatch;
+            }
+
             if ((this.CommandType & CommandTypes.Alias) != 0)
             {
                 options |= SearchResolutionOptions.ResolveAliasPatterns;
@@ -728,13 +747,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleName = this.Module[0];
                     }
 
-                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
-                    if (UseFuzzyMatching)
-                    {
-                        options |= SearchResolutionOptions.FuzzyMatch;
-                        isPattern = true;
-                    }
-
+                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName) || UseAbbreviationExpansion || UseFuzzyMatching;
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
@@ -798,7 +811,8 @@ namespace Microsoft.PowerShell.Commands
                                         this.Context,
                                         this.MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
-                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified);
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified,
+                                        useAbbreviationExpansion: UseAbbreviationExpansion);
                                 }
 
                                 foreach (CommandInfo command in commands)

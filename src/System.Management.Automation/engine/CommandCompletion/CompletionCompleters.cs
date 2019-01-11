@@ -87,7 +87,6 @@ namespace System.Management.Automation
             string commandName = context.WordToComplete;
             string quote = HandleDoubleAndSingleQuote(ref commandName);
 
-            commandName += "*";
             List<CompletionResult> commandResults = null;
 
             if (commandName.IndexOfAny(Utils.Separators.DirectoryOrDrive) == -1)
@@ -100,29 +99,7 @@ namespace System.Management.Automation
                     lastAst = context.RelatedAsts.Last();
                 }
 
-                var powershell = context.Helper
-                    .AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
-                    .AddParameter("All")
-                    .AddParameter("Name", commandName);
-
-                if (moduleName != null)
-                    powershell.AddParameter("Module", moduleName);
-                if (!types.Equals(CommandTypes.All))
-                    powershell.AddParameter("CommandType", types);
-
-                Exception exceptionThrown;
-                var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
-
-                if (commandInfos != null && commandInfos.Count > 1)
-                {
-                    // OrderBy is using stable sorting
-                    var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                    commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
-                }
-                else
-                {
-                    commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
-                }
+                commandResults = ExecuteGetCommandCommand(useModulePrefix: false);
 
                 if (lastAst != null)
                 {
@@ -159,31 +136,74 @@ namespace System.Management.Automation
                     moduleName = commandName.Substring(0, indexOfFirstBackslash);
                     commandName = commandName.Substring(indexOfFirstBackslash + 1);
 
-                    var powershell = context.Helper
-                        .AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
-                        .AddParameter("All")
-                        .AddParameter("Name", commandName)
-                        .AddParameter("Module", moduleName);
-
-                    if (!types.Equals(CommandTypes.All))
-                        powershell.AddParameter("CommandType", types);
-
-                    Exception exceptionThrown;
-                    var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
-
-                    if (commandInfos != null && commandInfos.Count > 1)
-                    {
-                        var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                        commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
-                    }
-                    else
-                    {
-                        commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
-                    }
+                    commandResults = ExecuteGetCommandCommand(useModulePrefix: true);
                 }
             }
 
             return commandResults;
+
+            List<CompletionResult> ExecuteGetCommandCommand(bool useModulePrefix)
+            {
+                var powershell = context.Helper
+                    .AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
+                    .AddParameter("All")
+                    .AddParameter("Name", commandName + "*");
+
+                if (moduleName != null)
+                {
+                    powershell.AddParameter("Module", moduleName);
+                }
+
+                if (!types.Equals(CommandTypes.All))
+                {
+                    powershell.AddParameter("CommandType", types);
+                }
+
+                // Exception is ignored, the user simply does not get any completion results if the pipeline fails
+                Exception exceptionThrown;
+                var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
+
+                if (commandInfos == null || commandInfos.Count == 0)
+                {
+                    powershell.Commands.Clear();
+                    powershell
+                        .AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
+                        .AddParameter("All")
+                        .AddParameter("Name", commandName);
+
+                    if (ExperimentalFeature.IsEnabled("PSUseAbbreviationExpansion"))
+                    {
+                        powershell.AddParameter("UseAbbreviationExpansion");
+                    }
+
+                    if (moduleName != null)
+                    {
+                        powershell.AddParameter("Module", moduleName);
+                    }
+
+                    if (!types.Equals(CommandTypes.All))
+                    {
+                        powershell.AddParameter("CommandType", types);
+                    }
+
+                    commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
+                }
+
+                List<CompletionResult> completionResults = null;
+
+                if (commandInfos != null && commandInfos.Count > 1)
+                {
+                    // OrderBy is using stable sorting
+                    var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
+                    completionResults = MakeCommandsUnique(sortedCommandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
+                }
+                else
+                {
+                    completionResults = MakeCommandsUnique(commandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
+                }
+
+                return completionResults;
+            }
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand

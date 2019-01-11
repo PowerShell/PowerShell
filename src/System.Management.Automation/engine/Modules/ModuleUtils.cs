@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Runspaces;
+using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -411,8 +412,9 @@ namespace System.Management.Automation.Internal
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
         /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
-        /// <returns>Returns CommandInfo IEnumerable.</returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false)
+        /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
+        /// <returns>Returns matching CommandInfo IEnumerable.</returns>
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -450,7 +452,8 @@ namespace System.Management.Automation.Internal
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                 (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)))
+                                    (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
+                                    (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -509,7 +512,8 @@ namespace System.Management.Automation.Internal
                         CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName) ||
-                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)))
+                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
+                            (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
 
@@ -577,6 +581,26 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns abbreviated version of a command name.
+        /// </summary>
+        /// <param name="commandName">Name of the command to transform.</param>
+        /// <returns>Abbreviated version of the command name.</returns>
+        internal static string AbbreviateName(string commandName)
+        {
+            // Use default size of 6 which represents expected average abbreviation length
+            StringBuilder abbreviation = new StringBuilder(6);
+            foreach (char c in commandName)
+            {
+                if (char.IsUpper(c) || c == '-')
+                {
+                    abbreviation.Append(c);
+                }
+            }
+
+            return abbreviation.ToString();
         }
     }
 
