@@ -26,17 +26,19 @@ Describe 'ConvertTo-Json' -tags 'CI' {
     }
 
     It 'StopProcessing should succeed' {
+        $obj = (1..100).ForEach{
+            $_ = [pscustomobject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
+            $_.P1 = $_.P2 = $_.P3 = $_.P4 = $_.P5 = $_.P6 = $_
+            Write-Output $_
+        }
+
         $ps = [powershell]::Create()
         [void]$ps.AddScript( {
-                $obj = [pscustomobject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
-                $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-                (1..100).ForEach{
-                    Write-Verbose -Message 'Ready' -Verbose
-                    ConvertTo-Json -InputObject $obj -Depth 10
-                }
-                throw 'ConvertTo-Json finished processing before it could be stopped.'
-            } )
-
+            param ($obj)
+            Write-Verbose -Message 'Ready' -Verbose
+            ConvertTo-Json -InputObject $obj -Depth 10
+            throw 'ConvertTo-Json finished processing before it could be stopped.'
+        } ).AddArgument($obj)
         [void]$ps.BeginInvoke()
 
         # Wait until there is output in the verbose stream.
