@@ -277,9 +277,29 @@ namespace System.Management.Automation.Security
                     }
                     finally
                     {
-                        if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }
+                        if (IO.File.Exists(testPathScript))
+                        {
+                            try
+                            {
+                                IO.File.Delete(testPathScript);
+                            }
+                            catch
+                            {
+                                // Leave the file if we can't delete
+                            }
+                        }
 
-                        if (IO.File.Exists(testPathModule)) { IO.File.Delete(testPathModule); }
+                        if (IO.File.Exists(testPathModule))
+                        {
+                            try
+                            {
+                                IO.File.Delete(testPathModule);
+                            }
+                            catch
+                            {
+                                // Leave the module if we can't delete
+                            }
+                        }
                     }
 
                     s_cachedSaferSystemPolicy = result;
