@@ -99,7 +99,7 @@ get_desktopintegration()
 # TODO:
 # Handle multiple versions of the same AppImage?
 # Handle removed AppImages? Currently we are just setting TryExec=
-# See http://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DELETE
+# See https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DELETE
 # Possibly move this to the C runtime that is part of every AppImage?
 
 # Exit on errors
