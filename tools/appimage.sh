@@ -262,7 +262,7 @@ if [ ! -z "$DESKTOPINTEGRATION" ] ; then
 fi
 
 # Check whether dependencies are present in base system (we do not bundle these)
-# http://cgit.freedesktop.org/xdg/desktop-file-utils/
+# https://cgit.freedesktop.org/xdg/desktop-file-utils/
 check_dep desktop-file-validate
 check_dep update-desktop-database
 check_dep desktop-file-install
