@@ -518,7 +518,7 @@ namespace System.Management.Automation
 
         // uses "yield" from C# 2.0, which automatically creates
         // an enumerable out of the loop code. See
-        // http://msdn.microsoft.com/msdnmag/issues/04/05/C20/ for
+        // https://msdn.microsoft.com/msdnmag/issues/04/05/C20/ for
         // more details.
         private static IEnumerable<string> enumerateContent(ExecutionContext context, IScriptExtent errorPosition, SplitImplOptions implOptions, object tuple)
         {
