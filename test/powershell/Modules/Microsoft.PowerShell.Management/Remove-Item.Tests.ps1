@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Remove-Item" -Tags "CI" {
-    $testpath = $TestDrive
-    $testfile = "testfile.txt"
+    $testpath       = $TestDrive
+    $testfile       = "testfile.txt"
     $testfileSpName = "[testfile].txt"
-    $testfileSp = "``[testfile``].txt"
-    $testfilepath = Join-Path -Path $testpath -ChildPath $testfile
+    $testfileSp     = "``[testfile``].txt"
+    $testfilepath   = Join-Path -Path $testpath -ChildPath $testfile
     $testfilepathSp = Join-Path -Path $testpath -ChildPath $testfileSp
     Context "File removal Tests" {
 	BeforeEach {
