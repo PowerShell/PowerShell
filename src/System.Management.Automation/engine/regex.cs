@@ -905,7 +905,7 @@ namespace System.Management.Automation
             //      therefore requiring only O(lengthOfPattern) memory for remembering
             //      which states have been already visited
             //  - Wikipedia calls this algorithm the "NFA" algorithm at
-            //    http://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
+            //    https://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
 
             var patternPositionsForCurrentStringPosition =
                     new PatternPositionsVisitor(_patternElements.Length);
