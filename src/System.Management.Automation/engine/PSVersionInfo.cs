@@ -394,7 +394,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// An implementation of semantic versioning (http://semver.org)
+    /// An implementation of semantic versioning (https://semver.org)
     /// that can be converted to/from <see cref="System.Version"/>.
     ///
     /// When converting to <see cref="Version"/>, a PSNoteProperty is
@@ -832,7 +832,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implement <see cref="IComparable{T}.CompareTo"/>.
-        /// Meets SymVer 2.0 p.11 http://semver.org/
+        /// Meets SymVer 2.0 p.11 https://semver.org/
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
