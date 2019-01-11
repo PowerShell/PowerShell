@@ -288,8 +288,8 @@ namespace Microsoft.PowerShell.Commands
             if (baseType.IsArray)
             {
                 baseType = baseType.GetElementType();
-                dynamic o = inputObject;
-                elements = (int)o.Length;
+                dynamic dynamicObject = inputObject;
+                elements = (int)dynamicObject.Length;
                 isArray = true;
             }
 
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                 result = new byte[elementSize * elements];
                 if (!isArray)
                 {
-                    inputObject = new object[1] { inputObject };
+                    inputObject = new object[] { inputObject };
                 }
 
                 int index = 0;
