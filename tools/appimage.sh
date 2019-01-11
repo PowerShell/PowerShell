@@ -6,7 +6,7 @@
 # The license of this code and of https://github.com/probonopd/AppImages/raw/e05cbebc62c86f8c602d74d9050bbfbf10df1c69/functions.sh
 # is the MIT License, see https://github.com/probonopd/AppImages/blob/e05cbebc62c86f8c602d74d9050bbfbf10df1c69/LICENSE
 #
-# Generate AppImage, http://appimage.org
+# Generate AppImage, https://appimage.org
 #
 # The resulting PowerShell AppImage is known to run on
 # CentOS-7.0-1406-x86_64-GnomeLive.iso
