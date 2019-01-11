@@ -10,7 +10,6 @@ namespace System.Management.Automation.Provider
     /// <summary>
     /// The base class for Cmdlet providers that expose an item as an MSH path.
     /// </summary>
-    ///
     /// <remarks>
     /// The ItemCmdletProvider class is a base class that a provider derives from to
     /// inherit a set of methods that allows the Monad engine
@@ -29,19 +28,15 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Nothing is returned, but all objects should be written to the WriteObject method.
         /// </returns>
-        ///
         internal void GetItem(string path, CmdletProviderContext context)
         {
             Context = context;
@@ -49,22 +44,19 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             GetItem(path);
-        } // GetItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the get-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -72,35 +64,29 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        ///
         internal object GetItemDynamicParameters(string path, CmdletProviderContext context)
         {
             Context = context;
             return GetItemDynamicParameters(path);
-        } // GetItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the SetItem protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the item specified by the path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// The item that was set at the specified path.
         /// </returns>
-        ///
         internal void SetItem(
             string path,
             object value,
@@ -113,26 +99,22 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             SetItem(path, value);
-        } // SetItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the set-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the item specified by the path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -140,7 +122,6 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        ///
         internal object SetItemDynamicParameters(
             string path,
             object value,
@@ -148,22 +129,19 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return SetItemDynamicParameters(path, value);
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the ClearItem protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to clear.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         internal void ClearItem(
             string path,
             CmdletProviderContext context)
@@ -175,22 +153,19 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             ClearItem(path);
-        } // ClearItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the clear-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -198,29 +173,25 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        ///
         internal object ClearItemDynamicParameters(
             string path,
             CmdletProviderContext context)
         {
             Context = context;
             return ClearItemDynamicParameters(path);
-        } // ClearItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the InvokeDefaultAction protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to perform the default action on.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         internal void InvokeDefaultAction(
             string path,
             CmdletProviderContext context)
@@ -232,22 +203,19 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             InvokeDefaultAction(path);
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the invoke-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -255,33 +223,28 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        ///
         internal object InvokeDefaultActionDynamicParameters(
             string path,
             CmdletProviderContext context)
         {
             Context = context;
             return InvokeDefaultActionDynamicParameters(path);
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the Exists protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to see if it exists.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// True if the item exists, false otherwise.
         /// </returns>
-        ///
         internal bool ItemExists(string path, CmdletProviderContext context)
         {
             Context = context;
@@ -300,22 +263,19 @@ namespace System.Management.Automation.Provider
             }
 
             return itemExists;
-        } // Exists
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the test-path cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -323,41 +283,35 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        ///
         internal object ItemExistsDynamicParameters(
             string path,
             CmdletProviderContext context)
         {
             Context = context;
             return ItemExistsDynamicParameters(path);
-        } // ItemExistsDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the IsValidPath protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check for validity.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is syntactically and semantically valid for the provider, or
         /// false otherwise.
         /// </returns>
-        ///
         /// <remarks>
         /// This test should not verify the existence of the item at the path. It should
         /// only perform syntactic and semantic validation of the path.  For instance, for
         /// the file system provider, that path should be canonicalized, syntactically verified,
         /// and ensure that the path does not refer to a device.
         /// </remarks>
-        ///
         internal bool IsValidPath(string path, CmdletProviderContext context)
         {
             Context = context;
@@ -365,7 +319,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return IsValidPath(path);
-        } // IsValidPath
+        }
 
         /// <summary>
         /// Internal wrapper for the ExpandPath protected method. It is called instead
@@ -373,27 +327,23 @@ namespace System.Management.Automation.Provider
         /// context of the command can be set. Only called for providers that declare
         /// the ExpandWildcards capability.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to expand. Expansion must be consistent with the wildcarding
         /// rules of PowerShell's WildcardPattern class.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// A list of provider paths that this path expands to. They must all exist.
         /// </returns>
-        ///
         internal string[] ExpandPath(string path, CmdletProviderContext context)
         {
             Context = context;
 
             // Call virtual method
             return ExpandPath(path);
-        } // IsValidPath
+        }
 
         #endregion internal methods
 
@@ -402,15 +352,12 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// Nothing is returned, but all objects should be written to the WriteItemObject method.
         /// </returns>
-        ///
         /// <remarks>
         /// Providers override this method to give the user access to the provider objects using
         /// the get-item and get-childitem cmdlets.
@@ -439,12 +386,10 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the get-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -458,24 +403,20 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // GetItemDynamicParameters
+        }
 
         /// <summary>
         /// Sets the item specified by the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the item specified by the path.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The item that was set should be passed to the WriteItemObject method.
         /// </returns>
-        ///
         /// <remarks>
         /// Providers override this method to give the user the ability to modify provider objects using
         /// the set-item cmdlet.
@@ -506,16 +447,13 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the set-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the item specified by the path.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -529,20 +467,17 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Clears the item specified by the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to clear.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The item that was cleared should be passed to the WriteItemObject method.
         /// </returns>
-        ///
         /// <remarks>
         /// Providers override this method to give the user the ability to clear provider objects using
         /// the clear-item cmdlet.
@@ -572,12 +507,10 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the clear-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -591,20 +524,17 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // ClearItemDynamicParameters
+        }
 
         /// <summary>
         /// Invokes the default action on the specified item.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to perform the default action on.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The item that was set should be passed to the WriteItemObject method.
         /// </returns>
-        ///
         /// <remarks>
         /// The default implementation does nothing.
         ///
@@ -635,12 +565,10 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the invoke-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -654,24 +582,20 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         /// <summary>
         /// Determines if an item exists at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to see if it exists.
         /// </param>
-        ///
         /// <returns>
         /// True if the item exists, false otherwise.
         /// </returns>
-        ///
         /// <returns>
         /// Nothing.  The item that was set should be passed to the WriteItemObject method.
         /// </returns>
-        ///
         /// <remarks>
         /// Providers override this method to give the user the ability to check for the existence of provider objects using
         /// the set-item cmdlet.
@@ -701,12 +625,10 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the test-path cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
@@ -720,22 +642,19 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // ItemExistsDynamicParameters
+        }
 
         /// <summary>
         /// Providers must override this method to verify the syntax and semantics
         /// of their paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check for validity.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is syntactically and semantically valid for the provider, or
         /// false otherwise.
         /// </returns>
-        ///
         /// <remarks>
         /// This test should not verify the existence of the item at the path. It should
         /// only perform syntactic and semantic validation of the path.  For instance, for
@@ -749,27 +668,24 @@ namespace System.Management.Automation.Provider
         /// paths that the path represents.Only called for providers that declare
         /// the ExpandWildcards capability.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to expand. Expansion must be consistent with the wildcarding
         /// rules of PowerShell's WildcardPattern class.
         /// </param>
-        ///
         /// <returns>
         /// A list of provider paths that this path expands to. They must all exist.
         /// </returns>
-        ///
         protected virtual string[] ExpandPath(string path)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 return new string[] { path };
             }
-        } // IsValidPath
+        }
 
         #endregion Protected methods
-    } // ItemCmdletProvider
+    }
 
     #endregion ItemCmdletProvider
-} // namespace System.Management.Automation
+}
 

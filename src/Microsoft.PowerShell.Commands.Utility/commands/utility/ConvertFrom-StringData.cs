@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _stringData;
             }
+
             set
             {
                 _stringData = value;
@@ -37,13 +38,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-            if (String.IsNullOrEmpty(_stringData))
+            if (string.IsNullOrEmpty(_stringData))
             {
                 WriteObject(result);
                 return;
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string s = line.Trim();
 
-                if (String.IsNullOrEmpty(s) || s[0] == '#')
+                if (string.IsNullOrEmpty(s) || s[0] == '#')
                     continue;
 
                 int index = s.IndexOf('=');

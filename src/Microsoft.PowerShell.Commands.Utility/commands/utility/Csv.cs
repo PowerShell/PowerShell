@@ -18,17 +18,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the delimiter that separates the values.
         /// </summary>
-        ///
         internal char Delimiter { get; } = ',';
 
         /// <summary>
-        /// Parse a CSV String.
+        /// Parse a CSV string.
         /// </summary>
-        ///
         /// <param name="csv">
         /// String to be parsed.
         /// </param>
-        ///
         internal Collection<string> ParseCsv(string csv)
         {
             Collection<string> result = new Collection<string>();
@@ -38,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return result;
             }
+
             bool inQuote = false;
             for (int i = 0; i < csv.Length; i++)
             {
@@ -61,8 +59,8 @@ namespace Microsoft.PowerShell.Commands
                         case '"':
                             if (inQuote)
                             {
-                                //If we are at the end of the string or the end of the segment, create a new value
-                                //Otherwise we have an error
+                                // If we are at the end of the string or the end of the segment, create a new value
+                                // Otherwise we have an error
                                 if (i == csv.Length - 1)
                                 {
                                     result.Add(tempString);
@@ -101,10 +99,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             if (tempString.Length > 0)
             {
                 result.Add(tempString);
             }
+
             return result;
         }
     }

@@ -14,19 +14,15 @@ using System.Text;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
-    ///
     /// </summary>
 
     [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
-    [OutputType(typeof(String), typeof(SecureString))]
+    [OutputType(typeof(string), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// Constructs a new instance.
-        ///
         /// </summary>
 
         public
@@ -38,9 +34,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        ///
         /// The objects to display on the host before collecting input.
-        ///
         /// </summary>
 
         [Parameter(Position = 0, ValueFromRemainingArguments = true)]
@@ -61,9 +55,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// Set to no echo the input as is is typed.
-        ///
         /// </summary>
 
         [Parameter]
@@ -108,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
                         string element = (string)LanguagePrimitives.ConvertTo(e.Current, typeof(string), CultureInfo.InvariantCulture);
 
-                        if (!String.IsNullOrEmpty(element))
+                        if (!string.IsNullOrEmpty(element))
                         {
                             // Prepend a space if the stringbuilder isn't empty...
                             // We could consider using $OFS here but that's probably more
@@ -118,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(element);
                         }
                     }
+
                     promptString = sb.ToString();
                 }
                 else
@@ -132,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    fd.SetParameterType(typeof(String));
+                    fd.SetParameterType(typeof(string));
                 }
 
                 Collection<FieldDescription> fdc = new Collection<FieldDescription>();
@@ -160,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = Host.UI.ReadLine();
                 }
+
                 WriteObject(result);
             }
         }
@@ -167,6 +161,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Cmdlet Overrides
 
         private object _prompt = null;
-        private Boolean _safe = false;
+        private bool _safe = false;
     }
 }

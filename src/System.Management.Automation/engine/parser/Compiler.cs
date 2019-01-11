@@ -368,7 +368,7 @@ namespace System.Management.Automation.Language
         internal static readonly FieldInfo PSObject_isDeserialized =
             typeof(PSObject).GetField(nameof(PSObject.isDeserialized), instanceFlags);
         internal static readonly MethodInfo PSObject_ToStringParser =
-            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), staticFlags);
+            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), staticFlags, null, new[] { typeof(ExecutionContext), typeof(object) }, null);
 
         internal static readonly PropertyInfo PSReference_Value =
             typeof(PSReference).GetProperty(nameof(PSReference.Value));
@@ -391,6 +391,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeNonPublic =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags);
+        internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeByRefLike =
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), staticFlags);
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
 
@@ -442,18 +444,18 @@ namespace System.Management.Automation.Language
             typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine));
 
         internal static readonly ConstructorInfo String_ctor_char_int =
-            typeof(String).GetConstructor(new Type[] { typeof(char), typeof(int) });
+            typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
         internal static readonly MethodInfo String_Concat_String =
-            typeof(String).GetMethod(nameof(String.Concat), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Concat), staticPublicFlags, null,
                                      CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(String).GetMethod(nameof(String.Equals), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo String_get_Chars =
             typeof(string).GetMethod("get_Chars");
         internal static readonly PropertyInfo String_Length =
-            typeof(string).GetProperty(nameof(String.Length));
+            typeof(string).GetProperty(nameof(string.Length));
 
         internal static readonly MethodInfo StringOps_Compare =
             typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags);
@@ -536,7 +538,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CompareOptionsNone = Expression.Constant(CompareOptions.None);
         internal static readonly Expression Ordinal = Expression.Constant(StringComparison.Ordinal);
         internal static readonly Expression InvariantCulture = Expression.Constant(CultureInfo.InvariantCulture);
-        internal static readonly Expression CurrentCultureIgnoreCaseComparer = Expression.Constant(StringComparer.CurrentCultureIgnoreCase, typeof(StringComparer));
+        internal static readonly Expression OrdinalIgnoreCaseComparer = Expression.Constant(StringComparer.OrdinalIgnoreCase, typeof(StringComparer));
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         internal static readonly Expression Empty = Expression.Empty();
         internal static Expression GetExecutionContextFromTLS =
@@ -563,6 +565,7 @@ namespace System.Management.Automation.Language
                 result = Expression.Constant(i);
                 s_intConstants[i + 1] = result;
             }
+
             return result;
         }
 
@@ -596,7 +599,7 @@ namespace System.Management.Automation.Language
                 return Expression.Convert(expr, type);
             }
 
-            if (type.ContainsGenericParameters)
+            if (type.ContainsGenericParameters || type.IsByRefLike)
             {
                 return Expression.Call(
                     CachedReflectionInfo.LanguagePrimitives_ThrowInvalidCastException,
@@ -623,6 +626,7 @@ namespace System.Management.Automation.Language
                                        Expression.Convert(expr, typeof(object)),
                                        Expression.Constant(type, typeof(Type)));
             }
+
             return Expression.Convert(expr, type);
         }
 
@@ -726,6 +730,7 @@ namespace System.Management.Automation.Language
                 DottedLocalsNameIndexMap.Add(SpecialVariables.AutomaticVariables[i], i);
                 DottedScriptCmdletLocalsNameIndexMap.Add(SpecialVariables.AutomaticVariables[i], i);
             }
+
             for (i = 0; i < SpecialVariables.PreferenceVariables.Length; ++i)
             {
                 DottedScriptCmdletLocalsNameIndexMap.Add(SpecialVariables.PreferenceVariables[i],
@@ -757,8 +762,11 @@ namespace System.Management.Automation.Language
 
         internal bool CompilingConstantExpression { get; set; }
         internal bool Optimize { get; private set; }
+
         internal Type LocalVariablesTupleType { get; private set; }
+
         internal ParameterExpression LocalVariablesParameter { get; private set; }
+
         private SymbolDocumentInfo _debugSymbolDocument;
         internal TypeDefinitionAst _memberFunctionType;
         private bool _compilingTrap;
@@ -780,6 +788,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(CompilingMemberFunction, "Return not only set for member functions");
                 return _memberFunctionReturnType;
             }
+
             set { _memberFunctionReturnType = value; }
         }
 
@@ -799,6 +808,7 @@ namespace System.Management.Automation.Language
             {
                 result = Expression.Block(result, ExpressionCache.NullConstant);
             }
+
             return result;
         }
 
@@ -835,6 +845,7 @@ namespace System.Management.Automation.Language
             {
                 result = Expression.Property(result, property);
             }
+
             return result;
         }
 
@@ -954,6 +965,7 @@ namespace System.Management.Automation.Language
                     firstConvert = (ConvertExpressionAst)expr;
                     break;
                 }
+
                 expr = ((AttributedExpressionAst)expr).Child;
             }
 
@@ -1072,6 +1084,7 @@ namespace System.Management.Automation.Language
                     s_attributeGeneratorCache.Add(callInfo, result);
                 }
             }
+
             return result;
         }
 
@@ -1096,8 +1109,13 @@ namespace System.Management.Automation.Language
             var positionalArgCount = ast.PositionalArguments.Count;
             if (positionalArgCount > 0)
             {
-                throw InterpreterError.NewInterpreterException(null, typeof(MethodException), ast.Extent,
-                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor",
+                throw InterpreterError.NewInterpreterException(
+                    null,
+                    typeof(MethodException),
+                    ast.Extent,
+                    "MethodCountCouldNotFindBest",
+                    ExtendedTypeSystem.MethodArgumentCountException,
+                    ".ctor",
                     positionalArgCount);
             }
         }
@@ -1108,8 +1126,13 @@ namespace System.Management.Automation.Language
             {
                 var namedArg = ast.NamedArguments[0];
                 var argumentName = namedArg.ArgumentName;
-                throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                    "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                throw InterpreterError.NewInterpreterException(
+                    namedArg,
+                    typeof(RuntimeException),
+                    namedArg.Extent,
+                    "PropertyNotFoundForType",
+                    ParserStrings.PropertyNotFoundForType,
+                    argumentName,
                     typeof(CmdletBindingAttribute));
             }
         }
@@ -1168,8 +1191,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1255,8 +1283,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1322,8 +1355,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1341,6 +1379,7 @@ namespace System.Management.Automation.Language
                 args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
                     ast.PositionalArguments[i].Accept(s_cvv));
             }
+
             return new AliasAttribute(args);
         }
 
@@ -1449,6 +1488,7 @@ namespace System.Management.Automation.Language
                 var posArg = attributeAst.PositionalArguments[index];
                 delegateArgs[i++] = posArg.Accept(s_cvv);
             }
+
             for (int index = 0; index < attributeAst.NamedArguments.Count; index++)
             {
                 var namedArg = attributeAst.NamedArguments[index];
@@ -1470,6 +1510,7 @@ namespace System.Management.Automation.Language
                         "ExceptionConstructingAttribute", ExtendedTypeSystem.ExceptionConstructingAttribute, innerException,
                         innerException.Message, attributeAst.TypeName.FullName);
                 }
+
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, attributeAst.Extent);
                 throw rte;
             }
@@ -1483,6 +1524,7 @@ namespace System.Management.Automation.Language
             {
                 type = ihct.CachedType;
             }
+
             if (type == null)
             {
                 type = TypeOps.ResolveTypeName(typeConstraintAst.TypeName, typeConstraintAst.Extent);
@@ -1491,6 +1533,7 @@ namespace System.Management.Automation.Language
                     ihct.CachedType = type;
                 }
             }
+
             return new ArgumentTypeConverterAttribute(type);
         }
 
@@ -1508,7 +1551,7 @@ namespace System.Management.Automation.Language
 
                 if (attribute is ExperimentalAttribute expAttribute)
                 {
-                    // Only honor the first seen experimental attribute, ignore the others. 
+                    // Only honor the first seen experimental attribute, ignore the others.
                     if (!hasSeenExpAttribute && expAttribute.ToHide) { return null; }
 
                     // Do not add experimental attributes to the attribute list.
@@ -1570,6 +1613,7 @@ namespace System.Management.Automation.Language
                     result.Value = defaultValue;
                 }
             }
+
             return result;
         }
 
@@ -1653,6 +1697,7 @@ namespace System.Management.Automation.Language
             {
                 _switchTupleIndex = VariableAnalysis.ForceDynamic;
             }
+
             if (!nameToIndexMap.TryGetValue(SpecialVariables.@foreach, out _foreachTupleIndex))
             {
                 _foreachTupleIndex = VariableAnalysis.ForceDynamic;
@@ -1828,11 +1873,13 @@ namespace System.Management.Automation.Language
                         var boundParameters = new PSBoundParametersDictionary { ImplicitUsingParameters = usingValues };
                         functionContext._localsTuple.SetAutomaticVariable(AutomaticVariable.PSBoundParameters, boundParameters, context);
                     }
+
                     var result = lambda(functionContext);
                     if (result == AutomationNull.Value)
                     {
                         return resultList.Count == 0 ? null : PipelineOps.PipelineResult(resultList);
                     }
+
                     return result;
                 }
                 catch (TargetInvocationException tie)
@@ -1888,8 +1935,11 @@ namespace System.Management.Automation.Language
                 this.BreakLabel = breakLabel;
                 this.ContinueLabel = continueLabel;
             }
+
             internal string Label { get; private set; }
+
             internal LabelTarget ContinueLabel { get; private set; }
+
             internal LabelTarget BreakLabel { get; private set; }
         }
 
@@ -1950,6 +2000,7 @@ namespace System.Management.Automation.Language
                 // Add merge redirection expressions if delegate is provided.
                 generateRedirectExprs(exprs, finallyExprs);
             }
+
             exprs.Add(Compile(ast));
 
             switch (context)
@@ -2016,6 +2067,7 @@ namespace System.Management.Automation.Language
                 {
                     return GetRedirectedExpression(commandExpressionAst, captureForInput: true);
                 }
+
                 return Compile(commandExpressionAst.Expression);
             }
 
@@ -2027,12 +2079,13 @@ namespace System.Management.Automation.Language
                 {
                     expr = Expression.Block(expr, ExpressionCache.Empty);
                 }
+
                 return expr;
             }
 
             var pipelineAst = stmt as PipelineAst;
             // If it's a pipeline that isn't being backgrounded, try to optimize expression
-            if (pipelineAst != null && ! pipelineAst.Background)
+            if (pipelineAst != null && !pipelineAst.Background)
             {
                 var expr = pipelineAst.GetPureExpression();
                 if (expr != null) { return Compile(expr); }
@@ -2056,6 +2109,7 @@ namespace System.Management.Automation.Language
             // does have a measurable impact, so only set $? = $true if the condition might change $? to $false.
             // We do this after evaluating the condition so that you could do something like:
             //    if ((dir file1,file2 -ea SilentlyContinue) -and $?) { <# files both exist, otherwise $? would be $false if 0 or 1 files existed #> }
+
             if (context == CaptureAstContext.Condition && AstSearcher.FindFirst(stmt, ast => ast is CommandAst, searchNestedScriptBlocks: false) != null)
             {
                 var tmp = NewTemp(result.Type, "condTmp");
@@ -2064,6 +2118,7 @@ namespace System.Management.Automation.Language
                     s_setDollarQuestionToTrue,
                     tmp);
             }
+
             return result;
         }
 
@@ -2111,6 +2166,7 @@ namespace System.Management.Automation.Language
                 _beginBlockLambda = CompileNamedBlock(scriptBlockAst.BeginBlock, funcName + "<Begin>", rootForDefiningTypesAndUsings);
                 rootForDefiningTypesAndUsings = null;
             }
+
             if (scriptBlockAst.ProcessBlock != null)
             {
                 var processFuncName = funcName;
@@ -2118,15 +2174,18 @@ namespace System.Management.Automation.Language
                 {
                     processFuncName = funcName + "<Process>";
                 }
+
                 _processBlockLambda = CompileNamedBlock(scriptBlockAst.ProcessBlock, processFuncName, rootForDefiningTypesAndUsings);
                 rootForDefiningTypesAndUsings = null;
             }
+
             if (scriptBlockAst.EndBlock != null)
             {
                 if (!scriptBlockAst.EndBlock.Unnamed)
                 {
                     funcName = funcName + "<End>";
                 }
+
                 _endBlockLambda = CompileNamedBlock(scriptBlockAst.EndBlock, funcName, rootForDefiningTypesAndUsings);
             }
 
@@ -2321,6 +2380,7 @@ namespace System.Management.Automation.Language
                     TypeOps.GetNamespacesForTypeResolutionState(usingStatements),
                     assemblies);
             }
+
             exprs.Add(Expression.Call(CachedReflectionInfo.TypeOps_SetCurrentTypeResolutionState,
                     Expression.Constant(trs), _executionContextParameter));
             if (typesToAdd != null && typesToAdd.Count > 0)
@@ -2335,8 +2395,8 @@ namespace System.Management.Automation.Language
         /// This method should be called only for rootAsts (i.e. script file root ScriptBlockAst).
         /// </summary>
         /// <param name="rootForDefiningTypes"></param>
-        /// <param name="typeAsts">non-empty array of TypeDefinitionAst</param>
-        /// <returns>Assembly with defined types</returns>
+        /// <param name="typeAsts">Non-empty array of TypeDefinitionAst.</param>
+        /// <returns>Assembly with defined types.</returns>
         internal static Assembly DefinePowerShellTypes(Ast rootForDefiningTypes, TypeDefinitionAst[] typeAsts)
         {
             // TODO(sevoroby): this Diagnostic is conceptually right.
@@ -2403,6 +2463,7 @@ namespace System.Management.Automation.Language
                                 types[SymbolResolver.GetModuleQualifiedName(module.Name, nameTypePair.Key)] = nameTypePair.Value;
                             }
                         }
+
                         break;
                     case UsingStatementKind.Namespace:
                         break;
@@ -2471,6 +2532,7 @@ namespace System.Management.Automation.Language
                                                                ParserStrings.ErrorLoadingAssembly,
                                                                assemblyName);
             }
+
             return assembly;
         }
 
@@ -2478,7 +2540,7 @@ namespace System.Management.Automation.Language
         /// Take module info of module that can be already loaded or not and loads it.
         /// </summary>
         /// <param name="originalModuleInfo"></param>
-        /// <returns>module info of the same module, but loaded</returns>
+        /// <returns>Module info of the same module, but loaded.</returns>
         private static PSModuleInfo LoadModule(PSModuleInfo originalModuleInfo)
         {
             // originalModuleInfo is created during parse time and may not contain [System.Type] types exported from the module.
@@ -2651,6 +2713,7 @@ namespace System.Management.Automation.Language
             {
                 exprs.Add(ExpressionCache.Empty);
             }
+
             return Expression.Block(typeof(void), temps, exprs);
         }
 
@@ -3121,6 +3184,7 @@ namespace System.Management.Automation.Language
                         i = 0;
                         commandsInPipe = pipeElements.Count;
                     }
+
                     Expression[] pipelineExprs = new Expression[commandsInPipe];
                     CommandBaseAst[] pipeElementAsts = new CommandBaseAst[commandsInPipe];
                     var commandRedirections = new object[commandsInPipe];
@@ -3394,6 +3458,7 @@ namespace System.Management.Automation.Language
                 //   finally {
                 //       finallyExprs
                 //   }
+
                 var wrapExpr = Expression.TryFinally(Expression.Block(exprs), Expression.Block(extraFileRedirectExprs));
                 exprs.Clear();
                 exprs.Add(wrapExpr);
@@ -3420,6 +3485,7 @@ namespace System.Management.Automation.Language
             {
                 return Expression.Block(temps.ToArray(), Expression.TryFinally(Expression.Block(exprs), Expression.Block(finallyExprs)));
             }
+
             return Expression.Block(temps.ToArray(), exprs);
         }
 
@@ -3582,6 +3648,7 @@ namespace System.Management.Automation.Language
             {
                 return expr;
             }
+
             return CallAddPipe(expr, s_getCurrentPipe);
         }
 
@@ -4028,6 +4095,7 @@ namespace System.Management.Automation.Language
             return new[]
             {
                 // catch (BreakException ev) { if (ev.MatchLabel(loopStatement.Label) { goto breakTarget; } throw; }
+
                 Expression.Catch(breakExceptionVar,
                     Expression.IfThenElse(
                         Expression.Call(breakExceptionVar,
@@ -4037,6 +4105,7 @@ namespace System.Management.Automation.Language
                         Expression.Rethrow())),
 
                 // catch (ContinueException ev) { if (ev.MatchLabel(loopStatement.Label) { goto continueTarget; } throw; }
+
                 Expression.Catch(continueExceptionVar,
                     Expression.IfThenElse(
                         Expression.Call(continueExceptionVar,
@@ -4117,6 +4186,7 @@ namespace System.Management.Automation.Language
             {
                 loopBodyExprs.Add(Expression.Goto(loopTop));
             }
+
             _loopTargets.RemoveAt(_loopTargets.Count - 1);
 
             Expression loopBody =
@@ -4147,6 +4217,7 @@ namespace System.Management.Automation.Language
             {
                 exprs.Add(loopBody);
             }
+
             exprs.Add(Expression.Label(breakLabel));
             enterLoop.LoopStatementCount = _stmtCount - preStmtCount;
             return (enterLoop.Loop = new PowerShellLoopExpression(exprs));
@@ -4207,6 +4278,7 @@ namespace System.Management.Automation.Language
             {
                 test = Expression.Not(test);
             }
+
             test = UpdatePositionForInitializerOrCondition(loopStatement.Condition, test);
             exprs.Add(Expression.IfThen(test, Expression.Goto(repeatLabel)));
             exprs.Add(Expression.Label(breakLabel));
@@ -4435,6 +4507,7 @@ namespace System.Management.Automation.Language
             {
                 return Expression.Block(init, loop);
             }
+
             return loop;
         }
 
@@ -4557,6 +4630,7 @@ namespace System.Management.Automation.Language
                 //            $_ = oldDollarUnder
                 //            context.CurrentExceptionBeingHandled = oldrte
                 //        }
+
                 AutomaticVarSaver avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath,
                                                               (int)AutomaticVariable.Underbar);
                 var rte = NewTemp(typeof(RuntimeException), "rte");
@@ -4668,6 +4742,7 @@ namespace System.Management.Automation.Language
                                                             Expression.Constant(ct.TypeName),
                                                             Expression.Constant(ct.Extent)))));
                             }
+
                             i += 1;
                         }
                     }
@@ -4970,6 +5045,7 @@ namespace System.Management.Automation.Language
                     {
                         result = Expression.Not(result);
                     }
+
                     return result;
 
                 case TokenKind.As:
@@ -4988,6 +5064,7 @@ namespace System.Management.Automation.Language
                     {
                         return Expression.Multiply(lhs, rhs);
                     }
+
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Multiply);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
                 case TokenKind.Divide:
@@ -4995,6 +5072,7 @@ namespace System.Management.Automation.Language
                     {
                         return Expression.Divide(lhs, rhs);
                     }
+
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Divide);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
                 case TokenKind.Rem:
@@ -5005,6 +5083,7 @@ namespace System.Management.Automation.Language
                     {
                         return Expression.Add(lhs, rhs);
                     }
+
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Add);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
                 case TokenKind.Minus:
@@ -5012,6 +5091,7 @@ namespace System.Management.Automation.Language
                     {
                         return Expression.Subtract(lhs, rhs);
                     }
+
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Subtract);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
                 case TokenKind.Format:
@@ -5019,6 +5099,7 @@ namespace System.Management.Automation.Language
                     {
                         lhs = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string), lhs, _executionContextParameter);
                     }
+
                     return Expression.Call(CachedReflectionInfo.StringOps_FormatOperator, lhs, rhs.Cast(typeof(object)));
                 case TokenKind.Xor:
                     return Expression.NotEqual(lhs.Convert(typeof(bool)), rhs.Convert(typeof(bool)));
@@ -5279,6 +5360,7 @@ namespace System.Management.Automation.Language
                                                    ExpressionCache.Constant(0).Cast(typeof(object)), tmp));
                 }
             }
+
             temps.Add(tmp);
             return Expression.Block(temps, exprs);
         }
@@ -5303,6 +5385,7 @@ namespace System.Management.Automation.Language
                         new[] { temp },
                         BuildHashtable(hashTableAst.KeyValuePairs, temp, ordered: true));
                 }
+
                 if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase))
                 {
                     // pure laziness here - we should construct the PSObject directly.  Instead, we're relying on the conversion
@@ -5394,10 +5477,12 @@ namespace System.Management.Automation.Language
                 {
                     return ExpressionCache.NullConstant;
                 }
+
                 if (varPath.UnqualifiedPath.Equals(SpecialVariables.True, StringComparison.OrdinalIgnoreCase))
                 {
                     return ExpressionCache.Constant(true);
                 }
+
                 if (varPath.UnqualifiedPath.Equals(SpecialVariables.False, StringComparison.OrdinalIgnoreCase))
                 {
                     return ExpressionCache.Constant(false);
@@ -5426,6 +5511,7 @@ namespace System.Management.Automation.Language
             {
                 return CallGetVariable(Expression.Constant(variableExpressionAst.VariablePath), variableExpressionAst);
             }
+
             return GetLocal(tupleIndex);
         }
 
@@ -5479,6 +5565,22 @@ namespace System.Management.Automation.Language
                             var propertyInfo = memberInfo[0] as PropertyInfo;
                             if (propertyInfo != null)
                             {
+                                if (propertyInfo.PropertyType.IsByRefLike)
+                                {
+                                    // ByRef-like types are not boxable and should be used only on stack.
+                                    return Expression.Throw(
+                                        Expression.New(
+                                            CachedReflectionInfo.GetValueException_ctor,
+                                            Expression.Constant(nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField)),
+                                            Expression.Constant(null, typeof(Exception)),
+                                            Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                                            Expression.NewArrayInit(
+                                                typeof(object),
+                                                Expression.Constant(propertyInfo.Name),
+                                                Expression.Constant(propertyInfo.PropertyType, typeof(Type)))),
+                                        typeof(object));
+                                }
+
                                 if (propertyInfo.CanRead)
                                 {
                                     return Expression.Property(null, propertyInfo);
@@ -5487,6 +5589,8 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
+                                // Field cannot be of a ByRef-like type unless it's an instance member of a ref struct.
+                                // So we don't need to check 'IsByRefLike' for static field access.
                                 return Expression.Field(null, (FieldInfo)memberInfo[0]);
                             }
                         }
@@ -5610,6 +5714,7 @@ namespace System.Management.Automation.Language
                     return Expression.NewArrayInit(typeof(object));
                 }
             }
+
             values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
             if (pureExprAst is ArrayLiteralAst)
@@ -5617,12 +5722,14 @@ namespace System.Management.Automation.Language
                 // If the pure expression is ArrayLiteralAst, just return the result.
                 return values;
             }
+
             if (values.Type.IsPrimitive || values.Type == typeof(string))
             {
                 // Slight optimization - no need for a dynamic site.  We could special case other
                 // types as well, but it's probably not worth it.
                 return Expression.NewArrayInit(typeof(object), values.Cast(typeof(object)));
             }
+
             if (values.Type == typeof(void))
             {
                 // A dynamic site can't take void - but a void value is just an empty array.
@@ -5640,6 +5747,7 @@ namespace System.Management.Automation.Language
                 var eValue = Compile(element);
                 elementValues.Add(eValue.Type != typeof(void) ? eValue.Cast(typeof(object)) : Expression.Block(eValue, ExpressionCache.AutomationNullConstant));
             }
+
             return Expression.NewArrayInit(typeof(object), elementValues);
         }
 
@@ -5648,7 +5756,7 @@ namespace System.Management.Automation.Language
             yield return Expression.Assign(temp,
                 Expression.New(ordered ? CachedReflectionInfo.OrderedDictionary_ctor : CachedReflectionInfo.Hashtable_ctor,
                                 ExpressionCache.Constant(keyValuePairs.Count),
-                                ExpressionCache.CurrentCultureIgnoreCaseComparer.Cast(typeof(IEqualityComparer))));
+                                ExpressionCache.OrdinalIgnoreCaseComparer.Cast(typeof(IEqualityComparer))));
             for (int index = 0; index < keyValuePairs.Count; index++)
             {
                 var keyValuePair = keyValuePairs[index];
@@ -5663,6 +5771,7 @@ namespace System.Management.Automation.Language
                     Expression.Call(CachedReflectionInfo.HashtableOps_AddKeyValuePair,
                                     temp, key, value, errorExtent);
             }
+
             yield return temp;
         }
 
@@ -5946,6 +6055,7 @@ namespace System.Management.Automation.Language
                 result = DynamicExpression.Dynamic(PSGetIndexBinder.Get(1, constraints), typeof(object), _targetExprTemp,
                                                    _indexExprTemp);
             }
+
             return result;
         }
 
@@ -5973,6 +6083,7 @@ namespace System.Management.Automation.Language
                 setExpr = DynamicExpression.Dynamic(PSSetIndexBinder.Get(1, constraints), typeof(object), targetExpr,
                                                     GetIndexExpr(compiler), temp);
             }
+
             return Expression.Block(new[] { temp }, Expression.Assign(temp, rhs), setExpr, temp);
         }
     }
@@ -6025,7 +6136,9 @@ namespace System.Management.Automation.Language
     internal class PowerShellLoopExpression : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
+
         public override Type Type { get { return typeof(void); } }
+
         public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
         private readonly IEnumerable<Expression> _exprs;
@@ -6070,7 +6183,9 @@ namespace System.Management.Automation.Language
     internal class EnterLoopExpression : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
+
         public override Type Type { get { return typeof(void); } }
+
         public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
         public override Expression Reduce()
@@ -6080,6 +6195,7 @@ namespace System.Management.Automation.Language
 
         internal new PowerShellLoopExpression Loop { get; set; }
         internal EnterLoopInstruction EnterLoopInstruction { get; private set; }
+
         internal int LoopStatementCount { get; set; }
 
         public void AddInstructions(LightCompiler compiler)
@@ -6100,7 +6216,9 @@ namespace System.Management.Automation.Language
     internal class UpdatePositionExpr : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
+
         public override Type Type { get { return typeof(void); } }
+
         public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
         private readonly IScriptExtent _extent;
@@ -6141,6 +6259,7 @@ namespace System.Management.Automation.Language
                             CachedReflectionInfo.Debugger_OnSequencePointHit,
                             Compiler._functionContext)));
             }
+
             exprs.Add(ExpressionCache.Empty);
 
             return Expression.Block(exprs);

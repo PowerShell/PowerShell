@@ -73,7 +73,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         internal FragmentedRemoteObject()
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Remoting
         #region Data Fields being sent
 
         /// <summary>
-        /// All fragments of the same PSObject have the same ObjectId
+        /// All fragments of the same PSObject have the same ObjectId.
         /// </summary>
         internal long ObjectId { get; set; }
 
@@ -142,6 +142,7 @@ namespace System.Management.Automation.Remoting
         internal int BlobLength
         {
             get { return _blobLength; }
+
             set
             {
                 Dbg.Assert(value >= 0, "BlobLength cannot be less than 0.");
@@ -155,6 +156,7 @@ namespace System.Management.Automation.Remoting
         internal byte[] Blob
         {
             get { return _blob; }
+
             set
             {
                 Dbg.Assert(value != null, "Blob cannot be null");
@@ -196,7 +198,6 @@ namespace System.Management.Automation.Remoting
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
         ///     +-+-+-+-+-+-+-+-
-        ///
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.
@@ -637,7 +638,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Read the currently accumulated data in queued memory streams
+        /// Read the currently accumulated data in queued memory streams.
         /// </summary>
         /// <returns></returns>
         internal byte[] Read()
@@ -664,7 +665,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -882,15 +882,12 @@ namespace System.Management.Automation.Remoting
         #region Stream Overrides
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanRead { get { return true; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanSeek { get { return false; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanWrite { get { return true; } }
         /// <summary>
@@ -898,11 +895,11 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override long Length { get { return _length; } }
         /// <summary>
-        ///
         /// </summary>
         public override long Position
         {
             get { throw new NotSupportedException(); }
+
             set { throw new NotSupportedException(); }
         }
         /// <summary>
@@ -913,7 +910,6 @@ namespace System.Management.Automation.Remoting
         {
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
@@ -923,7 +919,6 @@ namespace System.Management.Automation.Remoting
             throw new NotSupportedException();
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -944,6 +939,7 @@ namespace System.Management.Automation.Remoting
                 GC.SuppressFinalize(this);
                 _disposed = true;
             }
+
             base.Dispose();
         }
 
@@ -1037,6 +1033,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _fragmentSize;
             }
+
             set
             {
                 Dbg.Assert(value > 0, "FragmentSize cannot be less than 0.");

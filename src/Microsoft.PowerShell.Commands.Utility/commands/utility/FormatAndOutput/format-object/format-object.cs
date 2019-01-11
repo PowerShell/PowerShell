@@ -32,13 +32,13 @@ namespace Microsoft.PowerShell.Commands
         public object[] Property
         {
             get { return _props; }
+
             set { _props = value; }
         }
 
         private object[] _props;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [ValidateRangeAttribute(1, int.MaxValue)]
@@ -46,6 +46,7 @@ namespace Microsoft.PowerShell.Commands
         public int Depth
         {
             get { return _depth; }
+
             set { _depth = value; }
         }
 
@@ -71,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
+
                 parameters.viewName = this.View;
             }
 

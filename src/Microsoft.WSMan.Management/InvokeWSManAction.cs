@@ -30,17 +30,19 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "Action".
         /// Indicates the method which needs to be executed on the management object
-        /// specified by the ResourceURI and selectors
+        /// specified by the ResourceURI and selectors.
         /// </summary>
         [Parameter(Mandatory = true,
                   Position = 1)]
         [ValidateNotNullOrEmpty]
-        public String Action
+        public string Action
         {
             get { return action; }
+
             set { action = value; }
         }
-        private String action;
+
+        private string action;
 
         /// <summary>
         /// The following is the definition of the input parameter "ApplicationName".
@@ -48,12 +50,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
+
             set { applicationname = value; }
         }
-        private String applicationname = null;
+
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -63,20 +67,22 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.CurrentCultureIgnoreCase)))
+                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computername = "localhost";
                 }
 
             }
         }
-        private String computername = null;
+
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -91,24 +97,28 @@ namespace Microsoft.WSMan.Management
         public Uri ConnectionURI
         {
             get { return connectionuri; }
+
             set { connectionuri = value; }
         }
+
         private Uri connectionuri;
 
         /// <summary>
         /// The following is the definition of the input parameter "FilePath".
         /// Updates the management resource specified by the ResourceURI and SelectorSet
-        /// via this input file
+        /// via this input file.
         /// </summary>
         [Parameter]
         [Alias("Path")]
         [ValidateNotNullOrEmpty]
-        public String FilePath
+        public string FilePath
         {
             get { return filepath; }
+
             set { filepath = value; }
         }
-        private String filepath;
+
+        private string filepath;
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
@@ -123,8 +133,10 @@ namespace Microsoft.WSMan.Management
         public Hashtable OptionSet
         {
             get { return optionset; }
+
             set { optionset = value; }
         }
+
         private Hashtable optionset;
 
         /// <summary>
@@ -137,15 +149,17 @@ namespace Microsoft.WSMan.Management
         public Int32 Port
         {
             get { return port; }
+
             set { port = value; }
         }
+
         private Int32 port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
         /// management resource if there are are more than 1 instance of the resource
-        /// class
+        /// class.
         /// </summary>
         [Parameter(Position = 2,
                    ValueFromPipeline = true,
@@ -155,14 +169,16 @@ namespace Microsoft.WSMan.Management
         public Hashtable SelectorSet
         {
             get { return selectorset; }
+
             set { selectorset = value; }
         }
+
         private Hashtable selectorset;
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
         /// Defines a set of extended options for the WSMan session. This hashtable can
-        /// be created using New-WSManSessionOption
+        /// be created using New-WSManSessionOption.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -171,8 +187,10 @@ namespace Microsoft.WSMan.Management
         public SessionOption SessionOption
         {
             get { return sessionoption; }
+
             set { sessionoption = value; }
         }
+
         private SessionOption sessionoption;
 
         /// <summary>
@@ -186,8 +204,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
         /// <summary>
@@ -201,13 +221,15 @@ namespace Microsoft.WSMan.Management
         public Hashtable ValueSet
         {
             get { return valueset; }
+
             set { valueset = value; }
         }
+
         private Hashtable valueset;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
-        /// URI of the resource class/instance representation
+        /// URI of the resource class/instance representation.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
@@ -217,8 +239,10 @@ namespace Microsoft.WSMan.Management
         public Uri ResourceURI
         {
             get { return resourceuri; }
+
             set { resourceuri = value; }
         }
+
         private Uri resourceuri;
 
         private WSManHelper helper;
@@ -235,7 +259,7 @@ namespace Microsoft.WSMan.Management
 
             helper.WSManOp = "invoke";
 
-            //create the connection string
+            // create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
 
         }
@@ -248,10 +272,10 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //create the resourcelocator object
+                // create the resourcelocator object
                 IWSManResourceLocator m_resource = helper.InitializeResourceLocator(optionset, selectorset, null, null, m_wsmanObject, resourceuri);
 
-                //create the session object
+                // create the session object
                 m_session = helper.CreateSessionObject(m_wsmanObject, Authentication, sessionoption, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
 
                 string rootNode = helper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, action);
@@ -265,35 +289,37 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_wsmanObject.Error))
+                if (!string.IsNullOrEmpty(m_wsmanObject.Error))
                 {
                     helper.AssertError(m_wsmanObject.Error, true, resourceuri);
                 }
-                if (!String.IsNullOrEmpty(m_session.Error))
+
+                if (!string.IsNullOrEmpty(m_session.Error))
                 {
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
+
                 if (m_session != null)
                     Dispose(m_session);
 
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -315,5 +341,5 @@ namespace Microsoft.WSMan.Management
         }
 
 
-    }//End Class
+    }
 }

@@ -23,9 +23,9 @@ different implementations of PowerShell.
   to install PowerShell Core for the distribution and version of Linux you're running.
   You can get that version info by running the command `lsb_release -a` from the WSL console.
 
-* .NET Core 2.0 SDK
+* .NET Core 2.x SDK
 
-  Download and install the [.NET Core 2.0 SDK][net-core-sdk] for your operating system.
+  Download and install the [.NET Core 2.x SDK][net-core-sdk] for your operating system.
   It is recommended that you use a package manager to install the SDK on Linux.
   See these [instructions][linux-install] on how to install the SDK on Linux.
   Be sure to pick your distribution of Linux e.g. RHEL, Debian, etc to get the
@@ -40,7 +40,7 @@ different implementations of PowerShell.
    ```
 
    This should output `2.0.0` or higher. If it returns a major version of 1, make sure you have
-   installed the .NET Core 2.0 SDK and have restarted your shell to get the newer version of
+   installed the .NET Core 2.x SDK and have restarted your shell to get the newer version of
    the SDK tools.
 
 1. Use the `dotnet` CLI to create a starter `classlib` project based on .NET Standard 2.0
@@ -114,7 +114,7 @@ different implementations of PowerShell.
 ## Using a .NET Standard 2.0 based binary module in Windows PowerShell
 
 You may have heard that a .NET assembly compiled as a .NET Standard 2.0 class library
-will load into both .NET Core 2.0 applications such as PowerShell Core and
+will load into both .NET Core 2.x applications such as PowerShell Core and
 .NET Framework 4.6.1 (or higher) applications such as Windows PowerShell.
 This allows you to build a single, cross-platform binary module.
 
@@ -171,30 +171,34 @@ can't find the `netstandard.dll` "implementation" assembly for the version of th
 
 ### The fix for missing netstandard.dll
 
-If you install (or already have) the .NET Core 2.0 SDK for Windows, you can
+If you install (or already have) the .NET Core SDK for Windows, you can
 find the `netstandard.dll` implementation assembly for .NET 4.6.1 in the following directory:
-`C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
+`C:\Program Files\dotnet\sdk\<version-number>\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
+Note that, the version number in the path may vary depending on the installed SDK.
 
 If you copy `netstandard.dll` from this directory to the directory containing
 `MyModule.dll`, the `Write-TimestampedMessage` command will work.  Let's try that.
 
-1. Install the [.NET Core SDK 2.0 for Windows][net-core-sdk], if it isn't already installed.
+1. Install [.NET Core SDK for Windows][net-core-sdk], if it isn't already installed.
 
 1. Start a new Windows PowerShell console. Remember that once a binary assembly is
    loaded into PowerShell it can't be unloaded. Restarting PowerShell is necessary to
    get it to reload `MyModule.dll`.
 
 1. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
+
    ```powershell
    cd 'path-to-where-you-copied-module.dll'
-   Copy-Item 'C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
+   Copy-Item 'C:\Program Files\dotnet\sdk\<version-number>\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
    ```
 
 1. Import the module and execute the command:
+
    ```powershell
    Import-Module .\MyModule.dll
    Write-TimestampedMessage "Test message."
    ```
+
    Now the command should succeed.
 
    Note: If it fails, restart Windows PowerShell to make sure
@@ -211,7 +215,7 @@ class library that will run in PowerShell Core on multiple operating systems.
 It will also run in Windows PowerShell on Windows systems that have been updated to
 .NET Framework 4.7.1 as well as the Windows 10 Fall Creators Update which comes with that
 version pre-installed.  Furthermore, this binary module can be built on Linux
-and macOS as well as Windows using the .NET Core 2.0 SDK command-line tools.
+and macOS as well as Windows using the .NET Core 2.x SDK command-line tools.
 
 For more information on .NET Standard, check out the [documentation][net-std-docs]
 and the [.NET Standard YouTube channel][net-std-chan].

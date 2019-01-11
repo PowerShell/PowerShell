@@ -8,14 +8,14 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The base class for the */property commands that also take
-    /// a passthrough parameter
+    /// a passthrough parameter.
     /// </summary>
     public class PassThroughItemPropertyCommandBase : ItemPropertyCommandBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the passthrough parameter to the command
+        /// Gets or sets the passthrough parameter to the command.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
@@ -23,18 +23,17 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _passThrough;
-            } // get
+            }
 
             set
             {
                 _passThrough = value;
-            } // set
-        } // PassThru
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -44,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -52,11 +50,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
             }
-        } // Force
+        }
 
         #endregion Parameters
 
@@ -73,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
@@ -88,20 +87,18 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a CmdletProviderContext instance to the current context of
         /// the command.
         /// </summary>
-        ///
         /// <returns>
         /// A CmdletProviderContext instance initialized to the context of the current
         /// command.
         /// </returns>
-        ///
         internal CmdletProviderContext GetCurrentContext()
         {
             CmdletProviderContext currentCommandContext = CmdletProviderContext;
             currentCommandContext.PassThru = PassThru;
             return currentCommandContext;
-        } // GetCurrentContext
+        }
 
         #endregion protected members
-    } // PassThroughItemPropertyCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

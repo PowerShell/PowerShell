@@ -12,7 +12,6 @@ namespace System.Management.Automation
         /// Constructs an enumerator for enumerating through the session state scopes
         /// using the appropriate scoping rules (default to dynamic scoping).
         /// </summary>
-        ///
         /// <param name="scope">
         ///   The starting scope to start the enumeration from.
         /// </param>
@@ -20,16 +19,14 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(scope != null, "Caller to verify scope argument");
             _initialScope = scope;
-        } // ctor
+        }
 
         /// <summary>
         /// Uses the proper scoping rules to get the next scope to do the lookup in.
         /// </summary>
-        ///
         /// <returns>
         /// True if the enumerator was advanced to the next scope, or false otherwise.
         /// </returns>
-        ///
         public bool MoveNext()
         {
             // On the first call to MoveNext the enumerator should be before
@@ -41,25 +38,23 @@ namespace System.Management.Automation
             // If the current scope is the global scope there is nowhere else
             // to do the lookup, so return false.
             return (_currentEnumeratedScope != null);
-        } // MoveNext
+        }
 
         /// <summary>
-        /// Sets the enumerator to before the first scope
+        /// Sets the enumerator to before the first scope.
         /// </summary>
         public void Reset()
         {
             _currentEnumeratedScope = null;
-        } // Reset
+        }
 
         /// <summary>
-        /// Gets the current lookup scope
+        /// Gets the current lookup scope.
         /// </summary>
-        ///
         /// <exception cref="InvalidOperationException">
         /// The enumerator is positioned before the first element of the
         /// collection or after the last element.
         /// </exception>
-        ///
         SessionStateScope IEnumerator<SessionStateScope>.Current
         {
             get
@@ -70,8 +65,8 @@ namespace System.Management.Automation
                 }
 
                 return _currentEnumeratedScope;
-            } // get
-        } // Current
+            }
+        }
 
         object IEnumerator.Current
         {
@@ -82,9 +77,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the IEnumerator for this class
+        /// Gets the IEnumerator for this class.
         /// </summary>
-        ///
         /// <returns>
         /// The IEnumerator interface for this class.
         /// </returns>
@@ -105,6 +99,6 @@ namespace System.Management.Automation
 
         private readonly SessionStateScope _initialScope;
         private SessionStateScope _currentEnumeratedScope;
-    } // class SessionStateScopeEnumerator
-} // namespace System.Management.Automation
+    }
+}
 

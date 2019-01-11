@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return _fileName; }
+
             set { _fileName = value; }
         }
 
@@ -59,31 +60,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _fileName;
             }
+
             set
             {
                 _fileName = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
         /// Encoding optional flag.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
+        [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
@@ -94,8 +86,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Append
         {
             get { return _append; }
+
             set { _append = value; }
         }
+
         private bool _append;
 
         /// <summary>
@@ -105,8 +99,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private bool _force;
 
         /// <summary>
@@ -117,8 +113,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoClobber
         {
             get { return _noclobber; }
+
             set { _noclobber = value; }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -129,10 +127,11 @@ namespace Microsoft.PowerShell.Commands
         public int Width
         {
             get { return (_width != null) ? _width.Value : 0; }
+
             set { _width = value; }
         }
 
-        private Nullable<int> _width = null;
+        private int? _width = null;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -144,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _suppressNewline;
             }
+
             set
             {
                 _suppressNewline = value;
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         private StreamWriter _sw = null;
 
         /// <summary>
-        /// indicate whether the ProcessRecord method was executed.
+        /// Indicate whether the ProcessRecord method was executed.
         /// When the Out-File is used in a redirection pipelineProcessor,
         /// its ProcessRecord method may not be called when nothing is written to the
         /// output pipe, for example:

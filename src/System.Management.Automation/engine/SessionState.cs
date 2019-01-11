@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
 
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is a bridge class between internal classes and a public interface. It requires this much coupling.")]
@@ -39,17 +39,14 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor for session state object
+        /// Constructor for session state object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context for the runspace to which this session state object belongs.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="context"/> is null.
         /// </exception>
-        ///
         internal SessionStateInternal(ExecutionContext context) : this(null, false, context)
         {
         }
@@ -60,16 +57,17 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
+
             ExecutionContext = context;
 
             // Create the working directory stack. This
             // is used for the pushd and popd commands
 
-            _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
+            _workingLocationStack = new Dictionary<string, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
             // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
-            const int locationHistoryLimit = 20;
-            _SetLocationHistory = new BoundedStack<PathInfo>(locationHistoryLimit);
+            const uint locationHistoryLimit = 20;
+            _setLocationHistory = new HistoryStack<PathInfo>(locationHistoryLimit);
 
             GlobalScope = new SessionStateScope(null);
             ModuleScope = GlobalScope;
@@ -143,11 +141,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides all the path manipulation and globbing for Monad paths.
         /// </summary>
-        ///
         internal LocationGlobber Globber
         {
             get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
         }
+
         private LocationGlobber _globberPrivate;
 
         /// <summary>
@@ -161,21 +159,24 @@ namespace System.Management.Automation
         internal SessionState PublicSessionState
         {
             get { return _publicSessionState ?? (_publicSessionState = new SessionState(this)); }
+
             set { _publicSessionState = value; }
         }
+
         private SessionState _publicSessionState;
 
         /// <summary>
-        /// Gets the engine APIs to access providers
+        /// Gets the engine APIs to access providers.
         /// </summary>
         internal ProviderIntrinsics InvokeProvider
         {
-            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); } // get
+            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); }
         }
+
         private ProviderIntrinsics _invokeProvider;
 
         /// <summary>
-        /// The module info object associated with this session state
+        /// The module info object associated with this session state.
         /// </summary>
         internal PSModuleInfo Module { get; set; } = null;
 
@@ -189,7 +190,7 @@ namespace System.Management.Automation
         internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Get/set constraints for this execution environment
+        /// Get/set constraints for this execution environment.
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -197,6 +198,7 @@ namespace System.Management.Automation
             {
                 return ExecutionContext.LanguageMode;
             }
+
             set
             {
                 ExecutionContext.LanguageMode = value;
@@ -204,7 +206,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         internal bool UseFullLanguageModeInDebugger
         {
@@ -223,8 +225,8 @@ namespace System.Management.Automation
         /// <summary>
         /// See if a script is allowed to be run.
         /// </summary>
-        /// <param name="scriptPath">Path to check</param>
-        /// <returns>true if script is allowed</returns>
+        /// <param name="scriptPath">Path to check.</param>
+        /// <returns>True if script is allowed.</returns>
         internal SessionStateEntryVisibility CheckScriptVisibility(string scriptPath)
         {
             return checkPathVisibility(Scripts, scriptPath);
@@ -250,7 +252,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry)
         {
             AddSessionStateEntry(entry, /*local*/false);
@@ -259,8 +261,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
-        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope</param>
+        /// <param name="entry">The entry to add.</param>
+        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry, bool local)
         {
             ExecutionContext.CommandDiscovery.AddSessionStateCmdletEntryToCache(entry, local);
@@ -269,7 +271,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateApplicationEntry entry)
         {
             this.Applications.Add(entry.Path);
@@ -278,7 +280,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateScriptEntry entry)
         {
             this.Scripts.Add(entry.Path);
@@ -380,7 +382,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Check to see if an application is allowed to be run.
         /// </summary>
-        /// <param name="applicationPath">The path to the application to check</param>
+        /// <param name="applicationPath">The path to the application to check.</param>
         /// <returns>True if application is permitted.</returns>
         internal SessionStateEntryVisibility CheckApplicationVisibility(string applicationPath)
         {
@@ -390,12 +392,12 @@ namespace System.Management.Automation
         private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
             if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
-            if (String.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
+            if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
 
             if (list.Contains("*")) return SessionStateEntryVisibility.Public;
             foreach (string p in list)
             {
-                if (String.Equals(p, path, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(p, path, StringComparison.OrdinalIgnoreCase))
                     return SessionStateEntryVisibility.Public;
 
                 if (WildcardPattern.ContainsWildcardCharacters(p))
@@ -407,6 +409,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return SessionStateEntryVisibility.Private;
         }
 
@@ -416,7 +419,6 @@ namespace System.Management.Automation
         /// Notification for SessionState to do cleanup
         /// before runspace is closed.
         /// </summary>
-        ///
         internal void RunspaceClosingNotification()
         {
             if (this != ExecutionContext.TopLevelSessionState && Providers.Count > 0)
@@ -438,40 +440,32 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
-        /// using the specified data
+        /// using the specified data.
         /// </summary>
-        ///
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
         /// </param>
-        ///
         /// <param name="resourceStr">
         /// This is the message template string.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider information used when formatting the error message.
         /// </param>
-        ///
         /// <param name="path">
         /// The path used when formatting the error message.
         /// </param>
-        ///
         /// <param name="e">
         /// The exception that was thrown by the provider. This will be set as
         /// the ProviderInvocationException's InnerException and the message will
         /// be used when formatting the error message.
         /// </param>
-        ///
         /// <returns>
         /// A new instance of a ProviderInvocationException.
         /// </returns>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// Wraps <paramref name="e"/> in a ProviderInvocationException
         /// and then throws it.
         /// </exception>
-        ///
         internal ProviderInvocationException NewProviderInvocationException(
             string resourceId,
             string resourceStr,
@@ -484,45 +478,36 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
-        /// using the specified data
+        /// using the specified data.
         /// </summary>
-        ///
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
         /// </param>
-        ///
         /// <param name="resourceStr">
         /// This is the message template string.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider information used when formatting the error message.
         /// </param>
-        ///
         /// <param name="path">
         /// The path used when formatting the error message.
         /// </param>
-        ///
         /// <param name="e">
         /// The exception that was thrown by the provider. This will be set as
         /// the ProviderInvocationException's InnerException and the message will
         /// be used when formatting the error message.
         /// </param>
-        ///
         /// <param name="useInnerExceptionErrorMessage">
         /// If true, the error record from the inner exception will be used if it contains one.
         /// If false, the error message specified by the resourceId will be used.
         /// </param>
-        ///
         /// <returns>
         /// A new instance of a ProviderInvocationException.
         /// </returns>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// Wraps <paramref name="e"/> in a ProviderInvocationException
         /// and then throws it.
         /// </exception>
-        ///
         internal ProviderInvocationException NewProviderInvocationException(
             string resourceId,
             string resourceStr,
@@ -555,5 +540,5 @@ namespace System.Management.Automation
             return pie;
         }
         #endregion Errors
-    } // SessionStateInternal class
+    }
 }

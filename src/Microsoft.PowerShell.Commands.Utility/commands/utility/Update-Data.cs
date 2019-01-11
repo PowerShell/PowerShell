@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="files"></param>
         /// <param name="errorId"></param>
@@ -76,11 +75,13 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.WriteError(new ErrorRecord(e, errorId, ErrorCategory.InvalidOperation, file));
                     continue;
                 }
+
                 if (!provider.NameEquals(cmdlet.Context.ProviderNames.FileSystem))
                 {
                     ReportWrongProviderType(provider.FullName, errorId, cmdlet);
                     continue;
                 }
+
                 foreach (string providerPath in providerPaths)
                 {
                     if (!providerPath.EndsWith(".ps1xml", StringComparison.OrdinalIgnoreCase))
@@ -88,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
                         ReportWrongExtension(providerPath, "WrongExtension", cmdlet);
                         continue;
                     }
+
                     retValue.Add(providerPath);
                 }
             }

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Construct the class, using an array of patterns.
         /// </summary>
-        /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
+        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
             if (wildcardPatternsStrings == null)
@@ -38,8 +38,8 @@ namespace Microsoft.PowerShell.Commands
         /// Try to match the expression against the array of wildcard patterns.
         /// The first match shortcircuits the search.
         /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against</param>
-        /// <returns>true if there is a match, else false</returns>
+        /// <param name="expression">PSPropertyExpression to test against.</param>
+        /// <returns>True if there is a match, else false.</returns>
         internal bool IsMatch(PSPropertyExpression expression)
         {
             for (int k = 0; k < _wildcardPatterns.Length; k++)
@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_wildcardPatterns[k].IsMatch(expression.ToString()))
                     return true;
             }
+
             return false;
         }
 
@@ -63,7 +64,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
@@ -72,14 +72,12 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
@@ -87,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
         public object[] Property { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -95,7 +92,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -103,19 +99,19 @@ namespace Microsoft.PowerShell.Commands
         public string ExpandProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
         public SwitchParameter Unique
         {
             get { return _unique; }
+
             set { _unique = value; }
         }
+
         private bool _unique;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -125,12 +121,13 @@ namespace Microsoft.PowerShell.Commands
         public int Last
         {
             get { return _last; }
+
             set { _last = value; _firstOrLastSpecified = true; }
         }
+
         private int _last = 0;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -140,8 +137,10 @@ namespace Microsoft.PowerShell.Commands
         public int First
         {
             get { return _first; }
+
             set { _first = value; _firstOrLastSpecified = true; }
         }
+
         private int _first = 0;
         private bool _firstOrLastSpecified;
 
@@ -169,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// Used to display the object at specified index.
+        /// Used to display the object at the specified index.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
@@ -181,15 +180,42 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
                 _indexSpecified = true;
+                _isIncludeIndex = true;
                 Array.Sort(_index);
             }
         }
+
+        /// <summary>
+        /// Used to display all objects at the specified indices.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = "SkipIndexParameter")]
+        [ValidateRangeAttribute(0, int.MaxValue)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public int[] SkipIndex
+        {
+            get
+            {
+                return _index;
+            }
+
+            set
+            {
+                _index = value;
+                _indexSpecified = true;
+                _isIncludeIndex = false;
+                Array.Sort(_index);
+            }
+        }
+
         private int[] _index;
         private bool _indexSpecified;
+        private bool _isIncludeIndex;
 
         #endregion
 
@@ -224,12 +250,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     base.Dequeue();
                 }
+
                 base.Enqueue(obj);
             }
 
             public PSObject StreamingDequeue()
             {
-                //if skip parameter is not mentioned or there are no more objects to skip
+                // if skip parameter is not mentioned or there are no more objects to skip
                 if (_skip == 0)
                 {
                     if (_skipLast > 0)
@@ -259,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //if last parameter is not mentioned,remove the objects and decrement the skip
+                    // if last parameter is not mentioned,remove the objects and decrement the skip
                     if (_last == 0)
                     {
                         Dequeue();
@@ -299,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 WrittenObject = o;
                 NotePropertyCount = notePropertyCount;
             }
+
             internal readonly PSObject WrittenObject;
             internal int NotePropertyCount { get; }
         }
@@ -313,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             if ((Property != null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
+
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
@@ -332,7 +361,7 @@ namespace Microsoft.PowerShell.Commands
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[] { "*" };
+                    Property = new object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }
@@ -346,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //If property parameter is mentioned
+            // If property parameter is mentioned
             List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
             foreach (MshParameter p in _propertyMshParameterList)
             {
@@ -382,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 FilteredWriteObject(result, matchedProperties);
             }
             else
@@ -450,15 +480,18 @@ namespace Microsoft.PowerShell.Commands
                             "EmptyScriptBlockAndNoName",
                             ErrorCategory.InvalidArgument, null));
                     }
+
                     mshProp = new PSNoteProperty(resolvedExpressionName, r.Result);
                 }
                 else
                 {
                     mshProp = new PSNoteProperty(name, r.Result);
                 }
+
                 result.Add(mshProp);
             }
         }
+
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
@@ -474,6 +507,7 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
+
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
@@ -563,6 +597,7 @@ namespace Microsoft.PowerShell.Commands
                 inputObject);
             WriteError(errorRecord);
         }
+
         private void FilteredWriteObject(PSObject obj, List<PSNoteProperty> addedNoteProperties)
         {
             Diagnostics.Assert(obj != null, "This command should never write null");
@@ -574,9 +609,10 @@ namespace Microsoft.PowerShell.Commands
                     SetPSCustomObject(obj);
                     WriteObject(obj);
                 }
+
                 return;
             }
-            //if only unique is mentioned
+            // if only unique is mentioned
             else if ((_unique))
             {
                 bool isObjUnique = true;
@@ -596,6 +632,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (found)
                         {
                             isObjUnique = false;
@@ -607,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
                 }
+
                 if (isObjUnique)
                 {
                     SetPSCustomObject(obj);
@@ -636,7 +674,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -650,16 +687,18 @@ namespace Microsoft.PowerShell.Commands
             _selectObjectQueue = new SelectObjectQueue(_first, _last, Skip, SkipLast, _firstOrLastSpecified);
         }
 
-        private int _indexOfCurrentObject = 0;
-        private int _indexCount = 0;
         /// <summary>
-        ///
+        /// Handles processing of InputObject.
         /// </summary>
         protected override void ProcessRecord()
         {
             if (InputObject != AutomationNull.Value && InputObject != null)
             {
-                if (!_indexSpecified)
+                if (_indexSpecified)
+                {
+                    ProcessIndexed();
+                }
+                else
                 {
                     _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
@@ -667,40 +706,82 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ProcessObjectAndHandleErrors(streamingInputObject);
                     }
+
                     if (_selectObjectQueue.AllRequestedObjectsProcessed && !this.Wait)
                     {
                         this.EndProcessing();
                         throw new StopUpstreamCommandsException(this);
                     }
                 }
-                else
-                {
-                    if (_indexOfCurrentObject < _index.Length)
-                    {
-                        int currentlyRequestedIndex = _index[_indexOfCurrentObject];
-                        if (_indexCount == currentlyRequestedIndex)
-                        {
-                            ProcessObjectAndHandleErrors(InputObject);
-                            while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
-                            {
-                                _indexOfCurrentObject++;
-                            }
-                        }
-                    }
-
-                    if (!this.Wait && _indexOfCurrentObject >= _index.Length)
-                    {
-                        this.EndProcessing();
-                        throw new StopUpstreamCommandsException(this);
-                    }
-
-                    _indexCount++;
-                }
             }
         }
 
         /// <summary>
-        ///
+        /// The index of the active index filter.
+        /// </summary>
+        private int _currentFilterIndex;
+
+        /// <summary>
+        /// The index of the object being processed.
+        /// </summary>
+        private int _currentObjectIndex;
+
+        /// <summary>
+        /// Handles processing of InputObject if -Index or -SkipIndex is specified.
+        /// </summary>
+        private void ProcessIndexed()
+        {
+            if (_isIncludeIndex)
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToOutput = _index[_currentFilterIndex];
+                    if (_currentObjectIndex == nextIndexToOutput)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToOutput))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+
+                if (!Wait && _currentFilterIndex >= _index.Length)
+                {
+                    EndProcessing();
+                    throw new StopUpstreamCommandsException(this);
+                }
+
+                _currentObjectIndex++;
+            }
+            else
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToSkip = _index[_currentFilterIndex];
+                    if (_currentObjectIndex != nextIndexToSkip)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                    }
+                    else
+                    {
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToSkip))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+                else
+                {
+                    ProcessObjectAndHandleErrors(InputObject);
+                }
+
+                _currentObjectIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Completes the processing of Input.
         /// </summary>
         protected override void EndProcessing()
         {

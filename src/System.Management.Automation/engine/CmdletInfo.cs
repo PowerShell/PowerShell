@@ -9,7 +9,7 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH cmdlets that are directly executable by MSH
+    /// The command information for MSH cmdlets that are directly executable by MSH.
     /// </summary>
     public class CmdletInfo : CommandInfo
     {
@@ -19,27 +19,21 @@ namespace System.Management.Automation
         /// Constructs a CmdletInfo object from the raw cmdlet data.  This should only
         /// be used for Intrinsic commands.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the cmdlet.
         /// </param>
-        ///
         /// <param name="implementingType">
         /// The type information about the class that implements the cmdlet.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the cmdlet
         /// </param>
-        ///
         /// <param name="PSSnapin">
         /// The PSSnapInInfo of the PSSnapin the cmdlet comes from.
         /// </param>
-        ///
         /// <param name="context">
         /// The current engine context.
         /// </param>
-        ///
         internal CmdletInfo(
             string name,
             Type implementingType,
@@ -48,7 +42,7 @@ namespace System.Management.Automation
             ExecutionContext context)
             : base(name, CommandTypes.Cmdlet, context)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -67,6 +61,9 @@ namespace System.Management.Automation
             _helpFilePath = helpFile;
             _PSSnapin = PSSnapin;
             _options = ScopedItemOptions.ReadOnly;
+
+            // CmdletInfo represents cmdlets exposed from assemblies.  On a locked down system, only trusted
+            // assemblies will be loaded.  Therefore, a CmdletInfo instance will always be trusted.
             this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
         }
 
@@ -106,7 +103,7 @@ namespace System.Management.Automation
         public CmdletInfo(string name, Type implementingType)
             : base(name, CommandTypes.Cmdlet, null)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
@@ -142,7 +139,7 @@ namespace System.Management.Automation
         #region public members
 
         /// <summary>
-        /// Gets the verb of the cmdlet
+        /// Gets the verb of the cmdlet.
         /// </summary>
         public string Verb
         {
@@ -150,8 +147,9 @@ namespace System.Management.Automation
             {
                 return _verb;
             }
-        } // Verb
-        private string _verb = String.Empty;
+        }
+
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,8 +160,9 @@ namespace System.Management.Automation
             {
                 return _noun;
             }
-        } // Noun
-        private string _noun = String.Empty;
+        }
+
+        private string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -180,12 +179,14 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (index > 0)
             {
                 verb = name.Substring(0, index);
                 noun = name.Substring(index + 1);
                 return true;
             }
+
             return false;
         }
 
@@ -198,12 +199,14 @@ namespace System.Management.Automation
             {
                 return _helpFilePath;
             }
+
             internal set
             {
                 _helpFilePath = value;
             }
-        } // HelpFile
-        private string _helpFilePath = String.Empty;
+        }
+
+        private string _helpFilePath = string.Empty;
 
         internal override HelpCategory HelpCategory
         {
@@ -220,12 +223,12 @@ namespace System.Management.Automation
                 return _PSSnapin;
             }
         }
+
         private PSSnapInInfo _PSSnapin;
 
         /// <summary>
         /// Gets the name of the PSSnapin the cmdlet is implemented in.
         /// </summary>
-        ///
         internal string PSSnapInName
         {
             get
@@ -235,12 +238,13 @@ namespace System.Management.Automation
                 {
                     result = _PSSnapin.Name;
                 }
+
                 return result;
             }
         }
 
         /// <summary>
-        /// Gets the source version
+        /// Gets the source version.
         /// </summary>
         public override Version Version
         {
@@ -265,7 +269,7 @@ namespace System.Management.Automation
         private Version _version;
 
         /// <summary>
-        /// Gets the type that implements the cmdlet
+        /// Gets the type that implements the cmdlet.
         /// </summary>
         public Type ImplementingType
         {
@@ -274,10 +278,11 @@ namespace System.Management.Automation
                 return _implementingType;
             }
         }
+
         private Type _implementingType = null;
 
         /// <summary>
-        /// Gets the synopsis of the cmdlet
+        /// Gets the synopsis of the cmdlet.
         /// </summary>
         public override string Definition
         {
@@ -291,7 +296,7 @@ namespace System.Management.Automation
                     {
                         synopsis.AppendLine();
                         synopsis.AppendLine(
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 "{0}{1}{2} {3}",
                                 _verb,
@@ -304,7 +309,7 @@ namespace System.Management.Automation
                 {
                     // Skip the synopsis documentation if the cmdlet hasn't been loaded yet.
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             "{0}{1}{2}",
                             _verb,
@@ -374,6 +379,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (provider == null)
                     {
                         // No path argument, so just use the current path to choose the provider.
@@ -391,12 +397,12 @@ namespace System.Management.Automation
                 return new ReadOnlyCollection<PSTypeName>(_outputType);
             }
         }
+
         private List<PSTypeName> _outputType = null;
 
         /// <summary>
-        /// Gets or sets the scope options for the alias
+        /// Gets or sets the scope options for the alias.
         /// </summary>
-        ///
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an cmdlet that is constant or
         ///     if the value trying to be set is ScopedItemOptions.Constant
@@ -413,20 +419,18 @@ namespace System.Management.Automation
                 SetOptions(value, false);
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
         /// Sets the options for the cmdlet and allows changes ReadOnly options only if force is specified.
         /// </summary>
-        ///
         /// <param name="newOptions">
         /// The new options value.
         /// </param>
-        ///
         /// <param name="force">
         /// If true the change to the options will happen even if the existing options are read-only.
         /// </param>
-        ///
         internal void SetOptions(ScopedItemOptions newOptions, bool force)
         {
             // Check to see if the cmdlet is readonly, if so
@@ -452,21 +456,22 @@ namespace System.Management.Automation
         #region internal/private members
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         private static string GetFullName(string moduleName, string cmdletName)
         {
             System.Diagnostics.Debug.Assert(cmdletName != null, "cmdletName != null");
             string result = cmdletName;
-            if (!String.IsNullOrEmpty(moduleName))
+            if (!string.IsNullOrEmpty(moduleName))
             {
                 result = moduleName + '\\' + result;
             }
+
             return result;
         }
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         private static string GetFullName(CmdletInfo cmdletInfo)
         {
@@ -498,7 +503,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         internal string FullName
         {
@@ -509,28 +514,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the CommandMetadata for this cmdlet
+        /// Gets the CommandMetadata for this cmdlet.
         /// </summary>
-        ///
         /// <exception cref="ArgumentException">
         /// The type name is invalid or the length of the type name
         /// exceeds 1024 characters.
         /// </exception>
-        ///
         /// <exception cref="System.Security.SecurityException">
         /// The caller does not have the required permission to load the assembly
         /// or create the type.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal override CommandMetadata CommandMetadata
         {
             get {
@@ -538,6 +538,7 @@ namespace System.Management.Automation
                        (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }
         }
+
         private CommandMetadata _cmdletMetadata;
 
         internal override bool ImplementsDynamicParameters
@@ -556,5 +557,5 @@ namespace System.Management.Automation
         }
 
         #endregion internal/private members
-    } // CmdletInfo
-} // namespace System.Management.Automation
+    }
+}

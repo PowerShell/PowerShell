@@ -1,4 +1,0 @@
-[submodule "src/libpsl-native/test/googletest"]
-	path = src/libpsl-native/test/googletest
-	url = https://github.com/google/googletest.git
-	ignore = dirty

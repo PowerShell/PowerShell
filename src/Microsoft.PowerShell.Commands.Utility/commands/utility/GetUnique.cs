@@ -9,7 +9,6 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Unique", DefaultParameterSetName = "AsString",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113335", RemotingCapability = RemotingCapability.None)]
@@ -17,7 +16,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
@@ -32,8 +30,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsString
         {
             get { return _asString; }
+
             set { _asString = value; }
         }
+
         private bool _asString;
 
         /// <summary>
@@ -45,14 +45,15 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter OnType
         {
             get { return _onType; }
+
             set { _onType = value; }
         }
+
         private bool _onType = false;
         #endregion Parameters
 
         #region Overrides
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -75,7 +76,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _lastObjectAsString = _lastObject.ToString();
                 }
-                if (0 == String.Compare(
+
+                if (0 == string.Compare(
                     inputString,
                     _lastObjectAsString,
                     StringComparison.CurrentCulture))
@@ -96,6 +98,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.CurrentCulture,
                         true); // case-sensitive
                 }
+
                 isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
             }
 

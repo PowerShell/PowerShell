@@ -179,6 +179,23 @@ namespace ModuleCmdlets
         }
 
     }
+
+    It 'Should load from ModuleBase path before looking up in GAC' -Skip:(-not $IsWindows) {
+        $module = Get-Module PSScheduledJob -ListAvailable -SkipEditionCheck
+        $moduleBasePath = Split-Path $module.Path
+        $destPath = New-Item -ItemType Directory -Path "$TestDrive/PSScheduledJob"
+        $gacAssemblyPath = (Get-ChildItem "${env:WinDir}\Microsoft.NET\assembly\GAC_MSIL\Microsoft.PowerShell.ScheduledJob" -Recurse -Filter 'Microsoft.PowerShell.ScheduledJob.dll').FullName
+
+        # Copy format, type and psd1
+        Copy-Item "$moduleBasePath/PSScheduledJob*.*" -Destination $destPath -Force
+
+        # Copy assembly to temp module folder"
+        Copy-Item $gacAssemblyPath -Destination $destPath -Force
+
+        # Use a different pwsh so that we do not have the PSScheduledJob module already loaded.
+        $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
+        $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
+    }
  }
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
@@ -270,5 +287,45 @@ Describe "Circular nested module test" -tags "CI" {
     It "Loading the module should succeed and return a module with circular nested module" {
         $m = Import-Module $psdPath -PassThru
         $m.NestedModules[0] | Should -Be $m
+    }
+}
+
+Describe "Import-Module -Force behaviour" -Tag "CI" {
+    BeforeAll {
+        $moduleContent = 'function Test-One { return 101 }'
+        $newModuleContent = "function Test-One { return 93 }`nfunction Test-Two { return 14 }"
+        $modulePath = Join-Path $TestDrive 'ipmofTestModule.psm1'
+    }
+
+    AfterEach {
+        Get-Module 'ipmofTestModule' | Remove-Module
+    }
+
+    It "Loads new functions when Import-Module is called with -Force" {
+        Set-Content -Path $modulePath -Value $moduleContent
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+
+        Set-Content -Path $modulePath -Value $newModuleContent -Force
+        Import-Module -Force $modulePath
+
+        Test-One | Should -Be 93
+        Test-Two | Should -Be 14
+    }
+
+    It "Does not load new functions when Import-Module is called without -Force" {
+        Set-Content -Path $modulePath -Value $moduleContent
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+
+        Set-Content -Path $modulePath -Value $newModuleContent -Force
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 }

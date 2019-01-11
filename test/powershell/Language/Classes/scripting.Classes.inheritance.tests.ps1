@@ -63,6 +63,14 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         [MyComparable].GetInterface("System.IComparable") | Should -Not -BeNullOrEmpty
     }
 
+    It 'can implement .NET interface properties' {
+        Add-Type -TypeDefinition 'public interface InterfaceWithProperty { int Integer { get; set; } }'
+        $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer } [ClassWithInterfaceProperty]::new()'
+        $getter = $C1.GetType().GetMember('get_Integer')
+        $getter.ReturnType.FullName | Should -Be System.Int32
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
@@ -219,7 +227,69 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             [baz]::new().foo() | Should -Be 200600
         }
 
-        It 'allows base class method call and doesn''t fall into recursion' {
+        It 'allows base .NET class method call and doesn''t fall into recursion' {
+            Add-Type -TypeDefinition @'
+                public class BaseMembersTestClass
+                {
+                    public virtual int PublicMethod()
+                    {
+                        return 1001;
+                    }
+
+                    protected virtual int FamilyMethod()
+                    {
+                        return 2002;
+                    }
+
+                    protected internal virtual int FamilyOrAssemblyMethod()
+                    {
+                        return 3003;
+                    }
+                }
+'@
+            $derived = Invoke-Expression @'
+                class BaseCallTestClass : BaseMembersTestClass
+                {
+                    hidden [int] $publicMethodCallCounter
+                    [int] PublicMethod()
+                    {
+                        if ($this.publicMethodCallCounter++ -gt 0)
+                        {
+                            throw "Recursion happens"
+                        }
+                        return 3 * ([BaseMembersTestClass]$this).PublicMethod()
+                    }
+
+                    hidden [int] $familyMethodCallCounter
+                    [int] FamilyMethod()
+                    {
+                        if ($this.familyMethodCallCounter++ -gt 0)
+                        {
+                            throw "Recursion happens"
+                        }
+                        return 3 * ([BaseMembersTestClass]$this).FamilyMethod()
+                    }
+
+                    hidden [int] $familyOrAssemblyMethodCallCounter
+                    [int] FamilyOrAssemblyMethod()
+                    {
+                        if ($this.familyOrAssemblyMethodCallCounter++ -gt 0)
+                        {
+                            throw "Recursion happens"
+                        }
+                        return 3 * ([BaseMembersTestClass]$this).FamilyOrAssemblyMethod()
+                    }
+                }
+
+                [BaseCallTestClass]::new()
+'@
+
+            $derived.PublicMethod() | Should -Be 3003
+            $derived.FamilyMethod() | Should -Be 6006
+            $derived.FamilyOrAssemblyMethod() | Should -Be 9009
+        }
+
+        It 'allows base PowerShell class method call and doesn''t fall into recursion' {
             class bar
             {
                 [int]foo() {return 1001}

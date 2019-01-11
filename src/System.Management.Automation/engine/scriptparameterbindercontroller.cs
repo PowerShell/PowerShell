@@ -11,16 +11,14 @@ namespace System.Management.Automation
     /// This is the interface between the ScriptCommandProcessor and the
     /// parameter binders required to bind parameters to a shell function.
     /// </summary>
-    ///
     internal class ScriptParameterBinderController : ParameterBinderController
     {
         #region ctor
 
         /// <summary>
         /// Initializes the cmdlet parameter binder controller for
-        /// the specified cmdlet and engine context
+        /// the specified cmdlet and engine context.
         /// </summary>
-        ///
         /// <param name="script">
         /// The script that contains the parameter metadata.
         /// </param>
@@ -68,13 +66,11 @@ namespace System.Management.Automation
         internal List<object> DollarArgs { get; private set; }
 
         /// <summary>
-        /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks
+        /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks.
         /// </summary>
-        ///
         /// <param name="arguments">
         ///     The arguments to be bound.
         /// </param>
-        ///
         /// <returns>
         /// True if binding was successful or false otherwise.
         /// </returns>
@@ -123,20 +119,16 @@ namespace System.Management.Automation
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>
-        ///
         /// <param name="argument">
         /// The name and value of the variable to bind.
         /// </param>
-        ///
         /// <param name="flags">
         /// Ignored.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter was successfully bound. Any error condition
         /// produces an exception.
         /// </returns>
-        ///
         internal override bool BindParameter(CommandParameterInternal argument, ParameterBindingFlags flags)
         {
             // Just pass the binding straight through.  No metadata to verify the parameter against.
@@ -145,13 +137,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the specified parameters to the shell function
+        /// Binds the specified parameters to the shell function.
         /// </summary>
-        ///
         /// <param name="arguments">
         /// The arguments to bind.
         /// </param>
-        ///
         internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> arguments)
         {
             Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
@@ -196,6 +186,7 @@ namespace System.Management.Automation
 
                         throw bindingException;
                     }
+
                     BindParameter(uint.MaxValue, argument, parameter, ParameterBindingFlags.ShouldCoerceType);
                 }
                 else if (argument.ParameterName.Equals(Language.Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
@@ -210,18 +201,17 @@ namespace System.Management.Automation
                     result.Add(argument);
                 }
             }
+
             return result;
         }
 
         /// <summary>
         /// Takes the remaining arguments that haven't been bound, and binds
-        /// them to $args
+        /// them to $args.
         /// </summary>
-        ///
         /// <param name="arguments">
         ///     The remaining unbound arguments.
         /// </param>
-        ///
         /// <remarks>
         /// An array containing the values that were bound to $args.
         /// </remarks>
@@ -273,6 +263,7 @@ namespace System.Management.Automation
                     {
                         args.Add(argValue);
                     }
+
                     continue;
                 }
 
@@ -291,6 +282,7 @@ namespace System.Management.Automation
                         { IsHidden = true };
                         parameterText.Properties.Add(noteProperty);
                     }
+
                     args.Add(parameterText);
                 }
 

@@ -15,7 +15,7 @@ namespace System.Management.Automation.Language
     #region "AstArgumentPair"
 
     /// <summary>
-    /// The types for AstParameterArgumentPair
+    /// The types for AstParameterArgumentPair.
     /// </summary>
     internal enum AstParameterArgumentType
     {
@@ -27,48 +27,48 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The base class for parameter argument pair
+    /// The base class for parameter argument pair.
     /// </summary>
     internal abstract class AstParameterArgumentPair
     {
         /// <summary>
-        /// The parameter Ast
+        /// The parameter Ast.
         /// </summary>
         public CommandParameterAst Parameter { get; protected set; }
 
         /// <summary>
-        /// The argument type
+        /// The argument type.
         /// </summary>
         public AstParameterArgumentType ParameterArgumentType { get; protected set; }
 
         /// <summary>
-        /// Indicate if the parameter is specified
+        /// Indicate if the parameter is specified.
         /// </summary>
         public bool ParameterSpecified { get; protected set; } = false;
 
         /// <summary>
-        /// Indicate if the parameter is specified
+        /// Indicate if the parameter is specified.
         /// </summary>
         public bool ArgumentSpecified { get; protected set; } = false;
 
         /// <summary>
-        /// The parameter name
+        /// The parameter name.
         /// </summary>
         public string ParameterName { get; protected set; }
 
         /// <summary>
-        /// The parameter text
+        /// The parameter text.
         /// </summary>
         public string ParameterText { get; protected set; }
 
         /// <summary>
-        /// The argument type
+        /// The argument type.
         /// </summary>
         public Type ArgumentType { get; protected set; }
     }
 
     /// <summary>
-    /// Represent a parameter argument pair. The argument is a pipeline input object
+    /// Represent a parameter argument pair. The argument is a pipeline input object.
     /// </summary>
     internal sealed class PipeObjectPair : AstParameterArgumentPair
     {
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public ExpressionAst[] Argument { get; } = null;
     }
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public bool Argument
         {
@@ -231,17 +231,17 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Indicate if the argument is contained in the CommandParameterAst
+        /// Indicate if the argument is contained in the CommandParameterAst.
         /// </summary>
         public bool ParameterContainsArgument { get; } = false;
 
         /// <summary>
-        /// Indicate if the argument is of type CommandParameterAst
+        /// Indicate if the argument is of type CommandParameterAst.
         /// </summary>
         public bool ArgumentIsCommandParameterAst { get; } = false;
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public CommandElementAst Argument { get; } = null;
     }
@@ -251,12 +251,11 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    ///
     /// </summary>
     public static class StaticParameterBinder
     {
         /// <summary>
-        /// Bind a CommandAst to one of PowerShell's built-in commands
+        /// Bind a CommandAst to one of PowerShell's built-in commands.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <returns>The StaticBindingResult that represents the binding.</returns>
@@ -267,7 +266,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Bind a CommandAst to the specified command
+        /// Bind a CommandAst to the specified command.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <param name="resolve">Boolean to determine whether binding should be syntactic, or should attempt
@@ -280,7 +279,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Bind a CommandAst to the specified command
+        /// Bind a CommandAst to the specified command.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <param name="resolve">Boolean to determine whether binding should be syntactic, or should attempt
@@ -342,6 +341,7 @@ namespace System.Management.Automation.Language
                     s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
                     s_bindCommandRunspace.Open();
                 }
+
                 Runspace.DefaultRunspace = s_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
@@ -355,6 +355,7 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
+
         [ThreadStatic]
         static Runspace s_bindCommandRunspace = null;
     }
@@ -483,7 +484,7 @@ namespace System.Management.Automation.Language
                 {
                     CompiledCommandParameter parameter = item.Value.Parameter;
                     CommandElementAst value = null;
-                    Object constantValue = null;
+                    object constantValue = null;
 
                     // This is a single argument
                     AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
@@ -524,7 +525,7 @@ namespace System.Management.Automation.Language
                     if (parameter.Type == typeof(SwitchParameter))
                     {
                         if ((value != null) &&
-                            (String.Equals("$false", value.Extent.Text, StringComparison.OrdinalIgnoreCase)))
+                            (string.Equals("$false", value.Extent.Text, StringComparison.OrdinalIgnoreCase)))
                         {
                             continue;
                         }
@@ -594,6 +595,7 @@ namespace System.Management.Automation.Language
                 BindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
             }
         }
+
         private PseudoBindingInfo _bindingInfo = null;
 
         private void CreateBindingResultForSyntacticBind(CommandAst commandAst)
@@ -695,22 +697,20 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
 
     /// <summary>
-    /// Represents the binding of a parameter to its argument
+    /// Represents the binding of a parameter to its argument.
     /// </summary>
     public class ParameterBindingResult
     {
-        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, Object constantValue)
+        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, object constantValue)
         {
             this.Parameter = new ParameterMetadata(parameter);
             this.Value = value;
@@ -722,16 +722,15 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ParameterMetadata Parameter { get; internal set; }
 
         /// <summary>
-        ///
         /// </summary>
-        public Object ConstantValue
+        public object ConstantValue
         {
             get { return _constantValue; }
+
             internal set
             {
                 if (value != null)
@@ -740,14 +739,15 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private object _constantValue;
 
         /// <summary>
-        ///
         /// </summary>
         public CommandElementAst Value
         {
             get { return _value; }
+
             internal set
             {
                 _value = value;
@@ -759,19 +759,20 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private CommandElementAst _value;
     }
 
     /// <summary>
-    /// Represents the exception generated by the static parameter binding process
+    /// Represents the exception generated by the static parameter binding process.
     /// </summary>
     public class StaticBindingError
     {
         /// <summary>
-        /// Creates a StaticBindingException
+        /// Creates a StaticBindingException.
         /// </summary>
-        /// <param name="commandElement">The element associated with the exception</param>
-        /// <param name="exception">The parameter binding exception that got raised</param>
+        /// <param name="commandElement">The element associated with the exception.</param>
+        /// <param name="exception">The parameter binding exception that got raised.</param>
         internal StaticBindingError(CommandElementAst commandElement, ParameterBindingException exception)
         {
             this.CommandElement = commandElement;
@@ -800,7 +801,7 @@ namespace System.Management.Automation.Language
     internal sealed class PseudoBindingInfo
     {
         /// <summary>
-        /// The pseudo binding succeeded
+        /// The pseudo binding succeeded.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="validParameterSetsFlags"></param>
@@ -847,7 +848,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The pseudo binding failed with parameter set confliction
+        /// The pseudo binding failed with parameter set confliction.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="defaultParameterSetFlag"></param>
@@ -906,7 +907,7 @@ namespace System.Management.Automation.Language
     {
         /*
         /// <summary>
-        /// Get the parameter binding metadata
+        /// Get the parameter binding metadata.
         /// </summary>
         /// <param name="possibleParameterSets"></param>
         /// <returns></returns>
@@ -921,29 +922,29 @@ namespace System.Management.Automation.Language
         internal enum BindingType
         {
             /// <summary>
-            /// Caller is binding a parameter argument
+            /// Caller is binding a parameter argument.
             /// </summary>
             ArgumentBinding = 0,
 
             /// <summary>
-            /// Caller is performing completion on a parameter argument
+            /// Caller is performing completion on a parameter argument.
             /// </summary>
             ArgumentCompletion,
 
             /// <summary>
-            /// Caller is performing completion on a parameter name
+            /// Caller is performing completion on a parameter name.
             /// </summary>
             ParameterCompletion
         }
 
         /// <summary>
-        /// Get the parameter binding metadata
+        /// Get the parameter binding metadata.
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="pipeArgumentType">Indicate the type of the piped-in argument</param>
-        /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at</param>
+        /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
+        /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
-        /// <returns>PseudoBindingInfo</returns>
+        /// <returns>PseudoBindingInfo.</returns>
         internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
         {
             if (command == null)
@@ -969,11 +970,12 @@ namespace System.Management.Automation.Language
                     try
                     {
                         // Tab expansion is called from a trusted function - we should apply ConstrainedLanguage if necessary.
-                        if (ExecutionContext.HasEverUsedConstrainedLanguage)
+                        if (executionContext.HasRunspaceEverUsedConstrainedLanguageMode)
                         {
                             previousLanguageMode = executionContext.LanguageMode;
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         }
+
                         _bindingEffective = PrepareCommandElements(executionContext);
                     }
                     finally
@@ -992,6 +994,7 @@ namespace System.Management.Automation.Language
             {
                 _pipelineInputType = pipeArgumentType;
             }
+
             _bindingEffective = ParseParameterArguments(paramAstAtCursor);
 
             if (_bindingEffective)
@@ -1068,9 +1071,9 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Sets a temporary default host on the ExecutionContext
+        /// Sets a temporary default host on the ExecutionContext.
         /// </summary>
-        /// <param name="executionContext">ExecutionContext</param>
+        /// <param name="executionContext">ExecutionContext.</param>
         private void SetTemporaryDefaultHost(ExecutionContext executionContext)
         {
             if (executionContext.EngineHostInterface.IsHostRefSet)
@@ -1092,7 +1095,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Restores original ExecutionContext host state.
         /// </summary>
-        /// <param name="executionContext">ExecutionContext</param>
+        /// <param name="executionContext">ExecutionContext.</param>
         private void RestoreHost(ExecutionContext executionContext)
         {
             // Remove temporary host and revert to original.
@@ -1136,7 +1139,7 @@ namespace System.Management.Automation.Language
         private Dictionary<CommandParameterAst, ParameterBindingException> _bindingExceptions;
 
         /// <summary>
-        /// Initialize collection/dictionary members when it's necessary
+        /// Initialize collection/dictionary members when it's necessary.
         /// </summary>
         private void InitializeMembers()
         {
@@ -1331,6 +1334,7 @@ namespace System.Management.Automation.Language
                             _pipelineInputType = typeof(object);
                         break;
                     }
+
                     preCmdBaseAst = cmdBase;
                 }
             }
@@ -1347,6 +1351,7 @@ namespace System.Management.Automation.Language
             {
                 ast = ast.Parent;
             }
+
             ast.Visit(exportVisitor);
 
             CommandProcessorBase commandProcessor = null;
@@ -1372,6 +1377,7 @@ namespace System.Management.Automation.Language
                     commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);
                 }
             }
+
             return commandProcessor;
         }
 
@@ -1380,7 +1386,6 @@ namespace System.Management.Automation.Language
         /// specified. We always eat the error (such as parameter without value) and continue
         /// to do the binding.
         /// </summary>
-        ///
         /// <param name="paramAstAtCursor">
         /// For parameter completion, if the cursor is pointing at a CommandParameterAst, we
         /// should not try exact matching for that CommandParameterAst. This is to handle the
@@ -1410,7 +1415,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(argument.ParameterSpecified && !argument.ArgumentSpecified,
                     "At this point, the parameters should have no arguments");
 
-                //Now check the parameter name with the bindable parameters
+                // Now check the parameter name with the bindable parameters
                 string parameterName = argument.ParameterName;
                 MergedCompiledCommandParameter matchingParameter = null;
 
@@ -1837,6 +1842,7 @@ namespace System.Management.Automation.Language
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -1856,6 +1862,7 @@ namespace System.Management.Automation.Language
                     result = argument;
                     break;
                 }
+
                 nonPositionalArguments.Add(argument);
             }
 
@@ -1912,6 +1919,7 @@ namespace System.Management.Automation.Language
                         _boundArguments.Add(parameterName, new AstArrayPair(parameterName, argList));
                         unboundArguments.Clear();
                     }
+
                     result = true;
                     break;
                 }
@@ -1969,6 +1977,7 @@ namespace System.Management.Automation.Language
                     {
                         _boundArguments.Add(parameterName, new PipeObjectPair(parameterName, _pipelineInputType));
                     }
+
                     result = true;
                     break;
                 }

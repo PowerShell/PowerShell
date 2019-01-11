@@ -47,7 +47,7 @@ function RunTest() {
                     function callback(err, result) {
                         var resultString = (result || "").toString();
                         if (resultString) {
-                            file.contents = new Buffer(resultString);
+                            file.contents = Buffer.from(resultString);
                         }
                         next(err, file);
                     });

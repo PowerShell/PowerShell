@@ -28,22 +28,22 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The parameter set name to get the parent path
+        /// The parameter set name to get the parent path.
         /// </summary>
         private const string parentSet = "ParentSet";
 
         /// <summary>
-        /// The parameter set name to get the leaf name
+        /// The parameter set name to get the leaf name.
         /// </summary>
         private const string leafSet = "LeafSet";
 
         /// <summary>
-        /// The parameter set name to get the leaf base name
+        /// The parameter set name to get the leaf base name.
         /// </summary>
         private const string leafBaseSet = "LeafBaseSet";
 
         /// <summary>
-        /// The parameter set name to get the extension
+        /// The parameter set name to get the extension.
         /// </summary>
         private const string extensionSet = "ExtensionSet";
 
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         private const string literalPathSet = "LiteralPathSet";
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = parentSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = leafSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPathSet", Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
@@ -89,82 +89,70 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return Path;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 Path = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
-        /// Determines if the qualifier should be returned
+        /// Determines if the qualifier should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
-        /// Determines if the qualifier should be returned
+        /// Determines if the qualifier should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
         [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
-        /// Determines if the parent path should be returned
+        /// Determines if the parent path should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the parent of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = parentSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Parent { get; set; } = true;
 
         /// <summary>
-        /// Determines if the leaf name should be returned
+        /// Determines if the leaf name should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the leaf name of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
         /// <summary>
-        /// Determines if the leaf base name (name without extension) should be returned
+        /// Determines if the leaf base name (name without extension) should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the leaf base name of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter LeafBase { get; set; }
 
         /// <summary>
-        /// Determines if the extension should be returned
+        /// Determines if the extension should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the extension of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Extension { get; set; }
 
@@ -348,6 +336,7 @@ namespace Microsoft.PowerShell.Commands
                                         separatorIndex + 1);
                             }
                         }
+
                         break;
 
                     case parentSet:
@@ -357,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
                             result =
                                 SessionState.Path.ParseParent(
                                     pathsToParse[index],
-                                    String.Empty,
+                                    string.Empty,
                                     CmdletProviderContext,
                                     true);
                         }
@@ -368,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
                             // provider.  Since the paths for these types of
                             // providers can't be split, asking for the parent
                             // is asking for an empty string.
-                            result = String.Empty;
+                            result = string.Empty;
                         }
 
                         break;
@@ -430,28 +419,25 @@ namespace Microsoft.PowerShell.Commands
                             false,
                             "Only a known parameter set should be called");
                         break;
-                } // switch
+                }
 
                 if (result != null)
                 {
                     WriteObject(result);
                 }
-            } // for each path
-        } // ProcessRecord
+            }
+        }
         #endregion Command code
 
         /// <summary>
         /// Removes either the drive or provider qualifier or both from the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to strip the provider qualifier from.
         /// </param>
-        ///
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        ///
         private string RemoveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
@@ -472,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string driveName = String.Empty;
+                string driveName = string.Empty;
 
                 if (SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
@@ -486,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // RemoveQualifier
-    } // SplitPathCommand
-} // namespace Microsoft.PowerShell.Commands
+        }
+    }
+}
 

@@ -11,53 +11,42 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the configuration.
         /// </param>
-        ///
         /// <param name="configuration">
         /// The ScriptBlock for the configuration
         /// </param>
-        ///
         /// <param name="context">
         /// The ExecutionContext for the configuration.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>
-        ///
         internal ConfigurationInfo(string name, ScriptBlock configuration, ExecutionContext context) : this(name, configuration, context, null)
         {
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the configuration.
         /// </param>
-        ///
         /// <param name="configuration">
         /// The ScriptBlock for the configuration
         /// </param>
-        ///
         /// <param name="context">
         /// The ExecutionContext for the configuration.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the configuration.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>
-        ///
         internal ConfigurationInfo(string name, ScriptBlock configuration, ExecutionContext context, string helpFile)
             : base(name, configuration, context, helpFile)
         {
@@ -65,63 +54,49 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the configuration.
         /// </param>
-        ///
         /// <param name="configuration">
         /// The ScriptBlock for the configuration
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the configuration.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>
-        ///
         internal ConfigurationInfo(string name, ScriptBlock configuration, ScopedItemOptions options, ExecutionContext context) : this(name, configuration, options, context, null)
         {
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the configuration.
         /// </param>
-        ///
         /// <param name="configuration">
         /// The ScriptBlock for the configuration
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the configuration.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the configuration.
         /// </param>
-        ///
-        /// <param name="isMetaConfig">The configuration is a meta configuration</param>
-        ///
+        /// <param name="isMetaConfig">The configuration is a meta configuration.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>
-        ///
         internal ConfigurationInfo(string name, ScriptBlock configuration, ScopedItemOptions options, ExecutionContext context, string helpFile, bool isMetaConfig)
             : base(name, configuration, options, context, helpFile)
         {
@@ -130,33 +105,26 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the configuration.
         /// </param>
-        ///
         /// <param name="configuration">
         /// The ScriptBlock for the configuration
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the configuration.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the configuration.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>
-        ///
         internal ConfigurationInfo(string name, ScriptBlock configuration, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : this(name, configuration, options, context, helpFile, false)
         {
@@ -196,7 +164,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Indication whether the configuration is a meta-configuration
+        /// Indication whether the configuration is a meta-configuration.
         /// </summary>
         public bool IsMetaConfiguration
         { get; internal set; }

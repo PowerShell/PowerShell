@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 function Clean-State
 {
     if (Test-Path $FullyQualifiedLink)
@@ -253,19 +256,27 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 }
 
-Describe "New-Item with links fails for non elevated user." -Tags "CI" {
+Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
-        $tmpDirectory         = $TestDrive
         $testfile             = "testfile.txt"
-        $testfolder           = "newDirectory"
         $testlink             = "testlink"
-        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
+        $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
+        $developerMode = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
     }
 
-    It "Should error correctly when failing to create a symbolic link" {
-        # This test expects that /sbin exists but is not writable by the user
-        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
+    AfterEach {
+        Remove-Item -Path $testFilePath -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Should error correctly when failing to create a symbolic link and not in developer mode" -Skip:(!$IsWindows -or $developerMode -or (Test-IsElevated)) {
+        { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } |
         Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
+        $TestFilePath | Should -Not -Exist
+    }
+
+    It "Should succeed to create a symbolic link without elevation and in developer mode" -Skip:(!$IsWindows -or !$developerMode -or (Test-IsElevated)) {
+        { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
+        $TestFilePath | Should -Exist
     }
 }

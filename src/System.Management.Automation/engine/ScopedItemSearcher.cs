@@ -9,11 +9,9 @@ namespace System.Management.Automation
     /// Enumerates the items matching a particular name in the scopes specified using
     /// the appropriate scoping lookup rules.
     /// </summary>
-    ///
     /// <typeparam name="T">
     /// The type of items that the derived class returns.
     /// </typeparam>
-    ///
     internal abstract class ScopedItemSearcher<T> : IEnumerator<T>, IEnumerable<T>
     {
         #region ctor
@@ -21,20 +19,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a scoped item searcher.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// The state of the engine instance to enumerate through the scopes.
         /// </param>
-        ///
         /// <param name="lookupPath">
         /// The parsed name of the item to lookup.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> or <paramref name="lookupPath"/>
         /// is null.
         /// </exception>
-        ///
         internal ScopedItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath)
@@ -59,13 +53,11 @@ namespace System.Management.Automation
         #region IEnumerable/IEnumerator members
 
         /// <summary>
-        /// Gets the current object as an IEnumerator
+        /// Gets the current object as an IEnumerator.
         /// </summary>
-        ///
         /// <returns>
         /// The current object as an IEnumerator.
         /// </returns>
-        ///
         System.Collections.Generic.IEnumerator<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator()
         {
             return this;
@@ -79,11 +71,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Moves the enumerator to the next matching scoped item.
         /// </summary>
-        ///
         /// <returns>
         /// True if another matching scoped item was found, or false otherwise.
         /// </returns>
-        ///
         public bool MoveNext()
         {
             bool result = true;
@@ -106,6 +96,7 @@ namespace System.Management.Automation
                     result = true;
                     break;
                 }
+
                 result = false;
 
                 if (_isSingleScopeLookup)
@@ -118,9 +109,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current scoped item
+        /// Gets the current scoped item.
         /// </summary>
-        ///
 
         T IEnumerator<T>.Current
         {
@@ -156,23 +146,18 @@ namespace System.Management.Automation
         /// Derived classes override this method to return their
         /// particular type of scoped item.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to look the item up in.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the item to retrieve.
         /// </param>
-        ///
         /// <param name="newCurrentItem">
         /// The scope item that the derived class should return.
         /// </param>
-        ///
         /// <returns>
         /// True if the scope item was found or false otherwise.
         /// </returns>
-        ///
         protected abstract bool GetScopeItem(
             SessionStateScope scope,
             VariablePath name,
@@ -183,7 +168,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the lookup scope that the Current item was found in.
         /// </summary>
-        ///
         internal SessionStateScope CurrentLookupScope
         {
             get { return _currentScope; }
@@ -194,11 +178,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the scope in which the search begins.
         /// </summary>
-        ///
         internal SessionStateScope InitialScope
         {
             get { return _initialScope; }
         }
+
         private SessionStateScope _initialScope;
 
         #region private members
@@ -253,10 +237,10 @@ namespace System.Management.Automation
         private bool _isInitialized;
 
         #endregion private members
-    } // class ScopedItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for variables
+    /// The scope searcher for variables.
     /// </summary>
     internal class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
     {
@@ -274,23 +258,18 @@ namespace System.Management.Automation
         /// Derived classes override this method to return their
         /// particular type of scoped item.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to look the item up in.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the item to retrieve.
         /// </param>
-        ///
         /// <param name="variable">
         /// The scope item that the derived class should return.
         /// </param>
-        ///
         /// <returns>
         /// True if the scope item was found or false otherwise.
         /// </returns>
-        ///
         protected override bool GetScopeItem(
             SessionStateScope scope,
             VariablePath name,
@@ -316,10 +295,10 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // VariableScopeItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for aliases
+    /// The scope searcher for aliases.
     /// </summary>
     internal class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
     {
@@ -333,23 +312,18 @@ namespace System.Management.Automation
         /// Derived classes override this method to return their
         /// particular type of scoped item.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to look the item up in.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the item to retrieve.
         /// </param>
-        ///
         /// <param name="alias">
         /// The scope item that the derived class should return.
         /// </param>
-        ///
         /// <returns>
         /// True if the scope item was found or false otherwise.
         /// </returns>
-        ///
         protected override bool GetScopeItem(
             SessionStateScope scope,
             VariablePath name,
@@ -374,10 +348,10 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // AliasScopeItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for functions
+    /// The scope searcher for functions.
     /// </summary>
     internal class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
     {
@@ -395,23 +369,18 @@ namespace System.Management.Automation
         /// Derived classes override this method to return their
         /// particular type of scoped item.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to look the item up in.
         /// </param>
-        ///
         /// <param name="path">
         /// The name of the item to retrieve.
         /// </param>
-        ///
         /// <param name="script">
         /// The scope item that the derived class should return.
         /// </param>
-        ///
         /// <returns>
         /// True if the scope item was found or false otherwise.
         /// </returns>
-        ///
         protected override bool GetScopeItem(
             SessionStateScope scope,
             VariablePath path,
@@ -458,6 +427,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
 
@@ -465,11 +435,12 @@ namespace System.Management.Automation
         {
             get { return _name; }
         }
-        private string _name = String.Empty;
-    } // FunctionScopeItemSearcher
+
+        private string _name = string.Empty;
+    }
 
     /// <summary>
-    /// The scope searcher for drives
+    /// The scope searcher for drives.
     /// </summary>
     internal class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
     {
@@ -483,23 +454,18 @@ namespace System.Management.Automation
         /// Derived classes override this method to return their
         /// particular type of scoped item.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to look the item up in.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the item to retrieve.
         /// </param>
-        ///
         /// <param name="drive">
         /// The scope item that the derived class should return.
         /// </param>
-        ///
         /// <returns>
         /// True if the scope item was found or false otherwise.
         /// </returns>
-        ///
         protected override bool GetScopeItem(
             SessionStateScope scope,
             VariablePath name,
@@ -515,7 +481,8 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
-    } // DriveScopeItemSearcher
-} // namespace System.Management.Automation
+    }
+}

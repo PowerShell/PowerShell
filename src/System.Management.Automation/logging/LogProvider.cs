@@ -26,15 +26,13 @@ namespace System.Management.Automation
     ///     b. EngineLifecycleEvent
     ///     c. CommandLifecycleEvent
     ///     d. ProviderLifecycleEvent
-    ///     e. SettingsEvent
-    ///
+    ///     e. SettingsEvent.
     /// </summary>
     internal abstract class LogProvider
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
-        ///
         internal LogProvider()
         {
         }
@@ -42,37 +40,34 @@ namespace System.Management.Automation
         #region Provider api
 
         /// <summary>
-        /// Provider interface function for logging health event
+        /// Provider interface function for logging health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        ///
-        internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
+        internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo);
 
         /// <summary>
-        /// Provider interface function for logging engine lifecycle event
+        /// Provider interface function for logging engine lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
-        ///
         internal abstract void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState);
 
         /// <summary>
-        /// Provider interface function for logging command health event
+        /// Provider interface function for logging command health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
         internal abstract void LogCommandHealthEvent(LogContext logContext, Exception exception);
 
         /// <summary>
-        /// Provider interface function for logging command lifecycle event
+        /// Provider interface function for logging command lifecycle event.
         /// </summary>
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
-        ///
         internal abstract void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState);
 
         /// <summary>
@@ -80,38 +75,35 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal abstract void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail);
+        internal abstract void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail);
 
         /// <summary>
-        /// Provider interface function for logging provider health event
+        /// Provider interface function for logging provider health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        ///
         internal abstract void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception);
 
         /// <summary>
-        /// Provider interface function for logging provider lifecycle event
+        /// Provider interface function for logging provider lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
-        ///
         internal abstract void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState);
 
         /// <summary>
-        /// Provider interface function for logging settings event
+        /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
-        ///
         internal abstract void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
 
         /// <summary>
-        /// True if the log provider needs to use logging variables
+        /// True if the log provider needs to use logging variables.
         /// </summary>
         /// <returns></returns>
         internal virtual bool UseLoggingVariables()
@@ -155,14 +147,14 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             object logData = context.GetVariableValue(SpecialVariables.PSLogUserDataPath);
 
             if (logData == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             return logData.ToString();
@@ -171,8 +163,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Appends exception information.
         /// </summary>
-        /// <param name="sb">string builder.</param>
-        /// <param name="except">exception.</param>
+        /// <param name="sb">String builder.</param>
+        /// <param name="except">Exception.</param>
         protected static void AppendException(StringBuilder sb, Exception except)
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
@@ -200,13 +192,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Appends additional information.
         /// </summary>
-        /// <param name="sb">string builder.</param>
-        /// <param name="additionalInfo">additional information.</param>
-        protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<String, String> additionalInfo)
+        /// <param name="sb">String builder.</param>
+        /// <param name="additionalInfo">Additional information.</param>
+        protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<string, string> additionalInfo)
         {
             if (additionalInfo != null)
             {
-                foreach (KeyValuePair<String, String> value in additionalInfo)
+                foreach (KeyValuePair<string, string> value in additionalInfo)
                 {
                     sb.AppendLine(StringUtil.Format("{0} = {1}", value.Key, value.Value));
                 }
@@ -216,7 +208,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets PSLevel from severity.
         /// </summary>
-        /// <param name="severity">error severity.</param>
+        /// <param name="severity">Error severity.</param>
         /// <returns>PS log level.</returns>
         protected static PSLevel GetPSLevelFromSeverity(string severity)
         {
@@ -239,10 +231,10 @@ namespace System.Management.Automation
         const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
 
         /// <summary>
-        /// Converts log context to string
+        /// Converts log context to string.
         /// </summary>
-        /// <param name="context">log context</param>
-        /// <returns>string representation</returns>
+        /// <param name="context">Log context.</param>
+        /// <returns>String representation.</returns>
         protected static string LogContextToString(LogContext context)
         {
             StringBuilder sb = new StringBuilder(LogContextInitialSize);
@@ -291,9 +283,8 @@ namespace System.Management.Automation
     internal class DummyLogProvider : LogProvider
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
-        ///
         internal DummyLogProvider()
         {
         }
@@ -301,44 +292,40 @@ namespace System.Management.Automation
         #region Provider api
 
         /// <summary>
-        /// DummyLogProvider does nothing to Logging EngineHealthEvent
+        /// DummyLogProvider does nothing to Logging EngineHealthEvent.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        ///
-        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
         }
 
         /// <summary>
-        /// DummyLogProvider does nothing to Logging EngineLifecycleEvent
+        /// DummyLogProvider does nothing to Logging EngineLifecycleEvent.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
-        ///
         internal override void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
         {
         }
 
         /// <summary>
-        /// Provider interface function for logging command health event
+        /// Provider interface function for logging command health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
         }
 
         /// <summary>
-        /// DummyLogProvider does nothing to Logging CommandLifecycleEvent
+        /// DummyLogProvider does nothing to Logging CommandLifecycleEvent.
         /// </summary>
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
-        ///
         internal override void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState)
         {
         }
@@ -348,40 +335,37 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
         }
 
         /// <summary>
-        /// Provider interface function for logging provider health event
+        /// Provider interface function for logging provider health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
         }
 
         /// <summary>
-        /// DummyLogProvider does nothing to Logging ProviderLifecycleEvent
+        /// DummyLogProvider does nothing to Logging ProviderLifecycleEvent.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
-        ///
         internal override void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
         {
         }
 
         /// <summary>
-        /// DummyLogProvider does nothing to Logging SettingsEvent
+        /// DummyLogProvider does nothing to Logging SettingsEvent.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
-        ///
         internal override void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
         {
         }

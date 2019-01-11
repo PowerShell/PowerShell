@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Represents an error during execution of a CIM job
+    /// Represents an error during execution of a CIM job.
     /// </summary>
     [Serializable]
     public class CimJobException : SystemException, IContainsErrorRecord
@@ -125,6 +125,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     errorId: "CimJob_" + inner.GetType().Name,
                     errorCategory: ErrorCategory.NotSpecified);
             }
+
             return cimJobException;
         }
 
@@ -267,57 +268,57 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 case NativeErrorCode.Ok:
                     return ErrorCategory.NotSpecified;
                 case NativeErrorCode.Failed:
-                    return ErrorCategory.NotSpecified; ;
+                    return ErrorCategory.NotSpecified; 
                 case NativeErrorCode.AccessDenied:
-                    return ErrorCategory.PermissionDenied; ;
+                    return ErrorCategory.PermissionDenied;
                 case NativeErrorCode.InvalidNamespace:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.InvalidParameter:
-                    return ErrorCategory.InvalidArgument; ;
+                    return ErrorCategory.InvalidArgument;
                 case NativeErrorCode.InvalidClass:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.NotFound:
-                    return ErrorCategory.ObjectNotFound; ;
+                    return ErrorCategory.ObjectNotFound;
                 case NativeErrorCode.NotSupported:
-                    return ErrorCategory.NotImplemented; ;
+                    return ErrorCategory.NotImplemented;
                 case NativeErrorCode.ClassHasChildren:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.ClassHasInstances:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.InvalidSuperClass:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.AlreadyExists:
-                    return ErrorCategory.ResourceExists; ;
+                    return ErrorCategory.ResourceExists;
                 case NativeErrorCode.NoSuchProperty:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.TypeMismatch:
-                    return ErrorCategory.InvalidType; ;
+                    return ErrorCategory.InvalidType;
                 case NativeErrorCode.QueryLanguageNotSupported:
-                    return ErrorCategory.NotImplemented; ;
+                    return ErrorCategory.NotImplemented;
                 case NativeErrorCode.InvalidQuery:
-                    return ErrorCategory.InvalidArgument; ;
+                    return ErrorCategory.InvalidArgument;
                 case NativeErrorCode.MethodNotAvailable:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.MethodNotFound:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.NamespaceNotEmpty:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.InvalidEnumerationContext:
-                    return ErrorCategory.MetadataError; ;
+                    return ErrorCategory.MetadataError;
                 case NativeErrorCode.InvalidOperationTimeout:
-                    return ErrorCategory.InvalidArgument; ;
+                    return ErrorCategory.InvalidArgument;
                 case NativeErrorCode.PullHasBeenAbandoned:
-                    return ErrorCategory.OperationStopped; ;
+                    return ErrorCategory.OperationStopped;
                 case NativeErrorCode.PullCannotBeAbandoned:
-                    return ErrorCategory.CloseError; ;
+                    return ErrorCategory.CloseError;
                 case NativeErrorCode.FilteredEnumerationNotSupported:
-                    return ErrorCategory.NotImplemented; ;
+                    return ErrorCategory.NotImplemented;
                 case NativeErrorCode.ContinuationOnErrorNotSupported:
-                    return ErrorCategory.NotImplemented; ;
+                    return ErrorCategory.NotImplemented;
                 case NativeErrorCode.ServerLimitsExceeded:
-                    return ErrorCategory.ResourceBusy; ;
+                    return ErrorCategory.ResourceBusy;
                 case NativeErrorCode.ServerIsShuttingDown:
-                    return ErrorCategory.ResourceUnavailable; ;
+                    return ErrorCategory.ResourceUnavailable;
                 default:
                     return ErrorCategory.NotSpecified;
             }
@@ -352,6 +353,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get { return _errorRecord; }
         }
+
         private ErrorRecord _errorRecord;
 
         internal bool IsTerminatingError

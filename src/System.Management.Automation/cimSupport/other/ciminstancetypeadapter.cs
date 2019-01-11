@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
             propertyToAdd.baseObject = baseObject;
-            //propertyToAdd.adapter = this;
+            // propertyToAdd.adapter = this;
             return propertyToAdd;
         }
 
@@ -50,12 +50,11 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
-            //psComputerNameProperty.adapter = this;
+            // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -96,7 +95,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <param name="propertyName"></param>
@@ -154,7 +152,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -180,7 +177,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -239,11 +235,11 @@ namespace Microsoft.PowerShell.Cim
                     break;
                 }
             }
+
             return inheritanceChain;
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -296,7 +292,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -311,7 +306,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -340,7 +334,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <param name="value"></param>
@@ -378,6 +371,7 @@ namespace Microsoft.PowerShell.Cim
                         Dbg.Assert(paramType != null, "'default' case should only be used for well-defined CimType->DotNetType conversions");
                         break;
                 }
+
                 valueToSet = Adapter.PropertySetAndMethodArgumentConvertTo(
                     value, paramType, CultureInfo.InvariantCulture);
             }

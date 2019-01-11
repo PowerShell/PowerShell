@@ -33,7 +33,6 @@ namespace System.Management.Automation
     ///
     /// When the TraceFrame instance is disposed, all errorRecords stored will be
     /// dumped into HelpSystem.LastErrors with context information attached.
-    ///
     /// </summary>
     internal class HelpErrorTracer
     {
@@ -138,7 +137,7 @@ namespace System.Management.Automation
         private ArrayList _traceFrames = new ArrayList();
 
         /// <summary>
-        /// This is the API to use for starting a help trace scope
+        /// This is the API to use for starting a help trace scope.
         /// </summary>
         /// <param name="helpFile"></param>
         /// <returns></returns>

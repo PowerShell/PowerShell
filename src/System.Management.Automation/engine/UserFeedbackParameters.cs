@@ -20,6 +20,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
+
             commandRuntime.PagingParameters = this;
         }
 
@@ -56,14 +57,14 @@ namespace System.Management.Automation
         /// of objects that the cmdlet would return without paging
         /// (this can be more than the size of the page specified in the <see cref="First"/> cmdlet parameter).
         /// </summary>
-        /// <param name="totalCount">a total count of objects that the cmdlet would return without paging</param>
+        /// <param name="totalCount">A total count of objects that the cmdlet would return without paging.</param>
         /// <param name="accuracy">
         /// accuracy of the <paramref name="totalCount"/> parameter.
         /// <c>1.0</c> means 100% accurate;
         /// <c>0.0</c> means that total count is unknown;
         /// anything in-between means that total count is estimated
         /// </param>
-        /// <returns>An object that represents a total count of objects that the cmdlet would return without paging</returns>
+        /// <returns>An object that represents a total count of objects that the cmdlet would return without paging.</returns>
         public PSObject NewTotalCount(UInt64 totalCount, double accuracy)
         {
             PSObject result = new PSObject(totalCount);
@@ -105,22 +106,21 @@ namespace System.Management.Automation.Internal
         #region ctor
 
         /// <summary>
-        /// Constructs an instance with the specified command instance
+        /// Constructs an instance with the specified command instance.
         /// </summary>
-        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        ///
         internal ShouldProcessParameters(MshCommandRuntime commandRuntime)
         {
             if (commandRuntime == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
+
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
         #endregion ctor
 
         #region parameters
@@ -136,6 +136,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.WhatIf;
             }
+
             set
             {
                 _commandRuntime.WhatIf = value;
@@ -153,6 +154,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.Confirm;
             }
+
             set
             {
                 _commandRuntime.Confirm = value;
@@ -172,18 +174,16 @@ namespace System.Management.Automation.Internal
         #region ctor
 
         /// <summary>
-        /// Constructs an instance with the specified command instance
+        /// Constructs an instance with the specified command instance.
         /// </summary>
-        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        ///
         internal TransactionParameters(MshCommandRuntime commandRuntime)
         {
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
         #endregion ctor
 
         #region parameters
@@ -191,7 +191,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets or sets the value of the -UseTransaction parameter for all cmdlets.
         /// </summary>
-        ///
         [Parameter]
         [Alias("usetx")]
         public SwitchParameter UseTransaction
@@ -200,6 +199,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.UseTransaction;
             }
+
             set
             {
                 _commandRuntime.UseTransaction = value;

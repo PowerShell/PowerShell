@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "import-localizeddata" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
     public sealed class ImportLocalizedData : PSCmdlet
     {
@@ -22,7 +21,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The path from which to import the aliases.
         /// </summary>
-        ///
         [Parameter(Position = 0)]
         [Alias("Variable")]
         [ValidateNotNullOrEmpty]
@@ -38,12 +36,12 @@ namespace Microsoft.PowerShell.Commands
                 _bindingVariable = value;
             }
         }
+
         private string _bindingVariable;
 
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         public string UICulture
         {
@@ -57,12 +55,12 @@ namespace Microsoft.PowerShell.Commands
                 _uiculture = value;
             }
         }
+
         private string _uiculture;
 
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter]
         public string BaseDirectory
         {
@@ -76,12 +74,12 @@ namespace Microsoft.PowerShell.Commands
                 _baseDirectory = value;
             }
         }
+
         private string _baseDirectory;
 
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter]
         public string FileName
         {
@@ -95,12 +93,14 @@ namespace Microsoft.PowerShell.Commands
                 _fileName = value;
             }
         }
+
         private string _fileName;
 
         /// <summary>
         /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData is allowed.
         /// </summary>
         [Parameter]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] SupportedCommand
         {
@@ -108,12 +108,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandsAllowed;
             }
+
             set
             {
                 _setSupportedCommand = true;
                 _commandsAllowed = value;
             }
         }
+
         private string[] _commandsAllowed = new string[] { "ConvertFrom-StringData" };
         private bool _setSupportedCommand = false;
 
@@ -124,7 +126,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        ///
         protected override void ProcessRecord()
         {
             string path = GetFilePath();
@@ -211,6 +212,13 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         variable.Value = result;
+
+                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        {
+                            // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                            // a module scope, if it's necessary.
+                            ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, scope, Context.EngineSessionState);
+                        }
                     }
                 }
 
@@ -235,9 +243,9 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetFilePath()
         {
-            if (String.IsNullOrEmpty(_fileName))
+            if (string.IsNullOrEmpty(_fileName))
             {
-                if (InvocationExtent == null || String.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent == null || string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     throw PSTraceSource.NewInvalidOperationException(ImportLocalizedDataStrings.NotCalledFromAScriptFile);
                 }
@@ -245,9 +253,9 @@ namespace Microsoft.PowerShell.Commands
 
             string dir = _baseDirectory;
 
-            if (String.IsNullOrEmpty(dir))
+            if (string.IsNullOrEmpty(dir))
             {
-                if (InvocationExtent != null && !String.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent != null && !string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     dir = Path.GetDirectoryName(InvocationExtent.File);
                 }
@@ -260,13 +268,13 @@ namespace Microsoft.PowerShell.Commands
             dir = PathUtils.ResolveFilePath(dir, this);
 
             string fileName = _fileName;
-            if (String.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 fileName = InvocationExtent.File;
             }
             else
             {
-                if (!String.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
                 {
                     throw PSTraceSource.NewInvalidOperationException(ImportLocalizedDataStrings.FileNameParameterCannotHavePath);
                 }
@@ -294,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo currentCulture = culture;
             string filePath;
             string fullFileName = fileName + ".psd1";
-            while (currentCulture != null && !String.IsNullOrEmpty(currentCulture.Name))
+            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 

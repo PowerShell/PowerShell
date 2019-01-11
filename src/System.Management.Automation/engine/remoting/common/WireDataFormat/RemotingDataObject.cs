@@ -109,7 +109,6 @@ namespace System.Management.Automation.Remoting
         #endregion Properties
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -272,7 +271,6 @@ namespace System.Management.Automation.Remoting
         #region Constructors / Factory
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -288,7 +286,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -296,7 +293,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="powerShellId"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        internal new static RemoteDataObject CreateFrom(RemotingDestination destination,
+        internal static new RemoteDataObject CreateFrom(RemotingDestination destination,
             RemotingDataType dataType,
             Guid runspacePoolId,
             Guid powerShellId,

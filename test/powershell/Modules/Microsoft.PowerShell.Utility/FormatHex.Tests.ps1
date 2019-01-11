@@ -18,6 +18,8 @@ Describe "FormatHex" -tags "CI" {
 
     BeforeAll {
 
+        $newline = [Environment]::Newline
+
         Setup -d FormatHexDataDir
         $inputText1 = 'Hello World'
         $inputText2 = 'More text'
@@ -77,25 +79,25 @@ Describe "FormatHex" -tags "CI" {
                 Name = "Can process int32[] type 'fhx -InputObject [int32[]](2032, 2033, 2034)'"
                 InputObject = [int32[]](2032, 2033, 2034)
                 Count = 1
-                ExpectedResult = "00000000   F0 07 00 00 F1 07 00 00 F2 07 00 00              ð...ñ...ò..."
+                ExpectedResult = "00000000000000000000   F0 07 00 00 F1 07 00 00 F2 07 00 00              ð...ñ...ò..."
             }
             @{
                 Name = "Can process Int64 type 'fhx -InputObject [Int64]9223372036854775807'"
                 InputObject = [Int64]9223372036854775807
                 Count = 1
-                ExpectedResult = "00000000   FF FF FF FF FF FF FF 7F                          ......."
+                ExpectedResult = "00000000000000000000   FF FF FF FF FF FF FF 7F                          ......."
             }
             @{
                 Name = "Can process Int64[] type 'fhx -InputObject [Int64[]](9223372036852,9223372036853)'"
                 InputObject = [Int64[]](9223372036852,9223372036853)
                 Count = 1
-                ExpectedResult = "00000000   F4 5A D0 7B 63 08 00 00 F5 5A D0 7B 63 08 00 00  ôZÐ{c...õZÐ{c..."
+                ExpectedResult = "00000000000000000000   F4 5A D0 7B 63 08 00 00 F5 5A D0 7B 63 08 00 00  ôZÐ{c...õZÐ{c..."
             }
             @{
                 Name = "Can process string type 'fhx -InputObject hello world'"
                 InputObject = "hello world"
                 Count = 1
-                ExpectedResult = "00000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
+                ExpectedResult = "00000000000000000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
             }
         )
 
@@ -117,59 +119,59 @@ Describe "FormatHex" -tags "CI" {
                 Name = "Can process byte type '[byte]5 | fhx'"
                 InputObject = [byte]5
                 Count = 1
-                ExpectedResult = "00000000   05"
+                ExpectedResult = "00000000000000000000   05"
             }
             @{
                 Name = "Can process byte[] type '[byte[]](1,2) | fhx'"
                 InputObject = [byte[]](1,2)
                 Count = 2
-                ExpectedResult = "00000000   01                                               ."
-                ExpectedSecondResult = "00000000   02                                               ."
+                ExpectedResult = "00000000000000000000   01                                               ."
+                ExpectedSecondResult = "00000000000000000000   02                                               ."
             }
             @{
                 Name = "Can process int type '7 | fhx'"
                 InputObject = 7
                 Count = 1
-                ExpectedResult = "00000000   07 00 00 00                                      ...."
+                ExpectedResult = "00000000000000000000   07 00 00 00                                      ...."
             }
             @{
                 Name = "Can process int[] type '[int[]](5,6) | fhx'"
                 InputObject = [int[]](5,6)
                 Count = 2
-                ExpectedResult = "00000000   05 00 00 00                                      ...."
-                ExpectedSecondResult = "00000000   06 00 00 00                                      ...."
+                ExpectedResult = "00000000000000000000   05 00 00 00                                      ...."
+                ExpectedSecondResult = "00000000000000000000   06 00 00 00                                      ...."
             }
             @{
                 Name = "Can process int32 type '[int32]2032 | fhx'"
                 InputObject = [int32]2032
                 Count = 1
-                ExpectedResult = "00000000   F0 07 00 00                                      ð..."
+                ExpectedResult = "00000000000000000000   F0 07 00 00                                      ð..."
             }
             @{
                 Name = "Can process int32[] type '[int32[]](2032, 2033) | fhx'"
                 InputObject = [int32[]](2032, 2033)
                 Count = 2
-                ExpectedResult = "00000000   F0 07 00 00                                      ð..."
-                ExpectedSecondResult = "00000000   F1 07 00 00                                      ñ..."
+                ExpectedResult = "00000000000000000000   F0 07 00 00                                      ð..."
+                ExpectedSecondResult = "00000000000000000000   F1 07 00 00                                      ñ..."
             }
             @{
                 Name = "Can process Int64 type '[Int64]9223372036854775807 | fhx'"
                 InputObject = [Int64]9223372036854775807
                 Count = 1
-                ExpectedResult = "00000000   FF FF FF FF FF FF FF 7F                          ......."
+                ExpectedResult = "00000000000000000000   FF FF FF FF FF FF FF 7F                          ......."
             }
             @{
                 Name = "Can process Int64[] type '[Int64[]](9223372036852,9223372036853) | fhx'"
                 InputObject = [Int64[]](9223372036852,9223372036853)
                 Count = 2
-                ExpectedResult = "00000000   F4 5A D0 7B 63 08 00 00                          ôZÐ{c..."
-                ExpectedSecondResult = "00000000   F5 5A D0 7B 63 08 00 00                          õZÐ{c..."
+                ExpectedResult = "00000000000000000000   F4 5A D0 7B 63 08 00 00                          ôZÐ{c..."
+                ExpectedSecondResult = "00000000000000000000   F5 5A D0 7B 63 08 00 00                          õZÐ{c..."
             }
             @{
                 Name = "Can process string type 'hello world | fhx'"
                 InputObject = "hello world"
                 Count = 1
-                ExpectedResult = "00000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
+                ExpectedResult = "00000000000000000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
             }
         )
 
@@ -262,37 +264,37 @@ Describe "FormatHex" -tags "CI" {
                 Name = "Can process ASCII encoding 'fhx -InputObject 'hello' -Encoding ASCII'"
                 Encoding = "ASCII"
                 Count = 1
-                ExpectedResult = "00000000   68 65 6C 6C 6F                                   hello"
+                ExpectedResult = "00000000000000000000   68 65 6C 6C 6F                                   hello"
             }
             @{
                 Name = "Can process BigEndianUnicode encoding 'fhx -InputObject 'hello' -Encoding BigEndianUnicode'"
                 Encoding = "BigEndianUnicode"
                 Count = 1
-                ExpectedResult = "00000000   00 68 00 65 00 6C 00 6C 00 6F                    .h.e.l.l.o"
+                ExpectedResult = "00000000000000000000   00 68 00 65 00 6C 00 6C 00 6F                    .h.e.l.l.o"
             }
             @{
                 Name = "Can process Unicode encoding 'fhx -InputObject 'hello' -Encoding Unicode'"
                 Encoding = "Unicode"
                 Count = 1
-                ExpectedResult = "00000000   68 00 65 00 6C 00 6C 00 6F 00                    h.e.l.l.o."
+                ExpectedResult = "00000000000000000000   68 00 65 00 6C 00 6C 00 6F 00                    h.e.l.l.o."
             }
             @{
                 Name = "Can process UTF7 encoding 'fhx -InputObject 'hello' -Encoding UTF7'"
                 Encoding = "UTF7"
                 Count = 1
-                ExpectedResult = "00000000   68 65 6C 6C 6F                                   hello"
+                ExpectedResult = "00000000000000000000   68 65 6C 6C 6F                                   hello"
             }
              @{
                 Name = "Can process UTF8 encoding 'fhx -InputObject 'hello' -Encoding UTF8'"
                 Encoding = "UTF8"
                 Count = 1
-                ExpectedResult = "00000000   68 65 6C 6C 6F                                   hello"
+                ExpectedResult = "00000000000000000000   68 65 6C 6C 6F                                   hello"
             }
              @{
                 Name = "Can process UTF32 encoding 'fhx -InputObject 'hello' -Encoding UTF32'"
                 Encoding = "UTF32"
                 Count = 1
-                ExpectedResult = "00000000   68 00 00 00 65 00 00 00 6C 00 00 00 6C 00 00 00  h...e...l...l...`r`n00000010   6F 00 00 00                                      o..."
+                ExpectedResult = "00000000000000000000   68 00 00 00 65 00 00 00 6C 00 00 00 6C 00 00 00  h...e...l...l...$($newline)00000000000000000010   6F 00 00 00                                      o..."
             }
         )
 
@@ -418,18 +420,80 @@ Describe "FormatHex" -tags "CI" {
 
             $result | Should -Not -BeNullOrEmpty
             ,$result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result.ToString() | Should -MatchExactly "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa`r`n00000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
+            $result.ToString() | Should -MatchExactly "00000000000000000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa$($newline)00000000000000000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
 
-        It "Validate that files do not have buffer underrun problems 'Format-Hex -path `$InputFile4'" {
+        It "Validate that files do not have buffer underrun problems 'Format-Hex -Path `$InputFile4'" {
 
-            $result = Format-Hex -path $InputFile4
+            $result = Format-Hex -Path $InputFile4
 
             $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -Be 3
-            $result[0].ToString() | Should -MatchExactly "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
-            $result[1].ToString() | Should -MatchExactly "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
-            $result[2].ToString() | Should -MatchExactly "00000020   65 6E 74                                         ent             "
+            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+        }
+    }
+
+    Context "Count and Offset parameters" {
+        It "Count = length" {
+
+            $result = Format-Hex -Path $InputFile4 -Count $inputText4.Length
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+        }
+
+        It "Count = 1" {
+            $result = Format-Hex -Path $inputFile4 -Count 1
+            $result.ToString() | Should -MatchExactly    "00000000000000000000   4E                                               N               "
+        }
+
+        It "Offset = length" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset $inputText4.Length
+            $result | Should -BeNullOrEmpty
+
+            $result = Format-Hex -InputObject $inputText4 -Offset $inputText4.Length
+            $result.Bytes | Should -HaveCount 0
+        }
+
+        It "Offset = 1" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset 1
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000001   6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65 72  ow is the winter"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000011   20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74 65   of our disconte"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000021   6E 74                                            nt              "
+        }
+
+        It "Count = 1 and Offset = 1" {
+            $result = Format-Hex -Path $inputFile4 -Count 1 -Offset 1
+            $result.ToString() | Should -MatchExactly    "00000000000000000001   6F                                               o               "
+        }
+
+        It "Count should be > 0" {
+            { Format-Hex -Path $inputFile4 -Count 0 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+        }
+
+        It "Offset should be >= 0" {
+            { Format-Hex -Path $inputFile4 -Offset -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+        }
+
+        It "Offset = 0" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset 0
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
         }
     }
 }

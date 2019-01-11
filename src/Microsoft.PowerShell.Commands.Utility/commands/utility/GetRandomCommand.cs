@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
-                new ArgumentException(String.Format(
+                new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, min, max)),
                 "MinGreaterThanOrEqualMax",
                 ErrorCategory.InvalidArgument,
@@ -124,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         GetRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
                     }
+
                     break;
             }
         }
@@ -160,6 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _generator;
             }
+
             set
             {
                 _generator = value;
@@ -173,6 +175,7 @@ namespace Microsoft.PowerShell.Commands
                         // make sure we won't leave the generator around after runspace exits
                         myRunspace.StateChanged += CurrentRunspace_StateChanged;
                     }
+
                     GetRandomCommand.s_runspaceGeneratorMap[myRunspace.InstanceId] = _generator;
                 }
                 finally
@@ -215,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -224,6 +228,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -542,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
     /// Provides an adapter API for random numbers that may be either cryptographically random, or
     /// generated with the regular pseudo-random number generator. Re-implementations of
     /// methods using the NextBytes() primitive based on the CLR implementation:
-    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs
+    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs.
     /// </summary>
     internal class PolymorphicRandomNumberGenerator
     {
@@ -567,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
         /// </summary>
-        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0</returns>
+        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0.</returns>
         internal double NextDouble()
         {
             // According to the CLR source:
@@ -619,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a random integer that is within a specified range.
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
         /// <returns></returns>
         public int Next(int minValue, int maxValue)
         {
@@ -645,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Fills the elements of a specified array of bytes with random numbers.
         /// </summary>
-        /// <param name="buffer">The array to be filled</param>
+        /// <param name="buffer">The array to be filled.</param>
         internal void NextBytes(byte[] buffer)
         {
             if (_cryptographicGenerator != null)
@@ -661,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Samples a random integer.
         /// </summary>
-        /// <returns>A random integer, using the full range of Int32</returns>
+        /// <returns>A random integer, using the full range of Int32.</returns>
         private int InternalSample()
         {
             int result;

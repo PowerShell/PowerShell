@@ -12,9 +12,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The information about a parameter set and its parameters for a cmdlet
+    /// The information about a parameter set and its parameters for a cmdlet.
     /// </summary>
-    ///
     public class CommandParameterSetInfo
     {
         #region ctor
@@ -23,31 +22,24 @@ namespace System.Management.Automation
         /// Constructs the parameter set information using the specified parameter name,
         /// and type metadata.
         /// </summary>
-        ///
         /// <param name="name">
         /// The formal name of the parameter.
         /// </param>
-        ///
         /// <param name="isDefaultParameterSet">
         /// True if the parameter set is the default parameter set, or false otherwise.
         /// </param>
-        ///
         /// <param name="parameterSetFlag">
         /// The bit that specifies the parameter set in the type metadata.
         /// </param>
-        ///
         /// <param name="parameterMetadata">
         /// The type metadata about the cmdlet.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameterMetadata"/> is null.
         /// </exception>
-        ///
         internal CommandParameterSetInfo(
             string name,
             bool isDefaultParameterSet,
@@ -55,8 +47,8 @@ namespace System.Management.Automation
             MergedCommandParameterMetadata parameterMetadata)
         {
             IsDefault = true;
-            Name = String.Empty;
-            if (String.IsNullOrEmpty(name))
+            Name = string.Empty;
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -76,7 +68,7 @@ namespace System.Management.Automation
         #region public members
 
         /// <summary>
-        /// Gets the name of the parameter set
+        /// Gets the name of the parameter set.
         /// </summary>
         public string Name { get; private set; }
 
@@ -91,7 +83,7 @@ namespace System.Management.Automation
         public ReadOnlyCollection<CommandParameterInfo> Parameters { get; private set; }
 
         /// <summary>
-        /// Gets the synopsis for the cmdlet as a string
+        /// Gets the synopsis for the cmdlet as a string.
         /// </summary>
         public override string ToString()
         {
@@ -105,6 +97,7 @@ namespace System.Management.Automation
                                          {
                                              result.Append(" ");
                                          }
+
                                          result.Append("[");
                                          result.Append(str);
                                          result.Append("]");
@@ -166,6 +159,7 @@ namespace System.Management.Automation
                             sortedPositionalParameters.Add(null);
                         }
                     }
+
                     sortedPositionalParameters[parameter.Position] = parameter;
                 }
             }
@@ -311,6 +305,7 @@ namespace System.Management.Automation
                 Type parameterType = Nullable.GetUnderlyingType(type) ?? type;
                 parameterTypeString = ToStringCodeMethods.Type(parameterType, true);
             }
+
             return parameterTypeString;
         }
 
@@ -340,6 +335,6 @@ namespace System.Management.Automation
         }
 
         #endregion private members
-    } // class CommandParameterSetInfo
-} // namespace System.Management.Automation
+    }
+}
 

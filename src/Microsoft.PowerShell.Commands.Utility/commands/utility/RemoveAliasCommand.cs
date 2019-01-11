@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Remove-Alias" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.Remove, "Alias", DefaultParameterSetName = "Default", HelpUri = "")]
     [Alias("ral")]
     public class RemoveAliasCommand : PSCmdlet
@@ -48,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string aliasName in Name)
             {
                 AliasInfo existingAlias = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(aliasName);
                 }

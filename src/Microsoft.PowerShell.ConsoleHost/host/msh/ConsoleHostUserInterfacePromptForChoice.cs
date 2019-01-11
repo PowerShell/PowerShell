@@ -19,9 +19,7 @@ namespace Microsoft.PowerShell
     internal partial class ConsoleHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
-        ///
-        /// See base class
-        ///
+        /// See base class.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -29,25 +27,17 @@ namespace Microsoft.PowerShell
         /// <param name="defaultChoice"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
-        ///
         /// If <paramref name="choices"/> is null.
-        ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///
         /// If <paramref name="choices"/>.Count is 0.
-        ///
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If <paramref name="defaultChoice"/> is greater than
         ///     the length of <paramref name="choices"/>.
-        ///
         /// </exception>
         /// <exception cref="PromptingException">
-        ///
         ///  when prompt is canceled by, for example, Ctrl-c.
-        ///
         /// </exception>
 
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
@@ -330,7 +320,7 @@ namespace Microsoft.PowerShell
                 }
 
                 string choice =
-                    String.Format(
+                    string.Format(
                         CultureInfo.InvariantCulture,
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
@@ -370,6 +360,7 @@ namespace Microsoft.PowerShell
                         "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
+
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
                 if (defaultChoiceKeys.Count == 1)
@@ -447,7 +438,7 @@ namespace Microsoft.PowerShell
 
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        String.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
             }
         }
 

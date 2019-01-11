@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -45,7 +44,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -110,7 +108,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.String", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.String", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -121,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -132,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.ScriptBlock", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -143,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             get
             {
-                return String.Equals(this.FullName, "System.Management.Automation.SwitchParameter", StringComparison.OrdinalIgnoreCase);
+                return string.Equals(this.FullName, "System.Management.Automation.SwitchParameter", StringComparison.OrdinalIgnoreCase);
             }
         }
 

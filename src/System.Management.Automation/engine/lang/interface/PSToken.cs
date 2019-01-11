@@ -73,28 +73,32 @@ namespace System.Management.Automation
         #region Token Type
 
         /// <summary>
-        /// Map a V3 token to a V2 PSTokenType
+        /// Map a V3 token to a V2 PSTokenType.
         /// </summary>
-        /// <param name="token">The V3 token</param>
-        /// <returns>The V2 PSTokenType</returns>
+        /// <param name="token">The V3 token.</param>
+        /// <returns>The V2 PSTokenType.</returns>
         public static PSTokenType GetPSTokenType(Token token)
         {
             if ((token.TokenFlags & TokenFlags.CommandName) != 0)
             {
                 return PSTokenType.Command;
             }
+
             if ((token.TokenFlags & TokenFlags.MemberName) != 0)
             {
                 return PSTokenType.Member;
             }
+
             if ((token.TokenFlags & TokenFlags.AttributeName) != 0)
             {
                 return PSTokenType.Attribute;
             }
+
             if ((token.TokenFlags & TokenFlags.TypeName) != 0)
             {
                 return PSTokenType.Type;
             }
+
             return s_tokenKindMapping[(int)token.Kind];
         }
 
@@ -361,91 +365,84 @@ namespace System.Management.Automation
     public enum PSTokenType
     {
         /// <summary>
-        /// Unknown token
+        /// Unknown token.
         /// </summary>
         /// <remarks>
         /// </remarks>
         Unknown,
 
         /// <summary>
-        /// Command
+        /// Command.
         /// </summary>
         /// <remarks>
         /// For example, 'get-process' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         Command,
 
         /// <summary>
-        /// Command Parameter
+        /// Command Parameter.
         /// </summary>
         /// <remarks>
         /// For example, '-name' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandParameter,
 
         /// <summary>
-        /// Command Argument
+        /// Command Argument.
         /// </summary>
         /// <remarks>
         /// For example, 'foo' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandArgument,
 
         /// <summary>
-        /// Number
+        /// Number.
         /// </summary>
         /// <remarks>
         /// For example, 12 in
         ///
         ///     $a=12
-        ///
         /// </remarks>
         Number,
 
         /// <summary>
-        /// String
+        /// String.
         /// </summary>
         /// <remarks>
         /// For example, "12" in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         String,
 
         /// <summary>
-        /// Variable
+        /// Variable.
         /// </summary>
         /// <remarks>
         /// For example, $a in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         Variable,
 
         /// <summary>
-        /// Property name or method name
+        /// Property name or method name.
         /// </summary>
         /// <remarks>
         /// For example, Name in
         ///
         ///     $a.Name
-        ///
         /// </remarks>
         Member,
 
         /// <summary>
-        /// Loop label
+        /// Loop label.
         /// </summary>
         /// <remarks>
         /// For example, :loop in
@@ -455,45 +452,41 @@ namespace System.Management.Automation
         ///     {
         ///         $a
         ///     }
-        ///
         /// </remarks>
         LoopLabel,
 
         /// <summary>
-        /// Attributes
+        /// Attributes.
         /// </summary>
         /// <remarks>
         /// For example, Mandatory in
         ///
         ///     param([Mandatory] $a)
-        ///
         /// </remarks>
         Attribute,
 
         /// <summary>
-        /// Types
+        /// Types.
         /// </summary>
         /// <remarks>
         /// For example, [string] in
         ///
         ///     $a = [string] 12
-        ///
         /// </remarks>
         Type,
 
         /// <summary>
-        /// Operators
+        /// Operators.
         /// </summary>
         /// <remarks>
         /// For example, + in
         ///
         ///     $a = 1 + 2
-        ///
         /// </remarks>
         Operator,
 
         /// <summary>
-        /// Group Starter
+        /// Group Starter.
         /// </summary>
         /// <remarks>
         /// For example, { in
@@ -502,12 +495,11 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupStart,
 
         /// <summary>
-        /// Group Ender
+        /// Group Ender.
         /// </summary>
         /// <remarks>
         /// For example, } in
@@ -516,12 +508,11 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupEnd,
 
         /// <summary>
-        /// Keyword
+        /// Keyword.
         /// </summary>
         /// <remarks>
         /// For example, if in
@@ -530,12 +521,11 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Keyword,
 
         /// <summary>
-        /// Comment
+        /// Comment.
         /// </summary>
         /// <remarks>
         /// For example, #here in
@@ -545,7 +535,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Comment,
 
@@ -560,7 +549,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         StatementSeparator,
 
@@ -575,24 +563,22 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         NewLine,
 
         /// <summary>
-        /// Line continuation
+        /// Line continuation.
         /// </summary>
         /// <remarks>
         /// For example, ` in
         ///
         ///     get-command -name `
         ///     foo
-        ///
         /// </remarks>
         LineContinuation,
 
         /// <summary>
-        /// Position token
+        /// Position token.
         /// </summary>
         /// <remarks>
         /// Position token are bogus tokens generated for identifying a location

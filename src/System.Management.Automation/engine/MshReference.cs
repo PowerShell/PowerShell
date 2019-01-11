@@ -22,7 +22,6 @@ namespace System.Management.Automation
     ///         [ref] $a = $b
     ///     b. variable reference
     ///         $a = [ref] $b
-    ///
     /// </remarks>
     public class PSReference
     {
@@ -57,6 +56,7 @@ namespace System.Management.Automation
 
                 return _value;
             }
+
             set
             {
                 PSVariable variable = _value as PSVariable;

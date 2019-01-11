@@ -17,7 +17,10 @@ param (
 
     [switch]$AppImage,
     [switch]$TarX64,
-    [switch]$TarArm
+    [switch]$TarArm,
+    [switch]$TarArm64,
+    [switch]$FxDependent,
+    [switch]$Alpine
 )
 
 $releaseTagParam = @{}
@@ -33,9 +36,27 @@ try {
     Import-Module "$location/tools/packaging"
 
     Start-PSBootstrap -Package -NoSudo
-    Start-PSBuild -Configuration Release -Crossgen -PSModuleRestore @releaseTagParam
 
-    Start-PSPackage @releaseTagParam
+    $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true}
+
+    if($FxDependent.IsPresent) {
+        $buildParams.Add("Runtime", "fxdependent")
+    } elseif ($Alpine.IsPresent) {
+        $buildParams.Add("Runtime", 'alpine-x64')
+    } else {
+        $buildParams.Add("Crossgen", $true)
+    }
+
+    Start-PSBuild @buildParams @releaseTagParam
+
+    if($FxDependent) {
+        Start-PSPackage -Type 'fxdependent' @releaseTagParam
+    } elseif ($Alpine) {
+        Start-PSPackage -Type 'tar-alpine' @releaseTagParam
+    } else {
+        Start-PSPackage @releaseTagParam
+    }
+
     if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
     if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
 
@@ -45,6 +66,11 @@ try {
         Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
         Start-PSPackage -Type tar-arm @releaseTagParam
     }
+
+    if ($TarArm64) {
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
+        Start-PSPackage -Type tar-arm64 @releaseTagParam
+    }
 }
 finally
 {
@@ -52,6 +78,7 @@ finally
 }
 
 $linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.AppImage,*.tar.gz
+
 foreach ($linuxPackage in $linuxPackages)
 {
     $filePath = $linuxPackage.FullName

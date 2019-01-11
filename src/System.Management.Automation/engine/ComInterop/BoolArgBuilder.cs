@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression UnmarshalFromRef(Expression value)
         {
-            //parameter = temp != 0
+            // parameter = temp != 0
             return base.UnmarshalFromRef(
                 Expression.NotEqual(
                      value,

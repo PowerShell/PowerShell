@@ -45,17 +45,14 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructs an instance of the LocationGlobber from the current SessionState
+        /// Constructs an instance of the LocationGlobber from the current SessionState.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// The instance of session state on which this location globber acts.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState" /> is null.
         /// </exception>
-        ///
         internal LocationGlobber(SessionState sessionState)
         {
             if (sessionState == null)
@@ -64,7 +61,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // LocationGlobber(SessionState)
+        }
 
         #endregion Constructor
 
@@ -75,52 +72,41 @@ namespace System.Management.Automation
         /// Converts a PowerShell path containing glob characters to PowerShell paths that match
         /// the glob string.
         /// </summary>
-        ///
         /// <param name="path">
         /// A PowerShell path containing glob characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The provider instance used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// The PowerShell paths that match the glob string.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> is a provider-qualified path
         /// and the specified provider does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider does not support multiple items.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the home location for the provider is not set and
         /// <paramref name="path"/> starts with a "~".
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         internal Collection<PathInfo> GetGlobbedMonadPathsFromMonadPath(
             string path,
             bool allowNonexistingPaths,
@@ -130,67 +116,54 @@ namespace System.Management.Automation
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedMonadPathsFromMonadPath(path, allowNonexistingPaths, context, out providerInstance);
-        } // GetGlobbedMonadPathsFromMonadPath
+        }
 
         /// <summary>
         /// Converts a PowerShell path containing glob characters to PowerShell paths that match
         /// the glob string.
         /// </summary>
-        ///
         /// <param name="path">
         /// A PowerShell path containing glob characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The instance of the provider used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// The PowerShell paths that match the glob string.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> is a provider-qualified path
         /// and the specified provider does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider does not support multiple items.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the home location for the provider is not set and
         /// <paramref name="path"/> starts with a "~".
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         internal Collection<PathInfo> GetGlobbedMonadPathsFromMonadPath(
             string path,
             bool allowNonexistingPaths,
@@ -269,8 +242,9 @@ namespace System.Management.Automation
                     throw pathNotFound;
                 }
             }
+
             return result;
-        } // GetGlobbedMonadPathsFromMonadPath
+        }
 
         private Collection<string> ResolveProviderPathFromProviderPath(
             string providerPath,
@@ -433,7 +407,7 @@ namespace System.Management.Automation
                 else
                 {
                     constructedProviderPath =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}::{1}",
                             providerId,
@@ -460,7 +434,13 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
-            string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
+            string relativePath =
+                GetDriveRootRelativePathFromPSPath(
+                    path,
+                    context,
+                    !context.SuppressWildcardExpansion,
+                    out drive,
+                    out providerInstance);
 
             Dbg.Diagnostics.Assert(
                 drive != null,
@@ -497,6 +477,7 @@ namespace System.Management.Automation
                 userPath = GetDriveQualifiedPath(relativePath, drive);
                 itemPath = GetProviderPath(path, context);
             }
+
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
             Collection<string> stringResult = new Collection<string>();
@@ -622,71 +603,56 @@ namespace System.Management.Automation
         /// Converts a PowerShell path containing glob characters to the provider
         /// specific paths matching the glob strings.
         /// </summary>
-        ///
         /// <param name="path">
         /// A PowerShell path containing glob characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="provider">
         /// Returns the information of the provider that was used to do the globbing.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The instance of the provider used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider specific paths that matched the PowerShell glob path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> GetGlobbedProviderPathsFromMonadPath(
             string path,
             bool allowNonexistingPaths,
@@ -703,81 +669,65 @@ namespace System.Management.Automation
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, context, out provider, out providerInstance);
-        } // GetGlobbedProviderPathsFromMonadPath
+        }
 
         /// <summary>
         /// Converts a PowerShell path containing glob characters to the provider
         /// specific paths matching the glob strings.
         /// </summary>
-        ///
         /// <param name="path">
         /// A PowerShell path containing glob characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <param name="provider">
         /// Returns the information of the provider that was used to do the globbing.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The instance of the provider used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider specific paths that matched the PowerShell glob path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> GetGlobbedProviderPathsFromMonadPath(
             string path,
             bool allowNonexistingPaths,
@@ -836,7 +786,7 @@ namespace System.Management.Automation
 
                 return paths;
             }
-        } // GetGlobbedProviderPathsFromMonadPath
+        }
 
         #endregion Provider paths from Monad path globbing
 
@@ -847,60 +797,47 @@ namespace System.Management.Automation
         /// will perform the globbing using the specified provider and return the
         /// matching provider specific paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path containing the glob characters to resolve.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The ID of the provider to use to do the resolution.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The instance of the provider that was used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider specific paths that match the glob path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="providerId"/> references a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> references a provider that is not
         /// a ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> GetGlobbedProviderPathsFromProviderPath(
             string path,
             bool allowNonexistingPaths,
@@ -935,69 +872,57 @@ namespace System.Management.Automation
                     throw errorRecord.Exception;
                 }
             }
+
             return results;
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         /// <summary>
         /// Given a provider specific path that contains glob characters, this method
         /// will perform the globbing using the specified provider and return the
         /// matching provider specific paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path containing the glob characters to resolve. The path must be in the
         /// form providerId::providerPath.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The provider identifier for the provider to use to do the globbing.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is occurring.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// An instance of the provider that was used to perform the globbing.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider specific paths that match the glob path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="providerId"/>, or
         /// <paramref name="context"/> is null.
         ///  </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="providerId"/> references a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> references a provider that is not
         /// a ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> GetGlobbedProviderPathsFromProviderPath(
             string path,
             bool allowNonexistingPaths,
@@ -1033,7 +958,7 @@ namespace System.Management.Automation
                     context,
                     out providerInstance);
             }
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         #endregion Provider path to provider paths globbing
 
@@ -1043,113 +968,90 @@ namespace System.Management.Automation
         /// Gets a provider specific path when given an Msh path without resolving the
         /// glob characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// An Msh path.
         /// </param>
-        ///
         /// <returns>
         /// A provider specific path that the Msh path represents.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="path"/> threw an
         /// exception.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal string GetProviderPath(string path)
         {
             ProviderInfo provider = null;
             return GetProviderPath(path, out provider);
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Gets a provider specific path when given an Msh path without resolving the
         /// glob characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// An Msh path.
         /// </param>
-        ///
         /// <param name="provider">
         /// The information of the provider that was used to resolve the path.
         /// </param>
-        ///
         /// <returns>
         /// A provider specific path that the Msh path represents.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="provider"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal string GetProviderPath(string path, out ProviderInfo provider)
         {
             if (path == null)
@@ -1177,63 +1079,51 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Gets a provider specific path when given an Msh path without resolving the
         /// glob characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// An Msh path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context of the command.
         /// </param>
-        ///
         /// <returns>
         /// A provider specific path that the Msh path represents.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="provider"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal string GetProviderPath(string path, CmdletProviderContext context)
         {
             if (path == null)
@@ -1247,66 +1137,53 @@ namespace System.Management.Automation
             string result = GetProviderPath(path, context, out provider, out drive);
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Returns a provider specific path for given PowerShell path.
         /// </summary>
-        ///
         /// <param name="path">
         /// Either a PowerShell path or a provider path in the form providerId::providerPath
         /// </param>
-        ///
         /// <param name="context">
         /// The command context under which this operation is occurring.
         /// </param>
-        ///
         /// <param name="provider">
         /// This parameter is filled with the provider information for the given path.
         /// </param>
-        ///
         /// <param name="drive">
         /// This parameter is filled with the PowerShell drive that represents the given path. If a
         /// provider path is given drive will be null.
         /// </param>
-        ///
         /// <returns>
         /// The provider specific path generated from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="provider"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         internal string GetProviderPath(
             string path,
             CmdletProviderContext context,
@@ -1324,11 +1201,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a provider specific path for given PowerShell path.
         /// </summary>
-        /// <param name="path">Path to resolve</param>
-        /// <param name="context">Cmdlet context</param>
-        /// <param name="isTrusted">When true bypass trust check</param>
-        /// <param name="provider">Provider</param>
-        /// <param name="drive">Drive</param>
+        /// <param name="path">Path to resolve.</param>
+        /// <param name="context">Cmdlet context.</param>
+        /// <param name="isTrusted">When true bypass trust check.</param>
+        /// <param name="provider">Provider.</param>
+        /// <param name="drive">Drive.</param>
         /// <returns></returns>
         internal string GetProviderPath(
             string path,
@@ -1420,6 +1297,7 @@ namespace System.Management.Automation
                 {
                     result = GetProviderSpecificPath(drive, relativePath, context);
                 }
+
                 provider = drive.Provider;
             }
 
@@ -1450,26 +1328,22 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Determines if the specified path is a provider. This is done by looking for
         /// two colons in a row. Anything before the colons is considered the provider ID,
         /// and everything after is considered a namespace specific path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check to see if it is a provider path.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is a provider path, false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool IsProviderQualifiedPath(string path)
         {
             string providerId = null;
@@ -1481,23 +1355,18 @@ namespace System.Management.Automation
         /// two colons in a row. Anything before the colons is considered the provider ID,
         /// and everything after is considered a namespace specific path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check to see if it is a provider path.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The name of the provider if the path is a provider qualified path.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is a provider path, false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool IsProviderQualifiedPath(string path, out string providerId)
         {
             // Verify parameters
@@ -1558,51 +1427,44 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // IsProviderQualifiedPath
+        }
 
         /// <summary>
         /// Determines if the given path is absolute while on a single root filesystem.
         /// </summary>
-        ///
         /// <remarks>
         /// Porting notes: absolute paths on non-Windows filesystems start with a '/' (no "C:" drive
         /// prefix, the slash is the prefix). We compare against both '/' and '\' (default and
         /// alternate path separator) in order for PowerShell to be slash agnostic.
         /// </remarks>
-        ///
         /// <param name="path">
         /// The path used in the determination
         /// </param>
-        ///
         /// <returns>
         /// Returns true if we're on a single root filesystem and the path is absolute.
         /// </returns>
         internal static bool IsSingleFileSystemAbsolutePath(string path)
         {
 #if UNIX
-            return path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal)
-                || path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
+            return path.StartsWith(StringLiterals.DefaultPathSeparator)
+                || path.StartsWith(StringLiterals.AlternatePathSeparator);
 #else
             return false;
 #endif
-        } // IsSingleFileSystemAbsolutePath
+        }
 
         /// <summary>
-        /// Determines if the given path is relative or absolute
+        /// Determines if the given path is relative or absolute.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path used in the determination
         /// </param>
-        ///
         /// <returns>
         /// true if the path is an absolute path, false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool IsAbsolutePath(string path)
         {
             // Verify parameters
@@ -1667,6 +1529,7 @@ namespace System.Management.Automation
                     {
                         separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
                     }
+
                     if (separator == -1 || index < separator)
                     {
                         // We must have a drive specified
@@ -1676,25 +1539,21 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // IsAbsolutePath
+        }
 
         /// <summary>
-        /// Determines if the given path is relative or absolute
+        /// Determines if the given path is relative or absolute.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path used in the determination
         /// </param>
-        ///
         /// <param name="driveName">
         /// If the path is absolute, this out parameter will be the
         /// drive name of the drive that is referenced.
         /// </param>
-        ///
         /// <returns>
         /// true if the path is an absolute path, false otherwise.
         /// </returns>
-        ///
         internal bool IsAbsolutePath(string path, out string driveName)
         {
             // Verify parameters
@@ -1744,7 +1603,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.CurrentCulture);
+                int index = path.IndexOf(":", StringComparison.Ordinal);
 
                 if (index == -1)
                 {
@@ -1783,7 +1642,7 @@ namespace System.Management.Automation
 #endif
 
             return result;
-        } // IsAbsolutePath
+        }
 
         #endregion Path manipulation
 
@@ -1799,19 +1658,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the back tick "`" from any of the glob characters in the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to remove the glob escaping from.
         /// </param>
-        ///
         /// <returns>
         /// The path with the glob characters unescaped.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path" /> is null.
         /// </exception>
-        ///
         private static string RemoveGlobEscaping(string path)
         {
             if (path == null)
@@ -1822,7 +1677,7 @@ namespace System.Management.Automation
             string result = WildcardPattern.Unescape(path);
 
             return result;
-        } // RemoveGlobEscaping
+        }
 
         #region Path manipulation methods
 
@@ -1831,36 +1686,29 @@ namespace System.Management.Automation
         /// by the shell. For instance, "default", "current", "global", and "scope[##]" are scopes
         /// for variables and are considered shell virtual drives.
         /// </summary>
-        ///
         /// <param name="driveName">
         /// The name of the drive to check to see if it is a shell virtual drive.
         /// </param>
-        ///
         /// <param name="scope">
         /// This out parameter is filled with the scope that the drive name represents.
         /// It will be null if the driveName does not represent a scope.
         /// </param>
-        ///
         /// <returns>
         /// true, if the drive name is a shell virtual drive like "Default" or "global",
         /// false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="driveName" /> is null.
         /// </exception>
-        ///
         /// <remarks>
         /// The comparison is done using a case-insensitive comparison using the
         /// Invariant culture.
         ///
         /// This is internal so that it is accessible to SessionState.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="driveName"/> is null.
         /// </exception>
-        ///
         internal bool IsShellVirtualDrive(string driveName, out SessionStateScope scope)
         {
             if (driveName == null)
@@ -1870,55 +1718,48 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            // Is it the global scope?
-
-            if (String.Compare(
+            if (string.Compare(
                     driveName,
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
-            } // globalScope
-
-            // Is it the local scope?
-
-            else if (String.Compare(
+            }
+            else if (string.Compare(
                         driveName,
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
                 result = true;
                 scope = _sessionState.Internal.CurrentScope;
-            } // currentScope
+            }
             else
             {
                 scope = null;
             }
 
             return result;
-        } // IsShellVirtualDrive
+        }
 
         /// <summary>
         /// Gets a provider specific path that represents the specified path and is relative
         /// to the root of the PowerShell drive.
         /// </summary>
-        ///
         /// <param name="path">
         /// Can be a relative or absolute path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <param name="escapeCurrentLocation">
         /// Escape the wildcards in the current location.  Use when this path will be
         /// passed through globbing.
         /// </param>
-        ///
         /// <param name="workingDriveForPath">
         /// This out parameter returns the drive that was specified
         /// by the <paramref name="path" />. If <paramref name="path"/> is
@@ -1926,17 +1767,13 @@ namespace System.Management.Automation
         /// the current working drive.
         ///
         /// If the path refers to a non-existent drive, this parameter is set to null, and an exception is thrown.
-        ///
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// The provider instance that was used.
         /// </param>
-        ///
         /// <returns>
         /// A provider specific relative path to the root of the drive.
         /// </returns>
-        ///
         /// <remarks>
         /// The path is parsed to determine if it is a relative path to the
         /// current working drive or if it is an absolute path. If
@@ -1950,30 +1787,24 @@ namespace System.Management.Automation
         ///
         /// This is internal so that it can be called from SessionState
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path" /> is null.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="providerId"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider is not a NavigationCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         internal string GetDriveRootRelativePathFromPSPath(
             string path,
             CmdletProviderContext context,
@@ -2031,7 +1862,7 @@ namespace System.Management.Automation
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-                    if (normalizedRoot.IndexOf(":", StringComparison.CurrentCulture) >= 0)
+                    if (normalizedRoot.IndexOf(":", StringComparison.Ordinal) >= 0)
                     {
                         string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
@@ -2097,7 +1928,7 @@ namespace System.Management.Automation
                 // have access to it.
                 context.Drive = workingDriveForPath;
 
-                string relativePath = String.Empty;
+                string relativePath = string.Empty;
 
                     relativePath =
                         GenerateRelativePath(
@@ -2117,7 +1948,7 @@ namespace System.Management.Automation
                 providerInstance = null;
                 return string.Empty;
             }
-        } // GetDriveRootRelativePathFromPSPath
+        }
 
         private string GetDriveRootRelativePathFromProviderPath(
             string providerPath,
@@ -2139,10 +1970,10 @@ namespace System.Management.Automation
 
             // Keep on lopping off children until the the remaining path
             // is the drive root.
-            while ((!String.IsNullOrEmpty(providerPath)) &&
+            while ((!string.IsNullOrEmpty(providerPath)) &&
                 (!providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))
             {
-                if (!String.IsNullOrEmpty(childPath))
+                if (!string.IsNullOrEmpty(childPath))
                 {
                     childPath = _sessionState.Internal.MakePath(
                         providerInstance,
@@ -2167,55 +1998,44 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Builds a provider specific path from the current working
-        /// directory using the specified relative path
+        /// directory using the specified relative path.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The drive to generate the provider specific path from.
         /// </param>
-        ///
         /// <param name="path">
         /// The relative path to add to the absolute path in the drive.
         /// </param>
-        ///
         /// <param name="escapeCurrentLocation">
         /// Escape the wildcards in the current location.  Use when this path will be
         /// passed through globbing.
         /// </param>
-        ///
         /// <param name="providerInstance">
         /// An instance of the provider to use if MakePath or GetParentPath
         /// need to be called.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// A string with the joined current working path and relative
         /// path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="drive"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="providerId"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider is not a NavigationCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         internal string GenerateRelativePath(
             PSDriveInfo drive,
             string path,
@@ -2240,7 +2060,7 @@ namespace System.Management.Automation
             // the supplied path
 
             string driveRootRelativeWorkingPath = drive.CurrentLocation;
-            if ((!String.IsNullOrEmpty(driveRootRelativeWorkingPath) &&
+            if ((!string.IsNullOrEmpty(driveRootRelativeWorkingPath) &&
                 (driveRootRelativeWorkingPath.StartsWith(drive.Root, StringComparison.Ordinal))))
             {
                 driveRootRelativeWorkingPath = driveRootRelativeWorkingPath.Substring(drive.Root.Length);
@@ -2265,7 +2085,7 @@ namespace System.Management.Automation
             // We don't want to process other relative path
             // symbols in this case
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 // Just fall-through
             }
@@ -2278,7 +2098,7 @@ namespace System.Management.Automation
                 // is that for file paths a path that is already relative to the drive
                 // root is the same thing as an absolute path (both start with /).
 
-                driveRootRelativeWorkingPath = String.Empty;
+                driveRootRelativeWorkingPath = string.Empty;
 
                 // Remove the \ or / from the drive relative
                 // path
@@ -2315,7 +2135,7 @@ namespace System.Management.Automation
                         (pathLengthEqualsParentDirSymbol ||
                          pathDirSymbolFollowedBySeparator))
                     {
-                        if (!String.IsNullOrEmpty(driveRootRelativeWorkingPath))
+                        if (!string.IsNullOrEmpty(driveRootRelativeWorkingPath))
                         {
                             // Use the provider to get the current path
 
@@ -2380,7 +2200,7 @@ namespace System.Management.Automation
                     if (path.Equals(currentDirSymbol, StringComparison.OrdinalIgnoreCase))
                     {
                         processedSomething = true;
-                        path = String.Empty;
+                        path = string.Empty;
                         break;
                     }
 
@@ -2413,13 +2233,13 @@ namespace System.Management.Automation
                         // the loop.
                         break;
                     }
-                } // while
-            } // if (path.StartsWith(@"\", StringComparison.CurrentCulture))
+                }
+            }
 
             // If more relative path remains add that to
             // the known absolute path
 
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
                 driveRootRelativeWorkingPath =
                     _sessionState.Internal.MakePath(
@@ -2435,7 +2255,7 @@ namespace System.Management.Automation
                 string rootedPath = _sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
                 string normalizedRelativePath = navigationProvider.ContractRelativePath(rootedPath, context.Drive.Root, false, context);
 
-                if (!String.IsNullOrEmpty(normalizedRelativePath))
+                if (!string.IsNullOrEmpty(normalizedRelativePath))
                 {
                     if (normalizedRelativePath.StartsWith(context.Drive.Root, StringComparison.Ordinal))
                         driveRootRelativeWorkingPath = normalizedRelativePath.Substring(context.Drive.Root.Length);
@@ -2451,7 +2271,7 @@ namespace System.Management.Automation
                 driveRootRelativeWorkingPath);
 
             return driveRootRelativeWorkingPath;
-        } // GenerateRelativePath
+        }
 
         private bool HasRelativePathTokens(string path)
         {
@@ -2471,35 +2291,28 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Uses the drive and a relative working path to construct
-        /// a string which has a fully qualified provider specific path
+        /// a string which has a fully qualified provider specific path.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The drive to use as the root of the path.
         /// </param>
-        ///
         /// <param name="workingPath">
         /// The relative working directory to the specified drive.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// A string which is contains the fully qualified path in provider
         /// specific form.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/> or <paramref name="workingPath"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        ///
         private string GetProviderSpecificPath(
             PSDriveInfo drive,
             string workingPath,
@@ -2540,34 +2353,28 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderSpecificPath
+        }
 
         /// <summary>
         /// Parses the provider-qualified path into the provider name and
         /// the provider-internal path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The provider-qualified path to parse.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The name of the provider specified by the path is returned through
         /// this out parameter.
         /// </param>
-        ///
         /// <returns>
         /// The provider-internal path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> is not in the correct format.
         /// </exception>
-        ///
         private static string ParseProviderPath(string path, out string providerId)
         {
             if (path == null)
@@ -2590,7 +2397,7 @@ namespace System.Management.Automation
             string result = path.Substring(providerIdSeparatorIndex + StringLiterals.ProviderPathSeparator.Length);
 
             return result;
-        } // ParseProviderPath
+        }
 
         #endregion Path manipulation methods
 
@@ -2603,58 +2410,46 @@ namespace System.Management.Automation
         /// will perform the globbing using the specified provider and return the
         /// matching provider specific paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path containing the glob characters to resolve.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="containerProvider">
         /// The provider that will be used to glob the <paramref name="path" />.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is occurring.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider specific paths that match the glob path and
         /// filter (if supplied via the context).
         /// </returns>
-        ///
         /// <remarks>
         /// This method is internal because we don't want to expose the
         /// provider instances outside the engine.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="containerProvider"/>, or
         /// <paramref name="context"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> GetGlobbedProviderPathsFromProviderPath(
             string path,
             bool allowNonexistingPaths,
@@ -2684,25 +2479,21 @@ namespace System.Management.Automation
                     context);
 
             return expandedPaths;
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         /// <summary>
         /// Determines if the specified path contains any globing characters. These
         /// characters are defined as '?' and '*'.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to search for globing characters.
         /// </param>
-        ///
         /// <returns>
         /// True if the path contains any of the globing characters, false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool StringContainsGlobCharacters(string path)
         {
             if (path == null)
@@ -2711,26 +2502,22 @@ namespace System.Management.Automation
             }
 
             return WildcardPattern.ContainsWildcardCharacters(path);
-        } // StringContainsGlobCharacters
+        }
 
         /// <summary>
         /// Determines if the path and context are such that we need to run through
         /// the globbing algorithm.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check for glob characters.
         /// </param>
-        ///
         /// <param name="context">
         /// The context to check for filter, include, or exclude expressions.
         /// </param>
-        ///
         /// <returns>
         /// True if globbing should be performed (the path has glob characters, or the context
         /// has either a an include, or an exclude expression). False otherwise.
         /// </returns>
-        ///
         internal static bool ShouldPerformGlobbing(string path, CmdletProviderContext context)
         {
             bool pathContainsGlobCharacters = false;
@@ -2760,38 +2547,31 @@ namespace System.Management.Automation
             s_pathResolutionTracer.WriteLine("Path contains wildcard characters: {0}", pathContainsGlobCharacters);
 
             return (pathContainsGlobCharacters || contextContainsIncludeExclude) && (!contextContainsNoGlob);
-        } // ShouldPerformGlobbing
+        }
 
         /// <summary>
         /// Generates an array of provider specific paths from the single provider specific
         /// path using globing rules.
         /// </summary>
-        ///
         /// <param name="path">
         /// A path that may or may not contain globing characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive that the path is relative to.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider that implements the namespace for the path that we are globing over.
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// An array of path strings that match the globing rules applied to the path parameter.
         /// </returns>
-        ///
         /// <remarks>
         /// First the path is checked to see if it contains any globing characters ('?' or '*').
         /// If it doesn't then the path is returned as the only element in the array.
@@ -2813,49 +2593,39 @@ namespace System.Management.Automation
         /// Calling this method for the path above would return all files that end in 'a' and
         /// any other two characters followed by ".cs" in all the subdirectories of
         /// foo that have a bar subdirectory.
-        ///
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="provider"/>, or
         /// <paramref name="provider"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         private Collection<string> ExpandMshGlobPath(
             string path,
             bool allowNonexistingPaths,
@@ -2877,6 +2647,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
+
             s_tracer.WriteLine("path = {0}", path);
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
@@ -2897,7 +2668,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -2922,7 +2693,7 @@ namespace System.Management.Automation
                                 leafElement = navigationProvider.GetChildName(path, context);
                             }
 
-                            if (String.IsNullOrEmpty(leafElement))
+                            if (string.IsNullOrEmpty(leafElement))
                             {
                                 break;
                             }
@@ -2943,7 +2714,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, drive.Root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))
@@ -2961,6 +2732,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -2969,7 +2741,7 @@ namespace System.Management.Automation
                                 // it can have only one segment in its path. So after removing
                                 // the leaf all we have left is the empty string.
 
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             s_tracer.WriteLine("New path: {0}", path);
@@ -2991,14 +2763,14 @@ namespace System.Management.Automation
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
 
-                                if (!String.IsNullOrEmpty(leafElement))
+                                if (!string.IsNullOrEmpty(leafElement))
                                 {
                                     path = navigationProvider.GetParentPath(path, null, context);
                                 }
                             }
                             else
                             {
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             leafElements.Push(leafElement);
@@ -3098,7 +2870,7 @@ namespace System.Management.Automation
                                 }
                             }
                         }
-                    } // while (leafElements.Count > 0)
+                    }
 
                     Dbg.Diagnostics.Assert(
                         dirs != null,
@@ -3136,7 +2908,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        if (path.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             formatString = "{0}:{1}";
                         }
@@ -3149,7 +2921,7 @@ namespace System.Management.Automation
                     }
 
                     string resolvedPath =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             formatString,
                             drive.Name,
@@ -3182,34 +2954,28 @@ namespace System.Management.Automation
                 "This method should at least return the path or more if it has glob characters");
 
             return result;
-        } // ExpandMshGlobPath
+        }
 
         /// <summary>
         /// Gets either a drive-qualified or provider-qualified path based on the drive
         /// information.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to create a qualified path from.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive used to qualify the path.
         /// </param>
-        ///
         /// <returns>
         /// Either a drive-qualified or provider-qualified Msh path.
         /// </returns>
-        ///
         /// <remarks>
         /// The drive's Hidden property is used to determine if the path returned
         /// should be provider (hidden=true) or drive (hidden=false) qualified.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="drive"/> is null.
         /// </exception>
-        ///
         internal static string GetMshQualifiedPath(string path, PSDriveInfo drive)
         {
             Dbg.Diagnostics.Assert(
@@ -3235,25 +3001,21 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetMshQualifiedPath
+        }
 
         /// <summary>
         /// Removes the provider or drive qualifier from a Msh path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to remove the qualifier from.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive information used to determine if a provider qualifier
         /// or drive qualifier should be removed from the path.
         /// </param>
-        ///
         /// <returns>
         /// The path with the Msh qualifier removed.
         /// </returns>
-        ///
         internal static string RemoveMshQualifier(string path, PSDriveInfo drive)
         {
             Dbg.Diagnostics.Assert(
@@ -3276,29 +3038,24 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveMshQualifier
+        }
 
         /// <summary>
         /// Given an Msh relative or absolute path, returns a drive-qualified absolute path.
         /// No globbing or relative path character expansion is done.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the drive qualified path from.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive the path should be qualified with.
         /// </param>
-        ///
         /// <returns>
         /// A drive-qualified absolute Msh path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="drive"/> is null.
         /// </exception>
-        ///
         internal static string GetDriveQualifiedPath(string path, PSDriveInfo drive)
         {
             if (path == null)
@@ -3330,7 +3087,7 @@ namespace System.Management.Automation
                     else
                     {
                         string possibleDriveName = path.Substring(0, index);
-                        if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             treatAsRelative = false;
                         }
@@ -3341,8 +3098,8 @@ namespace System.Management.Automation
                     // Check if the path begins with "\" or "/" (UNC Path or Path in Unix).
                     // Ignore if the path resolves to a drive path, this will happen when path is equal to "\" or "/".
                     // Drive path still need formatting, so treat them as relative.
-                    if (path.Length > 1 && (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
-                        path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)))
+                    if (path.Length > 1 && (path.StartsWith(StringLiterals.DefaultPathSeparator) ||
+                        path.StartsWith(StringLiterals.AlternatePathSeparator)))
                     {
                         treatAsRelative = false;
                     }
@@ -3362,7 +3119,7 @@ namespace System.Management.Automation
                 if (drive.VolumeSeparatedByColon)
                 {
                     formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (path.StartsWith(StringLiterals.DefaultPathSeparator))
                     {
                         formatString = "{0}:{1}";
                     }
@@ -3373,7 +3130,7 @@ namespace System.Management.Automation
                 }
 
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         formatString,
                         drive.Name,
@@ -3381,20 +3138,17 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetDriveQualifiedPath
+        }
 
         /// <summary>
-        /// Removes the drive qualifier from a drive qualified MSH path
+        /// Removes the drive qualifier from a drive qualified MSH path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to remove the drive qualifier from.
         /// </param>
-        ///
         /// <returns>
         /// The path without the drive qualifier.
         /// </returns>
-        ///
         private static string RemoveDriveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
@@ -3413,6 +3167,7 @@ namespace System.Management.Automation
                 {
                     separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+
                 if (separator == -1 || index < separator)
                 {
                     // Remove the \ or / if it follows the drive indicator
@@ -3427,29 +3182,24 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveDriveQualifier
+        }
 
         /// <summary>
         /// Given an Msh path, returns a provider-qualified path.
         /// No globbing or relative path character expansion is done.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the drive qualified path from.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider the path should be qualified with.
         /// </param>
-        ///
         /// <returns>
         /// A drive-qualified absolute Msh path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="provider"/> is null.
         /// </exception>
-        ///
         internal static string GetProviderQualifiedPath(string path, ProviderInfo provider)
         {
             if (path == null)
@@ -3481,7 +3231,7 @@ namespace System.Management.Automation
             if (!pathResolved)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}{1}{2}",
                         provider.FullName,
@@ -3490,20 +3240,17 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderQualifiedPath
+        }
 
         /// <summary>
-        /// Removes the provider qualifier from a provider-qualified MSH path
+        /// Removes the provider qualifier from a provider-qualified MSH path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to remove the provider qualifier from.
         /// </param>
-        ///
         /// <returns>
         /// The path without the provider qualifier.
         /// </returns>
-        ///
         internal static string RemoveProviderQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
@@ -3523,85 +3270,70 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveProviderQualifier
+        }
 
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
         /// <paramref name="leafElement" /> parameter.
         /// </summary>
-        ///
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
         /// <paramref name="leafElement" /> expression.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive the Msh path is relative to.
         /// </param>
-        ///
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
         /// is used to search the containers in <paramref name="currentDirs" /> for children that
         /// match the glob expression.
         /// </param>
-        ///
         /// <param name="isLastLeaf">
         /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
         /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
         /// <paramref name="leafElement" /> expression.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="currentDirs" /> or <paramref name="provider" />
         /// is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         private List<string> GenerateNewPSPathsWithGlobLeaf(
             List<string> currentDirs,
             PSDriveInfo drive,
@@ -3665,7 +3397,7 @@ namespace System.Management.Automation
 
                         // Now continue on with the names that were returned
 
-                        string mshQualifiedParentPath = String.Empty;
+                        string mshQualifiedParentPath = string.Empty;
                         Collection<PSObject> childNamesObjectArray =
                             GetChildNamesInDir(
                                 dir,
@@ -3694,7 +3426,7 @@ namespace System.Management.Automation
                                 throw new PipelineStoppedException();
                             }
 
-                            string child = String.Empty;
+                            string child = string.Empty;
 
                             if (IsChildNameAMatch(
                                     childObject,
@@ -3709,12 +3441,7 @@ namespace System.Management.Automation
                                 {
                                     string parentPath = RemoveMshQualifier(mshQualifiedParentPath, drive);
 
-                                    childPath =
-                                        _sessionState.Internal.
-                                            MakePath(
-                                                parentPath,
-                                                child,
-                                                context);
+                                    childPath = _sessionState.Internal.MakePath(parentPath, child, context);
 
                                     childPath = GetMshQualifiedPath(childPath, drive);
                                 }
@@ -3728,10 +3455,10 @@ namespace System.Management.Automation
                                 childPath = isLastLeaf ? childPath : WildcardPattern.Escape(childPath);
                                 newDirs.Add(childPath);
                             }
-                        } // foreach (child in childNames)
+                        }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
             else
             {
                 s_tracer.WriteLine(
@@ -3761,13 +3488,7 @@ namespace System.Management.Automation
                         {
                             string parentPath = RemoveMshQualifier(resolvedPath, drive);
 
-                            childPath =
-                                _sessionState.Internal.
-                                    MakePath(
-                                        parentPath,
-                                        backslashEscapedLeafElement,
-                                        context);
-
+                            childPath = _sessionState.Internal.MakePath(parentPath, backslashEscapedLeafElement, context);
                             childPath = GetMshQualifiedPath(childPath, drive);
                         }
 
@@ -3779,38 +3500,32 @@ namespace System.Management.Automation
                             newDirs.Add(childPath);
                         }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
 
             return newDirs;
-        } // GenerateNewPSPathsWithGlobLeaf
+        }
 
         /// <summary>
         /// Generates an array of provider specific paths from the single provider specific
         /// path using globing rules.
         /// </summary>
-        ///
         /// <param name="path">
         /// A path that may or may not contain globing characters.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, a ItemNotFoundException will not be thrown for non-existing
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider that implements the namespace for the path that we are globing over.
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// An array of path strings that match the globing rules applied to the path parameter.
         /// </returns>
-        ///
         /// <remarks>
         /// First the path is checked to see if it contains any globing characters ('?' or '*').
         /// If it doesn't then the path is returned as the only element in the array.
@@ -3832,35 +3547,27 @@ namespace System.Management.Automation
         /// Calling this method for the path above would return all files that end in 'a' and
         /// any other two characters followed by ".cs" in all the subdirectories of
         /// foo that have a bar subdirectory.
-        ///
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="provider"/> is null.
         /// </exception>
-        ///
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// or if the provider is implemented in such a way as to cause the globber to go
         /// into an infinite loop.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal Collection<string> ExpandGlobPath(
             string path,
             bool allowNonexistingPaths,
@@ -3918,7 +3625,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -3943,7 +3650,7 @@ namespace System.Management.Automation
                                 leafElement = navigationProvider.GetChildName(path, context);
                             }
 
-                            if (String.IsNullOrEmpty(leafElement))
+                            if (string.IsNullOrEmpty(leafElement))
                             {
                                 break;
                             }
@@ -3962,7 +3669,7 @@ namespace System.Management.Automation
                             {
                                 // See if we can get the root from the context
 
-                                string root = String.Empty;
+                                string root = string.Empty;
 
                                 if (context != null)
                                 {
@@ -3978,7 +3685,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))
@@ -3996,6 +3703,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -4004,7 +3712,7 @@ namespace System.Management.Automation
                                 // it can have only one segment in its path. So after removing
                                 // the leaf all we have left is the empty string.
 
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             s_tracer.WriteLine("New path: {0}", path);
@@ -4025,15 +3733,16 @@ namespace System.Management.Automation
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
 
-                                if (!String.IsNullOrEmpty(leafElement))
+                                if (!string.IsNullOrEmpty(leafElement))
                                 {
                                     path = navigationProvider.GetParentPath(path, null, context);
                                 }
                             }
                             else
                             {
-                                path = String.Empty;
+                                path = string.Empty;
                             }
+
                             leafElements.Push(leafElement);
                             s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
                         }
@@ -4125,7 +3834,7 @@ namespace System.Management.Automation
                                 }
                             }
                         }
-                    } // while (leafElements.Count > 0)
+                    }
 
                     Dbg.Diagnostics.Assert(
                         dirs != null,
@@ -4167,6 +3876,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             Dbg.Diagnostics.Assert(
                 result != null,
                 "This method should at least return the path or more if it has glob characters");
@@ -4177,70 +3887,58 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ExpandGlobPath
+        }
 
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
         /// <paramref name="leafElement" /> parameter.
         /// </summary>
-        ///
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
         /// <paramref name="leafElement" /> expression.
         /// </param>
-        ///
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
         /// is used to search the containers in <paramref name="currentDirs" /> for children that
         /// match the glob expression.
         /// </param>
-        ///
         /// <param name="isLastLeaf">
         /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
         /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
         /// <paramref name="leafElement" /> expression.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="currentDirs" /> or <paramref name="provider" />
         /// is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         internal List<string> GenerateNewPathsWithGlobLeaf(
             List<string> currentDirs,
             string leafElement,
@@ -4324,29 +4022,24 @@ namespace System.Management.Automation
                                 throw new PipelineStoppedException();
                             }
 
-                            string child = String.Empty;
+                            string child = string.Empty;
                             if (IsChildNameAMatch(childObject, stringMatcher, includeMatcher, excludeMatcher, out child))
                             {
                                 string childPath = child;
 
                                 if (navigationProvider != null)
                                 {
-                                    childPath =
-                                        navigationProvider.
-                                        MakePath(
-                                            unescapedDir,
-                                            child,
-                                            context);
+                                    childPath = navigationProvider.MakePath(unescapedDir, child, context);
                                 }
 
                                 s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
 
                                 newDirs.Add(childPath);
                             }
-                        } // foreach (child in childNames)
+                        }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
             else
             {
                 s_tracer.WriteLine(
@@ -4390,101 +4083,82 @@ namespace System.Management.Automation
                             s_pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
                         }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
 
             return newDirs;
-        } // GenerateNewPathsWithGlobLeaf
+        }
 
         /// <summary>
-        /// Gets the child names in the specified path by using the provider
+        /// Gets the child names in the specified path by using the provider.
         /// </summary>
-        ///
         /// <param name="dir">
         /// The path of the directory to get the child names from. If this is an Msh Path,
         /// dirIsProviderPath must be false, If this is a provider-internal path,
         /// dirIsProviderPath must be true.
         /// </param>
-        ///
         /// <param name="leafElement">
         /// The element that we are ultimately looking for. Used to set filters on the context
         /// if desired.
         /// </param>
-        ///
         /// <param name="getAllContainers">
         /// Determines if the GetChildNames call should get all containers even if they don't
         /// match the filter.
         /// </param>
-        ///
         /// <param name="context">
         /// The context to be used for the command. The context is copied to a new context, the
         /// results are accumulated and then returned.
         /// </param>
-        ///
         /// <param name="dirIsProviderPath">
         /// Specifies whether the dir parameter is a provider-internal path (true) or Msh Path (false).
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive to use to qualify the Msh path if dirIsProviderPath is false.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider to use to get the child names.
         /// </param>
-        ///
         /// <param name="modifiedDirPath">
         /// Returns the modified dir path. If dirIsProviderPath is true, this is the unescaped dir path.
         /// If dirIsProviderPath is false, this is the unescaped resolved provider path.
         /// </param>
-        ///
         /// <returns>
         /// A collection of PSObjects whose BaseObject is a string that contains the name of the child.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="dir"/> or <paramref name="drive"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// If <paramref name="context"/> has been signaled for
         /// StopProcessing.
         /// </exception>
-        ///
         /// <exception>
         /// Any exception can be thrown by the provider that is called to build
         /// the provider path.
         /// </exception>
-        ///
         private Collection<PSObject> GetChildNamesInDir(
             string dir,
             string leafElement,
@@ -4625,38 +4299,31 @@ namespace System.Management.Automation
             {
                 getChildNamesContext.RemoveStopReferral();
             }
-        } // GetChildNamesInDir
+        }
 
         /// <summary>
         /// Determines if the specified PSObject contains a string that matches the specified
         /// wildcard patterns.
         /// </summary>
-        ///
         /// <param name="childObject">
         /// The PSObject that contains the child names.
         /// </param>
-        ///
         /// <param name="stringMatcher">
         /// The glob matcher.
         /// </param>
-        ///
         /// <param name="includeMatcher">
         /// The include matcher wildcard patterns.
         /// </param>
-        ///
         /// <param name="excludeMatcher">
         /// The exclude matcher wildcard patterns.
         /// </param>
-        ///
         /// <param name="childName">
         /// The name of the child which was extracted from the childObject and used for the matches.
         /// </param>
-        ///
         /// <returns>
         /// True if the string in the childObject matches the stringMatcher and includeMatcher wildcard patterns,
         /// and does not match the exclude wildcard patterns. False otherwise.
         /// </returns>
-        ///
         private static bool IsChildNameAMatch(
             PSObject childObject,
             WildcardPattern stringMatcher,
@@ -4732,36 +4399,30 @@ namespace System.Management.Automation
 
             s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
             return result;
-        } //IsChildNameAMatch
+        }
 
         /// <summary>
         /// Converts a back tick '`' escape into back slash escape for
         /// all occurrences in the string.
         /// </summary>
-        ///
         /// <param name="path">
         /// A string that may or may not have back ticks as escape characters.
         /// </param>
-        ///
         /// <returns>
         /// A string that has the back ticks replaced with back slashes except
         /// in the case where there are two back ticks in a row. In that case a single
         /// back tick is returned.
         /// </returns>
-        ///
         /// <remarks>
         /// The following rules apply to the conversion:
         /// 1. All \ characters are expanded to be \\
         /// 2. Any ` not followed by a ` is converted to a \
         /// 3. Any ` that is followed by a ` collapses the two into a single `
         /// 4. Any other character is immediately appended to the result.
-        ///
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         private static string ConvertMshEscapeToRegexEscape(string path)
         {
             if (path == null)
@@ -4828,7 +4489,7 @@ namespace System.Management.Automation
 
                     result.Append(workerArray[index]);
                 }
-            } // for ()
+            }
 
             s_tracer.WriteLine(
                 "Original path: {0} Converted to: {1}",
@@ -4836,26 +4497,22 @@ namespace System.Management.Automation
                 result.ToString());
 
             return result.ToString();
-        } // ConvertMshEscapeToRegexEscape
+        }
 
         /// <summary>
         /// Determines if the path is relative to a provider home based on
         /// the ~ character.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to determine if it is a home path.
         /// </param>
-        ///
         /// <returns>
         /// True if the path contains a ~ at the beginning of the path or immediately
         /// following a provider designator ("provider::")
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// Is <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool IsHomePath(string path)
         {
             if (path == null)
@@ -4890,25 +4547,21 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsHomePath
+        }
 
         /// <summary>
         /// Determines if the specified path looks like a remote path. (starts with
         /// // or \\.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check to determine if it is a remote path.
         /// </param>
-        ///
         /// <returns>
         /// True if the path starts with // or \\, or false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         internal static bool IsProviderDirectPath(string path)
         {
             if (path == null)
@@ -4918,45 +4571,37 @@ namespace System.Management.Automation
 
             return path.StartsWith(StringLiterals.DefaultRemotePathPrefix, StringComparison.Ordinal) ||
                    path.StartsWith(StringLiterals.AlternateRemotePathPrefix, StringComparison.Ordinal);
-        } // IsRemotePath
+        }
 
         /// <summary>
         /// Generates the path for the home location for a provider when given a
         /// path starting with ~ or "provider:~" followed by a relative path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to generate into a home path.
         /// </param>
-        ///
         /// <returns>
         /// The path representing the path to the home location for a provider. This
         /// may be either a fully qualified provider path or a PowerShell path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> is a provider-qualified path
         /// and the specified provider does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider does not support multiple items.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the home location for the provider is not set and
         /// <paramref name="path"/> starts with a "~".
         /// </exception>
-        ///
         internal string GetHomeRelativePath(string path)
         {
             if (path == null)
@@ -4986,7 +4631,7 @@ namespace System.Management.Automation
                         provider = _sessionState.Internal.GetSingleProvider(providerName);
                         path = path.Substring(index + StringLiterals.ProviderPathSeparator.Length);
                     }
-                } // IsProviderPath
+                }
 
                 if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
                 {
@@ -5015,7 +4660,7 @@ namespace System.Management.Automation
                         s_pathResolutionTracer.WriteLine("Getting home path for provider: {0}", provider.Name);
                         s_pathResolutionTracer.WriteLine("Provider HOME path: {0}", provider.Home);
 
-                        if (String.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path))
                         {
                             path = provider.Home;
                         }
@@ -5037,18 +4682,19 @@ namespace System.Management.Automation
                         throw e;
                     }
                 }
+
                 result = path;
-            } // IsHomePath
+            }
 
             return result;
-        } // GetHomeRelativePath
+        }
 
         private static void TraceFilters(CmdletProviderContext context)
         {
             if ((s_pathResolutionTracer.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
                 // Trace the filter
-                s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? String.Empty);
+                s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? string.Empty);
 
                 if (context.Include != null)
                 {
@@ -5058,6 +4704,7 @@ namespace System.Management.Automation
                     {
                         includeString.AppendFormat("{0} ", includeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
@@ -5069,11 +4716,12 @@ namespace System.Management.Automation
                     {
                         excludeString.AppendFormat("{0} ", excludeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
                 }
             }
         }
         #endregion internal methods
 
-    } // class LocationGlobber
-} // namespace System.Management.Automation
+    }
+}

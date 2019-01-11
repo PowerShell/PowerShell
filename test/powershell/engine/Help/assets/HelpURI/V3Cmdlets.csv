@@ -95,3 +95,4 @@ ConvertFrom-Markdown,https://go.microsoft.com/fwlink/?linkid=2006503
 Get-MarkdownOption,https://go.microsoft.com/fwlink/?linkid=2006371
 Set-MarkdownOption,https://go.microsoft.com/fwlink/?linkid=2006265
 Show-Markdown,https://go.microsoft.com/fwlink/?linkid=2006266
+Get-ExperimentalFeature,https://go.microsoft.com/fwlink/?linkid=2007351

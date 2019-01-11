@@ -32,11 +32,11 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true)]
         public string[] Name
         {
             get { return base.NameInternal; }
+
             set { base.NameInternal = value; }
         }
 
@@ -48,11 +48,12 @@ namespace Microsoft.PowerShell.Commands
         public PSTraceSourceOptions Option
         {
             get { return base.OptionsInternal; }
+
             set
             {
                 base.OptionsInternal = value;
             }
-        } // Options
+        }
 
         /// <summary>
         /// The parameter for the expression that should be traced.
@@ -79,11 +80,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         [Parameter]
         public TraceOptions ListenerOption
         {
             get { return base.ListenerOptionsInternal; }
+
             set
             {
                 base.ListenerOptionsInternal = value;
@@ -99,8 +100,9 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return base.FileListener; }
+
             set { base.FileListener = value; }
-        } // File
+        }
 
         /// <summary>
         /// Force parameter to control read-only files.
@@ -109,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return base.ForceWrite; }
+
             set { base.ForceWrite = value; }
         }
 
@@ -120,8 +123,9 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Debugger
         {
             get { return base.DebuggerListener; }
+
             set { base.DebuggerListener = value; }
-        } // Debugger
+        }
 
         /// <summary>
         /// If this parameter is specified the Msh Host trace listener will be added.
@@ -131,8 +135,9 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PSHost
         {
             get { return base.PSHostListener; }
+
             set { base.PSHostListener = value; }
-        } // PSHost
+        }
 
         #endregion Parameters
 
@@ -179,6 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 _pipeline.ExternalErrorOutput = new TracePipelineWriter(this, true, _matchingSources);
                 _pipeline.ExternalSuccessOutput = new TracePipelineWriter(this, false, _matchingSources);
             }
+
             ResetTracing(_matchingSources);
         }
 
@@ -201,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
                     result = StepCommand();
                     break;
             }
+
             ResetTracing(_matchingSources);
 
             if (result == null)
@@ -212,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(result, true);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Finishes running the command if specified and then sets the
@@ -230,13 +237,13 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(results, true);
             }
+
             this.Dispose();
         }
 
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        ///
         protected override void StopProcessing()
         {
             if (_pipeline != null)
@@ -264,6 +271,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _pipeline.Step(InputObject);
             }
+
             return null;
         }
 
@@ -302,9 +310,11 @@ namespace Microsoft.PowerShell.Commands
                         fileStream.Dispose();
                     }
                 }
+
                 GC.SuppressFinalize(this);
             }
-        } // Dispose
+        }
+
         private bool _disposed;
         #endregion IDisposable
     }
@@ -314,7 +324,6 @@ namespace Microsoft.PowerShell.Commands
     /// cmdlet.  It gets attached to the sub-pipelines success or error pipeline and redirects
     /// all objects written to these pipelines to trace-command pipeline.
     /// </summary>
-    ///
     internal class TracePipelineWriter : PipelineWriter
     {
         internal TracePipelineWriter(
@@ -419,7 +428,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write a single object into the underlying stream.
         /// </summary>
-        /// <param name="obj">The object to add to the stream</param>
+        /// <param name="obj">The object to add to the stream.</param>
         /// <returns>
         /// One, if the write was successful, otherwise;
         /// zero if the stream was closed before the object could be written,
@@ -453,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -461,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="ObjectDisposedException">
         /// The underlying stream is closed.
         /// </exception>

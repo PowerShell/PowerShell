@@ -31,6 +31,9 @@ Please read the rest of this document to ensure a smooth contribution process.
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell Maintainers are looking for help with the issue.
+* Issues marked as [`First-Time-Issue`][first-time-issue],
+  are identified as being easy and a great way to learn about this project and making
+  contributions.
 
 ## Contributing to Documentation
 
@@ -56,7 +59,7 @@ To run the spellchecker, follow the steps as follows:
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms`
+* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
 * if the `.spelling` file is updated, commit and push it
 
 ## Contributing to Code
@@ -140,7 +143,7 @@ Additional references:
   and is recommended by the Git SCM developers.
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
-  * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
+    * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
   write "New-SqlConnection: add parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
   a Maintainer will add the `Documentation Needed` label to your PR and add an issue to the [PowerShell-Docs repository][PowerShell-Docs],
@@ -151,15 +154,21 @@ Additional references:
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 * If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
   It is standard practice to have both a copyright and license notice for each source file.
-  * For `.h`, `.cpp`, and `.cs` files use:
+    * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
 
+    ```c#
         // Copyright (c) Microsoft Corporation. All rights reserved.
         // Licensed under the MIT License.
+        <Add empty line here>
+    ```
 
-  * For `.ps1` and `.psm1` files use:
+    * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
 
+    ```powershell
         # Copyright (c) Microsoft Corporation. All rights reserved.
         # Licensed under the MIT License.
+        <Add empty line here>
+    ```
 
 * If your change adds a new module manifest (.psd1 file), ensure that:
 
@@ -181,11 +190,23 @@ Additional references:
 * Make sure you follow the [Common Engineering Practices](#common-engineering-practices)
   and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md).
 * After submitting your pull request,
-  our [CI system (Travis CI and AppVeyor)][ci-system]
+  our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
 * Our CI contains automated spellchecking. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
+* Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
+
+  You could update the file manually in accordance with messages in the test log file. Or you can use automatically generated file. To get the file you should build the msi package locally:
+
+  ```powershell
+  Import-Module .\build.psm1
+  Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration Release -ReleaseTag <release tag>
+  Import-Module .\tools\packaging
+  Start-PSPackage -Type msi -ReleaseTag <release tag> -WindowsRuntime 'win7-x64' -SkipReleaseChecks
+  ```
+
+  Last command will report where new file is located.
 
 #### Pull Request - Workflow
 
@@ -337,3 +358,4 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
 [area-expert]: ../docs/community/governance.md#area-experts
 [ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system
+[first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue

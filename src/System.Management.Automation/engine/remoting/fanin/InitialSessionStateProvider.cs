@@ -66,10 +66,10 @@ namespace System.Management.Automation.Remoting
         internal string AssemblyName;
         internal string EndPointConfigurationTypeName;
         internal Type EndPointConfigurationType;
-        internal Nullable<int> MaxReceivedObjectSizeMB;
-        internal Nullable<int> MaxReceivedCommandSizeMB;
+        internal int? MaxReceivedObjectSizeMB;
+        internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
-        internal Nullable<PSThreadOptions> ShellThreadOptions;
+        internal PSThreadOptions? ShellThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
         internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
@@ -78,7 +78,7 @@ namespace System.Management.Automation.Remoting
         internal string ConfigFilePath;
 
         /// <summary>
-        /// Using optionName and optionValue updates the current object
+        /// Using optionName and optionValue updates the current object.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>
@@ -141,12 +141,14 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);
                         SessionConfigurationData = PSSessionConfigurationData.Create(optionValue);
                     }
+
                     break;
                 case CONFIGFILEPATH:
                     {
                         AssertValueNotAssigned(CONFIGFILEPATH, ConfigFilePath);
                         ConfigFilePath = optionValue.ToString();
                     }
+
                     break;
                 default:
                     // we dont need to evaluate PSVersion and other custom authz
@@ -156,7 +158,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if the originalValue is empty. If not throws an exception
+        /// Checks if the originalValue is empty. If not throws an exception.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
@@ -180,9 +182,9 @@ namespace System.Management.Automation.Remoting
         /// <returns>
         /// If value is specified, specified value as int . otherwise null.
         /// </returns>
-        private static Nullable<int> GetIntValueInBytes(string optionValueInMB)
+        private static int? GetIntValueInBytes(string optionValueInMB)
         {
-            Nullable<int> result = null;
+            int? result = null;
             try
             {
                 double variableValue = (double)LanguagePrimitives.ConvertTo(optionValueInMB,
@@ -301,7 +303,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
@@ -344,7 +345,7 @@ namespace System.Management.Automation.Remoting
     {
         #region tracer
         /// <summary>
-        /// Tracer for Server Remote session
+        /// Tracer for Server Remote session.
         /// </summary>
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
@@ -354,7 +355,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Derived classes must override this to supply an InitialSessionState
-        /// to be used to construct a Runspace for the user
+        /// to be used to construct a Runspace for the user.
         /// </summary>
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
@@ -363,7 +364,6 @@ namespace System.Management.Automation.Remoting
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -383,7 +383,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedObjectSize;
         }
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedDataSize;
         }
@@ -433,7 +433,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="isDisposing"></param>
         protected virtual void Dispose(bool isDisposing)
@@ -445,7 +444,6 @@ namespace System.Management.Automation.Remoting
         #region GetInitialSessionState from 3rd party shell ids
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
@@ -504,7 +502,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId">
         /// shellId for which the assembly is getting loaded
@@ -677,13 +674,14 @@ namespace System.Management.Automation.Remoting
                 {
                     return result;
                 }
+
                 s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
-                    String assemblyPath;
+                    string assemblyPath;
                     if (!Path.IsPathRooted(assemblyName))
                     {
-                        if (!String.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
+                        if (!string.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
                         {
                             assemblyPath = Path.Combine(applicationBase, assemblyName);
                         }
@@ -694,9 +692,10 @@ namespace System.Management.Automation.Remoting
                     }
                     else
                     {
-                        //Rooted path of dll is provided.
+                        // Rooted path of dll is provided.
                         assemblyPath = assemblyName;
                     }
+
                     result = Assembly.LoadFrom(assemblyPath);
                 }
                 catch (FileLoadException e)
@@ -720,6 +719,7 @@ namespace System.Management.Automation.Remoting
                     Directory.SetCurrentDirectory(originalDirectory);
                 }
             }
+
             return result;
         }
 
@@ -808,7 +808,6 @@ namespace System.Management.Automation.Remoting
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -872,23 +871,23 @@ namespace System.Management.Automation.Remoting
     public enum SessionType
     {
         /// <summary>
-        /// Empty session state
+        /// Empty session state.
         /// </summary>
         Empty,
 
         /// <summary>
-        /// Restricted remote server
+        /// Restricted remote server.
         /// </summary>
         RestrictedRemoteServer,
 
         /// <summary>
-        /// Default session state
+        /// Default session state.
         /// </summary>
         Default
     }
 
     /// <summary>
-    /// Configuration type entry
+    /// Configuration type entry.
     /// </summary>
     internal class ConfigTypeEntry
     {
@@ -898,7 +897,6 @@ namespace System.Management.Automation.Remoting
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="callback"></param>
@@ -910,7 +908,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Configuration file constants
+    /// Configuration file constants.
     /// </summary>
     internal static class ConfigFileConstants
     {
@@ -998,7 +996,7 @@ namespace System.Management.Automation.Remoting
         };
 
         /// <summary>
-        /// Checks if the given key is a valid key
+        /// Checks if the given key is a valid key.
         /// </summary>
         /// <param name="de"></param>
         /// <param name="cmdlet"></param>
@@ -1010,7 +1008,7 @@ namespace System.Management.Automation.Remoting
 
             foreach (ConfigTypeEntry configEntry in ConfigFileKeys)
             {
-                if (String.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     validKey = true;
 
@@ -1030,7 +1028,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1041,7 +1038,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1062,7 +1059,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1073,7 +1069,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1094,7 +1090,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1105,7 +1100,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1126,7 +1121,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1147,7 +1141,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1180,10 +1173,10 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string aliasKey in hashtable.Keys)
                 {
-                    if (!String.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, aliasKey, key, path));
                         return false;
@@ -1195,7 +1188,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1234,9 +1226,9 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string functionKey in hashtable.Keys)
                 {
-                    if (!String.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, functionKey, key, path));
                         return false;
@@ -1248,7 +1240,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1281,8 +1272,8 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string variableKey in hashtable.Keys)
                 {
-                    if (!String.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, variableKey, key, path));
                         return false;
@@ -1294,7 +1285,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies a string type
+        /// Verifies a string type.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1313,7 +1304,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies a string array type
+        /// Verifies a string array type.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1354,7 +1345,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies that an array contains only string or hashtable elements
+        /// Verifies that an array contains only string or hashtable elements.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1376,7 +1367,7 @@ namespace System.Management.Automation.Remoting
     #region DISC Utilities
 
     /// <summary>
-    /// DISC utilities
+    /// DISC utilities.
     /// </summary>
     internal static class DISCUtils
     {
@@ -1412,9 +1403,9 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Create an ExternalScriptInfo object from a file path.
         /// </summary>
-        /// <param name="context">execution context</param>
-        /// <param name="fileName">The path to the file</param>
-        /// <param name="scriptName">The base name of the script</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="fileName">The path to the file.</param>
+        /// <param name="scriptName">The base name of the script.</param>
         /// <returns>The ExternalScriptInfo object.</returns>
         internal static ExternalScriptInfo GetScriptInfoForFile(ExecutionContext context, string fileName, out string scriptName)
         {
@@ -1440,11 +1431,11 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Loads the configuration file into a hashtable
+        /// Loads the configuration file into a hashtable.
         /// </summary>
-        /// <param name="context">execution context</param>
-        /// <param name="scriptInfo">the ExternalScriptInfo object</param>
-        /// <returns>configuration hashtable</returns>
+        /// <param name="context">Execution context.</param>
+        /// <param name="scriptInfo">The ExternalScriptInfo object.</param>
+        /// <returns>Configuration hashtable.</returns>
         internal static Hashtable LoadConfigFile(ExecutionContext context, ExternalScriptInfo scriptInfo)
         {
             object result;
@@ -1469,12 +1460,12 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies the configuration hashtable
+        /// Verifies the configuration hashtable.
         /// </summary>
-        /// <param name="table">configuration hashtable</param>
+        /// <param name="table">Configuration hashtable.</param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns>true if valid, false otherwise</returns>
+        /// <returns>True if valid, false otherwise.</returns>
         internal static bool VerifyConfigTable(Hashtable table, PSCmdlet cmdlet, string path)
         {
             bool hasSchemaVersion = false;
@@ -1513,7 +1504,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
@@ -1541,7 +1531,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
@@ -1560,7 +1549,7 @@ namespace System.Management.Automation.Remoting
                         !ext.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         throw new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.DISCInvalidExtension, key, ext,
-                            String.Join(", ", StringLiterals.PowerShellScriptFileExtension, StringLiterals.PowerShellModuleFileExtension)));
+                            string.Join(", ", StringLiterals.PowerShellScriptFileExtension, StringLiterals.PowerShellModuleFileExtension)));
                     }
                 }
                 catch (ArgumentException argumentException)
@@ -1571,7 +1560,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>
@@ -1594,7 +1582,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if all paths are absolute paths
+        /// Checks if all paths are absolute paths.
         /// </summary>
         /// <param name="state"></param>
         /// <param name="table"></param>
@@ -1618,7 +1606,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if a path is an absolute path
+        /// Checks if a path is an absolute path.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="state"></param>
@@ -1703,7 +1691,7 @@ namespace System.Management.Automation.Remoting
     #endregion
 
     /// <summary>
-    /// Creates an initial session state based on the configuration language for PSSC files
+    /// Creates an initial session state based on the configuration language for PSSC files.
     /// </summary>
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
@@ -1711,7 +1699,7 @@ namespace System.Management.Automation.Remoting
         private Hashtable _configHash;
 
         /// <summary>
-        /// Gets the configuration hashtable that results from parsing the specified configuration file
+        /// Gets the configuration hashtable that results from parsing the specified configuration file.
         /// </summary>
         internal Hashtable ConfigHash
         {
@@ -1719,9 +1707,9 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a new instance of a Declarative Initial Session State Configuration
+        /// Creates a new instance of a Declarative Initial Session State Configuration.
         /// </summary>
-        /// <param name="configFile">The path to the .pssc file representing the initial session state</param>
+        /// <param name="configFile">The path to the .pssc file representing the initial session state.</param>
         /// <param name="roleVerifier">
         /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
@@ -1822,7 +1810,7 @@ namespace System.Management.Automation.Remoting
                     foreach (string roleCapability in roleCapabilities)
                     {
                         string roleCapabilityPath = GetRoleCapabilityPath(roleCapability);
-                        if (String.IsNullOrEmpty(roleCapabilityPath))
+                        if (string.IsNullOrEmpty(roleCapabilityPath))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + PSRCExtension);
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -1977,7 +1965,7 @@ namespace System.Management.Automation.Remoting
             bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
             bool processDefaultSessionStateVisibility = false;
 
-            if (!String.IsNullOrEmpty(initialSessionState))
+            if (!string.IsNullOrEmpty(initialSessionState))
             {
                 sessionType = (SessionType)Enum.Parse(typeof(SessionType), initialSessionState, true);
 
@@ -2027,7 +2015,7 @@ namespace System.Management.Automation.Remoting
                     System.Collections.Generic.HashSet<string> addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string provider in providers)
                     {
-                        if (!String.IsNullOrEmpty(provider))
+                        if (!string.IsNullOrEmpty(provider))
                         {
                             // Look up providers from provider name including wildcards.
                             var providersFound = iss.Providers.LookUpByName(provider);
@@ -2115,6 +2103,7 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     iss.ImportPSModule(modulesToImport);
                 }
             }
@@ -2171,7 +2160,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string alias in aliases)
                     {
-                        if (!String.IsNullOrEmpty(alias))
+                        if (!string.IsNullOrEmpty(alias))
                         {
                             bool found = false;
 
@@ -2282,7 +2271,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string type in types)
                     {
-                        if (!String.IsNullOrEmpty(type))
+                        if (!string.IsNullOrEmpty(type))
                         {
                             iss.Types.Add(new SessionStateTypeEntry(type));
                         }
@@ -2299,7 +2288,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string format in formats)
                     {
-                        if (!String.IsNullOrEmpty(format))
+                        if (!string.IsNullOrEmpty(format))
                         {
                             iss.Formats.Add(new SessionStateFormatEntry(format));
                         }
@@ -2344,7 +2333,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string script in startupScripts)
                     {
-                        if (!String.IsNullOrEmpty(script))
+                        if (!string.IsNullOrEmpty(script))
                         {
                             iss.StartupScripts.Add(script);
                         }
@@ -2485,8 +2474,8 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // If it's just a string, this is a visible command
-                String command = commandObject as String;
-                if (!String.IsNullOrEmpty(command))
+                string command = commandObject as string;
+                if (!string.IsNullOrEmpty(command))
                 {
                     ProcessVisibleCommand(iss, command, commandModuleNames);
                 }
@@ -2538,7 +2527,7 @@ namespace System.Management.Automation.Remoting
             if ((commandName == null) || (parameters == null))
             {
                 string hashtableKey = commandName;
-                if (String.IsNullOrEmpty(hashtableKey))
+                if (string.IsNullOrEmpty(hashtableKey))
                 {
                     IEnumerator errorKey = commandModification.Keys.GetEnumerator();
                     errorKey.MoveNext();
@@ -2574,7 +2563,7 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string parameterModification in parameter.Keys)
                 {
-                    if (String.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -2584,11 +2573,12 @@ namespace System.Management.Automation.Remoting
                     {
                         currentParameterModification[parameterModification] = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     }
+
                     HashSet<string> currentParameterModificationValue = (HashSet<string>)currentParameterModification[parameterModification];
 
                     foreach (string parameterModificationValue in TryGetStringArray(parameter[parameterModification]))
                     {
-                        if (!String.IsNullOrEmpty(parameterModificationValue))
+                        if (!string.IsNullOrEmpty(parameterModificationValue))
                         {
                             currentParameterModificationValue.Add(parameterModificationValue);
                         }
@@ -2636,20 +2626,20 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates an alias entry
+        /// Creates an alias entry.
         /// </summary>
         private SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
         {
             string name = TryGetValue(alias, ConfigFileConstants.AliasNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(alias, ConfigFileConstants.AliasValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2660,7 +2650,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(alias, ConfigFileConstants.AliasOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2675,21 +2665,21 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a function entry
+        /// Creates a function entry.
         /// </summary>
         /// <returns></returns>
         private SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
         {
             string name = TryGetValue(function, ConfigFileConstants.FunctionNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(function, ConfigFileConstants.FunctionValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2698,7 +2688,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(function, ConfigFileConstants.FunctionOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2716,20 +2706,20 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a variable entry
+        /// Creates a variable entry.
         /// </summary>
         private SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
         {
             string name = TryGetValue(variable, ConfigFileConstants.VariableNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(variable, ConfigFileConstants.VariableValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2740,7 +2730,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(variable, ConfigFileConstants.AliasOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2778,7 +2768,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a value from a hashtable
+        /// Attempts to get a value from a hashtable.
         /// </summary>
         /// <param name="table"></param>
         /// <param name="key"></param>
@@ -2790,11 +2780,11 @@ namespace System.Management.Automation.Remoting
                 return table[key].ToString();
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>
-        /// Attempts to get a hashtable array from an object
+        /// Attempts to get a hashtable array from an object.
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>
@@ -2838,7 +2828,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a string array from a hashtable
+        /// Attempts to get a string array from a hashtable.
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>
@@ -2888,6 +2878,7 @@ namespace System.Management.Automation.Remoting
                         }
                     }
                 }
+
                 return null;
             }
 
@@ -2904,6 +2895,7 @@ namespace System.Management.Automation.Remoting
                     return null;
                 }
             }
+
             return result;
         }
     }

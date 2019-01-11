@@ -367,7 +367,7 @@ $redirectTests = @(
     @{redirectType = 'relative'; redirectedMethod = 'GET'}
 )
 
-Describe "Invoke-WebRequest tests" -Tags "Feature" {
+Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -1785,7 +1785,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 }
 
-Describe "Invoke-RestMethod tests" -Tags "Feature" {
+Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -3069,7 +3069,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 }
 
-Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -3149,7 +3149,7 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
     }
 }
 
-Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
+Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -3160,7 +3160,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
             contenttype = 'text/plain'
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = iwr $uri
+        $result = Invoke-WebRequest $uri
         $result.StatusCode | Should -Be "200"
         $result.Content | Should -Be "hello"
     }
@@ -3171,7 +3171,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
             body        = @{Hello = "world"} | ConvertTo-Json -Compress
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = irm $uri
+        $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
     }
 }

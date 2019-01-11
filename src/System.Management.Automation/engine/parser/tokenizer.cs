@@ -22,15 +22,15 @@ namespace System.Management.Automation.Language
     public enum DynamicKeywordNameMode
     {
         /// <summary>
-        /// This keyword does not take a name value
+        /// This keyword does not take a name value.
         /// </summary>
         NoName = 0,
         /// <summary>
-        /// Name must be present and simple non-empty bare word
+        /// Name must be present and simple non-empty bare word.
         /// </summary>
         SimpleNameRequired = 1,
         /// <summary>
-        /// Name must be present but can also be an expression
+        /// Name must be present but can also be an expression.
         /// </summary>
         NameRequired = 2,
         /// <summary>
@@ -38,33 +38,33 @@ namespace System.Management.Automation.Language
         /// </summary>
         SimpleOptionalName = 3,
         /// <summary>
-        /// Name may be optionally present, expression or bare word
+        /// Name may be optionally present, expression or bare word.
         /// </summary>
         OptionalName = 4,
     };
 
     /// <summary>
-    /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body
+    /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body.
     /// </summary>
     public enum DynamicKeywordBodyMode
     {
         /// <summary>
-        /// The keyword act like a command
+        /// The keyword act like a command.
         /// </summary>
         Command = 0,
         /// <summary>
-        /// The keyword has a scriptblock body
+        /// The keyword has a scriptblock body.
         /// </summary>
         ScriptBlock = 1,
         /// <summary>
-        /// The keyword has hashtable body
+        /// The keyword has hashtable body.
         /// </summary>
         Hashtable = 2,
     }
 
     /// <summary>
     /// Defines the schema/behaviour for a dynamic keyword.
-    /// a constrained
+    /// a constrained.
     /// </summary>
     public class DynamicKeyword
     {
@@ -86,9 +86,8 @@ namespace System.Management.Automation.Language
         private static Dictionary<string, DynamicKeyword> t_dynamicKeywords;
 
         /// <summary>
-        /// stack of DynamicKeywords Cache
+        /// Stack of DynamicKeywords Cache.
         /// </summary>
-        ///
         private static Stack<Dictionary<string, DynamicKeyword>> DynamicKeywordsStack
         {
             get
@@ -97,6 +96,7 @@ namespace System.Management.Automation.Language
                        (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
             }
         }
+
         [ThreadStatic]
         private static Stack<Dictionary<string, DynamicKeyword>> t_dynamicKeywordsStack;
 
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Push current dynamicKeywords cache into stack
+        /// Push current dynamicKeywords cache into stack.
         /// </summary>
         public static void Push()
         {
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Pop up previous dynamicKeywords cache
+        /// Pop up previous dynamicKeywords cache.
         /// </summary>
         public static void Pop()
         {
@@ -126,7 +126,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -147,7 +146,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -163,7 +161,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="keywordToAdd"></param>
         public static void AddKeyword(DynamicKeyword keywordToAdd)
@@ -197,11 +194,12 @@ namespace System.Management.Automation.Language
                 PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
                 throw e;
             }
+
             DynamicKeyword.DynamicKeywords.Remove(name);
         }
 
         /// <summary>
-        /// Check if it is a hidden keyword
+        /// Check if it is a hidden keyword.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -226,9 +224,9 @@ namespace System.Management.Automation.Language
         #endregion
 
         /// <summary>
-        /// Duplicates the DynamicKeyword
+        /// Duplicates the DynamicKeyword.
         /// </summary>
-        /// <returns>A copy of the DynamicKeyword</returns>
+        /// <returns>A copy of the DynamicKeyword.</returns>
         public DynamicKeyword Copy()
         {
             DynamicKeyword keyword = new DynamicKeyword()
@@ -251,10 +249,12 @@ namespace System.Management.Automation.Language
             {
                 keyword.Properties.Add(entry.Key, entry.Value);
             }
+
             foreach (KeyValuePair<string, DynamicKeywordParameter> entry in this.Parameters)
             {
                 keyword.Parameters.Add(entry.Key, entry.Value);
             }
+
             return keyword;
         }
 
@@ -270,17 +270,17 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The keyword string
-        /// If an alias qualifier exist, use alias
+        /// If an alias qualifier exist, use alias.
         /// </summary>
         public string Keyword { get; set; }
 
         /// <summary>
-        /// The keyword resource name string
+        /// The keyword resource name string.
         /// </summary>
         public string ResourceName { get; set; }
 
         /// <summary>
-        /// Set to true if we should be looking for a scriptblock instead of a hashtable
+        /// Set to true if we should be looking for a scriptblock instead of a hashtable.
         /// </summary>
         public DynamicKeywordBodyMode BodyMode { get; set; }
 
@@ -289,7 +289,6 @@ namespace System.Management.Automation.Language
         /// rewrite the node as a simple direct function call.
         /// If NameMode is other than NoName, then the name of the instance
         /// will be passed as the parameter -InstanceName.
-        ///
         /// </summary>
         public bool DirectCall { get; set; }
 
@@ -305,17 +304,17 @@ namespace System.Management.Automation.Language
         public bool MetaStatement { get; set; }
 
         /// <summary>
-        /// Indicate that the keyword is reserved for future use by powershell
+        /// Indicate that the keyword is reserved for future use by powershell.
         /// </summary>
         public bool IsReservedKeyword { get; set; }
 
         /// <summary>
-        /// Contains the list of properties that are reserved for future use
+        /// Contains the list of properties that are reserved for future use.
         /// </summary>
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor
+        /// A list of the properties allowed for this constuctor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
@@ -325,6 +324,7 @@ namespace System.Management.Automation.Language
                        (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
@@ -338,16 +338,17 @@ namespace System.Management.Automation.Language
                        (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private Dictionary<string, DynamicKeywordParameter> _parameters;
 
         /// <summary>
         /// A custom function that gets executed at parsing time before parsing dynamickeyword block
-        /// The delegate has one parameter: DynamicKeyword
+        /// The delegate has one parameter: DynamicKeyword.
         /// </summary>
         public Func<DynamicKeyword, ParseError[]> PreParse { get; set; }
 
         /// <summary>
-        /// A custom function that gets executed at parsing time after parsing dynamickeyword block
+        /// A custom function that gets executed at parsing time after parsing dynamickeyword block.
         /// </summary>
         public Func<DynamicKeywordStatementAst, ParseError[]> PostParse { get; set; }
 
@@ -366,6 +367,7 @@ namespace System.Management.Automation.Language
             {
                 return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
             }
+
             return false;
         }
 
@@ -375,13 +377,13 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<String, List<String>> s_excludeKeywords = new Dictionary<String, List<String>>(StringComparer.OrdinalIgnoreCase)
+        private static Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
-            {@"Node", new List<String> {@"Node"}},
+            {@"Node", new List<string> {@"Node"}},
         };
 
         /// <summary>
-        /// Get allowed keyword list for a given keyword
+        /// Get allowed keyword list for a given keyword.
         /// </summary>
         /// <param name="keyword"></param>
         /// <param name="allowedKeywords"></param>
@@ -389,7 +391,7 @@ namespace System.Management.Automation.Language
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
-            if (String.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 List<string> excludeKeywords;
                 if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
@@ -399,6 +401,7 @@ namespace System.Management.Automation.Language
                 else
                     return allowedKeywords;
             }
+
             return null;
         }
     }
@@ -409,22 +412,23 @@ namespace System.Management.Automation.Language
     public class DynamicKeywordProperty
     {
         /// <summary>
-        /// The name of the property
+        /// The name of the property.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The required type of the property
+        /// The required type of the property.
         /// </summary>
         public string TypeConstraint { get; set; }
 
         /// <summary>
-        /// Any attributes that the property has
+        /// Any attributes that the property has.
         /// </summary>
         public List<string> Attributes
         {
             get { return _attributes ?? (_attributes = new List<string>()); }
         }
+
         private List<string> _attributes;
 
         /// <summary>
@@ -434,15 +438,17 @@ namespace System.Management.Automation.Language
         {
             get { return _values ?? (_values = new List<string>()); }
         }
+
         private List<string> _values;
 
         /// <summary>
-        /// Mapping the descriptive values to the actual values
+        /// Mapping the descriptive values to the actual values.
         /// </summary>
         public Dictionary<string, string> ValueMap
         {
             get { return _valueMap ?? (_valueMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
         }
+
         private Dictionary<string, string> _valueMap;
 
         /// <summary>
@@ -456,7 +462,7 @@ namespace System.Management.Automation.Language
         public bool IsKey { get; set; }
 
         /// <summary>
-        /// Indicates a range constraint on the property value
+        /// Indicates a range constraint on the property value.
         /// </summary>
         public Tuple<int, int> Range { get; set; }
     }
@@ -469,7 +475,7 @@ namespace System.Management.Automation.Language
     public class DynamicKeywordParameter : DynamicKeywordProperty
     {
         /// <summary>
-        /// Type if this is a switch parameter and takes no argument
+        /// Type if this is a switch parameter and takes no argument.
         /// </summary>
         public bool Switch { get; set; }
     }
@@ -480,6 +486,61 @@ namespace System.Management.Automation.Language
         Expression,
         TypeName,
         Signature, // i.e. class or method declaration
+    }
+
+    /// <summary>
+    /// Indicates which suffix character(s) are present in the numeric literal being parsed by TryGetNumberValue.
+    /// </summary>
+    [Flags]
+    internal enum NumberSuffixFlags
+    {
+        /// <summary>
+        /// Indicates no suffix, a raw numeric literal. May be parsed as Int32, Int64, or Double.
+        /// </summary>
+        None = 0x0,
+
+        /// <summary>
+        /// Indicates 'u' suffix for unsigned integers. May be parsed as UInt32 or UInt64, depending on the value.
+        /// </summary>
+        Unsigned = 0x1,
+
+        /// <summary>
+        /// Indicates 'y' suffix for signed byte (sbyte) values.
+        /// </summary>
+        SignedByte = 0x2,
+
+        /// <summary>
+        /// Indicates 'uy' suffix for unsigned byte values.
+        /// This is a compound value, representing both SignedByte and Unsigned flags being set.
+        /// </summary>
+        UnsignedByte = 0x3,
+
+        /// <summary>
+        /// Indicates 's' suffix for short (Int16) integers.
+        /// </summary>
+        Short = 0x4,
+
+        /// <summary>
+        /// Indicates 'us' suffix for ushort (UInt16) integers.
+        /// This is a compound flag value, representing both Unsigned and Short flags being set.
+        /// </summary>
+        UnsignedShort = 0x5,
+
+        /// <summary>
+        /// Indicates 'l' suffix for long (Int64) integers.
+        /// </summary>
+        Long = 0x8,
+
+        /// <summary>
+        /// Indicates 'ul' suffix for ulong (UInt64) integers.
+        /// This is a compound flag value, representing both Unsigned and Long flags being set.
+        /// </summary>
+        UnsignedLong = 0x9,
+
+        /// <summary>
+        /// Indicates 'd' suffix for decimal (128-bit) real numbers.
+        /// </summary>
+        Decimal = 0x10
     }
 
     //
@@ -638,12 +699,17 @@ namespace System.Management.Automation.Language
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
         internal Token FirstToken { get; private set; }
+
         internal Token LastToken { get; private set; }
+
         private List<Token> RequiresTokens { get; set; }
 
         private bool InCommandMode() { return Mode == TokenizerMode.Command; }
+
         private bool InExpressionMode() { return Mode == TokenizerMode.Expression; }
+
         private bool InTypeNameMode() { return Mode == TokenizerMode.TypeName; }
+
         private bool InSignatureMode() { return Mode == TokenizerMode.Signature; }
 
         internal void Initialize(string fileName, string input, List<Token> tokenList)
@@ -667,13 +733,16 @@ namespace System.Management.Automation.Language
                     {
                         i += 1;
                     }
+
                     lineStartMap.Add(i + 1);
                 }
+
                 if (c == '\n')
                 {
                     lineStartMap.Add(i + 1);
                 }
             }
+
             _currentIndex = 0;
             Mode = TokenizerMode.Command;
 
@@ -729,6 +798,7 @@ namespace System.Management.Automation.Language
             {
                 return '\0';
             }
+
             return _script[current];
         }
 
@@ -747,6 +817,7 @@ namespace System.Management.Automation.Language
             {
                 return '\0';
             }
+
             return _script[_currentIndex];
         }
 
@@ -768,10 +839,12 @@ namespace System.Management.Automation.Language
             {
                 return true;
             }
+
             if (DynamicKeyword.ContainsKeyword(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -802,6 +875,7 @@ namespace System.Management.Automation.Language
                         ScanNewline(c);
                         NewToken(TokenKind.NewLine);
                     }
+
                     goto again;
 
                 case ';':
@@ -812,8 +886,10 @@ namespace System.Management.Automation.Language
                             _tokenStart = _currentIndex - 1;
                             NewToken(TokenKind.Semi);
                         }
+
                         goto again;
                     }
+
                     break;
 
                 case '#':
@@ -829,6 +905,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     break;
 
                 case '`':
@@ -840,11 +917,13 @@ namespace System.Management.Automation.Language
                         NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
+
                     if (char.IsWhiteSpace(c1))
                     {
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     UngetChar();
                     break;
 
@@ -854,8 +933,10 @@ namespace System.Management.Automation.Language
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     break;
             }
+
             UngetChar();
         }
 
@@ -868,6 +949,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipChar();
             }
         }
@@ -899,6 +981,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             _currentIndex = start - adjustment;
             if (_currentIndex > _script.Length + 1)
             {
@@ -935,6 +1018,7 @@ namespace System.Management.Automation.Language
             {
                 i -= 1;
             }
+
             for (; i >= 0; i--)
             {
                 if (((InternalScriptExtent)tokenList[i].Extent).EndOffset <= start)
@@ -959,6 +1043,7 @@ namespace System.Management.Automation.Language
                     lastTokenToReplace = i;
                     continue;
                 }
+
                 if (((InternalScriptExtent)TokenList[i].Extent).StartOffset == startOffset)
                 {
                     TokenList.RemoveRange(i, lastTokenToReplace - i + 1);
@@ -1039,6 +1124,7 @@ namespace System.Management.Automation.Language
                         end += 1;
                     }
                 }
+
                 for (; i < end && i < _skippedCharOffsets.Length; ++i)
                 {
                     if (_skippedCharOffsets[i])
@@ -1047,6 +1133,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             return new InternalScriptExtent(_positionHelper, start, end);
         }
 
@@ -1082,9 +1169,11 @@ namespace System.Management.Automation.Language
                     {
                         FirstToken = token;
                     }
+
                     LastToken = token;
                     break;
             }
+
             return token;
         }
 
@@ -1154,6 +1243,7 @@ namespace System.Management.Automation.Language
                 {
                     UngetChar();
                 }
+
                 return NewNumberToken(from);
             }
 
@@ -1200,6 +1290,7 @@ namespace System.Management.Automation.Language
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -1310,9 +1401,11 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingUnicodeEscapeSequenceTerminator),
                             ParserStrings.MissingUnicodeEscapeSequenceTerminator);
                     }
+
                     return s_invalidChar;
                 }
-                else if (i == s_maxNumberOfUnicodeHexDigits) {
+                else if (i == s_maxNumberOfUnicodeHexDigits)
+                {
                     UngetChar();
 
                     Release(sb);
@@ -1328,7 +1421,7 @@ namespace System.Management.Automation.Language
             string hexStr = GetStringAndRelease(sb);
 
             uint unicodeValue = uint.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
-            if (unicodeValue <= Char.MaxValue)
+            if (unicodeValue <= char.MaxValue)
             {
                 return ((char)unicodeValue);
             }
@@ -1441,6 +1534,7 @@ namespace System.Management.Automation.Language
                         {
                             goto case '\n';
                         }
+
                         goto default;
                     case '\r':
                     case '\n':
@@ -1561,6 +1655,7 @@ namespace System.Management.Automation.Language
                     SkipChar();
                     break;
                 }
+
                 if (c == '\r' || c == '\n')
                 {
                     ScanNewline(c);
@@ -1684,6 +1779,7 @@ namespace System.Management.Automation.Language
                             {
                                 requiredSnapins = new List<PSSnapInSpecification>();
                             }
+
                             break;
                         }
                     }
@@ -1704,6 +1800,7 @@ namespace System.Management.Automation.Language
                                 DiscoveryExceptions.ScriptRequiresInvalidFormat);
                         }
                     }
+
                     if (snapinName != null)
                     {
                         Diagnostics.Assert(PSSnapInInfo.IsPSSnapinIdValid(snapinName), "we shouldn't set snapinName if it wasn't valid");
@@ -1765,6 +1862,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.ParameterCannotHaveArgument,
                         parameter.ParameterName);
                 }
+
                 return;
             }
 
@@ -1797,6 +1895,7 @@ namespace System.Management.Automation.Language
                         shellIDToken);
                     return;
                 }
+
                 if (!(argumentValue is string))
                 {
                     ReportError(argumentAst.Extent,
@@ -1805,6 +1904,7 @@ namespace System.Management.Automation.Language
                         shellIDToken);
                     return;
                 }
+
                 requiredShellId = (string)argumentValue;
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
@@ -1817,6 +1917,7 @@ namespace System.Management.Automation.Language
                         PSSnapinToken);
                     return;
                 }
+
                 if (snapinName != null)
                 {
                     ReportError(parameter.Extent,
@@ -1826,6 +1927,7 @@ namespace System.Management.Automation.Language
                         PSSnapinToken);
                     return;
                 }
+
                 if (!PSSnapInInfo.IsPSSnapinIdValid((string)argumentValue))
                 {
                     ReportError(argumentAst.Extent,
@@ -1883,6 +1985,7 @@ namespace System.Management.Automation.Language
                             versionToken);
                         return;
                     }
+
                     snapinVersion = version;
                 }
                 else
@@ -1896,6 +1999,7 @@ namespace System.Management.Automation.Language
                             versionToken);
                         return;
                     }
+
                     requiredVersion = version;
                 }
             }
@@ -1939,6 +2043,7 @@ namespace System.Management.Automation.Language
                             e.Message);
                         return;
                     }
+
                     if (requiredModules == null)
                         requiredModules = new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
@@ -1971,6 +2076,7 @@ namespace System.Management.Automation.Language
                     requiredAssemblies.Add((string)arg);
                 }
             }
+
             return requiredAssemblies;
         }
 
@@ -2009,6 +2115,7 @@ namespace System.Management.Automation.Language
                         editionToken);
                 }
             }
+
             return requiredEditions;
         }
         #endregion Requires
@@ -2049,7 +2156,7 @@ namespace System.Management.Automation.Language
             }
 
             InternalScriptExtent currentExtent = CurrentExtent();
-            String tokenValue = currentExtent.Text;
+            string tokenValue = currentExtent.Text;
             return NewStringLiteralToken(tokenValue, TokenKind.Generic, TokenFlags.None);
         }
 
@@ -2069,8 +2176,10 @@ namespace System.Management.Automation.Language
                     {
                         break;
                     }
+
                     c = GetChar();
                 }
+
                 sb.Append(c);
                 c = GetChar();
             }
@@ -2122,6 +2231,7 @@ namespace System.Management.Automation.Language
                         {
                             scanning = false;
                         }
+
                         break;
 
                     case '`':
@@ -2140,6 +2250,7 @@ namespace System.Management.Automation.Language
                         {
                             sb.Append(c);
                         }
+
                         break;
 
                     case '\0':
@@ -2223,6 +2334,7 @@ namespace System.Management.Automation.Language
                         }
                     }
                 }
+
                 if (c == '{' || c == '}')
                 {
                     // In the format string, we need to double up the curlies because we're
@@ -2230,6 +2342,7 @@ namespace System.Management.Automation.Language
                     // format expression for string.Format.
                     formatSb.Append(c);
                 }
+
                 sb.Append(c);
                 formatSb.Append(c);
             }
@@ -2353,6 +2466,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         break;
                     }
+
                     if (c == '\r' || c == '\n' || (c == '\0' && AtEof()))
                     {
                         UngetChar();
@@ -2401,6 +2515,7 @@ namespace System.Management.Automation.Language
                     // to give a helpful error message.
                     falseFooterOffset = _currentIndex - 1;
                 }
+
                 appendChar(GetChar());  // append the '@'
             }
             else
@@ -2409,6 +2524,7 @@ namespace System.Management.Automation.Language
                 // handle the character.
                 UngetChar();
             }
+
             return false;
         }
 
@@ -2472,6 +2588,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.TerminatorExpectedAtEndOfString,
                                 "'@");
                         }
+
                         flags = TokenFlags.TokenInError;
                         break;
                     }
@@ -2518,6 +2635,7 @@ namespace System.Management.Automation.Language
                             sb.Append('\n');
                             formatSb.Append('\n');
                         }
+
                         if (ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar, ref falseFooterOffset))
                         {
                             // Remove the last newline appended.
@@ -2525,6 +2643,7 @@ namespace System.Management.Automation.Language
                             formatSb.Length = formatLength;
                             break;
                         }
+
                         continue;
                     }
 
@@ -2551,6 +2670,7 @@ namespace System.Management.Automation.Language
                             }
                         }
                     }
+
                     if (c == '{' || c == '}')
                     {
                         // In the format string, we need to double up the curlies because we're
@@ -2558,6 +2678,7 @@ namespace System.Management.Automation.Language
                         // format expression for string.Format.
                         formatSb.Append(c);
                     }
+
                     if (c != '\0' || !AtEof())
                     {
                         sb.Append(c);
@@ -2579,6 +2700,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.TerminatorExpectedAtEndOfString,
                                 "\"@");
                         }
+
                         flags = TokenFlags.TokenInError;
                         break;
                     }
@@ -2622,12 +2744,14 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
+
                                 c = Backtick(c1, out char surrogateCharacter);
                                 if (surrogateCharacter != s_invalidChar)
                                 {
                                     sb.Append(c).Append(surrogateCharacter);
                                     continue;
                                 }
+
                                 break;
                             }
                         case '"':
@@ -2642,6 +2766,7 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
+
                                 if (c1.IsDoubleQuote())
                                 {
                                     c = c1;
@@ -2651,6 +2776,7 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                 }
                             }
+
                             break;
                         case '{':
                             ReportError(_currentIndex,
@@ -2663,6 +2789,7 @@ namespace System.Management.Automation.Language
                                 UngetChar();
                                 goto end_braced_variable_scan;
                             }
+
                             break;
                     }
 
@@ -2678,6 +2805,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.IncompleteDollarVariableReference),
                         ParserStrings.IncompleteDollarVariableReference);
                 }
+
                 if (name.Length == 0)
                 {
                     if (c == '}')
@@ -2686,6 +2814,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.EmptyVariableReference),
                             ParserStrings.EmptyVariableReference);
                     }
+
                     name = ":Error:";
                 }
 
@@ -2708,10 +2837,11 @@ namespace System.Management.Automation.Language
                 {
                     // Enable if we decide we still need to support
                     //     "${}"  or "$var:"
-                    //if (inStringExpandable)
-                    //{
+                    // if (inStringExpandable)
+                    // {
                     //    return NewToken(TokenKind.Unknown);
-                    //}
+                    // }
+
                     ReportError(NewScriptExtent(_tokenStart, _currentIndex),
                         nameof(ParserStrings.InvalidBracedVariableReference),
                         ParserStrings.InvalidBracedVariableReference);
@@ -2817,6 +2947,7 @@ namespace System.Management.Automation.Language
                             {
                                 sb.Append(c);
                             }
+
                             break;
 
                         case '\0':
@@ -2837,7 +2968,7 @@ namespace System.Management.Automation.Language
                         // occur after a variable.
                         case '.':
                         case '[':
-                            // Something like $a.b or $a[1].
+                        // Something like $a.b or $a[1].
                         case '=':
                             // Something like $a=
                             UngetChar();
@@ -2845,7 +2976,7 @@ namespace System.Management.Automation.Language
                             break;
 
                         default:
-                            if (Char.IsLetterOrDigit(c))
+                            if (char.IsLetterOrDigit(c))
                             {
                                 sb.Append(c);
                             }
@@ -2860,6 +2991,7 @@ namespace System.Management.Automation.Language
                                 UngetChar();
                                 scanning = false;
                             }
+
                             break;
                     }
                 }
@@ -2886,6 +3018,7 @@ namespace System.Management.Automation.Language
                     errorId = nameof(ParserStrings.InvalidVariableReference);
                     errorMsg = ParserStrings.InvalidVariableReference;
                 }
+
                 ReportError(NewScriptExtent(_tokenStart, _currentIndex), errorId, errorMsg);
             }
 
@@ -2937,6 +3070,7 @@ namespace System.Management.Automation.Language
                         {
                             UngetChar();
                         }
+
                         break;
 
                     case 'a':
@@ -3010,6 +3144,7 @@ namespace System.Management.Automation.Language
                             sb.Insert(0, _script[_tokenStart]); // Insert the '-' that we skipped.
                             return ScanGenericToken(sb);
                         }
+
                         UngetChar();
                         scanning = false;
                         break;
@@ -3024,6 +3159,7 @@ namespace System.Management.Automation.Language
                             UngetChar();
                             scanning = false;
                         }
+
                         break;
                 }
             }
@@ -3053,6 +3189,7 @@ namespace System.Management.Automation.Language
             {
                 return ScanGenericToken(c);
             }
+
             return NewToken(tokenKind);
         }
 
@@ -3065,6 +3202,7 @@ namespace System.Management.Automation.Language
                 sb.Append(c2);
                 return ScanGenericToken(sb);
             }
+
             return NewToken(tokenKind);
         }
 
@@ -3083,6 +3221,7 @@ namespace System.Management.Automation.Language
             {
                 sb.Append(surrogateCharacter);
             }
+
             return ScanGenericToken(sb);
         }
 
@@ -3110,7 +3249,7 @@ namespace System.Management.Automation.Language
             // indeed, '$' is not commonly used in command names.
 
             // Make sure our token does not start with any of these characters.
-            //Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
+            // Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
             List<Token> nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
@@ -3143,6 +3282,7 @@ namespace System.Management.Automation.Language
                     {
                         formatSb.Append(sb[i]);
                     }
+
                     continue;
                 }
                 else if (c.IsDoubleQuote())
@@ -3157,6 +3297,7 @@ namespace System.Management.Automation.Language
                         continue;
                     }
                 }
+
                 sb.Append(c);
                 formatSb.Append(c);
                 if (c == '{' || c == '}')
@@ -3164,6 +3305,7 @@ namespace System.Management.Automation.Language
                     formatSb.Append(c);
                 }
             }
+
             UngetChar();
 
             var str = GetStringAndRelease(sb);
@@ -3171,12 +3313,14 @@ namespace System.Management.Automation.Language
             {
                 return NewGenericExpandableToken(str, GetStringAndRelease(formatSb), nestedTokens);
             }
+
             Release(formatSb);
 
             if (DynamicKeyword.ContainsKeyword(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return NewToken(TokenKind.DynamicKeyword);
             }
+
             return NewGenericToken(str);
         }
 
@@ -3220,6 +3364,7 @@ namespace System.Management.Automation.Language
                 signIndex = sb.Length;
                 sb.Append(c);
             }
+
             if (ScanDecimalDigits(sb) == 0)
             {
                 notNumber = true;
@@ -3242,7 +3387,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3250,10 +3395,12 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
-                    if (suffix == 'd' || suffix == 'D')
+
+                    // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will never be read as Decimal literal
+                    // e.g., 0x1d == 29
+                    if (suffix == NumberSuffixFlags.Decimal)
                     {
-                        decimal d;
-                        if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
                             result = d * multiplier;
                             return true;
@@ -3265,25 +3412,58 @@ namespace System.Management.Automation.Language
 
                     if (real)
                     {
-                        double d;
-                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
-                            if (d == 0.0 && strNum[0] == '-')
+                            if (doubleValue == 0.0 && strNum[0] == '-')
                             {
-                                d = -0.0;
+                                doubleValue = -0.0;
                             }
-                            if (suffix == 'l' || suffix == 'L')
+
+                            switch (suffix)
                             {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
+                                case NumberSuffixFlags.None:
+                                    result = doubleValue * multiplier;
+                                    break;
+                                case NumberSuffixFlags.Long:
+                                    result = (long)Convert.ChangeType(doubleValue, typeof(long), CultureInfo.InvariantCulture) * multiplier;
+                                    break;
+                                case NumberSuffixFlags.Short:
+                                    result = (short)((short)Convert.ChangeType(doubleValue, typeof(short), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.SignedByte:
+                                    result = (sbyte)((sbyte)Convert.ChangeType(doubleValue, typeof(sbyte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedLong:
+                                    result = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    break;
+                                case NumberSuffixFlags.UnsignedShort:
+                                    result = (ushort)((ushort)Convert.ChangeType(doubleValue, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedByte:
+                                    result = (byte)((byte)Convert.ChangeType(doubleValue, typeof(byte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.Unsigned:
+                                    ulong testresult = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    if (testresult < uint.MaxValue)
+                                    {
+                                        result = (uint)testresult;
+                                    }
+                                    else
+                                    {
+                                        result = testresult;
+                                    }
+
+                                    break;
+                                default:
+                                    result = null;
+                                    return false;
                             }
-                            else
-                            {
-                                result = d * multiplier;
-                            }
+
                             return true;
                         }
 
+                        // TryParse on (real) number fails.
                         result = null;
                         return false;
                     }
@@ -3294,39 +3474,111 @@ namespace System.Management.Automation.Language
                         {
                             multiplier = -multiplier;
                         }
+
                         strNum = strNum.Substring(1);
                     }
+
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
-                    long longValue;
-                    if (suffix == 'l' || suffix == 'L')
+                    switch (suffix)
                     {
-                        if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
-                        {
-                            result = longValue * multiplier;
-                            return true;
-                        }
-                        result = null;
-                        return false;
+                        case NumberSuffixFlags.None:
+                            break;
+                        case NumberSuffixFlags.Long:
+                            if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long l))
+                            {
+                                result = l * multiplier;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Short:
+                            if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
+                            {
+                                result = (short)(s * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.SignedByte:
+                            // Multiplier for hex-parsed values can be negative to permit - prefix for hex values
+                            if (Math.Abs(multiplier) == 1 && sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
+                            {
+                                result = (sbyte)(sb * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Unsigned:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                            {
+                                u *= (ulong)multiplier;
+
+                                if (u <= uint.MaxValue)
+                                {
+                                    result = (uint)u;
+                                }
+                                else
+                                {
+                                    result = u;
+                                }
+
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedLong:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong ul))
+                            {
+                                result = (ulong)(ul * (ulong)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedShort:
+                            if (ushort.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ushort us))
+                            {
+                                result = (ushort)(us * (ushort)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedByte:
+                            // If multiplier is negative or greater than 1, we can assume it will fail since the
+                            // minimum multiplier is 1024 (already exceeds byte.MaxValue), and byte is unsigned
+                            if (multiplier == 1 && byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
+                            {
+                                result = b;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        default:
+                            result = null;
+                            return false;
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
-
                     BigInteger bigValue;
                     TypeCode whichTryParseWorked;
-                    int intValue;
-                    decimal decimalValue;
-                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out intValue))
+                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out int intValue))
                     {
                         whichTryParseWorked = TypeCode.Int32;
                         bigValue = intValue;
                     }
-                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long longValue))
                     {
                         whichTryParseWorked = TypeCode.Int64;
                         bigValue = longValue;
                     }
-                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
+                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal decimalValue))
                     {
                         whichTryParseWorked = TypeCode.Decimal;
                         bigValue = (BigInteger)decimalValue;
@@ -3336,10 +3588,9 @@ namespace System.Management.Automation.Language
                         // The result must be double if we get here.
                         if (!hex)
                         {
-                            double doubleValue;
-                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double dbl))
                             {
-                                result = doubleValue * multiplier;
+                                result = dbl * multiplier;
                                 return true;
                             }
                         }
@@ -3365,6 +3616,7 @@ namespace System.Management.Automation.Language
                     {
                         result = (double)bigValue;
                     }
+
                     return true;
                 }
                 catch (Exception)
@@ -3382,7 +3634,7 @@ namespace System.Management.Automation.Language
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
             bool hex, real;
-            char suffix;
+            NumberSuffixFlags suffix;
             long multiplier;
 
             string strNum = ScanNumberHelper(firstChar, out hex, out real, out suffix, out multiplier);
@@ -3413,21 +3665,21 @@ namespace System.Management.Automation.Language
             return NewNumberToken(value);
         }
 
-        /// <param name="firstChar">the first character</param>
-        /// <param name="hex">indicate if it's a hex number</param>
-        /// <param name="real">indicate if it's a real number</param>
-        /// <param name="suffix">indicate the type suffix</param>
-        /// <param name="multiplier">indicate the specified multiplier</param>
+        /// <param name="firstChar">The first character.</param>
+        /// <param name="hex">Indicate if it's a hex number.</param>
+        /// <param name="real">Indicate if it's a real number.</param>
+        /// <param name="suffix">Indicate the type suffix.</param>
+        /// <param name="multiplier">Indicate the specified multiplier.</param>
         /// <returns>
         /// return null if the token is not a number
         /// OR
         /// return the string format of the number
         /// </returns>
-        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out char suffix, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out NumberSuffixFlags suffix, out long multiplier)
         {
             hex = false;
             real = false;
-            suffix = '\0';
+            suffix = NumberSuffixFlags.None;
             multiplier = 1;
 
             bool notNumber = false;
@@ -3458,6 +3710,7 @@ namespace System.Management.Automation.Language
                     {
                         notNumber = true;
                     }
+
                     hex = true;
                 }
                 else
@@ -3481,6 +3734,7 @@ namespace System.Management.Automation.Language
                                 real = true;
                                 ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
                             }
+
                             break;
                         case 'E':
                         case 'e':
@@ -3497,8 +3751,66 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                suffix = c;
+                switch (c)
+                {
+                    case 'u':
+                    case 'U':
+                        suffix |= NumberSuffixFlags.Unsigned;
+                        break;
+                    case 's':
+                    case 'S':
+                        suffix |= NumberSuffixFlags.Short;
+                        break;
+                    case 'l':
+                    case 'L':
+                        suffix |= NumberSuffixFlags.Long;
+                        break;
+                    case 'd':
+                    case 'D':
+                        suffix |= NumberSuffixFlags.Decimal;
+                        break;
+                    case 'y':
+                    case 'Y':
+                        suffix |= NumberSuffixFlags.SignedByte;
+                        break;
+                    default:
+                        notNumber = true;
+                        break;
+                }
+
                 c = PeekChar();
+
+                if (c.IsTypeSuffix())
+                {
+                    SkipChar();
+                    if (suffix == NumberSuffixFlags.Unsigned)
+                    {
+                        switch (c)
+                        {
+                            case 'l':
+                            case 'L':
+                                suffix |= NumberSuffixFlags.Long;
+                                break;
+                            case 's':
+                            case 'S':
+                                suffix |= NumberSuffixFlags.Short;
+                                break;
+                            case 'y':
+                            case 'Y':
+                                suffix |= NumberSuffixFlags.SignedByte;
+                                break;
+                            default:
+                                notNumber = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        notNumber = true;
+                    }
+
+                    c = PeekChar();
+                }
             }
 
             if (c.IsMultiplierStart())
@@ -3589,11 +3901,14 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         return null;
                     }
+
                     return NewToken(TokenKind.Dot);
                 }
+
                 UngetChar();
                 return null;
             }
+
             if (c == ':')
             {
                 _tokenStart = _currentIndex;
@@ -3609,11 +3924,14 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         return null;
                     }
+
                     return NewToken(TokenKind.ColonColon);
                 }
+
                 UngetChar();
                 return null;
             }
+
             if (c == '[' && allowLBracket)
             {
                 _tokenStart = _currentIndex;
@@ -3634,12 +3952,14 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 return NewToken(TokenKind.LParen);
             }
+
             if (c == '{')
             {
                 _tokenStart = _currentIndex;
                 SkipChar();
                 return NewToken(TokenKind.LCurly);
             }
+
             return null;
         }
 
@@ -3685,6 +4005,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     UngetChar();
                     break;
 
@@ -3706,6 +4027,7 @@ namespace System.Management.Automation.Language
                     {
                         UngetChar();
                     }
+
                     break;
 
                 default:
@@ -3715,6 +4037,7 @@ namespace System.Management.Automation.Language
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     UngetChar();
                     break;
             }
@@ -3734,8 +4057,10 @@ namespace System.Management.Automation.Language
                     UngetChar();  // Unget the second dot, let ScanGenericToken consume it.
                     return ScanGenericToken('.');
                 }
+
                 return NewToken(TokenKind.DotDot);
             }
+
             if (c.IsDecimalDigit())
             {
                 return ScanNumber('.');
@@ -3801,6 +4126,7 @@ namespace System.Management.Automation.Language
                     if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
                         return NewToken(tokenKind);
                 }
+
                 if (DynamicKeyword.ContainsKeyword(ident) && !DynamicKeyword.IsHiddenKeyword(ident))
                 {
                     return NewToken(TokenKind.DynamicKeyword);
@@ -3834,6 +4160,7 @@ namespace System.Management.Automation.Language
                         {
                             continue;
                         }
+
                         break;
                 }
 
@@ -3861,6 +4188,7 @@ namespace System.Management.Automation.Language
                     UngetChar();
                     break;
                 }
+
                 sb.Append(c);
             }
 
@@ -3871,26 +4199,26 @@ namespace System.Management.Automation.Language
 
         internal string GetAssemblyNameSpec()
         {
-            //G  assembly-name-spec:
-            //G      assembly-name
-            //G      assembly-name   ','   assembly-properties
-            //G  assembly-name:
-            //G      assembly-token
-            //G  assembly-properties:
-            //G      assembly-property
-            //G      assembly-properties   ','   assembly-property
-            //G  assembly-property:
-            //G      assembly-property-name   '='   assembly-property-value
-            //G  assembly-property-name:  one of
-            //G      'Version'
-            //G      'PublicKey'
-            //G      'PublicKeyToken'
-            //G      'Culture'
-            //G      'Custom'
-            //G  assembly-property:
-            //G      assembly-token
-            //G  assembly-token:
-            //G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
+            // G  assembly-name-spec:
+            // G      assembly-name
+            // G      assembly-name   ','   assembly-properties
+            // G  assembly-name:
+            // G      assembly-token
+            // G  assembly-properties:
+            // G      assembly-property
+            // G      assembly-properties   ','   assembly-property
+            // G  assembly-property:
+            // G      assembly-property-name   '='   assembly-property-value
+            // G  assembly-property-name:  one of
+            // G      'Version'
+            // G      'PublicKey'
+            // G      'PublicKeyToken'
+            // G      'Culture'
+            // G      'Custom'
+            // G  assembly-property:
+            // G      assembly-token
+            // G  assembly-token:
+            // G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
 
             // The above grammar is specified by the CLR (except assembly-token).  We defer validation to the CLR, but
             // use the above grammar to collect the name of the assembly.
@@ -3938,6 +4266,7 @@ namespace System.Management.Automation.Language
                     UngetChar();
                     return NewGenericToken(GetStringAndRelease(sb));
                 }
+
                 UngetChar();
                 return ScanGenericToken(sb);
             }
@@ -3999,18 +4328,22 @@ namespace System.Management.Automation.Language
                     {
                         return NewToken(TokenKind.AtCurly);
                     }
+
                     if (c1 == '(')
                     {
                         return NewToken(TokenKind.AtParen);
                     }
+
                     if (c1.IsSingleQuote())
                     {
                         return ScanHereStringLiteral();
                     }
+
                     if (c1.IsDoubleQuote())
                     {
                         return ScanHereStringExpandable();
                     }
+
                     UngetChar();
                     if (c1.IsVariableStart())
                     {
@@ -4039,11 +4372,13 @@ namespace System.Management.Automation.Language
                         NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
+
                     if (char.IsWhiteSpace(c1))
                     {
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     if (c1 == '\0' && AtEof())
                     {
                         ReportIncompleteInput(_currentIndex,
@@ -4068,15 +4403,18 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.PlusPlus);
                     }
+
                     if (c1 == '=')
                     {
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.PlusEquals);
                     }
+
                     if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
                     {
                         return ScanNumber(c);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Plus);
 
                 case '-':
@@ -4089,19 +4427,23 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MinusMinus);
                     }
+
                     if (c1 == '=')
                     {
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MinusEquals);
                     }
+
                     if (char.IsLetter(c1) || c1 == '_' || c1 == '?')
                     {
                         return ScanParameter();
                     }
+
                     if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
                     {
                         return ScanNumber(c);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Minus);
 
                 case '*':
@@ -4111,6 +4453,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MultiplyEquals);
                     }
+
                     if (c1 == '>')
                     {
                         SkipChar();
@@ -4120,6 +4463,7 @@ namespace System.Management.Automation.Language
                             SkipChar();
                             return NewFileRedirectionToken(0, append: true, fromSpecifiedExplicitly: false);
                         }
+
                         if (c1 == '&')
                         {
                             SkipChar();
@@ -4129,6 +4473,7 @@ namespace System.Management.Automation.Language
                                 SkipChar();
                                 return NewMergingRedirectionToken(0, 1);
                             }
+
                             UngetChar();
                         }
 
@@ -4144,6 +4489,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.DivideEquals);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Divide);
 
                 case '%':
@@ -4153,6 +4499,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.RemainderEquals);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Rem);
 
                 case '$':
@@ -4161,6 +4508,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.DollarParen);
                     }
+
                     return ScanVariable(false, false);
 
                 case '<':
@@ -4170,6 +4518,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     return NewInputRedirectionToken();
 
                 case '>':
@@ -4178,6 +4527,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewFileRedirectionToken(1, append: true, fromSpecifiedExplicitly: false);
                     }
+
                     return NewFileRedirectionToken(1, append: false, fromSpecifiedExplicitly: false);
 
                 case 'a':
@@ -4244,6 +4594,7 @@ namespace System.Management.Automation.Language
                     {
                         return ScanGenericToken('[');
                     }
+
                     return NewToken(TokenKind.LBracket);
                 case ']':
                     return NewToken(TokenKind.RBracket);
@@ -4279,6 +4630,7 @@ namespace System.Management.Automation.Language
                             SkipChar();
                             return NewFileRedirectionToken(c - '0', append: true, fromSpecifiedExplicitly: true);
                         }
+
                         if (c1 == '&')
                         {
                             SkipChar();
@@ -4288,11 +4640,13 @@ namespace System.Management.Automation.Language
                                 SkipChar();
                                 return NewMergingRedirectionToken(c - '0', c1 - '0');
                             }
+
                             UngetChar();
                         }
 
                         return NewFileRedirectionToken(c - '0', append: false, fromSpecifiedExplicitly: true);
                     }
+
                     return ScanNumber(c);
 
                 case '&':
@@ -4301,6 +4655,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.AndAnd);
                     }
+
                     return NewToken(TokenKind.Ampersand);
 
                 case '|':
@@ -4309,6 +4664,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.OrOr);
                     }
+
                     return NewToken(TokenKind.Pipe);
 
                 case '!':
@@ -4322,7 +4678,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         bool hex, real;
-                        char suffix;
+                        NumberSuffixFlags suffix;
                         long multiplier;
 
                         // check if the next token is actually a number
@@ -4346,12 +4702,15 @@ namespace System.Management.Automation.Language
                             sb.Append("::");
                             return ScanGenericToken(sb);
                         }
+
                         return NewToken(TokenKind.ColonColon);
                     }
+
                     if (InCommandMode())
                     {
                         return ScanLabel();
                     }
+
                     return this.NewToken(TokenKind.Colon);
 
                 case '\0':
@@ -4359,6 +4718,7 @@ namespace System.Management.Automation.Language
                     {
                         return SaveToken(new Token(NewScriptExtent(_tokenStart + 1, _tokenStart + 1), TokenKind.EndOfInput, TokenFlags.None));
                     }
+
                     return ScanGenericToken(c);
 
                 default:
@@ -4372,6 +4732,7 @@ namespace System.Management.Automation.Language
                     {
                         return ScanIdentifier(c);
                     }
+
                     return ScanGenericToken(c);
             }
         }

@@ -6,7 +6,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A class representing a name that is qualified by the PSSnapin name
+    /// A class representing a name that is qualified by the PSSnapin name.
     /// </summary>
     internal class PSSnapinQualifiedName
     {
@@ -21,7 +21,7 @@ namespace System.Management.Automation
             }
             else if (splitName.Length == 2)
             {
-                if (!String.IsNullOrEmpty(splitName[0]))
+                if (!string.IsNullOrEmpty(splitName[0]))
                 {
                     _psSnapinName = splitName[0];
                 }
@@ -38,10 +38,10 @@ namespace System.Management.Automation
 
             // Now set the full name
 
-            if (!String.IsNullOrEmpty(_psSnapinName))
+            if (!string.IsNullOrEmpty(_psSnapinName))
             {
                 _fullName =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}\\{1}",
                         _psSnapinName,
@@ -56,15 +56,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance of the Name class.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the Name class.
         /// </returns>
-        ///
         internal static PSSnapinQualifiedName GetInstance(string name)
         {
             if (name == null)
@@ -75,7 +72,7 @@ namespace System.Management.Automation
                 return null;
             result = new PSSnapinQualifiedName(splitName);
             // If the shortname is empty, then return null...
-            if (String.IsNullOrEmpty(result.ShortName))
+            if (string.IsNullOrEmpty(result.ShortName))
             {
                 return null;
             }
@@ -86,7 +83,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command's full name.
         /// </summary>
-        ///
         internal string FullName
         {
             get
@@ -94,12 +90,12 @@ namespace System.Management.Automation
                 return _fullName;
             }
         }
+
         private string _fullName;
 
         /// <summary>
         /// Gets the command's PSSnapin name.
         /// </summary>
-        ///
         internal string PSSnapInName
         {
             get
@@ -107,12 +103,12 @@ namespace System.Management.Automation
                 return _psSnapinName;
             }
         }
+
         private string _psSnapinName;
 
         /// <summary>
         /// Gets the command's short name.
         /// </summary>
-        ///
         internal string ShortName
         {
             get
@@ -120,16 +116,15 @@ namespace System.Management.Automation
                 return _shortName;
             }
         }
+
         private string _shortName;
 
         /// <summary>
-        /// The full name
+        /// The full name.
         /// </summary>
-        ///
         /// <returns>
         /// A string representing the full name.
         /// </returns>
-        ///
         public override string ToString()
         {
             return _fullName;

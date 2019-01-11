@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The message written by the command that created this record
+        /// The message written by the command that created this record.
         /// </summary>
         public string Message
         {
@@ -58,11 +58,12 @@ namespace System.Management.Automation
             {
                 return _message;
             }
+
             set { _message = value; }
         }
 
         /// <summary>
-        /// The InvocationInfo of the command that created this record
+        /// The InvocationInfo of the command that created this record.
         /// </summary>
         /// <remarks>
         /// The InvocationInfo can be null if the record was not created by a command.
@@ -90,7 +91,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the InvocationInfo (and PipelineIterationInfo) for this record
+        /// Sets the InvocationInfo (and PipelineIterationInfo) for this record.
         /// </summary>
         internal void SetInvocationInfo(InvocationInfo invocationInfo)
         {
@@ -108,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Whether to serialize the InvocationInfo and PipelineIterationInfo during remote calls
+        /// Whether to serialize the InvocationInfo and PipelineIterationInfo during remote calls.
         /// </summary>
         internal bool SerializeExtendedInfo
         {
@@ -116,6 +117,7 @@ namespace System.Management.Automation
             {
                 return _serializeExtendedInfo;
             }
+
             set
             {
                 _serializeExtendedInfo = value;
@@ -123,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the record's message
+        /// Returns the record's message.
         /// </summary>
         public override string ToString()
         {
@@ -168,7 +170,6 @@ namespace System.Management.Automation
     public class WarningRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public WarningRecord(string message)
@@ -176,7 +177,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public WarningRecord(PSObject record)
@@ -186,8 +186,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for Fully qualified warning Id.
         /// </summary>
-        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id</param>
-        /// <param name="message">Warning message</param>
+        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id.</param>
+        /// <param name="message">Warning message.</param>
         public WarningRecord(string fullyQualifiedWarningId, string message)
             : base(message)
         {
@@ -197,8 +197,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for Fully qualified warning Id.
         /// </summary>
-        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id</param>
-        /// <param name="record">Warning serialized object</param>
+        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id.</param>
+        /// <param name="record">Warning serialized object.</param>
         public WarningRecord(string fullyQualifiedWarningId, PSObject record)
             : base(record)
         {
@@ -215,6 +215,7 @@ namespace System.Management.Automation
                 return _fullyQualifiedWarningId ?? string.Empty;
             }
         }
+
         private string _fullyQualifiedWarningId;
     }
 
@@ -225,7 +226,6 @@ namespace System.Management.Automation
     public class DebugRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public DebugRecord(string message)
@@ -233,7 +233,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public DebugRecord(PSObject record)
@@ -248,7 +247,6 @@ namespace System.Management.Automation
     public class VerboseRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public VerboseRecord(string message)
@@ -256,7 +254,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public VerboseRecord(PSObject record)

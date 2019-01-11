@@ -12,9 +12,8 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Information about a loaded Cmdlet Provider
+    /// Information about a loaded Cmdlet Provider.
     /// </summary>
-    ///
     /// <remarks>
     /// A cmdlet provider may want to derive from this class to provide their
     /// own public members to expose to the user or to cache information related to the provider.
@@ -42,18 +41,17 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available
+        /// Gets the full name of the provider including the pssnapin name if available.
         /// </summary>
-        ///
         internal string FullName
         {
             get
             {
                 string result = this.Name;
-                if (!String.IsNullOrEmpty(this.PSSnapInName))
+                if (!string.IsNullOrEmpty(this.PSSnapInName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.PSSnapInName,
@@ -64,12 +62,13 @@ namespace System.Management.Automation
                 else if (!string.IsNullOrEmpty(this.ModuleName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.ModuleName,
                             this.Name);
                 }
+
                 return result;
             }
         }
@@ -82,7 +81,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the pssnapin name that the provider is implemented in.
         /// </summary>
-        ///
         internal string PSSnapInName
         {
             get
@@ -92,6 +90,7 @@ namespace System.Management.Automation
                 {
                     result = PSSnapIn.Name;
                 }
+
                 return result;
             }
         }
@@ -109,6 +108,7 @@ namespace System.Management.Automation
                 {
                     psHome = null;
                 }
+
                 return psHome;
             }
         }
@@ -124,7 +124,7 @@ namespace System.Management.Automation
                     return PSSnapIn.Name;
                 if (Module != null)
                     return Module.Name;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -139,9 +139,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the description for the provider
+        /// Gets or sets the description for the provider.
         /// </summary>
-        public String Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets the capabilities that are implemented by the provider.
@@ -172,21 +172,22 @@ namespace System.Management.Automation
                         // Assume no capabilities for now
                     }
                 }
+
                 return _capabilities;
-            } // get
-        } // Capabilities
+            }
+        }
+
         private ProviderCapabilities _capabilities = ProviderCapabilities.None;
         private bool _capabilitiesRead;
 
         /// <summary>
         /// Gets or sets the home for the provider.
         /// </summary>
-        ///
         /// <remarks>
         /// The location can be either a fully qualified provider path
         /// or an Msh path. This is the location that is substituted for the ~.
         /// </remarks>
-        public string Home { get; set; } // Home
+        public string Home { get; set; }
 
         /// <summary>
         /// Gets an enumeration of drives that are available for
@@ -197,8 +198,8 @@ namespace System.Management.Automation
             get
             {
                 return _sessionState.Drive.GetAllForProvider(FullName);
-            } // get
-        } // Drives
+            }
+        }
 
         /// <summary>
         /// A hidden drive for the provider that is used for setting
@@ -210,19 +211,17 @@ namespace System.Management.Automation
         /// Gets the hidden drive for the provider that is used
         /// for setting a location to a provider-qualified path.
         /// </summary>
-        ///
         internal PSDriveInfo HiddenDrive
         {
             get
             {
                 return _hiddenDrive;
-            } // get
-        } // HiddenDrive
+            }
+        }
 
         /// <summary>
         /// Gets the string representation of the instance which is the name of the provider.
         /// </summary>
-        ///
         /// <returns>
         /// The name of the provider. If single-shell, the name is pssnapin-qualified. If custom-shell,
         /// the name is just the provider name.
@@ -248,7 +247,7 @@ namespace System.Management.Automation
         ///  are separated by a colon or not.
         ///
         /// This is true for all PSDrives on all platforms, except for filesystems on
-        /// non-windows platforms
+        /// non-windows platforms.
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
@@ -256,18 +255,15 @@ namespace System.Management.Automation
         /// Constructs an instance of the class using an existing reference
         /// as a template.
         /// </summary>
-        ///
         /// <param name="providerInfo">
         /// The provider information to copy to this instance.
         /// </param>
-        ///
         /// <remarks>
         /// This constructor should be used by derived types to easily copying
         /// the base class members from an existing ProviderInfo.
         /// This is designed for use by a <see cref="System.Management.Automation.Provider.CmdletProvider"/>
         /// during calls to their <see cref="System.Management.Automation.Provider.CmdletProvider.Start(ProviderInfo)"/> method.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="providerInfo"/> is null.
         /// </exception>
@@ -293,90 +289,71 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for the ProviderInfo class.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// The instance of session state that the provider is being added to.
         /// </param>
-        ///
         /// <param name="implementingType">
         /// The type that implements the provider
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the provider.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the provider.
         /// </param>
-        ///
         /// <param name="psSnapIn">
         /// The Snap-In name for the provider.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="implementingType"/> is null.
         /// </exception>
-        ///
         internal ProviderInfo(
             SessionState sessionState,
             Type implementingType,
             string name,
             string helpFile,
             PSSnapInInfo psSnapIn)
-            : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
+            : this(sessionState, implementingType, name, string.Empty, string.Empty, helpFile, psSnapIn)
         {
         }
 
         /// <summary>
         /// Constructor for the ProviderInfo class.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// The instance of session state that the provider is being added to.
         /// </param>
-        ///
         /// <param name="implementingType">
         /// The type that implements the provider
         /// </param>
-        ///
         /// <param name="name">
         /// The alternate name to use for the provider instead of the one specified
         /// in the .cmdletprovider file.
         /// </param>
-        ///
         /// <param name="description">
         /// The description of the provider.
         /// </param>
-        ///
         /// <param name="home">
         /// The home path for the provider. This must be an MSH path.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the provider.
         /// </param>
-        ///
         /// <param name="psSnapIn">
         /// The Snap-In for the provider.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="implementingType"/> or <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         internal ProviderInfo(
             SessionState sessionState,
             Type implementingType,
@@ -397,7 +374,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -436,15 +413,12 @@ namespace System.Management.Automation
         /// Determines if the passed in name is either the fully-qualified pssnapin name or
         /// short name of the provider.
         /// </summary>
-        ///
         /// <param name="providerName">
         /// The name to compare with the provider name.
         /// </param>
-        ///
         /// <returns>
         /// True if the name is the fully-qualified pssnapin name or the short name of the provider.
         /// </returns>
-        ///
         internal bool NameEquals(string providerName)
         {
             PSSnapinQualifiedName qualifiedProviderName = PSSnapinQualifiedName.GetInstance(providerName);
@@ -455,24 +429,25 @@ namespace System.Management.Automation
                 // If the pssnapin name and provider name are specified, then both must match
                 do // false loop
                 {
-                    if (!String.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
                     {
                         // After converting core snapins to load as modules, the providers will have Module property populated
-                        if (!String.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
-                            !String.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
+                        if (!string.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
                         {
                             break;
                         }
                     }
 
-                    result = String.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
+                    result = string.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
                 } while (false);
             }
             else
             {
                 // If only the provider name is specified, then only the name must match
-                result = String.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
+                result = string.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
             }
+
             return result;
         }
 
@@ -502,7 +477,7 @@ namespace System.Management.Automation
             {
                 if (namePattern == null)
                 {
-                    if (String.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
+                    if (string.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
                         IsPSSnapinNameMatch(psSnapinQualifiedName))
                     {
                         result = true;
@@ -513,6 +488,7 @@ namespace System.Management.Automation
                     result = true;
                 }
             }
+
             return result;
         }
 
@@ -520,8 +496,8 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
-                String.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
+                string.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }
@@ -530,18 +506,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the provider
+        /// Creates an instance of the provider.
         /// </summary>
-        ///
         /// <returns>
         /// An instance of the provider or null if one could not be created.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If an instance of the provider could not be created because the
         /// type could not be found in the assembly.
         /// </exception>
-        ///
         internal Provider.CmdletProvider CreateInstance()
         {
             // It doesn't really seem that using thread local storage to store an
@@ -620,6 +593,7 @@ namespace System.Management.Automation
                             "ProviderNotFoundInAssembly",
                             SessionStateStrings.ProviderNotFoundInAssembly);
                 }
+
                 throw e;
             }
 
@@ -647,12 +621,14 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     List<PSTypeName> l;
                     if (!_providerOutputType.TryGetValue(outputType.ProviderCmdlet, out l))
                     {
                         l = new List<PSTypeName>();
                         _providerOutputType[outputType.ProviderCmdlet] = l;
                     }
+
                     l.AddRange(outputType.Type);
                 }
             }
@@ -663,6 +639,7 @@ namespace System.Management.Automation
                 listToAppend.AddRange(cmdletOutputType);
             }
         }
+
         private Dictionary<string, List<PSTypeName>> _providerOutputType;
 
         private PSNoteProperty _noteProperty;
@@ -673,8 +650,9 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
-    } // class ProviderInfo
-} // namespace System.Management.Automation
+    }
+}
 

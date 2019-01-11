@@ -11,7 +11,6 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// MamlNode is an xml node in MAML schema. Maml schema includes formatting oriented tags like para, list
     /// etc, which needs to be taken care of during display. As a result, xml node in Maml schema can't be
     /// converted into PSObject directly with XmlNodeAdapter.
@@ -45,7 +44,6 @@ namespace System.Management.Automation
     ///                 </definition>
     ///             </definitionListItem>
     ///         </definitionList>
-    ///
     /// After processing, content of these three tags will be converted into textItem and its derivations,
     ///     1. para => paraTextItem
     ///         <textItem class="paraTextItem">
@@ -66,11 +64,10 @@ namespace System.Management.Automation
     ///             <definition>definition text here</definition>
     ///         </definitionListItem>
     /// </summary>
-    ///
     internal class MamlNode
     {
         /// <summary>
-        /// Constructor for HelpInfo
+        /// Constructor for HelpInfo.
         /// </summary>
         internal MamlNode(XmlNode xmlNode)
         {
@@ -80,7 +77,7 @@ namespace System.Management.Automation
         private XmlNode _xmlNode;
 
         /// <summary>
-        /// Underline xmlNode for this MamlNode object
+        /// Underline xmlNode for this MamlNode object.
         /// </summary>
         /// <value></value>
         internal XmlNode XmlNode
@@ -94,7 +91,7 @@ namespace System.Management.Automation
         private PSObject _mshObject;
 
         /// <summary>
-        /// mshObject which is converted from XmlNode.
+        /// MshObject which is converted from XmlNode.
         /// </summary>
         /// <value></value>
         internal PSObject PSObject
@@ -180,7 +177,6 @@ namespace System.Management.Automation
         ///                 </definitionListItem>
         ///             </definitionList>
         ///         </description>
-        ///
         ///         In this case, an PSObject based on an PSObject array will be created. The inside PSObject array
         ///         will contain following items
         ///             . a MamlParaTextItem based on "para 1"
@@ -191,7 +187,6 @@ namespace System.Management.Automation
         ///
         ///         The outside PSObject will have a property
         ///             attribute => "value"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -219,9 +214,9 @@ namespace System.Management.Automation
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (String.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (String.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -298,7 +293,6 @@ namespace System.Management.Automation
         /// We are making each property value is an array (PSObject[]) to start with.
         /// At the end, SimplifyProperties will be called to reduce PSObject[] containing
         /// only one element to PSObject itself.
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -364,7 +358,6 @@ namespace System.Management.Automation
         /// an node with maml formatting node inside is treated. The side effect of this
         /// is that the properties for outside mshObject will be lost. An example of this
         /// is that,
-        ///
         /// <command>
         ///     <description attrib1="value1">
         ///         <para></para>
@@ -372,16 +365,15 @@ namespace System.Management.Automation
         ///         <definitionList></definitionList>
         ///     </description>
         /// </command>
-        ///
         /// After the processing, PSObject corresponding to command will have an property
         /// with name "description" and a value of an PSObject array created based on
         /// maml formatting node inside "description" node. The attribute of description node
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring
         /// monad command help.
         /// </summary>
-        /// <param name="properties">property hashtable</param>
-        /// <param name="name">property name</param>
-        /// <param name="mshObject">property value</param>
+        /// <param name="properties">Property hashtable.</param>
+        /// <param name="name">Property name.</param>
+        /// <param name="mshObject">Property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
@@ -517,7 +509,7 @@ namespace System.Management.Automation
         /// Check whether a node is for maml formatting. This include following nodes,
         ///     a. para
         ///     b. list
-        ///     c. definitionList
+        ///     c. definitionList.
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -589,7 +581,6 @@ namespace System.Management.Automation
         ///            </definitionListItem>
         ///        </definitionList>
         ///    </description>
-        ///
         ///    In this case, an PSObject based on an PSObject array will be created. The inside PSObject array
         ///    will contain following items
         ///        . a MamlParaTextItem based on "para 1"
@@ -607,7 +598,7 @@ namespace System.Management.Automation
             int paraNodes = GetParaMamlNodeCount(xmlNode.ChildNodes);
             int count = 0;
             // Don't trim the content if this is an "introduction" node.
-            bool trim = ! string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
+            bool trim = !string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
@@ -651,7 +642,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the number of para nodes
+        /// Gets the number of para nodes.
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
@@ -663,10 +654,11 @@ namespace System.Management.Automation
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (childNode.InnerText.Trim().Equals(String.Empty))
+                    if (childNode.InnerText.Trim().Equals(string.Empty))
                     {
                         continue;
                     }
+
                     ++i;
                 }
             }
@@ -749,7 +741,6 @@ namespace System.Management.Automation
         ///    </para>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
         ///        a. text="para text"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
@@ -767,7 +758,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            if (newLine && !xmlNode.InnerText.Trim().Equals(String.Empty))
+            if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
                 sb.AppendLine(xmlNode.InnerText.Trim());
             }
@@ -778,6 +769,7 @@ namespace System.Management.Automation
                 {
                     innerText = innerText.Trim();
                 }
+
                 sb.Append(innerText);
             }
 
@@ -806,13 +798,11 @@ namespace System.Management.Automation
         ///            </para>
         ///        </listItem>
         ///    </list>
-        ///
         /// In this case, an array of PSObject, each of type "MamlOrderedListText" will be created with following
         /// two properties,
         ///        a. tag=" 1. " or " 2. "
         ///        b. text="text for list item 1" or "text for list item 2"
         /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -1029,7 +1019,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            if (String.IsNullOrEmpty(term))
+            if (string.IsNullOrEmpty(term))
                 return null;
 
             PSObject mshObject = new PSObject();
@@ -1093,14 +1083,12 @@ namespace System.Management.Automation
         /// is to remove that fixed amount from the text.
         ///
         /// For example, in xml,
-        ///
         /// <preformatted>
         ///     void function()
         ///     {
         ///         // call some other function here;
         ///     }
         /// </preformatted>
-        ///
         /// we can find that the preformatted text are indented unanimously
         /// by 4 spaces because of its position in xml.
         ///
@@ -1117,8 +1105,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static string GetPreformattedText(string text)
         {
-            //we are assuming tabsize=4 here.
-            //It is discouraged to use tab in preformatted text.
+            // we are assuming tabsize=4 here.
+            // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
             string[] lines = noTabText.Split(Utils.Separators.Newline);
@@ -1154,8 +1142,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Trim empty lines from the either end of an string array.
         /// </summary>
-        /// <param name="lines">lines to trim</param>
-        /// <returns>an string array with empty lines trimed on either end</returns>
+        /// <param name="lines">Lines to trim.</param>
+        /// <returns>An string array with empty lines trimed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
             if (lines == null || lines.Length == 0)
@@ -1191,7 +1179,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get minimum indentation of a paragraph
+        /// Get minimum indentation of a paragraph.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
@@ -1238,11 +1226,11 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsEmptyLine(string line)
         {
-            if (String.IsNullOrEmpty(line))
+            if (string.IsNullOrEmpty(line))
                 return true;
 
             string trimedLine = line.Trim();
-            if (String.IsNullOrEmpty(trimedLine))
+            if (string.IsNullOrEmpty(trimedLine))
                 return true;
 
             return false;

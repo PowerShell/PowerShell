@@ -60,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
                 }
+
                 foreach (FieldInfo field in type.GetFields())
                 {
                     if (field.IsLiteral)

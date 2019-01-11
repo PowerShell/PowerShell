@@ -24,9 +24,9 @@ Describe "Get-Content" -Tags "CI" {
         Remove-Item -Path $testPath2 -Force
     }
 
-    It "Should throw an error on a directory  " {
+    It "Should throw an error on a directory" {
         { Get-Content . -ErrorAction Stop } |
-            Should -Throw -ErrorId "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
+            Should -Throw -ErrorId "GetContainerContentException,Microsoft.PowerShell.Commands.GetContentCommand"
     }
 
     It "Should return an Object when listing only a single line and the correct information from a file" {
@@ -278,6 +278,15 @@ baz
         } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
     }
 
+    It "Should throw ItemNotFound when path matches no files with <variation>" -TestCases @(
+        @{ variation = "no additional parameters"; params = @{} },
+        @{ variation = "dynamic parameter"       ; params = @{ Raw = $true }}
+    ) {
+        param($params)
+
+        { Get-Content -Path "/DoesNotExist*.txt" @params -ErrorAction Stop } | Should -Throw -ErrorId "ItemNotFound,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+
     Context "Check Get-Content containing multi-byte chars" {
         BeforeAll {
             $firstLine = "Hello,World"
@@ -334,7 +343,7 @@ baz
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should -BeNullOrEmpty
         }
         It "A warning should be emitted if both -AsByteStream and -Encoding are used together" {
-            [byte[]][char[]]"test" | Set-Content -Encoding Unicode -AsByteStream "${TESTDRIVE}\bfile.txt" -WarningVariable contentWarning *>$null
+            [byte[]][char[]]"test" | Set-Content -Encoding Unicode -AsByteStream "${TESTDRIVE}\bfile.txt" -WarningVariable contentWarning *> $null
             $contentWarning.Message | Should -Match "-AsByteStream"
         }
     }

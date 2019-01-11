@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the underlying PSCredential of
         /// the instance.
         /// </summary>
-        ///
         [Parameter(Position = 0, ParameterSetName = credentialSet)]
         [ValidateNotNull]
         [Credential()]
@@ -46,8 +45,10 @@ namespace Microsoft.PowerShell.Commands
         public string Message
         {
             get { return _message; }
+
             set { _message = value; }
         }
+
         private string _message = UtilsStrings.PromptForCredential_DefaultMessage;
 
         /// <summary>
@@ -58,8 +59,10 @@ namespace Microsoft.PowerShell.Commands
         public string UserName
         {
             get { return _userName; }
+
             set { _userName = value; }
         }
+
         private string _userName = null;
 
         /// <summary>
@@ -70,13 +73,15 @@ namespace Microsoft.PowerShell.Commands
         public string Title
         {
             get { return _title; }
+
             set { _title = value; }
         }
+
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
-        /// class
+        /// class.
         /// </summary>
         public GetCredentialCommand() : base()
         {

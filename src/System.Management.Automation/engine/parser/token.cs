@@ -1403,6 +1403,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<Token> NestedTokens
         {
             get { return _nestedTokens; }
+
             internal set { _nestedTokens = value; }
         }
 
@@ -1417,12 +1418,12 @@ namespace System.Management.Automation.Language
             {
                 ToDebugString(_nestedTokens, sb, indent);
             }
+
             return sb.ToString();
         }
     }
 
     /// <summary>
-    ///
     /// </summary>
     public class LabelToken : Token
     {
@@ -1433,7 +1434,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public string LabelText { get; }
     }

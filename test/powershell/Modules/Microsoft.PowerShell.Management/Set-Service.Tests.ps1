@@ -12,12 +12,28 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             net user $userName $testPass /add > $null
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new(".\$userName", $password)
+
+            $testservicename1 = "testservice1"
+            $testservicename2 = "testservice2"
+            $svcbinaryname = "TestService"
+            $svccmd = Get-Command $svcbinaryname
+            $svccmd | Should -Not -BeNullOrEmpty
+            $svcfullpath = $svccmd.Path
+            $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
+            $testservice1 | Should -Not -BeNullOrEmpty
+            $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
+            $testservice2 | Should -Not -BeNullOrEmpty
         }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ($IsWindows) {
             net user $userName /delete > $null
+
+            Stop-Service $testservicename2
+            Stop-Service $testservicename1
+            Remove-Service $testservicename2
+            Remove-Service $testservicename1
         }
     }
 
@@ -328,5 +344,33 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $parameters += @{Binary = "$PSHOME\pwsh.exe"};
         }
         { & $cmdlet @parameters } | Should -Throw -ErrorId $errorid
+    }
+
+    Context "Set-Service test cases on the services with dependent relationship" {
+        BeforeEach {
+            { Set-Service -Status Running $testservicename2 } | Should -Not -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Running"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Running"
+        }
+
+        It "Set-Service can stop a service with dependency" {
+            $script = { Set-Service -Status Stopped $testservicename2 -ErrorAction Stop }
+            { & $script } | Should -Not -Throw
+            (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        }
+
+        It "Set-Service cannot stop a service with running dependent service" {
+            $script = { Set-Service -Status Stopped $testservicename1 -ErrorAction Stop }
+            { & $script } | Should -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Running"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Running"
+        }
+
+        It "Set-Service can stop a service with running dependent service by parameter -Force" {
+            $script = { Set-Service -Status Stopped -Force $testservicename1 -ErrorAction Stop }
+            { & $script } | Should -Not -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        }
     }
 }

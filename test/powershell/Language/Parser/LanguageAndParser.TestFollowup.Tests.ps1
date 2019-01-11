@@ -304,6 +304,12 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
     }
 }
 
+Describe "Hashtable is case insensitive" -Tag CI {
+    It "When LANG is C.UTF-8" -Skip:($IsWindows) {
+        sh -c 'LANG=C.UTF-8 pwsh -NoProfile -Command ''$h=@{p=1};$h.P''' | Should -Be 1
+    }
+}
+
 Describe "WildcardPattern" -Tags "CI" {
     It "Unescaping '<escapedStr>' which escaped from '<inputStr>' should get the original" -TestCases @(
         @{inputStr = '*This'; escapedStr = '`*This'}

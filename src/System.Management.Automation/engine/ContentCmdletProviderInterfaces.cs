@@ -16,27 +16,24 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ContentCmdletProviderIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
-        ///
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdlet"/> is null.
         /// </exception>
-        ///
         internal ContentCmdletProviderIntrinsics(Cmdlet cmdlet)
         {
             if (cmdlet == null)
@@ -46,20 +43,17 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // ContentCmdletProviderIntrinsics internal
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of the sessionState.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         internal ContentCmdletProviderIntrinsics(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -68,7 +62,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // ContentCmdletProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -77,39 +71,31 @@ namespace System.Management.Automation
         #region GetContentReader
 
         /// <summary>
-        /// Gets the content reader for the item at the specified path
+        /// Gets the content reader for the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to get the content reader for.
         /// </param>
-        ///
         /// <returns>
         /// The IContentReader for the item(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -122,50 +108,40 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReader(new string[] { path }, false, false);
-        } // GetContentReader
+        }
 
         /// <summary>
-        /// Gets the content reader for the item at the specified path
+        /// Gets the content reader for the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to get the content reader for.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The IContentReader for the item(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -182,38 +158,29 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        ///
         /// <param name="path">
         /// </param>
-        ///
         /// <param name="context">
         /// </param>
-        ///
         /// <returns>
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -228,43 +195,35 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReader(new string[] { path }, context);
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -279,7 +238,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReaderDynamicParameters(path, context);
-        } // GetContentReaderDynamicParameters
+        }
 
         #endregion GetContentReader
 
@@ -288,37 +247,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content writer for the item(s) at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item(s) to get the content writer for.
         /// </param>
-        ///
         /// <returns>
         /// The IContentWriter for the item(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -331,50 +282,40 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(new string[] { path }, false, false);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the content writer for the item(s) at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to get the content writer for.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The IContentWriter for the item(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -387,42 +328,33 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(path, force, literalPath);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// </summary>
-        ///
         /// <param name="path">
         /// </param>
-        ///
         /// <param name="context">
         /// </param>
-        ///
         /// <returns>
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -437,43 +369,35 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(new string[] { path }, context);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -488,42 +412,35 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriterDynamicParameters(path, context);
-        } // GetContentWriterDynamicParameters
+        }
 
         #endregion GetContentWriter
 
         #region ClearContent
 
         /// <summary>
-        /// Clears the content from the item(s) specified by the path
+        /// Clears the content from the item(s) specified by the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item(s) to clear the content from.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -536,46 +453,37 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearContent(new string[] { path }, false, false);
-        } // ClearContent
+        }
 
         /// <summary>
-        /// Clears the content from the item(s) specified by the path
+        /// Clears the content from the item(s) specified by the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to clear the content from.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -593,37 +501,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears the content from the specified item(s)
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item(s) to clear the content from.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -636,43 +536,35 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearContent(new string[] { path }, context);
-        } // ClearContent
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-content cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -685,7 +577,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearContentDynamicParameters(path, context);
-        } // ClearContentDynamicParameters
+        }
 
         #endregion ClearContent
 
@@ -697,6 +589,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // ContentCmdletProviderIntrinsics
+    }
 }
 

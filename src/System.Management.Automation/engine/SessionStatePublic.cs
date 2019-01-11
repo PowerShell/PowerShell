@@ -17,15 +17,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of SessionState that the APIs should work against.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         internal SessionState(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -34,12 +31,11 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // SessionState
+        }
 
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="context">
         /// An instance of ExecutionContext whose EngineSessionState represents the parent session state.
         /// </param>
@@ -49,7 +45,6 @@ namespace System.Management.Automation
         /// <param name="linkToGlobal">
         /// True if the session state should be linked to the global scope.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
@@ -68,7 +63,7 @@ namespace System.Management.Automation
             }
 
             _sessionState.PublicSessionState = this;
-        } // SessionState
+        }
 
         /// <summary>
         /// Construct a new session state object...
@@ -88,7 +83,7 @@ namespace System.Management.Automation
         #region Public methods
 
         /// <summary>
-        /// Gets the APIs to access drives
+        /// Gets the APIs to access drives.
         /// </summary>
         public DriveManagementIntrinsics Drive
         {
@@ -96,15 +91,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the APIs to access providers
+        /// Gets the APIs to access providers.
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); } // get
+            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); }
         }
 
         /// <summary>
-        /// Gets the APIs to access paths and location
+        /// Gets the APIs to access paths and location.
         /// </summary>
         public PathIntrinsics Path
         {
@@ -116,20 +111,21 @@ namespace System.Management.Automation
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); } // get
+            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); }
         }
 
         /// <summary>
-        /// Get/set constraints for this execution environment
+        /// Get/set constraints for this execution environment.
         /// </summary>
         public PSLanguageMode LanguageMode
         {
             get { return _sessionState.LanguageMode; }
+
             set { _sessionState.LanguageMode = value; }
         }
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         public bool UseFullLanguageModeInDebugger
         {
@@ -184,7 +180,7 @@ namespace System.Management.Automation
         /// then the check will be made. If the check fails, then an exception will be thrown...
         /// </summary>
         /// <param name="origin">The command origin value to check against...</param>
-        /// <param name="valueToCheck">The object to check</param>
+        /// <param name="valueToCheck">The object to check.</param>
         public static void ThrowIfNotVisible(CommandOrigin origin, object valueToCheck)
         {
             SessionStateException exception;
@@ -203,6 +199,7 @@ namespace System.Management.Automation
 
                     throw exception;
                 }
+
                 CommandInfo cinfo = valueToCheck as CommandInfo;
                 if (cinfo != null)
                 {
@@ -248,9 +245,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="valueToCheck">The object to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="valueToCheck">The object to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, object valueToCheck)
         {
             if (origin == CommandOrigin.Internal)
@@ -260,14 +257,15 @@ namespace System.Management.Automation
             {
                 return (obj.Visibility == SessionStateEntryVisibility.Public);
             }
+
             return true;
         }
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="variable">The variable to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="variable">The variable to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, PSVariable variable)
         {
             if (origin == CommandOrigin.Internal)
@@ -276,14 +274,15 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variable");
             }
+
             return (variable.Visibility == SessionStateEntryVisibility.Public);
         }
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="commandInfo">The command to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="commandInfo">The command to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, CommandInfo commandInfo)
         {
             if (origin == CommandOrigin.Internal)
@@ -292,6 +291,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
+
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
         }
 
@@ -300,13 +300,12 @@ namespace System.Management.Automation
         #region Internal methods
 
         /// <summary>
-        /// Gets a reference to the "real" session state object instead of the facade
+        /// Gets a reference to the "real" session state object instead of the facade.
         /// </summary>
-        ///
         internal SessionStateInternal Internal
         {
             get { return _sessionState; }
-        } // Internal
+        }
         #endregion Internal methods
 
         #region private data
@@ -318,7 +317,7 @@ namespace System.Management.Automation
         private PSVariableIntrinsics _variable;
 
         #endregion private data
-    } // SessionStatePublic
+    }
 
     /// <summary>
     /// This enum defines the visibility of execution environment elements...
@@ -326,12 +325,12 @@ namespace System.Management.Automation
     public enum SessionStateEntryVisibility
     {
         /// <summary>
-        /// Entries are visible to requests from outside the runspace
+        /// Entries are visible to requests from outside the runspace.
         /// </summary>
         Public = 0,
 
         /// <summary>
-        /// Entries are not visible to requests from outside the runspace
+        /// Entries are not visible to requests from outside the runspace.
         /// </summary>
         Private = 1
     }
@@ -348,12 +347,12 @@ namespace System.Management.Automation
     public enum PSLanguageMode
     {
         /// <summary>
-        /// All PowerShell language elements are available
+        /// All PowerShell language elements are available.
         /// </summary>
         FullLanguage = 0,
 
         /// <summary>
-        /// A subset of language elements are available to external requests
+        /// A subset of language elements are available to external requests.
         /// </summary>
         RestrictedLanguage = 1,
 

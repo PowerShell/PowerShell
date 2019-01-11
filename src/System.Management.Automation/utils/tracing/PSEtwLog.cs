@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// ETW logging API
+    /// ETW logging API.
     /// </summary>
     internal static class PSEtwLog
     {
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Tracing
 #endif
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         static PSEtwLog()
         {
@@ -45,32 +45,30 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging health event
+        /// Provider interface function for logging health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        ///
-        internal static void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal static void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
             provider.LogEngineHealthEvent(logContext, eventId, exception, additionalInfo);
         }
 
         /// <summary>
-        /// Provider interface function for logging engine lifecycle event
+        /// Provider interface function for logging engine lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
-        ///
         internal static void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
         {
             provider.LogEngineLifecycleEvent(logContext, newState, previousState);
         }
 
         /// <summary>
-        /// Provider interface function for logging command health event
+        /// Provider interface function for logging command health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
@@ -80,11 +78,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging command lifecycle event
+        /// Provider interface function for logging command lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
-        ///
         internal static void LogCommandLifecycleEvent(LogContext logContext, CommandState newState)
         {
             provider.LogCommandLifecycleEvent(() => logContext, newState);
@@ -95,13 +92,13 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal static void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal static void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
             provider.LogPipelineExecutionDetailEvent(logContext, pipelineExecutionDetail);
         }
 
         /// <summary>
-        /// Provider interface function for logging provider health event
+        /// Provider interface function for logging provider health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
@@ -112,32 +109,30 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging provider lifecycle event
+        /// Provider interface function for logging provider lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
-        ///
         internal static void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
         {
             provider.LogProviderLifecycleEvent(logContext, providerName, newState);
         }
 
         /// <summary>
-        /// Provider interface function for logging settings event
+        /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
-        ///
         internal static void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
         {
             provider.LogSettingsEvent(logContext, variableName, value, previousValue);
         }
 
         /// <summary>
-        /// Logs information to the operational channel
+        /// Logs information to the operational channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -150,7 +145,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs information to the operational channel
+        /// Logs information to the operational channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -163,7 +158,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs Verbose to the operational channel
+        /// Logs Verbose to the operational channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -176,7 +171,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs error message to the analytic channel
+        /// Logs error message to the analytic channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -189,7 +184,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs warning message to the analytic channel
+        /// Logs warning message to the analytic channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -234,7 +229,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs verbose message to the analytic channel
+        /// Logs verbose message to the analytic channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -247,7 +242,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs informational message to the analytic channel
+        /// Logs informational message to the analytic channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -273,7 +268,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Logs error message to the operational channel
+        /// Logs error message to the operational channel.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="opcode"></param>
@@ -304,7 +299,7 @@ namespace System.Management.Automation.Tracing
         /// Writes a transfer event mapping current activity id
         /// with a related activity id
         /// This function writes a transfer event for both the
-        /// operational and analytic channels
+        /// operational and analytic channels.
         /// </summary>
         /// <param name="relatedActivityId"></param>
         /// <param name="eventForOperationalChannel"></param>
@@ -322,7 +317,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Writes a transfer event
+        /// Writes a transfer event.
         /// </summary>
         /// <param name="parentActivityId"></param>
         internal static void WriteTransferEvent(Guid parentActivityId)

@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
-    [String]$Stage = 'Build'
+    [String]$Stage = 'Build',
+    [String]$NugetKey
 )
 
 Import-Module $PSScriptRoot/../build.psm1 -Force
@@ -50,14 +51,19 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
-    $releaseTag = $metadata.NextReleaseTag
-    if($env:TRAVIS_BUILD_NUMBER)
+    $releaseTag = $metadata.PreviewReleaseTag
+    $previewVersion = $releaseTag.Split('-')
+    $previewPrefix = $previewVersion[0]
+    $previewLabel = $previewVersion[1].replace('.','')
+
+    if($isDailyBuild)
     {
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:TRAVIS_BUILD_NUMBER
+        $previewLabel= "daily{0}" -f $previewLabel
     }
 
-    return $releaseTag
+    $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
+    return $preReleaseVersion
 }
 
 # This function retrieves the appropriate svg to be used when presenting
@@ -154,12 +160,35 @@ function Set-DailyBuildBadge
 # One of push, pull_request, api, cron.
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
+$commitMessage = [string]::Empty
+
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
-if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
+if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
 {
-    # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
-    # the commit SHA of the HEAD commit of the PR.
-    $commitMessage = git log --format=%B -n 1 $env:TRAVIS_PULL_REQUEST_SHA
+    $commitId = $null
+    if ($env:TRAVIS_EVENT_TYPE)
+    {
+        # We are in Travis-CI
+        $commitId = $env:TRAVIS_PULL_REQUEST_SHA
+
+        # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
+        # the commit SHA of the HEAD commit of the PR.
+        $commitMessage = git log --format=%B -n 1 $commitId
+        Write-Log -message "commitMessage: $commitMessage"
+    }
+    elseif($env:TF_BUILD)
+    {
+        if($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+        {
+            # We are in VSTS and have a commit ID in the Source Version Message
+            $commitId = $Matches[1]
+            $commitMessage = git log --format=%B -n 1 $commitId
+        }
+        else
+        {
+            Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+        }
+    }
 }
 else
 {
@@ -167,17 +196,26 @@ else
 }
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$hasFeatureTag = $commitMessage -match '\[feature\]'
-$hasPackageTag = $commitMessage -match '\[package\]'
+# or the environment variable `FORCE_FEATURE` equals `True`
+$hasFeatureTag = $commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True'
+
+# Run a packaging if the commit message contains `[Package]`
+# or the environment variable `FORCE_PACKAGE` equals `True`
+$hasPackageTag = $commitMessage -match '\[package\]' -or $env:FORCE_PACKAGE -eq 'True'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:BUILD_REASON -eq 'Schedule'
 # only update the build badge for the cron job
-$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
+$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:BUILD_REASON -eq 'Schedule'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
 if($Stage -eq 'Bootstrap')
 {
+    if($cronBuild -and $env:TF_BUILD)
+    {
+        Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    }
+
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
@@ -204,41 +242,92 @@ elseif($Stage -eq 'Build')
     $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
     $testResultsSudo = "$pwd/TestResultsSudo.xml"
 
-    $pesterParam = @{
-        'binDir'     = $output
+    $excludeTag = @('RequireSudoOnUnix')
+
+    $noSudoPesterParam = @{
+        'BinDir'     = $output
         'PassThru'   = $true
         'Terse'      = $true
         'Tag'        = @()
-        'ExcludeTag' = @('RequireSudoOnUnix')
+        'ExcludeTag' = $excludeTag
         'OutputFile' = $testResultsNoSudo
     }
 
     if ($isFullBuild) {
-        $pesterParam['Tag'] = @('CI','Feature','Scenario')
+        $noSudoPesterParam['Tag'] = @('CI','Feature','Scenario')
     } else {
-        $pesterParam['Tag'] = @('CI')
-        $pesterParam['ThrowOnFailure'] = $true
+        $noSudoPesterParam['Tag'] = @('CI')
+        $noSudoPesterParam['ThrowOnFailure'] = $true
     }
 
-    if ($hasRunFailingTestTag)
-    {
-        $pesterParam['IncludeFailingTest'] = $true
+    if ($hasRunFailingTestTag) {
+        $noSudoPesterParam['IncludeFailingTest'] = $true
     }
+
+    # Get the experimental feature names and the tests associated with them
+    $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
 
     # Running tests which do not require sudo.
-    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
+    $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title 'Pester No Sudo'
+
+    # Running tests that do not require sudo, with specified experimental features enabled
+    $noSudoResultsWithExpFeatures = @()
+    foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        $featureName = $entry.Key
+        $testFiles = $entry.Value
+
+        $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
+        $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
+        $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
+        if ($testFiles.Count -eq 0) {
+            # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+            # This allows us to prevent regressions to a critical engine experimental feature.
+            $noSudoPesterParam.Remove('Path')
+        } else {
+            # If a non-empty string or array is specified for the feature name, we only run those test files.
+            $noSudoPesterParam['Path'] = $testFiles
+        }
+        $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName"
+        $noSudoResultsWithExpFeatures += $passThruResult
+    }
 
     # Running tests, which require sudo.
-    $pesterParam['Tag'] = @('RequireSudoOnUnix')
-    $pesterParam['ExcludeTag'] = @()
-    $pesterParam['Sudo'] = $true
-    $pesterParam['OutputFile'] = $testResultsSudo
-    $pesterPassThruSudoObject = Start-PSPester @pesterParam
+    $sudoPesterParam = $noSudoPesterParam.Clone()
+    $sudoPesterParam.Remove('Path')
+    $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
+    $sudoPesterParam['ExcludeTag'] = @()
+    $sudoPesterParam['Sudo'] = $true
+    $sudoPesterParam['OutputFile'] = $testResultsSudo
+    $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title 'Pester Sudo'
+
+    # Running tests that require sudo, with specified experimental features enabled
+    $sudoResultsWithExpFeatures = @()
+    foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        $featureName = $entry.Key
+        $testFiles = $entry.Value
+
+        $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
+        $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
+        $sudoPesterParam['ExperimentalFeatureName'] = $featureName
+        if ($testFiles.Count -eq 0) {
+            # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+            # This allows us to prevent regressions to a critical engine experimental feature.
+            $sudoPesterParam.Remove('Path')
+        } else {
+            # If a non-empty string or array is specified for the feature name, we only run those test files.
+            $sudoPesterParam['Path'] = $testFiles
+        }
+        $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName"
+        $sudoResultsWithExpFeatures += $passThruResult
+    }
 
     # Determine whether the build passed
     try {
+        $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
+        $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
         # this throws if there was an error
-        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
         $result = "PASS"
     }
     catch {
@@ -247,12 +336,11 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        $SequentialXUnitTestResultsFile = "$pwd/SequentialXUnitTestResults.xml"
         $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
 
-        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        $SequentialXUnitTestResultsFile, $ParallelXUnitTestResultsFile | ForEach-Object { Test-XUnitTestResults -TestResultsFile $_ }
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
     }
     catch {
         $result = "FAIL"
@@ -275,10 +363,10 @@ elseif($Stage -eq 'Build')
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
-            if($isDailyBuild -and $env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
                 Write-Log "pushing $package to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if ($IsLinux)
@@ -286,6 +374,11 @@ elseif($Stage -eq 'Build')
             # Create and package Raspbian .tgz
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
+        }
+
+        if ($isDailyBuild)
+        {
+            New-TestPackage -Destination $pwd
         }
     }
 

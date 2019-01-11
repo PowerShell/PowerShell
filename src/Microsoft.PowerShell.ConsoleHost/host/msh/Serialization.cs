@@ -11,43 +11,33 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// Wraps Hitesh's xml serializer in such a way that it will select the proper serializer based on the data
     /// format.
-    ///
     /// </summary>
 
     internal class Serialization
     {
         /// <summary>
-        ///
         /// Describes the format of the data streamed between minishells, e.g. the allowed arguments to the minishell
         /// -outputformat and -inputformat command line parameters.
-        ///
         /// </summary>
 
         internal enum DataFormat
         {
             /// <summary>
-            ///
-            /// text format -- i.e. stream text just as out-default would display it.
-            ///
+            /// Text format -- i.e. stream text just as out-default would display it.
             /// </summary>
 
             Text = 0,
 
             /// <summary>
-            ///
-            /// XML-serialized format
-            ///
+            /// XML-serialized format.
             /// </summary>
 
             XML = 1,
 
             /// <summary>
-            ///
             /// Indicates that the data should be discarded instead of processed.
-            ///
             /// </summary>
             None = 2
         }
@@ -117,6 +107,7 @@ namespace Microsoft.PowerShell
                         _firstCall = false;
                         textWriter.WriteLine(Serialization.XmlCliTag);
                     }
+
                     _xmlSerializer.Serialize(o, streamName);
                     break;
                 case DataFormat.Text:
@@ -171,7 +162,7 @@ namespace Microsoft.PowerShell
 
             textReader = input;
             _firstLine = textReader.ReadLine();
-            if (String.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // format should be XML
 
@@ -214,6 +205,7 @@ namespace Microsoft.PowerShell
                     {
                         return null;
                     }
+
                     if (_firstLine != null)
                     {
                         o = _firstLine;
@@ -227,8 +219,10 @@ namespace Microsoft.PowerShell
                             _atEnd = true;
                         }
                     }
+
                     break;
             }
+
             return o;
         }
 
@@ -255,6 +249,7 @@ namespace Microsoft.PowerShell
                         result = _atEnd;
                         break;
                 }
+
                 return result;
             }
         }

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Configuration;
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Experimental feature names that are enabled in the config file.
         /// </summary>
-        internal static readonly ImmutableHashSet<string> EnabledExperimentalFeatureNames;
+        internal static readonly ReadOnlyBag<string> EnabledExperimentalFeatureNames;
 
         /// <summary>
         /// Type initializer. Initialize the engine experimental feature list.
@@ -88,6 +88,14 @@ namespace System.Management.Automation
                                         source: EngineSource,
                                         isEnabled: false),
                 */
+                new ExperimentalFeature(name: "PSImplicitRemotingBatching",
+                                        description: "Batch implicit remoting proxy commands to improve performance",
+                                        source: EngineSource,
+                                        isEnabled: false),
+                new ExperimentalFeature(name: "PSUseAbbreviationExpansion",
+                                        description: "Allow tab completion of cmdlets and functions by abbreviation",
+                                        source: EngineSource,
+                                        isEnabled: false),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -95,7 +103,7 @@ namespace System.Management.Automation
             var engineExpFeatureMap = engineFeatures.ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
             EngineExperimentalFeatureMap = new ReadOnlyDictionary<string, ExperimentalFeature>(engineExpFeatureMap);
 
-            // Initialize the immutable hashset 'EnabledExperimentalFeatureNames'.
+            // Initialize the readonly hashset 'EnabledExperimentalFeatureNames'.
             // The initialization of 'EnabledExperimentalFeatureNames' is deliberately made in the type initializer so that:
             //   1. 'EnabledExperimentalFeatureNames' can be declared as readonly;
             //   2. No need to deal with initialization from multiple threads;
@@ -115,11 +123,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Process the array of enabled feature names retrieved from configuration.
         /// Ignore invalid feature names and unavailable engine feature names, and
-        /// return an ImmutableHashSet of the valid enabled feature names.
+        /// return an ReadOnlyBag of the valid enabled feature names.
         /// </summary>
-        private static ImmutableHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
+        private static ReadOnlyBag<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ImmutableHashSet<string>.Empty; }
+            if (enabledFeatures.Length == 0) { return ReadOnlyBag<string>.Empty; }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)
@@ -147,7 +155,8 @@ namespace System.Management.Automation
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
                 }
             }
-            return ImmutableHashSet.CreateRange(StringComparer.OrdinalIgnoreCase, list);
+
+            return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -224,6 +233,7 @@ namespace System.Management.Automation
             {
                 action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
             }
+
             return action;
         }
 
@@ -330,9 +340,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = ExperimentAction.None;
     }
 }

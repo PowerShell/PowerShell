@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
             _expression = expression;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             List<PSPropertyExpressionResult> resList = _expression.GetValues(liveObject);
 
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object objectResult = result.Result;
-            return objectResult == null ? String.Empty : ColumnInfo.LimitString(objectResult.ToString());
+            return objectResult == null ? string.Empty : ColumnInfo.LimitString(objectResult.ToString());
         }
     }
 }

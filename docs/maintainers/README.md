@@ -25,6 +25,13 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
 - Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
 
+## Former Repository Maintainers
+
+- Jason Shirk ([lzybkr](https://github.com/lzybkr))
+- Sergei Vorobev ([vors](https://github.com/vors))
+- Mike Richmond ([mirichmo](https://github.com/mirichmo))
+- Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
+
 ## Repository Maintainer Responsibilities
 
 Repository Maintainers enable rapid contributions while maintaining a high level of quality in PowerShell by ensuring that all development processes are being followed correctly.

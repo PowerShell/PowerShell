@@ -4,6 +4,7 @@
     <Description>PowerShell Core on Windows top-level project</Description>
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
   </PropertyGroup>
@@ -20,14 +21,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="..\Schemas\PSMaml\*">
+      <Link>Schemas\PSMaml\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="..\..\LICENSE.txt;..\..\ThirdPartyNotices.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\powershell-win-core\pwsh-preview.cmd"> 
-      <Link>preview\pwsh-preview.cmd</Link> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
-    </Content> 
+    <Content Include="..\powershell-win-core\pwsh-preview.cmd">
+      <Link>preview\pwsh-preview.cmd</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +46,6 @@
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
-    <PackageReference Include="psrp.windows" Version="6.1.0-*" />
   </ItemGroup>
 
 </Project>

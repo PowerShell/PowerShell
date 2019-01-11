@@ -11,120 +11,96 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the filter.
         /// </param>
-        ///
         /// <param name="filter">
         /// The ScriptBlock for the filter
         /// </param>
-        ///
         /// <param name="context">
         /// The ExecutionContext for the filter.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="filter"/> is null.
         /// </exception>
-        ///
         internal FilterInfo(string name, ScriptBlock filter, ExecutionContext context) : this(name, filter, context, null)
         {
-        } // FilterInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the filter.
         /// </param>
-        ///
         /// <param name="filter">
         /// The ScriptBlock for the filter
         /// </param>
-        ///
         /// <param name="context">
         /// The ExecutionContext for the filter.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the filter.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="filter"/> is null.
         /// </exception>
-        ///
         internal FilterInfo(string name, ScriptBlock filter, ExecutionContext context, string helpFile)
             : base(name, filter, context, helpFile)
         {
             SetCommandType(CommandTypes.Filter);
-        } // FilterInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the filter.
         /// </param>
-        ///
         /// <param name="filter">
         /// The ScriptBlock for the filter
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the filter.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="filter"/> is null.
         /// </exception>
-        ///
         internal FilterInfo(string name, ScriptBlock filter, ScopedItemOptions options, ExecutionContext context) : this(name, filter, options, context, null)
         {
-        } // FilterInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FilterInfo class with the specified name and ScriptBlock.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the filter.
         /// </param>
-        ///
         /// <param name="filter">
         /// The ScriptBlock for the filter
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the filter.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The help file for the filter.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="filter"/> is null.
         /// </exception>
-        ///
         internal FilterInfo(string name, ScriptBlock filter, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : base(name, filter, options, context, helpFile)
         {
             SetCommandType(CommandTypes.Filter);
-        } // FilterInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -160,5 +136,5 @@ namespace System.Management.Automation
         {
             get { return HelpCategory.Filter; }
         }
-    } // FilterInfo
-} // namespace System.Management.Automation
+    }
+}

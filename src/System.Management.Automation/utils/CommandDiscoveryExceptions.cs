@@ -18,25 +18,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a CommandNotFoundException. This is the recommended constructor.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the command that could not be found.
         /// </param>
-        ///
         /// <param name="innerException">
         /// The inner exception.
         /// </param>
-        ///
         /// <param name="resourceStr">
         /// This string is message template string
         /// </param>
-        ///
         /// <param name="errorIdAndResourceId">
         /// This string is the ErrorId passed to the ErrorRecord, and is also
         /// the resourceId used to look up the message template string in
         /// DiscoveryExceptions.txt.
         /// </param>
-        ///
         /// <param name="messageArgs">
         /// Additional arguments to format into the message.
         /// </param>
@@ -58,22 +53,19 @@ namespace System.Management.Automation
         public CommandNotFoundException() : base() {; }
 
         /// <summary>
-        /// Constructs a CommandNotFoundException
+        /// Constructs a CommandNotFoundException.
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
         public CommandNotFoundException(string message) : base(message) {; }
 
         /// <summary>
-        /// Constructs a CommandNotFoundException
+        /// Constructs a CommandNotFoundException.
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        ///
         /// <param name="innerException">
         /// An exception that led to this exception.
         /// </param>
@@ -81,13 +73,11 @@ namespace System.Management.Automation
 
         #region Serialization
         /// <summary>
-        /// Serialization constructor for class CommandNotFoundException
+        /// Serialization constructor for class CommandNotFoundException.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -106,11 +96,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes the CommandNotFoundException.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -143,9 +131,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _commandName);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
 
         /// <summary>
@@ -154,9 +144,11 @@ namespace System.Management.Automation
         public string CommandName
         {
             get { return _commandName; }
+
             set { _commandName = value; }
         }
-        private string _commandName = String.Empty;
+
+        private string _commandName = string.Empty;
 
         #endregion Properties
 
@@ -182,6 +174,7 @@ namespace System.Management.Automation
                 a = new object[1];
                 a[0] = commandName;
             }
+
             return StringUtil.Format(resourceStr, a);
         }
         #endregion Private
@@ -197,19 +190,15 @@ namespace System.Management.Automation
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
         /// #requires -shellId MyShellId.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        ///
         /// <param name="requiresShellId">
         /// The ID of the shell that is incompatible with the current shell.
         /// </param>
-        ///
         /// <param name="requiresShellPath">
         /// The path to the shell specified in the #requires -shellId statement.
         /// </param>
-        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
@@ -233,19 +222,15 @@ namespace System.Management.Automation
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
         /// #requires -version N.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        ///
         /// <param name="requiresPSVersion">
         /// The Msh version that the script requires.
         /// </param>
-        ///
         /// <param name="currentPSVersion">
         /// The current Msh version
         /// </param>
-        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
@@ -270,19 +255,15 @@ namespace System.Management.Automation
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for the
         /// #requires -PSSnapin MyPSSnapIn statement.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        ///
         /// <param name="missingItems">
         /// The missing snap-ins/modules that the script requires.
         /// </param>
-        ///
         /// /// <param name="forSnapins">
         /// Indicates whether the error message needs to be constructed for missing snap-ins/ missing modules.
         /// </param>
-        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
@@ -299,23 +280,18 @@ namespace System.Management.Automation
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for the
         /// #requires -PSSnapin MyPSSnapIn statement.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        ///
         /// <param name="missingItems">
         /// The missing snap-ins/modules that the script requires.
         /// </param>
-        ///
         /// /// <param name="forSnapins">
         /// Indicates whether the error message needs to be constructed for missing snap-ins/ missing modules.
         /// </param>
-        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
-        ///
         /// <param name="errorRecord">
         /// The error Record for this exception.
         /// </param>
@@ -341,11 +317,9 @@ namespace System.Management.Automation
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
         /// #requires -RunAsAdministrator statement.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the script containing the #requires statement.
         /// </param>
-        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
@@ -363,27 +337,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
         public ScriptRequiresException() : base() {; }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
         public ScriptRequiresException(string message) : base(message) {; }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        ///
         /// <param name="innerException">
         /// The exception that led to this exception.
         /// </param>
@@ -393,11 +364,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an PSVersionNotCompatibleException using serialized data.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -414,11 +383,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the serialized data for the exception.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -448,24 +415,27 @@ namespace System.Management.Automation
         {
             get { return _commandName; }
         }
-        private string _commandName = String.Empty;
+
+        private string _commandName = string.Empty;
 
         /// <summary>
-        /// Gets the PSVersion that the script requires
+        /// Gets the PSVersion that the script requires.
         /// </summary>
         public Version RequiresPSVersion
         {
             get { return _requiresPSVersion; }
         }
+
         private Version _requiresPSVersion;
 
         /// <summary>
-        /// Gets the missing snap-ins that the script requires
+        /// Gets the missing snap-ins that the script requires.
         /// </summary>
         public ReadOnlyCollection<string> MissingPSSnapIns
         {
             get { return _missingPSSnapIns; }
         }
+
         private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(new string[0]);
 
         /// <summary>
@@ -475,15 +445,17 @@ namespace System.Management.Automation
         {
             get { return _requiresShellId; }
         }
+
         private string _requiresShellId;
 
         /// <summary>
-        /// Gets or sets the path to the incompatible shell
+        /// Gets or sets the path to the incompatible shell.
         /// </summary>
         public string RequiresShellPath
         {
             get { return _requiresShellPath; }
         }
+
         private string _requiresShellPath;
 
         #endregion Properties
@@ -500,10 +472,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("missingItems");
             }
+
             foreach (string missingItem in missingItems)
             {
                 sb.Append(missingItem).Append(", ");
             }
+
             if (sb.Length > 1)
             {
                 sb.Remove(sb.Length - 2, 2);
@@ -535,13 +509,13 @@ namespace System.Management.Automation
 
             if (forShellId)
             {
-                if (String.IsNullOrEmpty(first))
+                if (string.IsNullOrEmpty(first))
                 {
                     resourceStr = DiscoveryExceptions.RequiresShellIDInvalidForSingleShell;
                 }
                 else
                 {
-                    resourceStr = String.IsNullOrEmpty(second)
+                    resourceStr = string.IsNullOrEmpty(second)
                             ? DiscoveryExceptions.RequiresInterpreterNotCompatibleNoPath
                             : DiscoveryExceptions.RequiresInterpreterNotCompatible;
                 }
@@ -561,5 +535,5 @@ namespace System.Management.Automation
 
         #endregion Private
     }
-} // namespace System.Management.Automation
+}
 
