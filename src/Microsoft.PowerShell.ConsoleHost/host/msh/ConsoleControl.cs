@@ -2852,7 +2852,7 @@ namespace Microsoft.PowerShell
         internal static int LengthInBufferCells(char c)
         {
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
-            // which is derived from http://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
+            // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
 
             bool isWide = c >= 0x1100 &&
                 (c <= 0x115f || /* Hangul Jamo init. consonants */
