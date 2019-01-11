@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <returns>Whether the type is registered already.</returns>
         public bool IsRegistered(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return false;
             }
@@ -90,7 +90,7 @@ namespace System.Management.Automation
                 ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(PSTypeExtensions.EmptyTypes);
                 if (!constructor.IsPublic)
                 {
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
                                                    jobSourceAdapterType.FullName);
                     throw new InvalidOperationException(message);
@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns a token that allows a job to be constructed with a specific id and instanceId.
-        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter
+        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter.
         /// </summary>
         /// <param name="instanceId">The instance id desired.</param>
         /// <param name="typeName">The requesting type name for JobSourceAdapter implementation.</param>
@@ -860,7 +860,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Write a warning
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobSourceAdapterError,
                                                    exception.Message,
                                                    sourceAdapter.Name);

@@ -22,14 +22,14 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A job that can throttle execution of child jobs
+    /// A job that can throttle execution of child jobs.
     /// </summary>
     internal sealed class ThrottlingJob : Job
     {
         #region IDisposable Members
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         internal enum ChildJobFlags
         {
             /// <summary>
-            /// Child job doesn't have any special properties
+            /// Child job doesn't have any special properties.
             /// </summary>
             None = 0,
 
@@ -781,7 +781,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Indicates if job has more data available.
         /// <c>true</c> if any of the child jobs have more data OR if <see cref="EndOfChildJobs"/> have not been called yet;
-        /// <c>false</c> otherwise
+        /// <c>false</c> otherwise.
         /// </summary>
         public override bool HasMoreData
         {
@@ -808,7 +808,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _childJobLocations = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Status message associated with the Job
+        /// Status message associated with the Job.
         /// </summary>
         public override string StatusMessage
         {

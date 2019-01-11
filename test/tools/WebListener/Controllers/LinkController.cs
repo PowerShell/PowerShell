@@ -27,7 +27,7 @@ namespace mvc.Controllers
                 linkNumber = 1;
             }
 
-            string baseUri = Regex.Replace(UriHelper.GetDisplayUrl(Request), "\\?.*", String.Empty);
+            string baseUri = Regex.Replace(UriHelper.GetDisplayUrl(Request), "\\?.*", string.Empty);
 
             string type = Request.Query.TryGetValue("type", out StringValues typeSV) ? typeSV.FirstOrDefault() : "default";
 
@@ -41,7 +41,7 @@ namespace mvc.Controllers
                 whitespace = string.Empty;
             }
 
-            var linkList = new List<String>();
+            var linkList = new List<string>();
             if (maxLinks > 1 && linkNumber > 1)
             {
                 linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, whitespace: whitespace, rel: "prev"));
@@ -86,7 +86,7 @@ namespace mvc.Controllers
             }
             else
             {
-                linkHeader = String.Join(",", linkList);
+                linkHeader = string.Join(",", linkList);
             }
 
             Response.Headers.Add("Link", linkHeader);

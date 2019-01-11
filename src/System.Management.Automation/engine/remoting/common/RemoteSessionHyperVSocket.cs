@@ -288,7 +288,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Remoting
             //
             if (isFirstConnection)
             {
-                if (String.IsNullOrEmpty(networkCredential.UserName))
+                if (string.IsNullOrEmpty(networkCredential.UserName))
                 {
                     throw new PSDirectException(
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
@@ -520,13 +520,13 @@ namespace System.Management.Automation.Remoting
 
                 if (isFirstConnection)
                 {
-                    if (String.IsNullOrEmpty(networkCredential.Domain))
+                    if (string.IsNullOrEmpty(networkCredential.Domain))
                     {
                         networkCredential.Domain = "localhost";
                     }
 
-                    bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
-                    bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
+                    bool emptyPassword = string.IsNullOrEmpty(networkCredential.Password);
+                    bool emptyConfiguration = string.IsNullOrEmpty(configurationName);
 
                     byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
                     byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // Credential is invalid.
                     //
-                    if (String.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
+                    if (string.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
                     {
                         HyperVSocket.Send(response);
 
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // If PowerShell Direct in VM supports configuration, send configuration name.
                     //
-                    if (String.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
+                    if (string.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
                     {
                         if (emptyConfiguration)
                         {

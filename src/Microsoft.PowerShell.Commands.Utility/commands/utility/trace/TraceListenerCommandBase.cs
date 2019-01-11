@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string notMatchedName in notMatched)
             {
-                if (String.IsNullOrEmpty(notMatchedName))
+                if (string.IsNullOrEmpty(notMatchedName))
                 {
                     continue;
                 }
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource newTraceSource =
                     PSTraceSource.GetNewTraceSource(
                         notMatchedName,
-                        String.Empty,
+                        string.Empty,
                         true);
 
                 preconfiguredSources.Add(newTraceSource);
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                                     // Save some disk write time by checking whether file is readonly..
                                     if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                                     {
-                                        //Make sure the file is not read only
+                                        // Make sure the file is not read only
                                         fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                                     }
                                 }

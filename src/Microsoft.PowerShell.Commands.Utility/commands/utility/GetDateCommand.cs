@@ -235,49 +235,49 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = Date;
             }
 
-            //use passed year if specified
+            // use passed year if specified
             if (_yearSpecified)
             {
                 offset = Year - dateToUse.Year;
                 dateToUse = dateToUse.AddYears(offset);
             }
 
-            //use passed month if specified
+            // use passed month if specified
             if (_monthSpecified)
             {
                 offset = Month - dateToUse.Month;
                 dateToUse = dateToUse.AddMonths(offset);
             }
 
-            //use passed day if specified
+            // use passed day if specified
             if (_daySpecified)
             {
                 offset = Day - dateToUse.Day;
                 dateToUse = dateToUse.AddDays(offset);
             }
 
-            //use passed hour if specified
+            // use passed hour if specified
             if (_hourSpecified)
             {
                 offset = Hour - dateToUse.Hour;
                 dateToUse = dateToUse.AddHours(offset);
             }
 
-            //use passed minute if specified
+            // use passed minute if specified
             if (_minuteSpecified)
             {
                 offset = Minute - dateToUse.Minute;
                 dateToUse = dateToUse.AddMinutes(offset);
             }
 
-            //use passed second if specified
+            // use passed second if specified
             if (_secondSpecified)
             {
                 offset = Second - dateToUse.Second;
                 dateToUse = dateToUse.AddSeconds(offset);
             }
 
-            //use passed millisecond if specified
+            // use passed millisecond if specified
             if (_millisecondSpecified)
             {
                 offset = Millisecond - dateToUse.Millisecond;
@@ -287,31 +287,31 @@ namespace Microsoft.PowerShell.Commands
 
             if (UFormat != null)
             {
-                //format according to UFormat string
+                // format according to UFormat string
                 WriteObject(UFormatDateString(dateToUse));
             }
             else if (Format != null)
             {
-                //format according to Format string
+                // format according to Format string
 
                 // Special case built-in primitives: FileDate, FileDateTime.
                 // These are the ISO 8601 "basic" formats, dropping dashes and colons
                 // so that they can be used in file names
 
-                if (String.Equals("FileDate", Format, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("FileDate", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     Format = "yyyyMMdd";
                 }
-                else if (String.Equals("FileDateUniversal", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateUniversal", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     dateToUse = dateToUse.ToUniversalTime();
                     Format = "yyyyMMddZ";
                 }
-                else if (String.Equals("FileDateTime", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateTime", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     Format = "yyyyMMddTHHmmssffff";
                 }
-                else if (String.Equals("FileDateTimeUniversal", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateTimeUniversal", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     dateToUse = dateToUse.ToUniversalTime();
                     Format = "yyyyMMddTHHmmssffffZ";
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //output DateTime object wrapped in an PSObject with DisplayHint attached
+                // output DateTime object wrapped in an PSObject with DisplayHint attached
                 PSObject outputObj = new PSObject(dateToUse);
                 PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
                 outputObj.Properties.Add(note);
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
                         case 'F':
                             sb.Append("{0:yyyy}-{0:MM}-{0:dd}");
                             break;
-                            
+
                         case 'G':
                             sb.Append("{0:yyyy}");
                             break;

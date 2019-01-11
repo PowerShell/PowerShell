@@ -74,7 +74,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}: {1} {2}", Index, IsBoxed ? "boxed" : null, InClosure ? "in closure" : null);
+            return string.Format(CultureInfo.InvariantCulture, "{0}: {1} {2}", Index, IsBoxed ? "boxed" : null, InClosure ? "in closure" : null);
         }
     }
 
@@ -150,8 +150,8 @@ namespace System.Management.Automation.Interpreter
 
         public LocalDefinition DefineLocal(ParameterExpression variable, int start)
         {
-            //ContractUtils.RequiresNotNull(variable, "variable");
-            //ContractUtils.Requires(start >= 0, "start", "start must be positive");
+            // ContractUtils.RequiresNotNull(variable, "variable");
+            // ContractUtils.Requires(start >= 0, "start", "start must be positive");
 
             LocalVariable result = new LocalVariable(_localCount++, false, false);
             _maxLocalCount = System.Math.Max(_localCount, _maxLocalCount);
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Tracks where a variable is defined and what range of instructions it's used in
+        /// Tracks where a variable is defined and what range of instructions it's used in.
         /// </summary>
         private sealed class VariableScope
         {

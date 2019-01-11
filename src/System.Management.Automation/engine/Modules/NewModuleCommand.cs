@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _asCustomObject;
 
         /// <summary>
-        /// The arguments to pass to the scriptblock used to create the module
+        /// The arguments to pass to the scriptblock used to create the module.
         /// </summary>
         [Parameter(ValueFromRemainingArguments = true)]
         [Alias("Args")]
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
             if (_scriptBlock != null)
             {
                 string gs = System.Guid.NewGuid().ToString();
-                if (String.IsNullOrEmpty(_name))
+                if (string.IsNullOrEmpty(_name))
                 {
                     _name = PSModuleInfo.DynamicModulePrefixString + gs;
                 }

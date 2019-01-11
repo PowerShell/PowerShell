@@ -44,7 +44,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Contains a methods DISPID (in a string formatted of "[DISPID=N]"
-        /// and a chained list of delegates to invoke
+        /// and a chained list of delegates to invoke.
         /// </summary>
         private class ComEventSinkMethod
         {
@@ -126,7 +126,7 @@ namespace System.Management.Automation.ComInterop
 
         public void AddHandler(int dispid, object func)
         {
-            string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
+            string name = string.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
             lock (_lockObject)
             {
@@ -151,7 +151,7 @@ namespace System.Management.Automation.ComInterop
 
         public void RemoveHandler(int dispid, object func)
         {
-            string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
+            string name = string.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
             lock (_lockObject)
             {
@@ -184,7 +184,7 @@ namespace System.Management.Automation.ComInterop
 
                 // We can Unadvise from the ConnectionPoint if no more sink entries
                 // are registered for this interface
-                //(calling Dispose will call IConnectionPoint.Unadvise).
+                // (calling Dispose will call IConnectionPoint.Unadvise).
                 if (_comEventSinkMethods.Count == 0)
                 {
                     // notice that we do not remove

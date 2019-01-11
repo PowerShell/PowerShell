@@ -26,7 +26,7 @@ namespace System.Management.Automation
     public class ModuleIntrinsics
     {
         /// <summary>
-        /// Tracer for module analysis
+        /// Tracer for module analysis.
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
         internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         internal int ModuleNestingDepth { get; private set; }
 
         /// <summary>
-        /// Create a new module object from a scriptblock specifying the path to set for the module
+        /// Create a new module object from a scriptblock specifying the path to set for the module.
         /// </summary>
         /// <param name="name">The name of the module.</param>
         /// <param name="path">The path where the module is rooted.</param>
@@ -100,7 +100,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new module object from a ScriptInfo object
+        /// Create a new module object from a ScriptInfo object.
         /// </summary>
         /// <param name="path">The path where the module is rooted.</param>
         /// <param name="scriptInfo">The script info to use to create the module.</param>
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new module object from code specifying the path to set for the module
+        /// Create a new module object from code specifying the path to set for the module.
         /// </summary>
         /// <param name="name">The name of the module.</param>
         /// <param name="path">The path to use for the module root.</param>
@@ -276,7 +276,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = String.Empty; }
+            if (moduleName == null) { moduleName = string.Empty; }
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -863,7 +863,7 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (String.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName)) { continue; }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -946,7 +946,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the personal module path
+        /// Gets the personal module path.
         /// </summary>
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation
         /// <returns>The path of the Windows PowerShell system module directory.</returns>
         internal static string GetWindowsPowerShellPSHomeModulePath()
         {
-            if (!String.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
             {
                 return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
             }
@@ -1522,7 +1522,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Mark stuff to be exported from the current environment using the various patterns
+        /// Mark stuff to be exported from the current environment using the various patterns.
         /// </summary>
         /// <param name="cmdlet">The cmdlet calling this method.</param>
         /// <param name="sessionState">The session state instance to do the exports on.</param>

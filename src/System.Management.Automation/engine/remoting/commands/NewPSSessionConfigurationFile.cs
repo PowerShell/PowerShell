@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Destination path
+        /// Destination path.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
 
         /// <summary>
-        /// Configuration file schema version
+        /// Configuration file schema version.
         /// </summary>
         [Parameter()]
         [ValidateNotNull]
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _schemaVersion = new Version("2.0.0.0");
 
         /// <summary>
-        /// Configuration file GUID
+        /// Configuration file GUID.
         /// </summary>
         [Parameter()]
         public Guid Guid
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         private Guid _guid = Guid.NewGuid();
 
         /// <summary>
-        /// Author of the configuration file
+        /// Author of the configuration file.
         /// </summary>
         [Parameter()]
         public string Author
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private string _author;
 
         /// <summary>
-        /// Description
+        /// Description.
         /// </summary>
         [Parameter()]
         public string Description
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
         private string _description;
 
         /// <summary>
-        /// Company name
+        /// Company name.
         /// </summary>
         [Parameter()]
         public string CompanyName
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         private string _companyName;
 
         /// <summary>
-        /// Copyright information
+        /// Copyright information.
         /// </summary>
         [Parameter()]
         public string Copyright
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
         public string GroupManagedServiceAccount { get; set; }
 
         /// <summary>
-        /// Scripts to process
+        /// Scripts to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _roleDefinitions;
 
         /// <summary>
-        /// Specifies account groups that are membership requirements for this session
+        /// Specifies account groups that are membership requirements for this session.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _requiredGroups;
 
         /// <summary>
-        /// Language mode
+        /// Language mode.
         /// </summary>
         [Parameter()]
         public PSLanguageMode LanguageMode
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLanguageModeSpecified;
 
         /// <summary>
-        /// Execution policy
+        /// Execution policy.
         /// </summary>
         [Parameter()]
         public ExecutionPolicy ExecutionPolicy
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         private ExecutionPolicy _executionPolicy = ExecutionPolicy.Restricted;
 
         /// <summary>
-        /// PowerShell version
+        /// PowerShell version.
         /// </summary>
         [Parameter()]
         public Version PowerShellVersion
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _powerShellVersion;
 
         /// <summary>
-        /// A list of modules to import
+        /// A list of modules to import.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _modulesToImport;
 
         /// <summary>
-        /// A list of visible aliases
+        /// A list of visible aliases.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleAliases = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of visible cmdlets
+        /// A list of visible cmdlets.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _visibleCmdlets = null;
 
         /// <summary>
-        /// A list of visible functions
+        /// A list of visible functions.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of providers
+        /// A list of providers.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of aliases
+        /// A list of aliases.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary[] _aliasDefinitions;
 
         /// <summary>
-        /// A list of functions
+        /// A list of functions.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary[] _functionDefinitions;
 
         /// <summary>
-        /// A list of variables
+        /// A list of variables.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -545,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
         private object _variableDefinitions;
 
         /// <summary>
-        /// A list of environment variables
+        /// A list of environment variables.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _environmentVariables;
 
         /// <summary>
-        /// A list of types to process
+        /// A list of types to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _typesToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of format data to process
+        /// A list of format data to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _formatsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of assemblies to load
+        /// A list of assemblies to load.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(_path));
+            Debug.Assert(!string.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(_author))
+                if (string.IsNullOrEmpty(_author))
                 {
                     _author = Environment.UserName;
                 }
@@ -700,12 +700,12 @@ namespace Microsoft.PowerShell.Commands
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, string.IsNullOrEmpty(_description)));
 
                 // Company name
                 if (ShouldGenerateConfigurationSnippet("CompanyName"))
                 {
-                    if (String.IsNullOrEmpty(_companyName))
+                    if (string.IsNullOrEmpty(_companyName))
                     {
                         _companyName = Modules.DefaultCompanyName;
                     }
@@ -717,7 +717,7 @@ namespace Microsoft.PowerShell.Commands
                 // Copyright
                 if (ShouldGenerateConfigurationSnippet("Copyright"))
                 {
-                    if (String.IsNullOrEmpty(_copyright))
+                    if (string.IsNullOrEmpty(_copyright))
                     {
                         _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                     }
@@ -733,9 +733,9 @@ namespace Microsoft.PowerShell.Commands
                 string resultData = null;
 
                 // Transcript directory
-                resultData = String.IsNullOrEmpty(_transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(_transcriptDirectory);
+                resultData = string.IsNullOrEmpty(_transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(_transcriptDirectory);
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TranscriptDirectory, RemotingErrorIdStrings.DISCTranscriptDirectoryComment,
-                    resultData, streamWriter, String.IsNullOrEmpty(_transcriptDirectory)));
+                    resultData, streamWriter, string.IsNullOrEmpty(_transcriptDirectory)));
 
                 // Run as virtual account
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RunAsVirtualAccount, RemotingErrorIdStrings.DISCRunAsVirtualAccountComment,
@@ -976,9 +976,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1040,8 +1040,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
@@ -1139,7 +1139,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Destination path
+        /// Destination path.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
 
         /// <summary>
-        /// Configuration file GUID
+        /// Configuration file GUID.
         /// </summary>
         [Parameter()]
         public Guid Guid
@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell.Commands
         private Guid _guid = Guid.NewGuid();
 
         /// <summary>
-        /// Author of the configuration file
+        /// Author of the configuration file.
         /// </summary>
         [Parameter()]
         public string Author
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
         private string _author;
 
         /// <summary>
-        /// Description
+        /// Description.
         /// </summary>
         [Parameter()]
         public string Description
@@ -1216,7 +1216,7 @@ namespace Microsoft.PowerShell.Commands
         private string _description;
 
         /// <summary>
-        /// Company name
+        /// Company name.
         /// </summary>
         [Parameter()]
         public string CompanyName
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Commands
         private string _companyName;
 
         /// <summary>
-        /// Copyright information
+        /// Copyright information.
         /// </summary>
         [Parameter()]
         public string Copyright
@@ -1254,7 +1254,7 @@ namespace Microsoft.PowerShell.Commands
         private string _copyright;
 
         /// <summary>
-        /// A list of modules to import
+        /// A list of modules to import.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _modulesToImport;
 
         /// <summary>
-        /// A list of visible aliases
+        /// A list of visible aliases.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleAliases = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of visible cmdlets
+        /// A list of visible cmdlets.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1314,7 +1314,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _visibleCmdlets = null;
 
         /// <summary>
-        /// A list of visible functions
+        /// A list of visible functions.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of providers
+        /// A list of providers.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1374,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Scripts to process
+        /// Scripts to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1394,7 +1394,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _scriptsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of aliases
+        /// A list of aliases.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1414,7 +1414,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary[] _aliasDefinitions;
 
         /// <summary>
-        /// A list of functions
+        /// A list of functions.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1434,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary[] _functionDefinitions;
 
         /// <summary>
-        /// A list of variables
+        /// A list of variables.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1454,7 +1454,7 @@ namespace Microsoft.PowerShell.Commands
         private object _variableDefinitions;
 
         /// <summary>
-        /// A list of environment variables
+        /// A list of environment variables.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1475,7 +1475,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _environmentVariables;
 
         /// <summary>
-        /// A list of types to process
+        /// A list of types to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _typesToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of format data to process
+        /// A list of format data to process.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1515,7 +1515,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _formatsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of assemblies to load
+        /// A list of assemblies to load.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(_path));
+            Debug.Assert(!string.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(_author))
+                if (string.IsNullOrEmpty(_author))
                 {
                     _author = Environment.UserName;
                 }
@@ -1598,10 +1598,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, string.IsNullOrEmpty(_description)));
 
                 // Company name
-                if (String.IsNullOrEmpty(_companyName))
+                if (string.IsNullOrEmpty(_companyName))
                 {
                     _companyName = Modules.DefaultCompanyName;
                 }
@@ -1610,7 +1610,7 @@ namespace Microsoft.PowerShell.Commands
                     SessionConfigurationUtils.QuoteName(_companyName), streamWriter, false));
 
                 // Copyright
-                if (String.IsNullOrEmpty(_copyright))
+                if (string.IsNullOrEmpty(_copyright))
                 {
                     _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                 }
@@ -1723,9 +1723,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1784,8 +1784,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
@@ -1853,7 +1853,7 @@ namespace Microsoft.PowerShell.Commands
     #region SessionConfigurationUtils
 
     /// <summary>
-    /// Utility methods for configuration file commands
+    /// Utility methods for configuration file commands.
     /// </summary>
     internal class SessionConfigurationUtils
     {
@@ -1921,7 +1921,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the visibility default value
+        /// Gets the visibility default value.
         /// </summary>
         internal static string GetVisibilityDefault(object[] values, StreamWriter writer, PSCmdlet caller)
         {
@@ -1936,7 +1936,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Combines a hashtable into a single string block
+        /// Combines a hashtable into a single string block.
         /// </summary>
         internal static string CombineHashtable(IDictionary table, StreamWriter writer, int? indent = 0)
         {
@@ -2057,7 +2057,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Combines an array of hashtables into a single string block
+        /// Combines an array of hashtables into a single string block.
         /// </summary>
         internal static string CombineHashtableArray(IDictionary[] tables, StreamWriter writer, int? indent = 0)
         {
@@ -2077,7 +2077,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Combines an array of strings into a single string block
+        /// Combines an array of strings into a single string block.
         /// </summary>
         /// <param name="values">String values.</param>
         /// <returns>String block.</returns>
@@ -2087,7 +2087,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 0; i < values.Length; i++)
             {
-                if (!String.IsNullOrEmpty(values[i]))
+                if (!string.IsNullOrEmpty(values[i]))
                 {
                     sb.Append(QuoteName(values[i]));
 
@@ -2102,7 +2102,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Combines an array of strings or hashtables into a single string block
+        /// Combines an array of strings or hashtables into a single string block.
         /// </summary>
         internal static string CombineHashTableOrStringArray(object[] values, StreamWriter writer, PSCmdlet caller)
         {
@@ -2110,7 +2110,7 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < values.Length; i++)
             {
                 string strVal = values[i] as string;
-                if (!String.IsNullOrEmpty(strVal))
+                if (!string.IsNullOrEmpty(strVal))
                 {
                     sb.Append(QuoteName(strVal));
                 }

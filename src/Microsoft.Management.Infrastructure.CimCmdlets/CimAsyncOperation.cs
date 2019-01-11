@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimAsyncOperation()
         {
@@ -319,7 +319,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Subscribe event from proxy and add proxy to cache
+        /// Subscribe event from proxy and add proxy to cache.
         /// </summary>
         /// <param name="proxy"></param>
         protected void SubscribeEventAndAddProxytoCache(CimSessionProxy proxy)
@@ -344,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Retrieve the base object out if wrapped in psobject
+        /// Retrieve the base object out if wrapped in psobject.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -547,17 +547,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// lock object
+        /// Lock object.
         /// </summary>
         private readonly object myLock = new object();
 
         /// <summary>
-        /// number of active operations
+        /// Number of active operations.
         /// </summary>
         private UInt32 operationCount = 0;
 
         /// <summary>
-        /// Event to notify ps thread that more action is available
+        /// Event to notify ps thread that more action is available.
         /// </summary>
         private ManualResetEventSlim moreActionEvent;
 
@@ -569,12 +569,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private ConcurrentQueue<CimBaseAction> actionQueue;
 
         /// <summary>
-        /// lock object
+        /// Lock object.
         /// </summary>
         private readonly object cimSessionProxyCacheLock = new object();
 
         /// <summary>
-        /// cache all <see cref="CimSessionProxy"/> objects related to
+        /// Cache all <see cref="CimSessionProxy"/> objects related to
         /// the current operation.
         /// </summary>
         private List<CimSessionProxy> cimSessionProxyCache;
@@ -595,5 +595,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal const string CimSessionArgument = @"CimSession";
         #endregion
 
-    }//End Class
-}//End namespace
+    }
+}

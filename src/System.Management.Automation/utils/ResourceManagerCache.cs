@@ -20,7 +20,7 @@ namespace System.Management.Automation
             new Dictionary<string, Dictionary<string, ResourceManager>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Used to synchronize access to the ResourceManagerCache
+        /// Used to synchronize access to the ResourceManagerCache.
         /// </summary>
         private static object s_syncRoot = new Object();
 
@@ -46,7 +46,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Design For Testability -- assert on failed resource lookup
+        /// Design For Testability -- assert on failed resource lookup.
         /// </summary>
         private static bool s_DFT_monitorFailingResourceLookup = true;
         internal static bool DFT_DoMonitorFailingResourceLookup
@@ -122,7 +122,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the string from the resource manager based on the assembly,
-        /// base name, resource ID, and culture specified
+        /// base name, resource ID, and culture specified.
         /// </summary>
         /// <param name="assembly">
         /// The base assembly from which to get the resources from.
@@ -156,12 +156,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
             {
                 throw PSTraceSource.NewArgumentException("resourceId");
             }
@@ -198,7 +198,7 @@ namespace System.Management.Automation
                 text = resourceManager.GetString(resourceId);
             }
 
-            if (String.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
+            if (string.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
             {
                 Diagnostics.Assert(false,
                     "Lookup failure: baseName " + baseName + " resourceId " + resourceId);

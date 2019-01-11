@@ -32,7 +32,7 @@ using Microsoft.PowerShell.Telemetry.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements a cmdlet that loads a module
+    /// Implements a cmdlet that loads a module.
     /// </summary>
     [Cmdlet(VerbsData.Import, "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141553")]
     [OutputType(typeof(PSModuleInfo))]
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// This parameter specifies whether to import to the current session state
-        /// or to the global / top-level session state
+        /// or to the global / top-level session state.
         /// </summary>
         [Parameter]
         public SwitchParameter Global
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specified a prefix used to modify names of imported commands
+        /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { set; get; } = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_FQName, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ModuleInfo, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoClobber { get; set; }
 
         /// <summary>
-        /// Imports a command to the scope specified
+        /// Imports a command to the scope specified.
         /// </summary>
         [Parameter]
         [ValidateSet("Local", "Global")]
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isScopeSpecified = false;
 
         /// <summary>
-        /// If specified, then Import-Module will attempt to import PowerShell modules from a remote computer using the specified session
+        /// If specified, then Import-Module will attempt to import PowerShell modules from a remote computer using the specified session.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession, Mandatory = true)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession, Mandatory = true)]
@@ -383,21 +383,21 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If specified, then Import-Module will attempt to import PS-CIM modules from a remote computer using the specified session
+        /// If specified, then Import-Module will attempt to import PS-CIM modules from a remote computer using the specified session.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = true)]
         [ValidateNotNull]
         public CimSession CimSession { get; set; }
 
         /// <summary>
-        /// For interoperability with 3rd party CIM servers, user can specify custom resource URI
+        /// For interoperability with 3rd party CIM servers, user can specify custom resource URI.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = false)]
         [ValidateNotNull]
         public Uri CimResourceUri { get; set; }
 
         /// <summary>
-        /// For interoperability with 3rd party CIM servers, user can specify custom namespace
+        /// For interoperability with 3rd party CIM servers, user can specify custom namespace.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = false)]
         [ValidateNotNullOrEmpty]
@@ -600,7 +600,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 bool alreadyLoaded = false;
-                if (!String.IsNullOrEmpty(rootedPath))
+                if (!string.IsNullOrEmpty(rootedPath))
                 {
                     // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
                     // TODO/FIXME: (for example checking ModuleType != Manifest below seems incorrect - cdxml modules also declare their own version)
@@ -1493,7 +1493,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     moduleInfo = LoadModuleManifest(
                         temporaryModuleManifestPath,
-                        null, //scriptInfo
+                        null, // scriptInfo
                         data,
                         localizedData,
                         ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
@@ -1655,7 +1655,7 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         public void Dispose()
         {
@@ -1664,7 +1664,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         private void Dispose(bool disposing)
         {
@@ -1686,7 +1686,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// BeginProcessing override
+        /// BeginProcessing override.
         /// </summary>
         protected override void BeginProcessing()
         {

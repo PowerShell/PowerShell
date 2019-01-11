@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper to verify that the font is fixed pitch. If the test fails,
+        /// Internal helper to verify that the font is fixed pitch. If the test fails,
         /// it reverts to the default font.
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification.</param>
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             while ((linesPrinted < linesPerPage) && (_lines.Count > 0))
             {
                 // get the string to be printed
-                String line = _lines.Dequeue();
+                string line = _lines.Dequeue();
 
                 // compute the Y position where to draw
                 yPos = topMargin + (linesPrinted * lineHeight);
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 linesPrinted++;
             }
 
-            //If we have more lines then print another page
+            // If we have more lines then print another page
             ev.HasMorePages = _lines.Count > 0;
         }
 

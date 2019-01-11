@@ -70,7 +70,7 @@ namespace System.Management.Automation
         internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
-        /// wildcard pattern converted to regex pattern.
+        /// Wildcard pattern converted to regex pattern.
         /// </summary>
         internal string PatternConvertedToRegex
         {
@@ -218,7 +218,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s = String.Empty;
+                s = string.Empty;
             }
 
             return s;
@@ -350,7 +350,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s = String.Empty;
+                s = string.Empty;
             }
 
             return s;
@@ -690,7 +690,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Convert a string with wild cards into its equivalent regex
+    /// Convert a string with wild cards into its equivalent regex.
     /// </summary>
     /// <remarks>
     /// A list of glob patterns and their equivalent regexes
@@ -1242,7 +1242,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Translates a <see cref="WildcardPattern"/> into a DOS wildcard
+    /// Translates a <see cref="WildcardPattern"/> into a DOS wildcard.
     /// </summary>
     internal class WildcardPatternToDosWildcardParser : WildcardPatternParser
     {
@@ -1281,7 +1281,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts <paramref name="wildcardPattern"/> into a DOS wildcard
+        /// Converts <paramref name="wildcardPattern"/> into a DOS wildcard.
         /// </summary>
         internal static string Parse(WildcardPattern wildcardPattern)
         {

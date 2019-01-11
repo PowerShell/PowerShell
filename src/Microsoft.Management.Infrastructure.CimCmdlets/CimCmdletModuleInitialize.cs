@@ -75,21 +75,21 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// The string defining the name of this alias
+            /// The string defining the name of this alias.
             /// </summary>
             internal string Name { get { return this._name; } }
 
             private string _name;
 
             /// <summary>
-            /// The string defining real cmdlet name
+            /// The string defining real cmdlet name.
             /// </summary>
             internal string Value { get { return this._value; } }
 
-            private string _value = String.Empty;
+            private string _value = string.Empty;
 
             /// <summary>
-            /// The string defining real cmdlet name
+            /// The string defining real cmdlet name.
             /// </summary>
             internal ScopedItemOptions Options { get { return this._options; } }
 
@@ -114,5 +114,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     new CimCmdletAliasEntry("gcls", "Get-CimClass"),
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

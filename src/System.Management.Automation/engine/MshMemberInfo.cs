@@ -25,54 +25,54 @@ namespace System.Management.Automation
     #region PSMemberInfo
 
     /// <summary>
-    /// Enumerates all possible types of members
+    /// Enumerates all possible types of members.
     /// </summary>
     [TypeConverterAttribute(typeof(LanguagePrimitives.EnumMultipleTypeConverter))]
     [FlagsAttribute()]
     public enum PSMemberTypes
     {
         /// <summary>
-        /// An alias to another member
+        /// An alias to another member.
         /// </summary>
         AliasProperty = 1,
 
         /// <summary>
-        /// A property defined as a reference to a method
+        /// A property defined as a reference to a method.
         /// </summary>
         CodeProperty = 2,
 
         /// <summary>
-        /// A property from the BaseObject
+        /// A property from the BaseObject.
         /// </summary>
         Property = 4,
 
         /// <summary>
-        /// A property defined by a Name-Value pair
+        /// A property defined by a Name-Value pair.
         /// </summary>
         NoteProperty = 8,
 
         /// <summary>
-        /// A property defined by script language
+        /// A property defined by script language.
         /// </summary>
         ScriptProperty = 16,
 
         /// <summary>
-        /// A set of properties
+        /// A set of properties.
         /// </summary>
         PropertySet = 32,
 
         /// <summary>
-        /// A method from the BaseObject
+        /// A method from the BaseObject.
         /// </summary>
         Method = 64,
 
         /// <summary>
-        /// A method defined as a reference to another method
+        /// A method defined as a reference to another method.
         /// </summary>
         CodeMethod = 128,
 
         /// <summary>
-        /// A method defined as a script
+        /// A method defined as a script.
         /// </summary>
         ScriptMethod = 256,
 
@@ -82,12 +82,12 @@ namespace System.Management.Automation
         ParameterizedProperty = 512,
 
         /// <summary>
-        /// A set of members
+        /// A set of members.
         /// </summary>
         MemberSet = 1024,
 
         /// <summary>
-        /// All events
+        /// All events.
         /// </summary>
         Event = 2048,
 
@@ -101,17 +101,17 @@ namespace System.Management.Automation
         /// </summary>
         InferredProperty = 8192,
         /// <summary>
-        /// All property member types
+        /// All property member types.
         /// </summary>
         Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty | InferredProperty,
 
         /// <summary>
-        /// All method member types
+        /// All method member types.
         /// </summary>
         Methods = CodeMethod | Method | ScriptMethod,
 
         /// <summary>
-        /// All member types
+        /// All member types.
         /// </summary>
         All = Properties | Methods | Event | PropertySet | MemberSet | ParameterizedProperty | Dynamic
     }
@@ -124,39 +124,39 @@ namespace System.Management.Automation
     public enum PSMemberViewTypes
     {
         /// <summary>
-        /// Extended methods / properties
+        /// Extended methods / properties.
         /// </summary>
         Extended = 1,
 
         /// <summary>
-        /// Adapted methods / properties
+        /// Adapted methods / properties.
         /// </summary>
         Adapted = 2,
 
         /// <summary>
-        /// Base methods / properties
+        /// Base methods / properties.
         /// </summary>
         Base = 4,
 
         /// <summary>
-        /// All methods / properties
+        /// All methods / properties.
         /// </summary>
         All = Extended | Adapted | Base
     }
 
     /// <summary>
-    /// Match options
+    /// Match options.
     /// </summary>
     [FlagsAttribute]
     internal enum MshMemberMatchOptions
     {
         /// <summary>
-        /// No options
+        /// No options.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Hidden members should be displayed
+        /// Hidden members should be displayed.
         /// </summary>
         IncludeHidden = 1,
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as the base class for all members of an PSObject
+    /// Serves as the base class for all members of an PSObject.
     /// </summary>
     public abstract class PSMemberInfo
     {
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of an PSMemberInfo derived class
+        /// Initializes a new instance of an PSMemberInfo derived class.
         /// </summary>
         protected PSMemberInfo()
         {
@@ -211,12 +211,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public abstract PSMemberTypes MemberType { get; }
 
         /// <summary>
-        /// Gets the member name
+        /// Gets the member name.
         /// </summary>
         public string Name => this.name;
 
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if this is one of the reserved members
+        /// True if this is one of the reserved members.
         /// </summary>
         internal bool IsReservedMember { get; set; }
 
@@ -252,12 +252,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// True if this member has been added to the instance as opposed to
-        /// coming from the adapter or from type data
+        /// coming from the adapter or from type data.
         /// </summary>
         public bool IsInstance { get; internal set; }
 
         /// <summary>
-        /// Gets and Sets the value of this member
+        /// Gets and Sets the value of this member.
         /// </summary>
         /// <exception cref="GetValueException">When getting the value of a property throws an exception.
         /// This exception is also thrown if the property is an <see cref="PSScriptProperty"/> and there
@@ -269,13 +269,13 @@ namespace System.Management.Automation
         public abstract object Value { get; set; }
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">When there was a problem getting the property.</exception>
         public abstract string TypeNameOfValue { get; }
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public abstract PSMemberInfo Copy();
@@ -302,19 +302,19 @@ namespace System.Management.Automation
     public abstract class PSPropertyInfo : PSMemberInfo
     {
         /// <summary>
-        /// Initializes a new instance of an PSPropertyInfo derived class
+        /// Initializes a new instance of an PSPropertyInfo derived class.
         /// </summary>
         protected PSPropertyInfo()
         {
         }
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         public abstract bool IsSettable { get; }
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         public abstract bool IsGettable { get; }
 
@@ -336,7 +336,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as an alias to another member
+    /// Serves as an alias to another member.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSAliasProperty"/>
@@ -345,7 +345,7 @@ namespace System.Management.Automation
     public class PSAliasProperty : PSPropertyInfo
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -415,12 +415,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the name of the member this alias refers to
+        /// Gets the name of the member this alias refers to.
         /// </summary>
         public string ReferencedMemberName { get; }
 
         /// <summary>
-        /// Gets the member this alias refers to
+        /// Gets the member this alias refers to.
         /// </summary>
         internal PSMemberInfo ReferencedMember => this.LookupMember(ReferencedMemberName);
 
@@ -433,7 +433,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -444,12 +444,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.AliasProperty;
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
         /// When
@@ -471,7 +471,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
         /// When
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When
@@ -569,7 +569,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and Sets the value of this member
+        /// Gets and Sets the value of this member.
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
         /// When
@@ -608,7 +608,7 @@ namespace System.Management.Automation
     public class PSCodeProperty : PSPropertyInfo
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -637,7 +637,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from TypeTableUpdate before SetSetterFromTypeTable is called
+        /// Called from TypeTableUpdate before SetSetterFromTypeTable is called.
         /// </summary>
         internal void SetGetterFromTypeTable(Type type, string methodName)
         {
@@ -665,7 +665,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from TypeTableUpdate after SetGetterFromTypeTable is called
+        /// Called from TypeTableUpdate after SetGetterFromTypeTable is called.
         /// </summary>
         internal void SetSetterFromTypeTable(Type type, string methodName)
         {
@@ -693,7 +693,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used from TypeTable with the internal constructor
+        /// Used from TypeTable with the internal constructor.
         /// </summary>
         internal void SetGetter(MethodInfo methodForGet)
         {
@@ -725,7 +725,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used from TypeTable with the internal constructor
+        /// Used from TypeTable with the internal constructor.
         /// </summary>
         private void SetSetter(MethodInfo methodForSet, MethodInfo methodForGet)
         {
@@ -766,7 +766,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used from TypeTable to delay setting getter and setter
+        /// Used from TypeTable to delay setting getter and setter.
         /// </summary>
         internal PSCodeProperty(string name)
         {
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -855,22 +855,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.CodeProperty;
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         public override bool IsSettable => this.SetterCodeReference != null;
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         public override bool IsGettable => GetterCodeReference != null;
 
         /// <summary>
-        /// Gets and Sets the value of this member
+        /// Gets and Sets the value of this member.
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter or when the getter throws an exception.</exception>
         /// <exception cref="SetValueException">When setting and there is no setter or when the setter throws an exception.</exception>
@@ -1012,12 +1012,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Used to access the adapted or base properties from the BaseObject
+    /// Used to access the adapted or base properties from the BaseObject.
     /// </summary>
     public class PSProperty : PSPropertyInfo
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -1035,8 +1035,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// used by the adapters to keep intermediate data used between DoGetProperty and
-        /// DoGetValue or DoSetValue
+        /// Used by the adapters to keep intermediate data used between DoGetProperty and
+        /// DoGetValue or DoSetValue.
         /// </summary>
         internal string typeOfValue;
 
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
         internal bool isDeserialized;
 
         /// <summary>
-        /// This will be either instance.adapter or instance.clrAdapter
+        /// This will be either instance.adapter or instance.clrAdapter.
         /// </summary>
         internal Adapter adapter;
 
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
         internal object baseObject;
 
         /// <summary>
-        /// Constructs a property from a serialized value
+        /// Constructs a property from a serialized value.
         /// </summary>
         /// <param name="name">Name of the property.</param>
         /// <param name="serializedValue">Value of the property.</param>
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs this property
+        /// Constructs this property.
         /// </summary>
         /// <param name="name">Name of the property.</param>
         /// <param name="adapter">Adapter used in DoGetProperty.</param>
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1101,7 +1101,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.Property;
 
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the value of this property
+        /// Gets or sets the value of this property.
         /// </summary>
         /// <exception cref="GetValueException">When getting the value of a property throws an exception.</exception>
         /// <exception cref="SetValueException">When setting the value of a property throws an exception.</exception>
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         public override bool IsSettable
         {
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         public override bool IsGettable
         {
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         public override string TypeNameOfValue
         {
@@ -1212,12 +1212,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A property created by a user-defined PSPropertyAdapter
+    /// A property created by a user-defined PSPropertyAdapter.
     /// </summary>
     public class PSAdaptedProperty : PSProperty
     {
         /// <summary>
-        /// Creates a property for the given base object
+        /// Creates a property for the given base object.
         /// </summary>
         /// <param name="name">Name of the property.</param>
         /// <param name="tag">An adapter can use this object to keep any arbitrary data it needs.</param>
@@ -1249,12 +1249,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object the property belongs to
+        /// Gets the object the property belongs to.
         /// </summary>
         public object BaseObject => this.baseObject;
 
         /// <summary>
-        /// Gets the data attached to this property
+        /// Gets the data attached to this property.
         /// </summary>
         public object Tag => this.adapterData;
     }
@@ -1265,7 +1265,7 @@ namespace System.Management.Automation
     public class PSNoteProperty : PSPropertyInfo
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1314,22 +1314,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets PSMemberTypes.NoteProperty
+        /// Gets PSMemberTypes.NoteProperty.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.NoteProperty;
 
         /// <summary>
-        /// Gets true since the value of an PSNoteProperty can always be set
+        /// Gets true since the value of an PSNoteProperty can always be set.
         /// </summary>
         public override bool IsSettable => this.IsInstance;
 
         /// <summary>
-        /// Gets true since the value of an PSNoteProperty can always be obtained
+        /// Gets true since the value of an PSNoteProperty can always be obtained.
         /// </summary>
         public override bool IsGettable => true;
 
         /// <summary>
-        /// Gets or sets the value of this property
+        /// Gets or sets the value of this property.
         /// </summary>
         public override object Value
         {
@@ -1349,7 +1349,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         public override string TypeNameOfValue
         {
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation
     public class PSVariableProperty : PSNoteProperty
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -1444,7 +1444,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo,
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo,
         /// Note that it returns another reference to the variable, not a reference
         /// to a new variable...
         /// </summary>
@@ -1457,7 +1457,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets PSMemberTypes.NoteProperty
+        /// Gets PSMemberTypes.NoteProperty.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.NoteProperty;
 
@@ -1467,12 +1467,12 @@ namespace System.Management.Automation
         public override bool IsSettable => (_variable.Options & (ScopedItemOptions.Constant | ScopedItemOptions.ReadOnly)) == ScopedItemOptions.None;
 
         /// <summary>
-        /// Gets true since the value of an PSNoteProperty can always be obtained
+        /// Gets true since the value of an PSNoteProperty can always be obtained.
         /// </summary>
         public override bool IsGettable => true;
 
         /// <summary>
-        /// Gets or sets the value of this property
+        /// Gets or sets the value of this property.
         /// </summary>
         public override object Value
         {
@@ -1492,7 +1492,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         public override string TypeNameOfValue
         {
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
     public class PSScriptProperty : PSPropertyInfo
     {
         /// <summary>
-        /// Returns the string representation of this property
+        /// Returns the string representation of this property.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1763,22 +1763,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.ScriptProperty;
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         public override bool IsSettable => this._setterScript != null || this._setterScriptText != null;
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         public override bool IsGettable => this._getterScript != null || this._getterScriptText != null;
 
         /// <summary>
-        /// Gets and Sets the value of this property
+        /// Gets and Sets the value of this property.
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter,
         /// when the getter throws an exception or when there is no Runspace to run the script.
@@ -2059,7 +2059,7 @@ namespace System.Management.Automation
         public abstract object Invoke(params object[] arguments);
 
         /// <summary>
-        /// Gets a list of all the overloads for this method
+        /// Gets a list of all the overloads for this method.
         /// </summary>
         public abstract Collection<string> OverloadDefinitions { get; }
 
@@ -2095,7 +2095,7 @@ namespace System.Management.Automation
     public class PSCodeMethod : PSMethodInfo
     {
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -2150,7 +2150,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used from TypeTable
+        /// Used from TypeTable.
         /// </summary>
         internal PSCodeMethod(string name)
         {
@@ -2191,14 +2191,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the method referenced by this PSCodeMethod
+        /// Gets the method referenced by this PSCodeMethod.
         /// </summary>
         public MethodInfo CodeReference { get; private set; }
 
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2209,7 +2209,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.CodeMethod;
 
@@ -2266,7 +2266,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as a method implemented with a script
+    /// Serves as a method implemented with a script.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSScriptMethod"/>
@@ -2275,7 +2275,7 @@ namespace System.Management.Automation
     public class PSScriptMethod : PSMethodInfo
     {
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation
         private bool _shouldCloneOnAccess;
 
         /// <summary>
-        /// Gets the script implementing this PSScriptMethod
+        /// Gets the script implementing this PSScriptMethod.
         /// </summary>
         public ScriptBlock Script
         {
@@ -2317,7 +2317,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of PSScriptMethod
+        /// Initializes a new instance of PSScriptMethod.
         /// </summary>
         /// <param name="name">Name of the method.</param>
         /// <param name="script">Script to be used when calling the method.</param>
@@ -2414,7 +2414,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a list of all the overloads for this method
+        /// Gets a list of all the overloads for this method.
         /// </summary>
         public override Collection<string> OverloadDefinitions
         {
@@ -2426,7 +2426,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2437,7 +2437,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.ScriptMethod;
 
@@ -2450,7 +2450,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Used to access the adapted or base methods from the BaseObject
+    /// Used to access the adapted or base methods from the BaseObject.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSMethod"/>
@@ -2465,7 +2465,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -2478,7 +2478,7 @@ namespace System.Management.Automation
         internal object baseObject;
 
         /// <summary>
-        /// Constructs this method
+        /// Constructs this method.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="adapter">Adapter to be used invoking.</param>
@@ -2499,7 +2499,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a PSMethod
+        /// Constructs a PSMethod.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="adapter">Adapter to be used invoking.</param>
@@ -2518,7 +2518,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2529,7 +2529,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.Method;
 
@@ -2566,7 +2566,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a list of all the overloads for this method
+        /// Gets a list of all the overloads for this method.
         /// </summary>
         public override Collection<string> OverloadDefinitions => _adapter.BaseMethodDefinitions(this);
 
@@ -2874,7 +2874,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Used to access parameterized properties from the BaseObject
+    /// Used to access parameterized properties from the BaseObject.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSParameterizedProperty"/>
@@ -2883,7 +2883,7 @@ namespace System.Management.Automation
     public class PSParameterizedProperty : PSMethodInfo
     {
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -2897,7 +2897,7 @@ namespace System.Management.Automation
         internal object baseObject;
 
         /// <summary>
-        /// Constructs this parameterized property
+        /// Constructs this parameterized property.
         /// </summary>
         /// <param name="name">Name of the property.</param>
         /// <param name="adapter">Adapter used in DoGetMethod.</param>
@@ -2928,19 +2928,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets true if this property can be set
+        /// Gets true if this property can be set.
         /// </summary>
         public bool IsSettable => adapter.BaseParameterizedPropertyIsSettable(this);
 
         /// <summary>
-        /// Gets true if this property can be read
+        /// Gets true if this property can be read.
         /// </summary>
         public bool IsGettable => adapter.BaseParameterizedPropertyIsGettable(this);
 
         #region virtual implementation
 
         /// <summary>
-        /// Invokes the getter method and returns its result
+        /// Invokes the getter method and returns its result.
         /// </summary>
         /// <param name="arguments">Arguments to the method.</param>
         /// <returns>Return value from the method.</returns>
@@ -2957,7 +2957,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes the setter method
+        /// Invokes the setter method.
         /// </summary>
         /// <param name="valueToSet">Value to set this property with.</param>
         /// <param name="arguments">Arguments to the method.</param>
@@ -2974,7 +2974,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a collection of the definitions for this property
+        /// Returns a collection of the definitions for this property.
         /// </summary>
         public override Collection<string> OverloadDefinitions => adapter.BaseParameterizedPropertyDefinitions(this);
 
@@ -2984,7 +2984,7 @@ namespace System.Management.Automation
         public override string TypeNameOfValue => adapter.BaseParameterizedPropertyType(this);
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2995,7 +2995,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.ParameterizedProperty;
 
@@ -3003,7 +3003,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as a set of members
+    /// Serves as a set of members.
     /// </summary>
     public class PSMemberSet : PSMemberInfo
     {
@@ -3017,7 +3017,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -3052,7 +3052,7 @@ namespace System.Management.Automation
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_emptyPropertyCollection = new Collection<CollectionEntry<PSPropertyInfo>>();
 
         /// <summary>
-        /// Initializes a new instance of PSMemberSet with no initial members
+        /// Initializes a new instance of PSMemberSet with no initial members.
         /// </summary>
         /// <param name="name">Name for the member set.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -3140,7 +3140,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used to create the Extended MemberSet
+        /// Used to create the Extended MemberSet.
         /// </summary>
         /// <param name="name">Name of the memberSet.</param>
         /// <param name="mshObject">Object associated with this memberset.</param>
@@ -3174,12 +3174,12 @@ namespace System.Management.Automation
         public bool InheritMembers => this.inheritMembers;
 
         /// <summary>
-        /// Gets the internal member collection
+        /// Gets the internal member collection.
         /// </summary>
         internal virtual PSMemberInfoInternalCollection<PSMemberInfo> InternalMembers => this.internalMembers;
 
         /// <summary>
-        /// Gets the member collection
+        /// Gets the member collection.
         /// </summary>
         public PSMemberInfoCollection<PSMemberInfo> Members => _members;
 
@@ -3196,7 +3196,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3389,7 +3389,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as a list of property names
+    /// Serves as a list of property names.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSPropertySet"/>
@@ -3398,7 +3398,7 @@ namespace System.Management.Automation
     public class PSPropertySet : PSMemberInfo
     {
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -3422,7 +3422,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of PSPropertySet with a name and list of property names
+        /// Initializes a new instance of PSPropertySet with a name and list of property names.
         /// </summary>
         /// <param name="name">Name of the set.</param>
         /// <param name="referencedPropertyNames">Name of the properties in the set.</param>
@@ -3453,14 +3453,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the property names in this property set
+        /// Gets the property names in this property set.
         /// </summary>
         public Collection<string> ReferencedPropertyNames { get; }
 
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3471,7 +3471,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.PropertySet;
 
@@ -3495,7 +3495,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Used to access the adapted or base events from the BaseObject
+    /// Used to access the adapted or base events from the BaseObject.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSMethod"/>
@@ -3504,7 +3504,7 @@ namespace System.Management.Automation
     public class PSEvent : PSMemberInfo
     {
         /// <summary>
-        /// Returns the string representation of this member
+        /// Returns the string representation of this member.
         /// </summary>
         /// <returns>This property as a string.</returns>
         public override string ToString()
@@ -3533,7 +3533,7 @@ namespace System.Management.Automation
         internal EventInfo baseEvent;
 
         /// <summary>
-        /// Constructs this event
+        /// Constructs this event.
         /// </summary>
         /// <param name="baseEvent">The actual event.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -3546,7 +3546,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3557,7 +3557,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the member type
+        /// Gets the member type.
         /// </summary>
         public override PSMemberTypes MemberType => PSMemberTypes.Event;
 
@@ -3582,7 +3582,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A dynamic member
+    /// A dynamic member.
     /// </summary>
     public class PSDynamicMember : PSMemberInfo
     {
@@ -3622,7 +3622,7 @@ namespace System.Management.Automation
     #region Member collection classes and its auxiliary classes
 
     /// <summary>
-    /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection
+    /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection.
     /// </summary>
     internal class MemberMatch
     {
@@ -3637,7 +3637,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in memberList matching name and memberTypes
+        /// Returns all members in memberList matching name and memberTypes.
         /// </summary>
         /// <param name="memberList">Members to look for member with the correct types and name.</param>
         /// <param name="name">Name of the members to look for. The name might contain globbing characters.</param>
@@ -3683,14 +3683,14 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as the collection of members in an PSObject or MemberSet
+    /// Serves as the collection of members in an PSObject or MemberSet.
     /// </summary>
     public abstract class PSMemberInfoCollection<T> : IEnumerable<T> where T : PSMemberInfo
     {
         #region ctor
 
         /// <summary>
-        /// Initializes a new instance of an PSMemberInfoCollection derived class
+        /// Initializes a new instance of an PSMemberInfoCollection derived class.
         /// </summary>
         protected PSMemberInfoCollection()
         {
@@ -3701,7 +3701,7 @@ namespace System.Management.Automation
         #region abstract
 
         /// <summary>
-        /// Adds a member to this collection
+        /// Adds a member to this collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -3715,7 +3715,7 @@ namespace System.Management.Automation
         public abstract void Add(T member);
 
         /// <summary>
-        /// Adds a member to this collection
+        /// Adds a member to this collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
@@ -3732,7 +3732,7 @@ namespace System.Management.Automation
         public abstract void Add(T member, bool preValidated);
 
         /// <summary>
-        /// Removes a member from this collection
+        /// Removes a member from this collection.
         /// </summary>
         /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -3757,7 +3757,7 @@ namespace System.Management.Automation
         #region Match
 
         /// <summary>
-        /// Returns all members in the collection matching name
+        /// Returns all members in the collection matching name.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>All members in the collection matching name.</returns>
@@ -3765,7 +3765,7 @@ namespace System.Management.Automation
         public abstract ReadOnlyPSMemberInfoCollection<T> Match(string name);
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -3774,7 +3774,7 @@ namespace System.Management.Automation
         public abstract ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes);
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -3797,7 +3797,7 @@ namespace System.Management.Automation
         #region IEnumerable
 
         /// <summary>
-        /// Gets the general enumerator for this collection
+        /// Gets the general enumerator for this collection.
         /// </summary>
         /// <returns>The enumerator for this collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
@@ -3815,7 +3815,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as a read only collection of members
+    /// Serves as a read only collection of members.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="ReadOnlyPSMemberInfoCollection&lt;T&gt;"/>
@@ -3826,7 +3826,7 @@ namespace System.Management.Automation
         private readonly PSMemberInfoInternalCollection<T> _members;
 
         /// <summary>
-        /// Initializes a new instance of ReadOnlyPSMemberInfoCollection with the given members
+        /// Initializes a new instance of ReadOnlyPSMemberInfoCollection with the given members.
         /// </summary>
         /// <param name="members"></param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -3860,7 +3860,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name
+        /// Returns all members in the collection matching name.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>All members in the collection matching name.</returns>
@@ -3876,7 +3876,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -3893,7 +3893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the general enumerator for this collection
+        /// Gets the general enumerator for this collection.
         /// </summary>
         /// <returns>The enumerator for this collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
@@ -3911,12 +3911,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the number of elements in this collection
+        /// Gets the number of elements in this collection.
         /// </summary>
         public int Count => _members.Count;
 
         /// <summary>
-        /// Returns the 0 based member identified by index
+        /// Returns the 0 based member identified by index.
         /// </summary>
         /// <param name="index">Index of the member to retrieve.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -3924,7 +3924,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Collection of members
+    /// Collection of members.
     /// </summary>
     internal class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
@@ -3949,14 +3949,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs this collection
+        /// Constructs this collection.
         /// </summary>
         internal PSMemberInfoInternalCollection()
         {
         }
 
         /// <summary>
-        /// Constructs this collection with an initial capacity
+        /// Constructs this collection with an initial capacity.
         /// </summary>
         internal PSMemberInfoInternalCollection(int capacity)
         {
@@ -3978,7 +3978,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds a member to the collection by replacing the one with the same name
+        /// Adds a member to the collection by replacing the one with the same name.
         /// </summary>
         /// <param name="newMember"></param>
         internal void Replace(T newMember)
@@ -3996,7 +3996,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds a member to this collection
+        /// Adds a member to this collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">When a member by this name is already present.</exception>
@@ -4007,7 +4007,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds a member to this collection
+        /// Adds a member to this collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
@@ -4042,7 +4042,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes a member from this collection
+        /// Removes a member from this collection.
         /// </summary>
         /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">When removing a member with a reserved member name.</exception>
@@ -4082,7 +4082,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the member in this collection matching name
+        /// Returns the member in this collection matching name.
         /// </summary>
         /// <param name="name">Name of the member to look for.</param>
         /// <returns>The member matching name.</returns>
@@ -4109,7 +4109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name
+        /// Returns all members in the collection matching name.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>All members in the collection matching name.</returns>
@@ -4125,7 +4125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -4142,7 +4142,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -4184,7 +4184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The number of elements in this collection
+        /// The number of elements in this collection.
         /// </summary>
         internal int Count
         {
@@ -4203,7 +4203,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The number of elements in this collection not marked as Hidden
+        /// The number of elements in this collection not marked as Hidden.
         /// </summary>
         internal int VisibleCount
         {
@@ -4222,7 +4222,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the 0 based member identified by index
+        /// Returns the 0 based member identified by index.
         /// </summary>
         /// <param name="index">Index of the member to retrieve.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -4429,7 +4429,7 @@ namespace System.Management.Automation
         #region overrides
 
         /// <summary>
-        /// Adds member to the collection
+        /// Adds member to the collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -4448,7 +4448,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds member to the collection
+        /// Adds member to the collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
@@ -4494,7 +4494,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Auxiliary to add members from types.xml
+        /// Auxiliary to add members from types.xml.
         /// </summary>
         /// <param name="member"></param>
         /// <param name="preValidated"></param>
@@ -4515,7 +4515,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds member to the collection
+        /// Adds member to the collection.
         /// </summary>
         /// <param name="member">Member to be added.</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
@@ -4585,7 +4585,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the member named name from the collection
+        /// Removes the member named name from the collection.
         /// </summary>
         /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -4668,7 +4668,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the name corresponding to name or null if it is not present
+        /// Returns the name corresponding to name or null if it is not present.
         /// </summary>
         /// <param name="name">Name of the member to return.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -4829,7 +4829,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name
+        /// Returns all members in the collection matching name.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>All members in the collection matching name.</returns>
@@ -4845,7 +4845,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -4862,7 +4862,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns all members in the collection matching name and types
+        /// Returns all members in the collection matching name and types.
         /// </summary>
         /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <param name="memberTypes">Type of the members to be searched.</param>
@@ -4905,7 +4905,7 @@ namespace System.Management.Automation
         #endregion overrides
 
         /// <summary>
-        /// Enumerable for this class
+        /// Enumerable for this class.
         /// </summary>
         internal struct Enumerator<S> : IEnumerator<S> where S : PSMemberInfo
         {
@@ -4914,7 +4914,7 @@ namespace System.Management.Automation
             private readonly PSMemberInfoInternalCollection<S> _allMembers;
 
             /// <summary>
-            /// Constructs this instance to enumerate over members
+            /// Constructs this instance to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
@@ -4939,7 +4939,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Moves to the next element in the enumeration
+            /// Moves to the next element in the enumeration.
             /// </summary>
             /// <returns>
             /// false if there are no more elements to enumerate
@@ -4972,7 +4972,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Current PSMemberInfo in the enumeration
+            /// Current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
             S IEnumerator<S>.Current
@@ -4997,7 +4997,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Not supported
+            /// Not supported.
             /// </summary>
             public void Dispose()
             {

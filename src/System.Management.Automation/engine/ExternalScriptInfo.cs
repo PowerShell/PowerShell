@@ -41,7 +41,7 @@ namespace System.Management.Automation
         internal ExternalScriptInfo(string name, string path, ExecutionContext context)
             : base(name, CommandTypes.ExternalScript, context)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates an instance of ExternalScriptInfo that has no ExecutionContext.
-        /// This is used exclusively to pass it to the AuthorizationManager that just uses the path parameter
+        /// This is used exclusively to pass it to the AuthorizationManager that just uses the path parameter.
         /// </summary>
         /// <param name="name">
         /// The name of the script.
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ExternalScriptInfo(string name, string path) : base(name, CommandTypes.ExternalScript)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Common initialization for all constructors
+        /// Common initialization for all constructors.
         /// </summary>
         private void CommonInitialization()
         {
@@ -139,7 +139,7 @@ namespace System.Management.Automation
             get { return _path; }
         }
 
-        private readonly string _path = String.Empty;
+        private readonly string _path = string.Empty;
 
         /// <summary>
         /// Gets the path to the script file.
@@ -150,7 +150,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source of this command
+        /// Gets the source of this command.
         /// </summary>
         public override string Source
         {
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the syntax of a command
+        /// Returns the syntax of a command.
         /// </summary>
         internal override string Syntax
         {
@@ -169,7 +169,7 @@ namespace System.Management.Automation
                 foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                 {
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The script block that represents the external script
+        /// The script block that represents the external script.
         /// </summary>
         public ScriptBlock ScriptBlock
         {
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Validates the external script info
+        /// Validates the external script info.
         /// </summary>
         /// <param name="host"></param>
         public void ValidateScriptInfo(Host.PSHost host)
@@ -334,7 +334,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {
@@ -584,7 +584,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the name and version tuple of a PSSnapin
+    /// Defines the name and version tuple of a PSSnapin.
     /// </summary>
     [Serializable]
     public class PSSnapInSpecification

@@ -14,7 +14,7 @@ using System.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Update-Help cmdlet
+    /// This class implements the Update-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Update, "Help", DefaultParameterSetName = PathParameterSetName,
         SupportsShouldProcess = true,
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructor
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         public UpdateHelpCommand() : base(UpdatableHelpCommandType.UpdateHelpCommand)
         {
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Specifies the modules to update
+        /// Specifies the modules to update.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _module;
 
         /// <summary>
-        /// Specifies the Module Specifications to update
+        /// Specifies the Module Specifications to update.
         /// </summary>
         [Parameter(ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         public ModuleSpecification[] FullyQualifiedModule { get; set; }
 
         /// <summary>
-        /// Specifies the paths to update from
+        /// Specifies the paths to update from.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _path;
 
         /// <summary>
-        /// Specifies the literal path to save updates to
+        /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath","LP")]
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Scans paths recursively
+        /// Scans paths recursively.
         /// </summary>
         [Parameter]
         public SwitchParameter Recurse
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         #region Implementation
 
         /// <summary>
-        /// Begin processing
+        /// Begin processing.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Main cmdlet logic
+        /// Main cmdlet logic.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process a single module with a given culture
+        /// Process a single module with a given culture.
         /// </summary>
         /// <param name="module">Module to process.</param>
         /// <param name="culture">Culture to use.</param>
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                     // Search for the HelpInfo XML
                     foreach (string path in _path)
                     {
-                        if (String.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path))
                         {
                             PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                             WriteError(e.ErrorRecord);
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Throws PathMustBeValidContainers exception
+        /// Throws PathMustBeValidContainers exception.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="e"></param>

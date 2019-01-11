@@ -7,17 +7,17 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Computer target type
+    /// Computer target type.
     /// </summary>
     public enum TargetMachineType
     {
         /// <summary>
-        /// Target is a machine with which the session is based on networking
+        /// Target is a machine with which the session is based on networking.
         /// </summary>
         RemoteMachine,
 
         /// <summary>
-        /// Target is a virtual machine with which the session is based on Hyper-V socket
+        /// Target is a virtual machine with which the session is based on Hyper-V socket.
         /// </summary>
         VirtualMachine,
 
@@ -45,7 +45,7 @@ namespace System.Management.Automation.Runspaces
         private RemoteRunspace _remoteRunspace;
 
         /// <summary>
-        /// Static variable which is incremented to generate id
+        /// Static variable which is incremented to generate id.
         /// </summary>
         private static int s_seed = 0;
 
@@ -54,12 +54,12 @@ namespace System.Management.Automation.Runspaces
         #region Public Properties
 
         /// <summary>
-        /// Type of the computer target
+        /// Type of the computer target.
         /// </summary>
         public TargetMachineType ComputerType { get; set; }
 
         /// <summary>
-        /// Name of the computer target
+        /// Name of the computer target.
         /// </summary>
         public string ComputerName
         {
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Id of the container target
+        /// Id of the container target.
         /// </summary>
         public string ContainerId
         {
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Name of the virtual machine target
+        /// Name of the virtual machine target.
         /// </summary>
         public string VMName
         {
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Guid of the virtual machine target
+        /// Guid of the virtual machine target.
         /// </summary>
         public Guid? VMId
         {
@@ -126,12 +126,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shell which is executed in the remote machine
+        /// Shell which is executed in the remote machine.
         /// </summary>
         public string ConfigurationName { get; }
 
         /// <summary>
-        /// InstanceID that identifies this runspace
+        /// InstanceID that identifies this runspace.
         /// </summary>
         public Guid InstanceId
         {
@@ -143,18 +143,18 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// SessionId of this runspace. This is unique only across
-        /// a session
+        /// a session.
         /// </summary>
         public int Id { get; }
 
         /// <summary>
-        /// Friendly name for identifying this runspace
+        /// Friendly name for identifying this runspace.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
         /// Indicates whether the specified runspace is available
-        /// for executing commands
+        /// for executing commands.
         /// </summary>
         public RunspaceAvailability Availability
         {
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// The remote runspace object based on which this information object
-        /// is derived
+        /// is derived.
         /// </summary>
         /// <remarks>This property is marked internal to allow other cmdlets
         /// to get access to the RemoteRunspace object and operate on it like
@@ -201,7 +201,7 @@ namespace System.Management.Automation.Runspaces
         #region Public Methods
 
         /// <summary>
-        /// ToString method override
+        /// ToString method override.
         /// </summary>
         /// <returns>String.</returns>
         public override string ToString()
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// This constructor will be used to created a remote runspace info
-        /// object with a auto generated name
+        /// object with a auto generated name.
         /// </summary>
         /// <param name="remoteRunspace">Remote runspace object for which
         /// the info object need to be created</param>
@@ -320,7 +320,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Methods
 
         /// <summary>
-        /// Generates and returns the runspace name
+        /// Generates and returns the runspace name.
         /// </summary>
         /// <returns>Auto generated name.</returns>
         private string GetTransportName()

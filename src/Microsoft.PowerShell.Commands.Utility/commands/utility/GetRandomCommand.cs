@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
-                new ArgumentException(String.Format(
+                new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, min, max)),
                 "MinGreaterThanOrEqualMax",
                 ErrorCategory.InvalidArgument,
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
     /// Provides an adapter API for random numbers that may be either cryptographically random, or
     /// generated with the regular pseudo-random number generator. Re-implementations of
     /// methods using the NextBytes() primitive based on the CLR implementation:
-    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs
+    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs.
     /// </summary>
     internal class PolymorphicRandomNumberGenerator
     {

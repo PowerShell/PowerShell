@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        ///  Trigger frequency.
+        /// Trigger frequency.
         /// </summary>
         public TriggerFrequency Frequency
         {
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Serialization constructor
+        /// Serialization constructor.
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
@@ -696,7 +696,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
     #region JobTriggerToCimInstanceConverter
     /// <summary>
-    /// Class providing implementation of PowerShell conversions for types in Microsoft.Management.Infrastructure namespace
+    /// Class providing implementation of PowerShell conversions for types in Microsoft.Management.Infrastructure namespace.
     /// </summary>
     public sealed class JobTriggerToCimInstanceConverter : PSTypeConverter
     {
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type to convert to.</param>
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
+        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type to convert to.</param>
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type to convert to.</param>

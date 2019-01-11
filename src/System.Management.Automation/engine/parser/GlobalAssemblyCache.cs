@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis
     internal static class GlobalAssemblyCache
     {
         /// <summary>
-        /// Represents the current Processor architecture
+        /// Represents the current Processor architecture.
         /// </summary>
         public static readonly ProcessorArchitecture[] CurrentArchitectures = (IntPtr.Size == 4)
             ? new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.X86 }

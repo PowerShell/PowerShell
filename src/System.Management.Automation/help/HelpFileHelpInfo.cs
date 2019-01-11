@@ -12,7 +12,7 @@ namespace System.Management.Automation
     internal class HelpFileHelpInfo : HelpInfo
     {
         /// <summary>
-        /// Constructor for HelpFileHelpInfo
+        /// Constructor for HelpFileHelpInfo.
         /// </summary>
         /// <remarks>
         /// This is made private intentionally so that the only way to create object of this type
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Name for the help info
+        /// Name for the help info.
         /// </summary>
         /// <value>Name for the help info</value>
         internal override string Name { get; } = string.Empty;
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         private string _filename = string.Empty;
         private string _synopsis = string.Empty;
         /// <summary>
-        /// Synopsis for the help info
+        /// Synopsis for the help info.
         /// </summary>
         /// <value>Synopsis for the help info</value>
         internal override string Synopsis
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category for the help info
+        /// Help category for the help info.
         /// </summary>
         /// <value>Help category for the help info</value>
         internal override HelpCategory HelpCategory
@@ -77,13 +77,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Full help object for this help info
+        /// Full help object for this help info.
         /// </summary>
         /// <value>Full help object for this help info</value>
         internal override PSObject FullHelp { get; }
 
         /// <summary>
-        /// Get help info based on name, text and filename
+        /// Get help info based on name, text and filename.
         /// </summary>
         /// <param name="name">Help topic name.</param>
         /// <param name="text">Help text.</param>
@@ -91,12 +91,12 @@ namespace System.Management.Automation
         /// <returns>HelpFileHelpInfo object created based on information provided.</returns>
         internal static HelpFileHelpInfo GetHelpInfo(string name, string text, string filename)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpFileHelpInfo helpfileHelpInfo = new HelpFileHelpInfo(name, text, filename);
 
-            if (String.IsNullOrEmpty(helpfileHelpInfo.Name))
+            if (string.IsNullOrEmpty(helpfileHelpInfo.Name))
                 return null;
 
             helpfileHelpInfo.AddCommonHelpProperties();

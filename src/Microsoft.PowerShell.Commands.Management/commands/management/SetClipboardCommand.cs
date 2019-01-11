@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isHtmlSet = false;
 
         /// <summary>
-        /// This method implements the BeginProcessing method for Set-Clipboard command
+        /// This method implements the BeginProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Set-Clipboard command
+        /// This method implements the ProcessRecord method for Set-Clipboard command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             if (Value == null && _isHtmlSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
+    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for Set-Clipboard command
+        /// This method implements the EndProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((contentList == null || contentList.Count == 0) && !append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
                     Clipboard.Clear();
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsText())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -189,11 +189,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
             }
             else
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
             }
 
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsFileDropList())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     StringCollection clipBoardContent = Clipboard.GetFileDropList();
                     dropFiles = new HashSet<string>(clipBoardContent.Cast<string>().ToList(), StringComparer.OrdinalIgnoreCase);
 
-                    //we need the count of original files so we can get the accurate files number that has been appended.
+                    // we need the count of original files so we can get the accurate files number that has been appended.
                     clipBoardContentLength = clipBoardContent.Count;
                 }
             }
@@ -276,22 +276,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
                 }
             }
             else
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
                 }
             }
 
@@ -335,15 +335,15 @@ EndSelection:<<<<<<<<4";
             int fragmentEndIdx = html.LastIndexOf(EndFragment, StringComparison.OrdinalIgnoreCase);
 
             // if html tag is missing add it surrounding the given html
-            //find the index of "<html", ignore white space and case
+            // find the index of "<html", ignore white space and case
             int htmlOpenIdx = Regex.Match(html, @"<\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
             int htmlOpenEndIdx = htmlOpenIdx > 0 ? html.IndexOf('>', htmlOpenIdx) + 1 : -1;
-            //find the index of "</html", ignore white space and case
+            // find the index of "</html", ignore white space and case
             int htmlCloseIdx = Regex.Match(html, @"<\s*/\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
 
             if (fragmentStartIdx < 0 && fragmentEndIdx < 0)
             {
-                //find the index of "<body", ignore white space and case
+                // find the index of "<body", ignore white space and case
                 int bodyOpenIdx = Regex.Match(html, @"<\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
                 int bodyOpenEndIdx = bodyOpenIdx > 0 ? html.IndexOf('>', bodyOpenIdx) + 1 : -1;
 
@@ -361,7 +361,7 @@ EndSelection:<<<<<<<<4";
                 else
                 {
                     // insert start/end fragments in the proper place (related to html/body tags if exists) so the paste will work correctly
-                    //find the index of "</body", ignore white space and case
+                    // find the index of "</body", ignore white space and case
                     int bodyCloseIdx = Regex.Match(html, @"<\s*/\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
 
                     if (htmlOpenEndIdx < 0)

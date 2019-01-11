@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     public class ModuleSpecification
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         public ModuleSpecification()
         {
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Parse the specified string into a ModuleSpecification object
+        /// Parse the specified string into a ModuleSpecification object.
         /// </summary>
         /// <param name="input">The module specification string.</param>
         /// <param name="result">The ModuleSpecification object.</param>
@@ -321,11 +321,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return x != null && y != null
-                && String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)
                 && Version.Equals(x.Version, y.Version)
-                && String.Equals(x.MaximumVersion, y.MaximumVersion);
+                && string.Equals(x.MaximumVersion, y.MaximumVersion);
         }
 
         /// <summary>

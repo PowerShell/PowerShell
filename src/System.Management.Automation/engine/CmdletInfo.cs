@@ -9,7 +9,7 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH cmdlets that are directly executable by MSH
+    /// The command information for MSH cmdlets that are directly executable by MSH.
     /// </summary>
     public class CmdletInfo : CommandInfo
     {
@@ -42,7 +42,7 @@ namespace System.Management.Automation
             ExecutionContext context)
             : base(name, CommandTypes.Cmdlet, context)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         public CmdletInfo(string name, Type implementingType)
             : base(name, CommandTypes.Cmdlet, null)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
@@ -139,7 +139,7 @@ namespace System.Management.Automation
         #region public members
 
         /// <summary>
-        /// Gets the verb of the cmdlet
+        /// Gets the verb of the cmdlet.
         /// </summary>
         public string Verb
         {
@@ -149,7 +149,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _verb = String.Empty;
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _noun = String.Empty;
+        private string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -206,7 +206,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _helpFilePath = String.Empty;
+        private string _helpFilePath = string.Empty;
 
         internal override HelpCategory HelpCategory
         {
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source version
+        /// Gets the source version.
         /// </summary>
         public override Version Version
         {
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         private Version _version;
 
         /// <summary>
-        /// Gets the type that implements the cmdlet
+        /// Gets the type that implements the cmdlet.
         /// </summary>
         public Type ImplementingType
         {
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         private Type _implementingType = null;
 
         /// <summary>
-        /// Gets the synopsis of the cmdlet
+        /// Gets the synopsis of the cmdlet.
         /// </summary>
         public override string Definition
         {
@@ -296,7 +296,7 @@ namespace System.Management.Automation
                     {
                         synopsis.AppendLine();
                         synopsis.AppendLine(
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 "{0}{1}{2} {3}",
                                 _verb,
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                 {
                     // Skip the synopsis documentation if the cmdlet hasn't been loaded yet.
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             "{0}{1}{2}",
                             _verb,
@@ -401,7 +401,7 @@ namespace System.Management.Automation
         private List<PSTypeName> _outputType = null;
 
         /// <summary>
-        /// Gets or sets the scope options for the alias
+        /// Gets or sets the scope options for the alias.
         /// </summary>
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an cmdlet that is constant or
@@ -456,13 +456,13 @@ namespace System.Management.Automation
         #region internal/private members
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         private static string GetFullName(string moduleName, string cmdletName)
         {
             System.Diagnostics.Debug.Assert(cmdletName != null, "cmdletName != null");
             string result = cmdletName;
-            if (!String.IsNullOrEmpty(moduleName))
+            if (!string.IsNullOrEmpty(moduleName))
             {
                 result = moduleName + '\\' + result;
             }
@@ -471,7 +471,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         private static string GetFullName(CmdletInfo cmdletInfo)
         {
@@ -503,7 +503,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the full name of the cmdlet including the PSSnapin name
+        /// Gets the full name of the cmdlet including the PSSnapin name.
         /// </summary>
         internal string FullName
         {
@@ -514,7 +514,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the CommandMetadata for this cmdlet
+        /// Gets the CommandMetadata for this cmdlet.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// The type name is invalid or the length of the type name

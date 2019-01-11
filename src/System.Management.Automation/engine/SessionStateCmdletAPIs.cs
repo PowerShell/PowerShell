@@ -7,7 +7,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         internal CmdletInfo GetCmdlet(string cmdletName, CommandOrigin origin)
         {
             CmdletInfo result = null;
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
             {
                 return null;
             }
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         internal CmdletInfo GetCmdletAtScope(string cmdletName, string scopeID)
         {
             CmdletInfo result = null;
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
             {
                 return null;
             }
@@ -127,7 +127,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the cmdlet table
+        /// Gets an IEnumerable for the cmdlet table.
         /// </summary>
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTable()
         {
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the cmdlet table for a given scope
+        /// Gets an IEnumerable for the cmdlet table for a given scope.
         /// </summary>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveCmdlet(string name, int index, bool force, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveCmdletEntry(string name, bool force)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

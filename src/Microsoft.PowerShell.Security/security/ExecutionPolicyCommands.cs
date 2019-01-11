@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     ///    - Current-user Group Policy
     ///    - Current session preference
     ///    - Current user machine preference
-    ///    - Local machine preference
+    ///    - Local machine preference.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113315")]
     [OutputType(typeof(ExecutionPolicy))]
@@ -104,8 +104,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(SecuritySupport.GetExecutionPolicy(shellId));
             }
-        }//End BeginProcess()
-    }//End Class
+        }
+    }
 
     /// <summary>
     /// Defines the implementation of the 'Set-ExecutionPolicy' cmdlet.
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ExecutionPolicy != ExecutionPolicy.Undefined)
                 {
                     string effectiveExecutionPolicy = SecuritySupport.GetExecutionPolicy(shellId).ToString();
-                    if (!String.Equals(effectiveExecutionPolicy, executionPolicy, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(effectiveExecutionPolicy, executionPolicy, StringComparison.OrdinalIgnoreCase))
                     {
                         string message = StringUtil.Format(ExecutionPolicyCommands.ExecutionPolicyOverridden, effectiveExecutionPolicy);
                         string recommendedAction = ExecutionPolicyCommands.ExecutionPolicyOverriddenRecommendedAction;
@@ -238,10 +238,10 @@ namespace Microsoft.PowerShell.Commands
                     EtwLoggingStrings.ExecutionPolicyName, executionPolicy, null);
 #endif
             }
-        }//End ProcessRecord()
+        }
 
         // Determine if we should process this policy change
-#if CORECLR //Seems that we cannot find if the cmdlet is executed interactive or through a script on CoreCLR
+#if CORECLR // Seems that we cannot find if the cmdlet is executed interactive or through a script on CoreCLR
         private bool ShouldProcessPolicyChange(string localPreference)
         {
             return ShouldProcess(localPreference);
@@ -340,5 +340,5 @@ namespace Microsoft.PowerShell.Commands
             errorRecord.ErrorDetails = new ErrorDetails(message);
             ThrowTerminatingError(errorRecord);
         }
-    }//End Class
-}//End namespace
+    }
+}

@@ -67,7 +67,7 @@ namespace System.Management.Automation
     internal class MamlNode
     {
         /// <summary>
-        /// Constructor for HelpInfo
+        /// Constructor for HelpInfo.
         /// </summary>
         internal MamlNode(XmlNode xmlNode)
         {
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         private XmlNode _xmlNode;
 
         /// <summary>
-        /// Underline xmlNode for this MamlNode object
+        /// Underline xmlNode for this MamlNode object.
         /// </summary>
         /// <value></value>
         internal XmlNode XmlNode
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         private PSObject _mshObject;
 
         /// <summary>
-        /// mshObject which is converted from XmlNode.
+        /// MshObject which is converted from XmlNode.
         /// </summary>
         /// <value></value>
         internal PSObject PSObject
@@ -214,9 +214,9 @@ namespace System.Management.Automation
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (String.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (String.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -509,7 +509,7 @@ namespace System.Management.Automation
         /// Check whether a node is for maml formatting. This include following nodes,
         ///     a. para
         ///     b. list
-        ///     c. definitionList
+        ///     c. definitionList.
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -642,7 +642,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the number of para nodes
+        /// Gets the number of para nodes.
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
@@ -654,7 +654,7 @@ namespace System.Management.Automation
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (childNode.InnerText.Trim().Equals(String.Empty))
+                    if (childNode.InnerText.Trim().Equals(string.Empty))
                     {
                         continue;
                     }
@@ -758,7 +758,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            if (newLine && !xmlNode.InnerText.Trim().Equals(String.Empty))
+            if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
                 sb.AppendLine(xmlNode.InnerText.Trim());
             }
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            if (String.IsNullOrEmpty(term))
+            if (string.IsNullOrEmpty(term))
                 return null;
 
             PSObject mshObject = new PSObject();
@@ -1105,8 +1105,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static string GetPreformattedText(string text)
         {
-            //we are assuming tabsize=4 here.
-            //It is discouraged to use tab in preformatted text.
+            // we are assuming tabsize=4 here.
+            // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
             string[] lines = noTabText.Split(Utils.Separators.Newline);
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get minimum indentation of a paragraph
+        /// Get minimum indentation of a paragraph.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
@@ -1226,11 +1226,11 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsEmptyLine(string line)
         {
-            if (String.IsNullOrEmpty(line))
+            if (string.IsNullOrEmpty(line))
                 return true;
 
             string trimedLine = line.Trim();
-            if (String.IsNullOrEmpty(trimedLine))
+            if (string.IsNullOrEmpty(trimedLine))
                 return true;
 
             return false;

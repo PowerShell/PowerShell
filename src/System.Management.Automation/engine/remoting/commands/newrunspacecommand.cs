@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Create a runspace by connecting to port 8081 on server s1 and run shell named E12.
     /// This assumes that a shell by the name E12 exists on the remote server
-    /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12
+    /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// computer(s). The following formats are supported:
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
-        ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
+        ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18.
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipeline = true,
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The PSSession object describing the remote runspace
-        /// using which the specified cmdlet operation will be performed
+        /// using which the specified cmdlet operation will be performed.
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipelineByPropertyName = true,
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
-        /// Friendly names for the new PSSessions
+        /// Friendly names for the new PSSessions.
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The throttle limit will be set here as it needs to be done
-        /// only once per cmdlet and not for every call
+        /// only once per cmdlet and not for every call.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             _throttleManager.ThrottleComplete +=
                 new EventHandler<EventArgs>(HandleThrottleComplete);
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == NewPSSessionCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == NewPSSessionCommand.UriParameterSet))
@@ -187,8 +187,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // convert null to String.Empty for VM/Container session
-                    ConfigurationName = String.Empty;
+                    // convert null to string.Empty for VM/Container session
+                    ConfigurationName = string.Empty;
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         /// The runspace objects will be created using OpenAsync.
         /// At the end, the method will check if any runspace
         /// opened has already become available. If so, then it
-        /// will be written to the pipeline
+        /// will be written to the pipeline.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
         /// creating all the runspaces (basically the runspaces its
         /// waiting on OpenAsync is made available). However, when a stop
         /// signal is sent, CloseAsyn needs to be called to close all the
-        /// pending runspaces
+        /// pending runspaces.
         /// </summary>
         /// <remarks>This is called from a separate thread so need to worry
         /// about concurrency issues
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector
+        ///     2. Called by the garbage collector.
         /// </summary>
         public void Dispose()
         {
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Methods
 
         /// <summary>
-        /// Adds forwarded events to the local queue
+        /// Adds forwarded events to the local queue.
         /// </summary>
         private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
         {
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handles state changes for Runspace
+        /// Handles state changes for Runspace.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Event information object which describes
@@ -488,11 +488,11 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     errorDetails = "[" + host + "] ";
-                                    if (!String.IsNullOrEmpty(transException.Message))
+                                    if (!string.IsNullOrEmpty(transException.Message))
                                     {
                                         errorDetails += transException.Message;
                                     }
-                                    else if (!String.IsNullOrEmpty(transException.TransportMessage))
+                                    else if (!string.IsNullOrEmpty(transException.TransportMessage))
                                     {
                                         errorDetails += transException.TransportMessage;
                                     }
@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (WSManNativeApi.ERROR_WSMAN_NO_LOGON_SESSION_EXIST == transErrorCode)
                         {
-                            errorDetails += System.Environment.NewLine + String.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
+                            errorDetails += System.Environment.NewLine + string.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
 
                         ErrorRecord errorRecord = new ErrorRecord(reason,
@@ -720,7 +720,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates the remote runspace objects when the URI parameter
-        /// is specified
+        /// is specified.
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenUriParameterSpecified()
         {
@@ -784,7 +784,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates the remote runspace objects when the ComputerName parameter
-        /// is specified
+        /// is specified.
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenComputerNameParameterSpecified()
         {
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates the remote runspace objects when the VMId or VMName parameter
-        /// is specified
+        /// is specified.
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenVMParameterSpecified()
         {
@@ -997,7 +997,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Creates the remote runspace objects when the ContainerId parameter is specified
+        /// Creates the remote runspace objects when the ContainerId parameter is specified.
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenContainerParameterSpecified()
         {
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// CreateRunspacesForSSHHostParameterSet
+        /// CreateRunspacesForSSHHostParameterSet.
         /// </summary>
         /// <returns></returns>
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
@@ -1161,7 +1161,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Internal dispose method which does the actual
-        /// dispose operations and finalize suppressions
+        /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handles the throttling complete event of the throttle manager
+        /// Handles the throttling complete event of the throttle manager.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs"></param>
@@ -1211,7 +1211,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Writes an error record specifying that creation of remote runspace
-        /// failed
+        /// failed.
         /// </summary>
         /// <param name="e">exception which is causing this error record
         /// to be written</param>
@@ -1266,7 +1266,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Class that implements the IThrottleOperation in turn wrapping the
-    /// opening of a runspace asynchronously within it
+    /// opening of a runspace asynchronously within it.
     /// </summary>
     internal class OpenRunspaceOperation : IThrottleOperation, IDisposable
     {
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Opens the runspace asynchronously
+        /// Opens the runspace asynchronously.
         /// </summary>
         internal override void StartOperation()
         {
@@ -1302,7 +1302,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Closes the runspace already opened asynchronously
+        /// Closes the runspace already opened asynchronously.
         /// </summary>
         internal override void StopOperation()
         {

@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class TableWriter
     {
         /// <summary>
-        /// Information about each column boundaries
+        /// Information about each column boundaries.
         /// </summary>
         private class ColumnInfo
         {
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int alignment = TextAlignment.Left;
         }
         /// <summary>
-        /// Class containing information about the tabular layout
+        /// Class containing information about the tabular layout.
         /// </summary>
         private class ScreenInfo
         {

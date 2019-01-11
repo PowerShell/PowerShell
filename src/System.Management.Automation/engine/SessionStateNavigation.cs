@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation
         #region GetParentPath
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
         /// The path to the object to get the parent path from
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
         /// The path to the object to get the parent path from
@@ -176,7 +176,7 @@ namespace System.Management.Automation
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
-                if (!String.IsNullOrEmpty(qualifier) && !String.IsNullOrEmpty(result))
+                if (!string.IsNullOrEmpty(qualifier) && !string.IsNullOrEmpty(result))
                 {
                     result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
                 }
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="provider">
         /// The provider that should handle the GetParentPath call.
@@ -347,7 +347,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider that should handle the GetParentPath call.
@@ -589,7 +589,7 @@ namespace System.Management.Automation
                     // \\HKEY_LOCAL_MACHINE
                     if (
                         (GetProviderInstance(provider) is NavigationCmdletProvider) &&
-                        (!String.IsNullOrEmpty(drive.Root)) &&
+                        (!string.IsNullOrEmpty(drive.Root)) &&
                         (path.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase)))
                     {
                         //
@@ -876,7 +876,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Uses the specified provider to put the two parts of a path together
+        /// Uses the specified provider to put the two parts of a path together.
         /// </summary>
         /// <param name="provider">
         /// The provider to use.
@@ -925,7 +925,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Uses the specified provider to put the two parts of a path together
+        /// Uses the specified provider to put the two parts of a path together.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
 
                         // Now verify the providers are the same.
 
-                        if (!String.Equals(
+                        if (!string.Equals(
                                 provider.FullName,
                                 destinationProvider.FullName,
                                 StringComparison.OrdinalIgnoreCase))
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves the item at the specified path to the destination path
+        /// Moves the item at the specified path to the destination path.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.

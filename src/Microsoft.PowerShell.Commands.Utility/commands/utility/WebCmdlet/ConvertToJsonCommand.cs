@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public int Depth { get { return _depth; } set { _depth = value; } }
 
         /// <summary>
-        /// gets or sets the Compress property.
+        /// Gets or sets the Compress property.
         /// If the Compress property is set to be true, the Json string will
         /// be output in the compressed way. Otherwise, the Json string will
         /// be output with indentations.
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Compress { get; set; }
 
         /// <summary>
-        /// gets or sets the EnumsAsStrings property.
+        /// Gets or sets the EnumsAsStrings property.
         /// If the EnumsAsStrings property is set to true, enum values will
         /// be converted to their string equivalent. Otherwise, enum values
         /// will be converted to their numeric equivalent.

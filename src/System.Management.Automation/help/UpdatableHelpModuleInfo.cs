@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Updatable help system internal representation of the PSModuleInfo class
+    /// Updatable help system internal representation of the PSModuleInfo class.
     /// </summary>
     internal class UpdatableHelpModuleInfo
     {
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Help
         internal static readonly string HelpIntoXmlName = "HelpInfo.xml";
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="name">Module name.</param>
         /// <param name="guid">Module GUID.</param>
@@ -27,10 +27,10 @@ namespace System.Management.Automation.Help
         /// <param name="uri">HelpInfo URI.</param>
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            Debug.Assert(!string.IsNullOrEmpty(name));
             Debug.Assert(guid != null);
-            Debug.Assert(!String.IsNullOrEmpty(path));
-            Debug.Assert(!String.IsNullOrEmpty(uri));
+            Debug.Assert(!string.IsNullOrEmpty(path));
+            Debug.Assert(!string.IsNullOrEmpty(uri));
 
             ModuleName = name;
             _moduleGuid = guid;
@@ -39,12 +39,12 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Module name
+        /// Module name.
         /// </summary>
         internal string ModuleName { get; }
 
         /// <summary>
-        /// Module GUID
+        /// Module GUID.
         /// </summary>
         internal Guid ModuleGuid
         {
@@ -57,17 +57,17 @@ namespace System.Management.Automation.Help
         private Guid _moduleGuid;
 
         /// <summary>
-        /// Module path
+        /// Module path.
         /// </summary>
         internal string ModuleBase { get; }
 
         /// <summary>
-        /// HelpInfo URI
+        /// HelpInfo URI.
         /// </summary>
         internal string HelpInfoUri { get; }
 
         /// <summary>
-        /// Gets the combined HelpContent.zip name
+        /// Gets the combined HelpContent.zip name.
         /// </summary>
         /// <param name="culture">Current culture.</param>
         /// <returns>HelpContent name.</returns>
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the combined HelpInfo.xml name
+        /// Gets the combined HelpInfo.xml name.
         /// </summary>
         /// <returns>HelpInfo name.</returns>
         internal string GetHelpInfoName()

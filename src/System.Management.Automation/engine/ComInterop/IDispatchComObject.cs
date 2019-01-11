@@ -106,12 +106,12 @@ namespace System.Management.Automation.ComInterop
                 typeName = ctd.TypeName;
             }
 
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 typeName = "IDispatch";
             }
 
-            return String.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
+            return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
         }
 
         public ComTypeDesc ComTypeDesc
@@ -254,7 +254,7 @@ namespace System.Management.Automation.ComInterop
             }
             else
             {
-                throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+                throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 
@@ -293,7 +293,7 @@ namespace System.Management.Automation.ComInterop
             }
             else
             {
-                throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+                throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 
@@ -338,7 +338,7 @@ namespace System.Management.Automation.ComInterop
                         );
                         members.Add(new KeyValuePair<string, object>(method.Name, value));
 
-                        //evaluation failed for some reason. pass exception out
+                        // evaluation failed for some reason. pass exception out
                     }
                     catch (Exception ex)
                     {
@@ -589,14 +589,14 @@ namespace System.Management.Automation.ComInterop
 
             if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_INTERFACE)
             {
-                //We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
                 typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeInfo);
                 typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             }
 
             if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_COCLASS)
             {
-                //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                 typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCoClassTypeInfo(typeInfo);
                 typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             }

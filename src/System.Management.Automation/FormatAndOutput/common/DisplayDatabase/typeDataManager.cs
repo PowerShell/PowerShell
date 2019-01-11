@@ -15,14 +15,14 @@ using System.Threading;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to manage the database instances, do the reloading, etc.
+    /// Class to manage the database instances, do the reloading, etc.
     /// </summary>
     internal sealed class TypeInfoDataBaseManager
     {
         #region Private Data
 
         /// <summary>
-        /// instance of the object holding the format.ps1xml in memory database
+        /// Instance of the object holding the format.ps1xml in memory database.
         /// </summary>
         internal TypeInfoDataBase Database { get; private set; }
 
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Update the format data database. If there is any error in loading the format xml files,
         /// the old database is unchanged.
-        /// The reference returned should NOT be modified by any means by the caller
+        /// The reference returned should NOT be modified by any means by the caller.
         /// </summary>
         /// <param name="mshsnapins">Files to be loaded and errors to be updated.</param>
         /// <param name="authorizationManager">
@@ -297,8 +297,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// load the database
-        /// NOTE: need to be protected by lock since not thread safe per se
+        /// Load the database
+        /// NOTE: need to be protected by lock since not thread safe per se.
         /// </summary>
         /// <param name="files">*.formal.xml files to be loaded.</param>
         /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// it loads a database from file(s).
+        /// It loads a database from file(s).
         /// </summary>
         /// <param name="files">*.formal.xml files to be loaded.</param>
         /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to to add any pre-load intrinsics to the db
+        /// Helper to to add any pre-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to to add any post-load intrinsics to the db
+        /// Helper to to add any post-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPostLoadIntrinsics(TypeInfoDataBase db)

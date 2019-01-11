@@ -34,7 +34,7 @@ using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// helper fns
+    /// Helper fns.
     /// </summary>
     internal static class Utils
     {
@@ -75,12 +75,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Allowed PowerShell Editions
+        /// Allowed PowerShell Editions.
         /// </summary>
         internal static string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
-        /// helper fn to check byte[] arg for null.
+        /// Helper fn to check byte[] arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for empty or null.
+        /// Helper fn to check arg for empty or null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for null.
+        /// Helper fn to check arg for null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for null.
+        /// Helper fn to check arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         private static string s_pshome = null;
 
         /// <summary>
-        /// Get the application base path of the shell from registry
+        /// Get the application base path of the shell from registry.
         /// </summary>
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the current process is using WOW
+        /// Checks if the current process is using WOW.
         /// </summary>
         internal static bool IsRunningFromSysWOW64()
         {
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if host machine is WinPE
+        /// Checks if host machine is WinPE.
         /// </summary>
         internal static bool IsWinPEHost()
         {
@@ -341,7 +341,7 @@ namespace System.Management.Automation
         #region Versioning related methods
 
         /// <summary>
-        /// returns current major version of monad ( that is running ) in a string
+        /// Returns current major version of monad ( that is running ) in a string
         /// format.
         /// </summary>
         /// <returns>String.</returns>
@@ -487,7 +487,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The subdirectory of module paths
-        /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules
+        /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
@@ -893,7 +893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current impersonating Windows identity, if any
+        /// Gets the current impersonating Windows identity, if any.
         /// </summary>
         /// <param name="impersonatedIdentity">Current impersonated Windows identity or null.</param>
         /// <returns>True if current identity is impersonated.</returns>
@@ -953,8 +953,8 @@ namespace System.Management.Automation
             foreach (string deviceName in reservedDeviceNames)
             {
                 if (
-                    String.Equals(deviceName, compareName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(deviceName, noExtensionCompareName, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(deviceName, compareName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(deviceName, noExtensionCompareName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -1016,10 +1016,10 @@ namespace System.Management.Automation
                 public FILETIME ftCreationTime;
                 public FILETIME ftLastAccessTime;
                 public FILETIME ftLastWriteTime;
-                public uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-                public uint nFileSizeLow;  //|
-                public uint dwReserved0;   //|
-                public uint dwReserved1;   //v
+                public uint nFileSizeHigh; // changed all to uint, otherwise you run into unexpected overflow
+                public uint nFileSizeLow;  // |
+                public uint dwReserved0;   // |
+                public uint dwReserved1;   // v
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
                 public string cFileName;
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
 
         internal static bool IsPowerShellAssembly(string assemblyName)
         {
-            if (!String.IsNullOrWhiteSpace(assemblyName))
+            if (!string.IsNullOrWhiteSpace(assemblyName))
             {
                 // Remove the '.dll' if it's there...
                 var fixedName = assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
 
         internal static string GetPowerShellAssemblyStrongName(string assemblyName)
         {
-            if (!String.IsNullOrWhiteSpace(assemblyName))
+            if (!string.IsNullOrWhiteSpace(assemblyName))
             {
                 // Remove the '.dll' if it's there...
                 string fixedName = assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
@@ -1090,7 +1090,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// If a mutex is abandoned, in our case, it is ok to proceed
+        /// If a mutex is abandoned, in our case, it is ok to proceed.
         /// </summary>
         /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created.</param>
         /// <param name="initializer">The initializer to use to recreate the mutex.</param>
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
 
             if (bytesRead > 3)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
 
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation
             // Test for three-byte preambles
             if (bytesRead > 2)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
                     return foundEncoding;
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
             // Test for two-byte preambles
             if (bytesRead > 1)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1]);
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
                     return foundEncoding;
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If the command name is fully qualified then it is split into its component parts
-        /// E.g., moduleName\commandName
+        /// E.g., moduleName\commandName.
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
         ///    Console.WriteLine("Is __ComObject assignable from? {0}", comObjectType.IsAssignableFrom(type));
         /// and the results are:
         ///    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
-        ///    Is __ComObject assignable from? True
+        ///    Is __ComObject assignable from? True.
         /// </summary>
         internal static bool IsComObject(object obj)
         {
@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
         ///     FullLangauge        ->  ConstrainedLanguage
         ///     RestrictedLanguage  ->  NoLanguage
         ///     ConstrainedLanguage ->  ConstrainedLanguage
-        ///     NoLanguage          ->  NoLanguage
+        ///     NoLanguage          ->  NoLanguage.
         /// </summary>
         /// <param name="context">ExecutionContext.</param>
         /// <returns>Previous language mode or null for no language mode change.</returns>

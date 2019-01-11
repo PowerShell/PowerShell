@@ -65,7 +65,7 @@ namespace System.Management.Automation.PerformanceData
         public string GetCounterSetInstanceName()
         {
             Process currentProcess = Process.GetCurrentProcess();
-            string pid = String.Format(CultureInfo.InvariantCulture, "{0}", currentProcess.Id);
+            string pid = string.Format(CultureInfo.InvariantCulture, "{0}", currentProcess.Id);
             return pid;
         }
 
@@ -114,7 +114,7 @@ namespace System.Management.Automation.PerformanceData
             if (this.IsCounterSetRegistered(counterSetId, out counterSetInst))
             {
                 InvalidOperationException invalidOperationException = new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "A Counter Set Instance with id '{0}' is already registered",
                     counterSetId));
@@ -132,7 +132,7 @@ namespace System.Management.Automation.PerformanceData
                     {
                         InvalidOperationException invalidOperationException =
                             new InvalidOperationException(
-                                String.Format(
+                                string.Format(
                                 CultureInfo.InvariantCulture,
                                 "A Counter Set Instance with name '{0}' is already registered",
                                 counterSetName));
@@ -178,7 +178,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with id '{0}' is registered",
                         counterSetId));
@@ -209,7 +209,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with id '{0}' is registered",
                         counterSetId));
@@ -249,7 +249,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with id '{0}' is registered",
                          counterSetId));
@@ -290,7 +290,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with name {0} is registered",
                         counterSetName));
@@ -321,7 +321,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with id '{0}' is registered",
                         counterSetId));
@@ -352,7 +352,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                  new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "No Counter Set Instance with id '{0}' is registered",
                     counterSetId));
@@ -392,7 +392,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "No Counter Set Instance with name '{0}' is registered",
                     counterSetName));
@@ -432,7 +432,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "No Counter Set Instance with name '{0}' is registered",
                         counterSetName));

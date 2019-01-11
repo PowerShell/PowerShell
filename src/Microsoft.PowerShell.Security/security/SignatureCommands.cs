@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _sourcePathOrExtension;
 
         /// <summary>
-        /// File contents as a byte array
+        /// File contents as a byte array.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
         [ValidateNotNullOrEmpty]
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = String.Empty;
+                    value = string.Empty;
                 }
 
                 _timestampServer = value;
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // remember to reset the read-only attribute later
                                 readOnlyFileInfo = fInfo;
-                                //Make sure the file is not read only
+                                // Make sure the file is not read only
                                 fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                             }
                         }
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                 if (SecurityUtils.GetFileSize(filePath) < 4)
                 {
                     // Note that the message param comes first
-                    string message = String.Format(
+                    string message = string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// association between SigningOption.* values and the
+        /// Association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
         private static readonly SigningOptionInfo[] s_sigOptionInfo =
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// get SigningOption value corresponding to a string name
+        /// Get SigningOption value corresponding to a string name.
         /// </summary>
         /// <param name="optionName">Name of option.</param>
         /// <returns>SigningOption.</returns>
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
-                if (String.Equals(optionName, si.optionName,
+                if (string.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     return si.option;

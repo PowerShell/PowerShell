@@ -90,7 +90,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Finalizer for class PipelineProcessor
+        /// Finalizer for class PipelineProcessor.
         /// </summary>
         ~PipelineProcessor()
         {
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
-            if ((invocation == null) || String.IsNullOrEmpty(invocation.Line))
+            if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
                 if (hostInterface != null)
                 {
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!String.IsNullOrEmpty(logElement))
+            if (!string.IsNullOrEmpty(logElement))
             {
                 _eventLogBuffer.Add(logElement);
             }
@@ -268,7 +268,7 @@ namespace System.Management.Automation.Internal
         #region public_methods
 
         /// <summary>
-        /// Add a single InternalCommand to the end of the pipeline
+        /// Add a single InternalCommand to the end of the pipeline.
         /// </summary>
         /// <returns>Results from last pipeline stage.</returns>
         /// <exception cref="InvalidOperationException">
@@ -293,7 +293,7 @@ namespace System.Management.Automation.Internal
         //   should be an int or enum to allow for more queues
         // 2005/03/08-JonN: This is an internal API
         /// <summary>
-        /// Add a command to the pipeline
+        /// Add a command to the pipeline.
         /// </summary>
         /// <param name="commandProcessor"></param>
         /// <param name="readFromCommand">Reference number of command from which to read, 0 for none.</param>
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Add ExternalErrorOutput to all commands whose error
-        /// output is not yet claimed
+        /// output is not yet claimed.
         /// </summary>
         private void SetExternalErrorOutput()
         {
@@ -1090,7 +1090,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Clear ErrorVariable as appropriate
+        /// Clear ErrorVariable as appropriate.
         /// </summary>
         private void SetupParameterVariables()
         {

@@ -49,7 +49,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for AppDomain.GetAssemblies
+        /// Facade for AppDomain.GetAssemblies.
         /// </summary>
         /// <param name="namespaceQualifiedTypeName">
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding
+        /// Facade for getting default encoding.
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
@@ -99,7 +99,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for getting OEM encoding
-        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows
+        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
@@ -304,7 +304,7 @@ namespace System.Management.Automation
             // it's recommended to use TimeZoneInfo.Local whenever possible.
 
             const int maxsizeUtcDmtf = 999;
-            string UtcString = String.Empty;
+            string UtcString = string.Empty;
             // Fill up the UTC field in the DMTF date with the current zones UTC value
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);
@@ -361,7 +361,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for ProfileOptimization.SetProfileRoot
+        /// Facade for ProfileOptimization.SetProfileRoot.
         /// </summary>
         /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
         internal static void SetProfileOptimizationRoot(string directoryPath)
@@ -370,7 +370,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for ProfileOptimization.StartProfile
+        /// Facade for ProfileOptimization.StartProfile.
         /// </summary>
         /// <param name="profile">The file name of the profile to use.</param>
         internal static void StartProfileOptimization(string profile)
@@ -381,7 +381,7 @@ namespace System.Management.Automation
         #endregion Misc
 
         /// <summary>
-        /// Native methods that are used by facade methods
+        /// Native methods that are used by facade methods.
         /// </summary>
         private static class NativeMethods
         {

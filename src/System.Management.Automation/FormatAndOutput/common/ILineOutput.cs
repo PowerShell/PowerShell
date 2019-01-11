@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// - characters map to one or more character cells
     ///
     /// NOTE: we provide a base class that is valid for devices that have a
-    /// 1:1 mapping between a UNICODE character and a display cell
+    /// 1:1 mapping between a UNICODE character and a display cell.
     /// </summary>
     internal class DisplayCells
     {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Given a string and a number of display cells, it computes how many
-        /// characters would fit starting from the beginning or end of the string
+        /// characters would fit starting from the beginning or end of the string.
         /// </summary>
         /// <param name="str">String to be displayed.</param>
         /// <param name="offset">Offset inside the string.</param>
@@ -136,35 +136,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// - Fixed pitch font: layout done in terms of character cells
     /// - character cell layout not affected by bold, reverse screen, color, etc.
     /// - returned values might change from call to call if the specific underlying
-    ///   implementation allows window resizing
+    ///   implementation allows window resizing.
     /// </summary>
     internal abstract class LineOutput
     {
         /// <summary>
-        /// whether the device requires full buffering of formatting
-        /// objects before any processing
+        /// Whether the device requires full buffering of formatting
+        /// objects before any processing.
         /// </summary>
         internal virtual bool RequiresBuffering { get { return false; } }
 
         /// <summary>
-        /// delegate the implementor of ExecuteBufferPlayBack should
-        /// call to cause the playback to happen when ready to execute
+        /// Delegate the implementor of ExecuteBufferPlayBack should
+        /// call to cause the playback to happen when ready to execute.
         /// </summary>
         internal delegate void DoPlayBackCall();
 
         /// <summary>
-        /// if RequiresBuffering = true, this call will be made to
-        /// start the playback
+        /// If RequiresBuffering = true, this call will be made to
+        /// start the playback.
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
 
         /// <summary>
-        /// The number of columns the current device has
+        /// The number of columns the current device has.
         /// </summary>
         internal abstract int ColumnNumber { get; }
 
         /// <summary>
-        /// The number of rows the current device has
+        /// The number of rows the current device has.
         /// </summary>
         internal abstract int RowNumber { get; }
 
@@ -183,8 +183,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// handle the stop processing signal.
-        /// Set a flag that will be checked during operations
+        /// Handle the stop processing signal.
+        /// Set a flag that will be checked during operations.
         /// </summary>
         internal void StopProcessing()
         {
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// return an instance of the display helper tear off
+        /// Return an instance of the display helper tear off.
         /// </summary>
         /// <value></value>
         internal virtual DisplayCells DisplayCells
@@ -215,37 +215,37 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// singleton used for the default implementation.
+        /// Singleton used for the default implementation.
         /// NOTE: derived classes may chose to provide a different
-        /// implementation by overriding
+        /// implementation by overriding.
         /// </summary>
         protected static DisplayCells _displayCellsDefault = new DisplayCells();
     }
 
     /// <summary>
-    /// helper class to provide line breaking (based on device width)
+    /// Helper class to provide line breaking (based on device width)
     /// and embedded newline processing
-    /// It needs to be provided with two callbacks for line processing
+    /// It needs to be provided with two callbacks for line processing.
     /// </summary>
     internal class WriteLineHelper
     {
         #region callbacks
 
         /// <summary>
-        /// delegate definition
+        /// Delegate definition.
         /// </summary>
         /// <param name="s">String to write.</param>
         internal delegate void WriteCallback(string s);
 
         /// <summary>
-        /// instance of the delegate previously defined
-        /// for line that has EXACTLY this.ncols characters
+        /// Instance of the delegate previously defined
+        /// for line that has EXACTLY this.ncols characters.
         /// </summary>
         private WriteCallback _writeCall = null;
 
         /// <summary>
-        /// instance of the delegate previously defined
-        /// for generic line, less that this.ncols characters
+        /// Instance of the delegate previously defined
+        /// for generic line, less that this.ncols characters.
         /// </summary>
         private WriteCallback _writeLineCall = null;
 
@@ -254,9 +254,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _lineWrap;
 
         /// <summary>
-        /// construct an instance, given the two callbacks
+        /// Construct an instance, given the two callbacks
         /// NOTE: if the underlying device treats the two cases as the
-        /// same, the same delegate can be passed twice
+        /// same, the same delegate can be passed twice.
         /// </summary>
         /// <param name="lineWrap">True if we require line wrapping.</param>
         /// <param name="wlc">Delegate for WriteLine(), must ben non null.</param>
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// main entry point to process a line
+        /// Main entry point to process a line.
         /// </summary>
         /// <param name="s">String to process.</param>
         /// <param name="cols">Width of the device.</param>
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper, needed because it might make recursive calls to itself
+        /// Internal helper, needed because it might make recursive calls to itself.
         /// </summary>
         /// <param name="val">String to process.</param>
         /// <param name="cols">Width of the device.</param>
@@ -355,15 +355,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// Implementation of the ILineOutput interface accepting an instance of a
-    /// TextWriter abstract class
+    /// TextWriter abstract class.
     /// </summary>
     internal class TextWriterLineOutput : LineOutput
     {
         #region ILineOutput methods
 
         /// <summary>
-        /// get the columns on the screen
-        /// for files, it is settable at creation time
+        /// Get the columns on the screen
+        /// for files, it is settable at creation time.
         /// </summary>
         internal override int ColumnNumber
         {
@@ -375,8 +375,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// get the # of rows on the screen: for files
-        /// we return -1, meaning infinite
+        /// Get the # of rows on the screen: for files
+        /// we return -1, meaning infinite.
         /// </summary>
         internal override int RowNumber
         {
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write a line by delegating to the writer underneath
+        /// Write a line by delegating to the writer underneath.
         /// </summary>
         /// <param name="s"></param>
         internal override void WriteLine(string s)
@@ -406,8 +406,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// initialization of the object. It must be called before
-        /// attempting any operation
+        /// Initialization of the object. It must be called before
+        /// attempting any operation.
         /// </summary>
         /// <param name="writer">TextWriter to write to.</param>
         /// <param name="columns">Max columns widths for the text.</param>
@@ -418,8 +418,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// initialization of the object. It must be called before
-        /// attempting any operation
+        /// Initialization of the object. It must be called before
+        /// attempting any operation.
         /// </summary>
         /// <param name="writer">TextWriter to write to.</param>
         /// <param name="columns">Max columns widths for the text.</param>
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// TextWriter to generate data for the Monad pipeline in a streaming fashion:
-    /// the provided callback will be called each time a line is written
+    /// the provided callback will be called each time a line is written.
     /// </summary>
     internal class StreamingTextWriter : TextWriter
     {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         /// <summary>
-        /// create an instance by passing a delegate
+        /// Create an instance by passing a delegate.
         /// </summary>
         /// <param name="writeCall">Delegate to write to.</param>
         /// <param name="culture">Culture for this TextWriter.</param>
@@ -474,13 +474,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// delegate definition
+        /// Delegate definition.
         /// </summary>
         /// <param name="s">String to write.</param>
         internal delegate void WriteLineCallback(string s);
 
         /// <summary>
-        /// instance of the delegate previously defined
+        /// Instance of the delegate previously defined.
         /// </summary>
         private WriteLineCallback _writeCall = null;
     }

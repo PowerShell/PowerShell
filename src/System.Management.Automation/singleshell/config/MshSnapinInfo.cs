@@ -20,17 +20,17 @@ namespace System.Management.Automation
     internal static class RegistryStrings
     {
         /// <summary>
-        /// Root key path under HKLM
+        /// Root key path under HKLM.
         /// </summary>
         internal const string MonadRootKeyPath = "Software\\Microsoft\\PowerShell";
 
         /// <summary>
-        /// Root key name
+        /// Root key name.
         /// </summary>
         internal const string MonadRootKeyName = "PowerShell";
 
         /// <summary>
-        /// Key for monad engine
+        /// Key for monad engine.
         /// </summary>
         internal const string MonadEngineKey = "PowerShellEngine";
 
@@ -42,11 +42,11 @@ namespace System.Management.Automation
         internal const string MonadEngine_MonadVersion = "PowerShellVersion";
 
         /// <summary>
-        /// Key under which all the mshsnapin live
+        /// Key under which all the mshsnapin live.
         /// </summary>
         internal const string MshSnapinKey = "PowerShellSnapIns";
 
-        //Name of various values for each mshsnapin
+        // Name of various values for each mshsnapin
         internal const string MshSnapin_ApplicationBase = "ApplicationBase";
         internal const string MshSnapin_AssemblyName = "AssemblyName";
         internal const string MshSnapin_ModuleName = "ModuleName";
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         internal const string MshSnapin_VendorResource = "VendorIndirect";
         internal const string MshSnapin_LogPipelineExecutionDetails = "LogPipelineExecutionDetails";
 
-        //Name of default mshsnapins
+        // Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
         internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
         internal const string ManagementMshSnapinName = "Microsoft.PowerShell.Management";
@@ -69,7 +69,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains information about a mshsnapin
+    /// Contains information about a mshsnapin.
     /// </summary>
     public class PSSnapInInfo
     {
@@ -130,12 +130,12 @@ namespace System.Management.Automation
 
             if (descriptionFallback == null)
             {
-                descriptionFallback = String.Empty;
+                descriptionFallback = string.Empty;
             }
 
             if (vendorFallback == null)
             {
-                vendorFallback = String.Empty;
+                vendorFallback = string.Empty;
             }
 
             Name = name;
@@ -201,27 +201,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique Name of the mshsnapin
+        /// Unique Name of the mshsnapin.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Is this mshsnapin default mshsnapin
+        /// Is this mshsnapin default mshsnapin.
         /// </summary>
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Returns applicationbase for mshsnapin
+        /// Returns applicationbase for mshsnapin.
         /// </summary>
         public string ApplicationBase { get; }
 
         /// <summary>
-        /// Strong name of mshSnapIn assembly
+        /// Strong name of mshSnapIn assembly.
         /// </summary>
         public string AssemblyName { get; }
 
         /// <summary>
-        /// Name of PSSnapIn module
+        /// Name of PSSnapIn module.
         /// </summary>
         public string ModuleName { get; }
 
@@ -229,7 +229,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
+                if (string.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
                 {
                     return ModuleName;
                 }
@@ -243,12 +243,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monad version used by mshsnapin
+        /// Monad version used by mshsnapin.
         /// </summary>
         public Version PSVersion { get; }
 
         /// <summary>
-        /// Version of mshsnapin
+        /// Version of mshsnapin.
         /// </summary>
         public Version Version { get; }
 
@@ -258,15 +258,15 @@ namespace System.Management.Automation
         public Collection<string> Types { get; }
 
         /// <summary>
-        /// Collection of file names containing format information for PSSnapIn
+        /// Collection of file names containing format information for PSSnapIn.
         /// </summary>
         public Collection<string> Formats { get; }
 
         private string _descriptionIndirect;
-        private string _descriptionFallback = String.Empty;
+        private string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
-        /// Description of mshsnapin
+        /// Description of mshsnapin.
         /// </summary>
         public string Description
         {
@@ -282,10 +282,10 @@ namespace System.Management.Automation
         }
 
         private string _vendorIndirect;
-        private string _vendorFallback = String.Empty;
+        private string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
-        /// Vendor of mshsnapin
+        /// Vendor of mshsnapin.
         /// </summary>
         public string Vendor
         {
@@ -306,7 +306,7 @@ namespace System.Management.Automation
         public bool LogPipelineExecutionDetails { get; set; } = false;
 
         /// <summary>
-        /// Overrides ToString
+        /// Overrides ToString.
         /// </summary>
         /// <returns>
         /// Name of the PSSnapIn
@@ -385,12 +385,12 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(_description))
+            if (string.IsNullOrEmpty(_description))
             {
                 _description = _descriptionFallback;
             }
 
-            if (String.IsNullOrEmpty(_vendor))
+            if (string.IsNullOrEmpty(_vendor))
             {
                 _vendor = _vendorFallback;
             }
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         internal static bool IsPSSnapinIdValid(string psSnapinId)
         {
-            if (String.IsNullOrEmpty(psSnapinId))
+            if (string.IsNullOrEmpty(psSnapinId))
             {
                 return false;
             }
@@ -458,7 +458,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Internal class to read information about a mshsnapin
+    /// Internal class to read information about a mshsnapin.
     /// </summary>
     internal static class PSSnapInReader
     {
@@ -508,7 +508,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
-                //found a key which is not version
+                // found a key which is not version
                 if (!MeetsVersionFormat(version))
                 {
                     continue;
@@ -519,8 +519,8 @@ namespace System.Management.Automation
                 {
                     oneVersionMshSnapins = ReadAll(monadRootKey, version);
                 }
-                //If we cannot get information for one version, continue with other
-                //versions
+                // If we cannot get information for one version, continue with other
+                // versions
                 catch (SecurityException)
                 {
                 }
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads all registered mshsnapin for specified psVersion
+        /// Reads all registered mshsnapin for specified psVersion.
         /// </summary>
         /// <returns>
         /// A collection of PSSnapInInfo objects
@@ -586,7 +586,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads all the mshsnapins for a given psVersion
+        /// Reads all the mshsnapins for a given psVersion.
         /// </summary>
         /// <exception cref="SecurityException">
         /// The User doesn't have required permission to read the registry key for this version.
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             RegistryKey versionRoot = GetVersionRootKey(monadRootKey, psVersion);
             RegistryKey mshsnapinRoot = GetMshSnapinRootKey(versionRoot, psVersion);
 
-            //get name of all mshsnapin for this version
+            // get name of all mshsnapin for this version
             string[] mshsnapinIds = mshsnapinRoot.GetSubKeyNames();
 
             foreach (string id in mshsnapinIds)
@@ -620,7 +620,7 @@ namespace System.Management.Automation
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
                 }
-                //If we cannot read some mshsnapins, we should continue
+                // If we cannot read some mshsnapins, we should continue
                 catch (SecurityException)
                 {
                 }
@@ -633,7 +633,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Read mshsnapin for specified mshsnapinId and psVersion
+        /// Read mshsnapin for specified mshsnapinId and psVersion.
         /// </summary>
         /// <returns>
         /// MshSnapin info object
@@ -675,7 +675,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads the mshsnapin info for a specific key under specific monad version
+        /// Reads the mshsnapin info for a specific key under specific monad version.
         /// </summary>
         /// <remarks>
         /// ReadOne will never create a default PSSnapInInfo object.
@@ -723,9 +723,9 @@ namespace System.Management.Automation
 
             bool logPipelineExecutionDetails = false;
             string logPipelineExecutionDetailsStr = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_LogPipelineExecutionDetails, false);
-            if (!String.IsNullOrEmpty(logPipelineExecutionDetailsStr))
+            if (!string.IsNullOrEmpty(logPipelineExecutionDetailsStr))
             {
-                if (String.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
                     logPipelineExecutionDetails = true;
             }
 
@@ -740,7 +740,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets multistring value for name
+        /// Gets multistring value for name.
         /// </summary>
         /// <param name="mshsnapinKey"></param>
         /// <param name="name"></param>
@@ -772,7 +772,7 @@ namespace System.Management.Automation
 
             if (msv == null)
             {
-                //Check if the value is in string format
+                // Check if the value is in string format
                 string singleValue = value as string;
                 if (singleValue != null)
                 {
@@ -801,7 +801,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the value for name
+        /// Get the value for name.
         /// </summary>
         /// <param name="mshsnapinKey"></param>
         /// <param name="name"></param>
@@ -915,7 +915,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// PublicKeyToken is in the form of byte[]. Use this function to convert to a string
+        /// PublicKeyToken is in the form of byte[]. Use this function to convert to a string.
         /// </summary>
         /// <param name="tokens">Array of byte's.</param>
         /// <returns></returns>
@@ -932,7 +932,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads core snapin for monad engine
+        /// Reads core snapin for monad engine.
         /// </summary>
         /// <returns>
         /// A PSSnapInInfo object
@@ -986,7 +986,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads all registered mshsnapins for currently executing monad engine
+        /// Reads all registered mshsnapins for currently executing monad engine.
         /// </summary>
         /// <returns>
         /// A collection of PSSnapInInfo objects
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enable Snapin logging based on group policy
+        /// Enable Snapin logging based on group policy.
         /// </summary>
         private static void SetSnapInLoggingInformation(PSSnapInInfo psSnapInInfo)
         {
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enable Snapin logging based on group policy
+        /// Enable Snapin logging based on group policy.
         /// </summary>
         private static void SetSnapInLoggingInformation(PSSnapInInfo psSnapInInfo, ModuleCmdletBase.ModuleLoggingGroupPolicyStatus status, IEnumerable<string> moduleOrSnapinNames)
         {
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the key to monad root
+        /// Get the key to monad root.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="SecurityException">
@@ -1125,9 +1125,9 @@ namespace System.Management.Automation
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(RegistryStrings.MonadRootKeyPath);
             if (rootKey == null)
             {
-                //This should never occur because this code is running
-                //because monad is installed. { well this can occur if someone
-                //deletes the registry key after starting monad
+                // This should never occur because this code is running
+                // because monad is installed. { well this can occur if someone
+                // deletes the registry key after starting monad
                 Dbg.Assert(false, "Root Key of Monad installation is not present");
                 throw PSTraceSource.NewArgumentException("monad", MshSnapinInfo.MonadRootRegistryAccessFailed);
             }
@@ -1169,7 +1169,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the version root key for specified monad version
+        /// Gets the version root key for specified monad version.
         /// </summary>
         /// <param name="rootKey"></param>
         /// <param name="psVersion"></param>
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the mshsnapin root key for specified monad version
+        /// Gets the mshsnapin root key for specified monad version.
         /// </summary>
         /// <param name="versionRootKey"></param>
         /// <param name="psVersion"></param>
@@ -1225,7 +1225,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the mshsnapin key for specified monad version and mshsnapin name
+        /// Gets the mshsnapin key for specified monad version and mshsnapin name.
         /// </summary>
         /// <param name="mshSnapInName"></param>
         /// <param name="psVersion"></param>

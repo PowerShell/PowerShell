@@ -16,7 +16,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Constructs a ScriptParameterBinder with the specified context
+        /// Constructs a ScriptParameterBinder with the specified context.
         /// </summary>
         /// <param name="script">
         /// The script block representing the code being run
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         #region Parameter default values
 
         /// <summary>
-        /// Gets the default value for the specified parameter
+        /// Gets the default value for the specified parameter.
         /// </summary>
         /// <param name="name">
         /// The name of the parameter to get the default value of.
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         #region Parameter binding
 
         /// <summary>
-        /// Binds the parameters to local variables in the function scope
+        /// Binds the parameters to local variables in the function scope.
         /// </summary>
         /// <param name="name">
         ///     The name of the parameter to bind the value to.
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         #region private members
 
         /// <summary>
-        /// The script that is being bound to
+        /// The script that is being bound to.
         /// </summary>
         internal ScriptBlock Script { get; private set; }
 

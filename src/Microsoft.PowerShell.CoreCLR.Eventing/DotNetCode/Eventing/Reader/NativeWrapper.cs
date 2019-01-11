@@ -25,7 +25,7 @@ namespace System.Diagnostics.Eventing.Reader
     {
         public class SystemProperties
         {
-            //indicates if the SystemProperties values were already computed (for this event Instance, surely).
+            // indicates if the SystemProperties values were already computed (for this event Instance, surely).
             public bool filled = false;
 
             public ushort? Id = null;
@@ -196,7 +196,7 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, String channelPath, int flags)
+        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, string channelPath, int flags)
         {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenChannelConfig(session, channelPath, flags);
             int win32Error = Marshal.GetLastWin32Error();
@@ -270,7 +270,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
-                            String[] valuePaths,
+                            string[] valuePaths,
                             UnsafeNativeMethods.EvtRenderContextFlags flags)
         {
             EventLogHandle renderContextHandleValues = UnsafeNativeMethods.EvtCreateRenderContext(valuePathsCount, valuePaths, flags);
@@ -296,7 +296,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 if (win32Error == UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                 {
-                    //reallocate the new RenderBuffer with the right size.
+                    // reallocate the new RenderBuffer with the right size.
                     buffer.Capacity = buffUsed;
                     status = UnsafeNativeMethods.EvtRender(context, eventHandle, flags, buffer.Capacity, buffer, out buffUsed, out propCount);
                     win32Error = Marshal.GetLastWin32Error();
@@ -839,7 +839,7 @@ namespace System.Diagnostics.Eventing.Reader
                     throw new InvalidOperationException("We do not have " + SYSTEM_PROPERTY_COUNT + " variants given for the UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues flag. (System Properties)");
 
                 pointer = buffer;
-                //read each Variant structure
+                // read each Variant structure
                 for (int i = 0; i < propCount; i++)
                 {
                     UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(pointer);
@@ -911,8 +911,8 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        //EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and EvtRenderContextFlags.EvtRenderContextValues
-        //Render with Context = ContextUser or ContextValues (with user defined Xpath query strings)
+        // EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and EvtRenderContextFlags.EvtRenderContextValues
+        // Render with Context = ContextUser or ContextValues (with user defined Xpath query strings)
         [System.Security.SecuritySafeCritical]
         public static IList<object> EvtRenderBufferWithContextUserOrValues(EventLogHandle contextHandle, EventLogHandle eventHandle)
         {
@@ -1012,7 +1012,7 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-        //The EvtFormatMessage used for the obtaining of the Keywords names.
+        // The EvtFormatMessage used for the obtaining of the Keywords names.
         [System.Security.SecuritySafeCritical]
         public static IEnumerable<string> EvtFormatMessageRenderKeywords(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
         {
@@ -1064,10 +1064,10 @@ namespace System.Diagnostics.Eventing.Reader
                 while (true)
                 {
                     string s = Marshal.PtrToStringUni(pointer);
-                    if (String.IsNullOrEmpty(s))
+                    if (string.IsNullOrEmpty(s))
                         break;
                     keywordsList.Add(s);
-                    //nr of bytes = # chars * 2 + 2 bytes for character '\0'.
+                    // nr of bytes = # chars * 2 + 2 bytes for character '\0'.
                     pointer = new IntPtr((Int64)pointer + (s.Length * 2) + 2);
                 }
 
@@ -1113,7 +1113,7 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        //Get the formatted description, using the msgId for FormatDescription(string [])
+        // Get the formatted description, using the msgId for FormatDescription(string [])
         [System.Security.SecuritySafeCritical]
         public static string EvtFormatMessageFormatDescription(EventLogHandle handle, EventLogHandle eventHandle, string[] values)
         {
@@ -1278,9 +1278,9 @@ namespace System.Diagnostics.Eventing.Reader
                     return ConvertToFileTimeArray(val);
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSysTime):
                     return ConvertToSysTimeArray(val);
-                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary): //both length and count in the manifest: tracrpt supports, Crimson APIs don't
-                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSizeT):  //unused: array of win:pointer is returned as HexIntXX
-                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid): //unsupported by native APIs
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary): // both length and count in the manifest: tracrpt supports, Crimson APIs don't
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSizeT):  // unused: array of win:pointer is returned as HexIntXX
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid): // unsupported by native APIs
                 default:
                     throw new EventLogInvalidDataException();
             }
@@ -1347,7 +1347,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static Array ConvertToBoolArray(UnsafeNativeMethods.EvtVariant val)
         {
-            //NOTE: booleans are padded to 4 bytes in ETW
+            // NOTE: booleans are padded to 4 bytes in ETW
             IntPtr ptr = val.Reference;
             if (ptr == IntPtr.Zero)
             {

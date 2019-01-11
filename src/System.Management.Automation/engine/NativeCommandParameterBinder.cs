@@ -21,7 +21,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Constructs a NativeCommandParameterBinder
+        /// Constructs a NativeCommandParameterBinder.
         /// </summary>
         /// <param name="command">
         /// The NativeCommand to bind to.
@@ -131,7 +131,7 @@ namespace System.Management.Automation
         #endregion Parameter binding
 
         /// <summary>
-        /// Gets the command arguments in string form
+        /// Gets the command arguments in string form.
         /// </summary>
         internal string Arguments
         {
@@ -190,7 +190,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!String.IsNullOrEmpty(arg))
+                if (!string.IsNullOrEmpty(arg))
                 {
                     _arguments.Append(separator);
 
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The native command to bind to
+        /// The native command to bind to.
         /// </summary>
         private NativeCommand _nativeCommand;
 #endregion private members

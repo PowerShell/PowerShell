@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Definition")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Definition { get; set; }
+        public string[] Definition { get; set; }
 
         #endregion Parameters
 
@@ -92,10 +92,10 @@ namespace Microsoft.PowerShell.Commands
             // First get the alias table (from the proper scope if necessary)
             IDictionary<string, AliasInfo> aliasTable = null;
 
-            //get the command origin
+            // get the command origin
             CommandOrigin origin = MyInvocation.CommandOrigin;
             string displayString = "name";
-            if (!String.IsNullOrEmpty(Scope))
+            if (!string.IsNullOrEmpty(Scope))
             {
                 // This can throw PSArgumentException and PSArgumentOutOfRangeException
                 // but just let them go as this is terminal for the pipeline and the
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
-                    //excludes pattern
+                    // excludes pattern
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(tableEntry.Key, excludePatterns, false))
                     {
                         continue;

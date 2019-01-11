@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to set the property of an item at a specified path
+    /// A command to set the property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ItemProperty", DefaultParameterSetName = "propertyValuePathSet", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113396")]
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = propertyPSObjectPathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = propertyValueLiteralPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = propertyValueLiteralPathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The value of the property to set.
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 case propertyValuePathSet:
                 case propertyValueLiteralPathSet:
-                    if (!String.IsNullOrEmpty(Name))
+                    if (!string.IsNullOrEmpty(Name))
                     {
                         mshObject = new PSObject();
                         mshObject.Properties.Add(new PSNoteProperty(Name, Value));
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Sets the content of the item at the specified path
+        /// Sets the content of the item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {

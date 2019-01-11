@@ -270,7 +270,7 @@ namespace System.Management.Automation.Host
         private TranscriptionData _volatileTranscriptionData;
 
         /// <summary>
-        /// Transcribes a command being invoked
+        /// Transcribes a command being invoked.
         /// </summary>
         /// <param name="commandText">The text of the command being invoked.</param>
         /// <param name="invocation">The invocation info of the command being transcribed.</param>
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Host
                                 {
                                     transcript.OutputToLog.Add("**********************");
                                     transcript.OutputToLog.Add(
-                                        String.Format(
+                                        string.Format(
                                             Globalization.CultureInfo.InvariantCulture, InternalHostUserInterfaceStrings.CommandStartTime,
                                             DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture)));
                                     transcript.OutputToLog.Add("**********************");
@@ -350,7 +350,7 @@ namespace System.Management.Automation.Host
             string[] helperCommands = { "TabExpansion2", "prompt", "TabExpansion", "PSConsoleHostReadline" };
             foreach (string helperCommand in helperCommands)
             {
-                if (String.Equals(helperCommand, commandName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(helperCommand, commandName, StringComparison.OrdinalIgnoreCase))
                 {
                     IgnoreCommand(logElement, invocation);
 
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Host
             // Transcribe the transcript epilogue
             try
             {
-                string message = String.Format(
+                string message = string.Format(
                     Globalization.CultureInfo.InvariantCulture,
                     InternalHostUserInterfaceStrings.TranscriptEpilogue, DateTime.Now);
 
@@ -606,7 +606,7 @@ namespace System.Management.Automation.Host
                     if (TranscriptionData.CommandBeingIgnored != null)
                     {
                         // If we're ignoring a prompt, capture the value
-                        if (String.Equals("prompt", TranscriptionData.CommandBeingIgnored, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals("prompt", TranscriptionData.CommandBeingIgnored, StringComparison.OrdinalIgnoreCase))
                         {
                             TranscriptionData.PromptText = resultText;
                         }
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Transcribes / records the completion of a command
+        /// Transcribes / records the completion of a command.
         /// </summary>
         /// <param name="invocation"></param>
         internal void TranscribeCommandComplete(InvocationInfo invocation)
@@ -667,7 +667,7 @@ namespace System.Management.Automation.Host
                 // If we're completing a command that we were ignoring, start transcribing results / etc. again.
                 if ((TranscriptionData.CommandBeingIgnored != null) &&
                     (invocation != null) && (invocation.MyCommand != null) &&
-                    String.Equals(commandNameToCheck, invocation.MyCommand.Name, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(commandNameToCheck, invocation.MyCommand.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     TranscriptionData.CommandBeingIgnored = null;
                     TranscriptionData.IsHelperCommand = false;
@@ -716,9 +716,9 @@ namespace System.Management.Automation.Host
                     // Transcription should begin only if file generation is successful.
                     // If there is an error in file generation, throw the exception.
                     string baseDirectory = Path.GetDirectoryName(transcript.Path);
-                    if (Directory.Exists(transcript.Path) || (String.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
+                    if (Directory.Exists(transcript.Path) || (string.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
                     {
-                        string errorMessage = String.Format(
+                        string errorMessage = string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             InternalHostUserInterfaceStrings.InvalidTranscriptFilePath,
                             transcript.Path);
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Host
         #endregion Dialog-oriented interaction
 
         /// <summary>
-        /// Creates a new instance of the PSHostUserInterface class
+        /// Creates a new instance of the PSHostUserInterface class.
         /// </summary>
         protected PSHostUserInterface()
         {
@@ -986,7 +986,7 @@ namespace System.Management.Automation.Host
 
         internal static string GetTranscriptPath(string baseDirectory, bool includeDate)
         {
-            if (String.IsNullOrEmpty(baseDirectory))
+            if (string.IsNullOrEmpty(baseDirectory))
             {
                 baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation.Host
             // (5 bytes = 3 years, 4 bytes = about a month)
             byte[] randomBytes = new byte[6];
             System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
-            string filename = String.Format(
+            string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
                         Environment.MachineName,
@@ -1256,7 +1256,7 @@ namespace System.Management.Automation.Host
                 if (string.Compare(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal) == 0)
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        String.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }

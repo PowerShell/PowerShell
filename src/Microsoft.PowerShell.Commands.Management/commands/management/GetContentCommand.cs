@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get the content of an item at a specified path
+    /// A command to get the content of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Content", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113310")]
     public class GetContentCommand : ContentCommandBase
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The number of content items to retrieve. By default this
-        /// value is -1 which means read all the content
+        /// value is -1 which means read all the content.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("First", "Head")]
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Gets the content of an item at the specified path
+        /// Gets the content of an item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Scan forwards to get the tail content
+        /// Scan forwards to get the tail content.
         /// </summary>
         /// <param name="holder"></param>
         /// <param name="currentContext"></param>
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Seek position to the right place
+        /// Seek position to the right place.
         /// </summary>
         /// <param name="reader">
         /// reader should be able to be casted to FileSystemContentReader
@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Be sure to clean up
+        /// Be sure to clean up.
         /// </summary>
         protected override void EndProcessing()
         {

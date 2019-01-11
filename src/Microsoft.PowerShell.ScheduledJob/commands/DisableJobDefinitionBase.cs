@@ -15,17 +15,17 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Parameters
 
         /// <summary>
-        /// DefinitionIdParameterSet
+        /// DefinitionIdParameterSet.
         /// </summary>
         protected const string DefinitionIdParameterSet = "DefinitionId";
 
         /// <summary>
-        /// DefinitionNameParameterSet
+        /// DefinitionNameParameterSet.
         /// </summary>
         protected const string DefinitionNameParameterSet = "DefinitionName";
 
         /// <summary>
-        /// DefinitionParameterSet
+        /// DefinitionParameterSet.
         /// </summary>
         protected const string DefinitionParameterSet = "Definition";
 

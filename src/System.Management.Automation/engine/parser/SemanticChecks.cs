@@ -572,7 +572,7 @@ namespace System.Management.Automation.Language
         /// <param name="label">Label name. Can be null.</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 return;
             }
@@ -1365,7 +1365,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            String.Join("', '", tableKeys));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Language
     internal static class DscResourceChecker
     {
         /// <summary>
-        /// Check if it is a qualified DSC resource type
+        /// Check if it is a qualified DSC resource type.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst"></param>
@@ -1540,7 +1540,7 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Look up all the way up until find all the required members
+        /// Look up all the way up until find all the required members.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Check if it is a Get method with correct return type and signature
+        /// Check if it is a Get method with correct return type and signature.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="functionMemberAst">The function member AST.</param>
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation.Language
                 if (functionMemberAst.ReturnType != null)
                 {
                     // Return type is of the class we're defined in
-                    //it must return the class type, or array of the class type.
+                    // it must return the class type, or array of the class type.
                     var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
                     var typeName =
                         (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
@@ -1635,14 +1635,14 @@ namespace System.Management.Automation.Language
                         ParserStrings.DscResourceInvalidGetMethod,
                         ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                 }
-                //Set hasGet to true to stop look up; it may have invalid get
+                // Set hasGet to true to stop look up; it may have invalid get
                 hasGet = true;
                 return;
             }
         }
 
         /// <summary>
-        /// Check if it is a Test method with correct return type and signature
+        /// Check if it is a Test method with correct return type and signature.
         /// </summary>
         /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation.Language
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
         }
         /// <summary>
-        /// Check if it is a Set method with correct return type and signature
+        /// Check if it is a Set method with correct return type and signature.
         /// </summary>
         /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
@@ -2324,7 +2324,7 @@ namespace System.Management.Automation.Language
         {
             // REVIEW: it should be OK to allow these, since the ast now would visit the nested expressions and catch the errors.
             // Not allowed since most variables are not allowed
-            //ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
+            // ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }

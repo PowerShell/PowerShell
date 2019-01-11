@@ -18,7 +18,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal CommandProcessorBase()
         {
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         internal bool _addedToPipelineAlready;
 
         /// <summary>
-        /// Gets the CommandInfo for the command this command processor represents
+        /// Gets the CommandInfo for the command this command processor represents.
         /// </summary>
         /// <value></value>
         internal CommandInfo CommandInfo { get; set; }
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal virtual ObsoleteAttribute ObsoleteAttribute
         {
@@ -408,12 +408,12 @@ namespace System.Management.Automation
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(CommandInfo.Name)
+                string.IsNullOrEmpty(CommandInfo.Name)
                     ? "script block"
-                    : String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    : string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     CommandBaseStrings.ObsoleteCommand, CommandInfo.Name);
 
-            string warningMsg = String.Format(
+            string warningMsg = string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
                 CommandBaseStrings.UseOfDeprecatedCommandWarning,
                 commandName, obsoleteAttr.Message);
@@ -924,7 +924,7 @@ namespace System.Management.Automation
         /// IDisposable implementation
         /// When the command is complete, the CommandProcessorBase should be disposed.
         /// This enables cmdlets to reliably release file handles etc.
-        /// without waiting for garbage collection
+        /// without waiting for garbage collection.
         /// </summary>
         /// <remarks>We use the standard IDispose pattern</remarks>
         public void Dispose()

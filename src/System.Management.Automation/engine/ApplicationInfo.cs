@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ApplicationInfo(string name, string path, ExecutionContext context) : base(name, CommandTypes.Application)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -58,12 +58,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the path for the application file.
         /// </summary>
-        public string Path { get; } = String.Empty;
+        public string Path { get; } = string.Empty;
 
         /// <summary>
         /// Gets the extension of the application file.
         /// </summary>
-        public string Extension { get; } = String.Empty;
+        public string Extension { get; } = string.Empty;
 
         /// <summary>
         /// Gets the path of the application file.
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source of this command
+        /// Gets the source of this command.
         /// </summary>
         public override string Source
         {
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source version
+        /// Gets the source version.
         /// </summary>
         public override Version Version
         {

@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //This is never used for display.  It is used only as a key to typesAlreadyDisplayed
+                    // This is never used for display.  It is used only as a key to typesAlreadyDisplayed
                     typeName = "<null>";
                 }
             }
@@ -254,14 +254,14 @@ namespace Microsoft.PowerShell.Commands
         {
             public int Compare(MemberDefinition first, MemberDefinition second)
             {
-                int result = String.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
+                int result = string.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
                     StringComparison.OrdinalIgnoreCase);
                 if (result != 0)
                 {
                     return result;
                 }
 
-                return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
+                return string.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
 

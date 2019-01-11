@@ -37,7 +37,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Gets the message resource id for the specified event id
+        /// Gets the message resource id for the specified event id.
         /// </summary>
         /// <param name="eventId">The event id for the message resource to retrieve.</param>
         /// <param name="parameterCount">The number of parameters required by the message resource.</param>

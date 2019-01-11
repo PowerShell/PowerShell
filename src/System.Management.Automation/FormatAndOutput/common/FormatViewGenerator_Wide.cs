@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             WideViewEntry wve = new WideViewEntry();
             wve.formatPropertyField = GenerateFormatPropertyField(activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit);
 
-            //wve.alignment = activeWideViewEntryDefinition.alignment;
+            // wve.alignment = activeWideViewEntryDefinition.alignment;
 
             return wve;
         }
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we did not get any properties:
-            //try to get the display property of the object
+            // try to get the display property of the object
             PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
             if (displayNameExpression != null)
             {

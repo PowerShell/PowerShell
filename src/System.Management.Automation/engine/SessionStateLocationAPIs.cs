@@ -159,7 +159,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Changes the current working directory to the path specified
+        /// Changes the current working directory to the path specified.
         /// </summary>
         /// <param name="path">
         /// The path of the new current working directory
@@ -733,7 +733,7 @@ namespace System.Management.Automation
                     providerSpecificPath,
                     currentWorkingPath);
 
-                if (String.Compare(providerSpecificPath, currentWorkingPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(providerSpecificPath, currentWorkingPath, StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
                     // The path is the current working directory so
                     // return true
@@ -757,7 +757,7 @@ namespace System.Management.Automation
                             GetParentPath(
                                 drive.Provider,
                                 lockedDirectory,
-                                String.Empty,
+                                string.Empty,
                                 context);
 
                         s_tracer.WriteLine(
@@ -765,7 +765,7 @@ namespace System.Management.Automation
                             lockedDirectory,
                             providerSpecificPath);
 
-                        if (String.Compare(lockedDirectory, providerSpecificPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Compare(lockedDirectory, providerSpecificPath, StringComparison.CurrentCultureIgnoreCase) == 0)
                         {
                             // The path is a parent of the current working
                             // directory
@@ -817,7 +817,7 @@ namespace System.Management.Automation
         /// </param>
         internal void PushCurrentLocation(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -892,7 +892,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo PopLocation(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -958,7 +958,7 @@ namespace System.Management.Automation
                 result = SetLocation(newPath);
 
                 if (locationStack.Count == 0 &&
-                    !String.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
+                    !string.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
                 {
                     // Remove the stack from the stack list if it
                     // no longer contains any paths.
@@ -992,7 +992,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfoStack LocationStack(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation
             {
                 // If the request was for the default stack, but it doesn't
                 // yet exist, create a dummy stack and return it.
-                if (String.Equals(
+                if (string.Equals(
                         stackName,
                         startingDefaultStackName,
                         StringComparison.OrdinalIgnoreCase))
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the default stack ID to the specified stack ID
+        /// Sets the default stack ID to the specified stack ID.
         /// </summary>
         /// <param name="stackName">
         /// The stack ID to be used as the default.
@@ -1036,14 +1036,14 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfoStack SetDefaultLocationStack(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = startingDefaultStackName;
             }
 
             if (!_workingLocationStack.ContainsKey(stackName))
             {
-                if (String.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
                 {
                     // Since the "default" stack must always exist, create it here
                     return new PathInfoStack(startingDefaultStackName, new Stack<PathInfo>());

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
     internal partial class ConsoleHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell
                 }
 
                 string choice =
-                    String.Format(
+                    string.Format(
                         CultureInfo.InvariantCulture,
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
@@ -438,7 +438,7 @@ namespace Microsoft.PowerShell
 
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        String.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
             }
         }
 

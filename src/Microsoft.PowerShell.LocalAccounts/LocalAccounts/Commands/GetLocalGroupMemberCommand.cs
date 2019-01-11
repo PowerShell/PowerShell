@@ -157,12 +157,12 @@ namespace Microsoft.PowerShell.Commands
             // if no members are specified, return all of them
             if (Member == null)
             {
-                //return membership;
+                // return membership;
                 rv = new List<LocalPrincipal>(membership);
             }
             else
             {
-                //var rv = new List<LocalPrincipal>();
+                // var rv = new List<LocalPrincipal>();
                 rv = new List<LocalPrincipal>();
 
                 if (WildcardPattern.ContainsWildcardCharacters(Member))
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             return ProcessesMembership(sam.GetLocalGroupMembers(groupSid));
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         private string _definitionType;
 
         /// <summary>
-        /// Friendly name for this job object
+        /// Friendly name for this job object.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     _name = value;
                 }
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Command to execute specified as a string. This can be a single
         /// cmdlet, an expression or anything that can be internally
-        /// converted into a ScriptBlock
+        /// converted into a ScriptBlock.
         /// </summary>
         /// <remarks>This is used in the in process case with a
         /// "ValueFromPipelineProperty" enabled in order to maintain
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         // which should not be part of Start-PSJob
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override PSSession[] Session
         {
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] ComputerName
         {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Suppress SSHTransport
+        /// Suppress SSHTransport.
         /// </summary>
         public override SwitchParameter SSHTransport
         {
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Suppress SSHConnection
+        /// Suppress SSHConnection.
         /// </summary>
         public override Hashtable[] SSHConnection
         {
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Suppress UserName
+        /// Suppress UserName.
         /// </summary>
         public override string UserName
         {
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Suppress KeyFilePath
+        /// Suppress KeyFilePath.
         /// </summary>
         public override string KeyFilePath
         {
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// Credential to use for this job
+        /// Credential to use for this job.
         /// </summary>
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override int Port
         {
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override SwitchParameter UseSSL
         {
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string ConfigurationName
         {
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Int32 ThrottleLimit
         {
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string ApplicationName
         {
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Uri[] ConnectionUri
         {
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Filepath to execute as a script
+        /// Filepath to execute as a script.
         /// </summary>
         [Parameter(
             Position = 0,
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Literal Filepath to execute as a script
+        /// Literal Filepath to execute as a script.
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override SwitchParameter AllowRedirection
         {
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Guid[] VMId
         {
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] VMName
         {
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] ContainerId
         {
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override SwitchParameter RunAsAdministrator
         {
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _shouldRunAs32;
 
         /// <summary>
-        /// Powershell Version to execute the background job
+        /// Powershell Version to execute the background job.
         /// </summary>
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
         /// 1. Set the throttling limit and reset operations complete
         /// 2. Create helper objects
         /// 3. For async case, write the async result object down the
-        ///    pipeline
+        ///    pipeline.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -722,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Overrides
 
         /// <summary>
-        /// Dispose the cmdlet
+        /// Dispose the cmdlet.
         /// </summary>
         public void Dispose()
         {
@@ -731,7 +731,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// internal dispose method which does the actual disposing
+        /// Internal dispose method which does the actual disposing.
         /// </summary>
         /// <param name="disposing">Whether called from dispose or finalize.</param>
         private void Dispose(bool disposing)

@@ -34,7 +34,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "->{0} C({1}) S({2})", Index, ContinuationStackDepth, StackDepth);
+            return string.Format(CultureInfo.InvariantCulture, "->{0} C({1}) S({2})", Index, ContinuationStackDepth, StackDepth);
         }
     }
 
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void Mark(InstructionList instructions)
         {
-            //ContractUtils.Requires(_targetIndex == UnknownIndex && _stackDepth == UnknownDepth && _continuationStackDepth == UnknownDepth);
+            // ContractUtils.Requires(_targetIndex == UnknownIndex && _stackDepth == UnknownDepth && _continuationStackDepth == UnknownDepth);
 
             _stackDepth = instructions.CurrentStackDepth;
             _continuationStackDepth = instructions.CurrentContinuationsDepth;

@@ -18,12 +18,12 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// EventArgs for the ScriptCmdletVariableUpdate event
+    /// EventArgs for the ScriptCmdletVariableUpdate event.
     /// </summary>
     public class CommandLookupEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor for event args object
+        /// Constructor for event args object.
         /// </summary>
         /// <param name="commandName">The name of the command we're searching for.</param>
         /// <param name="commandOrigin">The origin of the command internal or runspace (external).</param>
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         private ExecutionContext _context;
 
         /// <summary>
-        /// The name of the command we're looking for
+        /// The name of the command we're looking for.
         /// </summary>
         public string CommandName { get; }
 
@@ -86,7 +86,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the preference options for the Module Auto-loading feature
+    /// Defines the preference options for the Module Auto-loading feature.
     /// </summary>
     public enum PSModuleAutoLoadingPreference
     {
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletInfo AddCmdletInfoToCache(string name, CmdletInfo newCmdletInfo, bool isGlobal)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -348,13 +348,13 @@ namespace System.Management.Automation
                 // If there were no PSSnapins required but there is a shellID required, then we need
                 // to error
 
-                if (!String.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
+                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
                 {
                     ScriptRequiresException sre =
                       new ScriptRequiresException(
                           scriptInfo.Name,
-                          String.Empty,
-                          String.Empty,
+                          string.Empty,
+                          string.Empty,
                           "RequiresShellIDInvalidForSingleShell");
 
                     throw sre;
@@ -513,8 +513,8 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// used to determine compatibility between the versions in the requires statement and
-        /// the installed version. The version can be PSSnapin or msh
+        /// Used to determine compatibility between the versions in the requires statement and
+        /// the installed version. The version can be PSSnapin or msh.
         /// </summary>
         /// <param name="requires">Versions in the requires statement.</param>
         /// <param name="installed">Version installed.</param>
@@ -648,7 +648,7 @@ namespace System.Management.Automation
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
-            //ShouldRunInternal throws PSSecurityException if run is not allowed
+            // ShouldRunInternal throws PSSecurityException if run is not allowed
             try
             {
                 if (commandOrigin == CommandOrigin.Runspace && commandInfo.Visibility != SessionStateEntryVisibility.Public)
@@ -771,7 +771,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin,
             ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 return null;
             }
@@ -962,7 +962,7 @@ namespace System.Management.Automation
             {
                 exception = e;
                 discoveryTracer.WriteLine("Encountered error importing module: {0}", e.Message);
-                //Call-out to user code, catch-all OK
+                // Call-out to user code, catch-all OK
             }
 
             return matchingModules;
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
                             if (exportedCommands == null) { continue; }
 
                             CommandTypes exportedCommandTypes;
-                            //Skip if module only has class or other types and no commands.
+                            // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
                             {
                                 Exception exception;
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(moduleName) || String.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories
+        /// using the PATH as the lookup directories.
         /// </summary>
         /// <param name="patterns">
         /// The patterns to search for. These patterns must be in the form taken
@@ -1349,7 +1349,7 @@ namespace System.Management.Automation
 
             bool isPathCacheValid =
                 path != null &&
-                String.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
                 _cachedPath != null;
 
             if (!isPathCacheValid)
@@ -1395,7 +1395,7 @@ namespace System.Management.Automation
         private string _pathCacheKey;
 
         /// <summary>
-        /// The cache of the tokenized PATH directories
+        /// The cache of the tokenized PATH directories.
         /// </summary>
         private Collection<string> _cachedPath;
 
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
+            Dbg.Assert(!string.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
 
             PSSnapinQualifiedName commandName = PSSnapinQualifiedName.GetInstance(cmdletName);
 
@@ -1493,7 +1493,6 @@ namespace System.Management.Automation
 
             // Check the current cmdlet cache then check the top level
             // if we aren't already at the top level.
-
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
@@ -1507,9 +1506,9 @@ namespace System.Management.Automation
 
                 foreach (var cmdletInfo in cmdlets)
                 {
-                    if (!String.IsNullOrEmpty(commandName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(commandName.PSSnapInName))
                     {
-                        if (String.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                         {
                             yield return cmdletInfo;
                             if (!searchAllScopes)
@@ -1523,7 +1522,7 @@ namespace System.Management.Automation
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {
-                            if (String.Equals(
+                            if (string.Equals(
                                 cmdletInfo.ModuleName,
                                 InitialSessionState.GetNestedModuleDllName(commandName.PSSnapInName),
                                 StringComparison.OrdinalIgnoreCase))
@@ -1573,7 +1572,7 @@ namespace System.Management.Automation
 
                 // check the environment variable
                 string psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
-                if (!String.IsNullOrEmpty(psEnvironmentVariable))
+                if (!string.IsNullOrEmpty(psEnvironmentVariable))
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);
                 }
@@ -1596,7 +1595,7 @@ namespace System.Management.Automation
     internal class LookupPathCollection : Collection<string>
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal LookupPathCollection() : base() { }
 
@@ -1638,7 +1637,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds all the strings in the specified collection to this collection
+        /// Adds all the strings in the specified collection to this collection.
         /// </summary>
         /// <param name="collection">
         /// The collection of strings to add.
@@ -1670,7 +1669,7 @@ namespace System.Management.Automation
 
             foreach (string name in this)
             {
-                if (String.Equals(item, name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(item, name, StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
@@ -1693,7 +1692,7 @@ namespace System.Management.Automation
             for (int index = 0; index < this.Count; ++index)
             {
                 string path = this[index];
-                if (!String.IsNullOrEmpty(path) &&
+                if (!string.IsNullOrEmpty(path) &&
                     path.StartsWith(".", StringComparison.Ordinal))
                 {
                     result.Add(index);
@@ -1718,7 +1717,7 @@ namespace System.Management.Automation
         /// </exception>
         public new int IndexOf(string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1727,7 +1726,7 @@ namespace System.Management.Automation
 
             for (int index = 0; index < this.Count; ++index)
             {
-                if (String.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
                 {
                     result = index;
                     break;

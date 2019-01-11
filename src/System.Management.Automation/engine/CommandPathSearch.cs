@@ -12,7 +12,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Used to enumerate the commands on the system that match the specified
-    /// command name
+    /// command name.
     /// </summary>
     internal class CommandPathSearch : IEnumerable<string>, IEnumerator<string>
     {
@@ -44,8 +44,10 @@ namespace System.Management.Automation
             string commandName,
             IEnumerable<string> lookupPaths,
             ExecutionContext context,
-            Collection<string> acceptableCommandNames)
+            Collection<string> acceptableCommandNames,
+            bool useFuzzyMatch = false)
         {
+            _useFuzzyMatch = useFuzzyMatch;
             string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
@@ -150,7 +152,7 @@ namespace System.Management.Automation
 
                     // Note, if the directory resolves to multiple paths, only the first is used.
 
-                    if (!String.IsNullOrEmpty(resolvedPath))
+                    if (!string.IsNullOrEmpty(resolvedPath))
                     {
                         CommandDiscovery.discoveryTracer.TraceError(
                             "The relative path resolved to: {0}",
@@ -227,7 +229,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an instance of a command enumerator
+        /// Gets an instance of a command enumerator.
         /// </summary>
         /// <returns>
         /// An instance of this class as IEnumerator.
@@ -238,7 +240,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an instance of a command enumerator
+        /// Gets an instance of a command enumerator.
         /// </summary>
         /// <returns>
         /// An instance of this class as IEnumerator.
@@ -249,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves the enumerator to the next command match
+        /// Moves the enumerator to the next command match.
         /// </summary>
         /// <returns>
         /// true if there was another command that matches, false otherwise.
@@ -341,7 +343,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resets the enumerator to before the first command match
+        /// Resets the enumerator to before the first command match.
         /// </summary>
         public void Reset()
         {
@@ -420,11 +422,29 @@ namespace System.Management.Automation
                     // to forcefully use null if pattern is "."
                     if (pattern.Length != 1 || pattern[0] != '.')
                     {
-                        var matchingFiles = Directory.EnumerateFiles(directory, pattern);
+                        if (_useFuzzyMatch)
+                        {
+                            var files = new List<string>();
+                            var matchingFiles = Directory.EnumerateFiles(directory);
+                            foreach (string file in matchingFiles)
+                            {
+                                if (FuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
+                                {
+                                    files.Add(file);
+                                }
+                            }
 
-                        result = _postProcessEnumeratedFiles != null
-                            ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
-                            : matchingFiles;
+                            result = _postProcessEnumeratedFiles != null
+                                ? _postProcessEnumeratedFiles(files.ToArray())
+                                : files;
+                        }
+                        else
+                        {
+                            var matchingFiles = Directory.EnumerateFiles(directory, pattern);
+                            result = _postProcessEnumeratedFiles != null
+                                ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
+                                : matchingFiles;
+                        }
                     }
                 }
             }
@@ -510,12 +530,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The directory paths in which to look for commands.
-        /// This is derived from the PATH environment variable
+        /// This is derived from the PATH environment variable.
         /// </summary>
         private LookupPathCollection _lookupPaths;
 
         /// <summary>
-        /// The enumerator for the lookup paths
+        /// The enumerator for the lookup paths.
         /// </summary>
         private IEnumerator<string> _lookupPathsEnumerator;
 
@@ -526,22 +546,22 @@ namespace System.Management.Automation
         private IEnumerable<string> _currentDirectoryResults;
 
         /// <summary>
-        /// The enumerator for the list of results
+        /// The enumerator for the list of results.
         /// </summary>
         private IEnumerator<string> _currentDirectoryResultsEnumerator;
 
         /// <summary>
-        /// The command name to search for
+        /// The command name to search for.
         /// </summary>
         private IEnumerable<string> _patterns;
 
         /// <summary>
-        /// The enumerator for the patterns
+        /// The enumerator for the patterns.
         /// </summary>
         private IEnumerator<string> _patternEnumerator;
 
         /// <summary>
-        /// A reference to the execution context for this runspace
+        /// A reference to the execution context for this runspace.
         /// </summary>
         private ExecutionContext _context;
 
@@ -552,12 +572,14 @@ namespace System.Management.Automation
         private bool _justReset;
 
         /// <summary>
-        /// If not null, called with the enumerated files for further processing
+        /// If not null, called with the enumerated files for further processing.
         /// </summary>
         private Func<string[], IEnumerable<string>> _postProcessEnumeratedFiles;
 
         private string[] _orderedPathExt;
         private Collection<string> _acceptableCommandNames;
+
+        private bool _useFuzzyMatch = false;
 
         #endregion private members
     }

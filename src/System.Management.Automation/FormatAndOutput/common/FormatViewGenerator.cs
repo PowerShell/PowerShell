@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// base class for the various types of formatting shapes
+    /// Base class for the various types of formatting shapes.
     /// </summary>
     internal abstract class ViewGenerator
     {
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// update the current value of the grouping key
+        /// Update the current value of the grouping key.
         /// </summary>
         /// <param name="so">Object to use for the update.</param>
         /// <returns>True if the value of the key changed.</returns>

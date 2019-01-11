@@ -10,12 +10,12 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Represents each supported culture
+    /// Represents each supported culture.
     /// </summary>
     internal class CultureSpecificUpdatableHelp
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="culture">Culture info.</param>
         /// <param name="version">Version info.</param>
@@ -29,23 +29,23 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Culture version
+        /// Culture version.
         /// </summary>
         internal Version Version { get; set; }
 
         /// <summary>
-        /// Supported culture
+        /// Supported culture.
         /// </summary>
         internal CultureInfo Culture { get; set; }
     }
 
     /// <summary>
-    /// This class represents the HelpInfo metadata XML
+    /// This class represents the HelpInfo metadata XML.
     /// </summary>
     internal class UpdatableHelpInfo
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="unresolvedUri">Unresolved help content URI.</param>
         /// <param name="cultures">Supported UI cultures.</param>
@@ -59,22 +59,22 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Unresolved URI
+        /// Unresolved URI.
         /// </summary>
         internal string UnresolvedUri { get; }
 
         /// <summary>
-        /// Link to the actual help content
+        /// Link to the actual help content.
         /// </summary>
         internal Collection<UpdatableHelpUri> HelpContentUriCollection { get; }
 
         /// <summary>
-        /// Supported UI cultures
+        /// Supported UI cultures.
         /// </summary>
         internal CultureSpecificUpdatableHelp[] UpdatableHelpItems { get; }
 
         /// <summary>
-        /// Checks if the other HelpInfo has a newer version
+        /// Checks if the other HelpInfo has a newer version.
         /// </summary>
         /// <param name="helpInfo">HelpInfo object to check.</param>
         /// <param name="culture">Culture to check.</param>
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if a culture is supported
+        /// Checks if a culture is supported.
         /// </summary>
         /// <param name="culture">Culture to check.</param>
         /// <returns>True if supported, false if not.</returns>
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Help
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
+                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets a string representation of the supported cultures
+        /// Gets a string representation of the supported cultures.
         /// </summary>
         /// <returns>Supported cultures in string.</returns>
         internal string GetSupportedCultures()
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the culture version
+        /// Gets the culture version.
         /// </summary>
         /// <param name="culture">Culture info.</param>
         /// <returns>Culture version.</returns>
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Help
         {
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
+                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return updatableHelpItem.Version;

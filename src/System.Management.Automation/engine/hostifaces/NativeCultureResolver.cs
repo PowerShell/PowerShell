@@ -30,7 +30,7 @@ using WORD = System.UInt16;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Custom culture
+    /// Custom culture.
     /// </summary>
     internal class VistaCultureInfo : CultureInfo
     {
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
         private object _syncObject = new object();
 
         /// <summary>
-        /// Constructs a CultureInfo that keeps track of fallbacks
+        /// Constructs a CultureInfo that keeps track of fallbacks.
         /// </summary>
         /// <param name="name">Name of the culture to construct.</param>
         /// <param name="fallbacks">
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 
-                //no fallbacks..just return base parent
+                // no fallbacks..just return base parent
                 return base.Parent;
             }
         }
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell
         private static object s_syncObject = new object();
 
         /// <summary>
-        /// Gets the UICulture to be used by console host
+        /// Gets the UICulture to be used by console host.
         /// </summary>
         internal static CultureInfo UICulture
         {
@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Checks if the current operating system is Vista or later
+        /// Checks if the current operating system is Vista or later.
         /// </summary>
         /// <returns>
         /// true, if vista and above
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell
         [DllImport("kernel32.dll", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern Int16 SetThreadUILanguage(Int16 langId);
 
-        //private static int MUI_LANGUAGE_ID = 0x4;
+        // private static int MUI_LANGUAGE_ID = 0x4;
         private static int s_MUI_LANGUAGE_NAME = 0x8;
         private static int s_MUI_CONSOLE_FILTER = 0x100;
         private static int s_MUI_MERGE_USER_FALLBACK = 0x20;

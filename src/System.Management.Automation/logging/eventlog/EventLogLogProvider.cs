@@ -42,7 +42,7 @@ namespace System.Management.Automation
             string source;
 
             // In case shellId == null, use the "Default" source.
-            if (String.IsNullOrEmpty(shellId))
+            if (string.IsNullOrEmpty(shellId))
             {
                 source = "Default";
             }
@@ -57,7 +57,7 @@ namespace System.Management.Automation
 
                 // There may be a situation where ShellId ends with a '.'.
                 // In that case, use the default source.
-                if (String.IsNullOrEmpty(source))
+                if (string.IsNullOrEmpty(source))
                     source = "Default";
             }
 
@@ -66,12 +66,12 @@ namespace System.Management.Automation
                 return source;
             }
 
-            string message = String.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
+            string message = string.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
             throw new InvalidOperationException(message);
         }
 
         /// <summary>
-        /// This represent a handle to EventLog
+        /// This represent a handle to EventLog.
         /// </summary>
         private EventLog _eventLog;
         private ResourceManager _resourceManager;
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         private const int PipelineExecutionDetailCategoryId = 8;
 
         /// <summary>
-        /// Log engine health event
+        /// Log engine health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="eventId"></param>
@@ -150,7 +150,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Log engine lifecycle event
+        /// Log engine lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
@@ -182,7 +182,7 @@ namespace System.Management.Automation
         private const int _invalidEventId = -1;
 
         /// <summary>
-        /// Get engine lifecycle event id based on engine state
+        /// Get engine lifecycle event id based on engine state.
         /// </summary>
         /// <param name="engineState"></param>
         /// <returns></returns>
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         private const int _commandHealthEventId = 200;
 
         /// <summary>
-        /// Provider interface function for logging command health event
+        /// Provider interface function for logging command health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         private const int _baseCommandLifecycleEventId = 500;
 
         /// <summary>
-        /// Get command lifecycle event id based on command state
+        /// Get command lifecycle event id based on command state.
         /// </summary>
         /// <param name="commandState"></param>
         /// <returns></returns>
@@ -382,7 +382,7 @@ namespace System.Management.Automation
 
         private const int _providerHealthEventId = 300;
         /// <summary>
-        /// Provider interface function for logging provider health event
+        /// Provider interface function for logging provider health event.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
@@ -403,7 +403,7 @@ namespace System.Management.Automation
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
                 if (icer.ErrorRecord.ErrorDetails != null
-                    && !String.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
+                    && !string.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;
                 }
@@ -631,7 +631,7 @@ namespace System.Management.Automation
 
             string messageTemplate = _resourceManager.GetString(messageId);
 
-            if (String.IsNullOrEmpty(messageTemplate))
+            if (string.IsNullOrEmpty(messageTemplate))
                 return string.Empty;
 
             return FillMessageTemplate(messageTemplate, mapArgs);

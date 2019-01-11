@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// </exception>
         public RuntimeDefinedParameter(string name, Type parameterType, Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the name of the parameter
+        /// Gets or sets the name of the parameter.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// If <paramref name="value"/> is null or empty on set.
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -94,7 +94,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _name = String.Empty;
+        private string _name = string.Empty;
 
         /// <summary>
         /// Gets or sets the type of the parameter.
@@ -226,10 +226,10 @@ namespace System.Management.Automation
         {
             get { return _helpFile; }
 
-            set { _helpFile = String.IsNullOrEmpty(value) ? String.Empty : value; }
+            set { _helpFile = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
 
-        private string _helpFile = String.Empty;
+        private string _helpFile = string.Empty;
 
         /// <summary>
         /// Gets or sets private data associated with the runtime-defined parameters.

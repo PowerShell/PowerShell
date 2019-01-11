@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.EndProcessing();
 
-            //close the writer
+            // close the writer
             _writer.Flush();
             _writer.Dispose();
 
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         private StreamingTextWriter _writer = null;
 
         /// <summary>
-        ///  Buffer used when buffering until the end.
+        /// Buffer used when buffering until the end.
         /// </summary>
         private StringBuilder _buffer = new StringBuilder();
     }

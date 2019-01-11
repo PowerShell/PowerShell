@@ -26,13 +26,13 @@ using Microsoft.Win32;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Updatable help system exception
+    /// Updatable help system exception.
     /// </summary>
     [Serializable]
     internal class UpdatableHelpSystemException : Exception
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="errorId">FullyQualifiedErrorId.</param>
         /// <param name="message">Exception message.</param>
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Help
 
 #if !CORECLR
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">Streaming context.</param>
@@ -60,28 +60,28 @@ namespace System.Management.Automation.Help
 #endif
 
         /// <summary>
-        /// Fully qualified error id
+        /// Fully qualified error id.
         /// </summary>
         internal string FullyQualifiedErrorId { get; }
 
         /// <summary>
-        /// Error category
+        /// Error category.
         /// </summary>
         internal ErrorCategory ErrorCategory { get; }
 
         /// <summary>
-        /// Target object
+        /// Target object.
         /// </summary>
         internal object TargetObject { get; }
     }
 
     /// <summary>
-    /// Exception context
+    /// Exception context.
     /// </summary>
     internal class UpdatableHelpExceptionContext
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="exception">Exception to wrap.</param>
         internal UpdatableHelpExceptionContext(UpdatableHelpSystemException exception)
@@ -92,22 +92,22 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// A list of modules
+        /// A list of modules.
         /// </summary>
         internal HashSet<string> Modules { get; set; }
 
         /// <summary>
-        /// A list of UI cultures
+        /// A list of UI cultures.
         /// </summary>
         internal HashSet<string> Cultures { get; set; }
 
         /// <summary>
-        /// Gets the help system exception
+        /// Gets the help system exception.
         /// </summary>
         internal UpdatableHelpSystemException Exception { get; }
 
         /// <summary>
-        /// Creates an error record from this context
+        /// Creates an error record from this context.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         /// <returns>Error record.</returns>
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the exception message
+        /// Gets the exception message.
         /// </summary>
         /// <param name="commandType"></param>
         /// <returns></returns>
@@ -129,8 +129,8 @@ namespace System.Management.Automation.Help
             string message = string.Empty;
             SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
             SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
-            string modules = String.Join(", ", sortedModules);
-            string cultures = String.Join(", ", sortedCultures);
+            string modules = string.Join(", ", sortedModules);
+            string cultures = string.Join(", ", sortedCultures);
 
             if (commandType == UpdatableHelpCommandType.UpdateHelpCommand)
             {
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Help
     }
 
     /// <summary>
-    /// Enumeration showing Update or Save help
+    /// Enumeration showing Update or Save help.
     /// </summary>
     internal enum UpdatableHelpCommandType
     {
@@ -170,19 +170,19 @@ namespace System.Management.Automation.Help
     }
 
     /// <summary>
-    /// Progress event arguments
+    /// Progress event arguments.
     /// </summary>
     internal class UpdatableHelpProgressEventArgs : EventArgs
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="status">Progress status.</param>
         /// <param name="percent">Progress percentage.</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = UpdatableHelpCommandType.UnknownCommand;
             ProgressStatus = status;
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="type">Command type.</param>
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Help
         /// <param name="percent">Progress percentage.</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, UpdatableHelpCommandType type, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = type;
             ProgressStatus = status;
@@ -208,28 +208,28 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Progress status
+        /// Progress status.
         /// </summary>
         internal string ProgressStatus { get; }
 
         /// <summary>
-        /// Progress percentage
+        /// Progress percentage.
         /// </summary>
         internal int ProgressPercent { get; }
 
         /// <summary>
-        /// Module name
+        /// Module name.
         /// </summary>
         internal string ModuleName { get; }
 
         /// <summary>
-        /// Command type
+        /// Command type.
         /// </summary>
         internal UpdatableHelpCommandType CommandType { get; set; }
     }
 
     /// <summary>
-    /// This class implements the Updatable Help System common operations
+    /// This class implements the Updatable Help System common operations.
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Help
         internal string CurrentModule { get; set; }
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Disposes the help system
+        /// Disposes the help system.
         /// </summary>
         public void Dispose()
         {
@@ -280,7 +280,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Help system errors
+        /// Help system errors.
         /// </summary>
         internal Collection<Exception> Errors { get; }
 
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Help
         #region Help Metadata Retrieval
 
         /// <summary>
-        /// Gets an internal help URI
+        /// Gets an internal help URI.
         /// </summary>
         /// <param name="module">Internal module information.</param>
         /// <param name="culture">Help content culture.</param>
@@ -321,7 +321,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the HelpInfo xml from the given URI
+        /// Gets the HelpInfo xml from the given URI.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         /// <param name="uri">HelpInfo URI.</param>
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Help
         /// <returns>Resolved URI.</returns>
         private string ResolveUri(string baseUri, bool verbose)
         {
-            Debug.Assert(!String.IsNullOrEmpty(baseUri));
+            Debug.Assert(!string.IsNullOrEmpty(baseUri));
 
             // Directory.Exists checks if baseUri is a network drive or
             // a local directory. If baseUri is local, we don't need to resolve it.
@@ -483,7 +483,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// HelpInfo.xml schema
+        /// HelpInfo.xml schema.
         /// </summary>
         private const string HelpInfoXmlSchema = @"<?xml version=""1.0"" encoding=""utf-8""?>
             <xs:schema attributeFormDefault=""unqualified"" elementFormDefault=""qualified""
@@ -514,7 +514,7 @@ namespace System.Management.Automation.Help
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
 
         /// <summary>
-        /// Creates a HelpInfo object
+        /// Creates a HelpInfo object.
         /// </summary>
         /// <param name="xml">XML text.</param>
         /// <param name="moduleName">Module name.</param>
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Help
             string uri = pathOverride;
             string unresolvedUri = document["HelpInfo"]["HelpContentURI"].InnerText;
 
-            if (String.IsNullOrEmpty(pathOverride))
+            if (string.IsNullOrEmpty(pathOverride))
             {
                 if (shouldResolveUri)
                 {
@@ -583,7 +583,7 @@ namespace System.Management.Automation.Help
 
             UpdatableHelpInfo helpInfo = new UpdatableHelpInfo(unresolvedUri, updatableHelpItem);
 
-            if (!String.IsNullOrEmpty(currentCulture))
+            if (!string.IsNullOrEmpty(currentCulture))
             {
                 WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
                 IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            if (!String.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
+            if (!string.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
             {
                 // throw exception
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
@@ -609,7 +609,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Creates a valid xml document
+        /// Creates a valid xml document.
         /// </summary>
         /// <param name="xml">Input xml.</param>
         /// <param name="ns">Schema namespace.</param>
@@ -652,7 +652,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Handles HelpInfo XML validation events
+        /// Handles HelpInfo XML validation events.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="arg">Event arguments.</param>
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Handles Help content MAML validation events
+        /// Handles Help content MAML validation events.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="arg">Event arguments.</param>
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Help
         #region Help Content Retrieval
 
         /// <summary>
-        /// Cancels all asynchronous download operations
+        /// Cancels all asynchronous download operations.
         /// </summary>
         internal void CancelDownload()
         {
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Downloads and installs help content
+        /// Downloads and installs help content.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         /// <param name="context">Execution context.</param>
@@ -739,7 +739,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Downloads the help content
+        /// Downloads the help content.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         /// <param name="path">Destination path.</param>
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Installs HelpInfo.xml
+        /// Installs HelpInfo.xml.
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="moduleGuid"></param>
@@ -990,7 +990,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Removes the read only attribute
+        /// Removes the read only attribute.
         /// </summary>
         /// <param name="path"></param>
         private void RemoveReadOnly(string path)
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Installs (unzips) the help content
+        /// Installs (unzips) the help content.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         /// <param name="context">Execution context.</param>
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation.Help
 #endif
 
         /// <summary>
-        /// Unzips to help content to a given location
+        /// Unzips to help content to a given location.
         /// </summary>
         /// <param name="context">Execution context.</param>
         /// <param name="srcPath">Source path.</param>
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Validates all XML files within a given path
+        /// Validates all XML files within a given path.
         /// </summary>
         /// <param name="sourcePath">Path containing files to validate.</param>
         /// <param name="destPaths">Destination paths.</param>
@@ -1231,8 +1231,8 @@ namespace System.Management.Automation.Help
             // We only accept txt files and xml files
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (!String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
-                    && !String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new UpdatableHelpSystemException("HelpContentContainsInvalidFiles",
                         StringUtil.Format(HelpDisplayStrings.HelpContentContainsInvalidFiles), ErrorCategory.InvalidData,
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation.Help
             // xml validation
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
                 {
                     if (xsd == null)
                     {
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Help
                         }
                     }
                 }
-                else if (String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
@@ -1407,7 +1407,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Loads string from the given path
+        /// Loads string from the given path.
         /// </summary>
         /// <param name="cmdlet">Cmdlet instance.</param>
         /// <param name="path">Path to load.</param>
@@ -1490,18 +1490,18 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the default source path from GP
+        /// Gets the default source path from GP.
         /// </summary>
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
             string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
-            return String.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
+            return string.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
         /// <summary>
-        /// Sets the DisablePromptToUpdatableHelp regkey
+        /// Sets the DisablePromptToUpdatableHelp regkey.
         /// </summary>
         internal static void SetDisablePromptToUpdateHelp()
         {
@@ -1520,7 +1520,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if it is necessary to prompt to update help
+        /// Checks if it is necessary to prompt to update help.
         /// </summary>
         /// <returns></returns>
         internal static bool ShouldPromptToUpdateHelp()
@@ -1555,7 +1555,7 @@ namespace System.Management.Automation.Help
 #if !CORECLR
 
         /// <summary>
-        /// Handles the download completion event
+        /// Handles the download completion event.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -1595,7 +1595,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Handles the download progress changed event
+        /// Handles the download progress changed event.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -1620,7 +1620,7 @@ namespace System.Management.Automation.Help
     }
 
     /// <summary>
-    /// Controls the updatable help system drive
+    /// Controls the updatable help system drive.
     /// </summary>
     internal class UpdatableHelpSystemDrive : IDisposable
     {
@@ -1628,7 +1628,7 @@ namespace System.Management.Automation.Help
         private PSCmdlet _cmdlet;
 
         /// <summary>
-        /// Gets the drive name
+        /// Gets the drive name.
         /// </summary>
         internal string DriveName
         {
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Help
                 }
 
                 mappedDrive = new PSDriveInfo(_driveName, cmdlet.SessionState.Internal.GetSingleProvider("FileSystem"),
-                    path, String.Empty, credential);
+                    path, string.Empty, credential);
 
                 cmdlet.SessionState.Drive.New(mappedDrive, "local");
 
@@ -1684,7 +1684,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Disposes the class
+        /// Disposes the class.
         /// </summary>
         public void Dispose()
         {

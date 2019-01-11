@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class EnvironmentProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Environment";
 
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the alias drive
+        /// Initializes the alias drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a environment variable from session state
+        /// Gets a environment variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to retrieve.
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             object result = null;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets the environment variable of the specified name to the specified value
+        /// Sets the environment variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to set.
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             if (value == null)
@@ -154,14 +154,14 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             Environment.SetEnvironmentVariable(name, null);
         }
 
         /// <summary>
-        /// Gets a flattened view of the environment variables in session state
+        /// Gets a flattened view of the environment variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the environment variables in
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the Value property of the DictionaryEntry item
+        /// Gets the Value property of the DictionaryEntry item.
         /// </summary>
         /// <param name="item">
         /// The item to get the value from.

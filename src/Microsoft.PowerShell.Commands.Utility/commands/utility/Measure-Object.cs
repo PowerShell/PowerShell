@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
+                return string.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
         }
 
@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>Number of chars in inStr.</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>Number of words in inStr.</returns>
             internal static int CountWord(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
@@ -718,7 +718,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>Number of lines in inStr.</returns>
             internal static int CountLine(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }

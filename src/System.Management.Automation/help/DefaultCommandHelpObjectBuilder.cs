@@ -14,7 +14,7 @@ using System.Reflection;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Positional parameter comparer
+    /// Positional parameter comparer.
     /// </summary>
     internal class PositionalParameterComparer : IComparer
     {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Help
     {
         internal static string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
         /// <summary>
-        /// Generates a HelpInfo PSObject from a CmdletInfo object
+        /// Generates a HelpInfo PSObject from a CmdletInfo object.
         /// </summary>
         /// <param name="input">Command info.</param>
         /// <returns>HelpInfo PSObject.</returns>
@@ -57,8 +57,8 @@ namespace System.Management.Automation.Help
             PSObject obj = new PSObject();
 
             obj.TypeNames.Clear();
-            obj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#{1}#command", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
-            obj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#{1}", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
+            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#{1}#command", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
+            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#{1}", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
             obj.TypeNames.Add(DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp);
             obj.TypeNames.Add("CmdletHelpInfo");
             obj.TypeNames.Add("HelpInfo");
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Help
                 bool common = HasCommonParameters(funcInfo.Parameters);
 
                 obj.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                AddDetailsProperties(obj, funcInfo.Name, String.Empty, String.Empty, TypeNameForDefaultHelp);
+                AddDetailsProperties(obj, funcInfo.Name, string.Empty, string.Empty, TypeNameForDefaultHelp);
                 AddSyntaxProperties(obj, funcInfo.Name, funcInfo.ParameterSets, common, TypeNameForDefaultHelp);
                 AddParametersProperties(obj, funcInfo.Parameters, common, TypeNameForDefaultHelp);
                 AddInputTypesProperties(obj, funcInfo.Parameters);
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Help
             obj.Properties.Add(new PSNoteProperty("examples", null));
             obj.Properties.Add(new PSNoteProperty("Synopsis", commandInfo.Syntax));
             obj.Properties.Add(new PSNoteProperty("ModuleName", commandInfo.ModuleName));
-            obj.Properties.Add(new PSNoteProperty("nonTerminatingErrors", String.Empty));
+            obj.Properties.Add(new PSNoteProperty("nonTerminatingErrors", string.Empty));
             obj.Properties.Add(new PSNoteProperty("xmlns:command", "http://schemas.microsoft.com/maml/dev/command/2004/10"));
             obj.Properties.Add(new PSNoteProperty("xmlns:dev", "http://schemas.microsoft.com/maml/dev/2004/10"));
             obj.Properties.Add(new PSNoteProperty("xmlns:maml", "http://schemas.microsoft.com/maml/2004/10"));
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the details properties
+        /// Adds the details properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Command name.</param>
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#details", typeNameForHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#details", typeNameForHelp));
 
             mshObject.Properties.Add(new PSNoteProperty("name", name));
             mshObject.Properties.Add(new PSNoteProperty("noun", noun));
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the syntax properties
+        /// Adds the syntax properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName">Command name.</param>
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#syntax", typeNameForHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#syntax", typeNameForHelp));
 
             AddSyntaxItemProperties(mshObject, cmdletName, parameterSets, common, typeNameForHelp);
 
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Add the syntax item properties
+        /// Add the syntax item properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName">Cmdlet name, you can't get this from parameterSets.</param>
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Help
                 PSObject mshObject = new PSObject();
 
                 mshObject.TypeNames.Clear();
-                mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#syntaxItem", typeNameForHelp));
+                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#syntaxItem", typeNameForHelp));
 
                 mshObject.Properties.Add(new PSNoteProperty("name", cmdletName));
                 mshObject.Properties.Add(new PSNoteProperty("CommonParameters", common));
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Help
                 PSObject mshObject = new PSObject();
 
                 mshObject.TypeNames.Clear();
-                mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
                 Collection<Attribute> attributes = new Collection<Attribute>(parameter.Attributes);
 
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Help
             PSObject paramValueGroup = new PSObject();
 
             paramValueGroup.TypeNames.Clear();
-            paramValueGroup.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameterValueGroup", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            paramValueGroup.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameterValueGroup", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             ArrayList paramValue = new ArrayList(values);
 
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Help
             PSObject paramsObject = new PSObject();
 
             paramsObject.TypeNames.Clear();
-            paramsObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameters", typeNameForHelp));
+            paramsObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameters", typeNameForHelp));
 
             ArrayList paramObjects = new ArrayList();
 
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Help
                 PSObject paramObject = new PSObject();
 
                 paramObject.TypeNames.Clear();
-                paramObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                paramObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
                 AddParameterProperties(paramObject, parameter, parameters[parameter].Aliases,
                     parameters[parameter].IsDynamic, parameters[parameter].ParameterType, parameters[parameter].Attributes);
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameter properties
+        /// Adds the parameter properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Parameter name.</param>
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameterType properties
+        /// Adds the parameterType properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameterType">The type of a parameter.</param>
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             var parameterTypeString = CommandParameterSetInfo.GetParameterTypeString(parameterType, attributes);
             mshObject.Properties.Add(new PSNoteProperty("name", parameterTypeString));
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameterValue properties
+        /// Adds the parameterValue properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameterType">The type of a parameter.</param>
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the InputTypes properties
+        /// Adds the InputTypes properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameters">Command parameters.</param>
@@ -612,17 +612,17 @@ namespace System.Management.Automation.Help
             PSObject inputTypesObj = new PSObject();
 
             inputTypesObj.TypeNames.Clear();
-            inputTypesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#inputTypes", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            inputTypesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#inputTypes", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject inputTypeObj = new PSObject();
 
             inputTypeObj.TypeNames.Clear();
-            inputTypeObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#inputType", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            inputTypeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#inputType", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject typeObj = new PSObject();
 
             typeObj.TypeNames.Clear();
-            typeObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             typeObj.Properties.Add(new PSNoteProperty("name", sb.ToString()));
             inputTypeObj.Properties.Add(new PSNoteProperty("type", typeObj));
@@ -631,7 +631,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the OutputTypes properties
+        /// Adds the OutputTypes properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="outputTypes">Output types.</param>
@@ -640,17 +640,17 @@ namespace System.Management.Automation.Help
             PSObject returnValuesObj = new PSObject();
 
             returnValuesObj.TypeNames.Clear();
-            returnValuesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#returnValues", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            returnValuesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#returnValues", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject returnValueObj = new PSObject();
 
             returnValueObj.TypeNames.Clear();
-            returnValueObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#returnValue", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            returnValueObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#returnValue", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject typeObj = new PSObject();
 
             typeObj.TypeNames.Clear();
-            typeObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             if (outputTypes.Count == 0)
             {
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the aliases properties
+        /// Adds the aliases properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Command name.</param>
@@ -703,14 +703,14 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the remarks properties
+        /// Adds the remarks properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName"></param>
         /// <param name="helpUri"></param>
         private static void AddRemarksProperties(PSObject obj, string cmdletName, string helpUri)
         {
-            if (String.IsNullOrEmpty(helpUri))
+            if (string.IsNullOrEmpty(helpUri))
             {
                 obj.Properties.Add(new PSNoteProperty("remarks", StringUtil.Format(HelpDisplayStrings.GetLatestHelpContentWithoutHelpUri, cmdletName)));
             }
@@ -721,18 +721,18 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the related links properties
+        /// Adds the related links properties.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="relatedLink"></param>
         internal static void AddRelatedLinksProperties(PSObject obj, string relatedLink)
         {
-            if (!String.IsNullOrEmpty(relatedLink))
+            if (!string.IsNullOrEmpty(relatedLink))
             {
                 PSObject navigationLinkObj = new PSObject();
 
                 navigationLinkObj.TypeNames.Clear();
-                navigationLinkObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#navigationLinks", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                navigationLinkObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#navigationLinks", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
                 navigationLinkObj.Properties.Add(new PSNoteProperty("uri", relatedLink));
 
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Help
                 PSObject relatedLinksObj = new PSObject();
 
                 relatedLinksObj.TypeNames.Clear();
-                relatedLinksObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#relatedLinks", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                relatedLinksObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#relatedLinks", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
                 relatedLinksObj.Properties.Add(new PSNoteProperty("navigationLink", navigationLinkValues.ToArray()));
 
                 obj.Properties.Add(new PSNoteProperty("relatedLinks", relatedLinksObj));
@@ -776,7 +776,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the parameter attribute from parameter metadata
+        /// Gets the parameter attribute from parameter metadata.
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
         /// <returns>Collection of parameter attributes.</returns>
@@ -798,7 +798,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the validate set attribute from parameter metadata
+        /// Gets the validate set attribute from parameter metadata.
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
         /// <returns>Collection of parameter attributes.</returns>
@@ -820,7 +820,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the pipeline input type
+        /// Gets the pipeline input type.
         /// </summary>
         /// <param name="paramAttrib">Parameter attribute.</param>
         /// <returns>Pipeline input type.</returns>
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if a set of parameters contains any of the common parameters
+        /// Checks if a set of parameters contains any of the common parameters.
         /// </summary>
         /// <param name="parameters">Parameters to check.</param>
         /// <returns>True if it contains common parameters, false otherwise.</returns>
@@ -891,7 +891,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if the module contains HelpInfoUri
+        /// Checks if the module contains HelpInfoUri.
         /// </summary>
         /// <param name="module"></param>
         /// <param name="moduleName"></param>
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Help
         private static bool HasHelpInfoUri(PSModuleInfo module, string moduleName)
         {
             // The core module is really a SnapIn, so module will be null
-            if (!String.IsNullOrEmpty(moduleName) && moduleName.Equals(InitialSessionState.CoreModule, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(moduleName) && moduleName.Equals(InitialSessionState.CoreModule, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -909,7 +909,7 @@ namespace System.Management.Automation.Help
                 return false;
             }
 
-            return !String.IsNullOrEmpty(module.HelpInfoUri);
+            return !string.IsNullOrEmpty(module.HelpInfoUri);
         }
     }
 }

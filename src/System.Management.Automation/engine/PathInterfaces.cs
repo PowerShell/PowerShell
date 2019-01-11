@@ -14,7 +14,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PathIntrinsics()
         {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current location for a specific provider
+        /// Gets the current location for a specific provider.
         /// </summary>
         /// <param name="providerName">
         /// The name of the provider to get the current location for.
@@ -94,7 +94,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current location for the file system provider
+        /// Gets the current location for the file system provider.
         /// </summary>
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the FileSystem provider

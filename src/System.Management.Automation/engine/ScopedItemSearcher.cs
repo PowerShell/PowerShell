@@ -53,7 +53,7 @@ namespace System.Management.Automation
         #region IEnumerable/IEnumerator members
 
         /// <summary>
-        /// Gets the current object as an IEnumerator
+        /// Gets the current object as an IEnumerator.
         /// </summary>
         /// <returns>
         /// The current object as an IEnumerator.
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current scoped item
+        /// Gets the current scoped item.
         /// </summary>
 
         T IEnumerator<T>.Current
@@ -240,7 +240,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// The scope searcher for variables
+    /// The scope searcher for variables.
     /// </summary>
     internal class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
     {
@@ -298,7 +298,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// The scope searcher for aliases
+    /// The scope searcher for aliases.
     /// </summary>
     internal class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
     {
@@ -351,7 +351,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// The scope searcher for functions
+    /// The scope searcher for functions.
     /// </summary>
     internal class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
     {
@@ -436,11 +436,11 @@ namespace System.Management.Automation
             get { return _name; }
         }
 
-        private string _name = String.Empty;
+        private string _name = string.Empty;
     }
 
     /// <summary>
-    /// The scope searcher for drives
+    /// The scope searcher for drives.
     /// </summary>
     internal class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
     {

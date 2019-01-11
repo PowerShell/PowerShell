@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByPath", Mandatory = true)]
         [Alias("FilePath")]
-        public String Path
+        public string Path
         {
             get
             {
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
         [Alias("PSPath", "LP")]
-        public String LiteralPath
+        public string LiteralPath
         {
             get
             {
@@ -147,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// writes out the formatting directives from the
-        /// collection to the specified XML file
+        /// Writes out the formatting directives from the
+        /// collection to the specified XML file.
         /// </summary>
         protected override void EndProcessing()
         {

@@ -46,7 +46,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
 
         if ($null -ne $breakpoint) { $breakpoint | remove-psbreakpoint }
         if (Test-Path $scriptFullName) { Remove-Item $scriptFullName -Force }
-        if ($null -ne (Get-PSDrive -Name tmpTestA1 2>$null)) { Remove-PSDrive -Name tmpTestA1 -Force }
+        if ($null -ne (Get-PSDrive -Name tmpTestA1 2> $null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
 }
 
@@ -498,7 +498,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         $moduleDirectory = [io.path]::Combine($moduleRoot, $moduleName)
         $moduleFile = [io.path]::Combine($moduleDirectory, $moduleName + ".psm1")
 
-        mkdir $moduleDirectory 2> $null
+        New-Item -ItemType Directory $moduleDirectory 2> $null
 
         write-output '
         function ModuleFunction1

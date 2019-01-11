@@ -18,14 +18,14 @@ namespace System.Management.Automation
     {
         #region Constructors
         /// <summary>
-        /// Constructs a ProviderInvocationException
+        /// Constructs a ProviderInvocationException.
         /// </summary>
         public ProviderInvocationException() : base()
         {
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException using serialized data
+        /// Constructs a ProviderInvocationException using serialized data.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -41,7 +41,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException with a message
+        /// Constructs a ProviderInvocationException with a message.
         /// </summary>
         /// <param name="message">
         /// The message for the exception.
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException
+        /// Constructs a ProviderInvocationException.
         /// </summary>
         /// <param name="errorId">
         /// This string will be used to construct the FullyQualifiedErrorId,
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor to make it easy to wrap a provider exception
+        /// Constructor to make it easy to wrap a provider exception.
         /// </summary>
         /// <param name="errorId">
         /// This string will be used to construct the FullyQualifiedErrorId,
@@ -267,7 +267,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
@@ -282,7 +282,7 @@ namespace System.Management.Automation
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
@@ -294,7 +294,7 @@ namespace System.Management.Automation
             if (path == null)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -303,7 +303,7 @@ namespace System.Management.Automation
             else
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -315,11 +315,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the exception message
+        /// Gets the exception message.
         /// </summary>
         public override string Message
         {
-            get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
 
         [NonSerialized]
@@ -329,7 +329,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Categories of session state objects, used by SessionStateException
+    /// Categories of session state objects, used by SessionStateException.
     /// </summary>
     public enum SessionStateCategory
     {
@@ -394,7 +394,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         /// <param name="itemName">Name of session state object.</param>
         /// <param name="sessionStateCategory">Category of session state object.</param>
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         public SessionStateException()
             : base()
@@ -433,7 +433,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -444,7 +444,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -522,7 +522,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = String.Empty;
+        private string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -574,7 +574,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="itemName">
         /// The name of the session state object the error occurred on.
@@ -604,7 +604,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         public SessionStateUnauthorizedAccessException()
             : base()
@@ -612,7 +612,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -623,7 +623,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -662,7 +662,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="itemName">
         /// The name of provider that could not be found.
@@ -698,7 +698,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         public ProviderNotFoundException()
             : base()
@@ -706,7 +706,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The messaged used by the exception.
@@ -717,7 +717,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -756,7 +756,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="providerName">
         /// The name of provider that was ambiguous.
@@ -793,7 +793,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         public ProviderNameAmbiguousException()
             : base()
@@ -801,7 +801,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="message">
         /// The messaged used by the exception.
@@ -812,7 +812,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -869,7 +869,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="itemName">
         /// The name of the drive that could not be found.
@@ -893,7 +893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         public DriveNotFoundException()
             : base()
@@ -901,7 +901,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message that will be used by the exception.
@@ -912,7 +912,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message that will be used by the exception.
@@ -951,7 +951,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="path">
         /// The path that was not found.
@@ -977,7 +977,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         public ItemNotFoundException()
             : base()
@@ -985,7 +985,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -996,7 +996,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.

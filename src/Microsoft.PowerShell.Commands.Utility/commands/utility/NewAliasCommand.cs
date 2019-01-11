@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 AliasInfo existingAlias = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(Name);
                 }
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         result = SessionState.Internal.SetAliasItem(newAlias, Force, MyInvocation.CommandOrigin);
                     }

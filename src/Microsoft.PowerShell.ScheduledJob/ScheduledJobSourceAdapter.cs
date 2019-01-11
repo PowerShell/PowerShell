@@ -35,17 +35,17 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Public Strings
 
         /// <summary>
-        /// BeforeFilter
+        /// BeforeFilter.
         /// </summary>
         public const string BeforeFilter = "Before";
 
         /// <summary>
-        /// AfterFilter
+        /// AfterFilter.
         /// </summary>
         public const string AfterFilter = "After";
 
         /// <summary>
-        /// NewestFilter
+        /// NewestFilter.
         /// </summary>
         public const string NewestFilter = "Newest";
 
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Get the list of jobs that are currently available in this
-        /// store
+        /// store.
         /// </summary>
         /// <returns>Collection of job objects.</returns>
         public override IList<Job2> GetJobs()
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Get list of jobs that matches the specified names
+        /// Get list of jobs that matches the specified names.
         /// </summary>
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Get list of jobs that run the specified command
+        /// Get list of jobs that run the specified command.
         /// </summary>
         /// <param name="command">Command to match.</param>
         /// <param name="recurse"></param>
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Get job that has the specified id
+        /// Get job that has the specified id.
         /// </summary>
         /// <param name="instanceId">Guid to match.</param>
         /// <param name="recurse"></param>
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Get job that has specific session id
+        /// Get job that has specific session id.
         /// </summary>
         /// <param name="id">Id to match.</param>
         /// <param name="recurse"></param>
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Get list of jobs that are in the specified state
+        /// Get list of jobs that are in the specified state.
         /// </summary>
         /// <param name="state">State to match.</param>
         /// <param name="recurse"></param>
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Get list of jobs based on the adapter specific
-        /// filter parameters
+        /// filter parameters.
         /// </summary>
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Remove a job from the store
+        /// Remove a job from the store.
         /// </summary>
         /// <param name="job">Job object to remove.</param>
         public override void RemoveJob(Job2 job)

@@ -10,7 +10,7 @@ using System.Management.Automation.Runspaces;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implementing type for WSManConfigurationOption
+    /// Implementing type for WSManConfigurationOption.
     /// </summary>
     public class WSManConfigurationOption : PSTransportOption
     {
@@ -59,14 +59,14 @@ namespace Microsoft.PowerShell.Commands
         private int? _maxConcurrentCommandsPerSession = null;
 
         /// <summary>
-        /// Constructor that instantiates with default values
+        /// Constructor that instantiates with default values.
         /// </summary>
         internal WSManConfigurationOption()
         {
         }
 
         /// <summary>
-        /// LoadFromDefaults
+        /// LoadFromDefaults.
         /// </summary>
         /// <param name="sessionType"></param>
         /// <param name="keepAssigned"></param>
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ProcessIdleTimeout in Seconds
+        /// ProcessIdleTimeout in Seconds.
         /// </summary>
         public int? ProcessIdleTimeoutSec
         {
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxIdleTimeout in Seconds
+        /// MaxIdleTimeout in Seconds.
         /// </summary>
         public int? MaxIdleTimeoutSec
         {
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxSessions
+        /// MaxSessions.
         /// </summary>
         public int? MaxSessions
         {
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxConcurrentCommandsPerSession
+        /// MaxConcurrentCommandsPerSession.
         /// </summary>
         public int? MaxConcurrentCommandsPerSession
         {
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxSessionsPerUser
+        /// MaxSessionsPerUser.
         /// </summary>
         public int? MaxSessionsPerUser
         {
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxMemoryPerSessionMB
+        /// MaxMemoryPerSessionMB.
         /// </summary>
         public int? MaxMemoryPerSessionMB
         {
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxProcessesPerSession
+        /// MaxProcessesPerSession.
         /// </summary>
         public int? MaxProcessesPerSession
         {
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxConcurrentUsers
+        /// MaxConcurrentUsers.
         /// </summary>
         public int? MaxConcurrentUsers
         {
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IdleTimeout in Seconds
+        /// IdleTimeout in Seconds.
         /// </summary>
         public int? IdleTimeoutSec
         {
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// OutputBufferingMode
+        /// OutputBufferingMode.
         /// </summary>
         public System.Management.Automation.Runspaces.OutputBufferingMode? OutputBufferingMode
         {
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ConstructQuotas
+        /// ConstructQuotas.
         /// </summary>
         /// <returns></returns>
         internal override string ConstructQuotas()
@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ConstructOptionsXmlAttributes
+        /// ConstructOptionsXmlAttributes.
         /// </summary>
         /// <returns></returns>
         internal override string ConstructOptionsAsXmlAttributes()
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ConstructOptionsXmlAttributes
+        /// ConstructOptionsXmlAttributes.
         /// </summary>
         /// <returns></returns>
         internal override Hashtable ConstructOptionsAsHashtable()
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Command to create an object for WSManConfigurationOption
+    /// Command to create an object for WSManConfigurationOption.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSTransportOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210608", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(WSManConfigurationOption))]
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
         private WSManConfigurationOption _option = new WSManConfigurationOption();
 
         /// <summary>
-        /// MaxIdleTimeoutSec
+        /// MaxIdleTimeoutSec.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(60, 2147483)]
         public int? MaxIdleTimeoutSec
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ProcessIdleTimeoutSec
+        /// ProcessIdleTimeoutSec.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(0, 1209600)]
         public int? ProcessIdleTimeoutSec
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxSessions
+        /// MaxSessions.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(1, int.MaxValue)]
         public int? MaxSessions
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxConcurrentCommandsPerSession
+        /// MaxConcurrentCommandsPerSession.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(1, int.MaxValue)]
         public int? MaxConcurrentCommandsPerSession
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxSessionsPerUser
+        /// MaxSessionsPerUser.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(1, int.MaxValue)]
         public int? MaxSessionsPerUser
@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxMemoryPerSessionMB
+        /// MaxMemoryPerSessionMB.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(5, int.MaxValue)]
         public int? MaxMemoryPerSessionMB
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxProcessesPerSession
+        /// MaxProcessesPerSession.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(1, int.MaxValue)]
         public int? MaxProcessesPerSession
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxConcurrentUsers
+        /// MaxConcurrentUsers.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(1, 100)]
         public int? MaxConcurrentUsers
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IdleTimeoutMs
+        /// IdleTimeoutMs.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true), ValidateRange(60, 2147483)]
         public int? IdleTimeoutSec
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// OutputBufferingMode
+        /// OutputBufferingMode.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.Management.Automation.Runspaces.OutputBufferingMode? OutputBufferingMode
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding the base method
+        /// Overriding the base method.
         /// </summary>
         protected override void ProcessRecord()
         {

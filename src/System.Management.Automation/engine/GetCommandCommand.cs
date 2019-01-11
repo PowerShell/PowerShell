@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Reflection;
@@ -31,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         #region Definitions of cmdlet parameters
 
         /// <summary>
-        /// Gets or sets the path(s) or name(s) of the commands to retrieve
+        /// Gets or sets the path(s) or name(s) of the commands to retrieve.
         /// </summary>
         [Parameter(
             Position = 0,
@@ -69,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _nameContainsWildcard;
 
         /// <summary>
-        /// Gets or sets the verb parameter to the cmdlet
+        /// Gets or sets the verb parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
         public string[] Verb
@@ -94,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _verbs = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Gets or sets the noun parameter to the cmdlet
+        /// Gets or sets the noun parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
         [ArgumentCompleter(typeof(NounArgumentCompleter))]
@@ -120,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _nouns = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Gets or sets the PSSnapin/Module parameter to the cmdlet
+        /// Gets or sets the PSSnapin/Module parameter to the cmdlet.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -150,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isModuleSpecified = false;
 
         /// <summary>
-        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet
+        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -176,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFullyQualifiedModuleSpecified = false;
 
         /// <summary>
-        /// Gets or sets the type of the command to get
+        /// Gets or sets the type of the command to get.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
         [Alias("Type")]
@@ -277,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _listImported;
 
         /// <summary>
-        /// The parameter that filters commands returned to only include commands that have a parameter with a name that matches one of the ParameterName's arguments
+        /// The parameter that filters commands returned to only include commands that have a parameter with a name that matches one of the ParameterName's arguments.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -305,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         private HashSet<string> _matchedParameterNames;
 
         /// <summary>
-        /// The parameter that filters commands returned to only include commands that have a parameter of a type that matches one of the ParameterType's arguments
+        /// The parameter that filters commands returned to only include commands that have a parameter of a type that matches one of the ParameterType's arguments.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -349,12 +350,29 @@ namespace Microsoft.PowerShell.Commands
 
         private PSTypeName[] _parameterTypes;
 
+        /// <summary>
+        /// Gets or sets the parameter that enables using fuzzy matching.
+        /// </summary>
+        [Parameter(ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseFuzzyMatching { get; set; }
+
+        private List<CommandScore> _commandScores = new List<CommandScore>();
+
+        /// <summary>
+        /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
+        /// This means it matches cmdlets where the uppercase characters for the noun match
+        /// the given characters.  i.e., g-sgc would match Get-SomeGreatCmdlet.
+        /// </summary>
+        [Experimental("PSUseAbbreviationExpansion", ExperimentAction.Show)]
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseAbbreviationExpansion { get; set; }
+
         #endregion Definitions of cmdlet parameters
 
         #region Overrides
 
         /// <summary>
-        /// Begin Processing
+        /// Begin Processing.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -374,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// method that implements get-command
+        /// Method that implements get-command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -382,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (_isModuleSpecified && _isFullyQualifiedModuleSpecified)
             {
-                string errMsg = String.Format(CultureInfo.InvariantCulture, SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = string.Format(CultureInfo.InvariantCulture, SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -412,13 +430,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes out the accumulated matching commands
+        /// Writes out the accumulated matching commands.
         /// </summary>
         protected override void EndProcessing()
         {
             // We do not show the pithy aliases (not of the format Verb-Noun) and applications by default.
             // We will show them only if the Name, All and totalCount are not specified.
-            if ((this.Name == null) && (!_all) && TotalCount == -1)
+            if ((this.Name == null) && (!_all) && TotalCount == -1 && !UseFuzzyMatching)
             {
                 CommandTypes commandTypesToIgnore = 0;
 
@@ -499,6 +517,11 @@ namespace Microsoft.PowerShell.Commands
         {
             CommandOrigin origin = this.MyInvocation.CommandOrigin;
 
+            if (UseFuzzyMatching)
+            {
+                results = _commandScores.OrderBy(x => x.Score).Select(x => x.Command).ToList();
+            }
+
             int count = 0;
             foreach (CommandInfo result in results)
             {
@@ -510,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
                     // otherwise just return the object...
                     if (Syntax)
                     {
-                        if (!String.IsNullOrEmpty(result.Syntax))
+                        if (!string.IsNullOrEmpty(result.Syntax))
                         {
                             PSObject syntax = PSObject.AsPSObject(result.Syntax);
 
@@ -552,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The comparer to sort CommandInfo objects in the result list
+        /// The comparer to sort CommandInfo objects in the result list.
         /// </summary>
         private class CommandInfoComparer : IComparer<CommandInfo>
         {
@@ -575,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    return String.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+                    return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -662,7 +685,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes out the commands for the AllCommandSet using the specified CommandType
+        /// Writes out the commands for the AllCommandSet using the specified CommandType.
         /// </summary>
         private void AccumulateMatchingCommands()
         {
@@ -685,6 +708,16 @@ namespace Microsoft.PowerShell.Commands
             if (All)
             {
                 options = SearchResolutionOptions.SearchAllScopes;
+            }
+
+            if (UseAbbreviationExpansion)
+            {
+                options |= SearchResolutionOptions.UseAbbreviationExpansion;
+            }
+
+            if (UseFuzzyMatching)
+            {
+                options |= SearchResolutionOptions.FuzzyMatch;
             }
 
             if ((this.CommandType & CommandTypes.Alias) != 0)
@@ -714,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleName = this.Module[0];
                     }
 
-                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
+                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName) || UseAbbreviationExpansion || UseFuzzyMatching;
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
@@ -732,10 +765,10 @@ namespace Microsoft.PowerShell.Commands
                         // If the command name had no wildcards or was module-qualified,
                         // import the module so that we can return the fully structured data.
                         // This uses the same code path as module auto-loading.
-                        if ((!isPattern) || (!String.IsNullOrEmpty(moduleName)))
+                        if ((!isPattern) || (!string.IsNullOrEmpty(moduleName)))
                         {
                             string tempCommandName = commandName;
-                            if ((!isModuleQualified) && (!String.IsNullOrEmpty(moduleName)))
+                            if ((!isModuleQualified) && (!string.IsNullOrEmpty(moduleName)))
                             {
                                 tempCommandName = moduleName + "\\" + commandName;
                             }
@@ -756,7 +789,33 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                foreach (CommandInfo command in System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(plainCommandName, this.Context, this.MyInvocation.CommandOrigin, rediscoverImportedModules: true, moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                IEnumerable<CommandInfo> commands;
+                                if (UseFuzzyMatching)
+                                {
+                                    foreach (var commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                    {
+                                        _commandScores.Add(commandScore);
+                                    }
+
+                                    commands = _commandScores.Select(x => x.Command).ToList();
+                                }
+                                else
+                                {
+                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified,
+                                        useAbbreviationExpansion: UseAbbreviationExpansion);
+                                }
+
+                                foreach (CommandInfo command in commands)
                                 {
                                     // Cannot pass in "command" by ref (foreach iteration variable)
                                     CommandInfo current = command;
@@ -900,6 +959,12 @@ namespace Microsoft.PowerShell.Commands
                         if (TotalCount >= 0 && currentCount > TotalCount)
                         {
                             break;
+                        }
+
+                        if (UseFuzzyMatching)
+                        {
+                            int score = FuzzyMatcher.GetDamerauLevenshteinDistance(current.Name, commandName);
+                            _commandScores.Add(new CommandScore(current, score));
                         }
 
                         _accumulatedResults.Add(current);
@@ -1263,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets matching commands from the module tables
+        /// Gets matching commands from the module tables.
         /// </summary>
         /// <param name="commandName">
         /// The commandname to look for
@@ -1339,7 +1404,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Determines if the specific command information has already been
-        /// added to the result from CommandSearcher
+        /// added to the result from CommandSearcher.
         /// </summary>
         /// <param name="command">
         /// The command information to check for duplication.
@@ -1354,10 +1419,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
                 if ((command.CommandType == commandInfo.CommandType &&
-                     (String.Compare(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) == 0 ||
+                     (string.Compare(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) == 0 ||
                       // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                       // Hence, an additional check is done with the prefix information
-                      String.Compare(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                      string.Compare(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase) == 0)
                     ) && commandInfo.Module != null && commandHasModule &&
                     ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
                      (commandInfo.IsImported && command.IsImported && commandInfo.Module.Equals(command.Module)) ||

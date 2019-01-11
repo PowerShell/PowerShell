@@ -26,7 +26,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public RemoveCimInstanceCommand()
             : base(parameters, parameterSets)
@@ -96,7 +96,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computername; }
 
@@ -107,7 +107,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computername;
+        private string[] computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Position = 1,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.QueryComputerSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -132,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
@@ -177,7 +177,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Property for internal usage purpose
+        /// Property for internal usage purpose.
         /// </summary>
         internal CimInstance CimInstance
         {
@@ -199,7 +199,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Position = 0,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.QuerySessionSet)]
-        public String Query
+        public string Query
         {
             get { return query;}
 
@@ -210,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String query;
+        private string query;
 
         /// <summary>
         /// The following is the definition of the input parameter "QueryDialect".
@@ -221,7 +221,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QuerySessionSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
-        public String QueryDialect
+        public string QueryDialect
         {
             get { return querydialect;}
 
@@ -232,7 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String querydialect;
+        private string querydialect;
 
         #endregion
 
@@ -251,7 +251,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationRemoveCimInstance(this, cimRemoveInstance);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -262,7 +262,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent();
             cimRemoveInstance.RemoveCimInstance(this);
             cimRemoveInstance.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -274,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimRemoveInstance.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -320,7 +320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -369,7 +369,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -379,5 +379,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.QuerySessionSet, new ParameterSetEntry(2)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

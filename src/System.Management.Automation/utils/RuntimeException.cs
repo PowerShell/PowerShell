@@ -142,7 +142,7 @@ namespace System.Management.Automation
         // will clean the cached ErrorRecord and erase any other changes,
         // so the ErrorId etc. should be set first.
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -227,7 +227,7 @@ namespace System.Management.Automation
             if (errorRecord == null)
                 return string.Empty;
             if (null != errorRecord.ErrorDetails &&
-                !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
+                !string.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;
             }
@@ -252,7 +252,7 @@ namespace System.Management.Automation
             if (ed == null)
                 return e.Message;
             string detailsMessage = ed.Message;
-            return (String.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
+            return (string.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
         }
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         private bool _thrownByThrowStatement;
 
         /// <summary>
-        /// fix for BUG: Windows Out Of Band Releases: 906263 and 906264
+        /// Fix for BUG: Windows Out Of Band Releases: 906263 and 906264
         /// The interpreter prompt CommandBaseStrings:InquireHalt
         /// should be suppressed when this flag is set.  This will be set
         /// when this prompt has already occurred and Break was chosen,

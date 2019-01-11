@@ -39,7 +39,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
@@ -94,7 +94,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor for clone operations
+        /// Copy constructor for clone operations.
         /// </summary>
         /// <param name="command">The source <see cref="Command"/> instance.</param>
         internal Command(Command command)
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Runspaces
             PipelineResultTypes.None;
         /// <summary>
         /// Sets this command as the mergepoint for previous unclaimed
-        /// commands' results
+        /// commands' results.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -268,12 +268,12 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Internal accessor for _mergeInstructions. It is used by serialization
-        /// code
+        /// code.
         /// </summary>
         internal PipelineResultTypes[] MergeInstructions { get; set; } = new PipelineResultTypes[MaxMergeType];
 
         /// <summary>
-        /// Merges this commands results
+        /// Merges this commands results.
         /// </summary>
         /// <param name="myResult">
         /// Pipeline stream to be redirected.
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Set the merge settings on commandProcessor
+        /// Set the merge settings on commandProcessor.
         /// </summary>
         /// <param name="commandProcessor"></param>
         private
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Runspaces
 
             if (_mergeUnclaimedPreviousCommandResults != PipelineResultTypes.None)
             {
-                //Currently only merging previous unclaimed error and output is supported.
+                // Currently only merging previous unclaimed error and output is supported.
                 if (mcr != null)
                 {
                     mcr.MergeUnclaimedPreviousErrorResults = true;
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Runspaces
             // Error merge.
             if (MergeInstructions[(int)MergeType.Error] == PipelineResultTypes.Output)
             {
-                //Currently only merging error with output is supported.
+                // Currently only merging error with output is supported.
                 mcr.ErrorMergeTo = MshCommandRuntime.MergeDataStream.Output;
             }
 
@@ -429,7 +429,7 @@ namespace System.Management.Automation.Runspaces
         #endregion Merge
 
         /// <summary>
-        /// Create a CommandProcessorBase for this Command
+        /// Create a CommandProcessorBase for this Command.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="addToHistory"></param>
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Runspaces
                     helpCategory);
             }
 
-            //Set the merge settings
+            // Set the merge settings
             SetMergeSettingsOnCommandProcessor(commandProcessorBase);
 
             return commandProcessorBase;
@@ -763,48 +763,48 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Enum defining the types of streams coming out of a pipeline
+    /// Enum defining the types of streams coming out of a pipeline.
     /// </summary>
     [Flags]
     public enum PipelineResultTypes
     {
         /// <summary>
-        /// Default streaming behavior
+        /// Default streaming behavior.
         /// </summary>
         None,
 
         /// <summary>
-        /// Success output
+        /// Success output.
         /// </summary>
         Output,
 
         /// <summary>
-        /// Error output
+        /// Error output.
         /// </summary>
         Error,
 
         /// <summary>
-        /// Warning information stream
+        /// Warning information stream.
         /// </summary>
         Warning,
 
         /// <summary>
-        /// Verbose information stream
+        /// Verbose information stream.
         /// </summary>
         Verbose,
 
         /// <summary>
-        /// Debug information stream
+        /// Debug information stream.
         /// </summary>
         Debug,
 
         /// <summary>
-        /// Information information stream
+        /// Information information stream.
         /// </summary>
         Information,
 
         /// <summary>
-        /// All streams
+        /// All streams.
         /// </summary>
         All,
 
@@ -821,21 +821,21 @@ namespace System.Management.Automation.Runspaces
     public sealed class CommandCollection : Collection<Command>
     {
         /// <summary>
-        /// Make the default constructor internal
+        /// Make the default constructor internal.
         /// </summary>
         internal CommandCollection()
         {
         }
 
         /// <summary>
-        /// Adds a new command for given string
+        /// Adds a new command for given string.
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
         /// command is null.
         /// </exception>
         public void Add(string command)
         {
-            if (String.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
             {
                 this.Add(command, true);
             }
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Adds a new script command
+        /// Adds a new script command.
         /// </summary>
         /// <param name="scriptContents">Script contents.</param>
         /// <exception cref="System.ArgumentNullException">
@@ -863,7 +863,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Adds a new scrip command for given script
+        /// Adds a new scrip command for given script.
         /// </summary>
         /// <param name="scriptContents">Script contents.</param>
         /// <param name="useLocalScope">If true local scope is used to run the script command.</param>

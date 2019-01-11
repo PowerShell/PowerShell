@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The information about a parameter set and its parameters for a cmdlet
+    /// The information about a parameter set and its parameters for a cmdlet.
     /// </summary>
     public class CommandParameterSetInfo
     {
@@ -47,8 +47,8 @@ namespace System.Management.Automation
             MergedCommandParameterMetadata parameterMetadata)
         {
             IsDefault = true;
-            Name = String.Empty;
-            if (String.IsNullOrEmpty(name))
+            Name = string.Empty;
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         #region public members
 
         /// <summary>
-        /// Gets the name of the parameter set
+        /// Gets the name of the parameter set.
         /// </summary>
         public string Name { get; private set; }
 
@@ -83,7 +83,7 @@ namespace System.Management.Automation
         public ReadOnlyCollection<CommandParameterInfo> Parameters { get; private set; }
 
         /// <summary>
-        /// Gets the synopsis for the cmdlet as a string
+        /// Gets the synopsis for the cmdlet as a string.
         /// </summary>
         public override string ToString()
         {

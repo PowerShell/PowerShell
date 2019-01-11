@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
 
             public PSObject StreamingDequeue()
             {
-                //if skip parameter is not mentioned or there are no more objects to skip
+                // if skip parameter is not mentioned or there are no more objects to skip
                 if (_skip == 0)
                 {
                     if (_skipLast > 0)
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //if last parameter is not mentioned,remove the objects and decrement the skip
+                    // if last parameter is not mentioned,remove the objects and decrement the skip
                     if (_last == 0)
                     {
                         Dequeue();
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //If property parameter is mentioned
+            // If property parameter is mentioned
             List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
             foreach (MshParameter p in _propertyMshParameterList)
             {
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
-            //if only unique is mentioned
+            // if only unique is mentioned
             else if ((_unique))
             {
                 bool isObjUnique = true;

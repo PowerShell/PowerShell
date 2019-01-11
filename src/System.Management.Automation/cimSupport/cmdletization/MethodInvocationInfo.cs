@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Cmdletization
     public sealed class MethodInvocationInfo
     {
         /// <summary>
-        /// Creates a new instance of MethodInvocationInfo
+        /// Creates a new instance of MethodInvocationInfo.
         /// </summary>
         /// <param name="name">Name of the method to invoke.</param>
         /// <param name="parameters">Method parameters.</param>
@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Name of the method to invoke
+        /// Name of the method to invoke.
         /// </summary>
         public string MethodName { get; }
 
         /// <summary>
-        /// Method parameters
+        /// Method parameters.
         /// </summary>
         public KeyedCollection<string, MethodParameter> Parameters { get; }
 

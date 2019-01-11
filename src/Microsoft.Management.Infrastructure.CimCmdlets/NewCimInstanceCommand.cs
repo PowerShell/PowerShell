@@ -28,7 +28,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public NewCimInstanceCommand()
             : base(parameters, parameterSets)
@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Position = 0,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -114,7 +114,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Key
+        public string[] Key
         {
             get { return key; }
 
@@ -125,7 +125,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] key;
+        private string[] key;
 
         /// <summary>
         /// The following is the definition of the input parameter "CimClass".
@@ -194,7 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -205,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
@@ -274,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimClassComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computerName; }
 
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computerName;
+        private string[] computerName;
 
         /// <summary>
         /// <para>
@@ -325,7 +325,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.CmdletOperation = new CmdletOperationBase(this);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -361,7 +361,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             cimNewCimInstance.NewCimInstance(this);
             cimNewCimInstance.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -373,7 +373,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimNewCimInstance.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -405,7 +405,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// check argument value
+        /// Check argument value.
         /// </summary>
         private void CheckArgument()
         {
@@ -437,7 +437,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -500,7 +500,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -512,5 +512,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.ResourceUriComputerSet, new ParameterSetEntry(1)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

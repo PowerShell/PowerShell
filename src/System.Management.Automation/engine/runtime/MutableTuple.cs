@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// </summary>
         public static Type MakeTupleType(params Type[] types)
         {
-            //ContractUtils.RequiresNotNull(types, "types");
+            // ContractUtils.RequiresNotNull(types, "types");
 
             return MakeTupleType(types, 0, types.Length);
         }
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         /// </summary>
         public static int GetSize(Type tupleType)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
             lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
@@ -323,8 +323,8 @@ namespace System.Management.Automation
         /// </summary>
         public static MutableTuple MakeTuple(Type tupleType, Dictionary<string, int> nameToIndexMap, Func<MutableTuple> creator = null)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
-            //ContractUtils.RequiresNotNull(args, "args");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(args, "args");
 
             int size = GetSize(tupleType);
             var bitArray = new BitArray(size);
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// </summary>
         public static object[] GetTupleValues(MutableTuple tuple)
         {
-            //ContractUtils.RequiresNotNull(tuple, "tuple");
+            // ContractUtils.RequiresNotNull(tuple, "tuple");
 
             List<object> res = new List<object>();
 
@@ -360,13 +360,13 @@ namespace System.Management.Automation
         /// </summary>
         internal static IEnumerable<PropertyInfo> GetAccessProperties(Type tupleType, int size, int index)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             if (index < 0 || index >= size) throw new ArgumentException("index");
 
             foreach (int curIndex in GetAccessPath(size, index))
             {
-                PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
+                PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
                 Diagnostics.Assert(pi != null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
@@ -437,7 +437,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < size; i++)
                 {
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
                     res.SetValueImpl(i, MakeTuple(pi.PropertyType, null, null));
                 }
             }
@@ -537,7 +537,7 @@ namespace System.Management.Automation
                     int newStart = start + (i * multiplier);
                     int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
 
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
 
                     newValues[i] = CreateNew(pi.PropertyType, newStart, newEnd, values);
                 }

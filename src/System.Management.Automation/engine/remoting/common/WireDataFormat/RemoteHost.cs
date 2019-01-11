@@ -60,7 +60,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Computer name to be used in messages
+        /// Computer name to be used in messages.
         /// </summary>
         private string _computerName;
 
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Remoting
         /// This message performs various security checks on the
         /// remote host call message. If there is a need to modify
         /// the message or discard it for security reasons then
-        /// such modifications will be made here
+        /// such modifications will be made here.
         /// </summary>
         /// <param name="computerName">computer name to use in
         /// warning messages</param>
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Remoting
         /// executed.</returns>
         internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(string computerName)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(computerName),
+            Dbg.Assert(!string.IsNullOrEmpty(computerName),
                 "Computer Name must be passed for use in warning messages");
             _computerName = computerName;
             Collection<RemoteHostCall> prerequisiteCalls = new Collection<RemoteHostCall>();
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Remoting
         /// Provides the modified message for the given one
         /// Used in ensuring that remote prompt messages
         /// contain a warning that they originate from a
-        /// different computer
+        /// different computer.
         /// </summary>
         /// <param name="message">Original message to modify.</param>
         /// <param name="computerName">computername to include in the
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a warning message which displays to the user a
         /// warning stating that the remote host computer is
-        /// actually attempting to read a line as a secure string
+        /// actually attempting to read a line as a secure string.
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>
@@ -499,7 +499,7 @@ namespace System.Management.Automation.Remoting
         /// Creates a warning message which displays to the user a
         /// warning stating that the remote host computer is
         /// attempting to read the host's buffer contents and that
-        /// it was suppressed
+        /// it was suppressed.
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>

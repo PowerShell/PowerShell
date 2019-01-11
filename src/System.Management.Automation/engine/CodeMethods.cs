@@ -14,28 +14,28 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxiliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types.
     /// </summary>
     public static partial class ToStringCodeMethods
     {
         /// <summary>
-        /// ToString implementation for PropertyValueCollection
+        /// ToString implementation for PropertyValueCollection.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a PropertyValueCollection.</param>
         public static string PropertyValueCollection(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+                return string.Empty;
 
             var values = (PropertyValueCollection)instance.BaseObject;
             if (values == null)
-                return String.Empty;
+                return string.Empty;
 
             if (values.Count == 1)
             {
                 if (values[0] == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return (PSObject.AsPSObject(values[0]).ToString());
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Converts instance of DN-With-Binary to .net String
+        /// Converts instance of DN-With-Binary to .net String.
         /// </summary>
         /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object.</param>
         /// <param name="dnWithBinaryInstance">Instance of PSObject wrapping DN-With-Binary object.</param>

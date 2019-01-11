@@ -167,7 +167,7 @@ namespace System.Management.Automation
             return first.Equals(second);
         }
         /// <summary>
-        /// Implement the != operator for switch parameters
+        /// Implement the != operator for switch parameters.
         /// </summary>
         /// <param name="first">First object to compare.</param>
         /// <param name="second">Second object to compare.</param>
@@ -197,7 +197,7 @@ namespace System.Management.Automation
             return !first.Equals(second);
         }
         /// <summary>
-        /// Implement the == operator for bool and switch parameters
+        /// Implement the == operator for bool and switch parameters.
         /// </summary>
         /// <param name="first">First object to compare.</param>
         /// <param name="second">Second object to compare.</param>
@@ -207,7 +207,7 @@ namespace System.Management.Automation
             return first.Equals(second);
         }
         /// <summary>
-        /// Implement the != operator for bool and switch parameters
+        /// Implement the != operator for bool and switch parameters.
         /// </summary>
         /// <param name="first">First object to compare.</param>
         /// <param name="second">Second object to compare.</param>
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation for this object
+        /// Returns the string representation for this object.
         /// </summary>
         /// <returns>The string for this object.</returns>
         public override string ToString()
@@ -363,7 +363,7 @@ namespace System.Management.Automation
         public System.EventHandler<LocationChangedEventArgs> LocationChangedAction { get; set; }
 
         /// <summary>
-        /// Returns the CmdletInfo object that corresponds to the name argument
+        /// Returns the CmdletInfo object that corresponds to the name argument.
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for.</param>
         /// <returns>The cmdletInfo object if found, null otherwise.</returns>
@@ -373,7 +373,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the CmdletInfo object that corresponds to the name argument
+        /// Returns the CmdletInfo object that corresponds to the name argument.
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for.</param>
         /// <param name="context">The execution context instance to use for lookup.</param>
@@ -557,7 +557,7 @@ namespace System.Management.Automation
                 if (current.CommandType == CommandTypes.Application)
                 {
                     string cmdExtension = System.IO.Path.GetExtension(current.Name);
-                    if (!String.IsNullOrEmpty(cmdExtension))
+                    if (!string.IsNullOrEmpty(cmdExtension))
                     {
                         // Only add the application in PATHEXT...
                         foreach (string extension in CommandDiscovery.PathExtensions)
@@ -597,7 +597,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Searches for PowerShell commands, optionally using wildcard patterns
+        /// Searches for PowerShell commands, optionally using wildcard patterns.
         /// </summary>
         /// <param name="name">The name of the command to use.</param>
         /// <param name="commandTypes">Type of commands to support.</param>

@@ -6,14 +6,14 @@ using System.Runtime.Serialization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This is a wrapper for exception class SecurityException
+    /// This is a wrapper for exception class SecurityException.
     /// </summary>
     [Serializable]
     public class PSSecurityException : RuntimeException
     {
         #region ctor
         /// <summary>
-        /// Recommended constructor for class PSSecurityException
+        /// Recommended constructor for class PSSecurityException.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public PSSecurityException()
@@ -29,7 +29,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serialization constructor for class PSSecurityException
+        /// Serialization constructor for class PSSecurityException.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for class PSSecurityException
+        /// Constructor for class PSSecurityException.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for class PSSecurityException
+        /// Constructor for class PSSecurityException.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>

@@ -179,7 +179,7 @@ namespace System.Management.Automation
 
         private string _role = null;
         /// <summary>
-        /// Role for this command
+        /// Role for this command.
         /// </summary>
         /// <value></value>
         internal override string Role
@@ -192,7 +192,7 @@ namespace System.Management.Automation
 
         private string _functionality = null;
         /// <summary>
-        /// Functionality for this command
+        /// Functionality for this command.
         /// </summary>
         /// <value></value>
         internal override string Functionality
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         {
             MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
 
-            if (String.IsNullOrEmpty(mamlCommandHelpInfo.Name))
+            if (string.IsNullOrEmpty(mamlCommandHelpInfo.Name))
                 return null;
 
             mamlCommandHelpInfo.AddCommonHelpProperties();
@@ -308,7 +308,7 @@ namespace System.Management.Automation
         #region Helper Methods and Overloads
 
         /// <summary>
-        /// Extracts text for a given property from the full help object
+        /// Extracts text for a given property from the full help object.
         /// </summary>
         /// <param name="psObject">FullHelp object.</param>
         /// <param name="propertyName">
@@ -391,7 +391,7 @@ namespace System.Management.Automation
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
         /// Cmdlet help info looks for pattern in Synopsis and
-        /// DetailedDescription
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>

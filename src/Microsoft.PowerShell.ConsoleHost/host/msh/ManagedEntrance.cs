@@ -14,12 +14,12 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Defines an entry point from unmanaged code to managed Msh
+    /// Defines an entry point from unmanaged code to managed Msh.
     /// </summary>
     public sealed class UnmanagedPSEntry
     {
         /// <summary>
-        /// Starts managed MSH
+        /// Starts managed MSH.
         /// </summary>
         /// <param name="consoleFilePath">
         /// Deprecated: Console file used to create a runspace configuration to start MSH
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
 #if DEBUG
-            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Attach the debugger to continue...");
                 while (!System.Diagnostics.Debugger.IsAttached) {

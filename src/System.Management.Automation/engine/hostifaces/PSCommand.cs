@@ -31,7 +31,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal copy constructor
+        /// Internal copy constructor.
         /// </summary>
         /// <param name="commandToClone"></param>
         internal PSCommand(PSCommand commandToClone)
@@ -47,7 +47,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a PSCommand from the specified command
+        /// Creates a PSCommand from the specified command.
         /// </summary>
         /// <param name="command">Command object to use.</param>
         internal PSCommand(Command command)
@@ -446,7 +446,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The PowerShell instance this PSCommand is associated to, or null if it is an standalone command
+        /// The PowerShell instance this PSCommand is associated to, or null if it is an standalone command.
         /// </summary>
         internal PowerShell Owner
         {

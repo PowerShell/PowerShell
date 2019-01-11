@@ -12,7 +12,7 @@ namespace System.Management.Automation.Runspaces.Internal
 {
     /// <summary>
     /// PowerShell client side proxy base which handles invocation
-    /// of powershell on a remote machine
+    /// of powershell on a remote machine.
     /// </summary>
     internal class ClientRemotePowerShell : IDisposable
     {
@@ -26,7 +26,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Constructors
 
         /// <summary>
-        /// Constructor which creates a client remote powershell
+        /// Constructor which creates a client remote powershell.
         /// </summary>
         /// <param name="shell">Powershell instance.</param>
         /// <param name="runspacePool">The runspace pool associated with
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Instance Id associated with this
-        /// client remote powershell
+        /// client remote powershell.
         /// </summary>
         internal Guid InstanceId
         {
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// PowerShell associated with this ClientRemotePowerShell
+        /// PowerShell associated with this ClientRemotePowerShell.
         /// </summary>
         internal PowerShell PowerShell
         {
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Set the state information of the client powershell
+        /// Set the state information of the client powershell.
         /// </summary>
         /// <param name="stateInfo">State information to set.</param>
         internal void SetStateInfo(PSInvocationStateInfo stateInfo)
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// whether input is available when this object is created
+        /// Whether input is available when this object is created.
         /// </summary>
         internal bool NoInput
         {
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Input stream associated with this object
+        /// Input stream associated with this object.
         /// </summary>
         internal ObjectStreamBase InputStream
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Output stream associated with this object
+        /// Output stream associated with this object.
         /// </summary>
         internal ObjectStreamBase OutputStream
         {
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// data structure handler object
+        /// Data structure handler object.
         /// </summary>
         internal ClientPowerShellDataStructureHandler DataStructureHandler
         {
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Invocation settings associated with this
-        /// ClientRemotePowerShell
+        /// ClientRemotePowerShell.
         /// </summary>
         internal PSInvocationSettings Settings
         {
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Close the output, error and other collections
         /// associated with the shell, so that the
-        /// enumerator does not block
+        /// enumerator does not block.
         /// </summary>
         internal void UnblockCollections()
         {
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Stop the remote powershell asynchronously
+        /// Stop the remote powershell asynchronously.
         /// </summary>
         /// <remarks>This method will be called from
         /// within the lock on PowerShell. Hence no need
@@ -210,12 +210,12 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// This event is raised, when a host call is for a remote pipeline
-        /// which this remote powershell wraps
+        /// which this remote powershell wraps.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteHostCall>> HostCallReceived;
 
         /// <summary>
-        /// Initialize the client remote powershell instance
+        /// Initialize the client remote powershell instance.
         /// </summary>
         /// <param name="inputstream">Input for execution.</param>
         /// <param name="errorstream">error stream to which
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Do any clean up operation per initialization here
+        /// Do any clean up operation per initialization here.
         /// </summary>
         internal void Clear()
         {
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// If this client remote powershell has been initialized
+        /// If this client remote powershell has been initialized.
         /// </summary>
         internal bool Initialized
         {
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// An error record is received from the powershell at the
         /// server side. It is added to the error collection of the
-        /// client powershell
+        /// client powershell.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// An output object is received from the powershell at the
         /// server side. It is added to the output collection of the
-        /// client powershell
+        /// client powershell.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -398,7 +398,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// The invocation state of the server powershell has changed.
-        /// The state of the client powershell is reflected accordingly
+        /// The state of the client powershell is reflected accordingly.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -677,7 +677,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Execute the specified host call
+        /// Execute the specified host call.
         /// </summary>
         /// <param name="hostcall">Host call to execute.</param>
         private void ExecuteHostCall(RemoteHostCall hostcall)
@@ -729,7 +729,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Handles notification from RunspacePool indicating
         /// that the pool is broken. This sets the state of
         /// all the powershell objects associated with the
-        /// runspace pool to Failed
+        /// runspace pool to Failed.
         /// </summary>
         /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event
@@ -942,7 +942,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public interface for dispose
+        /// Public interface for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -952,16 +952,16 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Release all resources
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
             {
-                //inputstream.Dispose();
-                //outputstream.Dispose();
-                //errorstream.Dispose();
+                // inputstream.Dispose();
+                // outputstream.Dispose();
+                // errorstream.Dispose();
             }
         }
         #endregion IDisposable
@@ -984,7 +984,7 @@ namespace System.Management.Automation.Runspaces.Internal
     };
 
     /// <summary>
-    /// PSConnectionRetryStatusEventArgs
+    /// PSConnectionRetryStatusEventArgs.
     /// </summary>
     internal sealed class PSConnectionRetryStatusEventArgs : EventArgs
     {

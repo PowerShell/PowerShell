@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     public enum WebSslProtocol
     {
         /// <summary>
-        ///  No SSL protocol will be set and the system defaults will be used.
+        /// No SSL protocol will be set and the system defaults will be used.
         /// </summary>
         Default = 0,
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         Tls = SslProtocols.Tls,
 
         /// <summary>
-        ///  Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
         /// </summary>
         Tls11 = SslProtocols.Tls11,
 
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = String.Empty;
+                string encodedValue = string.Empty;
                 if (value != null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
@@ -804,14 +804,14 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string unencoded = String.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
+            string unencoded = string.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return String.Format("Basic {0}", Convert.ToBase64String(bytes));
+            return string.Format("Basic {0}", Convert.ToBase64String(bytes));
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
+            return string.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
         }
 
         private void ProcessAuthentication()
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, String.Format("Unrecognized Authentication value: {0}", Authentication));
+                Diagnostics.Assert(false, string.Format("Unrecognized Authentication value: {0}", Authentication));
             }
         }
 
@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands
             if (ContentType != null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                //request
+                // request
             }
             // ContentType == null
             else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
@@ -1393,7 +1393,7 @@ namespace Microsoft.PowerShell.Commands
                             requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
                         }
 
-                        string reqVerboseMsg = String.Format(
+                        string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Method,
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// the main execution method for cmdlets derived from WebRequestPSCmdlet.
+        /// The main execution method for cmdlets derived from WebRequestPSCmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -1488,7 +1488,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (request.Content != null)
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
-                                string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                                string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
                                     request.RequestUri,
@@ -1514,14 +1514,14 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
-                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
+                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
 
                                 if (!_isSuccess)
                                 {
-                                    string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                    string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new HttpResponseException(message, response);
                                     ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
                                         }
                                     }
 
-                                    if (!String.IsNullOrEmpty(detailMsg))
+                                    if (!string.IsNullOrEmpty(detailMsg))
                                     {
                                         er.ErrorDetails = new ErrorDetails(detailMsg);
                                     }
@@ -1828,7 +1828,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new Uri(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
@@ -1878,7 +1878,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))
+            if (enumerate == false || fieldValue is string || !(fieldValue is IEnumerable))
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
@@ -1904,9 +1904,9 @@ namespace Microsoft.PowerShell.Commands
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
-            var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
+            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
             return result;
@@ -1921,7 +1921,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;

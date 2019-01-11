@@ -83,14 +83,14 @@ namespace Microsoft.PowerShell.Commands
         /// Called by the base implementation that checks the SupportShouldProcess provider
         /// capability. This virtual method gives the
         /// derived cmdlet a chance query the CmdletProvider capabilities to determine
-        /// if the provider supports ShouldProcess
+        /// if the provider supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected virtual bool ProviderSupportsShouldProcess => true;
 
         /// <summary>
         /// A helper for derived classes to call to determine if the paths specified
-        /// are for a provider that supports ShouldProcess
+        /// are for a provider that supports ShouldProcess.
         /// </summary>
         /// <param name="paths">
         /// The paths to check to see if the providers support ShouldProcess.
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             new Collection<CmdletProviderContext>();
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         /// <remarks>
         /// This is meant to be overridden by derived classes if
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual string Filter { get; set; }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         /// <remarks>
         /// This is meant to be overridden by derived classes if
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         } = new string[0];
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         /// <remarks>
         /// This is meant to be overridden by derived classes if
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
         } = new string[0];
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the cmdlet and CmdletProvider supports ShouldProcess
+        /// Determines if the cmdlet and CmdletProvider supports ShouldProcess.
         /// </summary>
         public bool SupportsShouldProcess => ProviderSupportsShouldProcess;
 
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the credential parameter
+        /// Gets or sets the credential parameter.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Credential()]
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Stack switch parameter which is used
-        /// to disambiguate parameter sets
+        /// to disambiguate parameter sets.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = StackParameterSet)]
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
         /// the parameter set that is specified, the command can do many things.
         ///     -locationSet gets the current working directory as a Monad path
         ///     -stackSet gets the directory stack of directories that have been
-        ///               pushed by the push-location command
+        ///               pushed by the push-location command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false, String.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
+                    Dbg.Diagnostics.Assert(false, string.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
                     break;
             }
         }
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
         private const string StackParameterSet = "Stack";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -692,9 +692,9 @@ namespace Microsoft.PowerShell.Commands
         #region Command data
 
         /// <summary>
-        /// The filter used when doing a dir
+        /// The filter used when doing a dir.
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -827,7 +827,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -870,9 +870,9 @@ namespace Microsoft.PowerShell.Commands
         #region Command data
 
         /// <summary>
-        /// The filter used when doing a dir
+        /// The filter used when doing a dir.
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -1082,7 +1082,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         /// <summary>
-        /// Gets or sets the name of the drive
+        /// Gets or sets the name of the drive.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
@@ -1092,7 +1092,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the provider ID
+        /// Gets or sets the provider ID.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string PSProvider
@@ -1114,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the description of the drive
+        /// Gets or sets the description of the drive.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Description
@@ -1160,7 +1160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// new-psdrive always supports ShouldProcess
+        /// New-psdrive always supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => true;
@@ -1170,22 +1170,22 @@ namespace Microsoft.PowerShell.Commands
         #region Command data
 
         /// <summary>
-        /// The name of the drive
+        /// The name of the drive.
         /// </summary>
         private string _name;
 
         /// <summary>
-        /// The provider ID for the drive
+        /// The provider ID for the drive.
         /// </summary>
         private string _provider;
 
         /// <summary>
-        /// The namespace specific path of the root of the drive
+        /// The namespace specific path of the root of the drive.
         /// </summary>
         private string _root;
 
         /// <summary>
-        /// A description for the drive
+        /// A description for the drive.
         /// </summary>
         private string _description;
 
@@ -1194,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Adds a new drive to the Monad namespace
+        /// Adds a new drive to the Monad namespace.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -1222,7 +1222,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = NavigationResources.NewDriveConfirmResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                        System.Globalization.CultureInfo.CurrentCulture,
                        resourceTemplate,
                        Name,
@@ -1377,11 +1377,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 tracer.WriteLine("ProviderName: {0}", providerName);
 
-                bool providerNameEmpty = String.IsNullOrEmpty(providerName);
+                bool providerNameEmpty = string.IsNullOrEmpty(providerName);
                 bool providerNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(providerName);
 
-                bool driveNameEmpty = String.IsNullOrEmpty(driveName);
+                bool driveNameEmpty = string.IsNullOrEmpty(driveName);
                 bool driveNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(driveName);
 
@@ -1400,7 +1400,7 @@ namespace Microsoft.PowerShell.Commands
                 // exist.
                 if (!driveNameEmpty && !driveNameContainsWildcardCharacters)
                 {
-                    if (String.IsNullOrEmpty(scope))
+                    if (string.IsNullOrEmpty(scope))
                     {
                         SessionState.Drive.Get(driveName);
                     }
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (base.SuppressWildcardExpansion)
                     {
-                        if (String.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
                             addDrive = true;
                     }
                     else
@@ -1500,7 +1500,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal name parameter to the command
+        /// Gets or sets the literal name parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = LiteralNameParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => true;
@@ -1594,7 +1594,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (PSDriveInfo drive in GetMatchingDrives(driveName, PSProvider, Scope))
                     {
                         string resource =
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 resourceTemplate,
                                 drive.Name,
@@ -1682,7 +1682,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal name parameter to the command
+        /// Gets or sets the literal name parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = LiteralNameParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -1859,7 +1859,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -1875,7 +1875,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -1885,7 +1885,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -1895,7 +1895,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -1905,7 +1905,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -2024,7 +2024,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the item to create
+        /// Gets or sets the name of the item to create.
         /// </summary>
         [Parameter(ParameterSetName = NameParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
@@ -2032,21 +2032,21 @@ namespace Microsoft.PowerShell.Commands
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the type of the item to create
+        /// Gets or sets the type of the item to create.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
         public string ItemType { get; set; }
 
         /// <summary>
-        /// Gets or sets the content of the item to create
+        /// Gets or sets the content of the item to create.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("Target")]
         public object Value { get; set; }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -2079,7 +2079,7 @@ namespace Microsoft.PowerShell.Commands
             if (Path != null && Path.Length > 0)
             {
                 // Path is only globbed if Name is specified.
-                if (String.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                     return InvokeProvider.Item.NewItemDynamicParameters(WildcardPattern.Escape(Path[0]), ItemType, Value, context);
                 else
                     return InvokeProvider.Item.NewItemDynamicParameters(Path[0], ItemType, Value, context);
@@ -2089,7 +2089,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(Path);
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path == null || Path.Length == 0)
             {
-                Path = new string[] { String.Empty };
+                Path = new string[] { string.Empty };
             }
 
             foreach (string path in Path)
@@ -2179,7 +2179,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -2195,13 +2195,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the value of the item to be set
+        /// Gets or sets the value of the item to be set.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public object Value { get; set; }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -2232,7 +2232,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -2242,7 +2242,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -2252,7 +2252,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -2282,7 +2282,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -2371,7 +2371,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -2382,7 +2382,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -2398,7 +2398,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -2408,7 +2408,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -2418,7 +2418,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -2428,7 +2428,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the recurse property
+        /// Gets or sets the recurse property.
         /// </summary>
         [Parameter]
         public SwitchParameter Recurse
@@ -2438,7 +2438,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -2477,7 +2477,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -2486,7 +2486,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command data
 
         /// <summary>
-        /// The path used when doing a delete
+        /// The path used when doing a delete.
         /// </summary>
         private string[] _paths;
 
@@ -2799,7 +2799,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -2810,7 +2810,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -2826,13 +2826,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the destination property
+        /// Gets or sets the destination property.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         public string Destination { get; set; } = ".";
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -2851,7 +2851,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -2861,7 +2861,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -2871,7 +2871,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -2913,7 +2913,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -2977,7 +2977,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Moves the specified item to the specified destination
+        /// Moves the specified item to the specified destination.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -3163,7 +3163,7 @@ namespace Microsoft.PowerShell.Commands
     #region RenameItemCommand
 
     /// <summary>
-    /// Renames a specified item to a new name using the namespace providers
+    /// Renames a specified item to a new name using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = ByPathParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113382")]
@@ -3175,7 +3175,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ByLiteralPathParameterSet = "ByLiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ByPathParameterSet)]
         public string Path
@@ -3185,7 +3185,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path property
+        /// Gets or sets the literal path property.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ByLiteralPathParameterSet)]
         [Alias("PSPath", "LP")]
@@ -3200,13 +3200,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the newName property
+        /// Gets or sets the newName property.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string NewName { get; set; }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -3252,7 +3252,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(new string[] { _path });
@@ -3316,7 +3316,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Moves the specified item to the specified destination
+        /// Moves the specified item to the specified destination.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -3504,7 +3504,7 @@ namespace Microsoft.PowerShell.Commands
     #region CopyItemCommand
 
     /// <summary>
-    /// Copies a specified item to a new location using the namespace providers
+    /// Copies a specified item to a new location using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113292")]
@@ -3516,7 +3516,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -3527,7 +3527,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -3543,13 +3543,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the destination property
+        /// Gets or sets the destination property.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         public string Destination { get; set; }
 
         /// <summary>
-        /// Gets or sets the container property
+        /// Gets or sets the container property.
         /// </summary>
         [Parameter]
         public SwitchParameter Container
@@ -3563,7 +3563,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -3582,7 +3582,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -3592,7 +3592,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -3602,7 +3602,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -3612,7 +3612,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the recurse property
+        /// Gets or sets the recurse property.
         /// </summary>
         [Parameter]
         public SwitchParameter Recurse
@@ -3665,7 +3665,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -3702,7 +3702,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Copies the specified item(s) to the specified destination
+        /// Copies the specified item(s) to the specified destination.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -3763,7 +3763,7 @@ namespace Microsoft.PowerShell.Commands
     #region ClearItemCommand
 
     /// <summary>
-    /// Clears an item at the specified location
+    /// Clears an item at the specified location.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113283")]
@@ -3775,7 +3775,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -3786,7 +3786,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -3802,7 +3802,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -3821,7 +3821,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -3831,7 +3831,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -3841,7 +3841,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -3871,7 +3871,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -3890,7 +3890,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Clears the specified item
+        /// Clears the specified item.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -3952,7 +3952,7 @@ namespace Microsoft.PowerShell.Commands
     #region InvokeItemCommand
 
     /// <summary>
-    /// Invokes an item at the specified location
+    /// Invokes an item at the specified location.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
@@ -3964,7 +3964,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
-        /// Gets or sets the path property
+        /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -3975,7 +3975,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -3991,7 +3991,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -4001,7 +4001,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -4011,7 +4011,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -4041,7 +4041,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
@@ -4060,7 +4060,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Invokes the specified item
+        /// Invokes the specified item.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4120,7 +4120,7 @@ namespace Microsoft.PowerShell.Commands
     #region GetProviderCommand
 
     /// <summary>
-    /// Gets a core command provider by name
+    /// Gets a core command provider by name.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113329")]
     [OutputType(typeof(ProviderInfo))]
