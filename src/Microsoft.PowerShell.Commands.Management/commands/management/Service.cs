@@ -1901,14 +1901,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if(!string.IsNullOrEmpty(securityDescriptor))
                     {
-                        bool executionStatus = NativeMethods.SetServiceObjectSecurity(
+                        bool status = NativeMethods.SetServiceObjectSecurity(
                             hService,
                             psecurityDescriptor,
                             IntPtr.Zero
                             );
                     }
 
-                    if (!executionStatus)
+                    if (!status)
                     {
                         int lastError = Marshal.GetLastWin32Error();
                         Win32Exception exception = new Win32Exception(lastError);
