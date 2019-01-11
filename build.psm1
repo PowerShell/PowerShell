@@ -1415,7 +1415,7 @@ function Start-PSxUnit {
             }
         }
 
-        dotnet build --configuration $Options.configuration 
+        dotnet build --configuration $Options.configuration
 
         if (Test-Path $ParallelTestResultsFile) {
             Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
@@ -1609,7 +1609,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
                 # Build tools
                 $Deps += "cmake"
