@@ -23,7 +23,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A relatively useless function." }
         It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
         It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should -BeExactly "This function is mostly harmless." }
-        It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should -BeExactly "http://blogs.msdn.com/powershell" }
+        It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should -BeExactly "https://blogs.msdn.com/powershell" }
         It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should -BeExactly "other commands" }
         It '$x.examples.example.code' { $x.examples.example.code | Should -BeExactly "If you need an example, you're hopeless." }
         It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should -BeExactly "Anything you like." }
@@ -49,7 +49,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #
         # .LINK
         #
-        #    http://blogs.msdn.com/powershell
+        #    https://blogs.msdn.com/powershell
         #
         # .LINK
         #
@@ -80,7 +80,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #    Useless
         #
         function helpFunc1 {}
-        
+
         Set-Item function:dynamicHelpFunc1 -Value {
             # .SYNOPSIS
             #
@@ -98,7 +98,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
             #
             # .LINK
             #
-            #    http://blogs.msdn.com/powershell
+            #    https://blogs.msdn.com/powershell
             #
             # .LINK
             #
@@ -128,7 +128,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
             #
             #    Useless
             #
-            
+
             process { }
         }
     }
