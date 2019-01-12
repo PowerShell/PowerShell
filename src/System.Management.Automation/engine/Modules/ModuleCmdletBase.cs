@@ -2208,15 +2208,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            string fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellNgenAssemblyExtension);
+                            string fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellNgenAssemblyExtension, out bool pathIsResolved);
+                            if (!pathIsResolved)
+                            {
+                                fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension);
+                            }
+
                             string loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
-                            WriteVerbose(loadMessage);
-                            iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
-                            fixedUpAssemblyPathList.Add(fileName);
-
-                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension);
-
-                            loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
                             WriteVerbose(loadMessage);
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
                             fixedUpAssemblyPathList.Add(fileName);
@@ -4562,12 +4560,30 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
+        internal string FixupFileName(string moduleBase, string name, string extension)
+        {
+            return FixupFileName(moduleBase, name, extension, out _);
+        }
+
+        /// <summary>
+        /// A utility routine to fix up a file name so it's rooted and has an extension.
+        /// </summary>
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="name">The file name to resolve.</param>
         /// <param name="extension">The extension to use in case the given name has no extension.</param>
+        /// <param name="pathIsResolved">Indicate if the returned path is fully resolved.</param>
         /// <returns></returns>
-        internal string FixupFileName(string moduleBase, string name, string extension)
+        internal string FixupFileName(string moduleBase, string name, string extension, out bool pathIsResolved)
         {
+            pathIsResolved = false;
+            string ext = Path.GetExtension(name);
+
+            if (string.IsNullOrEmpty(ext) && !string.IsNullOrEmpty(extension))
+            {
+                name += extension;
+                ext = extension;
+            }
+
             // Try to get the resolved fully qualified path to the file.
             // Note that, the 'IsRooted' method also returns true for relative paths, in which case we need to check for 'combinedPath' as well.
             //  * For example, the 'Microsoft.WSMan.Management.psd1' in Windows PowerShell defines 'FormatsToProcess="..\..\WSMan.format.ps1xml"'.
@@ -4578,33 +4594,28 @@ namespace Microsoft.PowerShell.Commands
             // The 'Microsoft.WSMan.Management' module in PowerShell Core was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, name);
-            string result = IsRooted(name)
+            string resolvedPath = IsRooted(name)
                 ? ResolveRootedFilePath(name, Context) ?? ResolveRootedFilePath(combinedPath, Context)
                 : ResolveRootedFilePath(combinedPath, Context);
 
-            // If we successfully resolved the path, then just return it.
-            if (result != null)
+            // Return the path if successfully resolved.
+            if (resolvedPath != null)
             {
-                return result;
+                pathIsResolved = true;
+                return resolvedPath;
             }
 
-            result = combinedPath;
-            string ext = Path.GetExtension(name);
-            if (string.IsNullOrEmpty(ext))
-            {
-                result += extension;
-            }
+            // Path resolution failed, use the combined path as default.
+            string result = combinedPath;
 
-            // For dlls, we cannot get the path from the provider.
-            // We need to load the assembly and then get the path.
-            // If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
-            // If the dll is not loaded, we load it from the resolved path.
-            // We attempt to load it from the resolved path before we try to look up in GAC on Windows.
+            // For an assembly file, the intention could be to load the assembly from TPAs or GAC (on Windows).
+            // So let's try loading the assembly using the name only, and use the assembly location if that succeeds.
             if (!string.IsNullOrEmpty(ext) && ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
             {
-                Assembly assembly = ExecutionContext.LoadAssembly(name, result, out _);
+                Assembly assembly = ExecutionContext.LoadAssembly(name, null, out _);
                 if (assembly != null)
                 {
+                    pathIsResolved = true;
                     result = assembly.Location;
                 }
             }
