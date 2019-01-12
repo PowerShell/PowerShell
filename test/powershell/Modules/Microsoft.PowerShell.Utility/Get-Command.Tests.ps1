@@ -15,7 +15,7 @@ Describe "Get-Command CI tests" -Tag Feature {
                 $ping = "PING.EXE"
             }
 
-            $cmds = Get-Command pin -UseFuzzyMatch
+            $cmds = Get-Command pinh -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
             $cmds.Name | Should -Contain $ping
         }
