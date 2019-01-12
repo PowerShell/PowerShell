@@ -1909,27 +1909,6 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
-#if !CORECLR // CLR version is not applicable to CoreCLR
-            else if (requestedClrVersion != null)
-            {
-                Version currentClrVersion = Environment.Version;
-                if (currentClrVersion < requestedClrVersion)
-                {
-                    containedErrors = true;
-                    if (writingErrors)
-                    {
-                        message = StringUtil.Format(Modules.ModuleManifestInsufficientCLRVersion, currentClrVersion,
-                            moduleManifestPath, requestedClrVersion);
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-                        ErrorRecord er = new ErrorRecord(ioe, "Modules_InsufficientCLRVersion",
-                            ErrorCategory.ResourceUnavailable, moduleManifestPath);
-                        WriteError(er);
-                    }
-
-                    if (bailOnFirstError) return null;
-                }
-            }
-#endif
 
             // Test the required .NET Framework version
             Version requestedDotNetFrameworkVersion;
@@ -1940,35 +1919,6 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
-#if !CORECLR // .NET Framework Version is not applicable to CoreCLR
-            else if (requestedDotNetFrameworkVersion != null)
-            {
-                bool higherThanKnownHighestVersion = false;
-                if (
-                    !Utils.IsNetFrameworkVersionSupported(requestedDotNetFrameworkVersion,
-                        out higherThanKnownHighestVersion))
-                {
-                    containedErrors = true;
-                    if (writingErrors)
-                    {
-                        message = StringUtil.Format(Modules.InvalidDotNetFrameworkVersion,
-                            moduleManifestPath, requestedDotNetFrameworkVersion);
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-                        ErrorRecord er = new ErrorRecord(ioe, "Modules_InsufficientDotNetFrameworkVersion",
-                            ErrorCategory.ResourceUnavailable, moduleManifestPath);
-                        WriteError(er);
-                    }
-
-                    if (bailOnFirstError) return null;
-                }
-                else if (higherThanKnownHighestVersion)
-                {
-                    string cannotDetectNetFrameworkVersionMessage =
-                        StringUtil.Format(Modules.CannotDetectNetFrameworkVersion, requestedDotNetFrameworkVersion);
-                    WriteVerbose(cannotDetectNetFrameworkVersionMessage);
-                }
-            }
-#endif
 
             // HelpInfo URI
             string helpInfoUri = null;
@@ -4614,33 +4564,32 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="name">The file name to resolve.</param>
-        /// <param name="extension">The extension to use.</param>
+        /// <param name="extension">The extension to use in case the given name has no extension.</param>
         /// <returns></returns>
         internal string FixupFileName(string moduleBase, string name, string extension)
         {
-            // First check for full-qualified paths - either absolute or relative
-            string resolvedName;
-            if (!IsRooted(name))
+            // Try to get the resolved fully qualified path to the file.
+            // Note that, the 'IsRooted' method also returns true for relative paths, in which case we need to check for 'combinedPath' as well.
+            //  * For example, the 'Microsoft.WSMan.Management.psd1' in Windows PowerShell defines 'FormatsToProcess="..\..\WSMan.format.ps1xml"'.
+            //  * For such a module, we will have the following input when reaching this method:
+            //     - moduleBase = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.WSMan.Management'
+            //     - name = '..\..\WSMan.format.ps1xml'
+            //    Check for combinedPath in this case will get us the normalized rooted path 'C:\Windows\System32\WindowsPowerShell\v1.0\WSMan.format.ps1xml'.
+            // The 'Microsoft.WSMan.Management' module in PowerShell Core was updated to not use the relative path for 'FormatsToProcess' entry,
+            // but it's safer to keep the original behavior to avoid unexpected breaking changes.
+            string combinedPath = Path.Combine(moduleBase, name);
+            string result = IsRooted(name)
+                ? ResolveRootedFilePath(name, Context) ?? ResolveRootedFilePath(combinedPath, Context)
+                : ResolveRootedFilePath(combinedPath, Context);
+
+            // If we successfully resolved the path, then just return it.
+            if (result != null)
             {
-                // The manifest file should only be related to moduleBase path.
-                resolvedName = ResolveRootedFilePath(Path.Combine(moduleBase, name), this.Context);
-            }
-            else
-            {
-                resolvedName = ResolveRootedFilePath(name, this.Context);
+                return result;
             }
 
-            if (string.IsNullOrEmpty(resolvedName))
-            {
-                resolvedName = Path.Combine(moduleBase, name);
-            }
-            // Again resolve the file path
-            // This is so that any relative path references are expanded to give the absolute path
-            // C:\Windows\System32\WindowsPowerShell\V1.0\Modules\Microsoft.PowerShell.WSMAN\..\..\WSMan.format.ps1xml is expanded to
-            // C:\Windows\System32\WindowsPowerShell\V1.0\WSMan.format.ps1xml
-            string resolvedName2 = ResolveRootedFilePath(resolvedName, this.Context);
+            result = combinedPath;
             string ext = Path.GetExtension(name);
-            string result = !string.IsNullOrEmpty(resolvedName2) ? resolvedName2 : resolvedName;
             if (string.IsNullOrEmpty(ext))
             {
                 result += extension;
@@ -4653,8 +4602,7 @@ namespace Microsoft.PowerShell.Commands
             // We attempt to load it from the resolved path before we try to look up in GAC on Windows.
             if (!string.IsNullOrEmpty(ext) && ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
             {
-                Exception ignored = null;
-                Assembly assembly = ExecutionContext.LoadAssembly(name, result, out ignored);
+                Assembly assembly = ExecutionContext.LoadAssembly(name, result, out _);
                 if (assembly != null)
                 {
                     result = assembly.Location;
