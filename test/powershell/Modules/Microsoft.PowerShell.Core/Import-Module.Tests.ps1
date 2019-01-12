@@ -189,6 +189,20 @@ namespace ModuleCmdlets
         # Copy format, type and psd1
         Copy-Item "$moduleBasePath/PSScheduledJob*.*" -Destination $destPath -Force
 
+        # The 'PSScheduledJob.types.ps1xml' has a reference to a assembly-name-qualified type name:
+        # 'Microsoft.PowerShell.ScheduledJob.JobTriggerToCimInstanceConverter, Microsoft.PowerShell.ScheduledJob, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+        # type/format files are processed before 'RootModule' and 'NestedModules', in this case, powershell tries to resolve this type before
+        # 'Microsoft.PowerShell.ScheduledJob.dll' is loaded via processing the 'RootModule', and would load the assembly from the GAC.
+        #
+        # For any module, types.ps1xml should avoid referring to a type that only exists in the assembly specified in 'RootModule' or 'NestedModules',
+        # because that would either make it fail to load the types.ps1xml file, or result in unexpected behavior such as having the assembly loaded from GAC.
+        # So here, we add the assembly name to 'RequiredAssemblies'. 'RequiredAssemblies' is processed before type/format files, and that is what we should
+        # do if types.ps1xml file refers to types from the module assemblies.
+        $manifestPath = Join-Path $destPath "PSScheduledJob.psd1"
+        $manifestHash = Import-PowerShellDataFile $manifestPath
+        $manifestHash["RequiredAssemblies"] = 'Microsoft.PowerShell.ScheduledJob.dll'
+        New-ModuleManifest -Path $manifestPath @manifestHash
+
         # Copy assembly to temp module folder"
         Copy-Item $gacAssemblyPath -Destination $destPath -Force
 
@@ -196,7 +210,7 @@ namespace ModuleCmdlets
         $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
         $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
     }
- }
+}
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
     BeforeAll {
