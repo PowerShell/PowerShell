@@ -1569,7 +1569,7 @@ namespace System.Management.Automation
                 // Remove the entry is the list is now empty
                 if (cmdlets.Count == 0)
                 {
-                    //Remove the key
+                    // Remove the key
                     _cmdlets.Remove(name);
                     return;
                 }

@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// The current output context, as determined by the
-        /// sequence of formatting messages in the object stream
+        /// sequence of formatting messages in the object stream.
         /// </summary>
         internal abstract class OutputContext
         {
@@ -48,16 +48,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// the outer context: the context object pushed onto the
+            /// The outer context: the context object pushed onto the
             /// stack before the current one. For the first object pushed onto
-            /// the stack it will be null
+            /// the stack it will be null.
             /// </summary>
             internal OutputContext ParentContext { get; }
         }
 
         /// <summary>
-        /// process an object from an input stream. It manages the context stack and
-        /// calls back on the specified event delegates
+        /// Process an object from an input stream. It manages the context stack and
+        /// calls back on the specified event delegates.
         /// </summary>
         /// <param name="o">Object to process.</param>
         internal void Process(object o)
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else if (formatDataIsGroupStartData)
                     {
-                        //GroupStartData gsd = (GroupStartData) formatData;
+                        // GroupStartData gsd = (GroupStartData) formatData;
                         // notify for Gs
                         this.gs(oc);
                     }
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// access the active context (top of the stack). It can be null.
+        /// Access the active context (top of the stack). It can be null.
         /// </summary>
         internal OutputContext ActiveOutputContext
         {
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        ///  internal stack to manage context
+        /// Internal stack to manage context.
         /// </summary>
         private Stack<OutputContext> _stack = new Stack<OutputContext>();
     }

@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines generic utilities and helper methods for PowerShell
+    /// Defines generic utilities and helper methods for PowerShell.
     /// </summary>
     internal static class PathUtils
     {
@@ -228,8 +228,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
@@ -240,8 +240,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>

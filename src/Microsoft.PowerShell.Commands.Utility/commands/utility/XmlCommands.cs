@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Mandatory file name to read from.
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get
             {
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(XmlDocument), typeof(String))]
+    [OutputType(typeof(XmlDocument), typeof(string))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -449,13 +449,13 @@ namespace Microsoft.PowerShell.Commands
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new StreamReader(_ms);
                 string data = read.ReadToEnd();
                 WriteObject(data);
 
-                //Cleanup
+                // Cleanup
                 CleanUp();
             }
             else
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //Cleaning up
+            // Cleaning up
             CleanUp();
         }
 
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream
+        ///Cleaning up the MemoryStream.
         /// </summary>
         private void CleanUp()
         {
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current user directory.
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get { return Path; }
 
@@ -915,9 +915,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessXmlFile(string filePath)
         {
-            //Cannot use ImportXMLHelper because it will throw terminating error which will
-            //not be inline with Select-String
-            //So doing self processing of the file.
+            // Cannot use ImportXMLHelper because it will throw terminating error which will
+            // not be inline with Select-String
+            // So doing self processing of the file.
             try
             {
                 XmlDocument xmlDocument = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
                 (ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
                 (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
             {
-                //If any file not resolved, execution stops. this is to make consistent with select-string.
+                // If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
                 foreach (string fpath in Path)
                 {
@@ -1041,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                         Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out provider);
                         if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                         {
-                            //Cannot open File error
+                            // Cannot open File error
                             string message = StringUtil.Format(UtilityCommonStrings.FileOpenError, provider.FullName);
                             InvalidOperationException e = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class UnblockFileCommand : PSCmdlet
     {
         /// <summary>
-        /// The path of the file to unblock
+        /// The path of the file to unblock.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The literal path of the file to unblock
+        /// The literal path of the file to unblock.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]

@@ -43,7 +43,7 @@ namespace System.Management.Automation
         #region constructor
 
         /// <summary>
-        /// Creates an instance of authorization manager using specified shellID
+        /// Creates an instance of authorization manager using specified shellID.
         /// </summary>
         /// <param name="shellId">
         /// </param>
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         #region methods to use internally
 
         /// <summary>
-        /// determine if we should run the specified file
+        /// Determine if we should run the specified file.
         /// </summary>
         /// <param name="commandInfo">Info on entity to be run.</param>
         /// <param name="origin">The dispatch origin of a command.</param>

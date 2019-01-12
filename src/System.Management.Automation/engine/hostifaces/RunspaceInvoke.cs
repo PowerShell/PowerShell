@@ -9,14 +9,14 @@ namespace System.Management.Automation
     using System.Management.Automation.Runspaces;
 
     /// <summary>
-    /// Defines a class which allows simple execution of commands from CLR languages
+    /// Defines a class which allows simple execution of commands from CLR languages.
     /// </summary>
     public class RunspaceInvoke : IDisposable
     {
         #region constructors
 
         /// <summary>
-        /// Runspace on which commands are invoked
+        /// Runspace on which commands are invoked.
         /// </summary>
         private Runspace _runspace;
 
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         #region invoke
 
         /// <summary>
-        /// Invoke the specified script
+        /// Invoke the specified script.
         /// </summary>
         /// <param name="script">Msh script to invoke.</param>
         /// <returns>Output of invocation.</returns>
@@ -69,7 +69,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invoke the specified script and passes specified input to the script
+        /// Invoke the specified script and passes specified input to the script.
         /// </summary>
         /// <param name="script">Msh script to invoke.</param>
         /// <param name="input">Input to script.</param>
@@ -127,12 +127,12 @@ namespace System.Management.Automation
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// Dispose underlying Runspace
+        /// Dispose underlying Runspace.
         /// </summary>
         public void Dispose()
         {

@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     public class CompleteTransactionCommand : PSCmdlet
     {
         /// <summary>
-        /// Commits the current transaction
+        /// Commits the current transaction.
         /// </summary>
         protected override void EndProcessing()
         {

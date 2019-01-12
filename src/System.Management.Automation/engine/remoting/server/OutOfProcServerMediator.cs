@@ -35,7 +35,7 @@ namespace System.Management.Automation.Remoting.Server
 #endif
 
         /// <summary>
-        /// Count of commands in progress
+        /// Count of commands in progress.
         /// </summary>
         protected int _inProgressCommandsCount = 0;
 

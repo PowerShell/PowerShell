@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class VariableProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Variable";
 
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the variables drive
+        /// Initializes the variables drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the variables drive.
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a variable from session state
+        /// Gets a variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to retrieve.
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets the variable of the specified name to the specified value
+        /// Sets the variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to set.
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a flattened view of the variables in session state
+        /// Gets a flattened view of the variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the variables in

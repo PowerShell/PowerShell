@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Is internal so it can be set by the engine code...
         /// This is used to specify whether this command was imported or not
-        /// If noClobber is specified during Import-Module, it is set to false
+        /// If noClobber is specified during Import-Module, it is set to false.
         /// </summary>
         internal bool _isImported = true;
     }
@@ -273,10 +273,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public bool IsRemove { get; }
 
-        //So that we can specify the type information on the fly,
-        //without using Types.ps1xml file
-        //public SessionStateTypeEntry(string name, xmlreader definition);
-        //public string Definition { get; }
+        // So that we can specify the type information on the fly,
+        // without using Types.ps1xml file
+        // public SessionStateTypeEntry(string name, xmlreader definition);
+        // public string Definition { get; }
     }
 
     /// <summary>
@@ -372,10 +372,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public ExtendedTypeDefinition FormatData { get; }
 
-        //So that we can specify the format information on the fly,
-        //without using Format.ps1xml file
-        //public SessionStateFormatEntry(string name, xmlreader definition);
-        //public string Definition { get; }
+        // So that we can specify the format information on the fly,
+        // without using Format.ps1xml file
+        // public SessionStateFormatEntry(string name, xmlreader definition);
+        // public string Definition { get; }
     }
 
     /// <summary>
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateAliasEntry : SessionStateCommandEntry
     {
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -1262,7 +1262,7 @@ namespace System.Management.Automation.Runspaces
 
         private Collection<T> _internalCollection;
 
-        //object to use for locking
+        // object to use for locking
         private object _syncObject = new object();
     }
 
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         /// <summary>
-        /// ctor for Custom-Shell - Do we need this?
+        /// Ctor for Custom-Shell - Do we need this?
         /// </summary>
         protected InitialSessionState()
         {
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState iss = new InitialSessionState();
 
-            //TODO: the following code is probably needed for the hosted constrained runspace
+            // TODO: the following code is probably needed for the hosted constrained runspace
             // There are too many things that depend on the built-in variables. At the same time,
             // these variables can't be public or they become a security issue.
             // This change still needs to be spec-reviewed before turning it on. It also seems to
@@ -1537,7 +1537,7 @@ namespace System.Management.Automation.Runspaces
                     throw pse;
                 }
 #if DEBUG
-                //NOTE:
+                // NOTE:
                 // This code is for testing a module-based shell. It is only available when the shell is complied
                 // in debug mode and is not intended to be a feature.
                 // July 31 2008 - brucepay
@@ -1790,7 +1790,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Specifies the execution policy to be used for this session state instance
+        /// Specifies the execution policy to be used for this session state instance.
         /// </summary>
         public Microsoft.PowerShell.ExecutionPolicy ExecutionPolicy
         {
@@ -3042,7 +3042,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// if <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
+        /// If <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
         private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
@@ -3794,7 +3794,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", psSnapInInfo.Name);
                     warning = null;
-                    return null; //BUGBUG - should add something to the warnings list here instead of quitting...
+                    return null; // BUGBUG - should add something to the warnings list here instead of quitting...
                 }
 
                 s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0} succeeded", psSnapInInfo.Name);
@@ -4065,13 +4065,13 @@ End
         ";
 
         /// <summary>
-        /// This is the default function to use for clear-host. On Windows it rewrites the
-        /// host, and on Linux, it delegates to the native binary, 'clear'.
+        /// This is the default function to use for clear-host.
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
             if (Platform.IsWindows)
             {
+                // use $RawUI so this works over remoting where there isn't a physical console
                 return @"
 $RawUI = $Host.UI.RawUI
 $RawUI.CursorPosition = @{X=0;Y=0}
@@ -4169,12 +4169,13 @@ param(
 
     $help = Get-Help @PSBoundParameters
 
-    # If a list of help is returned, don't pipe to more
-    if (($help | Select-Object -First 1).PSTypeNames -Contains 'HelpInfoShort')
+    # If a list of help is returned or AliasHelpInfo (because it is small), don't pipe to more
+    $psTypeNames = ($help | Select-Object -First 1).PSTypeNames
+    if ($psTypeNames -Contains 'HelpInfoShort' -Or $psTypeNames -Contains 'AliasHelpInfo')
     {
         $help
     }
-    else
+    elseif ($help -ne $null)
     {
         # Respect PAGER, use more on Windows, and use less on Linux
         $moreCommand,$moreArgs = $env:PAGER -split '\s+'
@@ -4389,7 +4390,7 @@ end {
                 RunspaceInit.FormatEnumerationLimitDescription
                 ),
 
-             //variable for PSEmailServer
+             // variable for PSEmailServer
             new SessionStateVariableEntry(
                 SpecialVariables.PSEmailServer,
                 string.Empty,
@@ -4536,6 +4537,7 @@ end {
 #if !UNIX
                     // ac is a native command on macOS
                     new SessionStateAliasEntry("ac", "Add-Content", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("clear", "Clear-Host"),
                     new SessionStateAliasEntry("compare", "Compare-Object", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("cpp", "Copy-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("diff", "Compare-Object", string.Empty, ReadOnly),
@@ -4568,8 +4570,6 @@ end {
                     new SessionStateAliasEntry("kill", "Stop-Process"),
                     new SessionStateAliasEntry("pwd", "Get-Location"),
                     new SessionStateAliasEntry("type", "Get-Content"),
-                    // Native commands we keep because the functions act correctly on Linux
-                    new SessionStateAliasEntry("clear", "Clear-Host"),
 // #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", string.Empty, ReadOnly),

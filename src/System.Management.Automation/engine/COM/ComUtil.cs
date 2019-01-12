@@ -39,12 +39,12 @@ namespace System.Management.Automation
 
             if (!isPropertyPut)
             {
-                //First get the string for return type.
+                // First get the string for return type.
                 string retstring = GetStringFromTypeDesc(typeinfo, funcdesc.elemdescFunc.tdesc);
                 builder.Append(retstring + " ");
             }
 
-            //Append the function name
+            // Append the function name
             builder.Append(name);
             builder.Append(" (");
 
@@ -60,8 +60,8 @@ namespace System.Management.Automation
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
 
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
                 if (IntPtr.Size == 4)
                 {
@@ -98,14 +98,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the name of the method or property defined by funcdesc
+        /// Gets the name of the method or property defined by funcdesc.
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
         /// <param name="funcdesc">FuncDesc of property of method.</param>
         /// <returns>Name of the method or property.</returns>
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
-            //Get the method or property name.
+            // Get the method or property name.
             string strName, strDoc, strHelp;
             int id;
             typeinfo.GetDocumentation(funcdesc.memid, out strName, out strDoc, out id, out strHelp);
@@ -113,7 +113,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Gets the name of the custom type defined in the type library
+        /// Gets the name of the custom type defined in the type library.
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
         /// <param name="refptr">Reference to the custom type.</param>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Determine .net type for the given type descriptor
+        /// Determine .net type for the given type descriptor.
         /// </summary>
         /// <param name="typedesc">COM type descriptor to convert.</param>
         /// <returns>Type represented by the typedesc.</returns>
@@ -257,7 +257,7 @@ namespace System.Management.Automation
 #pragma warning restore 618
 
         /// <summary>
-        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation
+        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation.
         /// </summary>
         private static ComMethodInformation GetMethodInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Obtains the parameter information for a given FuncDesc
+        /// Obtains the parameter information for a given FuncDesc.
         /// </summary>
         internal static ParameterInformation[] GetParameterInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
@@ -302,8 +302,8 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
 
                 if (IntPtr.Size == 4)
@@ -319,11 +319,11 @@ namespace System.Management.Automation
 
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
-                //get the type of parameter
+                // get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
                 object defaultvalue = null;
 
-                //check is this parameter is optional.
+                // check is this parameter is optional.
                 if ((ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOPT) != 0)
                 {
                     fOptional = true;

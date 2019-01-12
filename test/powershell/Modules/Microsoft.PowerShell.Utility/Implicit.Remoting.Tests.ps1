@@ -230,7 +230,7 @@ try
 
                 $icmErr = $($icmOut = Invoke-Command $session { foo1 }) 2>&1
                 $proxiedErr = $($proxiedOut = foo1) 2>&1
-                $proxiedOut2 = foo1 2>$null
+                $proxiedOut2 = foo1 2> $null
 
                 $icmOut = "$icmOut"
                 $icmErr = "$icmErr"

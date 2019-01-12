@@ -59,8 +59,8 @@ namespace Microsoft.PowerShell.Commands
                         case '"':
                             if (inQuote)
                             {
-                                //If we are at the end of the string or the end of the segment, create a new value
-                                //Otherwise we have an error
+                                // If we are at the end of the string or the end of the segment, create a new value
+                                // Otherwise we have an error
                                 if (i == csv.Length - 1)
                                 {
                                     result.Add(tempString);

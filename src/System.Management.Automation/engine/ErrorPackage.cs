@@ -107,7 +107,7 @@ namespace System.Management.Automation
         ParserError = 17,
 
         /// <summary>
-        /// Operation not permitted
+        /// Operation not permitted.
         /// </summary>
         PermissionDenied = 18,
 
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         FromStdErr = 24,
 
         /// <summary>
-        /// Used for security exceptions
+        /// Used for security exceptions.
         /// </summary>
         SecurityError = 25,
 
@@ -210,8 +210,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the operation which
-        /// encountered the error
+        /// Text description of the operation which
+        /// encountered the error.
         /// </summary>
         /// <value>text description of the operation</value>
         /// <remarks>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the error
+        /// Text description of the error.
         /// </summary>
         /// <value>text description of the error</value>
         /// <remarks>
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         private bool _reasonIsExceptionType;
 
         /// <summary>
-        /// text description of the target object
+        /// Text description of the target object.
         /// </summary>
         /// <value>text description of the target object</value>
         /// <remarks>
@@ -317,7 +317,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the type of the target object
+        /// Text description of the type of the target object.
         /// </summary>
         /// <value>text description of the type of the target object</value>
         /// <remarks>
@@ -350,7 +350,7 @@ namespace System.Management.Automation
 
         #region Methods
         /// <summary>
-        /// concise text description based on
+        /// Concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
         /// <returns>Concise text description.</returns>
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// concise text description based on
+        /// Concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
         /// <param name="uiCultureInfo">Culture in which to display message.</param>
@@ -499,7 +499,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// additional details about an
+    /// Additional details about an
     /// <see cref="System.Management.Automation.ErrorRecord"/>
     /// </summary>
     /// <remarks>
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
         #region Remoting
 
         /// <summary>
-        /// isSerialized is set to true if this error record is serialized.
+        /// IsSerialized is set to true if this error record is serialized.
         /// </summary>
         private bool _isSerialized = false;
 
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
         private string _serializedFullyQualifiedErrorId = null;
 
         /// <summary>
-        /// Message overridee for CategoryInfo.GetMessage method
+        /// Message overridee for CategoryInfo.GetMessage method.
         /// </summary>
         internal string _serializedErrorCategoryMessageOverride = null;
 
@@ -1147,7 +1147,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("fullyQualifiedErrorId");
             }
 
-            //Mark this error record as serialized
+            // Mark this error record as serialized
             _isSerialized = true;
             _error = exception;
             _target = targetObject;
@@ -1216,7 +1216,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the value for note from mshObject
+        /// Gets the value for note from mshObject.
         /// </summary>
         /// <param name="mshObject">
         /// PSObject from which value is fetched.
@@ -1275,10 +1275,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("serializedErrorRecord");
             }
 
-            //Get Exception
+            // Get Exception
             PSObject serializedException = RemotingDecoder.GetPropertyValue<PSObject>(serializedErrorRecord, "Exception");
 
-            //Get Target object
+            // Get Target object
             object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, "TargetObject");
 
             string exceptionMessage = null;
@@ -1291,27 +1291,27 @@ namespace System.Management.Automation
                 }
             }
 
-            //Get FullyQualifiedErrorId
+            // Get FullyQualifiedErrorId
             string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "FullyQualifiedErrorId") ??
                                            "fullyQualifiedErrorId";
 
-            //Get ErrorCategory...
+            // Get ErrorCategory...
             ErrorCategory errorCategory = RemotingDecoder.GetPropertyValue<ErrorCategory>(serializedErrorRecord, "errorCategory_Category");
 
-            //Get Various ErrorCategory fileds
+            // Get Various ErrorCategory fileds
             string errorCategory_Activity = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Activity");
             string errorCategory_Reason = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Reason");
             string errorCategory_TargetName = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetName");
             string errorCategory_TargetType = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetType");
             string errorCategory_Message = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Message");
 
-            //Get InvocationInfo (optional property)
+            // Get InvocationInfo (optional property)
             PSObject invocationInfo = Microsoft.PowerShell.DeserializingTypeConverter.GetPropertyValue<PSObject>(
                 serializedErrorRecord,
                 "InvocationInfo",
                 Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
-            //Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
+            // Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
             string errorDetails_Message =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_Message") as string;
 
@@ -1323,7 +1323,7 @@ namespace System.Management.Automation
 
             RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
-            //Create ErrorRecord
+            // Create ErrorRecord
             PopulateProperties(
                 re,
                 targetObject,
@@ -1472,7 +1472,7 @@ namespace System.Management.Automation
         private ErrorCategoryInfo _categoryInfo;
 
         /// <summary>
-        /// String which uniquely identifies this error condition
+        /// String which uniquely identifies this error condition.
         /// </summary>
         /// <value>never null</value>
         /// <remarks>
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation
         private ReadOnlyCollection<int> _pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
 
         /// <summary>
-        /// Whether to serialize the InvocationInfo during remote calls
+        /// Whether to serialize the InvocationInfo during remote calls.
         /// </summary>
         internal bool SerializeExtendedInfo
         {

@@ -18,7 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteProgress : CimBaseAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="activity">
         ///  Activity identifier of the given activity
@@ -90,32 +90,32 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// Activity of the given activity
+        /// Activity of the given activity.
         /// </summary>
         private string activity;
 
         /// <summary>
-        /// Activity identifier of the given activity
+        /// Activity identifier of the given activity.
         /// </summary>
         private int activityID;
 
         /// <summary>
-        /// current operation text of the given activity
+        /// Current operation text of the given activity.
         /// </summary>
         private string currentOperation;
 
         /// <summary>
-        /// status description of the given activity
+        /// Status description of the given activity.
         /// </summary>
         private string statusDescription;
 
         /// <summary>
-        /// percentage completed of the given activity
+        /// Percentage completed of the given activity.
         /// </summary>
         private UInt32 percentageCompleted;
 
         /// <summary>
-        /// how many seconds remained for the given activity
+        /// How many seconds remained for the given activity.
         /// </summary>
         private UInt32 secondsRemaining;
 
@@ -150,5 +150,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

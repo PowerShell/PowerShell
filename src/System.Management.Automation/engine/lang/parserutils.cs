@@ -170,7 +170,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Flow control ContinueException
+    /// Flow control ContinueException.
     /// </summary>
     public sealed class ContinueException : LoopFlowException
     {
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Argument
+        /// Argument.
         /// </summary>
         public object Argument { get; internal set; }
 
@@ -427,7 +427,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// private method used to call the op_* operations for the math operators
+        /// Private method used to call the op_* operations for the math operators.
         /// </summary>
         /// <param name="lval">Left operand.</param>
         /// <param name="rval">Right operand.</param>
@@ -783,7 +783,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implementation of the PowerShell binary -join operator
+        /// Implementation of the PowerShell binary -join operator.
         /// </summary>
         /// <param name="context">The execution context to use.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
@@ -888,7 +888,7 @@ namespace System.Management.Automation
         private static object AsChar(object obj)
         {
             if (obj is char) return obj;
-            if (obj is string str && str.Length == 1 && !Char.IsDigit(str, 0)) return str[0];
+            if (obj is string str && str.Length == 1 && !char.IsDigit(str, 0)) return str[0];
             return null;
         }
 
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implementation of the PowerShell -like operator
+        /// Implementation of the PowerShell -like operator.
         /// </summary>
         /// <param name="context">The execution context to use.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implementation of the PowerShell -match operator
+        /// Implementation of the PowerShell -match operator.
         /// </summary>
         /// <param name="context">The execution context to use.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A routine used to advance an enumerator and catch errors that might occur
-        /// performing the operation
+        /// performing the operation.
         /// </summary>
         /// <param name="context">The execution context used to see if the pipeline is stopping.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Retrieves the obj's type full name
+        /// Retrieves the obj's type full name.
         /// </summary>
         /// <param name="obj">The object we want to retrieve the type's full name from.</param>
         /// <returns>The obj's type full name.</returns>
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
     internal static class InterpreterError
     {
         /// <summary>
-        /// Create a new instance of an interpreter exception
+        /// Create a new instance of an interpreter exception.
         /// </summary>
         /// <param name="targetObject">The target object for this exception.</param>
         /// <param name="exceptionType">Type of exception to build.</param>
@@ -1768,7 +1768,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new instance of an interpreter exception
+        /// Create a new instance of an interpreter exception.
         /// </summary>
         /// <param name="targetObject">The object associated with the problem.</param>
         /// <param name="exceptionType">Type of exception to build.</param>
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new instance of an interpreter exception
+        /// Create a new instance of an interpreter exception.
         /// </summary>
         /// <param name="exceptionType">Type of exception to build.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>

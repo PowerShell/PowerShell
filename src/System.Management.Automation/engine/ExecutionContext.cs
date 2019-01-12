@@ -29,14 +29,14 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// The events received by this runspace
+        /// The events received by this runspace.
         /// </summary>
         internal PSLocalEventManager Events { get; private set; }
 
         internal HashSet<string> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// The debugger for the interpreter
+        /// The debugger for the interpreter.
         /// </summary>
         internal ScriptDebugger Debugger
         {
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         internal AppDomain AppDomainForModuleAnalysis { get; set; }
 
         /// <summary>
-        /// Authorization manager for this runspace
+        /// Authorization manager for this runspace.
         /// </summary>
         internal AuthorizationManager AuthorizationManager { get; private set; }
 
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         private string _shellId;
 
         /// <summary>
-        /// Session State with which this instance of engine works
+        /// Session State with which this instance of engine works.
         /// </summary>
         internal SessionStateInternal EngineSessionState { get; set; }
 
@@ -304,7 +304,7 @@ namespace System.Management.Automation
         internal SessionStateInternal TopLevelSessionState { get; private set; }
 
         /// <summary>
-        /// Get the SessionState facade for the internal session state APIs
+        /// Get the SessionState facade for the internal session state APIs.
         /// </summary>
         internal SessionState SessionState
         {
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get/set constraints for this execution environment
+        /// Get/set constraints for this execution environment.
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -375,7 +375,7 @@ namespace System.Management.Automation
         private PSLanguageMode _languageMode = PSLanguageMode.FullLanguage;
 
         /// <summary>
-        ///  True if this runspace has ever used constrained language mode
+        /// True if this runspace has ever used constrained language mode.
         /// </summary>
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 
@@ -481,7 +481,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         internal bool UseFullLanguageModeInDebugger
         {
@@ -497,7 +497,7 @@ namespace System.Management.Automation
             };
 
         /// <summary>
-        /// Is true if the PSScheduledJob module is loaded for this runspace
+        /// Is true if the PSScheduledJob module is loaded for this runspace.
         /// </summary>
         internal bool IsModuleWithJobSourceAdapterLoaded
         {
@@ -520,7 +520,7 @@ namespace System.Management.Automation
         private LocationGlobber _locationGlobber;
 
         /// <summary>
-        /// The assemblies that have been loaded for this runspace
+        /// The assemblies that have been loaded for this runspace.
         /// </summary>
         internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
 
@@ -550,7 +550,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This calls GetVariable(name) and returns the
-        /// value unless it is null in which case it returns the defaultValue provided by the caller
+        /// value unless it is null in which case it returns the defaultValue provided by the caller.
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
@@ -627,7 +627,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Same as GetEnumPreference, but for boolean values
+        /// Same as GetEnumPreference, but for boolean values.
         /// </summary>
         /// <param name="preferenceVariablePath"></param>
         /// <param name="defaultPref"></param>
@@ -685,7 +685,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
             CommandProcessorBase commandProcessor =
                 CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
-            // Reset the command origin for script commands... //BUGBUG - dotting can get around command origin checks???
+            // Reset the command origin for script commands... // BUGBUG - dotting can get around command origin checks???
             if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
             {
                 commandProcessor.Command.CommandOriginInternal = CommandOrigin.Internal;
@@ -713,7 +713,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Interface that should be used for interaction with host
+        /// Interface that should be used for interaction with host.
         /// </summary>
         internal InternalHost EngineHostInterface { get; private set;
 
@@ -732,7 +732,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Interface to the public API for the engine
+        /// Interface to the public API for the engine.
         /// </summary>
         internal EngineIntrinsics EngineIntrinsics
         {
@@ -742,23 +742,23 @@ namespace System.Management.Automation
         private EngineIntrinsics _engineIntrinsics;
 
         /// <summary>
-        /// Log context cache
+        /// Log context cache.
         /// </summary>
         internal LogContextCache LogContextCache { get; } = new LogContextCache();
 
         #region Output pipes
         /// <summary>
-        /// The PipelineWriter provided by the connection object for success output
+        /// The PipelineWriter provided by the connection object for success output.
         /// </summary>
         internal PipelineWriter ExternalSuccessOutput { get; set; }
 
         /// <summary>
-        /// The PipelineWriter provided by the connection object for error output
+        /// The PipelineWriter provided by the connection object for error output.
         /// </summary>
         internal PipelineWriter ExternalErrorOutput { get; set; }
 
         /// <summary>
-        /// The PipelineWriter provided by the connection object for progress output
+        /// The PipelineWriter provided by the connection object for progress output.
         /// </summary>
         internal PipelineWriter ExternalProgressOutput { get; set; }
 
@@ -790,7 +790,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Host uses this to saves context data when entering a nested prompt
+        /// Host uses this to saves context data when entering a nested prompt.
         /// </summary>
         /// <returns></returns>
         internal SavedContextData SaveContextData()
@@ -932,12 +932,12 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// The current connection object
+        /// The current connection object.
         /// </summary>
         private Runspace _currentRunspace;
-        //This should be internal, but it need to be friend of remoting dll.
+        // This should be internal, but it need to be friend of remoting dll.
         /// <summary>
-        /// The current connection object
+        /// The current connection object.
         /// </summary>
         internal Runspace CurrentRunspace
         {
@@ -963,7 +963,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Each pipeline has a stack of pipeline processor. This method pops the
-        /// top item from the stack
+        /// top item from the stack.
         /// </summary>
         internal void PopPipelineProcessor(bool fromSteppablePipeline)
         {
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation
         internal bool QuestionMarkVariableValue { get; set; } = true;
 
         /// <summary>
-        /// Shortcut to get at $error
+        /// Shortcut to get at $error.
         /// </summary>
         /// <value>The current value of $global:error </value>
         internal object DollarErrorVariable
@@ -1451,7 +1451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Report an initialization-time error
+        /// Report an initialization-time error.
         /// </summary>
         /// <param name="error">Error to report.</param>
         internal void ReportEngineStartupError(string error)
@@ -1480,7 +1480,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Report an initialization-time error
+        /// Report an initialization-time error.
         /// </summary>
         /// <param name="e"></param>
         internal void ReportEngineStartupError(Exception e)
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Report an initialization-time error
+        /// Report an initialization-time error.
         /// </summary>
         /// <param name="errorRecord"></param>
         internal void ReportEngineStartupError(ErrorRecord errorRecord)
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an Execution context object for Automation Engine
+        /// Constructs an Execution context object for Automation Engine.
         /// </summary>
         /// <param name="engine">
         /// Engine that hosts this execution context
@@ -1672,22 +1672,22 @@ namespace System.Management.Automation
         None = 0,
 
         /// <summary>
-        /// Engine available
+        /// Engine available.
         /// </summary>
         Available = 1,
 
         /// <summary>
-        /// Engine service is degraded
+        /// Engine service is degraded.
         /// </summary>
         Degraded = 2,
 
         /// <summary>
-        /// Engine is out of service
+        /// Engine is out of service.
         /// </summary>
         OutOfService = 3,
 
         /// <summary>
-        /// Engine is stopped
+        /// Engine is stopped.
         /// </summary>
         Stopped = 4
     };

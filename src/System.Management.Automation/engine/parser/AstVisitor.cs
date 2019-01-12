@@ -315,7 +315,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type
+    /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
     class CheckTypeBuilder : AstVisitor2
     {
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Language
 #endif
 
     /// <summary>
-    /// Searches an AST, using the evaluation function provided by either of the constructors
+    /// Searches an AST, using the evaluation function provided by either of the constructors.
     /// </summary>
     internal class AstSearcher : AstVisitor2
     {
@@ -547,7 +547,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Default implementation of <see cref="ICustomAstVisitor"/> interface
+    /// Default implementation of <see cref="ICustomAstVisitor"/> interface.
     /// </summary>
     public abstract class DefaultCustomAstVisitor : ICustomAstVisitor
     {
@@ -662,7 +662,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Default implementation of <see cref="ICustomAstVisitor2"/> interface
+    /// Default implementation of <see cref="ICustomAstVisitor2"/> interface.
     /// </summary>
     public abstract class DefaultCustomAstVisitor2 : DefaultCustomAstVisitor, ICustomAstVisitor2
     {

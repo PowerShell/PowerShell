@@ -25,28 +25,28 @@ namespace System.Management.Automation
     #region Event Args
 
     /// <summary>
-    /// Possible actions for the debugger after hitting a breakpoint/step
+    /// Possible actions for the debugger after hitting a breakpoint/step.
     /// </summary>
     public enum DebuggerResumeAction
     {
         /// <summary>
-        /// Continue running until the next breakpoint, or the end of the script
+        /// Continue running until the next breakpoint, or the end of the script.
         /// </summary>
         Continue = 0,
         /// <summary>
-        /// Step to next statement, going into functions, scripts, etc
+        /// Step to next statement, going into functions, scripts, etc.
         /// </summary>
         StepInto = 1,
         /// <summary>
-        /// Step to next statement, going over functions, scripts, etc
+        /// Step to next statement, going over functions, scripts, etc.
         /// </summary>
         StepOut = 2,
         /// <summary>
-        /// Step to next statement after the current function, script, etc
+        /// Step to next statement after the current function, script, etc.
         /// </summary>
         StepOver = 3,
         /// <summary>
-        /// Stop executing the script
+        /// Stop executing the script.
         /// </summary>
         Stop = 4,
     };
@@ -57,7 +57,7 @@ namespace System.Management.Automation
     public class DebuggerStopEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes the DebuggerStopEventArgs
+        /// Initializes the DebuggerStopEventArgs.
         /// </summary>
         internal DebuggerStopEventArgs(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
         {
@@ -83,12 +83,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invocation info of the code being executed
+        /// Invocation info of the code being executed.
         /// </summary>
         public InvocationInfo InvocationInfo { get; internal set; }
 
         /// <summary>
-        /// The breakpoint(s) hit
+        /// The breakpoint(s) hit.
         /// </summary>
         /// <remarks>
         /// Note there may be more than one breakpoint on the same object (line, variable, command). A single event is
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         public ReadOnlyCollection<Breakpoint> Breakpoints { get; private set; }
 
         /// <summary>
-        /// This property must be set in the event handler to indicate the debugger what it should do next
+        /// This property must be set in the event handler to indicate the debugger what it should do next.
         /// </summary>
         /// <remarks>
         /// The default action is DebuggerAction.Continue.
@@ -114,24 +114,24 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Kinds of breakpoint updates
+    /// Kinds of breakpoint updates.
     /// </summary>
     public enum BreakpointUpdateType
     {
         /// <summary>
-        /// A breakpoint was set
+        /// A breakpoint was set.
         /// </summary>
         Set = 0,
         /// <summary>
-        /// A breakpoint was removed
+        /// A breakpoint was removed.
         /// </summary>
         Removed = 1,
         /// <summary>
-        /// A breakpoint was enabled
+        /// A breakpoint was enabled.
         /// </summary>
         Enabled = 2,
         /// <summary>
-        /// A breakpoint was disabled
+        /// A breakpoint was disabled.
         /// </summary>
         Disabled = 3
     };
@@ -142,7 +142,7 @@ namespace System.Management.Automation
     public class BreakpointUpdatedEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes the BreakpointUpdatedEventArgs
+        /// Initializes the BreakpointUpdatedEventArgs.
         /// </summary>
         internal BreakpointUpdatedEventArgs(Breakpoint breakpoint, BreakpointUpdateType updateType, int breakpointCount)
         {
@@ -152,17 +152,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the breakpoint that was updated
+        /// Gets the breakpoint that was updated.
         /// </summary>
         public Breakpoint Breakpoint { get; private set; }
 
         /// <summary>
-        /// Gets the type of update
+        /// Gets the type of update.
         /// </summary>
         public BreakpointUpdateType UpdateType { get; private set; }
 
         /// <summary>
-        /// Gets the current breakpoint count
+        /// Gets the current breakpoint count.
         /// </summary>
         public int BreakpointCount { get; private set; }
     };
@@ -175,7 +175,7 @@ namespace System.Management.Automation
     public sealed class PSJobStartEventArgs : EventArgs
     {
         /// <summary>
-        ///  Job to be started
+        /// Job to be started.
         /// </summary>
         public Job Job
         {
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Job debugger
+        /// Job debugger.
         /// </summary>
         public Debugger Debugger
         {
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Job is run asynchronously
+        /// Job is run asynchronously.
         /// </summary>
         public bool IsAsync
         {
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="job">Started job.</param>
         /// <param name="debugger">Debugger.</param>
@@ -220,7 +220,7 @@ namespace System.Management.Automation
     #region Runspace Debug Processing
 
     /// <summary>
-    /// StartRunspaceDebugProcessing event arguments
+    /// StartRunspaceDebugProcessing event arguments.
     /// </summary>
     public sealed class StartRunspaceDebugProcessingEventArgs : EventArgs
     {
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public StartRunspaceDebugProcessingEventArgs(Runspace runspace)
         {
@@ -254,12 +254,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// ProcessRunspaceDebugEnd event arguments
+    /// ProcessRunspaceDebugEnd event arguments.
     /// </summary>
     public sealed class ProcessRunspaceDebugEndEventArgs : EventArgs
     {
         /// <summary>
-        /// The runspace where internal debug processing has ended
+        /// The runspace where internal debug processing has ended.
         /// </summary>
         public Runspace Runspace
         {
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="runspace"></param>
         public ProcessRunspaceDebugEndEventArgs(Runspace runspace)
@@ -314,7 +314,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Defines unhandled breakpoint processing behavior
+    /// Defines unhandled breakpoint processing behavior.
     /// </summary>
     internal enum UnhandledBreakpointProcessingMode
     {
@@ -341,12 +341,12 @@ namespace System.Management.Automation
         #region Events
 
         /// <summary>
-        /// Event raised when the debugger hits a breakpoint or a step
+        /// Event raised when the debugger hits a breakpoint or a step.
         /// </summary>
         public event EventHandler<DebuggerStopEventArgs> DebuggerStop;
 
         /// <summary>
-        /// Event raised when a breakpoint is updated
+        /// Event raised when a breakpoint is updated.
         /// </summary>
         public event EventHandler<BreakpointUpdatedEventArgs> BreakpointUpdated;
 
@@ -389,7 +389,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsPushed
+        /// IsPushed.
         /// </summary>
         internal virtual bool IsPushed
         {
@@ -397,7 +397,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemote
+        /// IsRemote.
         /// </summary>
         internal virtual bool IsRemote
         {
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// UnhandledBreakpointMode
+        /// UnhandledBreakpointMode.
         /// </summary>
         internal virtual UnhandledBreakpointProcessingMode UnhandledBreakpointMode
         {
@@ -440,7 +440,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// DebuggerMode
+        /// DebuggerMode.
         /// </summary>
         public DebugModes DebugMode { get; protected set; } = DebugModes.Default;
 
@@ -454,7 +454,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// InstanceId
+        /// InstanceId.
         /// </summary>
         public virtual Guid InstanceId
         {
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         #region Protected Methods
 
         /// <summary>
-        /// RaiseDebuggerStopEvent
+        /// RaiseDebuggerStopEvent.
         /// </summary>
         /// <param name="args">DebuggerStopEventArgs.</param>
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
@@ -492,7 +492,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsDebuggerStopEventSubscribed
+        /// IsDebuggerStopEventSubscribed.
         /// </summary>
         /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerStopEventSubscribed()
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// RaiseBreakpointUpdatedEvent
+        /// RaiseBreakpointUpdatedEvent.
         /// </summary>
         /// <param name="args">BreakpointUpdatedEventArgs.</param>
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsDebuggerBreakpointUpdatedEventSubscribed
+        /// IsDebuggerBreakpointUpdatedEventSubscribed.
         /// </summary>
         /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerBreakpointUpdatedEventSubscribed()
@@ -812,7 +812,7 @@ namespace System.Management.Automation
     #region ScriptDebugger class
 
     /// <summary>
-    /// Holds the debugging information for a Monad Shell session
+    /// Holds the debugging information for a Monad Shell session.
     /// </summary>
     internal sealed class ScriptDebugger : Debugger, IDisposable
     {
@@ -840,7 +840,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static ScriptDebugger()
         {
@@ -1183,7 +1183,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Raises the BreakpointUpdated event
+        /// Raises the BreakpointUpdated event.
         /// </summary>
         /// <param name="e"></param>
         private void OnBreakpointUpdated(BreakpointUpdatedEventArgs e)
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation
             new ConditionalWeakTable<IScriptExtent[], Tuple<List<LineBreakpoint>, BitArray>>();
 
         /// <summary>
-        /// Checks for command breakpoints
+        /// Checks for command breakpoints.
         /// </summary>
         internal bool CheckCommand(InvocationInfo invocationInfo)
         {
@@ -1667,7 +1667,7 @@ namespace System.Management.Automation
         #region private methods
 
         /// <summary>
-        /// Raises the DebuggerStop event
+        /// Raises the DebuggerStop event.
         /// </summary>
         private void OnDebuggerStop(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
         {
@@ -1824,7 +1824,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resumes execution after a breakpoint/step event has been handled
+        /// Resumes execution after a breakpoint/step event has been handled.
         /// </summary>
         private void ResumeExecution(DebuggerResumeAction action)
         {
@@ -2156,7 +2156,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// GetDebuggerStopped
+        /// GetDebuggerStopped.
         /// </summary>
         /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
@@ -2171,7 +2171,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ProcessCommand
+        /// ProcessCommand.
         /// </summary>
         /// <param name="command">PowerShell command.</param>
         /// <param name="output">Output.</param>
@@ -2270,7 +2270,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// StopProcessCommand
+        /// StopProcessCommand.
         /// </summary>
         public override void StopProcessCommand()
         {
@@ -2290,7 +2290,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set debug mode
+        /// Set debug mode.
         /// </summary>
         /// <param name="mode"></param>
         public override void SetDebugMode(DebugModes mode)
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetBreakpoints
+        /// SetBreakpoints.
         /// </summary>
         /// <param name="breakpoints"></param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
@@ -2477,7 +2477,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemote
+        /// IsRemote.
         /// </summary>
         internal override bool IsRemote
         {
@@ -3728,7 +3728,7 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -3989,7 +3989,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebuggerAction
+        /// SetDebuggerAction.
         /// </summary>
         /// <param name="resumeAction">Debugger resume action.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
@@ -4046,7 +4046,7 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public virtual void Dispose()
         {
@@ -4213,7 +4213,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="runspace">Runspace.</param>
         public StandaloneRunspaceDebugger(
@@ -4457,7 +4457,7 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public override void Dispose()
         {
@@ -4618,7 +4618,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// Resume action
+        /// Resume action.
         /// </summary>
         public DebuggerResumeAction? ResumeAction
         {
@@ -4644,7 +4644,7 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="resumeAction">Resume action.</param>
         /// <param name="evaluatedByDebugger">True if evaluated by debugger.</param>
@@ -4712,7 +4712,7 @@ namespace System.Management.Automation
         private const string Crlf = "\x000D\x000A";
 
         /// <summary>
-        /// Creates the table of debugger commands
+        /// Creates the table of debugger commands.
         /// </summary>
         public DebuggerCommandProcessor()
         {
@@ -4729,7 +4729,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resets any state in the command processor
+        /// Resets any state in the command processor.
         /// </summary>
         public void Reset()
         {
@@ -4746,7 +4746,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ProcessCommand
+        /// ProcessCommand.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="command"></param>
@@ -4796,7 +4796,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper for ProcessCommand
+        /// Helper for ProcessCommand.
         /// </summary>
         private DebuggerCommand DoProcessCommand(PSHost host, string command, InvocationInfo invocationInfo, IList<PSObject> output)
         {
@@ -4846,7 +4846,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Displays the help text for the debugger commands
+        /// Displays the help text for the debugger commands.
         /// </summary>
         private void DisplayHelp(PSHost host, IList<PSObject> output)
         {
@@ -4875,7 +4875,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Executes the list command
+        /// Executes the list command.
         /// </summary>
         private void DisplayScript(PSHost host, IList<PSObject> output, InvocationInfo invocationInfo, Match match)
         {
@@ -4954,7 +4954,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Executes the list command
+        /// Executes the list command.
         /// </summary>
         private void DisplayScript(PSHost host, IList<PSObject> output, InvocationInfo invocationInfo, int start, int count)
         {
@@ -5023,7 +5023,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class used to hold the output of the DebuggerCommandProcessor
+    /// Class used to hold the output of the DebuggerCommandProcessor.
     /// </summary>
     internal class DebuggerCommand
     {
@@ -5045,7 +5045,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When ResumeAction is null, this property indicates the command that the
-        /// host should pass to the PowerShell engine
+        /// host should pass to the PowerShell engine.
         /// </summary>
         public string Command { get; }
 
@@ -5055,7 +5055,7 @@ namespace System.Management.Automation
         public bool RepeatOnEnter { get; }
 
         /// <summary>
-        /// If true, the command was executed by the debugger and the host should ignore the command
+        /// If true, the command was executed by the debugger and the host should ignore the command.
         /// </summary>
         public bool ExecutedByDebugger { get; }
     }
@@ -5065,7 +5065,7 @@ namespace System.Management.Automation
     #region PSDebugContext class
 
     /// <summary>
-    /// This class exposes the information about the debugger that is available via $PSDebugContext
+    /// This class exposes the information about the debugger that is available via $PSDebugContext.
     /// </summary>
     public class PSDebugContext
     {
@@ -5086,7 +5086,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// InvocationInfo of the command currently being executed
+        /// InvocationInfo of the command currently being executed.
         /// </summary>
         public InvocationInfo InvocationInfo { get; private set; }
 
@@ -5107,7 +5107,7 @@ namespace System.Management.Automation
     public sealed class CallStackFrame
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="invocationInfo">Invocation Info.</param>
         public CallStackFrame(InvocationInfo invocationInfo)
@@ -5116,7 +5116,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="functionContext">Function context.</param>
         /// <param name="invocationInfo">Invocation Info.</param>
@@ -5144,7 +5144,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// File name of the current location, or null if the frame is not associated to a script
+        /// File name of the current location, or null if the frame is not associated to a script.
         /// </summary>
         public string ScriptName
         {
@@ -5152,7 +5152,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Line number of the current location, or 0 if the frame is not associated to a script
+        /// Line number of the current location, or 0 if the frame is not associated to a script.
         /// </summary>
         public int ScriptLineNumber
         {
@@ -5160,7 +5160,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The InvocationInfo of the command
+        /// The InvocationInfo of the command.
         /// </summary>
         public InvocationInfo InvocationInfo { get; private set; }
 
@@ -5178,7 +5178,7 @@ namespace System.Management.Automation
         internal FunctionContext FunctionContext { get; }
 
         /// <summary>
-        /// Returns a formatted string containing the ScriptName and ScriptLineNumber
+        /// Returns a formatted string containing the ScriptName and ScriptLineNumber.
         /// </summary>
         public string GetScriptLocation()
         {
@@ -5256,7 +5256,7 @@ namespace System.Management.Automation.Internal
     #region DebuggerUtils
 
     /// <summary>
-    /// Debugger Utilities class
+    /// Debugger Utilities class.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed Internal use only")]
     public static class DebuggerUtils
@@ -5413,7 +5413,7 @@ namespace System.Management.Automation.Internal
     #region PSMonitorRunspaceEvent
 
     /// <summary>
-    /// PSMonitorRunspaceEvent
+    /// PSMonitorRunspaceEvent.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed Internal use only")]
     public enum PSMonitorRunspaceType
@@ -5443,7 +5443,7 @@ namespace System.Management.Automation.Internal
         #region Properties
 
         /// <summary>
-        /// Created Runspace
+        /// Created Runspace.
         /// </summary>
         public Runspace Runspace { get; private set; }
 
@@ -5464,7 +5464,7 @@ namespace System.Management.Automation.Internal
         private PSMonitorRunspaceInfo() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="runspace">Runspace.</param>
         /// <param name="runspaceType">Runspace type.</param>
@@ -5510,7 +5510,7 @@ namespace System.Management.Automation.Internal
         #region Constructor
 
         /// <summary>
-        /// Creates instance of PSStandaloneMonitorRunspaceInfo
+        /// Creates instance of PSStandaloneMonitorRunspaceInfo.
         /// </summary>
         /// <param name="runspace">Runspace to monitor.</param>
         public PSStandaloneMonitorRunspaceInfo(
@@ -5559,7 +5559,7 @@ namespace System.Management.Automation.Internal
         public PowerShell Command { get; private set; }
 
         /// <summary>
-        /// Unique parent debugger identifier
+        /// Unique parent debugger identifier.
         /// </summary>
         public Guid ParentDebuggerId { get; private set; }
 
@@ -5568,7 +5568,7 @@ namespace System.Management.Automation.Internal
         #region Constructor
 
         /// <summary>
-        /// Creates instance of PSEmbeddedMonitorRunspaceInfo
+        /// Creates instance of PSEmbeddedMonitorRunspaceInfo.
         /// </summary>
         /// <param name="runspace">Runspace to monitor.</param>
         /// <param name="runspaceType">Type of runspace.</param>

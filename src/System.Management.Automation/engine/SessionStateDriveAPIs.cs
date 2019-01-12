@@ -15,7 +15,7 @@ using System.Globalization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -408,7 +408,7 @@ namespace System.Management.Automation
         #region GetDrive
 
         /// <summary>
-        /// Searches through the session state scopes to find a drive
+        /// Searches through the session state scopes to find a drive.
         /// </summary>
         /// <param name="name">
         /// The name of a drive to find.
@@ -754,7 +754,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Automatically mount the specified drive
+        /// Automatically mount the specified drive.
         /// </summary>
         /// <remarks>
         /// Neither 'WSMan' nor 'Certificate' provider works in UNIX PS today.
@@ -916,7 +916,7 @@ namespace System.Management.Automation
                 {
                     char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
 
-                    if (Char.ToUpperInvariant(driveChar) >= 'A' && Char.ToUpperInvariant(driveChar) <= 'Z')
+                    if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
                     {
                         DriveInfo systemDriveInfo = new DriveInfo(drive.Name);
 
@@ -939,7 +939,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets all the drives for a specific provider
+        /// Gets all the drives for a specific provider.
         /// </summary>
         /// <param name="providerId">
         /// The identifier for the provider to retrieve the drives for.
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
         #endregion Drives
 
         /// <summary>
-        /// Gets or sets the current working drive
+        /// Gets or sets the current working drive.
         /// </summary>
         internal PSDriveInfo CurrentDrive
         {

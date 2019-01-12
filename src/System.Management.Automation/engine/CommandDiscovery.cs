@@ -18,12 +18,12 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// EventArgs for the ScriptCmdletVariableUpdate event
+    /// EventArgs for the ScriptCmdletVariableUpdate event.
     /// </summary>
     public class CommandLookupEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor for event args object
+        /// Constructor for event args object.
         /// </summary>
         /// <param name="commandName">The name of the command we're searching for.</param>
         /// <param name="commandOrigin">The origin of the command internal or runspace (external).</param>
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         private ExecutionContext _context;
 
         /// <summary>
-        /// The name of the command we're looking for
+        /// The name of the command we're looking for.
         /// </summary>
         public string CommandName { get; }
 
@@ -86,7 +86,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the preference options for the Module Auto-loading feature
+    /// Defines the preference options for the Module Auto-loading feature.
     /// </summary>
     public enum PSModuleAutoLoadingPreference
     {
@@ -513,8 +513,8 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// used to determine compatibility between the versions in the requires statement and
-        /// the installed version. The version can be PSSnapin or msh
+        /// Used to determine compatibility between the versions in the requires statement and
+        /// the installed version. The version can be PSSnapin or msh.
         /// </summary>
         /// <param name="requires">Versions in the requires statement.</param>
         /// <param name="installed">Version installed.</param>
@@ -648,7 +648,7 @@ namespace System.Management.Automation
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
-            //ShouldRunInternal throws PSSecurityException if run is not allowed
+            // ShouldRunInternal throws PSSecurityException if run is not allowed
             try
             {
                 if (commandOrigin == CommandOrigin.Runspace && commandInfo.Visibility != SessionStateEntryVisibility.Public)
@@ -962,7 +962,7 @@ namespace System.Management.Automation
             {
                 exception = e;
                 discoveryTracer.WriteLine("Encountered error importing module: {0}", e.Message);
-                //Call-out to user code, catch-all OK
+                // Call-out to user code, catch-all OK
             }
 
             return matchingModules;
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
                             if (exportedCommands == null) { continue; }
 
                             CommandTypes exportedCommandTypes;
-                            //Skip if module only has class or other types and no commands.
+                            // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
                             {
                                 Exception exception;
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories
+        /// using the PATH as the lookup directories.
         /// </summary>
         /// <param name="patterns">
         /// The patterns to search for. These patterns must be in the form taken
@@ -1395,7 +1395,7 @@ namespace System.Management.Automation
         private string _pathCacheKey;
 
         /// <summary>
-        /// The cache of the tokenized PATH directories
+        /// The cache of the tokenized PATH directories.
         /// </summary>
         private Collection<string> _cachedPath;
 
@@ -1493,7 +1493,6 @@ namespace System.Management.Automation
 
             // Check the current cmdlet cache then check the top level
             // if we aren't already at the top level.
-
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
@@ -1596,7 +1595,7 @@ namespace System.Management.Automation
     internal class LookupPathCollection : Collection<string>
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal LookupPathCollection() : base() { }
 
@@ -1638,7 +1637,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds all the strings in the specified collection to this collection
+        /// Adds all the strings in the specified collection to this collection.
         /// </summary>
         /// <param name="collection">
         /// The collection of strings to add.

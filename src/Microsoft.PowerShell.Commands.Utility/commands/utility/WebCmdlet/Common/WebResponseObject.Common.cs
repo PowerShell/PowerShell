@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsPrintable(char c)
         {
-            return (Char.IsLetterOrDigit(c) || Char.IsPunctuation(c) || Char.IsSeparator(c) || Char.IsSymbol(c) || Char.IsWhiteSpace(c));
+            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
         }
 
         /// <summary>

@@ -9,8 +9,8 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to load the XML document into data structures.
-    /// It encapsulates the file format specific code
+    /// Class to load the XML document into data structures.
+    /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         hideHeadersNodeFound = true;
                         if (!this.ReadBooleanNode(n, out tableBody.header.hideHeader))
                         {
-                            return null; //fatal error
+                            return null; // fatal error
                         }
                     }
                     else if (MatchNodeName(n, XmlTags.AutoSizeNode))
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (tableBody.header.columnHeaderDefinitionList.Count !=
                         tableBody.defaultDefinition.rowItemDefinitionList.Count)
                     {
-                        //Error at XPath {0} in file {1}: Header item count = {2} does not match default row item count = {3}.
+                        // Error at XPath {0} in file {1}: Header item count = {2} does not match default row item count = {3}.
                         this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.IncorrectHeaderItemCount, ComputeCurrentXPath(), FilePath,
                             tableBody.header.columnHeaderDefinitionList.Count,
                             tableBody.defaultDefinition.rowItemDefinitionList.Count));
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (trd.rowItemDefinitionList.Count !=
                             tableBody.defaultDefinition.rowItemDefinitionList.Count)
                         {
-                            //Error at XPath {0} in file {1}: Row item count = {2} on alternative set #{3} does not match default row item count = {4}.
+                            // Error at XPath {0} in file {1}: Row item count = {2} on alternative set #{3} does not match default row item count = {4}.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.IncorrectRowItemCount, ComputeCurrentXPath(), FilePath,
                                 trd.rowItemDefinitionList.Count,
                                 tableBody.defaultDefinition.rowItemDefinitionList.Count, k + 1));
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             tableBody.header.columnHeaderDefinitionList.Add(chd);
                         else
                         {
-                            //Error at XPath {0} in file {1}: Column header definition is invalid; all headers are discarded.
+                            // Error at XPath {0} in file {1}: Column header definition is invalid; all headers are discarded.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidColumnHeader, ComputeCurrentXPath(), FilePath));
                             tableBody.header.columnHeaderDefinitionList = null;
                             return; // fatal error
@@ -219,9 +219,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2} value.
+                            // Error at XPath {0} in file {1}: Invalid {2} value.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNodeValue, ComputeCurrentXPath(), FilePath, XmlTags.WidthNode));
-                            return null; //fatal error
+                            return null; // fatal error
                         }
                     }
                     else if (MatchNodeName(n, XmlTags.AlignmentNode))
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool isInteger = int.TryParse(text, out val);
             if (!isInteger || val <= 0)
             {
-                //Error at XPath {0} in file {1}: A positive integer is expected.
+                // Error at XPath {0} in file {1}: A positive integer is expected.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectPositiveInteger, ComputeCurrentXPath(), FilePath));
                 return false;
             }
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                //Error at XPath {0} in file {1}: "{2}" is not an valid alignment value.
+                // Error at XPath {0} in file {1}: "{2}" is not an valid alignment value.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidAlignmentValue, ComputeCurrentXPath(), FilePath, alignmentString));
                 return false; // fatal error
             }
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         TableRowDefinition trd = LoadRowEntryDefinition(n, rowEntryIndex++);
                         if (trd == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.TableRowEntryNode));
                             tableBody.defaultDefinition = null;
                             return; // fatal error
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                             else
                             {
-                                //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                                // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.TableRowEntryNode));
                                 tableBody.defaultDefinition = null;
                                 return; // fatal error
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (tableBody.defaultDefinition == null)
                 {
-                    //Error at XPath {0} in file {1}: There must be at least one default {2}.
+                    // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.TableRowEntryNode));
                 }
             }
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (columnEntriesNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         LoadColumnEntries(n, trd);
@@ -391,13 +391,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (multiLineFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         multiLineFound = true;
                         if (!this.ReadBooleanNode(n, out trd.multiLine))
                         {
-                            return null; //fatal error
+                            return null; // fatal error
                         }
                     }
                     else

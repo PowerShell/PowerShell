@@ -34,7 +34,7 @@ namespace System.Management.Automation.Security
 
     /// <summary>
     /// Support class for dealing with the Windows Lockdown Policy,
-    /// Device Guard, and Constrained PowerShell
+    /// Device Guard, and Constrained PowerShell.
     /// </summary>
     public sealed class SystemPolicy
     {
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Gets the system lockdown policy
+        /// Gets the system lockdown policy.
         /// </summary>
         /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Security
         private static bool s_allowDebugOverridePolicy = false;
 
         /// <summary>
-        /// Gets lockdown policy as applied to a file
+        /// Gets lockdown policy as applied to a file.
         /// </summary>
         /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Security
         private static bool s_hadMissingWldpAssembly = false;
 
         /// <summary>
-        /// Gets lockdown policy as applied to a COM object
+        /// Gets lockdown policy as applied to a COM object.
         /// </summary>
         /// <returns>True if the COM object is allowed, False otherwise.</returns>
         internal static bool IsClassInApprovedList(Guid clsid)
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Security
         internal static bool XamlWorkflowSupported { get; set; }
 
         /// <summary>
-        /// Native constants for dealing with the lockdown policy
+        /// Native constants for dealing with the lockdown policy.
         /// </summary>
         internal class WldpNativeConstants
         {
@@ -521,7 +521,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// The different host IDs understood by the lockdown policy
+        /// The different host IDs understood by the lockdown policy.
         /// </summary>
         internal enum WLDP_HOST_ID
         {
@@ -536,7 +536,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Host information structure to contain the lockdown policy request
+        /// Host information structure to contain the lockdown policy request.
         /// </summary>
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct WLDP_HOST_INFORMATION
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Native methods for dealing with the lockdown policy
+        /// Native methods for dealing with the lockdown policy.
         /// </summary>
         internal class WldpNativeMethods
         {

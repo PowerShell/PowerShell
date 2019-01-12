@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal class DscResourceHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for DscResourceHelpProvider
+        /// Constructor for DscResourceHelpProvider.
         /// </summary>
         internal DscResourceHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Execution context of the HelpSystem
+        /// Execution context of the HelpSystem.
         /// </summary>
         private readonly ExecutionContext _context;
 
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Supported Help Categories
+        /// Supported Help Categories.
         /// </summary>
         internal override HelpCategory HelpCategory
         {
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
-        ///        schema
+        ///        schema.
         /// </summary>
         /// <param name="helpFile">File name.</param>
         /// <param name="helpItemsNode">Nodes to check.</param>
@@ -212,7 +212,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(helpFile))
             {
-                //Load the help file only once. Then use it from the cache.
+                // Load the help file only once. Then use it from the cache.
                 if (!_helpFiles.Contains(helpFile))
                 {
                     LoadHelpFile(helpFile, helpFile, resourceInfo.Name, reportErrors);

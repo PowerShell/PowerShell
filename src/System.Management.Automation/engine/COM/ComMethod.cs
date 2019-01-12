@@ -42,7 +42,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Defines the name of the method.
+        /// Defines the name of the method.
         /// </summary>
         internal string Name { get; }
 
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Invokes the method on object
+        /// Invokes the method on object.
         /// </summary>
         /// <param name="method">Represents the instance of the method we want to invoke.</param>
         /// <param name="arguments">Parameters to be passed to the method.</param>
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                //First check if this is a severe exception.
+                // First check if this is a severe exception.
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {

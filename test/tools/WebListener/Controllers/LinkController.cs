@@ -41,7 +41,7 @@ namespace mvc.Controllers
                 whitespace = string.Empty;
             }
 
-            var linkList = new List<String>();
+            var linkList = new List<string>();
             if (maxLinks > 1 && linkNumber > 1)
             {
                 linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, whitespace: whitespace, rel: "prev"));

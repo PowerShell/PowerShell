@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class EnvironmentProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Environment";
 
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the alias drive
+        /// Initializes the alias drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a environment variable from session state
+        /// Gets a environment variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to retrieve.
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets the environment variable of the specified name to the specified value
+        /// Sets the environment variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to set.
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a flattened view of the environment variables in session state
+        /// Gets a flattened view of the environment variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the environment variables in
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the Value property of the DictionaryEntry item
+        /// Gets the Value property of the DictionaryEntry item.
         /// </summary>
         /// <param name="item">
         /// The item to get the value from.

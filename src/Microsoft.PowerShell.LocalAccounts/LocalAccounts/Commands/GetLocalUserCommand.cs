@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process users requested by -Name
+        /// Process users requested by -Name.
         /// </summary>
         /// <remarks>
         /// All arguments to -Name will be treated as names,
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process users requested by -SID
+        /// Process users requested by -SID.
         /// </summary>
         private void ProcessSids()
         {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

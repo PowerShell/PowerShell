@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     public static class DscRemoteOperationsClass
     {
         /// <summary>
-        /// Convert Cim Instance representing Resource desired state to Powershell Class Object
+        /// Convert Cim Instance representing Resource desired state to Powershell Class Object.
         /// </summary>
         public static object ConvertCimInstanceToObject(Type targetType, CimInstance instance, string moduleName)
         {
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Convert hashtable from Ciminstance to hashtable primitive type
+        /// Convert hashtable from Ciminstance to hashtable primitive type.
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="arrayInstance"></param>
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return result;
         }
         /// <summary>
-        /// Convert CIM instance to PS Credential
+        /// Convert CIM instance to PS Credential.
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="propertyInstance"></param>
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     public sealed class ArgumentToConfigurationDataTransformationAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
-        /// convert a file of ConfigurationData into a hashtable
+        /// Convert a file of ConfigurationData into a hashtable.
         /// </summary>
         /// <param name="engineIntrinsics"></param>
         /// <param name="inputData"></param>
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         }
 
         /// <summary>
-        /// Read file content to byte array
+        /// Read file content to byte array.
         /// </summary>
         /// <param name="fullFilePath"></param>
         /// <returns></returns>
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                     string className = c.CimSystemProperties.ClassName;
                     if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
                     {
-                        //Get the name of the file without schema.mof extension
+                        // Get the name of the file without schema.mof extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private const int IndexModuleVersion = 1;
         private const int IndexClassName = 2;
 
-        //Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
+        // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
         private static readonly string[] s_hiddenResourceList =
     {
         "MSFT_BaseConfigurationProviderRegistration",
@@ -494,12 +494,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         "MSFT_PSConfigurationProviderRegistration",
     };
 
-        //Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
+        // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
         private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
             StringComparer.OrdinalIgnoreCase);
 
-        //a collection to hold current importing script based resource file
-        //this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
+        // a collection to hold current importing script based resource file
+        // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
         private static readonly HashSet<string> s_currentImportingScriptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> t_classCache;
 
         /// <summary>
-        /// DSC classname to source module mapper
+        /// DSC classname to source module mapper.
         /// </summary>
         private static Dictionary<string, Tuple<string, Version>> ByClassModuleCache
         {
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, Tuple<string, Version>> t_byClassModuleCache;
 
         /// <summary>
-        /// DSC filename to defined class mapper
+        /// DSC filename to defined class mapper.
         /// </summary>
         private static Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>> ByFileClassCache
         {
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>> t_byFileClassCache;
 
         /// <summary>
-        /// Filenames from which we have imported script dynamic keywords
+        /// Filenames from which we have imported script dynamic keywords.
         /// </summary>
         private static HashSet<string> ScriptKeywordFileCache
         {
@@ -580,12 +580,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static HashSet<string> t_scriptKeywordFileCache;
 
         /// <summary>
-        /// Default ModuleName and ModuleVersion to use
+        /// Default ModuleName and ModuleVersion to use.
         /// </summary>
         private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version("1.1"));
 
         /// <summary>
-        /// Default ModuleName and ModuleVersion to use for meta configuration resources
+        /// Default ModuleName and ModuleVersion to use for meta configuration resources.
         /// </summary>
         internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new Tuple<string, Version>("PSDesiredStateConfigurationEngine", new Version("2.0"));
 
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Get the module name and module version
+        /// Get the module name and module version.
         /// </summary>
         /// <param name="moduleFolderPath">
         /// Path to the module folder
@@ -871,7 +871,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return null;
         }
 
-        //Callback implementation...
+        // Callback implementation...
         private static CimClass MyClassCallback(string serverName, string namespaceName, string className)
         {
             foreach (KeyValuePair<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> cimClass in ClassCache)
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Import CIM classes from the given file
+        /// Import CIM classes from the given file.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="moduleInfo"></param>
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// get text from SecureString
+        /// Get text from SecureString.
         /// </summary>
         /// <param name="value">Value of SecureString.</param>
         /// <returns>Decoded string.</returns>
@@ -1054,7 +1054,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Find cached cim classes defined under specified module
+        /// Find cached cim classes defined under specified module.
         /// </summary>
         /// <param name="module"></param>
         /// <returns>List of cached cim classes.</returns>
@@ -1217,7 +1217,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             catch (Microsoft.Management.Infrastructure.CimException)
             {
-                //exception means no DSCAlias
+                // exception means no DSCAlias
             }
 
             return null;
@@ -1477,10 +1477,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// update range restriction for meta configuration keywords
+        /// Update range restriction for meta configuration keywords
         /// the restrictions are for
         /// ConfigurationModeFrequency: 15-44640
-        /// RefreshFrequency: 30-44640
+        /// RefreshFrequency: 30-44640.
         /// </summary>
         /// <param name="keyword"></param>
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
@@ -2337,7 +2337,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
         /// </summary>
         /// <param name="typeDefinitionAst"></param>
         /// <param name="methodsLinePosition"></param>
@@ -2373,7 +2373,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
         /// </summary>
         /// <param name="moduleInfo"></param>
         /// <param name="resourceName"></param>
@@ -2514,7 +2514,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            //BUGBUG - need to fix up how the module gets set.
+            // BUGBUG - need to fix up how the module gets set.
             Token[] tokens;
             ParseError[] errors;
             var ast = Parser.ParseFile(fileName, out tokens, out errors);
@@ -3260,8 +3260,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (!ScriptKeywordFileCache.Contains(schemaFilePath))
                 {
                     // Parsing the file is all that needs to be done to add the keywords
-                    //BUGBUG - need to fix up how the module gets set.
-                    //BUGBUG - should fail somehow if errors is not empty
+                    // BUGBUG - need to fix up how the module gets set.
+                    // BUGBUG - should fail somehow if errors is not empty
                     Token[] tokens; ParseError[] errors;
                     s_currentImportingScriptFiles.Add(schemaFilePath);
                     Parser.ParseFile(schemaFilePath, out tokens, out errors);
@@ -3276,7 +3276,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
         /// <param name="badDependsOnReference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
@@ -3291,7 +3291,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list
+        /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list.
         /// </summary>
         /// <param name="badExclusiveResourcereference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
@@ -3306,7 +3306,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// if a partial configuration is in 'Pull' Mode, it needs a configuration source
+        /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
         /// <param name="resourceId"></param>
         /// <returns></returns>
@@ -3334,7 +3334,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
         /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
         /// <param name="nodeName">The node being defined.</param>
@@ -3349,7 +3349,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a configuration name is invalid
+        /// Returns an error record to use in the case of a configuration name is invalid.
         /// </summary>
         /// <param name="configurationName"></param>
         /// <returns></returns>
@@ -3363,7 +3363,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of the given value for a property is invalid
+        /// Returns an error record to use in the case of the given value for a property is invalid.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
@@ -3380,7 +3380,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in case the given property is not valid LocalConfigurationManager property
+        /// Returns an error record to use in case the given property is not valid LocalConfigurationManager property.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="validProperties"></param>
@@ -3395,7 +3395,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of the given value for a property is not supported
+        /// Returns an error record to use in the case of the given value for a property is not supported.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
@@ -3412,7 +3412,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of no value is provided for a mandatory property
+        /// Returns an error record to use in the case of no value is provided for a mandatory property.
         /// </summary>
         /// <param name="keywordName"></param>
         /// <param name="typeName"></param>
@@ -3428,7 +3428,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of more than one values are provided for DebugMode property
+        /// Returns an error record to use in the case of more than one values are provided for DebugMode property.
         /// </summary>
         /// <returns></returns>
         public static ErrorRecord DebugModeShouldHaveOneValue()
@@ -3441,7 +3441,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Return an error to indicate a value is out of range for a dynamic keyword property
+        /// Return an error to indicate a value is out of range for a dynamic keyword property.
         /// </summary>
         /// <param name="property"></param>
         /// <param name="name"></param>
@@ -3459,7 +3459,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value
+        /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value.
         /// </summary>
         /// <param name="resourceId">ResourceId of resource.</param>
         /// <returns></returns>

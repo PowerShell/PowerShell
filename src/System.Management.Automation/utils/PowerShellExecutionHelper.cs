@@ -113,7 +113,7 @@ namespace System.Management.Automation
             try
             {
                 // blocks until all results are retrieved.
-                //results = this.ExecuteCommand(cmd);
+                // results = this.ExecuteCommand(cmd);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
                 // untill the next completion
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts an object to a string adn, if the string is not empty, adds it to the list
+        /// Converts an object to a string adn, if the string is not empty, adds it to the list.
         /// </summary>
         /// <param name="list">The list to update.</param>
         /// <param name="obj">The object to convert to a string...</param>

@@ -168,7 +168,7 @@ If you have any problems building, please consult the developer [FAQ][].
 [az-linux-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=17
 [az-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
 [az-macos-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=14
-[az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-spelling?branchName=master
+[az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-static-analysis?branchName=master
 [az-spell-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=22
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
 [windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=32

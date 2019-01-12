@@ -278,6 +278,7 @@ gitter
 globbing
 GoogleTest
 gzip
+hackathons
 hashtable
 helloworld.ps1
 helpproviderwithcache
@@ -378,6 +379,7 @@ metadata
 miaromero
 microsoft
 microsoft.com
+microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
 microsoft.powershell.archive
 microsoft.powershell.commands.diagnostics
@@ -390,6 +392,7 @@ microsoft.powershell.coreclr.eventing
 microsoft.powershell.diagnostics
 microsoft.powershell.localaccounts
 microsoft.powershell.management
+microsoft.powershell.markdownrender
 microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.powershell.utility
@@ -812,6 +815,8 @@ yurko7
 zhenggu
  - docs/debugging/README.md
 corehost
+ - docs/testing-guidelines/CodeCoverageAnalysis.md
+de5f69c
  - docs/testing-guidelines/TestRoadmap.md
 _no_
  - docs/testing-guidelines/WritingPesterTests.md

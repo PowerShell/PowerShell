@@ -30,9 +30,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// helper object holding a generic object and the related
+    /// Helper object holding a generic object and the related
     /// "applies to" object.
-    /// It is used in by the inheritance based type match algorithm
+    /// It is used in by the inheritance based type match algorithm.
     /// </summary>
     internal sealed class TypeMatchItem
     {
@@ -57,8 +57,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// algorithm to execute a type match on a list of entities
-    /// having an "applies to" associated object
+    /// Algorithm to execute a type match on a list of entities
+    /// having an "applies to" associated object.
     /// </summary>
     internal sealed class TypeMatch
     {
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// given an appliesTo list, it finds all the types that are contained (following type
+        /// Given an appliesTo list, it finds all the types that are contained (following type
         /// group references)
         /// </summary>
         /// <param name="db">Database to use.</param>

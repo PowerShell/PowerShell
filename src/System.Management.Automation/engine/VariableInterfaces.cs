@@ -13,7 +13,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PSVariableIntrinsics()
         {
@@ -370,7 +370,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the specified variable from the specified scope
+        /// Removes the specified variable from the specified scope.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to remove.
@@ -406,7 +406,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the specified variable from the specified scope
+        /// Removes the specified variable from the specified scope.
         /// </summary>
         /// <param name="variable">
         /// The variable to be removed. It is removed based on the name of the variable.

@@ -16,7 +16,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Contains the definition of a job which is defined in a
-    /// job store
+    /// job store.
     /// </summary>
     /// <remarks>The actual implementation of this class will
     /// happen in M2</remarks>
@@ -26,7 +26,7 @@ namespace System.Management.Automation
         private string _name;
 
         /// <summary>
-        /// A friendly Name for this definition
+        /// A friendly Name for this definition.
         /// </summary>
         public string Name
         {
@@ -69,14 +69,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Name of the job that needs to be loaded
-        /// from the specified module
+        /// from the specified module.
         /// </summary>
         public string Command { get; }
 
         private Guid _instanceId;
 
         /// <summary>
-        /// Unique Guid for this job definition
+        /// Unique Guid for this job definition.
         /// </summary>
         public Guid InstanceId
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Save this definition to the specified
-        /// file on disk
+        /// file on disk.
         /// </summary>
         /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
@@ -103,7 +103,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Load this definition from the specified
-        /// file on disk
+        /// file on disk.
         /// </summary>
         /// <param name="stream"></param>
         public virtual void Load(Stream stream)
@@ -113,7 +113,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns information about this job like
-        /// name, definition, parameters etc
+        /// name, definition, parameters etc.
         /// </summary>
         public CommandInfo CommandInfo
         {
@@ -166,7 +166,7 @@ namespace System.Management.Automation
     /// be passed to a job so that the job can be
     /// instantiated without having to specify
     /// the parameters explicitly. Helps in
-    /// passing job parameters to disk
+    /// passing job parameters to disk.
     /// </summary>
     /// <remarks>This class is not required if
     /// CommandParameterCollection adds a public
@@ -176,7 +176,7 @@ namespace System.Management.Automation
     public class JobInvocationInfo : ISerializable
     {
         /// <summary>
-        /// Friendly name associated with this specification
+        /// Friendly name associated with this specification.
         /// </summary>
         public string Name
         {
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         private JobDefinition _definition;
 
         /// <summary>
-        /// Definition associated with the job
+        /// Definition associated with the job.
         /// </summary>
         public JobDefinition Definition
         {
@@ -234,7 +234,7 @@ namespace System.Management.Automation
         private List<CommandParameterCollection> _parameters;
 
         /// <summary>
-        /// Parameters associated with this specification
+        /// Parameters associated with this specification.
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
@@ -242,12 +242,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique identifies for this specification
+        /// Unique identifies for this specification.
         /// </summary>
         public Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// Save this specification to a file
+        /// Save this specification to a file.
         /// </summary>
         /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load this specification from a file
+        /// Load this specification from a file.
         /// </summary>
         /// <param name="stream">Stream to load from.</param>
         public virtual void Load(Stream stream)
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utility function to turn a dictionary of name/value pairs into a parameter collection
+        /// Utility function to turn a dictionary of name/value pairs into a parameter collection.
         /// </summary>
         /// <param name="parameters">The dictionary to convert.</param>
         /// <returns>The converted collection.</returns>
@@ -377,7 +377,7 @@ namespace System.Management.Automation
     public abstract class JobSourceAdapter
     {
         /// <summary>
-        /// Name for this store
+        /// Name for this store.
         /// </summary>
         public string Name { get; set; } = string.Empty;
 
@@ -439,7 +439,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new job with the specified definition
+        /// Create a new job with the specified definition.
         /// </summary>
         /// <param name="definition">Job definition to use.</param>
         /// <returns>Job object.</returns>
@@ -463,7 +463,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new job with the specified JobSpecification
+        /// Create a new job with the specified JobSpecification.
         /// </summary>
         /// <param name="specification">Specification.</param>
         /// <returns>Job object.</returns>
@@ -471,13 +471,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the list of jobs that are currently available in this
-        /// store
+        /// store.
         /// </summary>
         /// <returns>Collection of job objects.</returns>
         public abstract IList<Job2> GetJobs();
 
         /// <summary>
-        /// Get list of jobs that matches the specified names
+        /// Get list of jobs that matches the specified names.
         /// </summary>
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         public abstract IList<Job2> GetJobsByName(string name, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that run the specified command
+        /// Get list of jobs that run the specified command.
         /// </summary>
         /// <param name="command">Command to match.</param>
         /// <param name="recurse"></param>
@@ -496,7 +496,7 @@ namespace System.Management.Automation
         public abstract IList<Job2> GetJobsByCommand(string command, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that has the specified id
+        /// Get list of jobs that has the specified id.
         /// </summary>
         /// <param name="instanceId">Guid to match.</param>
         /// <param name="recurse"></param>
@@ -504,7 +504,7 @@ namespace System.Management.Automation
         public abstract Job2 GetJobByInstanceId(Guid instanceId, bool recurse);
 
         /// <summary>
-        /// Get job that has specific session id
+        /// Get job that has specific session id.
         /// </summary>
         /// <param name="id">Id to match.</param>
         /// <param name="recurse"></param>
@@ -512,7 +512,7 @@ namespace System.Management.Automation
         public abstract Job2 GetJobBySessionId(int id, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that are in the specified state
+        /// Get list of jobs that are in the specified state.
         /// </summary>
         /// <param name="state">State to match.</param>
         /// <param name="recurse"></param>
@@ -522,7 +522,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get list of jobs based on the adapter specific
-        /// filter parameters
+        /// filter parameters.
         /// </summary>
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
@@ -532,7 +532,7 @@ namespace System.Management.Automation
         public abstract IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse);
 
         /// <summary>
-        /// Remove a job from the store
+        /// Remove a job from the store.
         /// </summary>
         /// <param name="job">Job object to remove.</param>
         public abstract void RemoveJob(Job2 job);

@@ -35,7 +35,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
-    /// as a server side runspacepool
+    /// as a server side runspacepool.
     /// </summary>
     internal class ServerRunspacePoolDriver : IRSPDriverInvoke
     {
@@ -97,7 +97,7 @@ namespace System.Management.Automation
 
 #if CORECLR // No ApartmentState In CoreCLR
         /// <summary>
-        /// Creates the runspace pool driver
+        /// Creates the runspace pool driver.
         /// </summary>
         /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
         /// <param name="transportManager">transport manager associated with this
@@ -136,7 +136,7 @@ namespace System.Management.Automation
             string configurationName)
 #else
         /// <summary>
-        /// Creates the runspace pool driver
+        /// Creates the runspace pool driver.
         /// </summary>
         /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
         /// <param name="transportManager">transport manager associated with this
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// data structure handler for communicating with client
+        /// Data structure handler for communicating with client.
         /// </summary>
         internal ServerRunspacePoolDataStructureHandler DataStructureHandler { get; }
 
@@ -284,13 +284,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// the client runspacepool id
+        /// The client runspacepool id.
         /// </summary>
         internal Guid InstanceId { get; }
 
         /// <summary>
         /// The local runspace pool associated with
-        /// this driver
+        /// this driver.
         /// </summary>
         internal RunspacePool RunspacePool { get; private set; }
 
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send application private data to client
         /// will be called during runspace creation
-        /// and each time a new client connects to the server session
+        /// and each time a new client connects to the server session.
         /// </summary>
         internal void SendApplicationPrivateDataToClient()
         {
@@ -379,7 +379,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Dispose the runspace pool driver and release all its resources
+        /// Dispose the runspace pool driver and release all its resources.
         /// </summary>
         internal void Close()
         {
@@ -541,7 +541,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes a script
+        /// Invokes a script.
         /// </summary>
         /// <param name="cmdToRun"></param>
         /// <param name="args"></param>
@@ -561,7 +561,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes a PowerShell instance
+        /// Invokes a PowerShell instance.
         /// </summary>
         /// <param name="powershell"></param>
         /// <param name="args"></param>
@@ -703,7 +703,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// handler to the runspace pool state changed events
+        /// Handler to the runspace pool state changed events.
         /// </summary>
         /// <param name="sender">Sender of this events.</param>
         /// <param name="eventArgs">arguments which describe the
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// handler to the runspace pool psevents
+        /// Handler to the runspace pool psevents.
         /// </summary>
         private void HandleRunspacePoolForwardEvent(object sender, PSEventArgs e)
         {
@@ -747,7 +747,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle the invocation of powershell
+        /// Handle the invocation of powershell.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle the invocation of command discovery pipeline
+        /// Handle the invocation of command discovery pipeline.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles host responses
+        /// Handles host responses.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the maximum runspace of the runspace pool and sends a response back
+        /// Sets the maximum runspace of the runspace pool and sends a response back.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new maxRunspaces
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the minimum runspace of the runspace pool and sends a response back
+        /// Sets the minimum runspace of the runspace pool and sends a response back.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new minRunspaces
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the available runspaces from the server and sends it across
-        /// to the client
+        /// to the client.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Contains information on the callid.</param>
@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Starts the PowerShell command on the currently pushed Runspace
+        /// Starts the PowerShell command on the currently pushed Runspace.
         /// </summary>
         /// <param name="powershell">PowerShell command or script.</param>
         /// <param name="extraPowerShell">PowerShell command to run after first completes.</param>
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation
         private enum PreProcessCommandResult
         {
             /// <summary>
-            /// No debugger pre-processing
+            /// No debugger pre-processing.
             /// </summary>
             None = 0,
 
@@ -1266,27 +1266,27 @@ namespace System.Management.Automation
             ValidNotProcessed,
 
             /// <summary>
-            /// GetDebuggerStopArgs
+            /// GetDebuggerStopArgs.
             /// </summary>
             GetDebuggerStopArgs,
 
             /// <summary>
-            /// SetDebuggerAction
+            /// SetDebuggerAction.
             /// </summary>
             SetDebuggerAction,
 
             /// <summary>
-            /// SetDebugMode
+            /// SetDebugMode.
             /// </summary>
             SetDebugMode,
 
             /// <summary>
-            /// SetDebuggerStepMode
+            /// SetDebuggerStepMode.
             /// </summary>
             SetDebuggerStepMode,
 
             /// <summary>
-            /// SetPreserveUnhandledBreakpointMode
+            /// SetPreserveUnhandledBreakpointMode.
             /// </summary>
             SetPreserveUnhandledBreakpointMode
         };
@@ -1489,7 +1489,7 @@ namespace System.Management.Automation
             #region Constructor
 
             /// <summary>
-            /// Constructor
+            /// Constructor.
             /// </summary>
             public PowerShellDriverInvoker()
             {
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
             #region Properties
 
             /// <summary>
-            /// IsActive
+            /// IsActive.
             /// </summary>
             public bool IsActive
             {
@@ -1792,7 +1792,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ProcessCommand
+        /// ProcessCommand.
         /// </summary>
         /// <param name="command">Command.</param>
         /// <param name="output">Output.</param>
@@ -1827,7 +1827,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// StopProcessCommand
+        /// StopProcessCommand.
         /// </summary>
         public override void StopProcessCommand()
         {
@@ -1844,7 +1844,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebugMode
+        /// SetDebugMode.
         /// </summary>
         /// <param name="mode"></param>
         public override void SetDebugMode(DebugModes mode)
@@ -1880,7 +1880,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// InternalProcessCommand
+        /// InternalProcessCommand.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsPushed
+        /// IsPushed.
         /// </summary>
         internal override bool IsPushed
         {
@@ -1942,7 +1942,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemote
+        /// IsRemote.
         /// </summary>
         internal override bool IsRemote
         {
@@ -1953,7 +1953,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsDebuggerSteppingEnabled
+        /// IsDebuggerSteppingEnabled.
         /// </summary>
         internal override bool IsDebuggerSteppingEnabled
         {
@@ -1964,7 +1964,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// UnhandledBreakpointMode
+        /// UnhandledBreakpointMode.
         /// </summary>
         internal override UnhandledBreakpointProcessingMode UnhandledBreakpointMode
         {
@@ -1986,7 +1986,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsPendingDebugStopEvent
+        /// IsPendingDebugStopEvent.
         /// </summary>
         internal override bool IsPendingDebugStopEvent
         {
@@ -1994,7 +1994,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ReleaseSavedDebugStop
+        /// ReleaseSavedDebugStop.
         /// </summary>
         internal override void ReleaseSavedDebugStop()
         {
@@ -2015,7 +2015,7 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -2208,7 +2208,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handler for debugger events
+        /// Handler for debugger events.
         /// </summary>
         private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
@@ -2262,7 +2262,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// HandleBreakpointUpdated
+        /// HandleBreakpointUpdated.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2443,7 +2443,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// HandleStopSignal
+        /// HandleStopSignal.
         /// </summary>
         /// <returns>True if stop signal is handled.</returns>
         internal bool HandleStopSignal()

@@ -73,7 +73,7 @@ namespace System.Management.Automation
         #region Token Type
 
         /// <summary>
-        /// Map a V3 token to a V2 PSTokenType
+        /// Map a V3 token to a V2 PSTokenType.
         /// </summary>
         /// <param name="token">The V3 token.</param>
         /// <returns>The V2 PSTokenType.</returns>
@@ -365,14 +365,14 @@ namespace System.Management.Automation
     public enum PSTokenType
     {
         /// <summary>
-        /// Unknown token
+        /// Unknown token.
         /// </summary>
         /// <remarks>
         /// </remarks>
         Unknown,
 
         /// <summary>
-        /// Command
+        /// Command.
         /// </summary>
         /// <remarks>
         /// For example, 'get-process' in
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         Command,
 
         /// <summary>
-        /// Command Parameter
+        /// Command Parameter.
         /// </summary>
         /// <remarks>
         /// For example, '-name' in
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         CommandParameter,
 
         /// <summary>
-        /// Command Argument
+        /// Command Argument.
         /// </summary>
         /// <remarks>
         /// For example, 'foo' in
@@ -402,7 +402,7 @@ namespace System.Management.Automation
         CommandArgument,
 
         /// <summary>
-        /// Number
+        /// Number.
         /// </summary>
         /// <remarks>
         /// For example, 12 in
@@ -412,7 +412,7 @@ namespace System.Management.Automation
         Number,
 
         /// <summary>
-        /// String
+        /// String.
         /// </summary>
         /// <remarks>
         /// For example, "12" in
@@ -422,7 +422,7 @@ namespace System.Management.Automation
         String,
 
         /// <summary>
-        /// Variable
+        /// Variable.
         /// </summary>
         /// <remarks>
         /// For example, $a in
@@ -432,7 +432,7 @@ namespace System.Management.Automation
         Variable,
 
         /// <summary>
-        /// Property name or method name
+        /// Property name or method name.
         /// </summary>
         /// <remarks>
         /// For example, Name in
@@ -442,7 +442,7 @@ namespace System.Management.Automation
         Member,
 
         /// <summary>
-        /// Loop label
+        /// Loop label.
         /// </summary>
         /// <remarks>
         /// For example, :loop in
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         LoopLabel,
 
         /// <summary>
-        /// Attributes
+        /// Attributes.
         /// </summary>
         /// <remarks>
         /// For example, Mandatory in
@@ -466,7 +466,7 @@ namespace System.Management.Automation
         Attribute,
 
         /// <summary>
-        /// Types
+        /// Types.
         /// </summary>
         /// <remarks>
         /// For example, [string] in
@@ -476,7 +476,7 @@ namespace System.Management.Automation
         Type,
 
         /// <summary>
-        /// Operators
+        /// Operators.
         /// </summary>
         /// <remarks>
         /// For example, + in
@@ -486,7 +486,7 @@ namespace System.Management.Automation
         Operator,
 
         /// <summary>
-        /// Group Starter
+        /// Group Starter.
         /// </summary>
         /// <remarks>
         /// For example, { in
@@ -499,7 +499,7 @@ namespace System.Management.Automation
         GroupStart,
 
         /// <summary>
-        /// Group Ender
+        /// Group Ender.
         /// </summary>
         /// <remarks>
         /// For example, } in
@@ -512,7 +512,7 @@ namespace System.Management.Automation
         GroupEnd,
 
         /// <summary>
-        /// Keyword
+        /// Keyword.
         /// </summary>
         /// <remarks>
         /// For example, if in
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         Keyword,
 
         /// <summary>
-        /// Comment
+        /// Comment.
         /// </summary>
         /// <remarks>
         /// For example, #here in
@@ -567,7 +567,7 @@ namespace System.Management.Automation
         NewLine,
 
         /// <summary>
-        /// Line continuation
+        /// Line continuation.
         /// </summary>
         /// <remarks>
         /// For example, ` in
@@ -578,7 +578,7 @@ namespace System.Management.Automation
         LineContinuation,
 
         /// <summary>
-        /// Position token
+        /// Position token.
         /// </summary>
         /// <remarks>
         /// Position token are bogus tokens generated for identifying a location

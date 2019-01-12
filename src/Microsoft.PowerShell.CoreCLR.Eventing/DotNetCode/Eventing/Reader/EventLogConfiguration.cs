@@ -16,7 +16,7 @@ using System.Collections.Generic;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Log Type
+    /// Log Type.
     /// </summary>
     public enum EventLogType
     {
@@ -27,7 +27,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// Log Isolation
+    /// Log Isolation.
     /// </summary>
     public enum EventLogIsolation
     {
@@ -37,7 +37,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// Log Mode
+    /// Log Mode.
     /// </summary>
     public enum EventLogMode
     {

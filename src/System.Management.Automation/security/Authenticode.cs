@@ -16,7 +16,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Defines the options that control what data is embedded in the
-    /// signature blob
+    /// signature blob.
     /// </summary>
     public enum SigningOption
     {
@@ -44,12 +44,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Helper functions for signature functionality
+    /// Helper functions for signature functionality.
     /// </summary>
     internal static class SignatureHelper
     {
         /// <summary>
-        /// tracer for SignatureHelper
+        /// Tracer for SignatureHelper.
         /// </summary>
         [Dbg.TraceSource("SignatureHelper",
                           "tracer for SignatureHelper")]
@@ -58,7 +58,7 @@ namespace System.Management.Automation
                           "tracer for SignatureHelper");
 
         /// <summary>
-        /// Sign a file
+        /// Sign a file.
         /// </summary>
         /// <param name="option">Option that controls what gets embedded in the signature blob.</param>
         /// <param name="fileName">Name of file to sign.</param>
@@ -151,7 +151,7 @@ namespace System.Management.Automation
             }
 
             SecuritySupport.CheckIfFileExists(fileName);
-            //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+            // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
 
             try
             {
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get signature on the specified file
+        /// Get signature on the specified file.
         /// </summary>
         /// <param name="fileName">Name of file to check.</param>
         /// <param name="fileContent">Content of file to check.</param>
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 Utils.CheckArgForNullOrEmpty(fileName, "fileName");
                 SecuritySupport.CheckIfFileExists(fileName);
-                //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+                // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
             }
 
             try

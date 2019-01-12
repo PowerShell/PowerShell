@@ -271,7 +271,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// block the ps thread until ACK message or Error happened.
+        /// Block the ps thread until ACK message or Error happened.
         /// </summary>
         private void WaitForAckMessage()
         {
@@ -305,7 +305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The cmdlet object who issue this subscription,
         /// to throw ThrowTerminatingError
-        /// in case there is a subscription failure
+        /// in case there is a subscription failure.
         /// </summary>
         /// <param name="cmdlet"></param>
         internal Cmdlet Cmdlet
@@ -315,9 +315,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// target computername
+        /// Target computername.
         /// </summary>
-        internal String TargetComputerName
+        internal string TargetComputerName
         {
             set;
             get;
@@ -344,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="timeout"></param>
@@ -362,7 +362,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// Exception occurred while start the subscription
+        /// Exception occurred while start the subscription.
         /// </summary>
         internal Exception Exception
         {
@@ -376,5 +376,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #endregion
 
-    }//End Class
-}//End namespace
+    }
+}

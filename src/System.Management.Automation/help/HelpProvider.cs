@@ -38,12 +38,12 @@ namespace System.Management.Automation
     ///     1. Initialize:
     ///     2. ExactMatchHelp:
     ///     3. SearchHelp:
-    ///     4. ProcessForwardedHelp
+    ///     4. ProcessForwardedHelp.
     /// </summary>
     internal abstract class HelpProvider
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal HelpProvider(HelpSystem helpSystem)
         {
@@ -63,7 +63,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name for the help provider
+        /// Name for the help provider.
         /// </summary>
         /// <value>Name for the help provider</value>
         /// <remarks>Derived classes should set this.</remarks>
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category for the help provider
+        /// Help category for the help provider.
         /// </summary>
         /// <value>Help category for the help provider</value>
         /// <remarks>Derived classes should set this.</remarks>
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Class that implements the help provider
+        /// Class that implements the help provider.
         /// </summary>
         /// <value>Class name</value>
         virtual internal string ClassName
@@ -218,7 +218,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Each Shell ( minishell ) will have its own path specified by the
-        /// application base folder, which should be the same as $pshome
+        /// application base folder, which should be the same as $pshome.
         /// </summary>
         /// <returns>String representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()
@@ -238,7 +238,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the search paths. If the current shell is single-shell based, then the returned
-        /// search path contains all the directories of currently active PSSnapIns
+        /// search path contains all the directories of currently active PSSnapIns.
         /// </summary>
         /// <returns>A collection of string representing locations.</returns>
         internal Collection<string> GetSearchPaths()

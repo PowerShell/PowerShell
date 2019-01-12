@@ -161,7 +161,7 @@ namespace System.Diagnostics.Eventing
                             (long)eventType & s_keyWordMask);
         }
 
-        public sealed override void TraceData(TraceEventCache eventCache, String source, TraceEventType eventType, int id, params object[] data)
+        public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, params object[] data)
         {
             if (!_provider.IsEnabled())
             {

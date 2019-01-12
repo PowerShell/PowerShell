@@ -89,7 +89,7 @@ namespace System.Management.Automation
         private Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// search for files using the target, searchPaths member of this class.
+        /// Search for files using the target, searchPaths member of this class.
         /// </summary>
         private void SearchForFiles()
         {
@@ -143,7 +143,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return (String[])result.ToArray(typeof(string));
+            return (string[])result.ToArray(typeof(string));
 #else
             return Directory.GetFiles(path, pattern);
 #endif
@@ -269,8 +269,8 @@ namespace System.Management.Automation
                     result.Add(Path.GetFullPath(directory));
                 }
 
-                //user specifically wanted to search in a particular directory
-                //so return..
+                // user specifically wanted to search in a particular directory
+                // so return..
                 return result;
             }
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Locate a file in default search paths
+        /// Locate a file in default search paths.
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -358,7 +358,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This enum defines different search mode for the MUIFileSearcher
+    /// This enum defines different search mode for the MUIFileSearcher.
     /// </summary>
     internal enum SearchMode
     {

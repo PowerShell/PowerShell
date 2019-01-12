@@ -41,11 +41,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
-    [OutputType(typeof(String), typeof(FileInfo), typeof(Image), typeof(Stream))]
+    [OutputType(typeof(string), typeof(FileInfo), typeof(Image), typeof(Stream))]
     public class GetClipboardCommand : PSCmdlet
     {
         /// <summary>
-        /// Property that sets clipboard type. This will return the required format from clipboard
+        /// Property that sets clipboard type. This will return the required format from clipboard.
         /// </summary>
         [Parameter]
         public ClipboardFormat Format { get; set; }
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isRawSet = false;
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Get-Clipboard command
+        /// This method implements the ProcessRecord method for Get-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {

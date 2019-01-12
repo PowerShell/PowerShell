@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         #region overrides
 
         /// <summary>
-        ///  Buffers InputObjet contents available in the pipeline.
+        /// Buffers InputObjet contents available in the pipeline.
         /// </summary>
         protected override void ProcessRecord()
         {

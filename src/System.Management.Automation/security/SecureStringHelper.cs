@@ -14,7 +14,7 @@ using System.Text;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// helper class for secure string related functionality
+    /// Helper class for secure string related functionality.
     /// </summary>
     internal static class SecureStringHelper
     {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// get the contents of a SecureString as byte[]
+        /// Get the contents of a SecureString as byte[]
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
@@ -141,8 +141,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using DPAPI and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using DPAPI and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">SecureString to protect.</param>
         /// <returns>A string (see summary) .</returns>
@@ -198,8 +198,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">Input string to encrypt.</param>
         /// <param name="key">Encryption key.</param>
@@ -227,8 +227,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">Input string to encrypt.</param>
         /// <param name="key">Encryption key.</param>
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     /// Helper class to return encryption results, and the IV used to
-    /// do the encryption
+    /// do the encryption.
     /// </summary>
     internal class EncryptionResult
     {
@@ -390,12 +390,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets the encrypted data
+        /// Gets the encrypted data.
         /// </summary>
         internal string EncryptedData { get; }
 
         /// <summary>
-        /// Gets the IV used to encrypt the data
+        /// Gets the IV used to encrypt the data.
         /// </summary>
         internal string IV { get; }
     }
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell
     internal static class ProtectedData
     {
         /// <summary>
-        /// Protect
+        /// Protect.
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Unprotect
+        /// Unprotect.
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {

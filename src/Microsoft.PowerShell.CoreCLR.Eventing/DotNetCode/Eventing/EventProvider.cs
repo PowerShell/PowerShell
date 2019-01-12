@@ -37,7 +37,7 @@ namespace System.Diagnostics.Eventing
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public enum WriteEventErrorCode : int
         {
-            //check mapping to runtime codes
+            // check mapping to runtime codes
             NoError = 0,
             NoFreeBuffers = 1,
             EventTooBig = 2
@@ -194,7 +194,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// IsEnabled, method used to test if provider is enabled
+        /// IsEnabled, method used to test if provider is enabled.
         /// </summary>
         public bool IsEnabled()
         {
@@ -202,7 +202,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// IsEnabled, method used to test if event is enabled
+        /// IsEnabled, method used to test if event is enabled.
         /// </summary>
         /// <param name="level">
         /// Level to test
@@ -406,14 +406,14 @@ namespace System.Diagnostics.Eventing
             }
             else if (data is Boolean)
             {
-                dataDescriptor->Size = (uint)sizeof(Boolean);
+                dataDescriptor->Size = (uint)sizeof(bool);
                 Boolean* booleanptr = (Boolean*)dataBuffer;
-                *booleanptr = (Boolean)data;
+                *booleanptr = (bool)data;
                 dataDescriptor->DataPointer = (ulong)booleanptr;
             }
             else
             {
-                //To our eyes, everything else is a just a string
+                // To our eyes, everything else is a just a string
                 sRet = data.ToString();
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
                 return sRet;
@@ -484,7 +484,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent method to write parameters with event schema properties
+        /// WriteEvent method to write parameters with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -497,7 +497,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent, method to write a string with event schema properties
+        /// WriteEvent, method to write a string with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -556,7 +556,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent, method to be used by generated code on a derived class
+        /// WriteEvent, method to be used by generated code on a derived class.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -595,7 +595,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteTransferEvent, method to write a parameters with event schema properties
+        /// WriteTransferEvent, method to write a parameters with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -624,7 +624,7 @@ namespace System.Diagnostics.Eventing
                         if (argCount > s_etwMaxNumberArguments)
                         {
                             //
-                            //too many arguments to log
+                            // too many arguments to log
                             //
                             throw new ArgumentOutOfRangeException("eventPayload",
                                 string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
@@ -633,7 +633,7 @@ namespace System.Diagnostics.Eventing
                         uint totalEventSize = 0;
                         int index;
                         int stringIndex = 0;
-                        int[] stringPosition = new int[s_etwAPIMaxStringCount]; //used to keep the position of strings in the eventPayload parameter
+                        int[] stringPosition = new int[s_etwAPIMaxStringCount]; // used to keep the position of strings in the eventPayload parameter
                         string[] dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter
                         EventData* userData = stackalloc EventData[argCount];             // allocation for the data descriptors
                         userDataPtr = (EventData*)userData;

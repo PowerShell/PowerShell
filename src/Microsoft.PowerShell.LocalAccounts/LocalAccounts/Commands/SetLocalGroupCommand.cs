@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionSetGroup);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

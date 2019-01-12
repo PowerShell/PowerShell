@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Issues an operation against the remote machine to ensure that the wsman
-    /// service is running
+    /// service is running.
     /// </summary>
 
     [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141464")]
@@ -31,11 +31,11 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer. The default is
         /// the local computer. Type the fully qualified domain name, NETBIOS name or IP
-        /// address to indicate the remote host
+        /// address to indicate the remote host.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -49,7 +49,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
@@ -124,14 +124,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// ProcessRecord method.
@@ -147,7 +147,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 m_SessionObj = helper.CreateSessionObject(wsmanObject, Authentication, null, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
-                m_SessionObj.Timeout = 1000; //1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
+                m_SessionObj.Timeout = 1000; // 1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.LoadXml(m_SessionObj.Identify(0));
                 WriteObject(xmldoc.DocumentElement);
@@ -173,22 +173,22 @@ namespace Microsoft.WSMan.Management
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
             }
-        }//End BeginProcessing()
+        }
 
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -200,6 +200,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion
 }

@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Updated from Hashtable to IDictionary to support the work around ordered hashtables.
         /// <summary>
-        /// gets the properties to be set.
+        /// Gets the properties to be set.
         /// </summary>
         [Parameter]
         [ValidateTrustedData]
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //WinRT does not support creating instances of attribute & delegate WinRT types.
+                // WinRT does not support creating instances of attribute & delegate WinRT types.
                 if (WinRTHelper.IsWinRTType(type) && ((typeof(System.Attribute)).IsAssignableFrom(type) || (typeof(System.Delegate)).IsAssignableFrom(type)))
                 {
                     ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(NewObjectStrings.CannotInstantiateWinRTType),
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (COMException e)
             {
-                //Check Error Code to see if Error is because of Com apartment Mismatch.
+                // Check Error Code to see if Error is because of Com apartment Mismatch.
                 if (e.HResult == RPC_E_CHANGED_MODE)
                 {
 #if CORECLR

@@ -112,7 +112,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         private string _errorId = "Argument";
 
         /// <summary>
-        /// see <see cref="System.Exception.Message"/>
+        /// See <see cref="System.Exception.Message"/>
         /// </summary>
         /// <remarks>
         /// Exception.Message is get-only, but you can effectively

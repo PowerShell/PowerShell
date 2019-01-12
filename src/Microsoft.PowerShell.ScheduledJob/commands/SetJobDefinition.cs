@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private ScheduledJobDefinition _definition;
 
         /// <summary>
-        /// ClearExecutionHistory
+        /// ClearExecutionHistory.
         /// </summary>
         [Parameter(ParameterSetName = SetScheduledJobCommand.ExecutionParameterSet)]
         public SwitchParameter ClearExecutionHistory

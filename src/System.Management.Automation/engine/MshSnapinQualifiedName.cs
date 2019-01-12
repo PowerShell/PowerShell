@@ -6,7 +6,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A class representing a name that is qualified by the PSSnapin name
+    /// A class representing a name that is qualified by the PSSnapin name.
     /// </summary>
     internal class PSSnapinQualifiedName
     {
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         private string _shortName;
 
         /// <summary>
-        /// The full name
+        /// The full name.
         /// </summary>
         /// <returns>
         /// A string representing the full name.

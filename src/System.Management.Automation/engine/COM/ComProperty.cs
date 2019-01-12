@@ -35,14 +35,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Defines the name of the property.
+        /// Defines the name of the property.
         /// </summary>
         internal string Name { get; }
 
         private Type _cachedType;
 
         /// <summary>
-        ///  Defines the type of the property.
+        /// Defines the type of the property.
         /// </summary>
         internal Type Type
         {
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Defines whether the property has parameters or not.
+        /// Defines whether the property has parameters or not.
         /// </summary>
         internal bool IsParameterized { get; private set; } = false;
 
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Defines whether this property is settable.
+        /// Defines whether this property is settable.
         /// </summary>
         internal bool IsSettable
         {
@@ -134,12 +134,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Defines whether this property is gettable.
+        /// Defines whether this property is gettable.
         /// </summary>
         internal bool IsGettable { get; private set; } = false;
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <returns>Value of the property.</returns>
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <param name="arguments">Parameters to get the property value.</param>
@@ -358,7 +358,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the property signature string
+        /// Returns the property signature string.
         /// </summary>
         /// <returns>Property signature.</returns>
         public override string ToString()

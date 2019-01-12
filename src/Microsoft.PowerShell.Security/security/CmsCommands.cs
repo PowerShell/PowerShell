@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// recipient and content supplied.
     /// </summary>
     [Cmdlet(VerbsSecurity.Protect, "CmsMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=394373", DefaultParameterSetName = "ByContent")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class ProtectCmsMessageCommand : PSCmdlet
     {
         /// <summary>
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         private string _resolvedOutFile = null;
 
         /// <summary>
-        /// Validate / convert arguments
+        /// Validate / convert arguments.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Encrypts and outputs the message
+        /// Encrypts and outputs the message.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         private string _resolvedPath = null;
 
         /// <summary>
-        /// Validate / convert arguments
+        /// Validate / convert arguments.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the CMS Message object
+        /// Gets the CMS Message object.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
     /// message.
     /// </summary>
     [Cmdlet(VerbsSecurity.Unprotect, "CmsMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=394374", DefaultParameterSetName = "ByWinEvent")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class UnprotectCmsMessageCommand : PSCmdlet
     {
         /// <summary>
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validate / convert arguments
+        /// Validate / convert arguments.
         /// </summary>
         protected override void BeginProcessing()
         {

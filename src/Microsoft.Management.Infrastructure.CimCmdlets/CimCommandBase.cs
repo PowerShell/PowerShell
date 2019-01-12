@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterDefinitionEntry
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         /// <param name="parameterSetName"></param>
         /// <param name="mandatory"></param>
@@ -36,7 +36,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// property ParameterSetName
+        /// Property ParameterSetName.
         /// </summary>
         internal string ParameterSetName
         {
@@ -49,7 +49,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly string parameterSetName = null;
 
         /// <summary>
-        /// Whether the parameter is mandatory to the set
+        /// Whether the parameter is mandatory to the set.
         /// </summary>
         internal bool IsMandatory
         {
@@ -70,7 +70,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterSetEntry
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         internal ParameterSetEntry(UInt32 mandatoryParameterCount)
@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         /// <param name="toClone"></param>
         internal ParameterSetEntry(ParameterSetEntry toClone)
@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
@@ -104,7 +104,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// reset the internal status
+        /// Reset the internal status.
         /// </summary>
         internal void reset()
         {
@@ -113,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// property <c>DefaultParameterSet</c>
+        /// Property <c>DefaultParameterSet</c>
         /// </summary>
         internal bool IsDefaultParameterSet
         {
@@ -126,7 +126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly bool isDefaultParameterSet = false;
 
         /// <summary>
-        /// property <c>MandatoryParameterCount</c>
+        /// Property <c>MandatoryParameterCount</c>
         /// </summary>
         internal UInt32 MandatoryParameterCount
         {
@@ -139,7 +139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly UInt32 mandatoryParameterCount = 0;
 
         /// <summary>
-        /// property <c>IsValueSet</c>
+        /// Property <c>IsValueSet</c>
         /// </summary>
         internal bool IsValueSet
         {
@@ -157,7 +157,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool isValueSet = false;
 
         /// <summary>
-        /// property <c>IsValueSetAtBeginProcess</c>
+        /// Property <c>IsValueSetAtBeginProcess</c>
         /// </summary>
         internal bool IsValueSetAtBeginProcess
         {
@@ -175,7 +175,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool isValueSetAtBeginProcess = false;
 
         /// <summary>
-        /// property <c>SetMandatoryParameterCount</c>
+        /// Property <c>SetMandatoryParameterCount</c>
         /// </summary>
         internal UInt32 SetMandatoryParameterCount
         {
@@ -193,7 +193,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private UInt32 setMandatoryParameterCount = 0;
 
         /// <summary>
-        /// property <c>SetMandatoryParameterCountAtBeginProcess</c>
+        /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
         /// </summary>
         internal UInt32 SetMandatoryParameterCountAtBeginProcess
         {
@@ -217,7 +217,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterBinder
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="sets"></param>
@@ -259,7 +259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private List<string> parametersetNamesList = new List<string>();
 
         /// <summary>
-        /// Parameter names list
+        /// Parameter names list.
         /// </summary>
         private List<string> parameterNamesList = new List<string>();
 
@@ -273,7 +273,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private List<string> parametersetNamesListAtBeginProcess = new List<string>();
 
         /// <summary>
-        /// Parameter names list before begin process
+        /// Parameter names list before begin process.
         /// </summary>
         private List<string> parameterNamesListAtBeginProcess = new List<string>();
 
@@ -409,7 +409,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get the parameter set name based on current binding results
+        /// Get the parameter set name based on current binding results.
         /// </summary>
         /// <returns></returns>
         internal string GetParameterSet()
@@ -489,7 +489,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Deep clone the parameter entries to member variable
+        /// Deep clone the parameter entries to member variable.
         /// </summary>
         private void CloneParameterEntries(
             Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
@@ -507,7 +507,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #endregion
 
     /// <summary>
-    /// Base command for all cim cmdlets
+    /// Base command for all cim cmdlets.
     /// </summary>
     public class CimBaseCommand : Cmdlet, IDisposable
     {
@@ -544,7 +544,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Redirect to parameterBinder to set one parameter
+        /// Redirect to parameterBinder to set one parameter.
         /// </summary>
         /// <param name="parameterName"></param>
         internal void SetParameter(object value, string parameterName)
@@ -568,7 +568,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         internal CimBaseCommand()
         {
@@ -577,7 +577,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
             Dictionary<string, ParameterSetEntry> sets)
@@ -596,13 +596,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void StopProcessing()
         {
             Dispose();
-        }//End StopProcessing()
+        }
 
         #endregion
 
         #region IDisposable interface
         /// <summary>
-        /// IDisposable interface
+        /// IDisposable interface.
         /// </summary>
         private bool disposed;
 
@@ -659,7 +659,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Clean up resources
+        /// Clean up resources.
         /// </summary>
         protected virtual void DisposeInternal()
         {
@@ -674,7 +674,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// Parameter binder used to resolve parameter set name
+        /// Parameter binder used to resolve parameter set name.
         /// </summary>
         private ParameterBinder parameterBinder;
 
@@ -686,7 +686,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimAsyncOperation operation;
 
         /// <summary>
-        /// lock object
+        /// Lock object.
         /// </summary>
         private readonly object myLock = new object();
 
@@ -700,7 +700,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// This flag is introduced to resolve the parameter set name
         /// during process record
-        /// Whether at begin process time, false means in processrecord
+        /// Whether at begin process time, false means in processrecord.
         /// </summary>
         private bool atBeginProcess = true;
         internal bool AtBeginProcess
@@ -756,7 +756,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Gets/Sets cmdlet operation wrapper object
+        /// Gets/Sets cmdlet operation wrapper object.
         /// </summary>
         internal virtual CmdletOperationBase CmdletOperation
         {
@@ -780,77 +780,77 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region internal const strings
 
         /// <summary>
-        /// alias CN - computer name
+        /// Alias CN - computer name.
         /// </summary>
         internal const string AliasCN = "CN";
 
         /// <summary>
-        /// alias ServerName - computer name
+        /// Alias ServerName - computer name.
         /// </summary>
         internal const string AliasServerName = "ServerName";
 
         /// <summary>
-        /// alias OT - operation timeout
+        /// Alias OT - operation timeout.
         /// </summary>
         internal const string AliasOT = "OT";
 
         /// <summary>
-        /// session set name
+        /// Session set name.
         /// </summary>
         internal const string SessionSetName = "SessionSet";
 
         /// <summary>
-        /// computer set name
+        /// Computer set name.
         /// </summary>
         internal const string ComputerSetName = "ComputerSet";
 
         /// <summary>
-        /// class name computer set name
+        /// Class name computer set name.
         /// </summary>
         internal const string ClassNameComputerSet = "ClassNameComputerSet";
 
         /// <summary>
-        /// resource Uri computer set name
+        /// Resource Uri computer set name.
         /// </summary>
         internal const string ResourceUriComputerSet = "ResourceUriComputerSet";
 
         /// <summary>
-        /// <see cref="CimInstance"/> computer set name
+        /// <see cref="CimInstance"/> computer set name.
         /// </summary>
         internal const string CimInstanceComputerSet = "CimInstanceComputerSet";
 
         /// <summary>
-        /// query computer set name
+        /// Query computer set name.
         /// </summary>
         internal const string QueryComputerSet = "QueryComputerSet";
 
         /// <summary>
-        /// class name session set name
+        /// Class name session set name.
         /// </summary>
         internal const string ClassNameSessionSet = "ClassNameSessionSet";
 
         /// <summary>
-        /// resource Uri session set name
+        /// Resource Uri session set name.
         /// </summary>
         internal const string ResourceUriSessionSet = "ResourceUriSessionSet";
 
         /// <summary>
-        /// <see cref="CimInstance"/> session set name
+        /// <see cref="CimInstance"/> session set name.
         /// </summary>
         internal const string CimInstanceSessionSet = "CimInstanceSessionSet";
 
         /// <summary>
-        /// query session set name
+        /// Query session set name.
         /// </summary>
         internal const string QuerySessionSet = "QuerySessionSet";
 
         /// <summary>
-        /// <see cref="CimClass"/> computer set name
+        /// <see cref="CimClass"/> computer set name.
         /// </summary>
         internal const string CimClassComputerSet = "CimClassComputerSet";
 
         /// <summary>
-        /// <see cref="CimClass"/> session set name
+        /// <see cref="CimClass"/> session set name.
         /// </summary>
         internal const string CimClassSessionSet = "CimClassSessionSet";
 
@@ -872,17 +872,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// credential parameter set
+        /// Credential parameter set.
         /// </summary>
         internal const string CredentialParameterSet = "CredentialParameterSet";
 
         /// <summary>
-        /// certificate parameter set
+        /// Certificate parameter set.
         /// </summary>
         internal const string CertificateParameterSet = "CertificateParameterSet";
 
         /// <summary>
-        /// CimInstance parameter alias
+        /// CimInstance parameter alias.
         /// </summary>
         internal const string AliasCimInstance = "CimInstance";
 
@@ -915,7 +915,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Throw conflict parameter error
+        /// Throw conflict parameter error.
         /// </summary>
         /// <param name="operationName"></param>
         /// <param name="parameterName"></param>
@@ -963,7 +963,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create credentials based on given authentication type and PSCredential
+        /// Create credentials based on given authentication type and PSCredential.
         /// </summary>
         /// <param name="psCredentials"></param>
         /// <param name="passwordAuthentication"></param>
@@ -1012,5 +1012,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return credentials;
         }
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

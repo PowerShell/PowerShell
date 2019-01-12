@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (!_shouldProcess) return;
-            //Process first object
+            // Process first object
             if (_propertyNames == null)
             {
                 // figure out the column names (and lock-in their order)
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
+    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
     public sealed
     class
     ImportCsvCommand : PSCmdlet
@@ -519,16 +519,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterLiteralPath")]
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
         /// <summary>
         /// Mandatory file name to read from.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true)]
+        [Parameter(Position = 0, ParameterSetName = "DelimiterPath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "CulturePath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public String[] Path
+        public string[] Path
         {
             get
             {
@@ -548,7 +550,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The literal path of the mandatory file name to read from.
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "DelimiterLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -571,7 +574,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets UseCulture parameter.
         /// </summary>
-        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
+        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNull]
         public SwitchParameter UseCulture
         {
@@ -664,9 +668,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertTo-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "Delimiter",
+    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "DelimiterPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class ConvertToCsvCommand : BaseCsvWritingCommand
     {
         #region Parameter
@@ -712,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-            //Process first object
+            // Process first object
             if (_propertyNames == null)
             {
                 _propertyNames = _helper.BuildPropertyNames(InputObject, _propertyNames);
@@ -720,14 +724,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteCsvLine(_helper.GetTypeString(InputObject));
                 }
-                //Write property information
+                // Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
                 if (!properties.Equals(string.Empty))
                     WriteCsvLine(properties);
             }
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
-            //write to the console
+            // write to the console
             if (csv != string.Empty)
                 WriteCsvLine(csv);
         }
@@ -754,7 +758,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertFrom-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "Delimiter",
+    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "DelimiterPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
     public sealed
     class
@@ -765,7 +769,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
@@ -773,7 +777,8 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
+        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public SwitchParameter UseCulture { get; set; }
@@ -890,7 +895,7 @@ namespace Microsoft.PowerShell.Commands
             _delimiter = delimiter;
         }
 
-        //Name of properties to be written in CSV format
+        // Name of properties to be written in CSV format
 
         /// <summary>
         /// Get the name of properties from source PSObject and add them to _propertyNames.
@@ -941,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //changed to delimiter
+                    // changed to delimiter
                     dest.Append(_delimiter);
                 }
 
@@ -981,7 +986,7 @@ namespace Microsoft.PowerShell.Commands
 
                 PSPropertyInfo property = mshObject.Properties[propertyName] as PSPropertyInfo;
                 string value = null;
-                //If property is not present, assume value is null
+                // If property is not present, assume value is null
                 if (property != null)
                 {
                     value = GetToStringValueForProperty(property);
@@ -1016,7 +1021,7 @@ namespace Microsoft.PowerShell.Commands
                     value = temp.ToString();
                 }
             }
-            //If we cannot read some value, treat it as null.
+            // If we cannot read some value, treat it as null.
             catch (Exception)
             {
             }
@@ -1035,7 +1040,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string type = null;
 
-            //get type of source
+            // get type of source
             Collection<string> tnh = source.TypeNames;
             if (tnh == null || tnh.Count == 0)
             {
@@ -1049,8 +1054,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 string temp = tnh[0];
-                //If type starts with CSV: remove it. This would happen when you export
-                //an imported object. import-csv adds CSV. prefix to the type.
+                // If type starts with CSV: remove it. This would happen when you export
+                // an imported object. import-csv adds CSV. prefix to the type.
                 if (temp.StartsWith(ImportExportCSVHelper.CSVTypePrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     temp = temp.Substring(4);
@@ -1075,12 +1080,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-            //Adding Double quote to all strings
+            // Adding Double quote to all strings
             dest.Append('"');
             for (int i = 0; i < source.Length; i++)
             {
                 char c = source[i];
-                //Double quote in the string is escaped with double quote
+                // Double quote in the string is escaped with double quote
                 if ((c == '"'))
                 {
                     dest.Append('"');
@@ -1249,7 +1254,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ReadHeader()
         {
-            //Read #Type record if available
+            // Read #Type record if available
             if ((TypeName == null) && (!this.EOF))
             {
                 TypeName = ReadTypeInformation();
@@ -1333,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (names.Count == 0)
                 {
-                    //If there are no names, it is an error
+                    // If there are no names, it is an error
                 }
                 else
                 {
@@ -1404,23 +1409,23 @@ namespace Microsoft.PowerShell.Commands
             // int i = 0;
             while (!EOF)
             {
-                //Read the next character
+                // Read the next character
                 char ch = ReadChar();
 
                 if ((ch == _delimiter))
                 {
                     if (seenBeginQuote)
                     {
-                        //Delimiter inside double quotes is part of string.
-                        //Ex:
-                        //"foo, bar"
-                        //is parsed as
-                        //->foo, bar<-
+                        // Delimiter inside double quotes is part of string.
+                        // Ex:
+                        // "foo, bar"
+                        // is parsed as
+                        // ->foo, bar<-
                         current.Append(ch);
                     }
                     else
                     {
-                        //Delimiter outside quotes is end of current word.
+                        // Delimiter outside quotes is end of current word.
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                     }
@@ -1431,32 +1436,32 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (PeekNextChar('"'))
                         {
-                            //"" inside double quote are single quote
-                            //ex: "foo""bar"
-                            //is read as
-                            //->foo"bar<-
+                            // "" inside double quote are single quote
+                            // ex: "foo""bar"
+                            // is read as
+                            // ->foo"bar<-
 
-                            //PeekNextChar only peeks. Read the next char.
+                            // PeekNextChar only peeks. Read the next char.
 
                             ReadChar();
                             current.Append('"');
                         }
                         else
                         {
-                            //We have seen a matching end quote.
+                            // We have seen a matching end quote.
                             seenBeginQuote = false;
 
-                            //Read
-                            //everything till we hit next delimiter.
-                            //In correct CSV,1) end quote is followed by delimiter
-                            //2)end quote is followed some whitespaces and
-                            //then delimiter.
-                            //We eat the whitespaces seen after the ending quote.
-                            //However if there are other characters, we add all of them
-                            //to string.
-                            //Ex: ->"foo bar"<- is read as ->foo bar<-
-                            //->"foo bar"  <- is read as ->foo bar<-
-                            //->"foo bar" ab <- is read as ->"foo bar" ab <-
+                            // Read
+                            // everything till we hit next delimiter.
+                            // In correct CSV,1) end quote is followed by delimiter
+                            // 2)end quote is followed some whitespaces and
+                            // then delimiter.
+                            // We eat the whitespaces seen after the ending quote.
+                            // However if there are other characters, we add all of them
+                            // to string.
+                            // Ex: ->"foo bar"<- is read as ->foo bar<-
+                            // ->"foo bar"  <- is read as ->foo bar<-
+                            // ->"foo bar" ab <- is read as ->"foo bar" ab <-
                             bool endofRecord = false;
                             ReadTillNextDelimiter(current, ref endofRecord, true);
                             result.Add(current.ToString());
@@ -1467,18 +1472,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (current.Length == 0)
                     {
-                        //We are at the beginning of a new word.
-                        //This quote is the first quote.
+                        // We are at the beginning of a new word.
+                        // This quote is the first quote.
                         seenBeginQuote = true;
                     }
                     else
                     {
-                        //We are seeing a quote after the start of
-                        //the word. This is error, however we will be
-                        //lenient here and do what excel does:
-                        //Ex: foo "ba,r"
-                        //In above example word read is ->foo "ba<-
-                        //Basically we read till next delimiter
+                        // We are seeing a quote after the start of
+                        // the word. This is error, however we will be
+                        // lenient here and do what excel does:
+                        // Ex: foo "ba,r"
+                        // In above example word read is ->foo "ba<-
+                        // Basically we read till next delimiter
                         bool endOfRecord = false;
                         current.Append(ch);
                         ReadTillNextDelimiter(current, ref endOfRecord, false);
@@ -1492,25 +1497,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (seenBeginQuote)
                     {
-                        //Spaces in side quote are valid
+                        // Spaces in side quote are valid
                         current.Append(ch);
                     }
                     else if (current.Length == 0)
                     {
-                        //ignore leading spaces
+                        // ignore leading spaces
                         continue;
                     }
                     else
                     {
-                        //We are not in quote and we are not at the
-                        //beginning of a word. We should not be seeing
-                        //spaces here. This is an error condition, however
-                        //we will be lenient here and do what excel does,
-                        //that is read till next delimiter.
-                        //Ex: ->foo <- is read as ->foo<-
-                        //Ex: ->foo bar<- is read as ->foo bar<-
-                        //Ex: ->foo bar <- is read as ->foo bar <-
-                        //Ex: ->foo bar "er,ror"<- is read as ->foo bar "er<-
+                        // We are not in quote and we are not at the
+                        // beginning of a word. We should not be seeing
+                        // spaces here. This is an error condition, however
+                        // we will be lenient here and do what excel does,
+                        // that is read till next delimiter.
+                        // Ex: ->foo <- is read as ->foo<-
+                        // Ex: ->foo bar<- is read as ->foo bar<-
+                        // Ex: ->foo bar <- is read as ->foo bar <-
+                        // Ex: ->foo bar "er,ror"<- is read as ->foo bar "er<-
                         bool endOfRecord = false;
                         current.Append(ch);
                         ReadTillNextDelimiter(current, ref endOfRecord, true);
@@ -1525,14 +1530,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (seenBeginQuote)
                     {
-                        //newline inside quote are valid
+                        // newline inside quote are valid
                         current.Append(newLine);
                     }
                     else
                     {
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
-                        //New line outside quote is end of word and end of record
+                        // New line outside quote is end of word and end of record
                         break;
                     }
                 }
@@ -1639,7 +1644,7 @@ namespace Microsoft.PowerShell.Commands
         PSObject
         BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
         {
-            //string[] namesarray = null;
+            // string[] namesarray = null;
             PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
@@ -1659,7 +1664,7 @@ namespace Microsoft.PowerShell.Commands
                     name = UnspecifiedName + unspecifiedNameIndex;
                     unspecifiedNameIndex++;
                 }
-                //If no value was present in CSV file, we write null.
+                // If no value was present in CSV file, we write null.
                 if (i < values.Count)
                 {
                     value = values[i];
@@ -1702,7 +1707,9 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case "Delimiter":
-                    //if delimiter is not given, it should take , as value
+                case "DelimiterPath":
+                case "DelimiterLiteralPath":
+                    // if delimiter is not given, it should take , as value
                     if (Delimiter == '\0')
                     {
                         Delimiter = ImportExportCSVHelper.CSVDelimiter;
@@ -1710,6 +1717,8 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
                 case "UseCulture":
+                case "CulturePath":
+                case "CultureLiteralPath":
                     if (UseCulture == true)
                     {
                         // ListSeparator is apparently always a character even though the property returns a string, checked via:

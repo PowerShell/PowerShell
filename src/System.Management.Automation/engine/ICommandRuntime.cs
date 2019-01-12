@@ -29,7 +29,7 @@ namespace System.Management.Automation
         PSHost Host { get; }
         #region Write
         /// <summary>
-        /// Display debug information
+        /// Display debug information.
         /// </summary>
         /// <param name="text">Debug output.</param>
         /// <remarks>
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         void WriteObject(object sendToPipeline, bool enumerateCollection);
 
         /// <summary>
-        /// Called by the cmdlet to display progress information
+        /// Called by the cmdlet to display progress information.
         /// </summary>
         /// <param name="progressRecord">Progress information.</param>
         /// <remarks>
@@ -108,7 +108,7 @@ namespace System.Management.Automation
         void WriteProgress(ProgressRecord progressRecord);
 
         /// <summary>
-        /// Displays progress output if enabled
+        /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
         /// Identifies which command is reporting progress
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         void WriteProgress(Int64 sourceId, ProgressRecord progressRecord);
 
         /// <summary>
-        /// Called when the cmdlet want to display verbose information
+        /// Called when the cmdlet want to display verbose information.
         /// </summary>
         /// <param name="text">Verbose output.</param>
         /// <remarks>
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         void WriteVerbose(string text);
 
         /// <summary>
-        /// Called by the cmdlet to display warning information
+        /// Called by the cmdlet to display warning information.
         /// </summary>
         /// <param name="text">Warning output.</param>
         /// <remarks>
@@ -513,7 +513,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         PSTransactionContext CurrentPSTransaction { get; }
         #endregion Transaction Support

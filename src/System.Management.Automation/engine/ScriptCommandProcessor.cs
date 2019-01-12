@@ -275,7 +275,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal override ObsoleteAttribute ObsoleteAttribute
         {

@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
-        /// internal Entry point in msh console host implementation
+        /// Internal Entry point in msh console host implementation.
         /// </summary>
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell
                 case ConsoleSpecialKey.ControlBreak:
                     if (s_cpp.NonInteractive)
                     {
-                        //ControlBreak mimics ControlC in Noninteractive shells
+                        // ControlBreak mimics ControlC in Noninteractive shells
                         SpinUpBreakHandlerThread(shouldEndSession: true);
                     }
                     else
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
                     if (s_cpp.NonInteractive)
                     {
-                        //ControlBreak mimics ControlC in Noninteractive shells
+                        // ControlBreak mimics ControlC in Noninteractive shells
                         SpinUpBreakHandlerThread(shouldEndSession: true);
                     }
                     else
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell
         #region overrides
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -540,7 +540,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell
         public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Handles state changed event of the remote runspace. If the remote runspace
         /// gets into a broken or closed state, writes a message and pops out the
-        /// runspace
+        /// runspace.
         /// </summary>
         /// <param name="sender">Not sure.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell
         private PSObject _consoleColorProxy;
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -874,7 +874,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -949,7 +949,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// If there is no nested prompt.
@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override void NotifyBeginApplication()
         {
@@ -1038,7 +1038,7 @@ namespace Microsoft.PowerShell
         #region non-overrides
 
         /// <summary>
-        /// Constructs a new instance
+        /// Constructs a new instance.
         /// </summary>
         internal ConsoleHost()
         {
@@ -1108,7 +1108,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizes the instance
+        /// Finalizes the instance.
         /// </summary>
         ~ConsoleHost()
         {
@@ -1116,7 +1116,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Disposes of this instance, per the IDisposable pattern
+        /// Disposes of this instance, per the IDisposable pattern.
         /// </summary>
         public void Dispose()
         {
@@ -1508,7 +1508,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method is here only to make V1 tests compatible with V2. DO NOT USE THIS FUNCTION! Use DoCreateRunspace instead
+        /// This method is here only to make V1 tests compatible with V2. DO NOT USE THIS FUNCTION! Use DoCreateRunspace instead.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void InitializeRunspace(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs)
@@ -1912,7 +1912,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Escapes backtick and tick characters with a backtick, returns the result
+        /// Escapes backtick and tick characters with a backtick, returns the result.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -2046,12 +2046,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// raised when the host pops a runspace
+        /// Raised when the host pops a runspace.
         /// </summary>
         internal event EventHandler RunspacePopped;
 
         /// <summary>
-        /// raised when the host pushes a runspace
+        /// Raised when the host pushes a runspace.
         /// </summary>
         internal event EventHandler RunspacePushed;
 
@@ -2060,7 +2060,7 @@ namespace Microsoft.PowerShell
         #region debugger
 
         /// <summary>
-        /// Handler for debugger events
+        /// Handler for debugger events.
         /// </summary>
         private void OnExecutionSuspended(object sender, DebuggerStopEventArgs e)
         {
@@ -2134,7 +2134,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Returns true if the host is in debug mode
+        /// Returns true if the host is in debug mode.
         /// </summary>
         private bool InDebugMode { get; set; }
 
@@ -2202,7 +2202,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Writes a line using the debugger colors
+        /// Writes a line using the debugger colors.
         /// </summary>
         private void WriteDebuggerMessage(string line)
         {
@@ -2309,7 +2309,7 @@ namespace Microsoft.PowerShell
 
             /// <summary>
             /// When a runspace is popped, we need to reevaluate the
-            /// prompt
+            /// prompt.
             /// </summary>
             /// <param name="sender">Sender of this event, unused.</param>
             /// <param name="eventArgs">Arguments describing this event, unused.</param>
@@ -2450,7 +2450,7 @@ namespace Microsoft.PowerShell
 
                         if (_parent.InDebugMode)
                         {
-                            DebuggerCommandResults results = ProcessDebugCommand(line.Trim(), out e);
+                            DebuggerCommandResults results = ProcessDebugCommand(line, out e);
 
                             if (results.ResumeAction != null)
                             {
@@ -2877,12 +2877,12 @@ namespace Microsoft.PowerShell
     }
 
     /// <summary>
-    /// Defines arguments passed to ConsoleHost.CreateRunspace
+    /// Defines arguments passed to ConsoleHost.CreateRunspace.
     /// </summary>
     internal sealed class RunspaceCreationEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructs RunspaceCreationEventArgs
+        /// Constructs RunspaceCreationEventArgs.
         /// </summary>
         /// <param name="initialCommand"></param>
         /// <param name="skipProfiles"></param>

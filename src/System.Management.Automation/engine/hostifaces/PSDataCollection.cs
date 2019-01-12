@@ -26,7 +26,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="psInstanceId">
         /// PowerShell InstanceId which added this data.
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="psInstanceId">
         /// PowerShell InstanceId which added this data.
@@ -133,13 +133,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Whether the enumerator needs to be blocking
-        /// by default
+        /// by default.
         /// </summary>
         private bool _blockingEnumerator = false;
 
         /// <summary>
-        /// whether the ref count was incremented when
-        /// BlockingEnumerator was updated
+        /// Whether the ref count was incremented when
+        /// BlockingEnumerator was updated.
         /// </summary>
         private bool _refCountIncrementedForBlockingEnumerator = false;
 
@@ -152,7 +152,7 @@ namespace System.Management.Automation
         #region Public Constructors
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         public PSDataCollection() : this(new List<T>())
         {
@@ -195,7 +195,7 @@ namespace System.Management.Automation
         #region type converters
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -207,7 +207,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -266,7 +266,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Wrap the argument in a PSDataCollection
+        /// Wrap the argument in a PSDataCollection.
         /// </summary>
         /// <param name="arrayToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete.</returns>
@@ -324,7 +324,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a PSDataCollection from an ISerializable context
+        /// Creates a PSDataCollection from an ISerializable context.
         /// </summary>
         /// <param name="info">Serialization information for this instance.</param>
         /// <param name="context">The streaming context for this instance.</param>
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         public event EventHandler<DataAddingEventArgs> DataAdding;
 
         /// <summary>
-        /// Event fired when objects are done being added to the underlying buffer
+        /// Event fired when objects are done being added to the underlying buffer.
         /// </summary>
         public event EventHandler<DataAddedEventArgs> DataAdded;
 
@@ -474,7 +474,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If this flag is set to true, the items in the collection will be set to null when it is
-        /// traversed using a PSDataCollectionEnumerator
+        /// traversed using a PSDataCollectionEnumerator.
         /// </summary>
         internal bool ReleaseOnEnumeration
         {
@@ -496,7 +496,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This flag is true when the collection has been enumerated at least once by a PSDataCollectionEnumerator
+        /// This flag is true when the collection has been enumerated at least once by a PSDataCollectionEnumerator.
         /// </summary>
         internal bool IsEnumerated
         {
@@ -519,7 +519,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Completes insertions to the buffer.
-        /// Subsequent Inserts to the buffer will result in an InvalidOperationException
+        /// Subsequent Inserts to the buffer will result in an InvalidOperationException.
         /// </summary>
         public void Complete()
         {
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         /// the data collection, a reference count is added
         /// which causes the enumerator to be blocking. This
         /// prevents the use of PSDataCollection without a
-        /// PowerShell object. This property fixes the same
+        /// PowerShell object. This property fixes the same.
         /// </summary>
         public bool BlockingEnumerator
         {
@@ -750,7 +750,7 @@ namespace System.Management.Automation
         #region ICollection Generic Overrides
 
         /// <summary>
-        /// Gets the number of elements contained in the buffer
+        /// Gets the number of elements contained in the buffer.
         /// </summary>
         public int Count
         {
@@ -778,7 +778,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds an item to the thread-safe buffer
+        /// Adds an item to the thread-safe buffer.
         /// </summary>
         /// <param name="item">
         /// item to add
@@ -794,7 +794,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes all items from the buffer
+        /// Removes all items from the buffer.
         /// </summary>
         public void Clear()
         {
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object used to synchronize access to the thread-safe buffer
+        /// Gets the object used to synchronize access to the thread-safe buffer.
         /// </summary>
         object ICollection.SyncRoot
         {
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the item at a specified index
+        /// Removes the item at a specified index.
         /// </summary>
         /// <param name="index">
         /// The zero-based index of the buffer where the object is to be removed.
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation
         #region Serializable
 
         /// <summary>
-        /// Implements the ISerializable contract for serializing a PSDataCollection
+        /// Implements the ISerializable contract for serializing a PSDataCollection.
         /// </summary>
         /// <param name="info">Serialization information for this instance.</param>
         /// <param name="context">The streaming context for this instance.</param>
@@ -1314,7 +1314,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Waitable handle for caller's to block until new data
-        /// is added to the underlying buffer
+        /// is added to the underlying buffer.
         /// </summary>
         internal WaitHandle WaitHandle
         {
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds an item to the thread-safe buffer
+        /// Adds an item to the thread-safe buffer.
         /// </summary>
         /// <param name="psInstanceId">
         /// InstanceId of PowerShell instance adding this data.
@@ -1702,12 +1702,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sync object for this collection
+        /// Sync object for this collection.
         /// </summary>
         internal object SyncObject { get; } = new object();
 
         /// <summary>
-        /// Reference count variable
+        /// Reference count variable.
         /// </summary>
         internal int RefCount
         {
@@ -1730,7 +1730,7 @@ namespace System.Management.Automation
         #region Idle event
 
         /// <summary>
-        /// Indicates whether or not the collection should pulse idle events
+        /// Indicates whether or not the collection should pulse idle events.
         /// </summary>
         internal bool PulseIdleEvent
         {
@@ -1740,7 +1740,7 @@ namespace System.Management.Automation
         internal event EventHandler<EventArgs> IdleEvent;
 
         /// <summary>
-        /// Fires an idle event
+        /// Fires an idle event.
         /// </summary>
         internal void FireIdleEvent()
         {
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Pulses the collection
+        /// Pulses the collection.
         /// </summary>
         internal void Pulse()
         {
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         #region IDisposable Overrides
 
         /// <summary>
-        /// Public dispose method
+        /// Public dispose method.
         /// </summary>
         public void Dispose()
         {
@@ -1773,7 +1773,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Release all the resources
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected void Dispose(bool disposing)
@@ -1850,7 +1850,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="collection">
         /// PSDataCollection to enumerate.

@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to Invoke WMI Method
+    /// A command to Invoke WMI Method.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WmiMethod", DefaultParameterSetName = "class", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113346", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// The WMI Object to use
+        /// The WMI Object to use.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
             set { _inputObject = value; }
         }
         /// <summary>
-        /// The WMI Path to use
+        /// The WMI Path to use.
         /// </summary>
         [Parameter(ParameterSetName = "path", Mandatory = true)]
         public string Path
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
             set { _path = value; }
         }
         /// <summary>
-        /// The WMI class to use
+        /// The WMI class to use.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             set { _className = value; }
         }
         /// <summary>
-        /// The WMI Method to execute
+        /// The WMI Method to execute.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         public string Name
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The parameters to the method specified by MethodName
+        /// The parameters to the method specified by MethodName.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(Position = 2, ParameterSetName = "class")]
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -173,14 +173,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",
                             ErrorCategory.InvalidOperation,
                             ComputerName));
                     }
-                    //If server name is specified loop through it.
+                    // If server name is specified loop through it.
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
                         string[] serverName = new string[] { mPath.Server };
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        }//ProcessRecord
+        }
 
         /// <summary>
         /// Ensure that the argument is a collection containing no PSObjects.
@@ -314,5 +314,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    }//InvokeWMIObject
+    }
 }

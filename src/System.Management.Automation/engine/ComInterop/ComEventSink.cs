@@ -44,7 +44,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Contains a methods DISPID (in a string formatted of "[DISPID=N]"
-        /// and a chained list of delegates to invoke
+        /// and a chained list of delegates to invoke.
         /// </summary>
         private class ComEventSinkMethod
         {
@@ -184,7 +184,7 @@ namespace System.Management.Automation.ComInterop
 
                 // We can Unadvise from the ConnectionPoint if no more sink entries
                 // are registered for this interface
-                //(calling Dispose will call IConnectionPoint.Unadvise).
+                // (calling Dispose will call IConnectionPoint.Unadvise).
                 if (_comEventSinkMethods.Count == 0)
                 {
                     // notice that we do not remove

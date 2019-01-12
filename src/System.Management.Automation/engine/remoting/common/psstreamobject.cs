@@ -63,7 +63,7 @@ namespace System.Management.Automation.Remoting.Internal
     }
 
     /// <summary>
-    /// struct which describes whether an object written
+    /// Struct which describes whether an object written
     /// to an ObjectStream is of type - output, error,
     /// verbose, debug.
     /// PSStreamObject is for internal (PowerShell) consumption
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Remoting.Internal
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
         /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="overrideInquire">Used by Receive-Job to suppress inquire preference.</param>
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Remoting.Internal
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
         /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="instanceId"></param>
@@ -430,7 +430,7 @@ namespace System.Management.Automation.Remoting.Internal
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
         /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="writeSourceIdentifier"></param>

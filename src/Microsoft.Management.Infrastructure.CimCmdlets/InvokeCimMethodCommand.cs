@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public InvokeCimMethodCommand()
             : base(parameters, parameterSets)
@@ -52,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
         [Alias("Class")]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
@@ -63,7 +63,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QuerySessionSet)]
-        public String QueryDialect
+        public string QueryDialect
         {
             get { return queryDialect; }
 
@@ -164,12 +164,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String queryDialect;
+        private string queryDialect;
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
         /// Takes a CimInstance object retrieved by a Get-CimInstance call.
-        /// Invoke the method against the given instance
+        /// Invoke the method against the given instance.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -192,7 +192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Property for internal usage purpose
+        /// Property for internal usage purpose.
         /// </summary>
         internal CimInstance CimInstance
         {
@@ -227,7 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computerName; }
 
@@ -239,7 +239,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computerName;
+        private string[] computerName;
 
         /// <summary>
         /// <para>
@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    Position = 2,
                    ValueFromPipelineByPropertyName = true)]
         [Alias("Name")]
-        public String MethodName
+        public string MethodName
         {
             get { return methodName; }
 
@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String methodName;
+        private string methodName;
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -335,7 +335,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -346,7 +346,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationInvokeCimMethod(this, cimInvokeMethod);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -393,7 +393,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
             cimInvokeMethod.InvokeCimMethod(this);
             cimInvokeMethod.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -405,7 +405,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimInvokeMethod.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -437,7 +437,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// check argument value
+        /// Check argument value.
         /// </summary>
         private void CheckArgument()
         {
@@ -471,7 +471,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -558,7 +558,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -574,5 +574,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.CimClassSessionSet, new ParameterSetEntry(3)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             categoryType = PerformanceCounterCategoryType.MultiInstance;
                         }
-                        else //if (counterSetInstances.Count == 1) //???
+                        else // if (counterSetInstances.Count == 1) //???
                         {
                             categoryType = PerformanceCounterCategoryType.SingleInstance;
                         }

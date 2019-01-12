@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public String[] TypeName
+        public string[] TypeName
         {
             get
             {
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 viewList.Add(formatdef);
-            }// foreach(ViewDefinition...
+            }
 
             // write out all the available type definitions
             foreach (var pair in typedefs)

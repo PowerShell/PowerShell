@@ -51,12 +51,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The current working directory for the virtual drive
-        /// as a relative path from Root
+        /// as a relative path from Root.
         /// </summary>
         private string _currentWorkingDirectory;
 
         /// <summary>
-        /// Gets the name of the drive
+        /// Gets the name of the drive.
         /// </summary>
         public string Name
         {
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The name of the virtual drive
+        /// The name of the virtual drive.
         /// </summary>
         private string _name;
 
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The root of the virtual drive
+        /// The root of the virtual drive.
         /// </summary>
         private string _root;
 
@@ -541,7 +541,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Traces the virtual drive
+        /// Traces the virtual drive.
         /// </summary>
         internal void Trace()
         {

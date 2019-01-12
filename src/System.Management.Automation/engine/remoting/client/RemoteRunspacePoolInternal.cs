@@ -19,7 +19,7 @@ namespace System.Management.Automation.Runspaces.Internal
 {
     /// <summary>
     /// Class which supports pooling remote powerShell runspaces
-    /// on the client
+    /// on the client.
     /// </summary>
     internal class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
     {
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Properties
 
         /// <summary>
-        /// the connection associated with this runspace pool
+        /// The connection associated with this runspace pool.
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {
@@ -215,7 +215,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// The ClientRunspacePoolDataStructureHandler associated with this
-        /// runspace pool
+        /// runspace pool.
         /// </summary>
         internal ClientRunspacePoolDataStructureHandler DataStructureHandler { get; private set; }
 
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Retrieves the number of runspaces available at the time of calling
-        /// this method from the remote server
+        /// this method from the remote server.
         /// </summary>
         /// <returns>The number of runspaces available in the pool.</returns>
         internal override int GetAvailableRunspaces()
@@ -531,7 +531,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// The state of the server RunspacePool has changed. Handle
-        /// the same and reflect local states accordingly
+        /// the same and reflect local states accordingly.
         /// </summary>
         /// <param name="eventArgs">Argument describing this event.</param>
         /// <param name="sender">Sender of this event.</param>
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// A host call has been proxied from the server which needs to
-        /// be executed
+        /// be executed.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -638,7 +638,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Application arguments to use when opening a remote session
+        /// Application arguments to use when opening a remote session.
         /// </summary>
         internal PSPrimitiveDictionary ApplicationArguments { get; }
 
@@ -694,12 +694,12 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// This event is raised, when a host call is for a remote runspace
-        /// which this runspace pool wraps
+        /// which this runspace pool wraps.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteHostCall>> HostCallReceived;
 
         /// <summary>
-        /// EventHandler used to report connection URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 
@@ -886,7 +886,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Public Methods
 
         /// <summary>
-        /// Synchronous open
+        /// Synchronous open.
         /// </summary>
         public override void Open()
         {
@@ -915,7 +915,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Closes the RunspacePool asynchronously. To get the exceptions
-        /// that might have occurred, call EndOpen
+        /// that might have occurred, call EndOpen.
         /// </summary>
         /// <param name="callback">
         /// An AsyncCallback to call once the BeginClose completes
@@ -982,7 +982,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (!skipClosing)
             {
-                //SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closing, null), true);
+                // SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closing, null), true);
 
                 // send a message using the data structure handler to close the RunspacePool
                 // on the remote server
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Set the new runspace pool state based on the state of the
-        /// server RunspacePool
+        /// server RunspacePool.
         /// </summary>
         /// <param name="newStateInfo">state information object
         /// describing the state change at the server RunspacePool</param>
@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Set the new runspace pool state based on the state of the
-        /// server RunspacePool and raise events if required
+        /// server RunspacePool and raise events if required.
         /// </summary>
         /// <param name="newStateInfo">state information object
         /// describing the state change at the server RunspacePool</param>
@@ -1643,7 +1643,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// The session is closing set the state and reason accordingly
+        /// The session is closing set the state and reason accordingly.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// The session closed, set the state and reason accordingly
+        /// The session closed, set the state and reason accordingly.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Set the async result for open as completed
+        /// Set the async result for open as completed.
         /// </summary>
         private void SetOpenAsCompleted()
         {
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Set the async result for close as completed
+        /// Set the async result for close as completed.
         /// </summary>
         private void SetCloseAsCompleted()
         {
@@ -1757,7 +1757,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// When a response to a SetMaxRunspaces or SetMinRunspaces is received,
         /// from the server, this method sets the response and thereby unblocks
-        /// corresponding call
+        /// corresponding call.
         /// </summary>
         /// <param name="sender">Sender of this message, unused.</param>
         /// <param name="eventArgs">Contains response and call id.</param>
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// When the server sends a PSEventArgs this method will add it to the local event queue
+        /// When the server sends a PSEventArgs this method will add it to the local event queue.
         /// </summary>
         private void HandlePSEventArgsReceived(object sender, RemoteDataEventArgs<PSEventArgs> e)
         {
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public method for Dispose
+        /// Public method for Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -1924,7 +1924,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Release all resources
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         public override void Dispose(bool disposing)

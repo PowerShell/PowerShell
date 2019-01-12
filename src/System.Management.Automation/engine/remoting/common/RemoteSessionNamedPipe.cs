@@ -156,7 +156,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Native API for Named Pipes
+    /// Native API for Named Pipes.
     /// </summary>
     internal static class NamedPipeNative
     {
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Remoting
             public bool InheritHandle;
 
             /// <summary>
-            /// Initializes a new instance of the SECURITY_ATTRIBUTES class
+            /// Initializes a new instance of the SECURITY_ATTRIBUTES class.
             /// </summary>
             public SECURITY_ATTRIBUTES()
             {
@@ -562,7 +562,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -982,7 +982,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {

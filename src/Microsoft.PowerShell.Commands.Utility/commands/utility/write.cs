@@ -403,13 +403,13 @@ namespace Microsoft.PowerShell.Commands
 
     /* 2005/01/25 removing throw-error
         /// <summary>
-        /// This class implements Write-Error command
+        /// This class implements Write-Error command.
         /// </summary>
         [Cmdlet("Throw", "Error", DefaultParameterSetName = "NoException")]
         public sealed class ThrowErrorCommand : WriteOrThrowErrorCommand
         {
             /// <summary>
-            /// constructor
+            /// Constructor.
             /// </summary>
             public ThrowErrorCommand()
             {

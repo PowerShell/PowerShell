@@ -41,7 +41,7 @@ namespace System.Management.Automation.Interpreter
 
         /// <summary>
         /// The variable that holds onto the StrongBox{object}[] closure from
-        /// the interpreter
+        /// the interpreter.
         /// </summary>
         private readonly ParameterExpression _closureArray;
 
@@ -247,7 +247,7 @@ namespace System.Management.Automation.Interpreter
         #region MergedRuntimeVariables
 
         /// <summary>
-        /// Provides a list of variables, supporting read/write of the values
+        /// Provides a list of variables, supporting read/write of the values.
         /// </summary>
         private sealed class MergedRuntimeVariables : IRuntimeVariables
         {

@@ -18,7 +18,7 @@ namespace System.Management.Automation.Runspaces
         #region Public constructors
 
         /// <summary>
-        /// Create a named parameter with a null value
+        /// Create a named parameter with a null value.
         /// </summary>
         /// <param name="name">Parameter name.</param>
         /// <exception cref="ArgumentNullException">
@@ -37,7 +37,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Create a named parameter
+        /// Create a named parameter.
         /// </summary>
         /// <param name="name">Parameter name.</param>
         /// <param name="value">Parameter value.</param>
@@ -68,12 +68,12 @@ namespace System.Management.Automation.Runspaces
         #region Public properties
 
         /// <summary>
-        /// gets the parameter name
+        /// Gets the parameter name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// gets the value of the parameter
+        /// Gets the value of the parameter.
         /// </summary>
         public object Value { get; }
 
@@ -267,17 +267,17 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class CommandParameterCollection : Collection<CommandParameter>
     {
-        //TODO: this class needs a mechanism to lock further changes
+        // TODO: this class needs a mechanism to lock further changes
 
         /// <summary>
-        /// Create a new empty instance of this collection type
+        /// Create a new empty instance of this collection type.
         /// </summary>
         public CommandParameterCollection()
         {
         }
 
         /// <summary>
-        /// Add a parameter with given name and default null value
+        /// Add a parameter with given name and default null value.
         /// </summary>
         /// <param name="name">Name of the parameter.</param>
         /// <exception cref="ArgumentNullException">
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Add a parameter with given name and value
+        /// Add a parameter with given name and value.
         /// </summary>
         /// <param name="name">Name of the parameter.</param>
         /// <param name="value">Value of the parameter.</param>

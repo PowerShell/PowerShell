@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// id of the cimsession
+        /// Id of the cimsession.
         /// </summary>
         public uint SessionId
         {
@@ -35,7 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private uint sessionId;
 
         /// <summary>
-        /// instanceId of the cimsession
+        /// InstanceId of the cimsession.
         /// </summary>
         public Guid InstanceId
         {
@@ -48,7 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Guid instanceId;
 
         /// <summary>
-        /// name of the cimsession
+        /// Name of the cimsession.
         /// </summary>
         public string Name
         {
@@ -61,7 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string name;
 
         /// <summary>
-        /// computer name of the cimsession
+        /// Computer name of the cimsession.
         /// </summary>
         public string ComputerName
         {
@@ -74,7 +74,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string computerName;
 
         /// <summary>
-        /// wrapped cimsession object
+        /// Wrapped cimsession object.
         /// </summary>
         public CimSession CimSession
         {
@@ -87,7 +87,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession cimSession;
 
         /// <summary>
-        /// computer name of the cimsession
+        /// Computer name of the cimsession.
         /// </summary>
         public string Protocol
         {
@@ -113,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private ProtocolType protocol;
 
         /// <summary>
-        /// PSObject that wrapped the cimSession
+        /// PSObject that wrapped the cimSession.
         /// </summary>
         private PSObject psObject;
 
@@ -183,7 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string CimSessionClassName = "CimSession";
 
         /// <summary>
-        /// CimSession object name
+        /// CimSession object name.
         /// </summary>
         internal static string CimSessionObject = "{CimSession Object}";
 
@@ -195,27 +195,27 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string SessionObjectPath = @"CimSession id = {0}, name = {2}, ComputerName = {3}, instance id = {1}";
 
         /// <summary>
-        /// Id property name of cimsession wrapper object
+        /// Id property name of cimsession wrapper object.
         /// </summary>
         internal static string idPropName = "Id";
 
         /// <summary>
-        /// Instanceid property name of cimsession wrapper object
+        /// Instanceid property name of cimsession wrapper object.
         /// </summary>
         internal static string instanceidPropName = "InstanceId";
 
         /// <summary>
-        /// Name property name of cimsession wrapper object
+        /// Name property name of cimsession wrapper object.
         /// </summary>
         internal static string namePropName = "Name";
 
         /// <summary>
-        /// Computer name property name of cimsession object
+        /// Computer name property name of cimsession object.
         /// </summary>
         internal static string computernamePropName = "ComputerName";
 
         /// <summary>
-        /// Protocol name property name of cimsession object
+        /// Protocol name property name of cimsession object.
         /// </summary>
         internal static string protocolPropName = "Protocol";
 
@@ -393,8 +393,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSession session,
             UInt32 sessionId,
             Guid instanceId,
-            String name,
-            String computerName,
+            string name,
+            string computerName,
             ProtocolType protocol)
         {
             CimSessionWrapper wrapper = new CimSessionWrapper(
@@ -431,13 +431,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="psObject"></param>
         internal string GetRemoveSessionObjectTarget(PSObject psObject)
         {
-            String message = string.Empty;
+            string message = string.Empty;
             if (psObject.BaseObject is CimSession)
             {
                 UInt32 id = 0x0;
                 Guid instanceId = Guid.Empty;
-                String name = string.Empty;
-                String computerName = string.Empty;
+                string name = string.Empty;
+                string computerName = string.Empty;
                 if (psObject.Properties[idPropName].Value is UInt32)
                 {
                     id = Convert.ToUInt32(psObject.Properties[idPropName].Value, null);
@@ -450,12 +450,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (psObject.Properties[namePropName].Value is String)
                 {
-                    name = (String)psObject.Properties[namePropName].Value;
+                    name = (string)psObject.Properties[namePropName].Value;
                 }
 
                 if (psObject.Properties[computernamePropName].Value is String)
                 {
-                    computerName = (String)psObject.Properties[computernamePropName].Value;
+                    computerName = (string)psObject.Properties[computernamePropName].Value;
                 }
 
                 message = string.Format(CultureInfo.CurrentUICulture, SessionObjectPath, id, instanceId, name, computerName);
@@ -496,8 +496,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimSessionWrapper wrapper = this.curCimSessionWrapper[session];
-            String name = wrapper.Name;
-            String computerName = wrapper.ComputerName;
+            string name = wrapper.Name;
+            string computerName = wrapper.ComputerName;
 
             DebugHelper.WriteLog("name {0}, computername {1}, id {2}, instanceId {3}", 1, name, computerName, wrapper.SessionId, wrapper.InstanceId);
 
@@ -558,7 +558,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session list by given id array
+        /// Query session list by given id array.
         /// </summary>
         /// <param name="ids"></param>
         /// <returns>List of session wrapper objects.</returns>
@@ -590,7 +590,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session list by given instance id array
+        /// Query session list by given instance id array.
         /// </summary>
         /// <param name="instanceIds"></param>
         /// <returns>List of session wrapper objects.</returns>
@@ -622,7 +622,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session list by given name array
+        /// Query session list by given name array.
         /// </summary>
         /// <param name="nameArray"></param>
         /// <returns>List of session wrapper objects.</returns>
@@ -664,7 +664,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session list by given computer name array
+        /// Query session list by given computer name array.
         /// </summary>
         /// <param name="computernameArray"></param>
         /// <returns>List of session wrapper objects.</returns>
@@ -703,7 +703,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session list by given session objects array
+        /// Query session list by given session objects array.
         /// </summary>
         /// <param name="cimsessions"></param>
         /// <returns>List of session wrapper objects.</returns>
@@ -735,7 +735,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session wrapper object
+        /// Query session wrapper object.
         /// </summary>
         /// <param name="cimsessions"></param>
         /// <returns>Session wrapper.</returns>
@@ -747,7 +747,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Query session object with given CimSessionInstanceID
+        /// Query session object with given CimSessionInstanceID.
         /// </summary>
         /// <param name="cimSessionInstanceId"></param>
         /// <returns>CimSession object.</returns>
@@ -781,7 +781,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimSessionBase()
         {
@@ -828,7 +828,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal CimSessionState sessionState;
 
         /// <summary>
-        /// Get current runspace id
+        /// Get current runspace id.
         /// </summary>
         private static Guid CurrentRunspaceId
         {
@@ -899,7 +899,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimNewSession : CimSessionBase, IDisposable
     {
         /// <summary>
-        /// CimTestCimSessionContext
+        /// CimTestCimSessionContext.
         /// </summary>
         internal class CimTestCimSessionContext : XOperationContextBase
         {
@@ -946,7 +946,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Create a new <see cref="CimSession"/> base on given cmdlet
-        /// and its parameter
+        /// and its parameter.
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="sessionOptions"></param>
@@ -980,7 +980,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 else
                 {
-                    //CimSession will be returned as part of TestConnection
+                    // CimSession will be returned as part of TestConnection
                     this.cimTestSession.TestCimSession(computerName, proxy);
                 }
             }
@@ -1049,7 +1049,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         private CimTestSession cimTestSession;
-        #endregion //private members
+        #endregion // private members
 
         #region IDisposable
 
@@ -1112,7 +1112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1126,7 +1126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1134,7 +1134,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Get <see cref="CimSession"/> objects based on the given cmdlet
-        /// and its parameter
+        /// and its parameter.
         /// </summary>
         /// <param name="cmdlet"></param>
         public void GetCimSession(GetCimSessionCommand cmdlet)
@@ -1189,7 +1189,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1203,12 +1203,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimRemoveSession : CimSessionBase
     {
         /// <summary>
-        /// Remove session action string
+        /// Remove session action string.
         /// </summary>
         internal static string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public CimRemoveSession() : base()
         {
@@ -1216,7 +1216,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Remove the <see cref="CimSession"/> objects based on given cmdlet
-        /// and its parameter
+        /// and its parameter.
         /// </summary>
         /// <param name="cmdlet"></param>
         public void RemoveCimSession(RemoveCimSessionCommand cmdlet)
@@ -1265,7 +1265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
         }
-    }//End Class
+    }
 
     #endregion
 
@@ -1278,7 +1278,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimTestSession : CimAsyncOperation
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         internal CimTestSession()
             : base()
@@ -1303,4 +1303,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #endregion
 
-}//End namespace
+}

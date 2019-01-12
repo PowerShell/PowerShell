@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class InnerFormatShapeCommandBase : ImplementationCommandBase
     {
         /// <summary>
-        /// constructor to set up the formatting context
+        /// Constructor to set up the formatting context.
         /// </summary>
         internal InnerFormatShapeCommandBase()
         {
@@ -27,24 +27,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// enum listing the possible states the context is in
+        /// Enum listing the possible states the context is in.
         /// </summary>
         internal enum FormattingContextState { none, document, group }
 
         /// <summary>
-        /// context manager: stack to keep track in which context
-        /// the formatter is
+        /// Context manager: stack to keep track in which context
+        /// the formatter is.
         /// </summary>
         protected Stack<FormattingContextState> contextManager = new Stack<FormattingContextState>();
     }
 
     /// <summary>
-    /// core inner implementation for format/xxx commands
+    /// Core inner implementation for format/xxx commands.
     /// </summary>
     internal class InnerFormatShapeCommand : InnerFormatShapeCommandBase
     {
         /// <summary>
-        /// constructor to glue to the CRO
+        /// Constructor to glue to the CRO.
         /// </summary>
         internal InnerFormatShapeCommand(FormatShape shape)
         {
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// execution entry point
+        /// Execution entry point.
         /// </summary>
         internal override void ProcessRecord()
         {
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// execute formatting on a single object
+        /// Execute formatting on a single object.
         /// </summary>
         /// <param name="so">Object to process.</param>
         private void ProcessObject(PSObject so)
@@ -418,15 +418,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// group transitions:
+        /// Group transitions:
         /// none: stay in the same group
         /// enter: start a new group
-        /// exit: exit from the current group
+        /// exit: exit from the current group.
         /// </summary>
         private enum GroupTransition { none, enter, exit, startNew }
 
         /// <summary>
-        /// compute the group transition, given an input object
+        /// Compute the group transition, given an input object.
         /// </summary>
         /// <param name="so">Object received from the input pipeline.</param>
         /// <returns>GroupTransition enumeration.</returns>
@@ -455,8 +455,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write a payplad object by properly wrapping it into
-        /// a FormatEntry object
+        /// Write a payplad object by properly wrapping it into
+        /// a FormatEntry object.
         /// </summary>
         /// <param name="so">Object to process.</param>
         private void WritePayloadObject(PSObject so)
@@ -471,8 +471,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// inject the start group information
-        /// and push group context on stack
+        /// Inject the start group information
+        /// and push group context on stack.
         /// </summary>
         /// <param name="firstObjectInGroup">current pipeline object
         /// that is starting the group</param>
@@ -484,8 +484,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// inject the end group information
-        /// and pop group context out of stack
+        /// Inject the end group information
+        /// and pop group context out of stack.
         /// </summary>
         private void PopGroup()
         {
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// the formatting shape this formatter emits
+        /// The formatting shape this formatter emits.
         /// </summary>
         private FormatShape _shape;
 
@@ -529,21 +529,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Command Line Switches
 
         /// <summary>
-        /// optional, non positional parameter to specify the
-        /// group by property
+        /// Optional, non positional parameter to specify the
+        /// group by property.
         /// </summary>
         [Parameter]
         public object GroupBy { get; set; } = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
         public string View { get; set; } = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool? showErrorsAsMessages = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool? showErrorsInFormattedOutput = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _forceFormattingAlsoOnOutOfBand;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -663,9 +663,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// it reads the command line switches and collects them into a
+        /// It reads the command line switches and collects them into a
         /// FormattingCommandLineParameters instance, ready to pass to the
-        /// inner format command
+        /// inner format command.
         /// </summary>
         /// <returns>Parameters collected in unified manner.</returns>
         internal virtual FormattingCommandLineParameters GetCommandLineParameters()
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Command Line Switches
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -784,7 +784,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public SwitchParameter RepeatHeader { get; set; }
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool? _hideHeaders = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]

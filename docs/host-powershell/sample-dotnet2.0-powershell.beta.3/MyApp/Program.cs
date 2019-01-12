@@ -9,7 +9,7 @@ namespace Application.Test
     public class Program
     {
         /// <summary>
-        /// Managed entry point shim, which starts the actual program
+        /// Managed entry point shim, which starts the actual program.
         /// </summary>
         public static int Main(string[] args)
         {

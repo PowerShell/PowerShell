@@ -17,7 +17,7 @@ namespace System.Management.Automation
         private readonly ComTypeInfo _comTypeInfo;
 
         /// <summary>
-        ///   Constructor for the ComAdapter
+        ///   Constructor for the ComAdapter.
         /// </summary>
         /// <param name="typeinfo">Typeinfo for the com object we are adapting.</param>
         internal ComAdapter(ComTypeInfo typeinfo)
@@ -36,7 +36,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the TypeNameHierarchy out of an object
+        /// Returns the TypeNameHierarchy out of an object.
         /// </summary>
         /// <param name="obj">Object to get the TypeNameHierarchy from.</param>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
@@ -50,7 +50,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
-        /// the corresponding PSMemberInfo
+        /// the corresponding PSMemberInfo.
         /// </summary>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="memberName">Name of the member to be retrieved.</param>
@@ -138,7 +138,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns an array with the property attributes
+        /// Returns an array with the property attributes.
         /// </summary>
         /// <param name="property">Property we want the attributes from.</param>
         /// <returns>An array with the property attributes.</returns>
@@ -148,7 +148,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the value from a property coming from a previous call to DoGetProperty
+        /// Returns the value from a property coming from a previous call to DoGetProperty.
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <returns>The value of the property.</returns>
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the value of a property coming from a previous call to DoGetProperty
+        /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <param name="setValue">Value to set the property with.</param>
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is settable
+        /// Returns true if the property is settable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is settable.</returns>
@@ -182,7 +182,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is gettable
+        /// Returns true if the property is gettable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is gettable.</returns>
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the name of the type corresponding to the property
+        /// Returns the name of the type corresponding to the property.
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous DoGetProperty.</param>
         /// <param name="forDisplay">True if the result is for display purposes only.</param>
@@ -205,7 +205,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  get the property signature.
+        /// Get the property signature.
         /// </summary>
         /// <param name="property">Property object whose signature we want.</param>
         /// <returns>String representing the signature of the property.</returns>
@@ -219,7 +219,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Called after a non null return from GetMethodData to try to call
-        /// the method with the arguments
+        /// the method with the arguments.
         /// </summary>
         /// <param name="method">The non empty return from GetMethods.</param>
         /// <param name="arguments">The arguments to use.</param>
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called after a non null return from GetMethodData to return the overloads
+        /// Called after a non null return from GetMethodData to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMethodData.</param>
         /// <returns></returns>
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         #region parameterized property
 
         /// <summary>
-        /// Returns the name of the type corresponding to the property's value
+        /// Returns the name of the type corresponding to the property's value.
         /// </summary>
         /// <param name="property">Property obtained in a previous GetMember.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is settable
+        /// Returns true if the property is settable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is settable.</returns>
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is gettable
+        /// Returns true if the property is gettable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is gettable.</returns>
@@ -278,7 +278,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called after a non null return from GetMember to get the property value
+        /// Called after a non null return from GetMember to get the property value.
         /// </summary>
         /// <param name="property">The non empty return from GetMember.</param>
         /// <param name="arguments">The arguments to use.</param>
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called after a non null return from GetMember to set the property value
+        /// Called after a non null return from GetMember to set the property value.
         /// </summary>
         /// <param name="property">The non empty return from GetMember.</param>
         /// <param name="setValue">The value to set property with.</param>
@@ -302,7 +302,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation of the property in the object
+        /// Returns the string representation of the property in the object.
         /// </summary>
         /// <param name="property">Property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
@@ -313,7 +313,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called after a non null return from GetMember to return the overloads
+        /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="property">The return of GetMember.</param>
         protected override Collection<string> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
