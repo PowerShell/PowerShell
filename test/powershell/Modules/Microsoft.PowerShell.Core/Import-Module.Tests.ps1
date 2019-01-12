@@ -329,3 +329,53 @@ Describe "Import-Module -Force behaviour" -Tag "CI" {
         { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 }
+
+Describe "Get-Module -ListAvailable behaviour" -Tag "CI" {
+    BeforeAll {
+        $tempModulePath = Join-Path $TestDrive "TempModules"
+        $testModuleDir = Join-Path $tempModulePath "MyModuelTest"
+        $moduleManifest = Join-Path $testModuleDir "MyModuelTest.psd1"
+        $assemblyPath = Join-Path $testModuleDir "MyModuelTestCommandAssembly.dll"
+
+        $null = New-Item $testModuleDir -ItemType Directory -ErrorAction SilentlyContinue
+        if (-not (Test-Path $moduleManifest))
+        {
+            Set-Content $moduleManifest -Value @'
+@{
+    RootModule = 'MyModuelTestCommandAssembly.dll'
+    ModuleVersion = '0.0.1'
+    GUID = '5776ed43-1607-4e64-be76-acacdf8e9c8c'
+    FunctionsToExport = @()
+    CmdletsToExport = @("Get-Test")
+    AliasesToExport = @()
+}
+'@
+        }
+
+        $code = @'
+using System.Management.Automation;
+
+[Cmdlet("Get", "Test")]
+public class MyModuelTestCommand : PSCmdlet
+{
+    protected override void ProcessRecord()
+    {
+        WriteObject("BLAH");
+    }
+}
+'@
+        if (-not (Test-Path $assemblyPath))
+        {
+            Add-Type -TypeDefinition $code -OutputAssembly $assemblyPath
+        }
+    }
+
+    AfterAll {
+        Remove-Item -Path $tempModulePath -Recurse -Force
+    }
+
+    It "'Get-Module -ListAvailable' should not load the module assembly" {
+        $result = pwsh -c "`$env:PSModulePath = '$tempModulePath'; `$null = Get-Module -ListAvailable; [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName"
+        $result | Should -Be $null
+    }
+}
