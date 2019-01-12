@@ -116,8 +116,9 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo { x; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { X; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo1 { x = [foo2]::x } enum foo2 { x = [foo1]::x }' CycleInEnumInitializers,CycleInEnumInitializers 0,28 -SkipAndCheckRuntimeError
-    ShouldBeParseError 'enum foo { e = [int]::MaxValue;  e2 }' EnumeratorValueTooLarge 33 -SkipAndCheckRuntimeError
-    ShouldBeParseError 'enum foo { e = [int]::MaxValue + 1 }' EnumeratorValueTooLarge 15 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo { e = [int]::MaxValue;  e2 }' EnumeratorValueOutOfBounds 33 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo { e = [int]::MaxValue + 1 }' EnumeratorValueOutOfBounds 15 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo : byte { e = -1 }' EnumeratorValueOutOfBounds 22 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = $foo }' EnumeratorValueMustBeConstant 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = "hello" }' CannotConvertValue 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { a;b;c;' MissingEndCurlyBrace 10
