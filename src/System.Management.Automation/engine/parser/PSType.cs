@@ -1152,8 +1152,8 @@ namespace System.Management.Automation.Language
                                 {
                                     _parser.ReportError(
                                         enumerator.InitialValue.Extent,
-                                        nameof(ParserStrings.EnumeratorValueTooLarge),
-                                        ParserStrings.EnumeratorValueTooLarge,
+                                        nameof(ParserStrings.EnumeratorValueOutOfBounds),
+                                        ParserStrings.EnumeratorValueOutOfBounds,
                                         ToStringCodeMethods.Type(underlyingType));
                                 }
                                 else
@@ -1181,8 +1181,8 @@ namespace System.Management.Automation.Language
                     {
                         _parser.ReportError(
                             enumerator.Extent,
-                            nameof(ParserStrings.EnumeratorValueTooLarge),
-                            ParserStrings.EnumeratorValueTooLarge,
+                            nameof(ParserStrings.EnumeratorValueOutOfBounds),
+                            ParserStrings.EnumeratorValueOutOfBounds,
                             ToStringCodeMethods.Type(underlyingType));
                     }
 
