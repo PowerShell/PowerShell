@@ -4536,7 +4536,7 @@ namespace System.Management.Automation.Language
             //G      enum-member  new-lines:opt
             //G      enum-member-list   enum-member
 
-            const TypeCode validUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
+            const TypeCode ValidUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
 
             SkipNewlines();
             var name = SimpleNameRule();
@@ -4627,7 +4627,7 @@ namespace System.Management.Automation.Language
                 var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
                 if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
-                    //no need to report error since there is error reported in method StatementRule
+                    // No need to report error since there is error reported in method StatementRule
                     List<Ast> nestedAsts = new List<Ast>();
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(enumDefn);
