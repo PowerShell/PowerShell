@@ -13,35 +13,21 @@ When adding new tests, place them in the directories as [outlined below](#test-l
 
 ## CI System
 
-We use [AppVeyor](http://www.appveyor.com/) as a continuous integration (CI) system for Windows
-and [Travis CI](http://www.travis-ci.com) for non-Windows platforms.
+We use [Azure DevOps](https://azure.microsoft.com/en-us/solutions/devops) as a continuous integration (CI) system for Windows
+and non-Windows platforms.
 
-### AppVeyor
-
-In the `README.md` at the top of the repo, you can see AppVeyor badge.
+In the `README.md` at the top of the repository, you can see Azure CI badge.
 It indicates the last build status of `master` branch.
 Hopefully, it's green:
 
-![AppVeyor-Badge-Green.png](Images/AppVeyor-Badge-Green.png)
-
-This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
-From there you can easily navigate to the build history.
-
-### Travis CI
-
-Travis CI works similarly to AppVeyor.
-For Travis CI there will be multiple badges.
-The badges indicate the last build status of `master` branch for different platforms.
-Hopefully, it's green:
-
-![Travis-CI-Badge-Green.png](Images/Travis-CI-Badge-Green.png)
+![AzDevOps-Success.png](Images/AzDevOps-Success.png)
 
 This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
 From there you can easily navigate to the build history.
 
 ### Getting CI Results
 
-CI System builds (AppVeyor and Travis CI) and runs tests on every pull request and provides quick feedback about it.
+CI System builds and runs tests on every pull request and provides quick feedback about it.
 
 ![AppVeyor-Github](Images/AppVeyor-Github.png)
 

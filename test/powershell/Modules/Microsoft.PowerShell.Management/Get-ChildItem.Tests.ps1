@@ -181,7 +181,7 @@ Describe "Get-ChildItem" -Tags "CI" {
 
                 $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | measure).Count | Should -Be $count
+                ($foobar | Measure-Object).Count | Should -Be $count
             }
             catch
             {

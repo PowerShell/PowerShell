@@ -13,7 +13,7 @@ namespace System.Management.Automation
         private static string userHomeHelpPath = null;
 
         /// <summary>
-        /// Get the path to $HOME
+        /// Get the path to $HOME.
         /// </summary>
         internal static string GetUserHomeHelpSearchPath()
         {
@@ -47,18 +47,18 @@ namespace System.Management.Automation
 
             if (moduleBase.EndsWith(moduleName, StringComparison.OrdinalIgnoreCase))
             {
-                //This module is not an inbox module, so help goes under <userHelpPath>/<moduleName>
+                // This module is not an inbox module, so help goes under <userHelpPath>/<moduleName>
                 newModuleBase = Path.Combine(userHelpPath, moduleName);
             }
-            else if (String.Equals(moduleBaseParent, moduleName, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(moduleBaseParent, moduleName, StringComparison.OrdinalIgnoreCase))
             {
-                //This module has version folder.
+                // This module has version folder.
                 var moduleVersion = Path.GetFileName(moduleBase);
                 newModuleBase = Path.Combine(userHelpPath, moduleName, moduleVersion);
             }
             else
             {
-                //This module is inbox module, help should be under <userHelpPath>
+                // This module is inbox module, help should be under <userHelpPath>
                 newModuleBase = userHelpPath;
             }
 

@@ -28,14 +28,14 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// The runtime-callable wrapper
+        /// The runtime-callable wrapper.
         /// </summary>
         internal object RuntimeCallableWrapper { get; }
 
         private static readonly object s_comObjectInfoKey = new object();
 
         /// <summary>
-        /// This is the factory method to get the ComObject corresponding to an RCW
+        /// This is the factory method to get the ComObject corresponding to an RCW.
         /// </summary>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]

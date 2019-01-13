@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -34,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -78,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
                     _foundMatch = true;
 
                     if (ShouldProcess(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventSubscription,
                             subscriber.SourceIdentifier),
@@ -97,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventSubscriptionNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
@@ -111,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventSubscriptionNotFound, SubscriptionId)),
                     "INVALID_SUBSCRIPTION_IDENTIFIER",

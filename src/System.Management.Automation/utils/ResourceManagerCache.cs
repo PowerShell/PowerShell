@@ -20,7 +20,7 @@ namespace System.Management.Automation
             new Dictionary<string, Dictionary<string, ResourceManager>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Used to synchronize access to the ResourceManagerCache
+        /// Used to synchronize access to the ResourceManagerCache.
         /// </summary>
         private static object s_syncRoot = new Object();
 
@@ -46,7 +46,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
                     // cache entry and then add it into the cache keyed by the assembly
                     // location
 
-                    var baseNameCacheEntry = new Dictionary<String, ResourceManager>();
+                    var baseNameCacheEntry = new Dictionary<string, ResourceManager>();
 
                     baseNameCacheEntry[baseName] = manager;
 
@@ -107,21 +107,22 @@ namespace System.Management.Automation
                 "If the manager was not already created, it should have been dynamically created or an exception should have been thrown");
 
             return manager;
-        } // GetResourceManager
+        }
 
         /// <summary>
-        /// Design For Testability -- assert on failed resource lookup
+        /// Design For Testability -- assert on failed resource lookup.
         /// </summary>
         private static bool s_DFT_monitorFailingResourceLookup = true;
         internal static bool DFT_DoMonitorFailingResourceLookup
         {
             get { return ResourceManagerCache.s_DFT_monitorFailingResourceLookup; }
+
             set { ResourceManagerCache.s_DFT_monitorFailingResourceLookup = value; }
         }
 
         /// <summary>
         /// Gets the string from the resource manager based on the assembly,
-        /// base name, resource ID, and culture specified
+        /// base name, resource ID, and culture specified.
         /// </summary>
         /// <param name="assembly">
         /// The base assembly from which to get the resources from.
@@ -155,12 +156,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
             {
                 throw PSTraceSource.NewArgumentException("resourceId");
             }
@@ -197,11 +198,12 @@ namespace System.Management.Automation
                 text = resourceManager.GetString(resourceId);
             }
 
-            if (String.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
+            if (string.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
             {
                 Diagnostics.Assert(false,
                     "Lookup failure: baseName " + baseName + " resourceId " + resourceId);
             }
+
             return text;
         }
 
@@ -216,7 +218,7 @@ namespace System.Management.Automation
         /// <param name="assemblyToUse">
         /// The main Assembly for the resources
         /// </param>
-        /// <returns>Resource Manager instance</returns>
+        /// <returns>Resource Manager instance.</returns>
         /// <exception cref="ArgumentException">
         /// Thrown if the resource manager instance could not be created
         /// </exception>
@@ -237,6 +239,6 @@ namespace System.Management.Automation
 
             return rm;
         }
-    } // class ResourceManagerCache
-} // namespace System.Management.Automation
+    }
+}
 

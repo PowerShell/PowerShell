@@ -4,7 +4,7 @@
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A variable that represents $PSCulture
+    /// A variable that represents $PSCulture.
     /// </summary>
     internal class PSCultureVariable : PSVariable
     {
@@ -31,7 +31,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A variable that represents $PSUICulture
+    /// A variable that represents $PSUICulture.
     /// </summary>
     internal class PSUICultureVariable : PSVariable
     {

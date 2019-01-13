@@ -20,6 +20,6 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteObject(this.Context.TransactionManager.GetCurrent());
         }
-    } // GetTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

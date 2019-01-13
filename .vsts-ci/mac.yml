@@ -9,7 +9,7 @@ trigger:
     - '*'
     exclude:
     - /tools/releaseBuild/**/*
-    - /.vsts-ci/spelling.yml
+    - /.vsts-ci/misc-analysis.yml
 pr:
   branches:
     include:
@@ -20,11 +20,11 @@ pr:
     - '*'
     exclude:
     - /tools/releaseBuild/**/*
-    - /.vsts-ci/spelling.yml
+    - /.vsts-ci/misc-analysis.yml
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
-  # Avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   # Enable VSTS debug mode until stabilitized
   system.debug: 'true'
@@ -32,11 +32,14 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: macOS_CI
+jobs:
+- job: macOS_CI
 
-  queue:
+  pool:
     name: Hosted macOS
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-ChildItem -Path env:
@@ -65,7 +68,7 @@ phases:
 
   - powershell: |
       $ErrorActionPreference = 'continue'
-      tools/travis.ps1
+      tools/travis.ps1 -NugetKey $(NUGET_KEY)
     displayName: Build and test
     condition: succeeded()
 

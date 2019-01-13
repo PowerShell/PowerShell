@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation
         #region NewProperty
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the item(s) on which the new property should be created.
@@ -88,10 +88,10 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // NewProperty
+        }
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the item(s) on which the new property should be created.
@@ -171,7 +171,7 @@ namespace System.Management.Automation
                     NewProperty(providerInstance, providerPath, property, type, value, context);
                 }
             }
-        } // NewProperty
+        }
 
         /// <summary>
         /// Creates a new property on the item at the specified path.
@@ -257,7 +257,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // NewProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-itemproperty cmdlet.
@@ -334,8 +334,9 @@ namespace System.Management.Automation
 
                 return NewPropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, type, value, newContext);
             }
+
             return null;
-        } // NewPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-itemproperty cmdlet.
@@ -422,8 +423,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // NewPropertyDynamicParameters
+        }
 
         #endregion NewProperty
 
@@ -479,7 +481,7 @@ namespace System.Management.Automation
             RemoveProperty(paths, property, context);
 
             context.ThrowFirstErrorOrDoNothing();
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Removes the specified properties from the specified item.
@@ -551,7 +553,7 @@ namespace System.Management.Automation
                     RemoveProperty(providerInstance, providerPath, property, context);
                 }
             }
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Removes the property from the item at the specified path.
@@ -629,7 +631,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-itemproperty cmdlet.
@@ -698,8 +700,9 @@ namespace System.Management.Automation
 
                 return RemovePropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, newContext);
             }
+
             return null;
-        } // RemovePropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-itemproperty cmdlet.
@@ -778,8 +781,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // RemovePropertyDynamicParameters
+        }
 
         #endregion RemoveProperty
 
@@ -864,7 +868,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Copies the specified property on the specified item to the specified property
@@ -990,10 +994,10 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // CopyProperty
+        }
 
         /// <summary>
-        /// Copies the property
+        /// Copies the property.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider to use.
@@ -1084,7 +1088,7 @@ namespace System.Management.Automation
                     sourcePath,
                     e);
             }
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-itemproperty cmdlet.
@@ -1167,8 +1171,9 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
-        } // CopyPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-itemproperty cmdlet.
@@ -1260,8 +1265,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // CopyPropertyDynamicParameters
+        }
 
         #endregion CopyProperty
 
@@ -1349,7 +1355,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Moves the specified property on the specified item to the specified property
@@ -1474,10 +1480,10 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // MoveProperty
+        }
 
         /// <summary>
-        /// Moves the property from one item to another
+        /// Moves the property from one item to another.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -1568,7 +1574,7 @@ namespace System.Management.Automation
                     sourcePath,
                     e);
             }
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-itemproperty cmdlet.
@@ -1651,8 +1657,9 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
-        } // MovePropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-itemproperty cmdlet.
@@ -1745,8 +1752,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // MovePropertyDynamicParameters
+        }
 
         #endregion MoveProperty
 
@@ -1819,7 +1827,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Renames the specified property on the specified item to the specified property.
@@ -1901,7 +1909,7 @@ namespace System.Management.Automation
                     RenameProperty(providerInstance, providerPath, sourceProperty, destinationProperty, context);
                 }
             }
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Renames the property of the item at the specified path.
@@ -1987,7 +1995,7 @@ namespace System.Management.Automation
                     sourcePath,
                     e);
             }
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-itemproperty cmdlet.
@@ -2065,8 +2073,9 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
-        } // RenamePropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-itemproperty cmdlet.
@@ -2153,13 +2162,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // RenamePropertyDynamicParameters
+        }
 
         #endregion RenameProperty
 
         #endregion IDynamicPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

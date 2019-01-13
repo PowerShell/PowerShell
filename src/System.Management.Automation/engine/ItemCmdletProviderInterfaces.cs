@@ -15,17 +15,17 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ItemCmdletProviderIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
@@ -42,10 +42,10 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // CmdletProviderIntrinsics internal
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the "real" session state class.
@@ -61,7 +61,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // CmdletProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -108,7 +108,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetItem(new string[] { path }, false, false);
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the item at the specified path.
@@ -155,7 +155,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetItem(path, force, literalPath);
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the item at the specified path.
@@ -199,7 +199,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetItem(new string[] { path }, context);
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
@@ -240,7 +240,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetItemDynamicParameters(path, context);
-        } // GetItemDynamicParameters
+        }
 
         #endregion GetItem
 
@@ -288,7 +288,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetItem(new string[] { path }, value, false, false);
-        } // SetItem
+        }
 
         /// <summary>
         /// Sets the item at the specified path.
@@ -338,7 +338,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetItem(path, value, force, literalPath);
-        } // SetItem
+        }
 
         /// <summary>
         /// Sets the item at the specified path.
@@ -385,7 +385,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.SetItem(new string[] { path }, value, context);
-        } // SetItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetItemDynamicParameters(path, value, context);
-        } // SetItemDynamicParameters
+        }
 
         #endregion SetItem
 
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearItem(new string[] { path }, false, false);
-        } // ClearItem
+        }
 
         /// <summary>
         /// Clears the item at the specified path.
@@ -524,7 +524,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearItem(path, force, literalPath);
-        } // ClearItem
+        }
 
         /// <summary>
         /// Clears the item at the specified path.
@@ -568,7 +568,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearItem(new string[] { path }, context);
-        } // ClearItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
@@ -609,7 +609,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearItemDynamicParameters(path, context);
-        } // ClearItemDynamicParameters
+        }
 
         #endregion ClearItem
 
@@ -651,7 +651,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.InvokeDefaultAction(new string[] { path }, false);
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Invokes the default action of the item(s) at the specified path(s).
@@ -692,7 +692,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.InvokeDefaultAction(path, literalPath);
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Invokes the default action for the item at the specified path.
@@ -733,7 +733,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.InvokeDefaultAction(new string[] { path }, context);
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
@@ -774,7 +774,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.InvokeDefaultActionDynamicParameters(path, context);
-        } // InvokeItemDynamicParameters
+        }
 
         #endregion InvokeDefaultAction
 
@@ -822,7 +822,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenameItem(path, newName, false);
-        } // RenameItem
+        }
 
         /// <summary>
         /// Renames the item at the given path.
@@ -869,7 +869,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenameItem(path, newName, force);
-        } // RenameItem
+        }
 
         /// <summary>
         /// Renames the item at the given path.
@@ -919,7 +919,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RenameItem(path, newName, context);
-        } // RenameItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
@@ -966,7 +966,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenameItemDynamicParameters(path, newName, context);
-        } // RenameItemDynamicParameters
+        }
 
         #endregion RenameItem
 
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewItem(new string[] { path }, name, itemTypeName, content, false);
-        } // NewItem
+        }
 
         /// <summary>
         /// Creates a new item at the given path.
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewItem(path, name, itemTypeName, content, force);
-        } // NewItem
+        }
 
         /// <summary>
         /// Creates a new item at the given path.
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.NewItem(new string[] { path }, name, type, content, context);
-        } // NewItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
@@ -1191,7 +1191,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewItemDynamicParameters(path, type, content, context);
-        } // NewItemDynamicParameters
+        }
 
         #endregion NewItem
 
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveItem(new string[] { path }, recurse, false, false);
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Removes the items at the given path.
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveItem(path, recurse, force, literalPath);
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Removes the items at the given path.
@@ -1333,7 +1333,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveItem(new string[] { path }, recurse, context);
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
@@ -1382,14 +1382,14 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RemoveItemDynamicParameters(path, recurse, context);
-        } // RemoveItemDynamicParameters
+        }
 
         #endregion RemoveItem
 
         #region CopyItem
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include
@@ -1441,10 +1441,10 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, false, false);
-        } // CopyItem
+        }
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to copy. They may be a drive or provider-qualified path and may include
@@ -1504,10 +1504,10 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.CopyItem(path, destinationPath, recurse, copyContainers, force, literalPath);
-        } // CopyItem
+        }
 
         /// <summary>
-        /// Copy item at the specified path
+        /// Copy item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include
@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, context);
-        } // CopyItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.CopyItemDynamicParameters(path, destination, recurse, context);
-        } // CopyItemDynamicParameters
+        }
 
         #endregion CopyItem
 
@@ -1671,7 +1671,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MoveItem(new string[] { path }, destination, false, false);
-        } // MoveItem
+        }
 
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
@@ -1729,7 +1729,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MoveItem(path, destination, force, literalPath);
-        } // MoveItem
+        }
 
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.MoveItem(new string[] { path }, destination, context);
-        } // MoveItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
@@ -1825,7 +1825,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MoveItemDynamicParameters(path, destination, context);
-        } // MoveItemDynamicParameters
+        }
 
         #endregion MoveItem
 
@@ -1866,7 +1866,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ItemExists(path, false, false);
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if an item at the given path exits.
@@ -1909,7 +1909,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ItemExists(path, force, literalPath);
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if an item at the given path exits.
@@ -1951,7 +1951,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ItemExists(path, context);
-        } // ItemExists
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the test-path cmdlet.
@@ -1993,7 +1993,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ItemExistsDynamicParameters(path, context);
-        } // ItemExistsDynamicParameters
+        }
         #endregion ItemExists
 
         #region IsContainer
@@ -2032,7 +2032,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsItemContainer(path);
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Determines if the specified path is to an item that is a container.
@@ -2073,7 +2073,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsItemContainer(path, context);
-        } // IsItemContainer
+        }
 
         #endregion IsItemContainer
 
@@ -2085,7 +2085,7 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // ItemCmdletProviderIntrinsics
+    }
 
     /// <summary>
     /// Determines how the source container of a copy operation

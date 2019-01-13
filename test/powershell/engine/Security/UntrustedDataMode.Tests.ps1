@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
-    
+
     BeforeAll {
 
         $testModule = Join-Path $TestDrive "UntrustedDataModeTest.psm1"
@@ -42,11 +42,11 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 [Parameter()]
                 [ValidateTrustedData()]
                 [string[]] $Name,
-        
+
                 [Parameter()]
                 [ValidateTrustedData()]
                 [DateTime] $Date,
-        
+
                 [Parameter()]
                 [ValidateTrustedData()]
                 [System.IO.FileInfo] $File,
@@ -86,7 +86,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
 
         ## Use a different runspace
         $ps = [powershell]::Create()
-        
+
         ## Helper function to execute script
         function Execute-Script
         {
@@ -143,7 +143,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             Get-GlobalVar
             try { Test-WithGlobalVar } catch { $_.FullyQualifiedErrorId }
 '@
-        
+
             $testCases = @(
                 ## Assignment in language
                 @{
@@ -173,7 +173,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                     SetupScript = '& { New-Variable globalVar -Value "New-Variable in sub scope with [-Scope 1]" -Force -Scope 1 }'
                     ExpectedOutput = "New-Variable in sub scope with [-Scope 1];ParameterArgumentValidationError,Test-Untrusted"
                 },
-            
+
                 ## Set-Variable
                 @{
                     Name = 'Set-Variable in global scope'
@@ -190,7 +190,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                     SetupScript = '& { Set-Variable globalVar -Value "Set-Variable in sub scope with [-Scope 1]" -Scope 1  }'
                     ExpectedOutput = "Set-Variable in sub scope with [-Scope 1];ParameterArgumentValidationError,Test-Untrusted"
                 },
-            
+
                 ## New-Item
                 @{
                     Name = 'New-Item in global scope'
@@ -203,7 +203,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                     SetupScript = 'Set-GlobalVar; & { New-Item variable:\globalVar -Value "New-Item in sub scope" -Force }'
                     ExpectedOutput = "Trusted-Global;Trusted-Global"
                 },
-            
+
                 ## Set-Item
                 @{
                     Name = 'Set-Item in global scope'
@@ -216,7 +216,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                     SetupScript = 'Set-GlobalVar; & { Set-Item variable:\globalVar -Value "Set-Item in sub scope" -Force }'
                     ExpectedOutput = "Trusted-Global;Trusted-Global"
                 },
-            
+
                 ## Error Variable
                 @{
                     Name = 'ErrorVariable in global scope'
@@ -294,7 +294,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 [scriptblock]::Create('data global:var { "data section" }')
                 throw "No Exception!"
             } catch {
-                
+
                 ## Syntax 'data global:var { }' is not supported at the time writting the tests here
                 ## If this test fail, then maybe this syntax is supported now, and in that case, please
                 ## enable the test 'Data Section - "data global:var"' in $testCases above
@@ -304,7 +304,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
     }
 
     Context "Set variable in Import-LocalizedData" {
-        
+
         BeforeAll {
             $localData = Join-Path $TestDrive "local.psd1"
             Set-Content $localData -Value '"Localized-Data"'
@@ -323,7 +323,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
     }
 
     Context "Exported variables by module loading" {
-        
+
         BeforeAll {
             ## Create a module that exposes two variables
             $VarModule = Join-Path $TestDrive "Var.psm1"
@@ -393,7 +393,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Invoke-Expression]" {
             ## Run this in the global scope, so value of $globalVar will be marked as untrusted
             $result = Execute-Script -Script @'
-            $globalVar = "gps -id $PID"
+            $globalVar = "Get-Process -id $PID"
             Invoke-Expression -Command $globalVar | ForEach-Object Id
 '@
             $result | Should Be $PID
@@ -529,7 +529,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
     }
 
     Context "Validate trusted data for parameters of some built-in powershell cmdlets" {
-        
+
         BeforeAll {
             $ScriptTemplate = @'
             try {{
@@ -548,7 +548,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 @{ Name = "test 'ValidateTrustedDataAttribute' on [Start-Job]";         Argument = '$globalVar = {1+1}; Test-StartJob $globalVar';                  ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand" }
             )
         }
-        
+
         It "<Name>" -TestCases $testCases {
             param ($Argument, $ExpectedErrorId)
             ## Run this in the global scope, so value of $globalVar will be marked as untrusted

@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
         /// Cmdlet help info looks for pattern in Synopsis and
-        /// DetailedDescription
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
@@ -370,10 +370,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern.
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <param name="pattern">Pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...

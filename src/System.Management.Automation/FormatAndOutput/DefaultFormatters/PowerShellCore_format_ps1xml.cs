@@ -25,6 +25,7 @@ namespace System.Management.Automation.Runspaces
                             .AddScriptBlockExpressionBinding(@"
                       $header = ""                       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
                       if($_.Path) { $header = ""                       "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
+
                       $header
                     ")
                         .EndFrame()
@@ -738,14 +739,17 @@ namespace System.Management.Automation.Runspaces
                                                     {
                                                         $myinv.MyCommand.Path + "" : ""
                                                     }
+
                                                     break
                                                 }
+
                                                 ([System.Management.Automation.CommandTypes]::Script)
                                                 {
                                                     if ($myinv.MyCommand.ScriptBlock)
                                                     {
                                                         $myinv.MyCommand.ScriptBlock.ToString() + "" : ""
                                                     }
+
                                                     break
                                                 }
                                                 default
@@ -761,6 +765,7 @@ namespace System.Management.Automation.Runspaces
                                                     {
                                                         $myinv.InvocationName + "" : ""
                                                     }
+
                                                     break
                                                 }
                                             }
@@ -796,6 +801,7 @@ namespace System.Management.Automation.Runspaces
                                         $indent = 4
 
                                         $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+
                                         if ($null -ne $errorCategoryMsg)
                                         {
                                             $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
@@ -804,12 +810,14 @@ namespace System.Management.Automation.Runspaces
                                         {
                                             $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
                                         }
+
                                         $posmsg += ""`n"" + $indentString
 
                                         $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
                                         $posmsg += ""`n"" + $indentString
 
                                         $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+
                                         if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
@@ -1213,10 +1221,12 @@ namespace System.Management.Automation.Runspaces
                             {
                                 $editions = @('Desktop')
                             }
+
                             foreach ($edition in $editions)
                             {
                                 $result += $edition.Substring(0,4)
                             }
+
                             ($result | Sort-Object) -join ','")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
@@ -1298,13 +1308,15 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"
                                   $result = $_.Content
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
+
                                   $result
                                 ", label: "Content")
                         .AddItemScriptBlock(@"
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
+
                                   $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")
@@ -1328,7 +1340,8 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
+
                                   $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")

@@ -66,8 +66,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to process a complex control directive and generate
-    /// the corresponding formatting tokens
+    /// Class to process a complex control directive and generate
+    /// the corresponding formatting tokens.
     /// </summary>
     internal sealed class ComplexControlGenerator
     {
@@ -129,6 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ExecuteFormatControlBody(level, so, complexBody, formatValueList);
                 return true;
             }
+
             return false;
         }
 
@@ -154,6 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return x;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return match.BestMatch as ComplexControlEntryDefinition;
@@ -171,6 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return x;
                         }
                     }
+
                     if (match.BestMatch != null)
                     {
                         return match.BestMatch as ComplexControlEntryDefinition;
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fe.formatValueList.Add(ftf);
                     continue;
                 }
+
                 var newline = t as NewLineToken;
                 if (newline != null)
                 {
@@ -217,8 +221,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         fe.formatValueList.Add(new FormatNewLine());
                     }
+
                     continue;
                 }
+
                 FrameToken ft = t as FrameToken;
                 if (ft != null)
                 {
@@ -281,6 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             val = string.Empty;
                         }
+
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
                         if (cpt.control != null)
@@ -303,6 +310,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     // nothing to process
                                     continue;
                                 }
+
                                 fpf = new FormatPropertyField();
 
                                 fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, _enumerationLimit, formatErrorObject, _expressionFactory);
@@ -316,6 +324,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, _enumerationLimit, formatErrorObject, _expressionFactory);
                             fe.formatValueList.Add(fpf);
                         }
+
                         if (formatErrorObject != null && formatErrorObject.exception != null)
                         {
                             _errorManager.LogStringFormatError(formatErrorObject);
@@ -329,6 +338,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             continue;
                         }
+
                         IEnumerable e = PSObjectHelper.GetEnumerable(val);
                         if (cpt.enumerateCollection && e != null)
                         {
@@ -369,6 +379,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
+
             return retVal;
         }
 
@@ -390,6 +401,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal int Level { get { return _level; } }
+
         internal int MaxDepth { get { return _maxDepth; } }
 
         internal TraversalInfo NextLevel
@@ -405,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to generate a complex view from properties
+    /// Class to generate a complex view from properties.
     /// </summary>
     internal sealed class ComplexViewObjectBrowser
     {
@@ -417,12 +429,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// given an object, generate a tree-like view
-        /// of the object
+        /// Given an object, generate a tree-like view
+        /// of the object.
         /// </summary>
-        /// <param name="so">object to process</param>
-        /// <param name="inputParameters">parameters from the command line</param>
-        /// <returns>complex view entry to send to the output command</returns>
+        /// <param name="so">Object to process.</param>
+        /// <param name="inputParameters">Parameters from the command line.</param>
+        /// <returns>Complex view entry to send to the output command.</returns>
         internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters inputParameters)
         {
             _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
@@ -496,12 +508,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// recursive call to display an object
+        /// Recursive call to display an object.
         /// </summary>
-        /// <param name="so">object to display</param>
-        /// <param name="currentLevel">current level in the traversal</param>
-        /// <param name="parameterList"> list of parameters from the command line</param>
-        /// <param name="formatValueList">list of format tokens to add to</param>
+        /// <param name="so">Object to display.</param>
+        /// <param name="currentLevel">Current level in the traversal.</param>
+        /// <param name="parameterList">List of parameters from the command line.</param>
+        /// <param name="formatValueList">List of format tokens to add to.</param>
         private void DisplayObject(PSObject so, TraversalInfo currentLevel, List<MshParameter> parameterList,
                                         List<FormatValue> formatValueList)
         {
@@ -592,15 +604,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     DisplayObject(PSObject.AsPSObject(val), level.NextLevel, null,
                         AddIndentationLevel(formatValueList));
                 }
-            } // for each
+            }
         }
 
         /// <summary>
-        /// recursive call to display an object
+        /// Recursive call to display an object.
         /// </summary>
-        /// <param name="e">enumeration to display</param>
-        /// <param name="level">current level in the traversal</param>
-        /// <param name="formatValueList">list of format tokens to add to</param>
+        /// <param name="e">Enumeration to display.</param>
+        /// <param name="level">Current level in the traversal.</param>
+        /// <param name="formatValueList">List of format tokens to add to.</param>
         private void DisplayEnumeration(IEnumerable e, TraversalInfo level, List<FormatValue> formatValueList)
         {
             AddPrologue(formatValueList, "[", null);
@@ -619,15 +631,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     throw new PipelineStoppedException();
                 }
+
                 if (_enumerationLimit >= 0)
                 {
                     if (_enumerationLimit == enumCount)
                     {
-                        DisplayLeaf(PSObjectHelper.ellipses, formatValueList);
+                        DisplayLeaf(PSObjectHelper.Ellipsis, formatValueList);
                         break;
                     }
+
                     enumCount++;
                 }
+
                 if (TreatAsLeafNode(x, level))
                 {
                     DisplayLeaf(x, formatValueList);
@@ -651,10 +666,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// display a leaf value
+        /// Display a leaf value.
         /// </summary>
-        /// <param name="val">object to display</param>
-        /// <param name="formatValueList">list of format tokens to add to</param>
+        /// <param name="val">Object to display.</param>
+        /// <param name="formatValueList">List of format tokens to add to.</param>
         private void DisplayLeaf(object val, List<FormatValue> formatValueList)
         {
             FormatPropertyField fpf = new FormatPropertyField();
@@ -665,10 +680,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// determine if we have to stop the expansion
+        /// Determine if we have to stop the expansion.
         /// </summary>
-        /// <param name="val">object to verify</param>
-        /// <param name="level">current level of recursion</param>
+        /// <param name="val">Object to verify.</param>
+        /// <param name="level">Current level of recursion.</param>
         /// <returns></returns>
         private static bool TreatAsLeafNode(object val, TraversalInfo level)
         {
@@ -679,10 +694,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// treat as scalar check
+        /// Treat as scalar check.
         /// </summary>
-        /// <param name="typeNames">name of the type to check</param>
-        /// <returns>true if it has to be treated as a scalar</returns>
+        /// <param name="typeNames">Name of the type to check.</param>
+        /// <returns>True if it has to be treated as a scalar.</returns>
         private static bool TreatAsScalarType(Collection<string> typeNames)
         {
             return DefaultScalarTypes.IsTypeInList(typeNames);
@@ -754,7 +769,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>
-        /// indentation added to each level in the recursion
+        /// Indentation added to each level in the recursion.
         /// </summary>
         private int _indentationStep = 2;
 

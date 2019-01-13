@@ -7,38 +7,38 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Enumerated values for DSC resource implementation type
+    /// Enumerated values for DSC resource implementation type.
     /// </summary>
     public enum ImplementedAsType
     {
         /// <summary>
-        /// DSC resource implementation type not known
+        /// DSC resource implementation type not known.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// DSC resource is implemented using PowerShell module
+        /// DSC resource is implemented using PowerShell module.
         /// </summary>
         PowerShell = 1,
 
         /// <summary>
-        /// DSC resource is implemented using a CIM provider
+        /// DSC resource is implemented using a CIM provider.
         /// </summary>
         Binary = 2,
 
         /// <summary>
-        /// DSC resource is a composite and implemented using configuration keyword
+        /// DSC resource is a composite and implemented using configuration keyword.
         /// </summary>
         Composite = 3
     }
 
     /// <summary>
-    /// Contains a DSC resource information
+    /// Contains a DSC resource information.
     /// </summary>
     public class DscResourceInfo
     {
         /// <summary>
-        /// Initializes a new instance of the DscResourceInfo class
+        /// Initializes a new instance of the DscResourceInfo class.
         /// </summary>
         /// <param name="name">Name of the DscResource.</param>
         /// <param name="friendlyName">FriendlyName of the DscResource.</param>
@@ -60,19 +60,19 @@ namespace System.Management.Automation
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets or sets resource type name
+        /// Gets or sets resource type name.
         /// </summary>
         public string ResourceType { get; set; }
 
         /// <summary>
-        /// Gets or sets friendly name defined for the resource
+        /// Gets or sets friendly name defined for the resource.
         /// </summary>
         public string FriendlyName { get; set; }
 
         /// <summary>
         /// Gets or sets of the file which implements the resource. For the resources which are defined using
         /// MOF file, this will be path to a module which resides in the same folder where schema.mof file is present.
-        /// For composite resources, this will be the module which implements the resource
+        /// For composite resources, this will be the module which implements the resource.
         /// </summary>
         public string Path { get; set; }
 
@@ -84,24 +84,24 @@ namespace System.Management.Automation
         public string ParentPath { get; set; }
 
         /// <summary>
-        /// Gets or sets a value which indicate how DSC resource is implemented
+        /// Gets or sets a value which indicate how DSC resource is implemented.
         /// </summary>
         public ImplementedAsType ImplementedAs { get; set; }
 
         /// <summary>
-        /// Gets or sets company which owns this resource
+        /// Gets or sets company which owns this resource.
         /// </summary>
         public string CompanyName { get; set; }
 
         /// <summary>
-        /// Gets or sets properties of the resource
+        /// Gets or sets properties of the resource.
         /// </summary>
         public ReadOnlyCollection<DscResourcePropertyInfo> Properties { get; private set; }
 
         /// <summary>
-        /// Updates properties of the resource
+        /// Updates properties of the resource.
         /// </summary>
-        /// <param name="properties">Updated properties</param>
+        /// <param name="properties">Updated properties.</param>
         public void UpdateProperties(IList<DscResourcePropertyInfo> properties)
         {
             if (properties != null)
@@ -116,18 +116,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
-        public string HelpFile { get; internal set; } = String.Empty;
+        public string HelpFile { get; internal set; } = string.Empty;
 
 // HelpFile
     }
 
     /// <summary>
-    /// Contains a DSC resource property information
+    /// Contains a DSC resource property information.
     /// </summary>
     public sealed class DscResourcePropertyInfo
     {
         /// <summary>
-        /// Initializes a new instance of the DscResourcePropertyInfo class
+        /// Initializes a new instance of the DscResourcePropertyInfo class.
         /// </summary>
         internal DscResourcePropertyInfo()
         {
@@ -135,22 +135,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets name of the property
+        /// Gets or sets name of the property.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets type of the property
+        /// Gets or sets type of the property.
         /// </summary>
         public string PropertyType { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the property is mandatory or not
+        /// Gets or sets a value indicating whether the property is mandatory or not.
         /// </summary>
         public bool IsMandatory { get; set; }
 
         /// <summary>
-        /// Gets Values for a resource property
+        /// Gets Values for a resource property.
         /// </summary>
         public ReadOnlyCollection<string> Values { get; private set; }
 

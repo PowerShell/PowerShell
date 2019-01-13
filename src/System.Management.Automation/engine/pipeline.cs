@@ -90,7 +90,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Finalizer for class PipelineProcessor
+        /// Finalizer for class PipelineProcessor.
         /// </summary>
         ~PipelineProcessor()
         {
@@ -114,6 +114,7 @@ namespace System.Management.Automation.Internal
             {
                 return _executionFailed;
             }
+
             set
             {
                 _executionFailed = value;
@@ -216,7 +217,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
-            if ((invocation == null) || String.IsNullOrEmpty(invocation.Line))
+            if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
                 if (hostInterface != null)
                 {
@@ -224,7 +225,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!String.IsNullOrEmpty(logElement))
+            if (!string.IsNullOrEmpty(logElement))
             {
                 _eventLogBuffer.Add(logElement);
             }
@@ -261,15 +262,15 @@ namespace System.Management.Automation.Internal
             return false;
         }
 
-        private List<String> _eventLogBuffer = new List<string>();
+        private List<string> _eventLogBuffer = new List<string>();
         #endregion
 
         #region public_methods
 
         /// <summary>
-        /// Add a single InternalCommand to the end of the pipeline
+        /// Add a single InternalCommand to the end of the pipeline.
         /// </summary>
-        /// <returns>Results from last pipeline stage</returns>
+        /// <returns>Results from last pipeline stage.</returns>
         /// <exception cref="InvalidOperationException">
         /// see AddCommand
         /// </exception>
@@ -292,12 +293,12 @@ namespace System.Management.Automation.Internal
         //   should be an int or enum to allow for more queues
         // 2005/03/08-JonN: This is an internal API
         /// <summary>
-        /// Add a command to the pipeline
+        /// Add a command to the pipeline.
         /// </summary>
         /// <param name="commandProcessor"></param>
-        /// <param name="readFromCommand">reference number of command from which to read, 0 for none</param>
-        /// <param name="readErrorQueue">read from error queue of command readFromCommand</param>
-        /// <returns>reference number of this command for use in readFromCommand</returns>
+        /// <param name="readFromCommand">Reference number of command from which to read, 0 for none.</param>
+        /// <param name="readErrorQueue">Read from error queue of command readFromCommand.</param>
+        /// <returns>Reference number of this command for use in readFromCommand.</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="ArgumentException">
         /// FirstCommandCannotHaveInput: <paramref name="readFromCommand"/> must be zero
@@ -316,25 +317,30 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("commandProcessor");
             }
+
             if (_commands == null)
             {
                 // "_commands == null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             if (_disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("PipelineProcessor");
             }
+
             if (_executionStarted)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.ExecutionAlreadyStarted);
             }
+
             if (commandProcessor.AddedToPipelineAlready)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.CommandProcessorAlreadyUsed);
             }
+
             if (0 == _commands.Count)
             {
                 if (0 != readFromCommand)
@@ -363,6 +369,7 @@ namespace System.Management.Automation.Internal
                     // "PipelineProcessor.AddCommand(): previous request object == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 Pipe UpstreamPipe = (readErrorQueue) ?
                     prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
                 if (UpstreamPipe == null)
@@ -370,6 +377,7 @@ namespace System.Management.Automation.Internal
                     // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 if (UpstreamPipe.DownstreamCmdlet != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
@@ -404,8 +412,9 @@ namespace System.Management.Automation.Internal
                         // the same pipe as the downstream cmdlet's input
                         prevcommandProcessor.CommandRuntime.ErrorOutputPipe = UpstreamPipe;
                     }
-                } // if MergeUnclaimedPreviousErrorResults
+                }
             }
+
             _commands.Add(commandProcessor);
 
             // We give the Command a pointer back to the
@@ -414,7 +423,7 @@ namespace System.Management.Automation.Internal
             commandProcessor.CommandRuntime.PipelineProcessor = this;
 
             return _commands.Count;
-        } // AddCommand( CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue )
+        }
 
         // 2005/03/08-JonN: This is an internal API
         /// <summary>
@@ -495,6 +504,7 @@ namespace System.Management.Automation.Internal
                         firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader
                             = ExternalInput;
                     }
+
                     Inject(input, enumerate: true);
                 }
                 catch (PipelineStoppedException)
@@ -571,7 +581,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
-        } // internal Array SynchronousExecuteEnumerate()
+        }
 
         private void DoCompleteCore(CommandProcessorBase commandRequestingUpstreamCommandsToStop)
         {
@@ -595,6 +605,7 @@ namespace System.Management.Automation.Internal
                         commandRequestingUpstreamCommandsToStop = null;
                         continue; // do not call DoComplete/EndProcessing on the command that initiated stopping
                     }
+
                     if (commandRequestingUpstreamCommandsToStop != null)
                     {
                         continue; // do not call DoComplete/EndProcessing on commands that were stopped upstream
@@ -636,6 +647,7 @@ namespace System.Management.Automation.Internal
                         commandProcessor.CommandRuntime.PipelineProcessor.LogExecutionComplete(
                             commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
                     }
+
                     lastCommandRuntime = commandProcessor.CommandRuntime;
                 }
             }
@@ -663,7 +675,7 @@ namespace System.Management.Automation.Internal
         /// Implements DoComplete as a stand-alone function for completing
         /// the execution of a steppable pipeline.
         /// </summary>
-        /// <returns>The results of the execution</returns>
+        /// <returns>The results of the execution.</returns>
         internal Array DoComplete()
         {
             if (Stopping)
@@ -726,7 +738,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
-        } // internal Array DoComplete()
+        }
 
         /// <summary>
         /// This routine starts the stepping process. It is optional to
@@ -735,7 +747,7 @@ namespace System.Management.Automation.Internal
         /// to process as is the case for I/O redirection into a file. We
         /// still want the file opened, even if there was nothing to write to it.
         /// </summary>
-        /// <param name="expectInput">True if you want to write to this pipeline</param>
+        /// <param name="expectInput">True if you want to write to this pipeline.</param>
         internal void StartStepping(bool expectInput)
         {
             try
@@ -759,6 +771,7 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError.Throw();
                 }
+
                 throw;
             }
         }
@@ -802,8 +815,8 @@ namespace System.Management.Automation.Internal
                     continue;
                 }
 #pragma warning restore 56500
-            } // for (int i = 0; i < _commands.Count; i++)
-        } // Stop()
+            }
+        }
 
         #endregion public_methods
 
@@ -873,6 +886,7 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError.Throw();
                 }
+
                 throw;
             }
             catch (Exception)
@@ -880,7 +894,7 @@ namespace System.Management.Automation.Internal
                 DisposeCommands();
                 throw;
             }
-        } // internal Array DoStepItems
+        }
 
         /// <summary>
         /// Prepares the pipeline for execution.
@@ -919,6 +933,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewObjectDisposedException("PipelineProcessor");
             }
+
             if (Stopping)
             {
                 throw new PipelineStoppedException();
@@ -955,6 +970,7 @@ namespace System.Management.Automation.Internal
                 // "PipelineProcessor.Start(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             if (ExternalSuccessOutput != null)
             {
                 LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter
@@ -1047,11 +1063,11 @@ namespace System.Management.Automation.Internal
 
                 commandProcessor.DoBegin();
             }
-        } // private void Start
+        }
 
         /// <summary>
         /// Add ExternalErrorOutput to all commands whose error
-        /// output is not yet claimed
+        /// output is not yet claimed.
         /// </summary>
         private void SetExternalErrorOutput()
         {
@@ -1074,7 +1090,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Clear ErrorVariable as appropriate
+        /// Clear ErrorVariable as appropriate.
         /// </summary>
         private void SetupParameterVariables()
         {
@@ -1102,7 +1118,7 @@ namespace System.Management.Automation.Internal
         /// <param name="input">
         /// Array of input objects for first stage
         /// </param>
-        /// <param name="enumerate">If true, unravel the input otherwise pass as one object</param>
+        /// <param name="enumerate">If true, unravel the input otherwise pass as one object.</param>
         /// <throws>
         /// Exception if any cmdlet throws a [terminating] exception
         /// </throws>
@@ -1156,7 +1172,7 @@ namespace System.Management.Automation.Internal
             // Execute the first command - In the streamlet model, Execute of the first command will
             // automatically call the downstream command incase if there are any objects in the pipe.
             firstcommandProcessor.DoExecute();
-        } // private void Inject
+        }
 
         /// <summary>
         /// Retrieve results from the pipeline.
@@ -1216,14 +1232,14 @@ namespace System.Management.Automation.Internal
             if (results == null)
                 return MshCommandRuntime.StaticEmptyArray;
             return results;
-        } // private Array RetrieveResults
+        }
 
         /// <summary>
         /// Links this pipeline to a pre-existing Pipe object. This allows nested pipes
         /// to write into the parent pipeline. It does this by resetting the terminal
         /// pipeline object.
         /// </summary>
-        /// <param name="pipeToUse">The pipeline to write success objects to</param>
+        /// <param name="pipeToUse">The pipeline to write success objects to.</param>
         internal void LinkPipelineSuccessOutput(Pipe pipeToUse)
         {
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
@@ -1238,7 +1254,7 @@ namespace System.Management.Automation.Internal
 
             LastCommandProcessor.CommandRuntime.OutputPipe = pipeToUse;
             _linkedSuccessOutput = true;
-        } // private void SetResultPipe
+        }
 
         internal void LinkPipelineErrorOutput(Pipe pipeToUse)
         {
@@ -1357,6 +1373,7 @@ namespace System.Management.Automation.Internal
 #pragma warning restore 56500
                 }
             }
+
             _redirectionPipes = null;
         }
 
@@ -1365,9 +1382,9 @@ namespace System.Management.Automation.Internal
         /// Makes an internal note of the exception, but only if this is
         /// the first error.
         /// </summary>
-        /// <param name="e">error which terminated the pipeline</param>
-        /// <param name="command">command against which to log SecondFailure</param>
-        /// <returns>true iff the pipeline was not already stopped</returns>
+        /// <param name="e">Error which terminated the pipeline.</param>
+        /// <param name="command">Command against which to log SecondFailure.</param>
+        /// <returns>True iff the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {
             bool wasStopping = false;
@@ -1391,6 +1408,7 @@ namespace System.Management.Automation.Internal
                     {
                         ex = ex.InnerException;
                     }
+
                     if (!(ex is PipelineStoppedException))
                     {
                         string message = StringUtil.Format(PipelineStrings.SecondFailure,
@@ -1407,9 +1425,11 @@ namespace System.Management.Automation.Internal
                             Severity.Warning);
                     }
                 }
+
                 wasStopping = _stopping;
                 _stopping = true;
             }
+
             return !wasStopping;
         }
 
@@ -1449,6 +1469,7 @@ namespace System.Management.Automation.Internal
         internal PipelineReader<object> ExternalInput
         {
             get { return _externalInputPipe; }
+
             set
             {
                 if (_executionStarted)
@@ -1456,6 +1477,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.ExecutionAlreadyStarted);
                 }
+
                 _externalInputPipe = value;
             }
         }
@@ -1473,6 +1495,7 @@ namespace System.Management.Automation.Internal
         internal PipelineWriter ExternalSuccessOutput
         {
             get { return _externalSuccessOutput; }
+
             set
             {
                 if (_executionStarted)
@@ -1480,6 +1503,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.ExecutionAlreadyStarted);
                 }
+
                 _externalSuccessOutput = value;
             }
         }
@@ -1498,6 +1522,7 @@ namespace System.Management.Automation.Internal
         internal PipelineWriter ExternalErrorOutput
         {
             get { return _externalErrorOutput; }
+
             set
             {
                 if (_executionStarted)
@@ -1531,6 +1556,7 @@ namespace System.Management.Automation.Internal
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }
+
             set { _localPipeline = value; }
         }
 
@@ -1542,6 +1568,7 @@ namespace System.Management.Automation.Internal
         internal SessionStateScope ExecutionScope
         {
             get { return _executionScope; }
+
             set
             {
                 // This needs to be settable so that a steppable pipeline
@@ -1561,5 +1588,5 @@ namespace System.Management.Automation.Internal
             PipelineComplete
         }
     }
-} // namespace System.Management.Automation
+}
 

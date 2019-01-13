@@ -128,6 +128,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return var;
             }
+
             return var = Expression.Variable(type, name);
         }
 
@@ -144,8 +145,10 @@ namespace System.Management.Automation.ComInterop
                 {
                     marshalType = mo.Expression.Type;
                 }
+
                 marshalType = marshalType.MakeByRefType();
             }
+
             return marshalType;
         }
 
@@ -251,6 +254,7 @@ namespace System.Management.Automation.ComInterop
                     // Positional arguments are in reverse order at the tail of rgArgs
                     variantIndex = reverseIndex;
                 }
+
                 VariantBuilder variantBuilder = _varEnumSelector.VariantBuilders[i];
 
                 Expression marshal = variantBuilder.InitializeArgumentVariant(
@@ -307,6 +311,7 @@ namespace System.Management.Automation.ComInterop
             {
                 args.Add(Expression.TypeAs(parameter, typeof(object)));
             }
+
             expr = Expression.Call(
                 typeof(ComRuntimeHelpers).GetMethod("CheckThrowException"),
                 hresult,
@@ -564,6 +569,7 @@ namespace System.Management.Automation.ComInterop
             {
                 res[copy++] = _args[i].Expression;
             }
+
             return res;
         }
     }

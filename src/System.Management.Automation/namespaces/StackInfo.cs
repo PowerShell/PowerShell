@@ -32,7 +32,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("locationStack");
             }
 
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 throw PSTraceSource.NewArgumentException("stackName");
             }
@@ -51,11 +51,11 @@ namespace System.Management.Automation
             {
                 this.Push(stackContents[index]);
             }
-        } // constructor
+        }
 
         /// <summary>
-        /// Gets the name of the stack
+        /// Gets the name of the stack.
         /// </summary>
         public string Name { get; } = null;
-    } // PathInfoStack
-} // namespace System.Management.Automation
+    }
+}

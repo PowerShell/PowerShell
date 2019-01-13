@@ -47,7 +47,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             permissionProvider.GetSecurityDescriptor(path, sections);
-        } // GetSecurityDescriptor
+        }
 
         /// <summary>
         /// Internal wrapper for the SetSecurityDescriptor protected method. This method will
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             permissionProvider.SetSecurityDescriptor(path, securityDescriptor);
-        } // SetSecurityDescriptor
+        }
 
         private static void CheckIfSecurityDescriptorInterfaceIsSupported(ISecurityDescriptorCmdletProvider permissionProvider)
         {

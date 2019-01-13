@@ -20,9 +20,9 @@ namespace mvc.Controllers
 {
     public class ResponseController : Controller
     {
-        public String Index()
+        public string Index()
         {
-            string output = String.Empty;
+            string output = string.Empty;
             string contentType = Constants.ApplicationJson;
 
             StringValues contentTypes;
@@ -33,7 +33,7 @@ namespace mvc.Controllers
 
             StringValues statusCodes;
             Int32 statusCode;
-            if (Request.Query.TryGetValue("statuscode", out statusCodes) && 
+            if (Request.Query.TryGetValue("statuscode", out statusCodes) &&
                 Int32.TryParse(statusCodes.FirstOrDefault(), out statusCode))
             {
                 Response.StatusCode = statusCode;
@@ -61,11 +61,12 @@ namespace mvc.Controllers
                     foreach (JProperty property in (JToken)jobject)
                     {
                         // Only set Content-Type through contenttype field.
-                        if (String.Equals(property.Name, "Content-Type", StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(property.Name, "Content-Type", StringComparison.InvariantCultureIgnoreCase))
                         {
                             continue;
                         }
-                        foreach (string entry in GetSingleOrArray<String>(property.Value))
+
+                        foreach (string entry in GetSingleOrArray<string>(property.Value))
                         {
                             Response.Headers.Append(property.Name,entry);
                         }

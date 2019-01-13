@@ -19,7 +19,7 @@ namespace mvc.Controllers
 {
     public class ResumeController : Controller
     {
-        private static Byte[] FileBytes = new Byte[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+        private static byte[] FileBytes = new byte[] { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 };
 
         public async void Index()
         {
@@ -34,6 +34,7 @@ namespace mvc.Controllers
                 {
                     from = (int)range.From;
                 }
+
                 if(range.To != null)
                 {
                     to = (int)range.To;
@@ -64,7 +65,7 @@ namespace mvc.Controllers
             }
         }
 
-        public async void NoResume() 
+        public async void NoResume()
         {
             SetResumeResponseHeaders();
             Response.ContentType = MediaTypeNames.Application.Octet;
@@ -79,6 +80,7 @@ namespace mvc.Controllers
             {
                 NumberBytes = FileBytes.Length;
             }
+
             Response.ContentType = MediaTypeNames.Application.Octet;
             Response.ContentLength = NumberBytes;
             await Response.Body.WriteAsync(FileBytes, 0, NumberBytes);

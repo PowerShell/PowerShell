@@ -6,6 +6,7 @@
     <Description>PowerShell top-level project with .NET CLI host</Description>
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
     <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -13,6 +14,11 @@
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" >
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\Schemas\PSMaml\*">
+      <Link>Schemas\PSMaml\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

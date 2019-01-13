@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// suspended
+        /// suspended.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -41,16 +41,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {
@@ -74,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to resume
+            // List of jobs to resume
             List<Job> jobsToResume = null;
 
             switch (ParameterSetName)
@@ -83,36 +85,42 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobsToResume = FindJobsMatchingByName(true, false, true, false);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByInstanceId(true, false, true, false);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         jobsToResume = FindJobsMatchingBySessionId(true, false, true, false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         jobsToResume = CopyJobsToList(_jobs, false, false);
                     }
+
                     break;
             }
 
@@ -203,6 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _pendingJobs.Remove(job.InstanceId);
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -263,6 +272,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.ResumeJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose
