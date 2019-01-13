@@ -4668,7 +4668,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         var resolvedType = underlyingType.GetReflectionType();
-                        if (resolvedType == null || !validUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
+                        if (resolvedType == null || !ValidUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
                         {
                             ReportError(
                                 underlyingType.Extent,
