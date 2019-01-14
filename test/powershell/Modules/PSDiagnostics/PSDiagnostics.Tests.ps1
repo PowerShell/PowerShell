@@ -34,6 +34,10 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
         }
 
         it "Should disable $LogType logs for Microsoft-Windows-PowerShell." {
+            [XML]$CurrentState = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+            if($CurrentState.channel.enabled -eq 'false'){
+                & wevtutil sl Microsoft-Windows-PowerShell/Analytic /e:true /q
+            }
             Disable-PSTrace
 
             [XML]$ExpectedOutput = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
@@ -53,6 +57,8 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             $LogProperty.Retention  | Should -Be $ExpectedOutput.channel.Logging.Retention
             $LogProperty.AutoBackup | Should -Be $ExpectedOutput.channel.Logging.AutoBackup
             $LogProperty.MaxLogSize | Should -Be $ExpectedOutput.channel.Logging.MaxSize
+
+            #Verifying the property count. Adding 2 to count from the wevtutil output as the Enabled and Name property as the count is taken only for Logging property.
             ($LogProperty | Get-Member -MemberType Property | Measure-Object).Count |
             Should -Be (($ExpectedOutput.Channel.Logging | Get-Member -MemberType Property | Measure-Object).Count + 2)
         }
