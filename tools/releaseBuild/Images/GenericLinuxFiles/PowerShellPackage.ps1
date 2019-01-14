@@ -18,7 +18,9 @@ param (
     [switch]$AppImage,
     [switch]$TarX64,
     [switch]$TarArm,
-    [switch]$FxDependent
+    [switch]$TarArm64,
+    [switch]$FxDependent,
+    [switch]$Alpine
 )
 
 $releaseTagParam = @{}
@@ -39,6 +41,8 @@ try {
 
     if($FxDependent.IsPresent) {
         $buildParams.Add("Runtime", "fxdependent")
+    } elseif ($Alpine.IsPresent) {
+        $buildParams.Add("Runtime", 'alpine-x64')
     } else {
         $buildParams.Add("Crossgen", $true)
     }
@@ -47,6 +51,8 @@ try {
 
     if($FxDependent) {
         Start-PSPackage -Type 'fxdependent' @releaseTagParam
+    } elseif ($Alpine) {
+        Start-PSPackage -Type 'tar-alpine' @releaseTagParam
     } else {
         Start-PSPackage @releaseTagParam
     }
@@ -59,6 +65,11 @@ try {
         ## Note that 'linux-arm' can only be built on Ubuntu environment.
         Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
         Start-PSPackage -Type tar-arm @releaseTagParam
+    }
+
+    if ($TarArm64) {
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
+        Start-PSPackage -Type tar-arm64 @releaseTagParam
     }
 }
 finally

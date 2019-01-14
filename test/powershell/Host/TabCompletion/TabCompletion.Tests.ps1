@@ -10,6 +10,35 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-Command'
     }
 
+    Context "ExperimentalFeatures" {
+
+        BeforeAll {
+            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
+
+            @"
+            {
+                "ExperimentalFeatures": [
+                  "PSUseAbbreviationExpansion"
+                ]
+            }
+"@ > $configFilePath
+
+        }
+
+        It 'Should complete abbreviated cmdlet' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res | Should -HaveCount 1
+            $res | Should -BeExactly 'Import-PowerShellDataFile'
+        }
+
+        It 'Should complete abbreviated function' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res.Count | Should -BeGreaterOrEqual 1
+            $res | Should -BeExactly 'PSConsoleHostReadLine'
+        }
+
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
@@ -1031,15 +1060,21 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPath = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt"))) {
+            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
+            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
+            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
             }
 
+            # If help content is present on both scopes, expect 2 or else expect 1 completion.
+            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
     }

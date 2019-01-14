@@ -16,12 +16,11 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="4.5.0" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.5.1" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.5.2" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.5.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="4.5.0" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.5.3" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.5.3" />

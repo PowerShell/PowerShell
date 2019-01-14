@@ -25,8 +25,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="objectName">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="objectName"></param>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// Per MSDN, the parameter is objectName and not message.
         /// I confirm this experimentally as well.
@@ -40,9 +40,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="objectName">  </param>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="objectName"></param>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         public PSObjectDisposedException(string objectName, string message)
                 : base(objectName, message)
         {
@@ -51,9 +51,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public PSObjectDisposedException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -65,9 +65,9 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected PSObjectDisposedException(SerializationInfo info,
                                               StreamingContext context)
                 : base(info, context)
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -114,11 +114,13 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidOperation,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "ObjectDisposed";
-    } // PSObjectDisposedException
-} // System.Management.Automation
+    }
+}
 

@@ -27,13 +27,13 @@ try
 
             $trustedModuleName1 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath1 = Join-Path $TestDrive $trustedModuleName1
-            mkdir $trustedModulePath1
+            New-Item -ItemType Directory $trustedModulePath1
             $trustedModuleFilePath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psm1")
             $trustedModuleManifestPath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psd1")
 
             $trustedModuleName2 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath2 = Join-Path $TestDrive $trustedModuleName2
-            mkdir $trustedModulePath2
+            New-Item -ItemType Directory $trustedModulePath2
             $trustedModuleFilePath2 = Join-Path $trustedModulePath2 ($trustedModuleName2 + ".psm1")
 
             $trustedModuleScript1 = @'
@@ -79,8 +79,8 @@ try
                 Import-Module -Name $trustedModuleName1 -Force -ErrorAction Stop;
 "@
                 $command += @'
-                $null = help NestedFn1 2>$null;
-                $result = Get-Command NestedFn1 2>$null; 
+                $null = help NestedFn1 2> $null;
+                $result = Get-Command NestedFn1 2> $null;
                 return ($result -ne $null)
 '@
                 $isCommandAccessible = powershell.exe -noprofile -nologo -c $command
@@ -140,7 +140,7 @@ try
 
                 $mod = Import-Module -Name $moduleFilePath -Force -PassThru
 
-                # Running module function TestRestrictedSession should throw a 'script not allowed' error 
+                # Running module function TestRestrictedSession should throw a 'script not allowed' error
                 # because it runs in a 'no language' session.
                 try
                 {
@@ -667,7 +667,7 @@ try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | % CompletionMatches | ? CompletionText -Match Pointer)
+                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | ForEach-Object CompletionMatches | Where-Object CompletionText -Match Pointer)
             }
             finally
             {
@@ -858,16 +858,16 @@ try
                     }
                 )
 
-                $result = $data.foreach('value1')
+                $result = $data.ForEach('value1')
                 Write-Output $result
 
-                # Execute method in scriptblock of foreach operator, should throw in ConstrainedLanguage mode.
-                $data.foreach{[system.io.path]::GetRandomFileName().Length}
+                # Execute method in scriptblock of ForEach operator, should throw in ConstrainedLanguage mode.
+                $data.ForEach{[system.io.path]::GetRandomFileName().Length}
 '@
 
             $script3 = @'
             # Method call should throw error.
-            (Get-Process powershell*).Foreach('GetHashCode')
+            (Get-Process powershell*).ForEach('GetHashCode')
 '@
 
             $script4 = @'
@@ -977,7 +977,7 @@ try
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
 
-                $results = $sb | Start-ThreadJob -ScriptBlock { $input | foreach { & $_ } } | Wait-Job | Receive-Job
+                $results = $sb | Start-ThreadJob -ScriptBlock { $input | ForEach-Object { & $_ } } | Wait-Job | Receive-Job
             }
             finally
             {

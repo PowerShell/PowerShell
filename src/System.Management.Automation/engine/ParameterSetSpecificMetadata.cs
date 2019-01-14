@@ -130,7 +130,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the value that tells whether this parameter set
-        /// data is for the "all" parameter set
+        /// data is for the "all" parameter set.
         /// </summary>
         internal bool IsInAllSets { get; set; }
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         /// If that fails and HelpMessage is set, the help info is set to HelpMessage; otherwise,
         /// the exception that is thrown when loading the resource is thrown.
         /// If both HelpMessageBaseName and HelpMessageResourceId are not set, the help info is
-        /// set to HelpMessage
+        /// set to HelpMessage.
         /// </summary>
         /// <returns>
         /// Help info about the parameter
@@ -205,10 +205,11 @@ namespace System.Management.Automation
             {
                 helpInfo = HelpMessage;
             }
+
             return helpInfo;
         }
 
         private ParameterAttribute _attribute;
-    } // ParameterSetSpecificMetadata
+    }
 }
 

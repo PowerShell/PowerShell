@@ -16,7 +16,7 @@ namespace System.Management.Automation.Runspaces
     public static class RunspaceFactory
     {
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static RunspaceFactory()
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.

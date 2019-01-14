@@ -2,16 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting;
-using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -109,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End Processing
+        /// End Processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -142,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
                     break;
             }
+
             VerifyProcess(Process);
 
             // Create named pipe runspace for selected process and open.
@@ -170,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Stop Processing
+        /// Stop Processing.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -356,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -393,14 +395,21 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
+
+#if UNIX
+        // CoreFx uses the system temp path to store the file used for named pipes and is not settable.
+        // This member is only used by Get-PSHostProcessInfo to know where to look for the named pipe files.
+        private static readonly string NamedPipePath = Path.GetTempPath();
+#else
         private const string NamedPipePath = @"\\.\pipe\";
+#endif
 
         #endregion
 
         #region Parameters
 
         /// <summary>
-        /// Name of Process
+        /// Name of Process.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = GetPSHostProcessInfoCommand.ProcessNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -412,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process
+        /// Process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -424,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -440,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End bock processing
+        /// End bock processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -515,18 +524,21 @@ namespace Microsoft.PowerShell.Commands
         /// Returns all named pipe AppDomain names for given process Ids or all PowerShell
         /// processes if procIds parameter is null.
         /// PowerShell pipe name example:
-        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
+        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell.
         /// </summary>
-        /// <param name="procIds">Process Ids or null</param>
-        /// <returns>Collection of process AppDomain info</returns>
+        /// <param name="procIds">Process Ids or null.</param>
+        /// <returns>Collection of process AppDomain info.</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
             var procAppDomainInfo = new List<PSHostProcessInfo>();
 
             // Get all named pipe 'files' on local machine.
-            List<string> directories;
-            List<string> namedPipes;
-            Utils.NativeEnumerateDirectory(NamedPipePath, out directories, out namedPipes);
+            List<string> namedPipes = new List<string>();
+            var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
+            foreach (var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
+            {
+                namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
+            }
 
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
@@ -534,14 +546,13 @@ namespace Microsoft.PowerShell.Commands
                 int startIndex = namedPipe.IndexOf(NamedPipeUtils.NamedPipeNamePrefix, StringComparison.OrdinalIgnoreCase);
                 if (startIndex > -1)
                 {
-                    // This is a PowerShell named pipe.  Parse the process Id, AppDomain name, and process name.
-                    int pStartTimeIndex = namedPipe.IndexOf(".", startIndex, StringComparison.OrdinalIgnoreCase);
+                    int pStartTimeIndex = namedPipe.IndexOf('.', startIndex);
                     if (pStartTimeIndex > -1)
                     {
-                        int pIdIndex = namedPipe.IndexOf(".", pStartTimeIndex + 1, StringComparison.OrdinalIgnoreCase);
+                        int pIdIndex = namedPipe.IndexOf('.', pStartTimeIndex + 1);
                         if (pIdIndex > -1)
                         {
-                            int pAppDomainIndex = namedPipe.IndexOf(".", pIdIndex + 1, StringComparison.OrdinalIgnoreCase);
+                            int pAppDomainIndex = namedPipe.IndexOf('.', pIdIndex + 1);
                             if (pAppDomainIndex > -1)
                             {
                                 string idString = namedPipe.Substring(pIdIndex + 1, (pAppDomainIndex - pIdIndex - 1));
@@ -564,15 +575,47 @@ namespace Microsoft.PowerShell.Commands
                                         if (!found) { continue; }
                                     }
                                 }
+                                else
+                                {
+                                    // Process id is not valid so we'll skip
+                                    continue;
+                                }
 
-                                int pNameIndex = namedPipe.IndexOf(".", pAppDomainIndex + 1, StringComparison.OrdinalIgnoreCase);
+                                int pNameIndex = namedPipe.IndexOf('.', pAppDomainIndex + 1);
                                 if (pNameIndex > -1)
                                 {
                                     string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
-                                    procAppDomainInfo.Add(
-                                        new PSHostProcessInfo(pName, id, appDomainName));
+                                    Process process = null;
+
+                                    try
+                                    {
+                                        process = System.Diagnostics.Process.GetProcessById(id);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // Do nothing if the process no longer exists
+                                    }
+
+                                    if (process == null)
+                                    {
+                                        try
+                                        {
+                                            // If the process is gone, try removing the PSHost named pipe
+                                            var pipeFile = new FileInfo(namedPipe);
+                                            pipeFile.Delete();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // best effort to cleanup
+                                        }
+                                    }
+                                    else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    {
+                                        // only add if the process name matches
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
+                                    }
                                 }
                             }
                         }
@@ -603,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Name of process
+        /// Name of process.
         /// </summary>
         public string ProcessName
         {
@@ -612,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         public int ProcessId
         {
@@ -621,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of PowerShell AppDomain in process
+        /// Name of PowerShell AppDomain in process.
         /// </summary>
         public string AppDomainName
         {
@@ -631,7 +674,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !CORECLR
         /// <summary>
-        /// Main window title of the process
+        /// Main window title of the process.
         /// </summary>
         public string MainWindowTitle
         {
@@ -647,21 +690,22 @@ namespace Microsoft.PowerShell.Commands
         private PSHostProcessInfo() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="processName">Name of process</param>
-        /// <param name="processId">Id of process</param>
-        /// <param name="appDomainName">Name of process AppDomain</param>
+        /// <param name="processName">Name of process.</param>
+        /// <param name="processId">Id of process.</param>
+        /// <param name="appDomainName">Name of process AppDomain.</param>
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR
-            MainWindowTitle = String.Empty;
+            MainWindowTitle = string.Empty;
             try
             {
-                var proc = System.Diagnostics.Process.GetProcessById(processId);
+                var proc = Process.GetProcessById(processId);
                 MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
             }
             catch (ArgumentException) { }

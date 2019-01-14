@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     Context "Validate basic PSDrive Cmdlets" {
         BeforeAll {
@@ -81,6 +82,10 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
             { $globalDrive = Get-PSDrive -Name $psDriveName -Scope Global -ErrorAction Stop } | Should -Throw -ErrorId "GetDriveNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local
             $localDrive.Name | Should -BeExactly $psDriveName
+        }
+
+        It "Verify '-Persist' parameter is not available on UNIX" -Skip:($IsWindows) {
+                { New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Persist -Description "Test PSDrive to remove" } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewPSDriveCommand"
         }
     }
 

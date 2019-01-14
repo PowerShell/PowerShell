@@ -77,22 +77,22 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.1/powershell-6.1.1-linux-arm32.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x86.msi
-[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.18.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.debian.8_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-osx-x64.pkg
-[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-arm32.zip
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-osx-x64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-linux-x64.tar.gz
-[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-linux-arm32.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell_6.2.0-preview.3-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell_6.2.0-preview.3-1.ubuntu.16.04_amd64.deb
+[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell_6.2.0-preview.3-1.ubuntu.14.04_amd64.deb
+[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell_6.2.0-preview.3-1.debian.8_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell_6.2.0-preview.3-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-1.rhel.7.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-x64.tar.gz
+[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-arm32.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
@@ -152,9 +152,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | Code Factor Status       |
+| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | CodeFactor Grade         |
 |:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|:-------------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
+| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
 
 [bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
 [bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
@@ -168,13 +168,15 @@ If you have any problems building, please consult the developer [FAQ][].
 [az-linux-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=17
 [az-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
 [az-macos-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=14
-[az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-spelling?branchName=master
+[az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-static-analysis?branchName=master
 [az-spell-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=22
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
+[windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=32
 [linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
 [macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
 [linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
 [macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
@@ -218,7 +220,7 @@ PowerShell is licensed under the [MIT license][].
 
 ### Windows Docker Files and Images
 
-License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on Docker hub:
+License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on Docker Hub:
 
 - [Window Server Core](https://hub.docker.com/r/microsoft/windowsservercore/)
 - [Nano Server](https://hub.docker.com/r/microsoft/nanoserver/)
@@ -243,4 +245,4 @@ For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [open
 [conduct-code]: http://opensource.microsoft.com/codeofconduct/
 [conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
 [conduct-email]: mailto:opencode@microsoft.com
-[conduct-md]: https://github.com/PowerShell/PowerShell/tree/master/./CODE_OF_CONDUCT.md
+[conduct-md]: https://github.com/PowerShell/PowerShell/tree/master/CODE_OF_CONDUCT.md

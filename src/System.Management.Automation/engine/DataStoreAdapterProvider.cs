@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Information about a loaded Cmdlet Provider
+    /// Information about a loaded Cmdlet Provider.
     /// </summary>
     /// <remarks>
     /// A cmdlet provider may want to derive from this class to provide their
@@ -41,17 +41,17 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available
+        /// Gets the full name of the provider including the pssnapin name if available.
         /// </summary>
         internal string FullName
         {
             get
             {
                 string result = this.Name;
-                if (!String.IsNullOrEmpty(this.PSSnapInName))
+                if (!string.IsNullOrEmpty(this.PSSnapInName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.PSSnapInName,
@@ -62,12 +62,13 @@ namespace System.Management.Automation
                 else if (!string.IsNullOrEmpty(this.ModuleName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.ModuleName,
                             this.Name);
                 }
+
                 return result;
             }
         }
@@ -89,6 +90,7 @@ namespace System.Management.Automation
                 {
                     result = PSSnapIn.Name;
                 }
+
                 return result;
             }
         }
@@ -106,6 +108,7 @@ namespace System.Management.Automation
                 {
                     psHome = null;
                 }
+
                 return psHome;
             }
         }
@@ -121,7 +124,7 @@ namespace System.Management.Automation
                     return PSSnapIn.Name;
                 if (Module != null)
                     return Module.Name;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -136,9 +139,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the description for the provider
+        /// Gets or sets the description for the provider.
         /// </summary>
-        public String Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets the capabilities that are implemented by the provider.
@@ -169,9 +172,11 @@ namespace System.Management.Automation
                         // Assume no capabilities for now
                     }
                 }
+
                 return _capabilities;
-            } // get
-        } // Capabilities
+            }
+        }
+
         private ProviderCapabilities _capabilities = ProviderCapabilities.None;
         private bool _capabilitiesRead;
 
@@ -182,7 +187,7 @@ namespace System.Management.Automation
         /// The location can be either a fully qualified provider path
         /// or an Msh path. This is the location that is substituted for the ~.
         /// </remarks>
-        public string Home { get; set; } // Home
+        public string Home { get; set; }
 
         /// <summary>
         /// Gets an enumeration of drives that are available for
@@ -193,8 +198,8 @@ namespace System.Management.Automation
             get
             {
                 return _sessionState.Drive.GetAllForProvider(FullName);
-            } // get
-        } // Drives
+            }
+        }
 
         /// <summary>
         /// A hidden drive for the provider that is used for setting
@@ -211,8 +216,8 @@ namespace System.Management.Automation
             get
             {
                 return _hiddenDrive;
-            } // get
-        } // HiddenDrive
+            }
+        }
 
         /// <summary>
         /// Gets the string representation of the instance which is the name of the provider.
@@ -242,7 +247,7 @@ namespace System.Management.Automation
         ///  are separated by a colon or not.
         ///
         /// This is true for all PSDrives on all platforms, except for filesystems on
-        /// non-windows platforms
+        /// non-windows platforms.
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
@@ -314,7 +319,7 @@ namespace System.Management.Automation
             string name,
             string helpFile,
             PSSnapInInfo psSnapIn)
-            : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
+            : this(sessionState, implementingType, name, string.Empty, string.Empty, helpFile, psSnapIn)
         {
         }
 
@@ -369,7 +374,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -424,24 +429,25 @@ namespace System.Management.Automation
                 // If the pssnapin name and provider name are specified, then both must match
                 do // false loop
                 {
-                    if (!String.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
                     {
                         // After converting core snapins to load as modules, the providers will have Module property populated
-                        if (!String.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
-                            !String.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
+                        if (!string.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
                         {
                             break;
                         }
                     }
 
-                    result = String.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
+                    result = string.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
                 } while (false);
             }
             else
             {
                 // If only the provider name is specified, then only the name must match
-                result = String.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
+                result = string.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
             }
+
             return result;
         }
 
@@ -471,7 +477,7 @@ namespace System.Management.Automation
             {
                 if (namePattern == null)
                 {
-                    if (String.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
+                    if (string.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
                         IsPSSnapinNameMatch(psSnapinQualifiedName))
                     {
                         result = true;
@@ -482,6 +488,7 @@ namespace System.Management.Automation
                     result = true;
                 }
             }
+
             return result;
         }
 
@@ -489,8 +496,8 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
-                String.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
+                string.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }
@@ -499,7 +506,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the provider
+        /// Creates an instance of the provider.
         /// </summary>
         /// <returns>
         /// An instance of the provider or null if one could not be created.
@@ -586,6 +593,7 @@ namespace System.Management.Automation
                             "ProviderNotFoundInAssembly",
                             SessionStateStrings.ProviderNotFoundInAssembly);
                 }
+
                 throw e;
             }
 
@@ -613,12 +621,14 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     List<PSTypeName> l;
                     if (!_providerOutputType.TryGetValue(outputType.ProviderCmdlet, out l))
                     {
                         l = new List<PSTypeName>();
                         _providerOutputType[outputType.ProviderCmdlet] = l;
                     }
+
                     l.AddRange(outputType.Type);
                 }
             }
@@ -629,6 +639,7 @@ namespace System.Management.Automation
                 listToAppend.AddRange(cmdletOutputType);
             }
         }
+
         private Dictionary<string, List<PSTypeName>> _providerOutputType;
 
         private PSNoteProperty _noteProperty;
@@ -639,8 +650,9 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
-    } // class ProviderInfo
-} // namespace System.Management.Automation
+    }
+}
 

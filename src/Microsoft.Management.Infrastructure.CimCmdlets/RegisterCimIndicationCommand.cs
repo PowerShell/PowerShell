@@ -34,12 +34,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
+
             set { nameSpace = value; }
         }
-        private String nameSpace;
+
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "ClassName".
@@ -52,16 +54,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(Mandatory = true,
             Position = 0,
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
+
             set
             {
                 className = value;
                 this.SetParameter(value, nameClassName);
             }
         }
-        private String className;
+
+        private string className;
 
         /// <summary>
         /// The following is the definition of the input parameter "Query".
@@ -75,16 +79,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Mandatory = true,
             Position = 0,
             ParameterSetName = CimBaseCommand.QueryExpressionComputerSet)]
-        public String Query
+        public string Query
         {
             get { return query; }
+
             set
             {
                 query = value;
                 this.SetParameter(value, nameQuery);
             }
         }
-        private String query;
+
+        private string query;
 
         /// <summary>
         /// <para>
@@ -95,16 +101,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionComputerSet)]
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionSessionSet)]
-        public String QueryDialect
+        public string QueryDialect
         {
             get { return queryDialect; }
+
             set
             {
                 queryDialect = value;
                 this.SetParameter(value, nameQueryDialect);
             }
         }
-        private String queryDialect;
+
+        private string queryDialect;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
@@ -116,8 +124,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout; }
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -133,12 +143,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 this.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession cimSession;
 
         /// <summary>
@@ -149,23 +161,25 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCN, CimBaseCommand.AliasServerName)]
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionComputerSet)]
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
                 this.SetParameter(value, nameComputerName);
             }
         }
-        private String computername;
+
+        private string computername;
 
         #endregion
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             CimIndicationWatcher watcher = null;
             string parameterSetName = null;
@@ -177,6 +191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.parameterBinder.reset();
             }
+
             string tempQueryExpression = string.Empty;
             switch (parameterSetName)
             {
@@ -188,9 +203,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ClassNameComputerSet:
                     // validate the classname
                     this.CheckArgument();
-                    tempQueryExpression = String.Format(CultureInfo.CurrentCulture, "Select * from {0}", this.ClassName);
+                    tempQueryExpression = string.Format(CultureInfo.CurrentCulture, "Select * from {0}", this.ClassName);
                     break;
             }
+
             switch (parameterSetName)
             {
                 case CimBaseCommand.QueryExpressionSessionSet:
@@ -198,25 +214,29 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         watcher = new CimIndicationWatcher(this.CimSession, this.Namespace, this.QueryDialect, tempQueryExpression, this.OperationTimeoutSec);
                     }
+
                     break;
                 case CimBaseCommand.QueryExpressionComputerSet:
                 case CimBaseCommand.ClassNameComputerSet:
                     {
                         watcher = new CimIndicationWatcher(this.ComputerName, this.Namespace, this.QueryDialect, tempQueryExpression, this.OperationTimeoutSec);
                     }
+
                     break;
             }
+
             if (watcher != null)
             {
                 watcher.SetCmdlet(this);
             }
+
             return watcher;
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
-        protected override String GetSourceObjectEventName()
+        protected override string GetSourceObjectEventName()
         {
             return "CimIndicationArrived";
         }
@@ -238,7 +258,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("RegisterCimIndicationCommand::EndProcessing subscribe to Unsubscribed event", 4);
                 newSubscriber.Unsubscribed += new PSEventUnsubscribedEventHandler(newSubscriber_Unsubscribed);
             }
-        }//End EndProcessing()
+        }
 
         /// <summary>
         /// <para>
@@ -261,7 +281,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
         /// <summary>
-        /// check argument value
+        /// Check argument value.
         /// </summary>
         private void CheckArgument()
         {
@@ -269,13 +289,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Parameter binder used to resolve parameter set name
+        /// Parameter binder used to resolve parameter set name.
         /// </summary>
         private ParameterBinder parameterBinder = new ParameterBinder(
             parameters, parameterSets);
 
         /// <summary>
-        /// Set the parameter
+        /// Set the parameter.
         /// </summary>
         /// <param name="parameterName"></param>
         private void SetParameter(object value, string parameterName)
@@ -284,6 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return;
             }
+
             this.parameterBinder.SetParameter(parameterName, true);
         }
 
@@ -296,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -333,7 +354,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -344,5 +365,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

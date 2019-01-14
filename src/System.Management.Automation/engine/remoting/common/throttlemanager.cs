@@ -10,35 +10,35 @@ namespace System.Management.Automation.Remoting
     #region OperationState
 
     /// <summary>
-    /// Defines the different states of the operation
+    /// Defines the different states of the operation.
     /// </summary>
     internal enum OperationState
     {
         /// <summary>
-        /// Start operation completed successfully
+        /// Start operation completed successfully.
         /// </summary>
         StartComplete = 0,
 
         /// <summary>
-        /// Stop operation completed successfully
+        /// Stop operation completed successfully.
         /// </summary>
         StopComplete = 1,
     }
 
     /// <summary>
-    /// class describing event args which a helper class
-    /// implementing IThrottleOperation need to throw
+    /// Class describing event args which a helper class
+    /// implementing IThrottleOperation need to throw.
     /// </summary>
     internal sealed class OperationStateEventArgs : EventArgs
     {
         /// <summary>
-        /// operation state
+        /// Operation state.
         /// </summary>
         internal OperationState OperationState { get; set; }
 
         /// <summary>
-        /// the original event which actually resulted in this
-        /// event being raised
+        /// The original event which actually resulted in this
+        /// event being raised.
         /// </summary>
         internal EventArgs BaseEvent { get; set; }
     }
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// Interface which needs to be implemented by a class which wants to
-    /// submit operations to the throttle manager
+    /// submit operations to the throttle manager.
     /// </summary>
     /// <remarks>Any synchronization that needs to be performed between
     /// StartOperation and StopOperation in the class that implements this
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting
         /// an event is successfully received as a result of this function,
         /// the handler has to ensure that it raises an OperationComplete
         /// event with StartComplete or StopComplete for the throttle manager
-        /// to handle
+        /// to handle.
         /// </summary>
         internal abstract void StartOperation();
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation.Remoting
         /// raises an OperationComplete event with StopComplete for the
         /// throttle manager to handle. It is important that this function
         /// does not raise a StartComplete which will then result in the
-        /// ThrottleComplete event not being raised by the throttle manager
+        /// ThrottleComplete event not being raised by the throttle manager.
         /// </summary>
         internal abstract void StopOperation();
 
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Remoting
         internal abstract event EventHandler<OperationStateEventArgs> OperationComplete;
 
         /// <summary>
-        /// This Property indicates whether an operation has been stopped
+        /// This Property indicates whether an operation has been stopped.
         /// </summary>
         /// <remarks>
         /// In the initial implementation of ThrottleManager stopping
@@ -123,11 +123,13 @@ namespace System.Management.Automation.Remoting
             {
                 return _ignoreStop;
             }
+
             set
             {
                 _ignoreStop = true;
             }
         }
+
         private bool _ignoreStop = false;
 
         #region Runspace Debug
@@ -156,9 +158,9 @@ namespace System.Management.Automation.Remoting
         internal event EventHandler<StartRunspaceDebugProcessingEventArgs> RunspaceDebugStop;
 
         /// <summary>
-        /// RaiseRunspaceDebugStopEvent
+        /// RaiseRunspaceDebugStopEvent.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         internal void RaiseRunspaceDebugStopEvent(System.Management.Automation.Runspaces.Runspace runspace)
         {
             RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
@@ -166,7 +168,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-    } // IThrottleOperation
+    }
 
     #endregion IThrottleOperation
 
@@ -189,7 +191,7 @@ namespace System.Management.Automation.Remoting
     /// handler will start an operation once a previous event is completed.
     ///
     /// The queue used is a generic queue of type IThrottleOperations, as it will offer better
-    /// performance
+    /// performance.
     /// </summary>
     /// <remarks>Throttle limit is currently set to 50. This value may be modified later based
     /// on a figure that we may arrive at out of experience.</remarks>
@@ -198,9 +200,9 @@ namespace System.Management.Automation.Remoting
         #region Public (internal) Properties
 
         /// <summary>
-        /// Allows the consumer to override the default throttle limit
+        /// Allows the consumer to override the default throttle limit.
         /// </summary>
-        internal Int32 ThrottleLimit
+        internal int ThrottleLimit
         {
             set
             {
@@ -209,21 +211,23 @@ namespace System.Management.Automation.Remoting
                     _throttleLimit = value;
                 }
             }
+
             get
             {
                 return _throttleLimit;
             }
         }
-        private Int32 _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
+
+        private int _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
 
         #endregion Public (internal) Properties
 
         #region Public (internal) Methods
 
         /// <summary>
-        /// Submit a list of operations that need to be throttled
+        /// Submit a list of operations that need to be throttled.
         /// </summary>
-        /// <param name="operations">list of operations to be throttled</param>
+        /// <param name="operations">List of operations to be throttled.</param>
         /// <remarks>Once the operations are added to the queue, the method will
         /// start operations from the queue
         /// </remarks>
@@ -251,12 +255,12 @@ namespace System.Management.Automation.Remoting
 
             // schedule operations here if possible
             StartOperationsFromQueue();
-        } // SubmitOperations
+        }
 
         /// <summary>
-        /// Add a single operation to the queue
+        /// Add a single operation to the queue.
         /// </summary>
-        /// <param name="operation">Operation to be added</param>
+        /// <param name="operation">Operation to be added.</param>
         internal void AddOperation(IThrottleOperation operation)
         {
             // add item to the queue
@@ -279,16 +283,16 @@ namespace System.Management.Automation.Remoting
 
             // start operations from queue if possible
             StartOperationsFromQueue();
-        }// AddOperation
+        }
 
         /// <summary>
-        /// Stop throttling operations
+        /// Stop throttling operations.
         /// </summary>
         /// <remarks>Calling this method will also affect other cmdlets which
         /// could have potentially submitComplete operations for processing
         /// </remarks>
-        /// <returns>number of objects cleared from queue without being
-        /// stopped</returns>
+        /// <returns>Number of objects cleared from queue without being
+        /// stopped.</returns>
         internal void StopAllOperations()
         {
             // if stopping is already in progress, make it a no op
@@ -304,7 +308,7 @@ namespace System.Management.Automation.Remoting
                 {
                     needToReturn = true;
                 }
-            } // lock ...
+            }
 
             if (needToReturn)
             {
@@ -346,8 +350,8 @@ namespace System.Management.Automation.Remoting
                     _stopOperationQueue.Add(operation);
 
                     operation.IgnoreStop = true;
-                } // foreach...
-            } // lock...
+                }
+            }
 
             foreach (IThrottleOperation operation in startOperationsInProcessArray)
             {
@@ -357,12 +361,12 @@ namespace System.Management.Automation.Remoting
             // Raise event as it can be that at this point, all operations are
             // complete
             RaiseThrottleManagerEvents();
-        } // StopAllOperations
+        }
 
         /// <summary>
-        /// Stop the specified operation
+        /// Stop the specified operation.
         /// </summary>
-        /// <param name="operation">operation which needs to be stopped</param>
+        /// <param name="operation">Operation which needs to be stopped.</param>
         internal void StopOperation(IThrottleOperation operation)
         {
             // StopOperation is being called a second time
@@ -405,7 +409,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Signals that no more operations can be submitComplete
-        /// for throttling
+        /// for throttling.
         /// </summary>
         internal void EndSubmitOperations()
         {
@@ -415,14 +419,14 @@ namespace System.Management.Automation.Remoting
             }
 
             RaiseThrottleManagerEvents();
-        } // EndSubmitOperations
+        }
 
         #endregion Public (internal) Methods
 
         #region Public (internal) Events
 
         /// <summary>
-        /// Event raised when throttling all operations is complete
+        /// Event raised when throttling all operations is complete.
         /// </summary>
         internal event EventHandler<EventArgs> ThrottleComplete;
 
@@ -431,7 +435,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Public constructor
+        /// Public constructor.
         /// </summary>
         public ThrottleManager()
         {
@@ -439,7 +443,7 @@ namespace System.Management.Automation.Remoting
             _startOperationQueue = new List<IThrottleOperation>();
             _stopOperationQueue = new List<IThrottleOperation>();
             _syncObject = new Object();
-        }// ThrottleManager
+        }
 
         #endregion Constructors
 
@@ -448,9 +452,9 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handler which handles state change for the object which implements
         /// the <see cref="System.Management.Automation.Remoting.IThrottleOperation"/>
-        /// interface
+        /// interface.
         /// </summary>
-        /// <param name="source">sender of the event</param>
+        /// <param name="source">Sender of the event.</param>
         /// <param name="stateEventArgs">Event information object which describes the event
         /// which triggered this method</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)
@@ -508,10 +512,10 @@ namespace System.Management.Automation.Remoting
 
             // Do necessary things for starting operation for the next item in the queue
             StartOneOperationFromQueue();
-        } // OperationCompleteHandler
+        }
 
         /// <summary>
-        /// Method used to start the operation on one item in the queue
+        /// Method used to start the operation on one item in the queue.
         /// </summary>
         private void StartOneOperationFromQueue()
         {
@@ -533,10 +537,10 @@ namespace System.Management.Automation.Remoting
             {
                 operation.StartOperation();
             }
-        } //StartOneOperationFromQueue
+        }
 
         /// <summary>
-        /// Start operations to the limit possible from the queue
+        /// Start operations to the limit possible from the queue.
         /// </summary>
         private void StartOperationsFromQueue()
         {
@@ -560,10 +564,10 @@ namespace System.Management.Automation.Remoting
                     StartOneOperationFromQueue();
                 }
             }
-        } // StartOperationsFromQueue
+        }
 
         /// <summary>
-        /// Raise the throttle manager events once the conditions are met
+        /// Raise the throttle manager events once the conditions are met.
         /// </summary>
         private void RaiseThrottleManagerEvents()
         {
@@ -586,44 +590,44 @@ namespace System.Management.Automation.Remoting
             {
                 ThrottleComplete.SafeInvoke(this, EventArgs.Empty);
             }
-        } // RaiseThrottleManagerEvents
+        }
 
         #endregion Private Methods
 
         #region Private Members
 
         /// <summary>
-        /// default throttle limit - the maximum number of operations
-        /// to be processed at a time
+        /// Default throttle limit - the maximum number of operations
+        /// to be processed at a time.
         /// </summary>
         private static int s_DEFAULT_THROTTLE_LIMIT = 32;
 
         /// <summary>
-        /// Maximum value that the throttle limit can be set to
+        /// Maximum value that the throttle limit can be set to.
         /// </summary>
         private static int s_THROTTLE_LIMIT_MAX = int.MaxValue;
 
         /// <summary>
-        /// All pending operations
+        /// All pending operations.
         /// </summary>
         private List<IThrottleOperation> _operationsQueue;
 
         /// <summary>
         /// List of items on which a StartOperation has
-        /// been called
+        /// been called.
         /// </summary>
         private List<IThrottleOperation> _startOperationQueue;
 
         /// <summary>
         /// List of items on which a StopOperation has
-        /// been called
+        /// been called.
         /// </summary>
         private List<IThrottleOperation> _stopOperationQueue;
 
         /// <summary>
-        /// Object used to synchronize access to the queues
+        /// Object used to synchronize access to the queues.
         /// </summary>
-        private Object _syncObject;
+        private object _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
         private bool _stopping = false;                      // if stop is in process
@@ -635,7 +639,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Dispose method of IDisposable. Any cmdlet that uses
         /// the throttle manager needs to call this method from its
-        /// Dispose method
+        /// Dispose method.
         /// </summary>
         public void Dispose()
         {
@@ -646,7 +650,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Internal dispose method which does the actual dispose
-        /// operations and finalize suppressions
+        /// operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">If method is called from
         /// disposing of destructor</param>
@@ -656,7 +660,7 @@ namespace System.Management.Automation.Remoting
             {
                 StopAllOperations();
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }
@@ -732,6 +736,7 @@ namespace System.Management.Automation.Remoting
                     OperationComplete += new EventHandler<OperationStateEventArgs>(Operation_OperationComplete);
                 }
             }
+
             remove
             {
                 InternalEvent -= value;

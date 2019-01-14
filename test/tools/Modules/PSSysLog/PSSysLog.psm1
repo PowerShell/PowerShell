@@ -901,7 +901,7 @@ function Export-PSOsLog
             Write-Output $log
         }
         else {
-            throw "did not recieve at least $MinimumCount records but $($log.Count) instead."
+            throw "did not recieve at least $MinimumCount records but $($logToCount.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
         $log = Start-NativeExecution -command {log show --info @extraParams}
@@ -1038,7 +1038,7 @@ function Clear-PSEventLog
 {
    param([Parameter(Mandatory=$true)][string]$Name)
 
-   wevtutil cl $Name 2>$null
+   wevtutil cl $Name 2> $null
 }
 
 # Waits on a windows event with a property with a particular value
@@ -1077,7 +1077,7 @@ function Wait-PSWinEvent
 
         $recordsToReturn = @()
 
-        foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2>$null))
+        foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
         {
             if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
             {

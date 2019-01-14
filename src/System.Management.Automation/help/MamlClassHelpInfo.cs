@@ -49,14 +49,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a MamlClassHelpInfo object from an XmlNode.
         /// </summary>
-        /// <param name="xmlNode">xmlNode that contains help info</param>
-        /// <param name="helpCategory">help category this maml object fits into</param>
-        /// <returns>MamlCommandHelpInfo object created</returns>
+        /// <param name="xmlNode">XmlNode that contains help info.</param>
+        /// <param name="helpCategory">Help category this maml object fits into.</param>
+        /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlClassHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
             MamlClassHelpInfo mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
 
-            if (String.IsNullOrEmpty(mamlClassHelpInfo.Name))
+            if (string.IsNullOrEmpty(mamlClassHelpInfo.Name))
                 return null;
 
             mamlClassHelpInfo.AddCommonHelpProperties();
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// Clone the help object with a new category.
         /// </summary>
         /// <param name="newCategoryToUse"></param>
-        /// <returns>MamlClassHelpInfo</returns>
+        /// <returns>MamlClassHelpInfo.</returns>
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);

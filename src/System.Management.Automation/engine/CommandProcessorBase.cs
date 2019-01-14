@@ -18,7 +18,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal CommandProcessorBase()
         {
@@ -74,12 +74,14 @@ namespace System.Management.Automation
         internal bool AddedToPipelineAlready
         {
             get { return _addedToPipelineAlready; }
+
             set { _addedToPipelineAlready = value; }
         }
+
         internal bool _addedToPipelineAlready;
 
         /// <summary>
-        /// Gets the CommandInfo for the command this command processor represents
+        /// Gets the CommandInfo for the command this command processor represents.
         /// </summary>
         /// <value></value>
         internal CommandInfo CommandInfo { get; set; }
@@ -102,6 +104,7 @@ namespace System.Management.Automation
         ///        kill current powershell session.
         /// </remarks>
         public bool FromScriptFile { get { return _fromScriptFile; } }
+
         protected bool _fromScriptFile = false;
 
         /// <summary>
@@ -118,6 +121,7 @@ namespace System.Management.Automation
         internal InternalCommand Command
         {
             get { return _command; }
+
             set
             {
                 // The command runtime needs to be set up...
@@ -132,12 +136,13 @@ namespace System.Management.Automation
                     if (value.Context == null && _context != null)
                         value.Context = _context;
                 }
+
                 _command = value;
             }
         }
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal virtual ObsoleteAttribute ObsoleteAttribute
         {
@@ -153,6 +158,7 @@ namespace System.Management.Automation
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
+
             set { commandRuntime = value; }
         }
 
@@ -164,17 +170,19 @@ namespace System.Management.Automation
         internal bool UseLocalScope
         {
             get { return _useLocalScope; }
+
             set { _useLocalScope = value; }
         }
+
         protected bool _useLocalScope;
 
         /// <summary>
         /// Ensures that the provided script block is compatible with the current language mode - to
         /// be used when a script block is being dotted.
         /// </summary>
-        /// <param name="scriptBlock">The script block being dotted</param>
-        /// <param name="languageMode">The current language mode</param>
-        /// <param name="invocationInfo">The invocation info about the command</param>
+        /// <param name="scriptBlock">The script block being dotted.</param>
+        /// <param name="languageMode">The current language mode.</param>
+        /// <param name="invocationInfo">The invocation info about the command.</param>
         protected static void ValidateCompatibleLanguageMode(
             ScriptBlock scriptBlock,
             PSLanguageMode languageMode,
@@ -224,6 +232,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set { _context = value; }
         }
 
@@ -242,9 +251,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all
@@ -257,10 +266,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a command processor for "get-help [helpTarget]".
         /// </summary>
-        /// <param name="context">context for the command processor</param>
-        /// <param name="helpTarget">help target</param>
-        /// <param name="helpCategory">help category</param>
-        /// <returns>command processor for "get-help [helpTarget]"</returns>
+        /// <param name="context">Context for the command processor.</param>
+        /// <param name="helpTarget">Help target.</param>
+        /// <param name="helpCategory">Help category.</param>
+        /// <returns>Command processor for "get-help [helpTarget]".</returns>
         internal static CommandProcessorBase CreateGetHelpCommandProcessor(
             ExecutionContext context,
             string helpTarget,
@@ -270,6 +279,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
+
             if (string.IsNullOrEmpty(helpTarget))
             {
                 throw PSTraceSource.NewArgumentNullException("helpTarget");
@@ -383,7 +393,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
             arguments.Add(parameter);
-        } // AddParameter
+        }
 
         /// <summary>
         /// Prepares the command for execution.
@@ -398,12 +408,12 @@ namespace System.Management.Automation
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(CommandInfo.Name)
+                string.IsNullOrEmpty(CommandInfo.Name)
                     ? "script block"
-                    : String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    : string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     CommandBaseStrings.ObsoleteCommand, CommandInfo.Name);
 
-            string warningMsg = String.Format(
+            string warningMsg = string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
                 CommandBaseStrings.UseOfDeprecatedCommandWarning,
                 commandName, obsoleteAttr.Message);
@@ -443,6 +453,7 @@ namespace System.Management.Automation
                     // so the scope we created needs to release any resources it hold.s
                     CommandSessionState.RemoveScope(CommandScope);
                 }
+
                 throw;
             }
             finally
@@ -494,6 +505,7 @@ namespace System.Management.Automation
                     {
                         _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                     }
+
                     _context.CurrentCommandProcessor = this;
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
@@ -586,7 +598,7 @@ namespace System.Management.Automation
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
             }
-        } // Complete
+        }
 
         /// <summary>
         /// Calls the virtual Complete method after setting the appropriate session state scope.
@@ -616,6 +628,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                 }
+
                 _context.CurrentCommandProcessor = this;
 
                 SetCurrentScopeToExecutionScope();
@@ -911,7 +924,7 @@ namespace System.Management.Automation
         /// IDisposable implementation
         /// When the command is complete, the CommandProcessorBase should be disposed.
         /// This enables cmdlets to reliably release file handles etc.
-        /// without waiting for garbage collection
+        /// without waiting for garbage collection.
         /// </summary>
         /// <remarks>We use the standard IDispose pattern</remarks>
         public void Dispose()

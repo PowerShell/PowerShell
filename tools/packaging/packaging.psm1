@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-musl', 'fxdependent')]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -65,10 +65,12 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
+        } elseif ($Type -eq "tar-alpine") {
+            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-musl") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } elseif ($Type -eq "tar-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -112,7 +114,7 @@ function Start-PSPackage {
             $PSModuleRestoreCorrect = $true
         }
 
-        $precheckFailed = if ($Type -eq 'fxdependent') {
+        $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
             ## We do not check for runtime and crossgen for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
@@ -376,13 +378,26 @@ function Start-PSPackage {
                     New-TarballPackage @Arguments
                 }
             }
-            "tar-musl" {
+            "tar-arm64" {
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "musl-x64"
+                    Architecture = "arm64"
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            "tar-alpine" {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    Architecture = "alpine-x64"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -744,7 +759,7 @@ function New-UnixPackage {
         if ($pscmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
-            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
+            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link
@@ -767,6 +782,7 @@ function New-UnixPackage {
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
+            Write-Log "Setting permissions..."
             Start-NativeExecution {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
@@ -779,6 +795,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
+            Write-Log "Adding macOS launch opplication..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
@@ -816,10 +833,12 @@ function New-UnixPackage {
         # Build package
         try {
             if ($pscmdlet.ShouldProcess("Create $type package")) {
+                Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
+                Write-Log "Starting Cleanup for mac packaging..."
                 if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
@@ -1167,8 +1186,8 @@ function New-AfterScripts
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
@@ -1185,8 +1204,8 @@ function New-AfterScripts
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
     }
 
@@ -1203,6 +1222,7 @@ function New-ManGzip
         $IsPreview
     )
 
+    Write-Log "Creating man gz..."
     # run ronn to convert man page to roff
     $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
     if ($IsPreview.IsPresent)
@@ -1215,7 +1235,8 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+    Write-Log "Creating man gz - running ronn..."
+    Start-NativeExecution { ronn --roff $RonnFile }
 
     if ($IsPreview.IsPresent)
     {
@@ -1224,6 +1245,7 @@ function New-ManGzip
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
+    Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
@@ -1492,7 +1514,7 @@ function New-UnifiedNugetPackage
         [string] $LinuxArm32BinPath,
 
         [Parameter(Mandatory = $false)]
-        [string] $LinuxMuslBinPath,
+        [string] $LinuxAlpineBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $LinuxBinPath,
@@ -1561,9 +1583,9 @@ function New-UnifiedNugetPackage
             {
                 CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
 
-                if ($linuxMuslBinPath)
+                if ($linuxAlpineBinPath)
                 {
-                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+                    CreateNugetPlatformFolder -Platform 'alpine-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxAlpineBinPath
                 }
 
                 CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
@@ -2508,6 +2530,7 @@ function New-MSIPackage
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
+        $FilesWxsPath = New-PreviewFileWxs -FilesWxsPath $FilesWxsPath
     }
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
@@ -2559,7 +2582,14 @@ function New-MSIPackage
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
+    if ($isPreview)
+    {
+        $wixObjFragmentPath = Join-Path $env:Temp "files-preview.wixobj"
+    }
+    else
+    {
+        $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
+    }
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
@@ -2593,6 +2623,11 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    if ($isPreview)
+    {
+        # remove the temporary generated files.wxs for preview builds
+        Remove-Item -ErrorAction SilentlyContinue $FilesWxsPath -Force
+    }
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -2612,6 +2647,36 @@ function New-MSIPackage
         }
         throw $errorMessage
     }
+}
+
+# generate a files.wxs for preview builds
+# so that the component ids are different than the stable builds
+# the file is created in the temp folder
+function New-PreviewFileWxs
+{
+    param
+    (
+        # File describing the MSI file components from the asset folder
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs"
+    )
+
+    Write-Verbose "Generating new component Ids for Files-Preview.wxs" -Verbose
+    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
+    foreach($component in $filesAssetXml.GetElementsByTagName('Component'))
+    {
+        $component.Id = $component.Id + "_Preview"
+    }
+
+    foreach($componentRef in $filesAssetXml.GetElementsByTagName('ComponentRef'))
+    {
+        $componentRef.Id = $componentRef.Id + "_Preview"
+    }
+
+    $previewFilesWxsPath = Join-Path ([System.IO.Path]::GetTempPath()) "Files-Preview.wxs"
+    $filesAssetXml.Save($previewFilesWxsPath)
+    $previewFilesWxsPath
 }
 
 # verify no files have been added or removed

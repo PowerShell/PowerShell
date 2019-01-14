@@ -120,6 +120,7 @@ namespace System.Management.Automation.Interpreter
 
                 return _newArrayInit[elementCount] ?? (_newArrayInit[elementCount] = new NewArrayInitInstruction<T>(elementCount));
             }
+
             return new NewArrayInitInstruction<T>(elementCount);
         }
     }

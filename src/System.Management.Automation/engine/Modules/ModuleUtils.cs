@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Runspaces;
+using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -14,14 +15,14 @@ namespace System.Management.Automation.Internal
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
-        private readonly static System.IO.EnumerationOptions s_defaultEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0 };
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
-        private readonly static System.IO.EnumerationOptions s_uncPathEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace System.Management.Automation.Internal
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
-            
+
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -145,7 +146,7 @@ namespace System.Management.Automation.Internal
                     {
                         analysisProgress = new ProgressRecord(0,
                             Modules.DeterminingAvailableModules,
-                            String.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
+                            string.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
                         {
                             RecordType = ProgressRecordType.Processing
                         };
@@ -321,10 +322,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the list of versions under the specified module base path in descending sorted order
+        /// Gets the list of versions under the specified module base path in descending sorted order.
         /// </summary>
-        /// <param name="moduleBase">module base path</param>
-        /// <returns>sorted list of versions</returns>
+        /// <param name="moduleBase">Module base path.</param>
+        /// <returns>Sorted list of versions.</returns>
         internal static List<Version> GetModuleVersionSubfolders(string moduleBase)
         {
             var versionFolders = new List<Version>();
@@ -349,6 +350,7 @@ namespace System.Management.Automation.Internal
                     versionFolders.Add(version);
                 }
             }
+
             if (versionFolders.Count > 1)
             {
                 versionFolders.Sort((x, y) => y.CompareTo(x));
@@ -364,6 +366,7 @@ namespace System.Management.Automation.Internal
                 folderName = Path.GetFileName(folderName);
                 return Version.TryParse(folderName, out version);
             }
+
             return false;
         }
 
@@ -372,7 +375,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return false;
 #else
-            Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
             string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
             return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
@@ -380,15 +383,38 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets a list of matching commands
+        /// Gets a list of fuzzy matching commands and their scores.
         /// </summary>
-        /// <param name="pattern">command pattern</param>
-        /// <param name="commandOrigin"></param>
-        /// <param name="context"></param>
-        /// <param name="rediscoverImportedModules"></param>
-        /// <param name="moduleVersionRequired"></param>
-        /// <returns></returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        /// <param name="pattern">Command pattern.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
+        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
+        /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
+        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        {
+            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
+            {
+                int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
+                if (score <= FuzzyMatcher.MinimumDistance)
+                {
+                    yield return new CommandScore(command, score);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of matching commands.
+        /// </summary>
+        /// <param name="pattern">Command pattern.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
+        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
+        /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
+        /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
+        /// <returns>Returns matching CommandInfo IEnumerable.</returns>
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -398,9 +424,7 @@ namespace System.Management.Automation.Internal
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = CommandDiscovery.GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
             if ((moduleAutoLoadingPreference != PSModuleAutoLoadingPreference.None) &&
-                    ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))
-                    )
-                )
+                ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
             {
                 foreach (string modulePath in GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, context))
                 {
@@ -427,7 +451,9 @@ namespace System.Management.Automation.Internal
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
-                                if (commandPattern.IsMatch(entry.Value.Name))
+                                if (commandPattern.IsMatch(entry.Value.Name) ||
+                                    (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
+                                    (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -473,7 +499,7 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
                     }
 
-                    //moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
+                    // moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
                     if (moduleVersionRequired && modulePath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         tempModuleInfo.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(modulePath));
@@ -485,7 +511,9 @@ namespace System.Management.Automation.Internal
                         string commandName = pair.Key;
                         CommandTypes commandTypes = pair.Value;
 
-                        if (commandPattern.IsMatch(commandName))
+                        if (commandPattern.IsMatch(commandName) ||
+                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
+                            (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
 
@@ -505,7 +533,7 @@ namespace System.Management.Automation.Internal
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }
 
-                                    if (String.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (commandEntry.Visibility == SessionStateEntryVisibility.Private)
                                         {
@@ -524,6 +552,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Cmdlet) == CommandTypes.Cmdlet)
                                 {
                                     yield return new CmdletInfo(commandName, implementingType: null, helpFile: null, PSSnapin: null, context: context)
@@ -531,6 +560,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Function) == CommandTypes.Function)
                                 {
                                     yield return new FunctionInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
@@ -538,6 +568,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Configuration) == CommandTypes.Configuration)
                                 {
                                     yield return new ConfigurationInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
@@ -551,6 +582,38 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
+
+        /// <summary>
+        /// Returns abbreviated version of a command name.
+        /// </summary>
+        /// <param name="commandName">Name of the command to transform.</param>
+        /// <returns>Abbreviated version of the command name.</returns>
+        internal static string AbbreviateName(string commandName)
+        {
+            // Use default size of 6 which represents expected average abbreviation length
+            StringBuilder abbreviation = new StringBuilder(6);
+            foreach (char c in commandName)
+            {
+                if (char.IsUpper(c) || c == '-')
+                {
+                    abbreviation.Append(c);
+                }
+            }
+
+            return abbreviation.ToString();
+        }
+    }
+
+    internal struct CommandScore
+    {
+        public CommandScore(CommandInfo command, int score)
+        {
+            Command = command;
+            Score =  score;
+        }
+
+        public CommandInfo Command;
+        public int Score;
     }
 }
 

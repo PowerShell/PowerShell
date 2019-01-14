@@ -18,7 +18,7 @@ using System.Reflection;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Parses help comments and turns them into HelpInfo objects
+    /// Parses help comments and turns them into HelpInfo objects.
     /// </summary>
     internal class HelpCommentsParser
     {
@@ -48,6 +48,7 @@ namespace System.Management.Automation
                     _commandName = si.Path;
                 }
             }
+
             _commandMetadata = commandInfo.CommandMetadata;
             _parameterDescriptions = parameterDescriptions;
         }
@@ -90,6 +91,7 @@ namespace System.Management.Automation
                         _parameters.Add(parameterName.ToUpperInvariant(), _parameterDescriptions[i]);
                     }
                 }
+
                 ++i;
             }
         }
@@ -117,7 +119,7 @@ namespace System.Management.Automation
         {
             XmlElement command_parameter = _doc.CreateElement("command:parameter", commandURI);
             command_parameter.SetAttribute("required", isMandatory ? "true" : "false");
-            //command_parameter.SetAttribute("variableLength", "unknown");
+            // command_parameter.SetAttribute("variableLength", "unknown");
             command_parameter.SetAttribute("globbing", supportsWildcards ? "true" : "false");
             string fromPipeline;
             if (valueFromPipeline && valueFromPipelineByPropertyName)
@@ -136,6 +138,7 @@ namespace System.Management.Automation
             {
                 fromPipeline = "false";
             }
+
             command_parameter.SetAttribute("pipelineInput", fromPipeline);
             command_parameter.SetAttribute("position", position);
 
@@ -165,6 +168,7 @@ namespace System.Management.Automation
                     XmlText parameterValue_text = _doc.CreateTextNode(valueName);
                     parameterValueGroup.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }
+
                 command_parameter.AppendChild(parameterValueGroup);
             }
             else
@@ -174,7 +178,7 @@ namespace System.Management.Automation
                 {
                     XmlElement parameterValue = _doc.CreateElement("command:parameterValue", commandURI);
                     parameterValue.SetAttribute("required", isSwitchParameter ? "false" : "true");
-                    //parameterValue.SetAttribute("variableLength", "unknown");
+                    // parameterValue.SetAttribute("variableLength", "unknown");
                     XmlText parameterValue_text = _doc.CreateTextNode(type.Name);
                     command_parameter.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }
@@ -198,7 +202,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create the maml xml after a successful analysis of the comments.
         /// </summary>
-        /// <returns>The xml node for the command constructed</returns>
+        /// <returns>The xml node for the command constructed.</returns>
         internal XmlDocument BuildXmlFromComments()
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(_commandName), "Name can never be null");
@@ -256,6 +260,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 string parameterName = pair.Key;
                 string description = GetParameterDescription(parameterName);
 
@@ -272,6 +277,7 @@ namespace System.Management.Automation
                 {
                     parameterSetData = parameter.GetParameterSetData(1u << i++);
                 }
+
                 if (parameterSetData != null)
                 {
                     isMandatory = parameterSetData.IsMandatory;
@@ -322,6 +328,7 @@ namespace System.Management.Automation
                     parameter.Type, description, supportsWildcards, defaultValueStr, forSyntax: false);
                 commandParameters.AppendChild(parameterElement);
             }
+
             command.AppendChild(commandParameters);
 
             #endregion Parameters
@@ -333,6 +340,7 @@ namespace System.Management.Automation
                 XmlText description_text = _doc.CreateTextNode(_sections.Description);
                 command.AppendChild(description).AppendChild(description_para).AppendChild(description_text);
             }
+
             if (!string.IsNullOrEmpty(_sections.Notes))
             {
                 XmlElement alertSet = _doc.CreateElement("maml:alertSet", mamlURI);
@@ -341,6 +349,7 @@ namespace System.Management.Automation
                 XmlText alert_para_text = _doc.CreateTextNode(_sections.Notes);
                 command.AppendChild(alertSet).AppendChild(alert).AppendChild(alert_para).AppendChild(alert_para_text);
             }
+
             if (_examples.Count > 0)
             {
                 XmlElement examples = _doc.CreateElement("command:examples", commandURI);
@@ -383,10 +392,13 @@ namespace System.Management.Automation
                     {
                         remarks.AppendChild(_doc.CreateElement("maml:para", mamlURI));
                     }
+
                     examples.AppendChild(example_node);
                 }
+
                 command.AppendChild(examples);
             }
+
             if (_inputs.Count > 0)
             {
                 XmlElement inputTypes = _doc.CreateElement("command:inputTypes", commandURI);
@@ -398,6 +410,7 @@ namespace System.Management.Automation
                     XmlText maml_name_text = _doc.CreateTextNode(inputStr);
                     inputTypes.AppendChild(inputType).AppendChild(type).AppendChild(maml_name).AppendChild(maml_name_text);
                 }
+
                 command.AppendChild(inputTypes);
             }
             // For outputs, we prefer what was specified in the comments, but if there are no comments
@@ -411,6 +424,7 @@ namespace System.Management.Automation
             {
                 outputs = _scriptBlock.OutputType;
             }
+
             if (outputs != null)
             {
                 XmlElement returnValues = _doc.CreateElement("command:returnValues", commandURI);
@@ -423,8 +437,10 @@ namespace System.Management.Automation
                     XmlText maml_name_text = _doc.CreateTextNode(returnValueStr);
                     returnValues.AppendChild(returnValue).AppendChild(type).AppendChild(maml_name).AppendChild(maml_name_text);
                 }
+
                 command.AppendChild(returnValues);
             }
+
             if (_links.Count > 0)
             {
                 XmlElement links = _doc.CreateElement("maml:relatedLinks", mamlURI);
@@ -437,6 +453,7 @@ namespace System.Management.Automation
                     XmlText linkText_text = _doc.CreateTextNode(link);
                     links.AppendChild(navigationLink).AppendChild(linkText).AppendChild(linkText_text);
                 }
+
                 command.AppendChild(links);
             }
 
@@ -472,6 +489,7 @@ namespace System.Management.Automation
                     parameter.Type, description, supportsWildcards, defaultValue: string.Empty, forSyntax: true);
                 syntaxItem.AppendChild(parameterElement);
             }
+
             command.AppendChild(syntax).AppendChild(syntaxItem);
         }
 
@@ -492,17 +510,20 @@ namespace System.Management.Automation
                     ++collectingPart;
                     continue;
                 }
+
                 if (c == '\n' && collectingPart < 3)
                 {
                     if (collectingPart == 1)
                     {
                         prompt_str = default_prompt_str;
                     }
+
                     code_str = builder.ToString().Trim();
                     builder = new StringBuilder();
                     collectingPart = 3;
                     continue;
                 }
+
                 builder.Append(c);
             }
 
@@ -521,7 +542,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Split the text in the comment token into multiple lines, appending commentLines.
         /// </summary>
-        /// <param name="comment">A single line or multiline comment token</param>
+        /// <param name="comment">A single line or multiline comment token.</param>
         /// <param name="commentLines"></param>
         private static void CollectCommentText(Token comment, List<string> commentLines)
         {
@@ -553,9 +574,11 @@ namespace System.Management.Automation
                         {
                             i++;
                         }
+
                         start = i + 1;
                     }
                 }
+
                 commentLines.Add(text.Substring(start, i - start));
             }
             else
@@ -569,6 +592,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 commentLines.Add(text.Substring(i));
             }
         }
@@ -595,6 +619,7 @@ namespace System.Management.Automation
                     // Skip blank lines before capturing anything in the section.
                     continue;
                 }
+
                 if (Regex.IsMatch(line, directive))
                 {
                     // Break on any directive even if we haven't started capturing.
@@ -612,6 +637,7 @@ namespace System.Management.Automation
                         j++;
                     }
                 }
+
                 capturing = true;
 
                 // Skip leading whitespace based on the first line in the section, skipping
@@ -622,9 +648,11 @@ namespace System.Management.Automation
                 {
                     start++;
                 }
+
                 sb.Append(line.Substring(start));
                 sb.Append('\n');
             }
+
             return sb.ToString();
         }
 
@@ -636,7 +664,7 @@ namespace System.Management.Automation
             }
 
             string helpFileToLoad = _sections.MamlHelpFile;
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
             string scriptFile = ((IScriptCommandInfo)commandInfo).ScriptBlock.File;
             if (!string.IsNullOrEmpty(scriptFile))
             {
@@ -646,6 +674,7 @@ namespace System.Management.Automation
             {
                 helpFileToLoad = Path.Combine(Path.GetDirectoryName(commandInfo.Module.Path), _sections.MamlHelpFile);
             }
+
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
 
             return location;
@@ -683,7 +712,7 @@ namespace System.Management.Automation
         /// Look for special comments indicating the comment block is meant
         /// to be used for help.
         /// </summary>
-        /// <param name="comments">The list of comments to process</param>
+        /// <param name="comments">The list of comments to process.</param>
         /// <returns>True if any special comments are found, false otherwise.</returns>
         internal bool AnalyzeCommentBlock(List<Token> comments)
         {
@@ -723,6 +752,7 @@ namespace System.Management.Automation
                                     {
                                         _parameters.Add(param, section);
                                     }
+
                                     break;
                                 }
                             case "FORWARDHELPTARGETNAME":
@@ -888,6 +918,7 @@ namespace System.Management.Automation
                     {
                         localHelpInfo.ForwardTarget = helpCommentsParser._sections.ForwardHelpTargetName;
                     }
+
                     if (!string.IsNullOrEmpty(helpCommentsParser._sections.ForwardHelpCategory))
                     {
                         try
@@ -924,7 +955,7 @@ namespace System.Management.Automation
         /// Analyze a block of comments to determine if it is a special help block.
         /// </summary>
         /// <param name="commentBlock">The block of comments to analyze.</param>
-        /// <returns>true if the block is our special comment block for help, false otherwise.</returns>
+        /// <returns>True if the block is our special comment block for help, false otherwise.</returns>
         internal static bool IsCommentHelpText(List<Token> commentBlock)
         {
             if ((commentBlock == null) || (commentBlock.Count == 0))
@@ -996,6 +1027,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             result.Reverse();
             return result;
         }
@@ -1010,6 +1042,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return index;
         }
 
@@ -1023,6 +1056,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return index - 1;
         }
 
@@ -1073,6 +1107,7 @@ namespace System.Management.Automation
                 int n = -1;
                 result.Add(GetSection(commentLines, ref n));
             }
+
             return result;
         }
 
@@ -1154,10 +1189,10 @@ namespace System.Management.Automation
                 //     $sb = { }
                 //     set-item function:foo $sb
                 //     help foo
-                startTokenIndex = savedStartIndex = FirstTokenInExtent(tokens, ast.Extent) - 1;
+                startTokenIndex = savedStartIndex = FirstTokenInExtent(tokens, ast.Extent) + 1;
                 lastTokenIndex = LastTokenInExtent(tokens, ast.Extent, startTokenIndex);
 
-                Diagnostics.Assert(tokens[startTokenIndex + 1].Kind == TokenKind.LCurly,
+                Diagnostics.Assert(tokens[startTokenIndex - 1].Kind == TokenKind.LCurly,
                     "Unexpected first token in script block");
                 Diagnostics.Assert(tokens[lastTokenIndex].Kind == TokenKind.RCurly,
                     "Unexpected last token in script block");
@@ -1190,6 +1225,7 @@ namespace System.Management.Automation
                         {
                             return Tuple.Create(commentBlock, GetParameterComments(tokens, ipmp, savedStartIndex));
                         }
+
                         break;
                     }
                 }

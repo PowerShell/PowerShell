@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class VariableProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Variable";
 
@@ -36,14 +36,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public VariableProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the variables drive
+        /// Initializes the variables drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the variables drive.
@@ -56,21 +56,21 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.VariableDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(variableDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
         #region protected members
 
         /// <summary>
-        /// Gets a variable from session state
+        /// Gets a variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to retrieve.
@@ -81,14 +81,14 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             return (PSVariable)SessionState.Internal.GetVariable(name, Context.Origin);
-        } // GetSessionStateItem
+        }
 
         /// <summary>
-        /// Sets the variable of the specified name to the specified value
+        /// Sets the variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to set.
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             PSVariable variable = null;
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // ensure the name matches
 
-                    if (!String.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         PSVariable newVar = new PSVariable(name, variable.Value, variable.Options, variable.Attributes);
                         newVar.Description = variable.Description;
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 
         /// <summary>
         /// Removes the specified variable from session state.
@@ -148,14 +148,14 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveVariable(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
-        /// Gets a flattened view of the variables in session state
+        /// Gets a flattened view of the variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the variables in
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetVariableTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Gets the value of the item that is returned from GetItem by
@@ -192,8 +192,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = var.Value;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -232,6 +233,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
 
-    } // VariableProvider
+    }
 }
 

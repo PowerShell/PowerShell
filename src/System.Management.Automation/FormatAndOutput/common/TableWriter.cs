@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Management.Automation.Internal;
 using System.Text;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal class TableWriter
     {
         /// <summary>
-        /// Information about each column boundaries
+        /// Information about each column boundaries.
         /// </summary>
         private class ColumnInfo
         {
@@ -21,11 +22,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int alignment = TextAlignment.Left;
         }
         /// <summary>
-        /// Class containing information about the tabular layout
+        /// Class containing information about the tabular layout.
         /// </summary>
         private class ScreenInfo
         {
             internal int screenColumns = 0;
+            internal int screenRows = 0;
 
             internal const int separatorCharacterCount = 1;
 
@@ -37,6 +39,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private ScreenInfo _si;
+        private const char ESC = '\u001b';
+        private const string ResetConsoleVt100Code = "\u001b[m";
+        private List<string> _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
@@ -70,35 +75,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Initialize the table specifying the width of each column
+        /// Initialize the table specifying the width of each column.
         /// </summary>
-        /// <param name="leftMarginIndent">left margin indentation</param>
-        /// <param name="screenColumns">number of character columns on the screen</param>
-        /// <param name="columnWidths">array of specified column widths</param>
-        /// <param name="alignment">array of alignment flags</param>
-        /// <param name="suppressHeader">if true, suppress header printing</param>
-        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader)
+        /// <param name="leftMarginIndent">Left margin indentation.</param>
+        /// <param name="screenColumns">Number of character columns on the screen.</param>
+        /// <param name="columnWidths">Array of specified column widths.</param>
+        /// <param name="alignment">Array of alignment flags.</param>
+        /// <param name="suppressHeader">If true, suppress header printing.</param>
+        /// <param name="screenRows">Number of rows on the screen.</param>
+        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
         {
-            //Console.WriteLine("         1         2         3         4         5         6         7");
-            //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
-
             if (leftMarginIndent < 0)
             {
                 leftMarginIndent = 0;
             }
+
             if (screenColumns - leftMarginIndent < ScreenInfo.minimumScreenColumns)
             {
                 _disabled = true;
                 return;
             }
-            _startColumn = leftMarginIndent;
 
+            _startColumn = leftMarginIndent;
             _hideHeader = suppressHeader;
 
             // make sure the column widths are correct; if not, take appropriate action
-            ColumnWidthManager manager = new ColumnWidthManager(screenColumns - leftMarginIndent,
-                                                        ScreenInfo.minimumColumnWidth,
-                                                        ScreenInfo.separatorCharacterCount);
+            ColumnWidthManager manager = new ColumnWidthManager(
+                screenColumns - leftMarginIndent,
+                ScreenInfo.minimumColumnWidth,
+                ScreenInfo.separatorCharacterCount);
 
             manager.CalculateColumnWidths(columnWidths);
 
@@ -123,6 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // now set the run time data structures
             _si = new ScreenInfo();
             _si.screenColumns = screenColumns;
+            _si.screenRows = screenRows;
             _si.columnInfo = new ColumnInfo[columnWidths.Length];
 
             int startCol = _startColumn;
@@ -133,20 +139,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _si.columnInfo[k].width = columnWidths[k];
                 _si.columnInfo[k].alignment = alignment[k];
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
-                //Console.WriteLine("start = {0} width = {1}", si.columnInfo[k].startCol, si.columnInfo[k].width);
             }
         }
 
-        internal void GenerateHeader(string[] values, LineOutput lo)
+        internal int GenerateHeader(string[] values, LineOutput lo)
         {
-            if (_disabled)
-                return;
+            if (_disabled || _hideHeader)
+            {
+                return 0;
+            }
+            else if (_header != null)
+            {
+                foreach (string line in _header)
+                {
+                    lo.WriteLine(line);
+                }
 
-            if (_hideHeader)
-                return;
+                return _header.Count;
+            }
+
+            _header = new List<string>();
 
             // generate the row with the header labels
-            GenerateRow(values, lo, true, null, lo.DisplayCells);
+            GenerateRow(values, lo, true, null, lo.DisplayCells, _header);
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -172,10 +187,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // would be invalidated
                 breakLine[k] = StringUtil.DashPadding(count);
             }
-            GenerateRow(breakLine, lo, false, null, lo.DisplayCells);
+
+            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header);
+            return _header.Count;
         }
 
-        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
+        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows)
         {
             if (_disabled)
                 return;
@@ -204,16 +221,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (multiLine)
             {
-                string[] lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
-
-                for (int k = 0; k < lines.Length; k++)
+                foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
-                    lo.WriteLine(lines[k]);
+                    generatedRows?.Add(line);
+                    lo.WriteLine(line);
                 }
             }
             else
             {
-                lo.WriteLine(GenerateRow(values, currentAlignment, dc));
+                string line = GenerateRow(values, currentAlignment, dc);
+                generatedRows?.Add(line);
+                lo.WriteLine(line);
             }
         }
 
@@ -358,6 +376,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(scArray[col][row]);
                     }
                 }
+
                 rows[row] = sb.ToString();
             }
 
@@ -368,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
-            if (addPadding || alignment == TextAlignment.Right)
+            if (addPadding || alignment == TextAlignment.Right || alignment == TextAlignment.Center)
             {
                 // if length is shorter, do some padding
                 for (int col = 0; col < sc.Count; col++)
@@ -377,6 +396,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc, addPadding);
                 }
             }
+
             return sc;
         }
 
@@ -413,8 +433,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(StringUtil.Padding(_startColumn));
                     }
                 }
+
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
+                if (values[k].IndexOf(ESC) != -1)
+                {
+                    // Reset the console output if the content of this column contains ESC
+                    sb.Append(ResetConsoleVt100Code);
+                }
             }
+
             return sb.ToString();
         }
 
@@ -437,6 +464,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             s = StringUtil.Padding(padCount) + s;
                         }
+
                         break;
 
                     case TextAlignment.Center:
@@ -451,6 +479,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s += StringUtil.Padding(padRight);
                             }
                         }
+
                         break;
 
                     default:
@@ -461,6 +490,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s += StringUtil.Padding(padCount);
                             }
                         }
+
                         break;
                 }
             }
@@ -468,7 +498,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // the string is longer than the width of the column
                 // truncate and add ellipsis if it's too long
-                int truncationDisplayLength = width - ellipsis.Length;
+                int truncationDisplayLength = width - EllipsisSize;
 
                 if (truncationDisplayLength > 0)
                 {
@@ -480,16 +510,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "...f"
                                 int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
                                 s = s.Substring(s.Length - tailCount);
-                                s = ellipsis + s;
+                                s = PSObjectHelper.Ellipsis + s;
                             }
+
                             break;
 
                         case TextAlignment.Center:
                             {
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += ellipsis;
+                                s += PSObjectHelper.Ellipsis;
                             }
+
                             break;
 
                         default:
@@ -497,8 +529,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // left align is the default
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += ellipsis;
+                                s += PSObjectHelper.Ellipsis;
                             }
+
                             break;
                     }
                 }
@@ -515,6 +548,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 int tailCount = dc.GetTailSplitLength(s, len);
                                 s = s.Substring(s.Length - tailCount, tailCount);
                             }
+
                             break;
 
                         case TextAlignment.Center:
@@ -522,6 +556,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "a"
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, len));
                             }
+
                             break;
 
                         default:
@@ -530,6 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "a"
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, len));
                             }
+
                             break;
                     }
                 }
@@ -543,12 +579,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return s;
             }
+
             switch (alignment)
             {
                 case TextAlignment.Right:
                     {
                         s = " " + s;
                     }
+
                     break;
 
                 case TextAlignment.Center:
@@ -558,6 +596,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             s += " ";
                         }
                     }
+
                     break;
 
                 default:
@@ -568,13 +607,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             s += " ";
                         }
                     }
+
                     break;
             }
 
             return s;
         }
 
-        private const string ellipsis = "...";
+        private const int EllipsisSize = 1;
 
         private bool _disabled = false;
 

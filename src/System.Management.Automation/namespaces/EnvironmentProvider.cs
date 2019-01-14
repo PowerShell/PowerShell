@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class EnvironmentProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Environment";
 
@@ -32,14 +32,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public EnvironmentProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the alias drive
+        /// Initializes the alias drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
@@ -52,21 +52,21 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(envDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
         #region protected members
 
         /// <summary>
-        /// Gets a environment variable from session state
+        /// Gets a environment variable from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to retrieve.
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             object result = null;
@@ -88,11 +88,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = new DictionaryEntry(name, value);
             }
+
             return result;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
-        /// Sets the environment variable of the specified name to the specified value
+        /// Sets the environment variable of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the environment variable to set.
@@ -106,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             if (value == null)
@@ -132,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
                     PSObject wrappedObject = PSObject.AsPSObject(value);
                     stringValue = wrappedObject.ToString();
                 }
+
                 Environment.SetEnvironmentVariable(name, stringValue);
 
                 DictionaryEntry item = new DictionaryEntry(name, stringValue);
@@ -141,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteItemObject(item, name, false);
                 }
             }
-        } // SetSessionStateItem
+        }
 
         /// <summary>
         /// Removes the specified environment variable from session state.
@@ -152,14 +154,14 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             Environment.SetEnvironmentVariable(name, null);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
-        /// Gets a flattened view of the environment variables in session state
+        /// Gets a flattened view of the environment variables in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the environment variables in
@@ -192,9 +194,9 @@ namespace Microsoft.PowerShell.Commands
                     //       see https://github.com/PowerShell/PowerShell/issues/6305.
                     //       However, because retrieval *by name* later is invariably
                     //       case-INsensitive, in effect only a *single* variable exists.
-                    //       We simply ask Environment.GetEnvironmentVariable() for the effective value 
+                    //       We simply ask Environment.GetEnvironmentVariable() for the effective value
                     //       and use that as the only entry, because for a given key 'foo' (and all its case variations),
-                    //       that is guaranteed to match what $env:FOO and [environment]::GetEnvironmentVariable('foo') return. 
+                    //       that is guaranteed to match what $env:FOO and [environment]::GetEnvironmentVariable('foo') return.
                     //       (If, by contrast, we just used `entry` as-is every time a duplicate is encountered,
                     //        it could - intermittently - represent a value *other* than the effective one.)
                     string effectiveValue = Environment.GetEnvironmentVariable((string)entry.Key);
@@ -202,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
                         // Note: We *recreate* the entry so that the specific name casing of the
                         //       effective definition is also reflected. However, if the case variants
                         //       define the same value, it is unspecified which name variant is reflected
-                        //       in Get-Item env: output; given the always case-insensitive nature of the retrieval, 
+                        //       in Get-Item env: output; given the always case-insensitive nature of the retrieval,
                         //       that shouldn't matter.
                         providerTable.Remove((string)entry.Key);
                         providerTable.Add((string)entry.Key, entry);
@@ -211,10 +213,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return providerTable;
-        } // GetSessionStateTable
+        }
 
         /// <summary>
-        /// Gets the Value property of the DictionaryEntry item
+        /// Gets the Value property of the DictionaryEntry item.
         /// </summary>
         /// <param name="item">
         /// The item to get the value from.
@@ -234,10 +236,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = ((DictionaryEntry)item).Value;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         #endregion protected members
-    } // EnvironmentProvider
+    }
 }
 

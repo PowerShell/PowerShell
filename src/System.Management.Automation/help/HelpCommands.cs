@@ -21,13 +21,13 @@ using Microsoft.Win32;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-help command
+    /// This class implements get-help command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113316")]
     public sealed class GetHelpCommand : PSCmdlet
     {
         /// <summary>
-        /// Help Views
+        /// Help Views.
         /// </summary>
         internal enum HelpView
         {
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Default constructor for the GetHelpCommand class
+        /// Default constructor for the GetHelpCommand class.
         /// </summary>
         public GetHelpCommand()
         {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet Parameters
 
         /// <summary>
-        /// Target to search for help
+        /// Target to search for help.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         public string Path { get; set; }
 
         /// <summary>
-        /// List of help categories to search for help
+        /// List of help categories to search for help.
         /// </summary>
         [Parameter]
         [ValidateSet(
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         private string _provider = string.Empty;
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public string[] Role { get; set; }
-        
+
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
         /// navigate to a URL (stored in the command MAML file under
@@ -193,11 +193,13 @@ namespace Microsoft.PowerShell.Commands
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
             }
+
             get
             {
                 return _showOnlineHelp;
             }
         }
+
         private bool _showOnlineHelp;
 
         // The following variable controls the view.
@@ -213,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet API implementation
 
         /// <summary>
-        /// Implements the BeginProcessing() method for get-help command
+        /// Implements the BeginProcessing() method for get-help command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -234,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implements the ProcessRecord() method for get-help command
+        /// Implements the ProcessRecord() method for get-help command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -295,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteObjectsOrShowOnlineHelp(helpInfo, false);
                     }
+
                     countOfHelpInfos++;
                 }
 
@@ -456,9 +459,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validates input parameters
+        /// Validates input parameters.
         /// </summary>
-        /// <param name="cat">Category specified by the user</param>
+        /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
         /// If the request cant be serviced.
         /// </exception>
@@ -640,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if we can connect to the internet
+        /// Checks if we can connect to the internet.
         /// </summary>
         /// <returns></returns>
         private bool HasInternetConnection()
@@ -679,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
     public static class GetHelpCodeMethods
     {
         /// <summary>
-        /// Verifies if the InitialSessionState of the current process
+        /// Verifies if the InitialSessionState of the current process.
         /// </summary>
         /// <returns></returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
@@ -705,6 +708,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return false;
         }
 
@@ -726,6 +730,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return string.Empty;
             }
+
             CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
@@ -792,10 +797,10 @@ namespace Microsoft.PowerShell.Commands
                 // 2. This method is primarily used to get uri faster while serializing the CommandInfo objects (from Get-Command)
                 // 3. Exchange uses Get-Help proxy to not call Get-Help cmdlet at-all while serializing CommandInfo objects
                 // 4. Using HelpSystem directly will not allow Get-Help proxy to do its job.
-                System.Management.Automation.PowerShell getHelpPS = System.Management.Automation.PowerShell.Create(
-                    RunspaceMode.CurrentRunspace).AddCommand("get-help").
-                    AddParameter("Name", cmdName).AddParameter("Category",
-                                                                cmdInfo.HelpCategory.ToString());
+                var getHelpPS = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                    .AddCommand("get-help")
+                    .AddParameter("Name", cmdName)
+                    .AddParameter("Category", cmdInfo.HelpCategory.ToString());
                 try
                 {
                     Collection<PSObject> helpInfos = getHelpPS.Invoke();

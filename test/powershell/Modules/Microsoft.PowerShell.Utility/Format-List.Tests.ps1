@@ -75,7 +75,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $info = @{}
         $info.array = $al
         $result = $info | Format-List | Out-String
-        $result | Should -Match "Name  : array\s+Value : {0, 1, 2, 3...}"
+        $result | Should -Match "Name  : array\s+Value : {0, 1, 2, 3`u{2026}}" # ellipsis
     }
 
 	It "Format-List with No Objects for End-To-End should work"{

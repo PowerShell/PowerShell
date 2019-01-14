@@ -40,6 +40,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return _boxes[index].Value;
             }
+
             set
             {
                 _boxes[index].Value = value;

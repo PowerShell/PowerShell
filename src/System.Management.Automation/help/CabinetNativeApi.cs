@@ -83,7 +83,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Finalizer to ensure destruction of unmanaged resources
+        /// Finalizer to ensure destruction of unmanaged resources.
         /// </summary>
         ~CabinetExtractor()
         {
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Frees all the delegate handles
+        /// Frees all the delegate handles.
         /// </summary>
         private void CleanUpDelegates()
         {
@@ -420,6 +420,7 @@ namespace System.Management.Automation.Internal
                         return new IntPtr(1);
                     }
             }
+
             return new IntPtr(0);
         }
 
@@ -428,7 +429,7 @@ namespace System.Management.Automation.Internal
         #region Helper methods for non-trivial conversions
 
         /// <summary>
-        /// Converts an unmanaged define into a known managed value
+        /// Converts an unmanaged define into a known managed value.
         /// </summary>
         /// <param name="origin">Defined in stdio.h.</param>
         /// <returns>The appropriate System.IO.SeekOrigin value.</returns>
@@ -450,7 +451,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Converts an unmanaged define into a known managed type.
         /// </summary>
-        /// <param name="oflag">Operation mode defined in fcntl.h</param>
+        /// <param name="oflag">Operation mode defined in fcntl.h.</param>
         /// <returns>The appropriate System.IO.FileMode type.</returns>
         internal static FileMode ConvertOpflagToFileMode(int oflag)
         {
@@ -489,7 +490,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Converts an unmanaged define into a known managed type.
         /// </summary>
-        /// <param name="pmode">Permission mode defined in stat.h</param>
+        /// <param name="pmode">Permission mode defined in stat.h.</param>
         /// <returns>The appropriate System.IO.FileAccess type.</returns>
         internal static FileAccess ConvertPermissionModeToFileAccess(int pmode)
         {
@@ -516,7 +517,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Converts an unmanaged define into a known managed type.
         /// </summary>
-        /// <param name="pmode">Permission mode defined in stat.h</param>
+        /// <param name="pmode">Permission mode defined in stat.h.</param>
         /// <returns>The appropriate System.IO.FileShare type.</returns>
         internal static FileShare ConvertPermissionModeToFileShare(int pmode)
         {
@@ -576,7 +577,7 @@ namespace System.Management.Automation.Internal
         {
             internal int cb; // LONG
             internal string psz1; // char FAR *
-            internal string psz2; //char FAR *
+            internal string psz2; // char FAR *
             internal string psz3; // char FAR *
             internal IntPtr pv; // void FAR * // In this case, it is the destination path
             internal IntPtr hf; // INT_PTR
@@ -625,17 +626,17 @@ namespace System.Management.Automation.Internal
         #region PInvoke Definitions
 
         /// <summary>
-        /// Creates an FDI context
+        /// Creates an FDI context.
         /// </summary>
-        /// <param name="pfnalloc">_In_ PFNALLOC - Memory allocation delegate</param>
-        /// <param name="pfnfree">_In_ PFNFREE - Memory free delegate</param>
-        /// <param name="pfnopen">_In_ PFNOPEN - File open delegate</param>
-        /// <param name="pfnread">_In_ PFNREAD - File read delegate</param>
-        /// <param name="pfnwrite">_In_ PFNWRITE - File write delegate</param>
-        /// <param name="pfnclose">_In_ PFNCLOSE - File close delegate</param>
-        /// <param name="pfnseek">_In_ PFNSEEK - File seek delegate</param>
-        /// <param name="cpuType">_In_ int - CPU type</param>
-        /// <param name="erf">_Inout_ PERF - Error structure containing error information</param>
+        /// <param name="pfnalloc">_In_ PFNALLOC - Memory allocation delegate.</param>
+        /// <param name="pfnfree">_In_ PFNFREE - Memory free delegate.</param>
+        /// <param name="pfnopen">_In_ PFNOPEN - File open delegate.</param>
+        /// <param name="pfnread">_In_ PFNREAD - File read delegate.</param>
+        /// <param name="pfnwrite">_In_ PFNWRITE - File write delegate.</param>
+        /// <param name="pfnclose">_In_ PFNCLOSE - File close delegate.</param>
+        /// <param name="pfnseek">_In_ PFNSEEK - File seek delegate.</param>
+        /// <param name="cpuType">_In_ int - CPU type.</param>
+        /// <param name="erf">_Inout_ PERF - Error structure containing error information.</param>
         /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern FdiContextHandle FDICreate(
@@ -650,15 +651,15 @@ namespace System.Management.Automation.Internal
             FdiERF erf);
 
         /// <summary>
-        /// Extracts files from cabinets
+        /// Extracts files from cabinets.
         /// </summary>
-        /// <param name="hfdi">_In_ HFDI - A valid FDI context handle returned by FDICreate</param>
-        /// <param name="pszCabinet">_In_ LPSTR - The name of the cabinet file</param>
-        /// <param name="pszCabPath">_In_ LPSTR - The path to the cabinet file excluding the file name</param>
-        /// <param name="flags">_In_ int - Not defined</param>
-        /// <param name="pfnfdin">_In_ PFNFDINOTIFY - Pointer to the notification callback delegate</param>
-        /// <param name="pfnfdid">_In_ PFNFDIDECRYPT - Not used</param>
-        /// <param name="pvUser">_In_opt_ void FAR * - Path string passed to the notification function</param>
+        /// <param name="hfdi">_In_ HFDI - A valid FDI context handle returned by FDICreate.</param>
+        /// <param name="pszCabinet">_In_ LPSTR - The name of the cabinet file.</param>
+        /// <param name="pszCabPath">_In_ LPSTR - The path to the cabinet file excluding the file name.</param>
+        /// <param name="flags">_In_ int - Not defined.</param>
+        /// <param name="pfnfdin">_In_ PFNFDINOTIFY - Pointer to the notification callback delegate.</param>
+        /// <param name="pfnfdid">_In_ PFNFDIDECRYPT - Not used.</param>
+        /// <param name="pvUser">_In_opt_ void FAR * - Path string passed to the notification function.</param>
         /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true, BestFitMapping = false)]
         internal static extern bool FDICopy(
@@ -671,9 +672,9 @@ namespace System.Management.Automation.Internal
             IntPtr pvUser);
 
         /// <summary>
-        /// Deletes an open FDI context
+        /// Deletes an open FDI context.
         /// </summary>
-        /// <param name="hfdi">_In_ HFDI - The FDI context handle to destroy</param>
+        /// <param name="hfdi">_In_ HFDI - The FDI context handle to destroy.</param>
         /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern bool FDIDestroy(

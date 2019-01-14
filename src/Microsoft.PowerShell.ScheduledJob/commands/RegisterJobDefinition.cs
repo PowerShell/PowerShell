@@ -36,8 +36,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string FilePath
         {
             get { return _filePath; }
+
             set { _filePath = value; }
         }
+
         private string _filePath;
 
         /// <summary>
@@ -49,8 +51,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
+
             set { _scriptBlock = value; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -64,8 +68,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
+
         private string _name;
 
         /// <summary>
@@ -78,8 +84,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobTrigger[] Trigger
         {
             get { return _triggers; }
+
             set { _triggers = value; }
         }
+
         private ScheduledJobTrigger[] _triggers;
 
         /// <summary>
@@ -91,8 +99,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScriptBlock InitializationScript
         {
             get { return _initializationScript; }
+
             set { _initializationScript = value; }
         }
+
         private ScriptBlock _initializationScript;
 
         /// <summary>
@@ -103,8 +113,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RunAs32
         {
             get { return _runAs32; }
+
             set { _runAs32 = value; }
         }
+
         private SwitchParameter _runAs32;
 
         /// <summary>
@@ -116,8 +128,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public PSCredential Credential
         {
             get { return _credential; }
+
             set { _credential = value; }
         }
+
         private PSCredential _credential;
 
         /// <summary>
@@ -128,8 +142,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public AuthenticationMechanism Authentication
         {
             get { return _authenticationMechanism; }
+
             set { _authenticationMechanism = value; }
         }
+
         private AuthenticationMechanism _authenticationMechanism;
 
         /// <summary>
@@ -141,8 +157,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobOptions ScheduledJobOption
         {
             get { return _options; }
+
             set { _options = value; }
         }
+
         private ScheduledJobOptions _options;
 
         /// <summary>
@@ -155,8 +173,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public object[] ArgumentList
         {
             get { return _arguments; }
+
             set { _arguments = value; }
         }
+
         private object[] _arguments;
 
         /// <summary>
@@ -167,8 +187,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public int MaxResultCount
         {
             get { return _executionHistoryLength; }
+
             set { _executionHistoryLength = value; }
         }
+
         private int _executionHistoryLength;
 
         /// <summary>
@@ -179,8 +201,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RunNow
         {
             get { return _runNow; }
+
             set { _runNow = value; }
         }
+
         private SwitchParameter _runNow;
 
         /// <summary>
@@ -192,8 +216,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RunEvery
         {
             get { return _runEvery; }
+
             set { _runEvery = value; }
         }
+
         private TimeSpan _runEvery;
 
         #endregion
@@ -238,6 +264,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                         return;
                     }
+
                     definition.SetExecutionHistoryLength(MaxResultCount, false);
                 }
 
@@ -333,6 +360,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 return null;
             }
+
             Collection<PathInfo> pathInfos = SessionState.Path.GetResolvedPSPathFromPSPath(FilePath);
             if (pathInfos.Count != 1)
             {
@@ -343,6 +371,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 return null;
             }
+
             parameterCollection.Add(ScheduledJobInvocationInfo.FilePathParameter, pathInfos[0].Path);
 
             JobInvocationInfo jobInvocationInfo = new ScheduledJobInvocationInfo(jobDefinition, parameterCollection);

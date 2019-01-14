@@ -15,17 +15,17 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ChildItemCmdletProviderIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet that this class is acting as a facade for.
@@ -39,10 +39,10 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // ChildItemCmdletProviderIntrinsics internal
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the "real" session state.
@@ -58,7 +58,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // ChildItemCmdletProviderIntrinsics internal
+        }
         #endregion Constructors
 
         #region Public methods
@@ -110,7 +110,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildItems(new string[] { path }, recurse, uint.MaxValue, false, false);
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the child items of the container at the given path(s).
@@ -275,7 +275,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetChildItems(path, recurse, depth, context);
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem cmdlet.
@@ -324,7 +324,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildItemsDynamicParameters(path, recurse, context);
-        } // GetChildItemsDynamicParameters
+        }
 
         #endregion GetChildItems
 
@@ -383,7 +383,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildNames(new string[] { path }, returnContainers, recurse, uint.MaxValue, false, false);
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the child names of the container at the given path.
@@ -571,7 +571,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetChildNames(path, returnContainers, recurse, depth, context);
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem -name cmdlet.
@@ -614,7 +614,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildNamesDynamicParameters(path, context);
-        } // GetChildNamesDynamicParameters
+        }
 
         #endregion GetChildNames
 
@@ -659,7 +659,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.HasChildItems(path, false, false);
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Determines if an item at the given path has children.
@@ -752,7 +752,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.HasChildItems(path, context);
-        } // HasChildItems
+        }
 
         #endregion HasChildItems
 
@@ -764,7 +764,7 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // ChildItemCmdletProviderIntrinsics
+    }
 
     /// <summary>
     /// This enum determines which types of containers are returned from some of

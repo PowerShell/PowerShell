@@ -12,11 +12,11 @@ namespace System.Management.Automation.Internal
     internal abstract class ICabinetExtractor : IDisposable
     {
         /// <summary>
-        /// Extracts a cabinet file
+        /// Extracts a cabinet file.
         /// </summary>
-        /// <param name="cabinetName">cabinet file name</param>
-        /// <param name="srcPath">cabinet directory name, must be back slash terminated</param>
-        /// <param name="destPath">destination directory name, must be back slash terminated</param>
+        /// <param name="cabinetName">Cabinet file name.</param>
+        /// <param name="srcPath">Cabinet directory name, must be back slash terminated.</param>
+        /// <param name="destPath">Destination directory name, must be back slash terminated.</param>
         internal abstract bool Extract(string cabinetName, string srcPath, string destPath);
 
         #region IDisposable Interface
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Abstract class which defines a CabinetExtractor loader. An implementation
     /// of this class will be instantiated onetime from the C++/CLI
-    /// assembly using reflection
+    /// assembly using reflection.
     /// </summary>
     /// <remarks>The C++/CLI implementation of this class needs to be
     /// static</remarks>
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Used to create a CabinetExtractor class
+    /// Used to create a CabinetExtractor class.
     /// </summary>
     internal class CabinetExtractorFactory
     {
@@ -84,7 +84,7 @@ namespace System.Management.Automation.Internal
         internal static ICabinetExtractor EmptyExtractor = new EmptyCabinetExtractor();
 
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         static CabinetExtractorFactory()
@@ -93,9 +93,9 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Provider a CabinetExtractor instance
+        /// Provider a CabinetExtractor instance.
         /// </summary>
-        /// <returns>Tracer instance</returns>
+        /// <returns>Tracer instance.</returns>
         internal static ICabinetExtractor GetCabinetExtractor()
         {
             if (s_cabinetLoader != null)
@@ -110,16 +110,16 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Dummy cabinet extractor implementation
+    /// Dummy cabinet extractor implementation.
     /// </summary>
     internal sealed class EmptyCabinetExtractor : ICabinetExtractor
     {
         /// <summary>
-        /// Extracts a cabinet file
+        /// Extracts a cabinet file.
         /// </summary>
-        /// <param name="cabinetName">cabinet file name</param>
-        /// <param name="srcPath">cabinet directory name, must be back slash terminated</param>
-        /// <param name="destPath">destination directory name, must be back slash terminated</param>
+        /// <param name="cabinetName">Cabinet file name.</param>
+        /// <param name="srcPath">Cabinet directory name, must be back slash terminated.</param>
+        /// <param name="destPath">Destination directory name, must be back slash terminated.</param>
         internal override bool Extract(string cabinetName, string srcPath, string destPath)
         {
             // its intentional that this method has no definition
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Disposes the instance
+        /// Disposes the instance.
         /// </summary>
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
