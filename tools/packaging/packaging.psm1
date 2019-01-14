@@ -273,7 +273,7 @@ function Start-PSPackage {
             "fxdependent" {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
                 if ($IsWindows) {
@@ -2970,4 +2970,85 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     }
 
     $packageVersion
+}
+
+function New-DotnetSdkContainerFxdPackage {
+    param(
+        [Parameter(Mandatory)] $FxdPackagePath,
+        [Parameter(Mandatory)] $ReleaseTag
+    )
+
+    $Version = $ReleaseTag -Replace '^v'
+
+    if ($IsWindows) {
+        $basePackagePattern = "*$Version-win-fxdependent.zip"
+        $packageNamePlatform = 'win'
+        $packageNameExtension = '.zip'
+    } else {
+        $basePackagePattern = "*$Version-linux-x64-fxdependent.tar.gz"
+        $packageNamePlatform = 'linux-x64'
+        $packageNameExtension = '.tar.gz'
+    }
+
+    $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
+
+    ## Get fxdependent package path
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern
+
+    Write-Verbose -Verbose "Fxd Package Path: $fxdPackage"
+
+    if ($fxdPackage) {
+        ## Extract fxd package
+        $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
+        Push-Location $tempExtractFolder
+
+        Write-Verbose -Verbose "Pushed location"
+
+        try {
+
+            if ($IsWindows) {
+                Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
+            } else {
+                Start-NativeExecution { tar -xf $fxdPackage }
+            }
+
+            ## Remove unnecessary files
+            $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+            Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+
+            $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
+
+            # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+            # win10-x64 (Nano Server)
+            # win-arm (Nano Server)
+            # linux-musl-x64 (Alpine 3.8)
+            # linux-x64 (bionic / stretch)
+            # unix, linux, win for dependencies
+            # win-x64 to get PowerShell.Native components
+            $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+
+            $runtimeFolder | ForEach-Object {
+                Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+            }
+
+            Write-Verbose -Verbose "Compressing"
+
+            if ($IsWindows) {
+                Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
+            } else {
+                Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+            }
+
+            Write-Verbose -Verbose "Compressing complete"
+
+        } finally {
+            Pop-Location
+        }
+    }
+
+    if (Test-Path "$FxdPackagePath/$packageName") {
+        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$FxdPackagePath/$packageName"
+    } else {
+        Write-Verbose -Verbose "Package not found: $FxdPackagePath/$packageName"
+    }
 }
