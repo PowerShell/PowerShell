@@ -8,90 +8,6 @@ using Microsoft.Win32;
 
 #pragma warning disable 1591, 1572, 1571, 1573, 1587, 1570, 0067
 
-#region CLR_STUBS
-
-// This namespace contains stubs for some .NET types that are not in CoreCLR, such as ISerializable and SerializableAttribute.
-// We use the stubs in this namespace to reduce #if/def in the code as much as possible.
-namespace Microsoft.PowerShell.CoreClr.Stubs
-{
-    #region SystemManagementStubs
-
-    // Summary:
-    //     Describes the authentication level to be used to connect to WMI. This is
-    //     used for the COM connection to WMI.
-    public enum AuthenticationLevel
-    {
-        // Summary:
-        //     Authentication level should remain as it was before.
-        Unchanged = -1,
-        //
-        // Summary:
-        //     The default COM authentication level. WMI uses the default Windows Authentication
-        //     setting.
-        Default = 0,
-        //
-        // Summary:
-        //     No COM authentication.
-        None = 1,
-        //
-        // Summary:
-        //     Connect-level COM authentication.
-        Connect = 2,
-        //
-        // Summary:
-        //     Call-level COM authentication.
-        Call = 3,
-        //
-        // Summary:
-        //     Packet-level COM authentication.
-        Packet = 4,
-        //
-        // Summary:
-        //     Packet Integrity-level COM authentication.
-        PacketIntegrity = 5,
-        //
-        // Summary:
-        //     Packet Privacy-level COM authentication.
-        PacketPrivacy = 6,
-    }
-
-    // Summary:
-    //     Describes the impersonation level to be used to connect to WMI.
-    public enum ImpersonationLevel
-    {
-        // Summary:
-        //     Default impersonation.
-        Default = 0,
-        //
-        // Summary:
-        //     Anonymous COM impersonation level that hides the identity of the caller.
-        //     Calls to WMI may fail with this impersonation level.
-        Anonymous = 1,
-        //
-        // Summary:
-        //     Identify-level COM impersonation level that allows objects to query the credentials
-        //     of the caller. Calls to WMI may fail with this impersonation level.
-        Identify = 2,
-        //
-        // Summary:
-        //     Impersonate-level COM impersonation level that allows objects to use the
-        //     credentials of the caller. This is the recommended impersonation level for
-        //     WMI calls.
-        Impersonate = 3,
-        //
-        // Summary:
-        //     Delegate-level COM impersonation level that allows objects to permit other
-        //     objects to use the credentials of the caller. This level, which will work
-        //     with WMI calls but may constitute an unnecessary security risk, is supported
-        //     only under Windows 2000.
-        Delegate = 4,
-    }
-
-    #endregion
-}
-
-#endregion CLR_STUBS
-
 #region PS_STUBS
 // Include PS types that are not needed for PowerShell on CSS
 
@@ -101,11 +17,12 @@ namespace System.Management.Automation
 
     /// <summary>
     /// We don't need PSTransaction related types on CSS because System.Transactions
-    /// namespace is not available in CoreCLR
+    /// namespace is not available in CoreCLR.
     /// </summary>
     public sealed class PSTransactionContext : IDisposable
     {
         internal PSTransactionContext(Internal.PSTransactionManager transactionManager) { }
+
         public void Dispose() { }
     }
 
@@ -116,49 +33,29 @@ namespace System.Management.Automation
     public enum RollbackSeverity
     {
         /// <summary>
-        /// Non-terminating errors or worse
+        /// Non-terminating errors or worse.
         /// </summary>
         Error,
 
         /// <summary>
-        /// Terminating errors or worse
+        /// Terminating errors or worse.
         /// </summary>
         TerminatingError,
 
         /// <summary>
-        /// Do not rollback the transaction on error
+        /// Do not rollback the transaction on error.
         /// </summary>
         Never
     }
 
     #endregion PSTransaction
-
-    #region ApartmentState
-
-    internal enum ApartmentState
-    {
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a single-threaded apartment.
-        STA = 0,
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a multithreaded apartment.
-        MTA = 1,
-        //
-        // Summary:
-        //     The System.Threading.Thread.ApartmentState property has not been set.
-        Unknown = 2
-    }
-
-    #endregion ApartmentState
 }
 
 namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// We don't need PSTransaction related types on CSS because System.Transactions
-    /// namespace is not available in CoreCLR
+    /// namespace is not available in CoreCLR.
     /// </summary>
     internal sealed class PSTransactionManager : IDisposable
     {
@@ -199,7 +96,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the rollback preference for the active transaction
+        /// Gets the rollback preference for the active transaction.
         /// </summary>
         internal RollbackSeverity RollbackPreference
         {
@@ -500,6 +397,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             throw new NotImplementedException("SetValue(string name, obj value, RegistryValueKind valueKind) is not implemented. TransactedRegistry related APIs should not be used.");
         }
+
         public string[] GetValueNames()
         {
             throw new NotImplementedException("GetValueNames() is not implemented. TransactedRegistry related APIs should not be used.");
@@ -551,6 +449,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         public abstract string Name { get; }
+
         public abstract int SubKeyCount { get; }
 
         public void SetAccessControl(ObjectSecurity securityDescriptor)
@@ -700,7 +599,7 @@ namespace System.Management.Automation.Security
         private SystemPolicy() { }
 
         /// <summary>
-        /// Gets the system lockdown policy
+        /// Gets the system lockdown policy.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
@@ -709,7 +608,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Gets lockdown policy as applied to a file
+        /// Gets lockdown policy as applied to a file.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
         public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
@@ -724,7 +623,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// How the policy is being enforced
+    /// How the policy is being enforced.
     /// </summary>
     internal enum SystemEnforcementMode
     {
@@ -779,27 +678,27 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceTask
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// CreateRunspace
+        /// CreateRunspace.
         /// </summary>
         CreateRunspace = 1,
 
         /// <summary>
-        /// ExecuteCommand
+        /// ExecuteCommand.
         /// </summary>
         ExecuteCommand = 2,
 
         /// <summary>
-        /// Serialization
+        /// Serialization.
         /// </summary>
         Serialization = 3,
 
         /// <summary>
-        /// PowerShellConsoleStartup
+        /// PowerShellConsoleStartup.
         /// </summary>
         PowerShellConsoleStartup = 4,
     }
@@ -812,52 +711,52 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceKeywords : ulong
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Runspace
+        /// Runspace.
         /// </summary>
         Runspace = 0x1,
 
         /// <summary>
-        /// Pipeline
+        /// Pipeline.
         /// </summary>
         Pipeline = 0x2,
 
         /// <summary>
-        /// Protocol
+        /// Protocol.
         /// </summary>
         Protocol = 0x4,
 
         /// <summary>
-        /// Transport
+        /// Transport.
         /// </summary>
         Transport = 0x8,
 
         /// <summary>
-        /// Host
+        /// Host.
         /// </summary>
         Host = 0x10,
 
         /// <summary>
-        /// Cmdlets
+        /// Cmdlets.
         /// </summary>
         Cmdlets = 0x20,
 
         /// <summary>
-        /// Serializer
+        /// Serializer.
         /// </summary>
         Serializer = 0x40,
 
         /// <summary>
-        /// Session
+        /// Session.
         /// </summary>
         Session = 0x80,
 
         /// <summary>
-        /// ManagedPlugIn
+        /// ManagedPlugIn.
         /// </summary>
         ManagedPlugIn = 0x100,
 
@@ -941,7 +840,7 @@ namespace System.Management.Automation.Tracing
         {
         }
 
-        public bool WriteMessage(String message)
+        public bool WriteMessage(string message)
         {
             return false;
         }

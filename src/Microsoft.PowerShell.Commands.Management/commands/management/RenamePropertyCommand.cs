@@ -7,7 +7,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to rename a property of an item at a specified path
+    /// A command to rename a property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113383")]
@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -54,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The properties to be renamed on the item
+        /// The properties to be renamed on the item.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
         public string Name { get; set; }
 
         /// <summary>
-        /// The new name of the property on the item
+        /// The new name of the property on the item.
         /// </summary>
         [Parameter(Mandatory = true, Position = 2, ValueFromPipelineByPropertyName = true)]
         public string NewName { get; set; }
@@ -84,6 +84,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.RenamePropertyDynamicParameters(Path, Name, NewName, context);
             }
+
             return InvokeProvider.Property.RenamePropertyDynamicParameters(".", Name, NewName, context);
         }
 

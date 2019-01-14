@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -215,6 +215,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -351,6 +352,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -551,6 +553,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -617,6 +620,7 @@ namespace System.Management.Automation
 
                 return GetContentWriterDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -693,6 +697,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -940,11 +945,12 @@ namespace System.Management.Automation
 
                 return ClearContentDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
         /// <summary>
-        /// Calls the provider to get the clear-content dynamic parameters
+        /// Calls the provider to get the clear-content dynamic parameters.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider to call
@@ -1015,13 +1021,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion ClearContent
 
         #endregion IContentCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

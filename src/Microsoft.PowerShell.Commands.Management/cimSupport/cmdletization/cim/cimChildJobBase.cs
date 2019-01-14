@@ -17,7 +17,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Base class for all child jobs that wrap CIM operations
+    /// Base class for all child jobs that wrap CIM operations.
     /// </summary>
     internal abstract class CimChildJobBase<T> :
         StartableJob,
@@ -34,6 +34,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return _jobContext;
             }
         }
+
         private readonly CimJobContext _jobContext;
 
         internal CimChildJobBase(CimJobContext jobContext)
@@ -101,6 +102,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return false;
             }
+
             if (errorCodeProperty.CimType != CimType.UInt32)
             {
                 return false;
@@ -172,15 +174,18 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                 _sleepAndRetryTimer.Dispose();
                                 _sleepAndRetryTimer = null;
                             }
+
                             if (_jobWasStopped)
                             {
                                 this.SetCompletedJobState(JobState.Stopped, null);
                                 return;
                             }
                         }
+
                         this.StartJob();
                     });
         }
+
         private void SleepAndRetry()
         {
             int tmpRandomDelay = _random.Next(0, _sleepAndRetryDelayRangeMs);
@@ -218,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Indicates a location where this job is running
+        /// Indicates a location where this job is running.
         /// </summary>
         public override string Location
         {
@@ -238,7 +243,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Status message associated with the Job
+        /// Status message associated with the Job.
         /// </summary>
         public override string StatusMessage
         {
@@ -325,6 +330,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         internal abstract string Description { get; }
+
         internal abstract string FailSafeDescription { get; }
 
         internal void ExceptionSafeWrapper(Action action)
@@ -358,10 +364,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         {
                             everythingIsOk = true;
                         }
+
                         if (_alreadyReachedCompletedState && _jobHadErrors)
                         {
                             everythingIsOk = true;
                         }
+
                         if (!everythingIsOk)
                         {
                             Dbg.Assert(false, "PSInvalidOperationException should only happen in certain job states");
@@ -492,6 +500,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.JobContext.CmdletizationModuleVersion,
                     CimSensitiveValueConverter);
             }
+
             CimOperationOptionsHelper.SetCustomOption(
                 operationOptions,
                 "MI_OPERATIONOPTIONS_POWERSHELL_CMDLETNAME",
@@ -539,6 +548,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return;
                 }
+
                 _jobWasStopped = true;
 
                 if (!_jobWasStarted)
@@ -556,6 +566,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.SetJobState(JobState.Stopping);
                 }
             }
+
             _cancellationTokenSource.Cancel();
         }
 
@@ -593,6 +604,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         out sessionWasAlreadyTerminated);
                 }
             }
+
             if (brokenSessionException != null)
             {
                 string brokenSessionMessage = string.Format(
@@ -749,6 +761,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 activity = this.GetDescription();
             }
+
             if (string.IsNullOrEmpty(statusDescription))
             {
                 statusDescription = this.StatusMessage;
@@ -979,6 +992,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 _userRespondedYesToAtLeastOneShouldProcess = true;
             }
+
             return result;
         }
 
@@ -992,6 +1006,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return false;
             }
+
             return true.Equals(psShowComputerNameProperty.Value);
         }
 
@@ -1022,17 +1037,20 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 cimInstance = outputObject as CimInstance;
             }
+
             if (cimInstance != null)
             {
                 CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 CimCustomOptionsDictionary.AssociateCimInstanceWithCustomOptions(cimInstance, this.GetJobSpecificCustomOptions());
             }
+
             if (this.JobContext.ShowComputerName)
             {
                 if (pso == null)
                 {
                     pso = PSObject.AsPSObject(outputObject);
                 }
+
                 AddShowComputerNameMarker(pso);
                 if (cimInstance == null)
                 {
@@ -1052,11 +1070,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     isCompleted = _alreadyReachedCompletedState;
                 }
+
                 if (!isCompleted)
                 {
                     this.StopJob();
                     this.Finished.WaitOne();
                 }
+
                 _cimSensitiveValueConverter.Dispose();
             }
         }

@@ -37,20 +37,27 @@ Describe "Join-String" -Tags "CI" {
     }
 
     It "Should join property values SingleQuoted" {
-        $expected = ($testObject.Name).Foreach{"'$_'"} -join "; "
+        $expected = ($testObject.Name).ForEach{"'$_'"} -join "; "
         $actual = $testObject | Join-String -Property Name -Separator "; " -SingleQuote
         $actual | Should -BeExactly $expected
     }
 
     It "Should join property values DoubleQuoted" {
-        $expected = ($testObject.Name).Foreach{"""$_"""} -join "; "
+        $expected = ($testObject.Name).ForEach{"""$_"""} -join "; "
         $actual = $testObject | Join-String -Property Name -Separator "; " -DoubleQuote
         $actual | Should -BeExactly $expected
     }
 
     It "Should join property values Formatted" {
-        $expected = ($testObject.Name).Foreach{"[$_]"} -join "; "
+        $expected = ($testObject.Name).ForEach{"[$_]"} -join "; "
         $actual = $testObject | Join-String -Property Name -Separator "; " -Format "[{0}]"
+        $actual | Should -BeExactly $expected
+    }
+
+    It "Should join numeric values Formatted" {
+        $testValues = 1.2, 3.4, 5.6
+        $expected = $testValues.Foreach{"{0:N2}" -f $_} -join "; "
+        $actual = $testValues | Join-String -Separator "; " -Format "{0:N2}"
         $actual | Should -BeExactly $expected
     }
 
@@ -70,20 +77,20 @@ Describe "Join-String" -Tags "CI" {
 
     It "Should join script block results SingleQuoted" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb).Foreach{"'$_'"} -join $ofs
+        $expected = ($testObject | ForEach-Object $sb).ForEach{"'$_'"} -join $ofs
         $actual = $testObject | Join-String -Property $sb -SingleQuote
         $actual | Should -BeExactly $expected
     }
     It "Should join script block results DoubleQuoted" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb).Foreach{"""$_"""} -join $ofs
+        $expected = ($testObject | ForEach-Object $sb).ForEach{"""$_"""} -join $ofs
         $actual = $testObject | Join-String -Property $sb -DoubleQuote
         $actual | Should -BeExactly $expected
     }
 
     It "Should join script block results with Format and separator" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb).Foreach{"[{0}]" -f $_} -join "; "
+        $expected = ($testObject | ForEach-Object $sb).ForEach{"[{0}]" -f $_} -join "; "
         $actual = $testObject | Join-String -Property $sb -Separator "; " -Format "[{0}]"
         $actual | Should -BeExactly $expected
     }
@@ -105,8 +112,8 @@ Describe "Join-String" -Tags "CI" {
         $cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
         $res = tabexpansion2 $cmd $cmd.length
         $completionTexts = $res.CompletionMatches.CompletionText
-        $Propertys = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
-        foreach ($n in $Propertys) {
+        $Properties = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
+        foreach ($n in $Properties) {
             $n -in $completionTexts | Should -BeTrue
         }
     }

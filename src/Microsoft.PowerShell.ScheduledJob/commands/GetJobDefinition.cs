@@ -30,8 +30,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32[] Id
         {
             get { return _definitionIds; }
+
             set { _definitionIds = value; }
         }
+
         private Int32[] _definitionIds;
 
         /// <summary>
@@ -44,8 +46,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string[] Name
         {
             get { return _definitionNames; }
+
             set { _definitionNames = value; }
         }
+
         private string[] _definitionNames;
 
         #endregion
@@ -77,6 +81,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                                 WriteObject(definition);
                             });
                     }
+
                     break;
 
                 case DefinitionNameParameterSet:

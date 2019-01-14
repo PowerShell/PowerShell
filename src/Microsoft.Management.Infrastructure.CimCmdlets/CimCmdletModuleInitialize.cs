@@ -46,6 +46,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     invoker.AddScript(string.Format(CultureInfo.CurrentUICulture, "Set-Alias -Name {0} -Value {1} -Option {2} -ErrorAction SilentlyContinue", alias.Name, alias.Value, alias.Options));
                     DebugHelper.WriteLog(@"Add commands {0} of {1} with option {2} to current runspace.", 1, alias.Name, alias.Value, alias.Options);
                 }
+
                 System.Collections.ObjectModel.Collection<PSObject> psObjects = invoker.Invoke();
                 DebugHelper.WriteLog(@"Invoke results {0}.", 1, psObjects.Count);
             }
@@ -74,21 +75,24 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// The string defining the name of this alias
+            /// The string defining the name of this alias.
             /// </summary>
             internal string Name { get { return this._name; } }
+
             private string _name;
 
             /// <summary>
-            /// The string defining real cmdlet name
+            /// The string defining real cmdlet name.
             /// </summary>
             internal string Value { get { return this._value; } }
-            private string _value = String.Empty;
+
+            private string _value = string.Empty;
 
             /// <summary>
-            /// The string defining real cmdlet name
+            /// The string defining real cmdlet name.
             /// </summary>
             internal ScopedItemOptions Options { get { return this._options; } }
+
             private ScopedItemOptions _options = ScopedItemOptions.AllScope | ScopedItemOptions.ReadOnly;
         }
 
@@ -110,5 +114,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     new CimCmdletAliasEntry("gcls", "Get-CimClass"),
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

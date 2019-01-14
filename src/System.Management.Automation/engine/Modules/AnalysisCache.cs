@@ -278,8 +278,10 @@ namespace System.Management.Automation
                 {
                     commandTypes = commandTypeToAdd;
                 }
+
                 result[command] = commandTypes;
             }
+
             return true;
         }
 
@@ -443,7 +445,7 @@ namespace System.Management.Automation
         /// Also re-cache the module if the cached item is stale.
         /// </summary>
         /// <param name="modulePath">Path to the module to get exported types from.</param>
-        /// <param name="context">Current Context</param>
+        /// <param name="context">Current Context.</param>
         /// <returns></returns>
         internal static ConcurrentDictionary<string, TypeAttributes> GetExportedClasses(string modulePath, ExecutionContext context)
         {
@@ -705,6 +707,7 @@ namespace System.Management.Automation
             fixed (byte* b = bytes) *((int*)b) = val;
             stream.Write(bytes, 0, 4);
         }
+
         private static unsafe void Write(long val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
@@ -1011,6 +1014,7 @@ namespace System.Management.Automation
                 {
                     Task.Delay(10000).ContinueWith(_ => result.Cleanup());
                 }
+
                 return result;
             }
         }
@@ -1040,6 +1044,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 retryCount -= 1;
                 Thread.Sleep(25); // Sleep a bit to give time for another process to finish writing the cache
             } while (retryCount > 0);

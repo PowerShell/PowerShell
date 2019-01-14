@@ -85,6 +85,7 @@ namespace System.Management.Automation
 
                         throw e;
                     }
+
                     var.SetValueRaw(value, true);
                     // Don't update the PSVariable's attributes until we successfully set the value
                     var.Attributes.Clear();
@@ -135,8 +136,10 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
+
                     parent = parent.Parent;
                 }
+
                 return true;
             }
 
@@ -164,6 +167,7 @@ namespace System.Management.Automation
 
                 result = null;
             }
+
             return result;
         }
 
@@ -228,6 +232,7 @@ namespace System.Management.Automation
                     staticType = value.GetType();
                 }
             }
+
             if (staticType == null)
             {
                 var declaredType = var.Attributes.OfType<ArgumentTypeConverterAttribute>().FirstOrDefault();
@@ -244,6 +249,7 @@ namespace System.Management.Automation
             {
                 result.Add(attributeAst.GetAttribute());
             }
+
             return result;
         }
 

@@ -48,14 +48,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal ExtendedTypeDefinition FormatData { get; }
+
         internal TypeData TypeData { get; }
+
         internal bool IsRemove { get; }
+
         internal string FullPath { get; }
+
         internal FormatTable FormatTable { get; }
 
         internal ConcurrentBag<string> Errors { get; set; }
 
         internal string PSSnapinName { get { return psSnapinName; } }
+
         internal bool FailToLoadFile;
     }
 
@@ -114,7 +119,7 @@ namespace System.Management.Automation.Runspaces
             string errorId,
             Collection<string> independentErrors,
             Collection<PSSnapInTypeAndFormatErrors> PSSnapinFilesCollection,
-            RunspaceConfigurationCategory category)
+            Category category)
         {
             Collection<string> errors = new Collection<string>();
             if (independentErrors != null)
@@ -148,15 +153,16 @@ namespace System.Management.Automation.Runspaces
             }
 
             string message = string.Empty;
-            if (category == RunspaceConfigurationCategory.Types)
+            if (category == Category.Types)
             {
                 message =
                     StringUtil.Format(ExtendedTypeSystem.TypesXmlError, allErrors.ToString());
             }
-            else if (category == RunspaceConfigurationCategory.Formats)
+            else if (category == Category.Formats)
             {
                 message = StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatLoadingErrors, allErrors.ToString());
             }
+
             RuntimeException ex = new RuntimeException(message);
             ex.SetErrorId(errorId);
             throw ex;
@@ -165,7 +171,7 @@ namespace System.Management.Automation.Runspaces
         internal static void ThrowExceptionOnError(
             string errorId,
             ConcurrentBag<string> errors,
-            RunspaceConfigurationCategory category)
+            Category category)
         {
             if (errors.Count == 0)
             {
@@ -182,18 +188,25 @@ namespace System.Management.Automation.Runspaces
             }
 
             string message = string.Empty;
-            if (category == RunspaceConfigurationCategory.Types)
+            if (category == Category.Types)
             {
                 message =
                     StringUtil.Format(ExtendedTypeSystem.TypesXmlError, allErrors.ToString());
             }
-            else if (category == RunspaceConfigurationCategory.Formats)
+            else if (category == Category.Formats)
             {
                 message = StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatLoadingErrors, allErrors.ToString());
             }
+
             RuntimeException ex = new RuntimeException(message);
             ex.SetErrorId(errorId);
             throw ex;
+        }
+
+        internal enum Category
+        {
+            Types,
+            Formats,
         }
     }
 }

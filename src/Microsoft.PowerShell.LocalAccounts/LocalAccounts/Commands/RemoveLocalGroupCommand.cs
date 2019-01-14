@@ -43,8 +43,10 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalGroup[] InputObject
         {
             get { return this.inputobject; }
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalGroup[] inputobject;
 
         /// <summary>
@@ -62,8 +64,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return this.name; }
+
             set { this.name = value; }
         }
+
         private string[] name;
 
         /// <summary>
@@ -81,8 +85,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier[] SID
         {
             get { return this.sid; }
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
@@ -127,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process groups requested by -Name
+        /// Process groups requested by -Name.
         /// </summary>
         /// <remarks>
         /// All arguments to -Name will be treated as names,
@@ -153,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process groups requested by -SID
+        /// Process groups requested by -SID.
         /// </summary>
         private void ProcessSids()
         {
@@ -175,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process groups given through -InputObject
+        /// Process groups given through -InputObject.
         /// </summary>
         private void ProcessGroups()
         {
@@ -201,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionRemoveGroup);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

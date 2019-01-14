@@ -217,6 +217,7 @@
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas\command">
                 <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -RemoveWorkingDirectoryTrailingCharacter -WorkingDirectory &quot;%V!&quot; -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'&quot;"/>
               </RegistryKey>
+              <RemoveRegistryKey Id="RemoveOldOpenKey" Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open" Action="removeOnInstall"/>
             </Component>
           </Directory>
         </Directory>

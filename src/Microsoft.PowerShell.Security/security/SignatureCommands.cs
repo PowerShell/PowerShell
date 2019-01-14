@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -64,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -73,8 +75,10 @@ namespace Microsoft.PowerShell.Commands
         protected Signature Signature
         {
             get { return _signature; }
+
             set { _signature = value; }
         }
+
         private Signature _signature;
 
         /// <summary>
@@ -95,10 +99,11 @@ namespace Microsoft.PowerShell.Commands
                 _sourcePathOrExtension = value;
             }
         }
+
         private string[] _sourcePathOrExtension;
 
         /// <summary>
-        /// File contents as a byte array
+        /// File contents as a byte array.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
         [ValidateNotNullOrEmpty]
@@ -106,11 +111,13 @@ namespace Microsoft.PowerShell.Commands
         public byte[] Content
         {
             get { return _content; }
+
             set
             {
                 _content = value;
             }
         }
+
         private byte[] _content;
 
         //
@@ -281,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the signature from the specified file contents.
         /// </summary>
-        /// <param name="sourcePathOrExtension">The file type associated with the contents</param>
+        /// <param name="sourcePathOrExtension">The file type associated with the contents.</param>
         /// <param name="content">
         /// The contents of the file on which to perform the action.
         /// </param>
@@ -325,6 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 _certificate = value;
             }
         }
+
         private X509Certificate2 _certificate;
 
         /// <summary>
@@ -351,6 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 _includeChain = value;
             }
         }
+
         private string _includeChain = "notroot";
 
         /// <summary>
@@ -370,11 +379,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = String.Empty;
+                    value = string.Empty;
                 }
+
                 _timestampServer = value;
             }
         }
+
         private string _timestampServer = string.Empty;
 
         /// <summary>
@@ -395,6 +406,7 @@ namespace Microsoft.PowerShell.Commands
                 _hashAlgorithm = value;
             }
         }
+
         private string _hashAlgorithm = null;
 
         /// <summary>
@@ -407,11 +419,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -464,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // remember to reset the read-only attribute later
                                 readOnlyFileInfo = fInfo;
-                                //Make sure the file is not read only
+                                // Make sure the file is not read only
                                 fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                             }
                         }
@@ -536,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                 if (SecurityUtils.GetFileSize(filePath) < 4)
                 {
                     // Note that the message param comes first
-                    string message = String.Format(
+                    string message = string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
@@ -568,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
@@ -588,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// association between SigningOption.* values and the
+        /// Association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
         private static readonly SigningOptionInfo[] s_sigOptionInfo =
@@ -599,15 +613,15 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// get SigningOption value corresponding to a string name
+        /// Get SigningOption value corresponding to a string name.
         /// </summary>
-        /// <param name="optionName"> name of option </param>
-        /// <returns> SigningOption </returns>
+        /// <param name="optionName">Name of option.</param>
+        /// <returns>SigningOption.</returns>
         private static SigningOption GetSigningOption(string optionName)
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
-                if (String.Equals(optionName, si.optionName,
+                if (string.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     return si.option;

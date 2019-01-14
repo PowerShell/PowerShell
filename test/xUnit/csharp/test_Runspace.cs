@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Xunit;
 
 namespace PSTests.Parallel
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
-
     public class RunspaceTests
     {
         private static int count = 1;
-        private static string script = String.Format($"get-command get-command");
+        private static string script = string.Format($"get-command get-command");
 
         [Fact]
         public void TestRunspaceWithPipeline()
@@ -30,6 +30,7 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
                 }
 
@@ -56,6 +57,7 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
                 }
 
@@ -66,7 +68,8 @@ namespace PSTests.Parallel
         [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
-            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            // CreateDefault2 is intentional.
+            InitialSessionState iss = InitialSessionState.CreateDefault();
 
             // NOTE: instantiate custom host myHost for the next line to capture stdout and stderr output
             //       in addition to just the PSObjects
@@ -90,9 +93,11 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
-                    powerShell.Dispose();
                 }
+
+                runspace.Close();
             }
         }
     }

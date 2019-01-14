@@ -76,6 +76,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
                                 displayName = fpt.expression.expressionValue;
                             }
+
                             if (fpt.expression.isScriptBlock)
                             {
                                 PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(fpt.expression);
@@ -107,10 +108,12 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     if (columnInfo != null)
                     {
                         headerInfo.AddColumn(columnInfo);
                     }
+
                     col++;
                 }
             }
@@ -165,14 +168,17 @@ namespace Microsoft.PowerShell.Commands
                     if (key != AutomationNull.Value)
                         propertyName = (string)key;
                 }
+
                 if (propertyName == null)
                 {
                     propertyName = association.ResolvedExpression.ToString();
                 }
+
                 ColumnInfo columnInfo = new OriginalColumnInfo(propertyName, propertyName, propertyName, parentCmdlet);
 
                 headerInfo.AddColumn(columnInfo);
             }
+
             return headerInfo;
         }
 
@@ -225,6 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             if (matchingRowDefinition == null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -245,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
                     }
+
                     if (matchingRowDefinition == null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -274,6 +282,7 @@ namespace Microsoft.PowerShell.Commands
                     // Use the override
                     activeRowItemDefinitionList.Add(rowItem);
                 }
+
                 col++;
             }
 

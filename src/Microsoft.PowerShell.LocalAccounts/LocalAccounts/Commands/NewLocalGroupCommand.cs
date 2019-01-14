@@ -37,8 +37,10 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get { return this.description;}
+
             set { this.description = value; }
         }
+
         private string description;
 
         /// <summary>
@@ -54,8 +56,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
         #endregion Parameter Properties
 
@@ -111,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionNewGroup);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

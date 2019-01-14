@@ -96,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             if (baseObject != null && inComingbaseObjectPropertyValue != null)
             {
                 return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
@@ -169,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return 1;
             }
-            //both are nonexisting
+            // both are nonexisting
             return 0;
         }
 

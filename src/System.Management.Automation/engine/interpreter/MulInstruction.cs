@@ -22,6 +22,7 @@ namespace System.Management.Automation.Interpreter
         private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private MulInstruction()
@@ -154,6 +155,7 @@ namespace System.Management.Automation.Interpreter
         private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private MulOvfInstruction()

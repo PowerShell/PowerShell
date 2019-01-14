@@ -20,14 +20,14 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the childPath parameter to the command
+        /// Gets or sets the childPath parameter to the command.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Determines if the path should be resolved after being joined
+        /// Determines if the path should be resolved after being joined.
         /// </summary>
         /// <value></value>
         [Parameter]
