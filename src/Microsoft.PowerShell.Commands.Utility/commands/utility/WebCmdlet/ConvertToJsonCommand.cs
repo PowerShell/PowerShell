@@ -206,7 +206,6 @@ namespace Microsoft.PowerShell.Commands
                 TypeInfo t = obj.GetType().GetTypeInfo();
                 WriteVerbose(StringUtil.Format(UtilityCommonStrings.ConvertToJsonProcessValueVerboseMessage, t.Name, depth));
 
-
                 if (t.IsPrimitive)
                 {
                     rv = obj;
