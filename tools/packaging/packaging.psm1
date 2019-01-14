@@ -3002,7 +3002,7 @@ function New-DotnetSdkContainerFxdPackage {
         $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
         Push-Location $tempExtractFolder
 
-        Write-Verbose -Verbose "Pushed location"
+        Write-Verbose -Verbose "Pushed location: $tempExtractFolder"
 
         try {
 
