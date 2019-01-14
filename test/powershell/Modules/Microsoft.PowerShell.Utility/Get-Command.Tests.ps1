@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Get-Command CI tests" -Tag Feature {
+Describe "Get-Command Feature tests" -Tag Feature {
     Context "-UseFuzzyMatch tests" {
         It "Should match cmdlets" {
             $cmds = Get-Command get-hlp -UseFuzzyMatch
@@ -10,14 +10,15 @@ Describe "Get-Command CI tests" -Tag Feature {
         }
 
         It "Should match native commands" {
-            $ping = "ping"
+            $input = "pwsg"
+            $expectedcmd = "pwsh"
             if ($IsWindows) {
-                $ping = "PING.EXE"
+                $expectedcmd = "pwsh.EXE"
             }
 
-            $cmds = Get-Command pinh -UseFuzzyMatch
+            $cmds = Get-Command $input -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
-            $cmds.Name | Should -Contain $ping
+            $cmds.Name | Should -Contain $expectedcmd
         }
     }
 
