@@ -10,6 +10,7 @@ $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
+        $skip = $false
         $NpmInstalled = "not installed"
         if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
         {
@@ -42,7 +43,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         #>
     }
 
-    It "Should not have errors in any markdown files" {
+    It "Should not have errors in any markdown files" -skip:$skip {
         $NpmInstalled | should BeExactly "Installed"
         $mdErrors = 0
         Push-Location -Path $PSScriptRoot
