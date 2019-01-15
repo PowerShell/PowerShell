@@ -22,7 +22,6 @@ Describe "Verify Markdown Links" {
     Write-Verbose -verbose "starting jobs for performance ..."
     Foreach($group in $groups)
     {
-        $result = markdown-link-check $file 2>&1
         $job = start-job {
             param([object] $group)
             foreach($file in $group.Group)
