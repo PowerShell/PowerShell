@@ -1640,8 +1640,8 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.2"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0 --no-rdoc --no-ri"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-rdoc --no-ri"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
