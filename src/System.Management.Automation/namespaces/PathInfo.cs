@@ -76,6 +76,7 @@ namespace System.Management.Automation
                 return _providerPath;
             }
         }
+
         private string _providerPath;
         private SessionState _sessionState;
 
@@ -92,7 +93,7 @@ namespace System.Management.Automation
 
         private PSDriveInfo _drive;
         private ProviderInfo _provider;
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Gets a string representing the MSH path.

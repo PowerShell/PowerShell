@@ -18,6 +18,7 @@ namespace System.Management.Automation
             internal string parameterName;
             internal string parameterText;
         }
+
         private class Argument
         {
             internal Ast ast;
@@ -30,8 +31,11 @@ namespace System.Management.Automation
         private bool _spaceAfterParameter;
 
         internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } }
+
         internal bool ParameterNameSpecified { get { return _parameter != null; } }
+
         internal bool ArgumentSpecified { get { return _argument != null; } }
+
         internal bool ParameterAndArgumentSpecified { get { return ParameterNameSpecified && ArgumentSpecified; } }
 
         /// <summary>
@@ -44,6 +48,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(ParameterNameSpecified, "Caller must verify parameter name was specified");
                 return _parameter.parameterName;
             }
+
             set
             {
                 Diagnostics.Assert(ParameterNameSpecified, "Caller must verify parameter name was specified");
@@ -120,6 +125,7 @@ namespace System.Management.Automation
             {
                 _argument = new Argument();
             }
+
             _argument.value = value;
             _argument.ast = ast;
         }
@@ -194,7 +200,7 @@ namespace System.Management.Automation
         /// <param name="parameterText">The text of the parameter, as it did, or would, appear in script.</param>
         /// <param name="argumentAst">The ast of the argument value in the script.</param>
         /// <param name="value">The argument value.</param>
-        /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar</param>
+        /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar.</param>
         internal static CommandParameterInternal CreateParameterWithArgument(
             Ast parameterAst,
             string parameterName,

@@ -251,7 +251,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 '@
 
-            $cls = Add-Type -TypeDefinition $a -PassThru | select -First 1
+            $cls = Add-Type -TypeDefinition $a -PassThru | Select-Object -First 1
             $testModule = Import-Module $cls.Assembly -PassThru
         }
 
@@ -470,7 +470,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         It 'Can implement CachedValidValuesGeneratorBase with cache expiration in PowerShell' {
             Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
             Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
-            Start-Sleep 3
+            Start-Sleep -Seconds 3
             Get-TestValidateSetPS5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should -BeExactly "TestString2"
         }
     }

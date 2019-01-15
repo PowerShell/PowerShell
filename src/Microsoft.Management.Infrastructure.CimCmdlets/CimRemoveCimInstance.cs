@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void RemoveCimInstance(RemoveCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
@@ -70,16 +70,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         proxys.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
                     }
+
                     break;
                 case CimBaseCommand.CimInstanceSessionSet:
                     foreach (CimSession session in GetCimSession(cmdlet))
                     {
                         proxys.Add(CreateSessionProxy(session, cmdlet));
                     }
+
                     break;
                 default:
                     break;
             }
+
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:
@@ -93,6 +96,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         nameSpace = ConstValue.GetNamespace(GetCimInstanceParameter(cmdlet).CimSystemProperties.Namespace);
                     }
+
                     string target = cmdlet.CimInstance.ToString();
                     foreach (CimSessionProxy proxy in proxys)
                     {
@@ -100,8 +104,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             return;
                         }
+
                         proxy.DeleteInstanceAsync(nameSpace, cmdlet.CimInstance);
                     }
+
                     break;
                 case CimBaseCommand.QueryComputerSet:
                 case CimBaseCommand.QuerySessionSet:
@@ -137,9 +143,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// action
+        /// Action.
         /// </summary>
         private const string action = @"Remove-CimInstance";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _notAppendNewline;
             }
+
             set
             {
                 _notAppendNewline = value;
@@ -120,6 +121,6 @@ namespace Microsoft.PowerShell.Commands
             this.WriteInformation(informationMessage, new string[] { "PSHOST" });
         }
 
-        private Boolean _notAppendNewline = false;
+        private bool _notAppendNewline = false;
     }
 }

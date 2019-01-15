@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     #region New-WebServiceProxy
 
     /// <summary>
-    /// Cmdlet for new-WebService Proxy
+    /// Cmdlet for new-WebService Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "WebServiceProxy", DefaultParameterSetName = "NoCredentials", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135238")]
     public sealed class NewWebServiceProxy : PSCmdlet
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// URI of the web service
+        /// URI of the web service.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
@@ -47,15 +47,17 @@ namespace Microsoft.PowerShell.Commands
         public System.Uri Uri
         {
             get { return _uri; }
+
             set
             {
                 _uri = value;
             }
         }
+
         private System.Uri _uri;
 
         /// <summary>
-        /// Parameter Class name
+        /// Parameter Class name.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -63,15 +65,17 @@ namespace Microsoft.PowerShell.Commands
         public string Class
         {
             get { return _class; }
+
             set
             {
                 _class = value;
             }
         }
+
         private string _class;
 
         /// <summary>
-        /// namespace
+        /// Namespace.
         /// </summary>
         [Parameter(Position = 2)]
         [ValidateNotNullOrEmpty]
@@ -79,15 +83,17 @@ namespace Microsoft.PowerShell.Commands
         public string Namespace
         {
             get { return _namespace; }
+
             set
             {
                 _namespace = value;
             }
         }
+
         private string _namespace;
 
         /// <summary>
-        /// Credential
+        /// Credential.
         /// </summary>
         [Parameter(ParameterSetName = "Credential")]
         [ValidateNotNullOrEmpty]
@@ -96,15 +102,17 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
             }
         }
+
         private PSCredential _credential;
 
         /// <summary>
-        /// use default credential..
+        /// Use default credential..
         /// </summary>
         [Parameter(ParameterSetName = "UseDefaultCredential")]
         [ValidateNotNull]
@@ -112,11 +120,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseDefaultCredential
         {
             get { return _usedefaultcredential; }
+
             set
             {
                 _usedefaultcredential = value;
             }
         }
+
         private SwitchParameter _usedefaultcredential;
 
         #endregion
@@ -133,17 +143,17 @@ namespace Microsoft.PowerShell.Commands
         private static Dictionary<int, object> s_srccodeCache = new Dictionary<int, object>();
 
         /// <summary>
-        /// holds the hash code of the source generated.
+        /// Holds the hash code of the source generated.
         /// </summary>
         private int _sourceHash;
         /// <summary>
-        /// Random class
+        /// Random class.
         /// </summary>
 
         private object _cachelock = new object();
         private static Random s_rnd = new Random();
         /// <summary>
-        /// BeginProcessing code
+        /// BeginProcessing code.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -153,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
-            //check if system.web is available.This assembly is not available in win server core.
+            // check if system.web is available.This assembly is not available in win server core.
             string AssemblyString = "System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             try
             {
@@ -172,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (s_uriCache.ContainsKey(_uri))
                 {
-                    //if uri is present in the cache
+                    // if uri is present in the cache
                     string ns;
                     s_uriCache.TryGetValue(_uri, out ns);
                     string[] data = ns.Split('|');
@@ -184,14 +194,16 @@ namespace Microsoft.PowerShell.Commands
                             _class = data[1];
                         }
                     }
+
                     sourceCache = Int32.Parse(data[2].ToString(), CultureInfo.InvariantCulture);
                 }
             }
+
             if (string.IsNullOrEmpty(_namespace))
             {
                 _namespace = "Microsoft.PowerShell.Commands.NewWebserviceProxy.AutogeneratedTypes.WebServiceProxy" + GenerateRandomName();
             }
-            //if class is null,generate a name for it
+            // if class is null,generate a name for it
             if (string.IsNullOrEmpty(_class))
             {
                 _class = "MyClass" + GenerateRandomName();
@@ -200,9 +212,9 @@ namespace Microsoft.PowerShell.Commands
             Assembly webserviceproxy = GenerateWebServiceProxyAssembly(_namespace, _class);
             if (webserviceproxy == null)
                 return;
-            Object instance = InstantiateWebServiceProxy(webserviceproxy);
+            object instance = InstantiateWebServiceProxy(webserviceproxy);
 
-            //to set the credentials into the generated webproxy Object
+            // to set the credentials into the generated webproxy Object
             PropertyInfo[] pinfo = instance.GetType().GetProperties();
             foreach (PropertyInfo pr in pinfo)
             {
@@ -214,6 +226,7 @@ namespace Microsoft.PowerShell.Commands
                         pr.SetValue(instance, flag as object, null);
                     }
                 }
+
                 if (pr.Name.Equals("Credentials", StringComparison.OrdinalIgnoreCase))
                 {
                     if (Credential != null)
@@ -224,12 +237,13 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //disposing the entries in a cache
-            //Adding to Cache
+            // disposing the entries in a cache
+            // Adding to Cache
             lock (s_uriCache)
             {
                 s_uriCache.Remove(_uri);
             }
+
             if (sourceCache > 0)
             {
                 lock (_cachelock)
@@ -237,18 +251,20 @@ namespace Microsoft.PowerShell.Commands
                     s_srccodeCache.Remove(sourceCache);
                 }
             }
+
             string key = string.Join("|", new string[] { _namespace, _class, _sourceHash.ToString(System.Globalization.CultureInfo.InvariantCulture) });
             lock (s_uriCache)
             {
                 s_uriCache.Add(_uri, key);
             }
+
             lock (_cachelock)
             {
                 s_srccodeCache.Add(_sourceHash, instance);
             }
 
             WriteObject(instance, true);
-        }//End BeginProcessing()
+        }
 
         #endregion
 
@@ -258,9 +274,9 @@ namespace Microsoft.PowerShell.Commands
         private static object s_sequenceNumberLock = new object();
 
         /// <summary>
-        /// Generates a random name
+        /// Generates a random name.
         /// </summary>
-        /// <returns>string </returns>
+        /// <returns>String.</returns>
         private string GenerateRandomName()
         {
             string rndname = null;
@@ -288,11 +304,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (sequenceString + rndname.Substring(rndname.Length - 30));
             }
+
             return (sequenceString + rndname);
         }
 
         /// <summary>
-        /// Generates the Assembly
+        /// Generates the Assembly.
         /// </summary>
         /// <param name="NameSpace"></param>
         /// <param name="ClassName"></param>
@@ -302,11 +319,11 @@ namespace Microsoft.PowerShell.Commands
         {
             DiscoveryClientProtocol dcp = new DiscoveryClientProtocol();
 
-            //if paramset is defaultcredential, set the flag in wcclient
+            // if paramset is defaultcredential, set the flag in wcclient
             if (_usedefaultcredential.IsPresent)
                 dcp.UseDefaultCredentials = true;
 
-            //if paramset is credential, assign the credentials
+            // if paramset is credential, assign the credentials
             if (ParameterSetName.Equals("Credential", StringComparison.OrdinalIgnoreCase))
                 dcp.Credentials = _credential.GetNetworkCredential();
 
@@ -336,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
             if (!string.IsNullOrEmpty(NameSpace))
                 codeNS.Name = NameSpace;
 
-            //create the class and add it to the namespace
+            // create the class and add it to the namespace
             if (!string.IsNullOrEmpty(ClassName))
             {
                 CodeTypeDeclaration codeClass = new CodeTypeDeclaration(ClassName);
@@ -345,12 +362,12 @@ namespace Microsoft.PowerShell.Commands
                 codeNS.Types.Add(codeClass);
             }
 
-            //create a web reference to the uri docs
+            // create a web reference to the uri docs
             WebReference wref = new WebReference(dcp.Documents, codeNS);
             WebReferenceCollection wrefs = new WebReferenceCollection();
             wrefs.Add(wref);
 
-            //create a codecompileunit and add the namespace to it
+            // create a codecompileunit and add the namespace to it
             CodeCompileUnit codecompileunit = new CodeCompileUnit();
             codecompileunit.Namespaces.Add(codeNS);
 
@@ -358,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
             wrefOptions.CodeGenerationOptions = System.Xml.Serialization.CodeGenerationOptions.GenerateNewAsync | System.Xml.Serialization.CodeGenerationOptions.GenerateOldAsync | System.Xml.Serialization.CodeGenerationOptions.GenerateProperties;
             wrefOptions.Verbose = true;
 
-            //create a csharpprovider and compile it
+            // create a csharpprovider and compile it
             CSharpCodeProvider csharpprovider = new CSharpCodeProvider();
             StringCollection Warnings = ServiceDescriptionImporter.GenerateWebReferences(wrefs, csharpprovider, codecompileunit, wrefOptions);
 
@@ -373,10 +390,10 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "NotImplementedException", ErrorCategory.ObjectNotFound, _uri);
                 WriteError(er);
             }
-            //generate the hashcode of the CodeCompileUnit
+            // generate the hashcode of the CodeCompileUnit
             _sourceHash = codegenerator.ToString().GetHashCode();
 
-            //if the sourcehash matches the hashcode in the cache,the proxy hasnt changed and so
+            // if the sourcehash matches the hashcode in the cache,the proxy hasnt changed and so
             // return the instance of th eproxy in the cache
             if (s_srccodeCache.ContainsKey(_sourceHash))
             {
@@ -385,6 +402,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(obj, true);
                 return null;
             }
+
             CompilerParameters options = new CompilerParameters();
             CompilerResults results = null;
 
@@ -418,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Function to add all the assemblies required to generate the web proxy
+        /// Function to add all the assemblies required to generate the web proxy.
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="parameters"></param>
@@ -437,23 +455,24 @@ namespace Microsoft.PowerShell.Commands
         }
         /// <summary>
         /// Instantiates the object
-        ///  if a type of WebServiceBindingAttribute is not found, throw an exception
+        ///  if a type of WebServiceBindingAttribute is not found, throw an exception.
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
         private object InstantiateWebServiceProxy(Assembly assembly)
         {
             Type proxyType = null;
-            //loop through the types of the assembly and identify the type having
+            // loop through the types of the assembly and identify the type having
             // a web service binding attribute
             foreach (Type type in assembly.GetTypes())
             {
-                Object[] obj = type.GetCustomAttributes(typeof(WebServiceBindingAttribute), false);
+                object[] obj = type.GetCustomAttributes(typeof(WebServiceBindingAttribute), false);
                 if (obj.Length > 0)
                 {
                     proxyType = type;
                     break;
                 }
+
                 if (proxyType != null) break;
             }
 
@@ -465,6 +484,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    }//end class
+    }
     #endregion
-}//Microsoft.Powershell.commands
+}

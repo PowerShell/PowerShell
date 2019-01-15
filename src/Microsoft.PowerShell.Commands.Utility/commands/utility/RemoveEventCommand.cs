@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -34,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -46,11 +48,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventIdentifier;
             }
+
             set
             {
                 _eventIdentifier = value;
             }
         }
+
         private int _eventIdentifier = -1;
 
         #endregion parameters
@@ -90,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foundMatch = true;
                     if (ShouldProcess(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventResource,
                             currentEvent.SourceIdentifier),
@@ -109,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.SourceIdentifierNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
@@ -122,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventIdentifierNotFound, _eventIdentifier)),
                     "INVALID_EVENT_IDENTIFIER",

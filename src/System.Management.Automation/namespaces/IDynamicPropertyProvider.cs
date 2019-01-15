@@ -144,7 +144,7 @@ namespace System.Management.Automation.Provider
             string propertyName);
 
         /// <summary>
-        /// Renames a property of the item at the specified path
+        /// Renames a property of the item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item on which to rename the property.

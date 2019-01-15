@@ -13,7 +13,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PSVariableIntrinsics()
         {
@@ -66,7 +66,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
 
-            // Null is returned whenever the requested variable is String.Empty.
+            // Null is returned whenever the requested variable is string.Empty.
             // As per Powershell V1 implementation:
             // 1. If the requested variable exists in the session scope, the variable value is returned.
             // 2. If the requested variable is not null and does not exist in the session scope, then a null value is returned to the pipeline.
@@ -370,7 +370,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the specified variable from the specified scope
+        /// Removes the specified variable from the specified scope.
         /// </summary>
         /// <param name="name">
         /// The name of the variable to remove.
@@ -406,7 +406,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the specified variable from the specified scope
+        /// Removes the specified variable from the specified scope.
         /// </summary>
         /// <param name="variable">
         /// The variable to be removed. It is removed based on the name of the variable.

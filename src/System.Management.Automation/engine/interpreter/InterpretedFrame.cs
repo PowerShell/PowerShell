@@ -140,7 +140,7 @@ namespace System.Management.Automation.Interpreter
 
         public static bool IsInterpretedFrame(MethodBase method)
         {
-            //ContractUtils.RequiresNotNull(method, "method");
+            // ContractUtils.RequiresNotNull(method, "method");
             return method.DeclaringType == typeof(Interpreter) && method.Name == "Run";
         }
 
@@ -159,12 +159,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         continue;
                     }
+
                     inInterpretedFrame = true;
                 }
                 else
                 {
                     inInterpretedFrame = false;
                 }
+
                 yield return frame;
             }
         }
@@ -249,7 +251,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Get called from the LeaveFinallyInstruction
+        /// Get called from the LeaveFinallyInstruction.
         /// </summary>
         public int YieldToPendingContinuation()
         {
@@ -323,6 +325,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Data[StackIndex - 1] = value;
                 }
+
                 return target.Index - InstructionIndex;
             }
 

@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed name and hkey won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
-        internal TransactedRegistrySecurity(SafeRegistryHandle hKey, String name, AccessControlSections includeSections)
+        internal TransactedRegistrySecurity(SafeRegistryHandle hKey, string name, AccessControlSections includeSections)
             : base(true, ResourceType.RegistryKey, hKey, includeSections, _HandleErrorCode, null)
         {
             new RegistryPermission(RegistryPermissionAccess.NoAccess, AccessControlActions.View, name).Demand();
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed keyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
-        internal void Persist(SafeRegistryHandle hKey, String keyName)
+        internal void Persist(SafeRegistryHandle hKey, string keyName)
         {
             new RegistryPermission(RegistryPermissionAccess.NoAccess, AccessControlActions.Change, keyName).Demand();
 

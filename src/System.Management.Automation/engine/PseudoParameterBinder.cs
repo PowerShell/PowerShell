@@ -54,6 +54,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
             }
+
             this.CommandLineParameters = commandLineParameters;
         }
 
@@ -63,7 +64,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Hides the base class Target property to ensure the target
-        /// is always a RuntimeDefinedParameterDictionary
+        /// is always a RuntimeDefinedParameterDictionary.
         /// </summary>
         internal new RuntimeDefinedParameterDictionary Target
         {
@@ -81,7 +82,7 @@ namespace System.Management.Automation
         #region Parameter default values
 
         /// <summary>
-        /// Gets the default value for the specified parameter
+        /// Gets the default value for the specified parameter.
         /// </summary>
         /// <param name="name">
         /// The name of the parameter to get the value for.
@@ -97,6 +98,7 @@ namespace System.Management.Automation
             {
                 result = parameter.Value;
             }
+
             return result;
         }
 
@@ -120,7 +122,7 @@ namespace System.Management.Automation
         /// </exception>
         internal override void BindParameter(string name, object value, CompiledCommandParameter parameterMetadata)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

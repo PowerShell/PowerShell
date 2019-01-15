@@ -56,6 +56,7 @@ namespace System.Management.Automation
 
                 return _value;
             }
+
             set
             {
                 PSVariable variable = _value as PSVariable;

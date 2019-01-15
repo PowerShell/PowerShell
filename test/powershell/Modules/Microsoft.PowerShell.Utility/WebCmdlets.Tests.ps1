@@ -3160,7 +3160,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
             contenttype = 'text/plain'
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = iwr $uri
+        $result = Invoke-WebRequest $uri
         $result.StatusCode | Should -Be "200"
         $result.Content | Should -Be "hello"
     }
@@ -3171,7 +3171,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
             body        = @{Hello = "world"} | ConvertTo-Json -Compress
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = irm $uri
+        $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
     }
 }

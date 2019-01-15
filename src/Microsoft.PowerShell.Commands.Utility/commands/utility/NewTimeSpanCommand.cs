@@ -29,12 +29,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _start;
             }
+
             set
             {
                 _start = value;
                 _startSpecified = true;
             }
         }
+
         private DateTime _start;
         private bool _startSpecified;
 
@@ -50,12 +52,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _end;
             }
+
             set
             {
                 _end = value;
                 _endSpecified = true;
             }
         }
+
         private DateTime _end;
         private bool _endSpecified = false;
 
@@ -104,6 +108,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startTime = Start;
                     }
+
                     if (_endSpecified)
                     {
                         endTime = End;

@@ -34,6 +34,7 @@ namespace System.Management.Automation.Language
                 result = arg;
                 return true;
             }
+
             if (!LanguagePrimitives.TryConvertTo(arg, type, out result))
             {
                 parser.ReportError(errorExtent,
@@ -42,6 +43,7 @@ namespace System.Management.Automation.Language
                     ToStringCodeMethods.Type(type));
                 return false;
             }
+
             return true;
         }
 
@@ -117,8 +119,10 @@ namespace System.Management.Automation.Language
                         {
                             return null;
                         }
+
                         paramsArray.SetValue(arg, i);
                     }
+
                     break;
                 }
 
@@ -127,6 +131,7 @@ namespace System.Management.Automation.Language
                 {
                     return null;
                 }
+
                 ctorArgs[argIndex] = arg;
             }
 
@@ -171,6 +176,7 @@ namespace System.Management.Automation.Language
                 {
                     return null;
                 }
+
                 fieldInfoList.Add(fieldInfo);
                 fieldArgs.Add(arg);
             }
@@ -302,7 +308,7 @@ namespace System.Management.Automation.Language
             /// </summary>
             /// <param name="parser"></param>
             /// <param name="typeDefinitionAst"></param>
-            /// <param name="interfaces">return declared interfaces</param>
+            /// <param name="interfaces">Return declared interfaces.</param>
             /// <returns></returns>
             private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<Type> interfaces)
             {
@@ -491,6 +497,7 @@ namespace System.Management.Automation.Language
                                 instanceCtors.Add(method);
                             }
                         }
+
                         hasAnyMethods = true;
 
                         DefineMethod(method);
@@ -600,7 +607,7 @@ namespace System.Management.Automation.Language
                     getSetAttributes |= Reflection.MethodAttributes.Static;
                 }
                 // C# naming convention for backing fields.
-                string backingFieldName = String.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
+                string backingFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
@@ -621,7 +628,7 @@ namespace System.Management.Automation.Language
                 PropertyBuilder property = _typeBuilder.DefineProperty(propertyMemberAst.Name, Reflection.PropertyAttributes.None, type, null);
 
                 // Define the "get" accessor method.
-                MethodBuilder getMethod = _typeBuilder.DefineMethod(String.Concat("get_", propertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
+                MethodBuilder getMethod = _typeBuilder.DefineMethod(string.Concat("get_", propertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
                 ILGenerator getIlGen = getMethod.GetILGenerator();
                 if (propertyMemberAst.IsStatic)
                 {
@@ -638,7 +645,7 @@ namespace System.Management.Automation.Language
                 }
 
                 // Define the "set" accessor method.
-                MethodBuilder setMethod = _typeBuilder.DefineMethod(String.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
+                MethodBuilder setMethod = _typeBuilder.DefineMethod(string.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
                 ILGenerator setIlGen = setMethod.GetILGenerator();
 
                 if (hasValidateAttributes)
@@ -652,6 +659,7 @@ namespace System.Management.Automation.Language
                     {
                         setIlGen.Emit(OpCodes.Box, type);
                     }
+
                     setIlGen.Emit(OpCodes.Call, CachedReflectionInfo.ClassOps_ValidateSetProperty);
                 }
 
@@ -666,6 +674,7 @@ namespace System.Management.Automation.Language
                     setIlGen.Emit(OpCodes.Ldarg_1);
                     setIlGen.Emit(OpCodes.Stfld, backingField);
                 }
+
                 setIlGen.Emit(OpCodes.Ret);
 
                 // Map the two methods created above to our PropertyBuilder to
@@ -764,8 +773,10 @@ namespace System.Management.Automation.Language
                             typeConstraint.TypeName.FullName);
                         anyErrors = true;
                     }
+
                     result[i] = paramType;
                 }
+
                 return anyErrors ? null : result;
             }
 
@@ -778,6 +789,7 @@ namespace System.Management.Automation.Language
                 {
                     return false;
                 }
+
                 var mi = baseType.GetMethod(methodName, parameterTypes);
                 return mi != null && mi.IsFinal;
             }
@@ -790,6 +802,7 @@ namespace System.Management.Automation.Language
                     // There must have been an error, just return
                     return;
                 }
+
                 if (CheckForDuplicateOverload(functionMemberAst, parameterTypes))
                 {
                     return;
@@ -809,8 +822,10 @@ namespace System.Management.Automation.Language
                                 ParserStrings.StaticConstructorCantHaveParameters);
                             return;
                         }
+
                         methodAttributes |= Reflection.MethodAttributes.Static;
                     }
+
                     DefineConstructor(functionMemberAst, functionMemberAst.Attributes, functionMemberAst.IsHidden, methodAttributes, parameterTypes);
                     return;
                 }
@@ -829,8 +844,10 @@ namespace System.Management.Automation.Language
                         attributes |= Reflection.MethodAttributes.HideBySig;
                         attributes |= Reflection.MethodAttributes.NewSlot;
                     }
+
                     attributes |= Reflection.MethodAttributes.Virtual;
                 }
+
                 var returnType = functionMemberAst.GetReturnType();
                 if (returnType == null)
                 {
@@ -840,12 +857,14 @@ namespace System.Management.Automation.Language
                         functionMemberAst.ReturnType.TypeName.FullName);
                     return;
                 }
+
                 var method = _typeBuilder.DefineMethod(functionMemberAst.Name, attributes, returnType, parameterTypes);
                 DefineCustomAttributes(method, functionMemberAst.Attributes, _parser, AttributeTargets.Method);
                 if (functionMemberAst.IsHidden)
                 {
                     method.SetCustomAttribute(s_hiddenCustomAttributeBuilder);
                 }
+
                 var ilGenerator = method.GetILGenerator();
                 DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Count()), functionMemberAst.IsStatic, parameterTypes, returnType,
                     (i, n) => method.DefineParameter(i, ParameterAttributes.None, n));
@@ -862,6 +881,7 @@ namespace System.Management.Automation.Language
                 {
                     ctor.SetCustomAttribute(s_hiddenCustomAttributeBuilder);
                 }
+
                 var ilGenerator = ctor.GetILGenerator();
 
                 if (!isStatic)
@@ -932,12 +952,14 @@ namespace System.Management.Automation.Language
                         {
                             ilGenerator.Emit(OpCodes.Box, parameterTypes[i]);
                         }
+
                         ilGenerator.Emit(OpCodes.Stelem_Ref);           // save the argument in the array
 
                         // Set the parameter name, mostly for Get-Member
                         // Parameters are indexed beginning with the number 1 for the first parameter
                         parameterNameSetter(i + 1, parameters[i].Name.VariablePath.UserPath);
                     }
+
                     ilGenerator.Emit(OpCodes.Ldloc, local);         // load array
                 }
                 else
@@ -954,6 +976,7 @@ namespace System.Management.Automation.Language
                 {
                     invokeHelper = typeof(ScriptBlockMemberMethodWrapper).GetMethod("InvokeHelperT", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(returnType);
                 }
+
                 ilGenerator.Emit(OpCodes.Tailcall);
                 ilGenerator.EmitCall(OpCodes.Call, invokeHelper, null);
                 ilGenerator.Emit(OpCodes.Ret);
@@ -1183,6 +1206,7 @@ namespace System.Management.Automation.Language
                         }
                     }
                 }
+
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
             }
         }
@@ -1330,6 +1354,7 @@ namespace System.Management.Automation.Language
                         nameParts.Add("<" + parent.Extent.Text.GetHashCode().ToString("x", CultureInfo.InvariantCulture) + ">");
                     }
                 }
+
                 parent = parent.Parent;
             }
 

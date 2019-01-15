@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server
+    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server.
     /// </summary>
     internal class QueryInstancesJob : QueryJobBase
     {

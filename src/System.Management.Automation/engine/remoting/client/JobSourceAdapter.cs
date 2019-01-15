@@ -16,7 +16,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Contains the definition of a job which is defined in a
-    /// job store
+    /// job store.
     /// </summary>
     /// <remarks>The actual implementation of this class will
     /// happen in M2</remarks>
@@ -26,11 +26,12 @@ namespace System.Management.Automation
         private string _name;
 
         /// <summary>
-        /// A friendly Name for this definition
+        /// A friendly Name for this definition.
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
 
@@ -50,6 +51,7 @@ namespace System.Management.Automation
         public string ModuleName
         {
             get { return _moduleName; }
+
             set { _moduleName = value; }
         }
 
@@ -61,19 +63,20 @@ namespace System.Management.Automation
         public string JobSourceAdapterTypeName
         {
             get { return _jobSourceAdapterTypeName; }
+
             set { _jobSourceAdapterTypeName = value; }
         }
 
         /// <summary>
         /// Name of the job that needs to be loaded
-        /// from the specified module
+        /// from the specified module.
         /// </summary>
-        public String Command { get; }
+        public string Command { get; }
 
         private Guid _instanceId;
 
         /// <summary>
-        /// Unique Guid for this job definition
+        /// Unique Guid for this job definition.
         /// </summary>
         public Guid InstanceId
         {
@@ -81,6 +84,7 @@ namespace System.Management.Automation
             {
                 return _instanceId;
             }
+
             set
             {
                 _instanceId = value;
@@ -89,9 +93,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Save this definition to the specified
-        /// file on disk
+        /// file on disk.
         /// </summary>
-        /// <param name="stream">stream to save to</param>
+        /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
         {
             throw new NotImplementedException();
@@ -99,7 +103,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Load this definition from the specified
-        /// file on disk
+        /// file on disk.
         /// </summary>
         /// <param name="stream"></param>
         public virtual void Load(Stream stream)
@@ -109,7 +113,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns information about this job like
-        /// name, definition, parameters etc
+        /// name, definition, parameters etc.
         /// </summary>
         public CommandInfo CommandInfo
         {
@@ -123,8 +127,8 @@ namespace System.Management.Automation
         /// Public constructor for testing.
         /// </summary>
         /// <param name="jobSourceAdapterType">Type of adapter to use to create a job.</param>
-        /// <param name="command">the command string.</param>
-        /// <param name="name">the job name.</param>
+        /// <param name="command">The command string.</param>
+        /// <param name="name">The job name.</param>
         public JobDefinition(Type jobSourceAdapterType, string command, string name)
         {
             JobSourceAdapterType = jobSourceAdapterType;
@@ -132,6 +136,7 @@ namespace System.Management.Automation
             {
                 _jobSourceAdapterTypeName = jobSourceAdapterType.Name;
             }
+
             Command = command;
             _name = name;
             _instanceId = Guid.NewGuid();
@@ -161,7 +166,7 @@ namespace System.Management.Automation
     /// be passed to a job so that the job can be
     /// instantiated without having to specify
     /// the parameters explicitly. Helps in
-    /// passing job parameters to disk
+    /// passing job parameters to disk.
     /// </summary>
     /// <remarks>This class is not required if
     /// CommandParameterCollection adds a public
@@ -171,14 +176,15 @@ namespace System.Management.Automation
     public class JobInvocationInfo : ISerializable
     {
         /// <summary>
-        /// Friendly name associated with this specification
+        /// Friendly name associated with this specification.
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
                 return _name;
             }
+
             set
             {
                 if (value == null)
@@ -186,6 +192,7 @@ namespace System.Management.Automation
                 _name = value;
             }
         }
+
         private string _name = string.Empty;
 
         private string _command;
@@ -199,6 +206,7 @@ namespace System.Management.Automation
             {
                 return _command ?? _definition.Command;
             }
+
             set
             {
                 _command = value;
@@ -208,7 +216,7 @@ namespace System.Management.Automation
         private JobDefinition _definition;
 
         /// <summary>
-        /// Definition associated with the job
+        /// Definition associated with the job.
         /// </summary>
         public JobDefinition Definition
         {
@@ -216,6 +224,7 @@ namespace System.Management.Automation
             {
                 return _definition;
             }
+
             set
             {
                 _definition = value;
@@ -225,7 +234,7 @@ namespace System.Management.Automation
         private List<CommandParameterCollection> _parameters;
 
         /// <summary>
-        /// Parameters associated with this specification
+        /// Parameters associated with this specification.
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
@@ -233,23 +242,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique identifies for this specification
+        /// Unique identifies for this specification.
         /// </summary>
         public Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// Save this specification to a file
+        /// Save this specification to a file.
         /// </summary>
-        /// <param name="stream">stream to save to</param>
+        /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Load this specification from a file
+        /// Load this specification from a file.
         /// </summary>
-        /// <param name="stream">stream to load from</param>
+        /// <param name="stream">Stream to load from.</param>
         public virtual void Load(Stream stream)
         {
             throw new NotImplementedException();
@@ -264,8 +273,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new job definition with a single set of parameters.
         /// </summary>
-        /// <param name="definition">The job definition</param>
-        /// <param name="parameters">The parameter collection to use</param>
+        /// <param name="definition">The job definition.</param>
+        /// <param name="parameters">The parameter collection to use.</param>
         public JobInvocationInfo(JobDefinition definition, Dictionary<string, object> parameters)
         {
             _definition = definition;
@@ -280,8 +289,8 @@ namespace System.Management.Automation
         /// Create a new job definition with a multiple sets of parameters. This allows
         /// different parameters for different machines.
         /// </summary>
-        /// <param name="definition">The job definition</param>
-        /// <param name="parameterCollectionList">Collection of sets of parameters to use for the child jobs</param>
+        /// <param name="definition">The job definition.</param>
+        /// <param name="parameterCollectionList">Collection of sets of parameters to use for the child jobs.</param>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
             Justification = "This is forced by the interaction of PowerShell and Workflow.")]
         public JobInvocationInfo(JobDefinition definition, IEnumerable<Dictionary<string, object>> parameterCollectionList)
@@ -342,10 +351,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utility function to turn a dictionary of name/value pairs into a parameter collection
+        /// Utility function to turn a dictionary of name/value pairs into a parameter collection.
         /// </summary>
-        /// <param name="parameters">The dictionary to convert</param>
-        /// <returns>The converted collection</returns>
+        /// <param name="parameters">The dictionary to convert.</param>
+        /// <returns>The converted collection.</returns>
         private static CommandParameterCollection ConvertDictionaryToParameterCollection(IEnumerable<KeyValuePair<string, object>> parameters)
         {
             if (parameters == null)
@@ -356,6 +365,7 @@ namespace System.Management.Automation
             {
                 paramCollection.Add(paramItem);
             }
+
             return paramCollection;
         }
     }
@@ -367,9 +377,9 @@ namespace System.Management.Automation
     public abstract class JobSourceAdapter
     {
         /// <summary>
-        /// Name for this store
+        /// Name for this store.
         /// </summary>
-        public String Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned
@@ -377,8 +387,8 @@ namespace System.Management.Automation
         /// creator of the original job.
         /// The original job must have been saved using "SaveJobIdForReconstruction"
         /// </summary>
-        /// <param name="instanceId">Instance Id of the job to recreate</param>
-        /// <returns>JobIdentifier to be used in job construction</returns>
+        /// <param name="instanceId">Instance Id of the job to recreate.</param>
+        /// <returns>JobIdentifier to be used in job construction.</returns>
         protected JobIdentifier RetrieveJobIdForReuse(Guid instanceId)
         {
             return JobManager.GetJobIdentifier(instanceId, this.GetType().Name);
@@ -397,6 +407,7 @@ namespace System.Management.Automation
             {
                 PSTraceSource.NewArgumentNullException("job", RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
+
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
             if (recurse && job.ChildJobs != null && job.ChildJobs.Count > 0)
             {
@@ -428,10 +439,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a new job with the specified definition
+        /// Create a new job with the specified definition.
         /// </summary>
-        /// <param name="definition">job definition to use</param>
-        /// <returns>job object</returns>
+        /// <param name="definition">Job definition to use.</param>
+        /// <returns>Job object.</returns>
         public Job2 NewJob(JobDefinition definition)
         {
             return NewJob(new JobInvocationInfo(definition, new Dictionary<string, object>()));
@@ -443,93 +454,93 @@ namespace System.Management.Automation
         /// then a default location will be used to find the job
         /// definition by name.
         /// </summary>
-        /// <param name="definitionName">Job definition name</param>
-        /// <param name="definitionPath">Job definition file path</param>
-        /// <returns>Job2 object</returns>
+        /// <param name="definitionName">Job definition name.</param>
+        /// <param name="definitionPath">Job definition file path.</param>
+        /// <returns>Job2 object.</returns>
         public virtual Job2 NewJob(string definitionName, string definitionPath)
         {
             return null;
         }
 
         /// <summary>
-        /// Create a new job with the specified JobSpecification
+        /// Create a new job with the specified JobSpecification.
         /// </summary>
-        /// <param name="specification">specification</param>
-        /// <returns>job object</returns>
+        /// <param name="specification">Specification.</param>
+        /// <returns>Job object.</returns>
         public abstract Job2 NewJob(JobInvocationInfo specification);
 
         /// <summary>
         /// Get the list of jobs that are currently available in this
-        /// store
+        /// store.
         /// </summary>
-        /// <returns>collection of job objects</returns>
+        /// <returns>Collection of job objects.</returns>
         public abstract IList<Job2> GetJobs();
 
         /// <summary>
-        /// Get list of jobs that matches the specified names
+        /// Get list of jobs that matches the specified names.
         /// </summary>
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByName(string name, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that run the specified command
+        /// Get list of jobs that run the specified command.
         /// </summary>
-        /// <param name="command">command to match</param>
+        /// <param name="command">Command to match.</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByCommand(string command, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that has the specified id
+        /// Get list of jobs that has the specified id.
         /// </summary>
-        /// <param name="instanceId">Guid to match</param>
+        /// <param name="instanceId">Guid to match.</param>
         /// <param name="recurse"></param>
-        /// <returns>job with the specified guid</returns>
+        /// <returns>Job with the specified guid.</returns>
         public abstract Job2 GetJobByInstanceId(Guid instanceId, bool recurse);
 
         /// <summary>
-        /// Get job that has specific session id
+        /// Get job that has specific session id.
         /// </summary>
-        /// <param name="id">Id to match</param>
+        /// <param name="id">Id to match.</param>
         /// <param name="recurse"></param>
-        /// <returns>Job with the specified id</returns>
+        /// <returns>Job with the specified id.</returns>
         public abstract Job2 GetJobBySessionId(int id, bool recurse);
 
         /// <summary>
-        /// Get list of jobs that are in the specified state
+        /// Get list of jobs that are in the specified state.
         /// </summary>
-        /// <param name="state">state to match</param>
+        /// <param name="state">State to match.</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs with the specified
-        /// state</returns>
+        /// <returns>Collection of jobs with the specified
+        /// state.</returns>
         public abstract IList<Job2> GetJobsByState(JobState state, bool recurse);
 
         /// <summary>
         /// Get list of jobs based on the adapter specific
-        /// filter parameters
+        /// filter parameters.
         /// </summary>
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the
-        /// specified criteria</returns>
+        /// <returns>Collection of jobs that match the
+        /// specified criteria.</returns>
         public abstract IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse);
 
         /// <summary>
-        /// Remove a job from the store
+        /// Remove a job from the store.
         /// </summary>
-        /// <param name="job">job object to remove</param>
+        /// <param name="job">Job object to remove.</param>
         public abstract void RemoveJob(Job2 job);
 
         /// <summary>
         /// Saves the job to a persisted store.
         /// </summary>
-        /// <param name="job">Job2 type job to persist</param>
+        /// <param name="job">Job2 type job to persist.</param>
         public virtual void PersistJob(Job2 job)
         {
             // Implemented only if job needs to be told when to persist.
