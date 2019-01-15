@@ -478,19 +478,25 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
     }
 }
 
-Describe "Validate that Get-Help accepts arrays as the -Parameter parameter value" -Tags @('CI') {
+Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags @('CI') {
 
     BeforeAll {
+        $userHelpRoot = GetCurrentUserHelpRoot
+
+        ## Clear all help from user scope.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
+
+        ## Delete help from global scope if it exists.
         $currentCulture = (Get-Culture).Name
         $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
-        if (-not (Test-Path $coreHelpFilePath))
-        {
-            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        if (Test-Path $coreHelpFilePath) {
+            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
-        Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
     }
 
     It "Should return help objects for two parameters" {
