@@ -486,10 +486,6 @@ namespace System.Management.Automation
             }
         }
 
-        #region comment out RequiresNetFrameworkVersion feature 8/10/2010
-
-        #endregion
-
         /// <summary>
         /// Used to determine compatibility between the versions in the requires statement and
         /// the installed version. The version can be PSSnapin or msh.
