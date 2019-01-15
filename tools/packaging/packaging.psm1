@@ -2972,7 +2972,18 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersion
 }
 
+<#
+.SYNOPSIS
+Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
+
+.PARAMETER FxdPackagePath
+Path to the folder containing the fxdependent package.
+
+.PARAMETER ReleaseTag
+Release tag to construct the package name.
+#>
 function New-DotnetSdkContainerFxdPackage {
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory)] $FxdPackagePath,
         [Parameter(Mandatory)] $ReleaseTag
@@ -2995,60 +3006,62 @@ function New-DotnetSdkContainerFxdPackage {
     ## Get fxdependent package path
     $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern
 
-    Write-Verbose -Verbose "Fxd Package Path: $fxdPackage"
+    Write-Log "Fxd Package Path: $fxdPackage"
 
     if ($fxdPackage) {
-        ## Extract fxd package
-        $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
-        Push-Location $tempExtractFolder
+        if ($PSCmdlet.ShouldProcess("Create the reduced framework dependent package based of $fxPackage")) {
 
-        Write-Verbose -Verbose "Pushed location: $tempExtractFolder"
+            ## Extract fxd package
+            $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
+            Push-Location $tempExtractFolder
 
-        try {
+            Write-Log "Pushed location: $tempExtractFolder"
 
-            if ($IsWindows) {
-                Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
-            } else {
-                Start-NativeExecution { tar -xf $fxdPackage }
+            try {
+                if ($IsWindows) {
+                    Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
+                } else {
+                    Start-NativeExecution { tar -xf $fxdPackage }
+                }
+
+                ## Remove unnecessary files
+                $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+                Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+
+                $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
+
+                # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+                # win10-x64 (Nano Server)
+                # win-arm (Nano Server)
+                # linux-musl-x64 (Alpine 3.8)
+                # linux-x64 (bionic / stretch)
+                # unix, linux, win for dependencies
+                # win-x64 to get PowerShell.Native components
+                $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+
+                $runtimeFolder | ForEach-Object {
+                    Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+                }
+
+                Write-Verbose -Verbose "Compressing"
+
+                if ($IsWindows) {
+                    Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
+                } else {
+                    Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+                }
+
+                Write-Log "Compressing complete"
+
+            } finally {
+                Pop-Location
             }
-
-            ## Remove unnecessary files
-            $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
-            Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
-
-            $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
-
-            # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
-            # win10-x64 (Nano Server)
-            # win-arm (Nano Server)
-            # linux-musl-x64 (Alpine 3.8)
-            # linux-x64 (bionic / stretch)
-            # unix, linux, win for dependencies
-            # win-x64 to get PowerShell.Native components
-            $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
-
-            $runtimeFolder | ForEach-Object {
-                Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
-            }
-
-            Write-Verbose -Verbose "Compressing"
-
-            if ($IsWindows) {
-                Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
-            } else {
-                Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
-            }
-
-            Write-Verbose -Verbose "Compressing complete"
-
-        } finally {
-            Pop-Location
         }
     }
 
     if (Test-Path "$FxdPackagePath/$packageName") {
         Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$FxdPackagePath/$packageName"
     } else {
-        Write-Verbose -Verbose "Package not found: $FxdPackagePath/$packageName"
+        Write-Log "Package not found: $FxdPackagePath/$packageName"
     }
 }
