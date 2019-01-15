@@ -469,3 +469,26 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         $helpObj.description | Out-String | Should -Match $CmdletName
     }
 }
+
+Describe "Validate that Get-Help accepts arrays as the -Parameter parameter value" {
+
+    BeforeAll {
+        $currentCulture = (Get-Culture).Name
+        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+        if (-not (Test-Path $coreHelpFilePath))
+        {
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        }
+    }
+
+    AfterAll {
+        Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Should return help objects for two parameters" {
+        $help = Get-Help -Name Get-Command -Parameter Verb, Noun
+        $help | Should -HaveCount 2
+        $help[0].Name | Should -BeExactly 'Verb'
+        $help[1].Name | Should -BeExactly 'Noun'
+    }
+}
