@@ -354,7 +354,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
-[use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
+[use-vscode-editor]: https://code.visualstudio.com/
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
 [area-expert]: ../docs/community/governance.md#area-experts
 [ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system
