@@ -36,7 +36,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
         it "Should disable $LogType logs for Microsoft-Windows-PowerShell." {
             [XML]$CurrentState = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
             if($CurrentState.channel.enabled -eq 'false'){
-                & wevtutil sl Microsoft-Windows-PowerShell/Analytic /e:true /q
+                & wevtutil sl Microsoft-Windows-PowerShell/$LogType /e:true /q
             }
             Disable-PSTrace
 
