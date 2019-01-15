@@ -277,29 +277,10 @@ namespace System.Management.Automation.Security
                     }
                     finally
                     {
-                        if (IO.File.Exists(testPathScript))
-                        {
-                            try
-                            {
-                                IO.File.Delete(testPathScript);
-                            }
-                            catch
-                            {
-                                // Leave the file if we can't delete
-                            }
-                        }
-
-                        if (IO.File.Exists(testPathModule))
-                        {
-                            try
-                            {
-                                IO.File.Delete(testPathModule);
-                            }
-                            catch
-                            {
-                                // Leave the module if we can't delete
-                            }
-                        }
+                        // Ok to leave the test scripts in the temp folder if they happen to be in use
+                        // so that PowerShell will still startup.
+                        PathUtils.TryDeleteFile(testPathScript);
+                        PathUtils.TryDeleteFile(testPathModule);
                     }
 
                     s_cachedSaferSystemPolicy = result;
