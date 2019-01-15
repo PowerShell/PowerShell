@@ -92,6 +92,13 @@ Describe "Verify Markdown Links" {
                     it "<url> should work" -TestCases $verifyFailures -Pending  {
                     }
                 }
+
+                if(!$passes -and !$trueFailures -and !$verifyFailures)
+                {
+                    It "has no links" {
+                        noop
+                    }
+                }
             }
         }
     }
