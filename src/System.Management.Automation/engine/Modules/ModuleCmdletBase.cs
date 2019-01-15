@@ -634,13 +634,13 @@ namespace Microsoft.PowerShell.Commands
             Version savedBaseRequiredVersion = BaseRequiredVersion;
             Guid? savedBaseGuid = BaseGuid;
 
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
+            var importingModule = manifestProcessingFlags.HasFlag(ManifestProcessingFlags.LoadElements);
             string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
             if (string.IsNullOrEmpty(rootedPath))
             {
-                rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
+                rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension, importingModule);
             }
             else
             {
@@ -1461,9 +1461,9 @@ namespace Microsoft.PowerShell.Commands
         {
             string message;
 
-            var bailOnFirstError = 0 != (manifestProcessingFlags & ManifestProcessingFlags.NullOnFirstError);
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-            var writingErrors = 0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors);
+            var bailOnFirstError = manifestProcessingFlags.HasFlag(ManifestProcessingFlags.NullOnFirstError);
+            var importingModule = manifestProcessingFlags.HasFlag(ManifestProcessingFlags.LoadElements);
+            var writingErrors = manifestProcessingFlags.HasFlag(ManifestProcessingFlags.WriteErrors);
 
             Dbg.Assert(moduleManifestPath != null, "moduleManifestPath for module (.psd1) can't be null");
             string moduleBase = Path.GetDirectoryName(moduleManifestPath);
@@ -1610,7 +1610,7 @@ namespace Microsoft.PowerShell.Commands
                 // have an extension and the module table is indexed by full names, we
                 // may have search through all the extensions.
                 PSModuleInfo loadedModule = null;
-                string rootedPath = this.FixupFileName(moduleBase, actualRootModule, null);
+                string rootedPath = this.FixupFileName(moduleBase, actualRootModule, extension: null, importingModule);
                 string mtpExtension = Path.GetExtension(rootedPath);
                 if (!string.IsNullOrEmpty(mtpExtension) && ModuleIntrinsics.IsPowerShellModuleExtension(mtpExtension))
                 {
@@ -1620,7 +1620,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string extensionToTry in ModuleIntrinsics.PSModuleExtensions)
                     {
-                        rootedPath = this.FixupFileName(moduleBase, actualRootModule, extensionToTry);
+                        rootedPath = this.FixupFileName(moduleBase, actualRootModule, extensionToTry, importingModule);
                         TryGetFromModuleTable(rootedPath, out loadedModule);
                         if (loadedModule != null)
                             break;
@@ -2208,10 +2208,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            string fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellNgenAssemblyExtension, out bool pathIsResolved);
+                            string fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellNgenAssemblyExtension, importingModule, out bool pathIsResolved);
                             if (!pathIsResolved)
                             {
-                                fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension);
+                                fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension, importingModule);
                             }
 
                             string loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
@@ -4378,8 +4378,8 @@ namespace Microsoft.PowerShell.Commands
         {
             list = null;
 
-            List<string> listOfStrings;
-            if (!GetListOfStringsFromData(data, moduleManifestPath, key, manifestProcessingFlags, out listOfStrings))
+            bool importingModule = manifestProcessingFlags.HasFlag(ManifestProcessingFlags.LoadElements);
+            if (!GetListOfStringsFromData(data, moduleManifestPath, key, manifestProcessingFlags, out List<string> listOfStrings))
             {
                 return false;
             }
@@ -4400,7 +4400,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        string fixedFileName = FixupFileName(moduleBase, s, extension);
+                        string fixedFileName = FixupFileName(moduleBase, s, extension, importingModule);
                         var dir = Path.GetDirectoryName(fixedFileName);
 
                         if (string.Equals(psHome, dir, StringComparison.OrdinalIgnoreCase) ||
@@ -4420,7 +4420,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+                        if (manifestProcessingFlags.HasFlag(ManifestProcessingFlags.WriteErrors))
                         {
                             this.ThrowTerminatingError(GenerateInvalidModuleMemberErrorRecord(key, moduleManifestPath, e));
                         }
@@ -4560,9 +4560,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
-        internal string FixupFileName(string moduleBase, string name, string extension)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule)
         {
-            return FixupFileName(moduleBase, name, extension, out _);
+            return FixupFileName(moduleBase, name, extension, isImportingModule, pathIsResolved: out _);
         }
 
         /// <summary>
@@ -4571,17 +4571,18 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="name">The file name to resolve.</param>
         /// <param name="extension">The extension to use in case the given name has no extension.</param>
+        /// <param name="isImportingModule">Indicate if we are loading a module.</param>
         /// <param name="pathIsResolved">Indicate if the returned path is fully resolved.</param>
         /// <returns></returns>
-        internal string FixupFileName(string moduleBase, string name, string extension, out bool pathIsResolved)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved)
         {
             pathIsResolved = false;
-            string ext = Path.GetExtension(name);
+            string originalName = name;
+            string originalExt = Path.GetExtension(name);
 
-            if (string.IsNullOrEmpty(ext) && !string.IsNullOrEmpty(extension))
+            if (string.IsNullOrEmpty(originalExt))
             {
                 name += extension;
-                ext = extension;
             }
 
             // Try to get the resolved fully qualified path to the file.
@@ -4601,6 +4602,18 @@ namespace Microsoft.PowerShell.Commands
             // Return the path if successfully resolved.
             if (resolvedPath != null)
             {
+                if (isImportingModule && resolvedPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    // If we are fixing up an assembly file path and we are actually loading the module, then we load the resolved assembly file here.
+                    // This is because we process type/format ps1xml files before 'RootModule' and 'NestedModules' entries during the module loading.
+                    // A types.ps1xml file could refer to a type defined in the assembly that is specified in the 'RootModule' or 'NestedModule', and
+                    // in that case, processing the types.ps1xml file would fail because it happens before processing the 'RootModule', which loads
+                    // the assembly. We cannot move the processing of types.ps1xml file after processing 'RootModule' either, because the 'RootModule'
+                    // might refer to members defined in the types.ps1xml file. In order to make it work for this paradox, we have to load the resolved
+                    // assembly when we are actually loading the module. However, when it's module analysis, there is no need to load the assembly.
+                    ExecutionContext.LoadAssembly(name: null, filename: resolvedPath, error: out _);
+                }
+
                 pathIsResolved = true;
                 return resolvedPath;
             }
@@ -4608,11 +4621,11 @@ namespace Microsoft.PowerShell.Commands
             // Path resolution failed, use the combined path as default.
             string result = combinedPath;
 
-            // For an assembly file, the intention could be to load the assembly from TPAs or GAC (on Windows).
-            // So let's try loading the assembly using the name only, and use the assembly location if that succeeds.
-            if (!string.IsNullOrEmpty(ext) && ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+            // For the given assembly name, the intention could be to use the assembly from TPAs or GAC (on Windows).
+            // So try loading the assembly using the passed-in name only, and use the assembly location if that succeeds.
+            if (!string.IsNullOrEmpty(originalExt) && originalExt.Equals(".dll", StringComparison.OrdinalIgnoreCase))
             {
-                Assembly assembly = ExecutionContext.LoadAssembly(name, null, out _);
+                Assembly assembly = ExecutionContext.LoadAssembly(name: originalName, filename: null, error: out _);
                 if (assembly != null)
                 {
                     pathIsResolved = true;
@@ -5419,19 +5432,6 @@ namespace Microsoft.PowerShell.Commands
                 if (!scriptName.EndsWith(".cdxml", StringComparison.OrdinalIgnoreCase))
                 {
                     CommandDiscovery.VerifyScriptRequirements(scriptInfo, Context);
-
-                    // Verify that the NetFrameWorkVersion is correct...
-
-                    #region comment out RequiresNetFrameworkVersion feature 8/10/2010
-
-                    /*
-                     * The "#requires -NetFrameworkVersion" feature is CUT OFF.
-                     * The call of "VerifyNetFrameworkVersion" will be CUT OFF too.
-                    /*
-                    CommandDiscovery.VerifyNetFrameworkVersion(scriptInfo);
-                    */
-
-                    #endregion
                 }
 
                 // If we got this far, the check succeeded and we don't need to check again.
