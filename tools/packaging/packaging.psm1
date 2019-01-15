@@ -1155,9 +1155,9 @@ function Test-Dependencies
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
