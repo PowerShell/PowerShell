@@ -495,10 +495,6 @@ Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags
         }
     }
 
-    AfterAll {
-        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
-    }
-
     It "Should return help objects for two parameters" {
         $help = Get-Help -Name Get-Command -Parameter Verb, Noun
         $help | Should -HaveCount 2
