@@ -10,6 +10,7 @@ $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
+        Push-Location $psscriptroot
         $skip = $false
         $NpmInstalled = "not installed"
         if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
@@ -17,7 +18,15 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $NpmInstalled = "Installed"
             Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
             start-nativeExecution { npm install --silent }
-            start-nativeExecution { sudo npm install -g gulp@4.0.0 --silent }
+            start-nativeExecution { npm install 'gulp@4.0.0' --silent }
+            if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
+            {
+                start-nativeExecution { sudo npm install -g 'gulp@4.0.0' --silent }
+            }
+            if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
+            {
+                throw "node not found"
+            }
         }
         elseif( -not $env:AppVeyor)
         {
@@ -35,12 +44,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     }
 
     AfterAll {
-        <#
-            NPM install all the tools needed to run this test in the test folder.
-            We will now clean these up.
-            We're using this tool to delete the node_modules folder because it gets too long
-            for PowerShell to remove.
-        #>
+        Pop-Location
     }
 
     It "Should not have errors in any markdown files" -skip:$skip {
