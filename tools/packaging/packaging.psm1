@@ -795,7 +795,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
-            Write-Log "Adding macOS launch opplication..."
+            Write-Log "Adding macOS launch application..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
