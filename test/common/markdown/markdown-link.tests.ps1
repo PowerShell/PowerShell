@@ -7,15 +7,12 @@ Describe "Verify Markdown Links" {
         start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
 
         # Cleanup jobs for reliability
-        Get-Job | stop-job
-        get-job | remove-job
+        get-job | remove-job -force
     }
 
     AfterAll {
         # Cleanup jobs to leave the process the same
-        Write-Verbose -verbose "cleaning jobs ..."
-        Get-Job | stop-job
-        get-job | remove-job
+        get-job | remove-job -force
     }
 
     $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Group-Object -Property directory
@@ -50,6 +47,8 @@ Describe "Verify Markdown Links" {
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify links in $file" {
+                # failures look like `[✖] https://someurl` (perhaps without the https://)
+                # passes look like `[✓] https://someurl` (perhaps without the https://)
                 $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4) }
                 $passes = $result -like '*[✓]*' | ForEach-Object {
                     @{url=$_.Substring(4)}
