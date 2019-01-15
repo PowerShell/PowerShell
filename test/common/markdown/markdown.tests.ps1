@@ -15,18 +15,8 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         {
             $NpmInstalled = "Installed"
             Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
-            Start-Process `
-                -FilePath "npm" `
-                -ArgumentList @('install','--silent') `
-                -Wait `
-                -WorkingDirectory $PSScriptRoot `
-                -NoNewWindow
-            Start-Process `
-                -FilePath "npm" `
-                -ArgumentList @('install','-g','gulp@4.0.0','--silent') `
-                -Wait `
-                -WorkingDirectory $PSScriptRoot `
-                -NoNewWindow
+            start-nativeExecution { npm install --silent }
+            start-nativeExecution { npm install -g gulp@4.0.0 --silent }
         }
         elseif( -not $env:AppVeyor)
         {
