@@ -3,6 +3,9 @@
 
 Describe "Verify Markdown Links" {
     BeforeAll {
+        # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
+        start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
+
         # Cleanup jobs for reliability
         Get-Job | stop-job
         get-job | remove-job

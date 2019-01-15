@@ -40,12 +40,6 @@ phases:
     displayName: Install mdspell
     condition: succeededOrFailed()
 
-  - bash: |
-      sudo npm install -g markdown-link-check@3.7.2
-    # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
-    displayName: Install markdown-link-check
-    condition: succeededOrFailed()
-
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
