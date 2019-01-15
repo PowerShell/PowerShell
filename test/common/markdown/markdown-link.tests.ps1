@@ -1,4 +1,7 @@
-﻿Describe "Verify Markdown Links" {
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+Describe "Verify Markdown Links" {
     BeforeAll {
         # Cleanup jobs for reliability
         Get-Job | stop-job
