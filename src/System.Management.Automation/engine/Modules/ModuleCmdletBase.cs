@@ -4568,12 +4568,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
+        /// <remarks>
+        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// Read the comments in the method for the detailed information.
+        /// </remarks>
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="name">The file name to resolve.</param>
         /// <param name="extension">The extension to use in case the given name has no extension.</param>
         /// <param name="isImportingModule">Indicate if we are loading a module.</param>
         /// <param name="pathIsResolved">Indicate if the returned path is fully resolved.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The resolved file path. Or, the combined path of <paramref name="moduleBase"/> and <paramref name="name"/> when the file path cannot be resolved.
+        /// </returns>
         internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved)
         {
             pathIsResolved = false;
