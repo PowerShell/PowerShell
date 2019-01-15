@@ -3,7 +3,7 @@
 If you have any problems, please consult the [known issues][], developer [FAQ][], and [GitHub issues][].  
 If you do not see your problem captured, please file a [new issue][] and follow the provided template.  
 Also make sure to see the [Official Support Policy][].  
-If you know how to fix the issue, feel free to send a pull request our way.  (The [Contribution Guides][] apply to that pull request, you may want to give it a read!)
+If you know how to fix the issue, feel free to send a pull request our way. (The [Contribution Guides][] apply to that pull request, you may want to give it a read!)
 
 [Official Support Policy]: https://docs.microsoft.com/en-us/powershell/scripting/powershell-support-lifecycle?view=powershell-6
 [FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
