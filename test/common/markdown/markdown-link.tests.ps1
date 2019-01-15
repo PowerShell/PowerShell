@@ -82,7 +82,14 @@ Describe "Verify Markdown Links" {
                 if($trueFailures)
                 {
                     it "<url> should work" -TestCases $trueFailures  {
-                        throw "Url unreachable"
+                        if($url -match '^http(s)?:')
+                        {
+                            # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
+                            $null = Invoke-WebRequest -uri $url -RetryIntervalSec 2 -MaximumRetryCount 5
+                        }
+                        else {
+                            throw "Tool reported Url as unreachable"
+                        }
                     }
                 }
 
