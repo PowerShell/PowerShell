@@ -478,7 +478,7 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
     }
 }
 
-Describe "Validate that Get-Help accepts arrays as the -Parameter parameter value" {
+Describe "Validate that Get-Help accepts arrays as the -Parameter parameter value" -Tags @('CI') {
 
     BeforeAll {
         $currentCulture = (Get-Culture).Name
