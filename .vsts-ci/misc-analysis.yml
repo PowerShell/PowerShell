@@ -48,8 +48,7 @@ phases:
     condition: succeededOrFailed()
   - powershell: |
       Import-module ./build.psm1
-      $path = './linkResults.xml'
-      $path = (Resolve-Path -path $path).ProviderPath
+      $path = Join-Path -Path $pwd -ChildItem './linkResults.xml'
       $results = invoke-pester -Script ./test/common -OutputFile $path -OutputFormat NUnitXml -PassThru
       Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Test Markdown Links;publishRunAttachments=true;resultFiles=$path;]"
       if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
