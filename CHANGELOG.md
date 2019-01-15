@@ -1,5 +1,22 @@
 # Changelog
 
+## v6.1.2 - 2019-01-15
+
+### Tests
+
+- Fix test failures (Internal 6310)
+
+### Build and Packaging Improvements
+
+- Moved the cleanup logic to `Restore-PSModuleToBuild` (Internal 6442)
+- Update dependency versions (Internal 6421)
+- Create unified release build for macOS and Linux packages (#8399)
+- Build Alpine `tar.gz` package in release builds (Internal 6027)
+
+### Documentation and Help Content
+
+- Update version for README, Alpine docker file and hosting tests (Internal 6438)
+
 ## v6.1.1 - 2018-11-13
 
 ### Engine Updates and Fixes
