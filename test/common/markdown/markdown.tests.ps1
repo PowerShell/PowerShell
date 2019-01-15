@@ -50,18 +50,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             We're using this tool to delete the node_modules folder because it gets too long
             for PowerShell to remove.
         #>
-        Start-Process `
-            -FilePath "npm" `
-            -ArgumentList @('install','rimraf','-g','--silent') `
-            -Wait `
-            -WorkingDirectory $PSScriptRoot `
-            -NoNewWindow
-        Start-Process `
-            -FilePath "rimraf" `
-            -ArgumentList @(Join-Path -Path $PSScriptRoot -ChildPath 'node_modules') `
-            -Wait `
-            -WorkingDirectory $PSScriptRoot `
-            -NoNewWindow
     }
 
     It "Should not have errors in any markdown files" {
