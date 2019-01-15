@@ -357,7 +357,7 @@ Function Start-HTTPListener {
                 {
                     # ignore if listener is not ready
                 }
-                Start-Sleep -milliseconds 100
+                Start-Sleep -Milliseconds 100
             }
             if (!$succeeded)
             {
