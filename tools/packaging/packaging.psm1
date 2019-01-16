@@ -3001,6 +3001,13 @@ function New-DotnetSdkContainerFxdPackage {
         $packageNameExtension = '.tar.gz'
     }
 
+    Write-Log "basePackagePattern: $basePackagePattern"
+    Write-Log "fxdPackagePath: $FxdPackagePath"
+
+    $files = Get-ChildItem $FxdPackagePath -Recurse | Out-String
+
+    Write-Log "Files: `n$files"
+
     $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
 
     ## Get fxdependent package path
