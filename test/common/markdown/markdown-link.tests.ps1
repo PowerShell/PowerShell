@@ -59,9 +59,9 @@ Describe "Verify Markdown Links" {
             Context "Verify links in $file" {
                 # failures look like `[✖] https://someurl` (perhaps without the https://)
                 # passes look like `[✓] https://someurl` (perhaps without the https://)
-                $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4) }
+                $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4).Trim() }
                 $passes = $result -like '*[✓]*' | ForEach-Object {
-                    @{url=$_.Substring(4)}
+                    @{url=$_.Substring(4).Trim() }
                 }
                 $trueFailures = @()
                 $verifyFailures = @()
