@@ -332,6 +332,23 @@
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
 
+## v6.1.2 - 2019-01-15
+
+### Tests
+
+- Fix test failures (Internal 6310)
+
+### Build and Packaging Improvements
+
+- Moved the cleanup logic to `Restore-PSModuleToBuild` (Internal 6442)
+- Update dependency versions (Internal 6421)
+- Create unified release build for macOS and Linux packages (#8399)
+- Build Alpine `tar.gz` package in release builds (Internal 6027)
+
+### Documentation and Help Content
+
+- Update version for README, Alpine docker file and hosting tests (Internal 6438)
+
 ## v6.1.1 - 2018-11-13
 
 ### Engine Updates and Fixes
@@ -1809,7 +1826,7 @@ Many modules and cmdlets that didn't work in the past may now work on .NET Core,
 
 If you want to opt-out of this telemetry, simply delete `$PSHome\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY`.
 Even before the first run of Powershell, deleting this file will bypass all telemetry.
-In the future, we plan on also enabling a configuration value for whatever is approved as part of [RFC0015](https://github.com/PowerShell/PowerShell-RFC/blob/master/1-Draft/RFC0015-PowerShell-StartupConfig.md).
+In the future, we plan on also enabling a configuration value for whatever is approved as part of [RFC0015](https://github.com/PowerShell/PowerShell-RFC/blob/master/X-Rejected/RFC0015-PowerShell-StartupConfig.md).
 We also plan on exposing this telemetry data (as well as whatever insights we leverage from the telemetry) in [our community dashboard](https://blogs.msdn.microsoft.com/powershell/2017/01/31/powershell-open-source-community-dashboard/).
 
 If you have any questions or comments about our telemetry, please file an issue.
