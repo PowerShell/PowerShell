@@ -9,7 +9,7 @@ RUN apt-get update \
 	apt-utils \
 	apt-utils \
         libc6 \
-        libcurl3 \
+        libcurl4 \
         ca-certificates \
         libgcc1 \
         libicu60 \
