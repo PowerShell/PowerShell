@@ -513,3 +513,34 @@ Describe "Help failure cases" -Tags Feature {
         { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }
+
+Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
+    BeforeAll {
+        $fakePager = @'
+        param(
+            [Parameter]
+            $customCommandArgs,
+
+            [Parameter(ValueFromPipelineByPropertyName)]
+            $Name
+        )
+
+        $b = [System.Text.Encoding]::UTF8.GetBytes($Name)
+        return [System.Convert]::ToBase64String($b)
+'@
+        $fakePagerFolder = Join-Path $TestDrive "path with space"
+        $fakePagerPath = Join-Path $fakePagerFolder "fakepager.ps1"
+        New-Item -ItemType File -Path $fakePagerPath -Force > $null
+        Set-Content -Path $fakePagerPath -Value $fakePager
+
+        $SavedEnvPager = $env:PAGER
+        $env:PAGER = $fakePagerPath
+    }
+    AfterAll {
+        $env:PAGER = $SavedEnvPager
+    }
+
+    It 'help renders when using a PAGER with a space in the path' {
+        help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
+    }
+}
