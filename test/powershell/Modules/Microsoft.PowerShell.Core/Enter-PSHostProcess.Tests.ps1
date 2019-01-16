@@ -16,12 +16,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $powershell = [System.Diagnostics.Process]::Start($si)
         }
 
-        if ($env:AppVeyor) {
-            $IsAppveyor = $true
-        }
-        else {
-            $IsAppveyor = $false
-        }
+        $IsAppveyor = $false
     }
 
     AfterAll {
