@@ -72,7 +72,7 @@ To run the link-checker, follow the steps as follows:
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install markdown-link-check by
   `npm install -g markdown-link-check@3.7.2` (v3.7.2 **only**)
-* run `find . *.md -exec markdown-link-check {} \;`
+* run `find . \*.md -exec markdown-link-check {} \;`
 
 ## Contributing to Code
 
