@@ -1623,6 +1623,8 @@ function Start-PSBootstrap {
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
+                $Deps += "rdoc"
+
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution { brew install $Deps } -IgnoreExitcode
@@ -1646,7 +1648,7 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install rdoc"))
+
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
                 } catch {
