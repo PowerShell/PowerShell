@@ -76,7 +76,7 @@ Please see [Building PowerShell](../README.md#building-the-repository).
 
 #### Testing PowerShell
 
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.  
 
 ### Finding or creating an issue
 
@@ -192,7 +192,7 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking. If there is any false-positive,
+* Our CI contains automated spellchecking and link checking (markdown files only for link checking). If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
