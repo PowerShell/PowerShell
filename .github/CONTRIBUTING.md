@@ -191,6 +191,7 @@ Additional references:
   Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
   ```
   is at the top.  
+
 ### Pull Request - Work in Progress
 
 * If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
