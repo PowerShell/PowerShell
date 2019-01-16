@@ -425,15 +425,6 @@ Fix steps:
     }
 
     if ($Environment.IsWindows) {
-        ## need RCEdit to modify the binaries embedded resources
-        $rcedit = "~/.rcedit/rcedit-x64.exe"
-        if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | ForEach-Object Name
-        }
-        if (-not $rcedit) {
-            throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
-        }
-
         $ReleaseVersion = ""
         if ($ReleaseTagToUse) {
             $ReleaseVersion = $ReleaseTagToUse
@@ -448,25 +439,6 @@ Fix steps:
             $fileVersion = $ReleaseVersion.Split("-")[0]
         }
 
-        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
-        $pwshPath = $Options.Output
-        if (!$pwshPath.EndsWith("pwsh.exe")) {
-            $pwshPath = Join-Path $Options.Output "pwsh.exe"
-        }
-
-        if (Test-IsPreview $ReleaseVersion) {
-            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
-        } else {
-            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
-        }
-
-        # fxdependent package does not have an executable to set iconPath etc.
-        if ($Options.Runtime -ne 'fxdependent') {
-            Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-                    --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
-                    --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
-        }
     }
 
     # download modules from powershell gallery.
@@ -1684,19 +1656,6 @@ function Start-PSBootstrap {
                 Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
-            }
-
-            ## need RCEdit to modify the binaries embedded resources
-            if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-            {
-                Write-Log "Install RCEdit for modifying exe resources"
-                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
-                New-Item -Path "~/.rcedit" -Type Directory -Force > $null
-
-                ## need to specify TLS version 1.2 since GitHub API requires it
-                [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-
-                Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
             }
         }
     } finally {

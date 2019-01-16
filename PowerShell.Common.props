@@ -62,6 +62,9 @@
             Tracking Issue https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+      <ApplicatioManifest>..\..\assets\pwsh.manifest</ApplicatioManifest>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
 
