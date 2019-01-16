@@ -65,6 +65,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './docs/testing-guidelines/testing-guidelines.md'
                 './test/powershell/README.md'
                 './tools/*.md'
+                './github/CONTRIBUTING.md'
             )
             $filter = ($docsToTest -join ',')
 
