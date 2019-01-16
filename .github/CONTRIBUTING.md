@@ -54,7 +54,7 @@ Documentation is spellchecked. We make use of the
 which can be run in interactive mode to correct typos or add words to the ignore list
 (`.spelling` at the repository root).
 
-To run the spellchecker, follow the steps as follows:
+To run the spellchecker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
@@ -67,7 +67,7 @@ Documentation is link-checked. We make use of the
 markdown-link-check tool command line tool,
 which can be run to see if any links are dead.  
 
-To run the link-checker, follow the steps as follows:
+To run the link-checker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install markdown-link-check by
