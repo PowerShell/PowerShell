@@ -9,6 +9,12 @@ Describe "Verify Markdown Links" {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
         }
+
+        if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
+        {
+            Install-Module -Name ThreadJob -Scope CurrentUser
+        }
+
         # Cleanup jobs for reliability
         get-job | remove-job -force
     }
