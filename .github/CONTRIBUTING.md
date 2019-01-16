@@ -204,7 +204,7 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking and link checking (markdown files only for link checking). If there is any false-positive,
+* Our CI contains automated spellchecking and link checking for markdown files. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
