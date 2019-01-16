@@ -64,7 +64,7 @@ To run the spellchecker, follow these steps:
 
 #### Checking links in documentation  
 Documentation is link-checked. We make use of the
-markdown-link-check tool command line tool,
+markdown-link-check command line tool,
 which can be run to see if any links are dead.  
 
 To run the link-checker, follow these steps:
