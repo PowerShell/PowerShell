@@ -49,7 +49,7 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
 
 #### Spellchecking documentation
 
-Documentation are spellchecked. We make use of the
+Documentation is spellchecked. We make use of the
 [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
 which can be run in interactive mode to correct typos or add words to the ignore list
 (`.spelling` at the repository root).
@@ -60,7 +60,19 @@ To run the spellchecker, follow the steps as follows:
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
 * run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
-* if the `.spelling` file is updated, commit and push it
+* if the `.spelling` file is updated, commit and push it  
+
+#### Checking links in documentation  
+Documentation is link-checked. We make use of the
+markdown-link-check tool command line tool,
+which can be run to see if any links are dead.  
+
+To run the link-checker, follow the steps as follows:
+
+* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install markdown-link-check by
+  `npm install -g markdown-link-check@3.7.2` (v3.7.2 **only**)
+* run `find . *.md -exec markdown-link-check {};`
 
 ## Contributing to Code
 
@@ -76,7 +88,7 @@ Please see [Building PowerShell](../README.md#building-the-repository).
 
 #### Testing PowerShell
 
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.  
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.
 
 ### Finding or creating an issue
 
@@ -177,7 +189,7 @@ Additional references:
   Company = "Microsoft Corporation"
   Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
   ```
-
+  is at the top.  
 ### Pull Request - Work in Progress
 
 * If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
@@ -192,7 +204,7 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking and link checking for markdown files. If there is any false-positive,
+* Our CI contains automated spellchecking and link checking (markdown files only for link checking). If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
