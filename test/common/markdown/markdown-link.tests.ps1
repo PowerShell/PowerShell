@@ -28,9 +28,9 @@ Describe "Verify Markdown Links" {
 
     $jobs = @{}
     # start all link verification in parallel
-    Write-Verbose -verbose "starting jobs for performance ..."
     Foreach($group in $groups)
     {
+        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
@@ -45,6 +45,7 @@ Describe "Verify Markdown Links" {
         $jobs.add($group.name,$job)
     }
 
+    Write-Verbose -verbose "Getting and printing results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
@@ -91,13 +92,25 @@ Describe "Verify Markdown Links" {
                 if($trueFailures)
                 {
                     it "<url> should work" -TestCases $trueFailures  {
+                        param($url)
+
+                        $prefix = $url.Substring(0,7)
+
+                        # Logging for diagnosability.  AzDevOps sometimes redacts the full url.
+                        Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
                             # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
-                            $null = Invoke-WebRequest -uri $url -RetryIntervalSec 2 -MaximumRetryCount 5
+                            try{
+                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
+                            }
+                            catch
+                            {
+                                throw "retry of url failed with error: $($_.Message)"
+                            }
                         }
                         else {
-                            throw "Tool reported Url as unreachable"
+                            throw "Tool reported Url as unreachable."
                         }
                     }
                 }
