@@ -63,6 +63,7 @@ To run the spellchecker, follow these steps:
 * if the `.spelling` file is updated, commit and push it  
 
 #### Checking links in documentation  
+
 Documentation is link-checked. We make use of the
 markdown-link-check command line tool,
 which can be run to see if any links are dead.  
