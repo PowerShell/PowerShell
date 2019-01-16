@@ -1552,6 +1552,7 @@ function Start-PSBootstrap {
                 $Deps += "libunwind8"
                 if ($Environment.IsUbuntu14) { $Deps += "libicu52" }
                 elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
+                elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
