@@ -49,7 +49,7 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
 
 #### Spellchecking documentation
 
-Documentation is spellchecked. We make use of the
+Documentation is spellchecked. We use the
 [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
 which can be run in interactive mode to correct typos or add words to the ignore list
 (`.spelling` at the repository root).
