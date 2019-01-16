@@ -31,7 +31,7 @@ Describe "Verify Markdown Links" {
     Write-Verbose -verbose "starting jobs for performance ..."
     Foreach($group in $groups)
     {
-        $job = start-job {
+        $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
             {
