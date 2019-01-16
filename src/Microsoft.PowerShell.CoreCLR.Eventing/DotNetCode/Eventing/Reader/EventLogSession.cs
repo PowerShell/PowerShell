@@ -17,7 +17,7 @@ using System.Globalization;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Session Login Type
+    /// Session Login Type.
     /// </summary>
     public enum SessionAuthentication
     {
@@ -28,7 +28,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// The type: log / external log file to query
+    /// The type: log / external log file to query.
     /// </summary>
     public enum PathType
     {
@@ -39,30 +39,30 @@ namespace System.Diagnostics.Eventing.Reader
     public class EventLogSession : IDisposable
     {
         //
-        //the two context handles for rendering (for EventLogRecord).
-        //the system and user context handles. They are both common for all the event instances and can be created only once.
-        //access to the data member references is safe, while
-        //invoking methods on it is marked SecurityCritical as appropriate.
+        // the two context handles for rendering (for EventLogRecord).
+        // the system and user context handles. They are both common for all the event instances and can be created only once.
+        // access to the data member references is safe, while
+        // invoking methods on it is marked SecurityCritical as appropriate.
         //
         internal EventLogHandle renderContextHandleSystem = EventLogHandle.Zero;
         internal EventLogHandle renderContextHandleUser = EventLogHandle.Zero;
 
-        //the dummy sync object for the two contexts.
+        // the dummy sync object for the two contexts.
         private object _syncObject = null;
 
         private string _server;
         private string _user;
         private string _domain;
         private SessionAuthentication _logOnType;
-        //we do not maintain the password here.
+        // we do not maintain the password here.
 
         //
-        //access to the data member references is safe, while
-        //invoking methods on it is marked SecurityCritical as appropriate.
+        // access to the data member references is safe, while
+        // invoking methods on it is marked SecurityCritical as appropriate.
         //
         private EventLogHandle _handle = EventLogHandle.Zero;
 
-        //setup the System Context, once for all the EventRecords.
+        // setup the System Context, once for all the EventRecords.
         [System.Security.SecuritySafeCritical]
         internal void SetupSystemContext()
         {
@@ -72,8 +72,8 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 if (this.renderContextHandleSystem.IsInvalid)
                 {
-                    //create the SYSTEM render context
-                    //call the EvtCreateRenderContext to get the renderContextHandleSystem, so that we can get the system/values/user properties.
+                    // create the SYSTEM render context
+                    // call the EvtCreateRenderContext to get the renderContextHandleSystem, so that we can get the system/values/user properties.
                     this.renderContextHandleSystem = NativeWrapper.EvtCreateRenderContext(0, null, UnsafeNativeMethods.EvtRenderContextFlags.EvtRenderContextSystem);
                 }
             }
@@ -86,7 +86,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 if (this.renderContextHandleUser.IsInvalid)
                 {
-                    //create the USER render context
+                    // create the USER render context
                     this.renderContextHandleUser = NativeWrapper.EvtCreateRenderContext(0, null, UnsafeNativeMethods.EvtRenderContextFlags.EvtRenderContextUser);
                 }
             }
@@ -97,7 +97,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public EventLogSession()
         {
-            //handle = EventLogHandle.Zero;
+            // handle = EventLogHandle.Zero;
             _syncObject = new object();
         }
 
@@ -132,7 +132,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 if (password != null)
                     erLogin.Password.SetMemory(SecureStringMarshal.SecureStringToCoTaskMemUnicode(password));
-                //open a session using the erLogin structure.
+                // open a session using the erLogin structure.
                 _handle = NativeWrapper.EvtOpenSession(UnsafeNativeMethods.EvtLoginClass.EvtRpcLogin, ref erLogin, 0, 0);
             }
             finally

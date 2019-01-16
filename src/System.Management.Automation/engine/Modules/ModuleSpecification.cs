@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     public class ModuleSpecification
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         public ModuleSpecification()
         {
@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException(nameof(moduleName));
             }
+
             this.Name = moduleName;
             // Alias name of miniumVersion
             this.Version = null;
@@ -81,8 +82,8 @@ namespace Microsoft.PowerShell.Commands
         /// Initialize moduleSpecification from hashtable. Return exception object, if hashtable cannot be converted.
         /// Return null, in the success case.
         /// </summary>
-        /// <param name="moduleSpecification">object to initialize</param>
-        /// <param name="hashtable">contains info about object to initialize.</param>
+        /// <param name="moduleSpecification">Object to initialize.</param>
+        /// <param name="hashtable">Contains info about object to initialize.</param>
         /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
         {
@@ -107,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
                     {
-                        moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<String>(entry.Value);
+                        moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<string>(entry.Value);
                         ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
                     else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
@@ -120,6 +121,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             badKeys.Append(", ");
                         }
+
                         badKeys.Append("'");
                         badKeys.Append(entry.Key.ToString());
                         badKeys.Append("'");
@@ -163,6 +165,7 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
+
             return null;
         }
 
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
                 }
+
                 if (MaximumVersion != null)
                 {
                     moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
@@ -222,10 +226,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Parse the specified string into a ModuleSpecification object
+        /// Parse the specified string into a ModuleSpecification object.
         /// </summary>
-        /// <param name="input">The module specification string</param>
-        /// <param name="result">the ModuleSpecification object</param>
+        /// <param name="input">The module specification string.</param>
+        /// <param name="result">The ModuleSpecification object.</param>
         /// <returns></returns>
         public static bool TryParse(string input, out ModuleSpecification result)
         {
@@ -248,6 +252,31 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Copy the module specification while normalizing the name
+        /// so that paths become absolute and use the right directory separators.
+        /// </summary>
+        /// <param name="context">The current execution context. Used for path normalization.</param>
+        /// <param name="basePath">The base path where a relative path should be interpreted with respect to.</param>
+        /// <returns>A fresh module specification object with the name normalized for use internally.</returns>
+        internal ModuleSpecification WithNormalizedName(ExecutionContext context, string basePath)
+        {
+            // Save allocating a new module spec if we don't need to change anything
+            if (!ModuleIntrinsics.IsModuleNamePath(Name))
+            {
+                return this;
+            }
+
+            return new ModuleSpecification()
+            {
+                Guid = Guid,
+                MaximumVersion = MaximumVersion,
+                Version = Version,
+                RequiredVersion = RequiredVersion,
+                Name = ModuleIntrinsics.NormalizeModuleName(Name, basePath, context)
+            };
+        }
+
+        /// <summary>
         /// The module name.
         /// </summary>
         public string Name { get; internal set; }
@@ -265,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The module maxVersion number if specified, otherwise null.
         /// </summary>
-        public String MaximumVersion { get; internal set; }
+        public string MaximumVersion { get; internal set; }
 
         /// <summary>
         /// The exact version of the module if specified, otherwise null.
@@ -292,11 +321,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return x != null && y != null
-                && String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)
                 && Version.Equals(x.Version, y.Version)
-                && String.Equals(x.MaximumVersion, y.MaximumVersion);
+                && string.Equals(x.MaximumVersion, y.MaximumVersion);
         }
 
         /// <summary>
@@ -316,4 +345,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
-} // Microsoft.PowerShell.Commands
+}

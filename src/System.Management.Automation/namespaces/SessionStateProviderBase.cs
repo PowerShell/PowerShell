@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region tracer
 
         /// <summary>
-        /// An instance of the PSTraceSource class used for trace output
+        /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
         [Dbg.TraceSourceAttribute(
              "SessionStateProvider",
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Derived classes must override to get items from session state
+        /// Derived classes must override to get items from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the item to get.
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Since items are often more than their value, this method should
-        /// be overridden to provide the value for an item
+        /// be overridden to provide the value for an item.
         /// </summary>
         /// <param name="item">
         /// The item to extract the value from.
@@ -109,8 +109,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = ((DictionaryEntry)item).Value;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -149,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary table = GetSessionStateTable();
             if (table != null)
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     isContainer = true;
                     item = table.Values;
@@ -167,10 +168,10 @@ namespace Microsoft.PowerShell.Commands
                     WriteItemObject(item, name, isContainer);
                 }
             }
-        } // GetItem
+        }
 
         /// <summary>
-        /// Sets a session state item to a given value
+        /// Sets a session state item to a given value.
         /// </summary>
         /// <param name="name">
         /// Name of the item to set
@@ -186,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
             string name,
             object value)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 WriteError(new ErrorRecord(
                     PSTraceSource.NewArgumentNullException("name"),
@@ -205,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.SetItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         name,
@@ -230,14 +231,14 @@ namespace Microsoft.PowerShell.Commands
                         argException.ErrorRecord,
                         argException));
             }
-        } // SetItem
+        }
 
         /// <summary>
         /// </summary>
         /// <param name="path"></param>
         protected override void ClearItem(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 WriteError(new ErrorRecord(
                     PSTraceSource.NewArgumentNullException("path"),
@@ -256,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.ClearItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -280,14 +281,14 @@ namespace Microsoft.PowerShell.Commands
                         argException.ErrorRecord,
                         argException));
             }
-        } // ClearItem
+        }
 
         #endregion ItemCmdletProvider overrides
 
         #region ContainerCmdletProvider overrides
 
         /// <summary>
-        /// Gets the item(s) at the given path
+        /// Gets the item(s) at the given path.
         /// </summary>
         /// <param name="path">
         /// The name of the item to retrieve, or all if empty or null.
@@ -298,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void GetChildItems(string path, bool recurse)
         {
             CommandOrigin origin = this.Context.Origin;
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 IDictionary dictionary = null;
 
@@ -323,6 +324,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     sortedEntries.Add(entry);
                 }
+
                 sortedEntries.Sort(
                     delegate (DictionaryEntry left, DictionaryEntry right)
                     {
@@ -399,10 +401,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // GetChildItems
+        }
 
         /// <summary>
-        /// Gets the name(s) of the item(s) at the given path
+        /// Gets the name(s) of the item(s) at the given path.
         /// </summary>
         /// <param name="path">
         /// The name of the item to retrieve, or all if empty or null.
@@ -413,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void GetChildNames(string path, ReturnContainers returnContainers)
         {
             CommandOrigin origin = this.Context.Origin;
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 IDictionary dictionary = null;
 
@@ -491,10 +493,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // GetChildNames
+        }
 
         /// <summary>
-        /// Determines if there are any items
+        /// Determines if there are any items.
         /// </summary>
         /// <param name="path">
         /// The container to check to see if there are any children.
@@ -506,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 try
                 {
@@ -527,10 +529,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // HasChildItems
+        }
 
         /// <summary>
-        /// Determines if the specified item exists
+        /// Determines if the specified item exists.
         /// </summary>
         /// <param name="path">
         /// The path to the item to check. If this is null or empty, the item
@@ -543,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 result = true;
             }
@@ -572,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if the specified path is syntactically and semantically valid.
@@ -589,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override bool IsValidPath(string path)
         {
-            return !String.IsNullOrEmpty(path);
+            return !string.IsNullOrEmpty(path);
         }
 
         /// <summary>
@@ -603,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void RemoveItem(string path, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -622,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.RemoveItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -677,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void NewItem(string path, string type, object newItem)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -727,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.NewItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -739,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
                     SetItem(path, newItem);
                 }
             }
-        } // NewItem
+        }
 
         /// <summary>
         /// Copies the specified item.
@@ -755,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void CopyItem(string path, string copyPath, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -770,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
             // If copyPath is null or empty, that means we are trying to copy
             // the item to itself so it should be a no-op.
 
-            if (String.IsNullOrEmpty(copyPath))
+            if (string.IsNullOrEmpty(copyPath))
             {
                 // Just get the item for -passthru
                 GetItem(path);
@@ -803,7 +805,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.CopyItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -848,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-        } // CopyItem
+        }
 
         /// <summary>
         /// Copies the specified item.
@@ -861,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void RenameItem(string name, string newName)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("name");
@@ -920,7 +922,7 @@ namespace Microsoft.PowerShell.Commands
                             string resourceTemplate = SessionStateProviderBaseStrings.RenameItemResourceTemplate;
 
                             string resource =
-                                String.Format(
+                                string.Format(
                                     Host.CurrentCulture,
                                     resourceTemplate,
                                     name,
@@ -928,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (ShouldProcess(resource, action))
                             {
-                                if (String.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
+                                if (string.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // This is a no-op. Just get the item for -passthru
                                     GetItem(newName);
@@ -994,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-        } // RenameItem
+        }
 
         #endregion ContainerCmdletProvider overrides
 
@@ -1031,7 +1033,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Always throws a NotSupportedException
+        /// Always throws a NotSupportedException.
         /// </summary>
         /// <param name="path">
         /// ignored.
@@ -1052,38 +1054,38 @@ namespace Microsoft.PowerShell.Commands
         // so these methods just return null
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentReaderDynamicParameters(string path) { return null; }
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentWriterDynamicParameters(string path) { return null; }
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object ClearContentDynamicParameters(string path) { return null; }
 
         #endregion
         #endregion
-    } // SessionStateProviderBase
+    }
 
     /// <summary>
-    /// The content reader/writer for all providers deriving from SessionStateProviderBase
+    /// The content reader/writer for all providers deriving from SessionStateProviderBase.
     /// </summary>
     public class SessionStateProviderBaseContentReaderWriter : IContentReader, IContentWriter
     {
         /// <summary>
         /// Constructs a content reader/writer for the specified provider using the specified
-        /// path to read or write the content
+        /// path to read or write the content.
         /// </summary>
         /// <param name="path">
         /// The path to the session state item which the content will be read or written.
@@ -1100,7 +1102,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         internal SessionStateProviderBaseContentReaderWriter(string path, SessionStateProviderBase provider)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1109,6 +1111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("provider");
             }
+
             _path = path;
             _provider = provider;
         }
@@ -1117,7 +1120,7 @@ namespace Microsoft.PowerShell.Commands
         private SessionStateProviderBase _provider;
 
         /// <summary>
-        /// Reads the content from the item
+        /// Reads the content from the item.
         /// </summary>
         /// <param name="readCount">
         /// The number of "blocks" of data to be read from the item.
@@ -1145,12 +1148,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = getItemValueResult as IList ?? new object[] { getItemValueResult };
                     }
+
                     _contentRead = true;
                 }
             }
 
             return result;
         }
+
         private bool _contentRead;
 
         /// <summary>
@@ -1187,7 +1192,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// None of the derived providers supports seeking for V1 so this
-        /// always throws a NotSupportedException
+        /// always throws a NotSupportedException.
         /// </summary>
         /// <param name="offset">
         /// ignored

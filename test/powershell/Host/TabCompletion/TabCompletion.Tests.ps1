@@ -10,6 +10,35 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-Command'
     }
 
+    Context "ExperimentalFeatures" {
+
+        BeforeAll {
+            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
+
+            @"
+            {
+                "ExperimentalFeatures": [
+                  "PSUseAbbreviationExpansion"
+                ]
+            }
+"@ > $configFilePath
+
+        }
+
+        It 'Should complete abbreviated cmdlet' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res | Should -HaveCount 1
+            $res | Should -BeExactly 'Import-PowerShellDataFile'
+        }
+
+        It 'Should complete abbreviated function' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res.Count | Should -BeGreaterOrEqual 1
+            $res | Should -BeExactly 'PSConsoleHostReadLine'
+        }
+
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
@@ -491,7 +520,7 @@ Describe "TabCompletion" -Tags CI {
                 ## if $PSHOME contains a space tabcompletion adds ' around the path
                 @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
-                @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
+                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }}
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests
@@ -696,7 +725,7 @@ dir -Recurse `
         It "Test member completion of a static method invocation" {
             $inputStr = '[powershell]::Create().'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 31
+            $res.CompletionMatches | Should -HaveCount 32
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
     }
@@ -1031,21 +1060,27 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPath = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt"))) {
+            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
+            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
+            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
             }
 
+            # If help content is present on both scopes, expect 2 or else expect 1 completion.
+            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
     }
 }
 
-Describe "Tab completion tests with remote Runspace" -Tags Feature {
+Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
         if ($IsWindows) {
             $session = New-RemoteSession
@@ -1116,9 +1151,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
-        for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $res.CompletionMatches[$i].ListItemText | Should -Be $listener[$i].Name
-        }
+        $res.CompletionMatches.ListItemText | Should -BeIn $listener.Name
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(

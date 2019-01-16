@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DateTime? At
         {
             get { return _time; }
+
             set { _time = value; }
         }
 
@@ -57,6 +58,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public List<DayOfWeek> DaysOfWeek
         {
             get { return _daysOfWeek; }
+
             set { _daysOfWeek = value; }
         }
 
@@ -66,15 +68,17 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 Interval
         {
             get { return _interval; }
+
             set { _interval = value; }
         }
 
         /// <summary>
-        ///  Trigger frequency.
+        /// Trigger frequency.
         /// </summary>
         public TriggerFrequency Frequency
         {
             get { return _frequency; }
+
             set { _frequency = value; }
         }
 
@@ -84,6 +88,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RandomDelay
         {
             get { return _randomDelay; }
+
             set { _randomDelay = value; }
         }
 
@@ -93,6 +98,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionInterval
         {
             get { return _repInterval; }
+
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
@@ -107,6 +113,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionDuration
         {
             get { return _repDuration; }
+
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
@@ -121,6 +128,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string User
         {
             get { return _user; }
+
             set { _user = value; }
         }
 
@@ -130,6 +138,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 Id
         {
             get { return _id; }
+
             internal set { _id = value; }
         }
 
@@ -139,6 +148,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool Enabled
         {
             get { return _enabled; }
+
             set { _enabled = value; }
         }
 
@@ -148,6 +158,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition JobDefinition
         {
             get { return _jobDefAssociation; }
+
             internal set { _jobDefAssociation = value; }
         }
 
@@ -164,16 +175,16 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="enabled">Enabled</param>
-        /// <param name="frequency">Trigger frequency</param>
-        /// <param name="time">Trigger time</param>
-        /// <param name="daysOfWeek">Weekly days of week</param>
-        /// <param name="interval">Daily or Weekly interval</param>
-        /// <param name="randomDelay">Random delay</param>
-        /// <param name="repetitionInterval">Repetition interval</param>
-        /// <param name="repetitionDuration">Repetition duration</param>
-        /// <param name="user">Logon user</param>
-        /// <param name="id">Trigger id</param>
+        /// <param name="enabled">Enabled.</param>
+        /// <param name="frequency">Trigger frequency.</param>
+        /// <param name="time">Trigger time.</param>
+        /// <param name="daysOfWeek">Weekly days of week.</param>
+        /// <param name="interval">Daily or Weekly interval.</param>
+        /// <param name="randomDelay">Random delay.</param>
+        /// <param name="repetitionInterval">Repetition interval.</param>
+        /// <param name="repetitionDuration">Repetition duration.</param>
+        /// <param name="user">Logon user.</param>
+        /// <param name="id">Trigger id.</param>
         private ScheduledJobTrigger(
             bool enabled,
             TriggerFrequency frequency,
@@ -201,7 +212,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        /// <param name="copyTrigger">ScheduledJobTrigger</param>
+        /// <param name="copyTrigger">ScheduledJobTrigger.</param>
         internal ScheduledJobTrigger(ScheduledJobTrigger copyTrigger)
         {
             if (copyTrigger == null)
@@ -224,10 +235,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Serialization constructor
+        /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobTrigger(
             SerializationInfo info,
@@ -355,10 +366,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerOnceType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_repInterval != null || _repDuration != null)
                     {
                         ValidateOnceRepetitionParams(_repInterval, _repDuration);
                     }
+
                     break;
 
                 case TriggerFrequency.Daily:
@@ -367,10 +380,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerDailyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_interval < 1)
                     {
                         throw new ScheduledJobException(ScheduledJobErrorStrings.InvalidDaysIntervalParam);
                     }
+
                     break;
 
                 case TriggerFrequency.Weekly:
@@ -379,15 +394,18 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerWeeklyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_interval < 1)
                     {
                         throw new ScheduledJobException(ScheduledJobErrorStrings.InvalidWeeksIntervalParam);
                     }
+
                     if (_daysOfWeek == null || _daysOfWeek.Count == 0)
                     {
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerDaysOfWeek, ScheduledJobErrorStrings.TriggerWeeklyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     break;
             }
         }
@@ -456,13 +474,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a one time ScheduledJobTrigger object.
         /// </summary>
-        /// <param name="time">DateTime when trigger activates</param>
-        /// <param name="delay">Random delay</param>
-        /// <param name="repetitionInterval">Repetition interval</param>
-        /// <param name="repetitionDuration">Repetition duration</param>
-        /// <param name="id">Trigger Id</param>
-        /// <param name="enabled">Trigger enabled state</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <param name="time">DateTime when trigger activates.</param>
+        /// <param name="delay">Random delay.</param>
+        /// <param name="repetitionInterval">Repetition interval.</param>
+        /// <param name="repetitionDuration">Repetition duration.</param>
+        /// <param name="id">Trigger Id.</param>
+        /// <param name="enabled">Trigger enabled state.</param>
+        /// <returns>ScheduledJobTrigger.</returns>
         public static ScheduledJobTrigger CreateOnceTrigger(
             DateTime time,
             TimeSpan delay,
@@ -487,12 +505,12 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a daily ScheduledJobTrigger object.
         /// </summary>
-        /// <param name="time">Time of day when trigger activates</param>
-        /// <param name="interval">Days interval for trigger activation</param>
-        /// <param name="delay">Random delay</param>
-        /// <param name="id">Trigger Id</param>
-        /// <param name="enabled">Trigger enabled state</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <param name="time">Time of day when trigger activates.</param>
+        /// <param name="interval">Days interval for trigger activation.</param>
+        /// <param name="delay">Random delay.</param>
+        /// <param name="id">Trigger Id.</param>
+        /// <param name="enabled">Trigger enabled state.</param>
+        /// <returns>ScheduledJobTrigger.</returns>
         public static ScheduledJobTrigger CreateDailyTrigger(
             DateTime time,
             Int32 interval,
@@ -516,13 +534,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a weekly ScheduledJobTrigger object.
         /// </summary>
-        /// <param name="time">Time of day when trigger activates</param>
-        /// <param name="interval">Weeks interval for trigger activation</param>
-        /// <param name="daysOfWeek">Days of the week for trigger activation</param>
-        /// <param name="delay">Random delay</param>
-        /// <param name="id">Trigger Id</param>
-        /// <param name="enabled">Trigger enabled state</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <param name="time">Time of day when trigger activates.</param>
+        /// <param name="interval">Weeks interval for trigger activation.</param>
+        /// <param name="daysOfWeek">Days of the week for trigger activation.</param>
+        /// <param name="delay">Random delay.</param>
+        /// <param name="id">Trigger Id.</param>
+        /// <param name="enabled">Trigger enabled state.</param>
+        /// <returns>ScheduledJobTrigger.</returns>
         public static ScheduledJobTrigger CreateWeeklyTrigger(
             DateTime time,
             Int32 interval,
@@ -549,11 +567,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a trigger that activates after user log on.
         /// </summary>
-        /// <param name="user">Name of user</param>
-        /// <param name="delay">Random delay</param>
-        /// <param name="id">Trigger Id</param>
-        /// <param name="enabled">Trigger enabled state</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <param name="user">Name of user.</param>
+        /// <param name="delay">Random delay.</param>
+        /// <param name="id">Trigger Id.</param>
+        /// <param name="enabled">Trigger enabled state.</param>
+        /// <returns>ScheduledJobTrigger.</returns>
         public static ScheduledJobTrigger CreateAtLogOnTrigger(
             string user,
             TimeSpan delay,
@@ -576,10 +594,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a trigger that activates after OS boot.
         /// </summary>
-        /// <param name="delay">Random delay</param>
-        /// <param name="id">Trigger Id</param>
-        /// <param name="enabled">Trigger enabled state</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <param name="delay">Random delay.</param>
+        /// <param name="id">Trigger Id.</param>
+        /// <param name="enabled">Trigger enabled state.</param>
+        /// <returns>ScheduledJobTrigger.</returns>
         public static ScheduledJobTrigger CreateAtStartupTrigger(
             TimeSpan delay,
             Int32 id,
@@ -678,7 +696,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
     #region JobTriggerToCimInstanceConverter
     /// <summary>
-    /// Class providing implementation of PowerShell conversions for types in Microsoft.Management.Infrastructure namespace
+    /// Class providing implementation of PowerShell conversions for types in Microsoft.Management.Infrastructure namespace.
     /// </summary>
     public sealed class JobTriggerToCimInstanceConverter : PSTypeConverter
     {
@@ -687,8 +705,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Determines if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public override bool CanConvertFrom(object sourceValue, Type destinationType)
         {
@@ -701,14 +719,14 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
-        /// <param name="ignoreCase">true if case should be ignored</param>
-        /// <returns>the <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible</exception>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
+        /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             if (destinationType == null)
@@ -747,10 +765,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
+        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public override bool CanConvertTo(object sourceValue, Type destinationType)
         {
@@ -758,14 +776,14 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
-        /// <param name="ignoreCase">true if case should be ignored</param>
-        /// <returns>sourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible</exception>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
+        /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             throw new NotImplementedException();

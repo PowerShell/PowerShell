@@ -43,6 +43,7 @@ namespace System.Management.Automation
             {
                 return 82460653; // random number
             }
+
             unchecked
             {
                 int hash = 41; // 41 is a random prime number
@@ -54,6 +55,7 @@ namespace System.Management.Automation
                         hash = hash + x.GetHashCode();
                     }
                 }
+
                 return hash;
             }
         }
@@ -76,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
         /// </summary>
-        /// <param name="type">type</param>
-        /// <returns>true when type has a default ctor.</returns>
+        /// <param name="type">Type.</param>
+        /// <returns>True when type has a default ctor.</returns>
         internal static bool HasDefaultCtor(this Type type)
         {
             var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);

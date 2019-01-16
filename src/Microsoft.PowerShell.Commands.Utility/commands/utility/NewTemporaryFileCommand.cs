@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
                             tempPath));
                     return;
                 }
+
                 if (!string.IsNullOrEmpty(filePath))
                 {
                     FileInfo file = new FileInfo(filePath);

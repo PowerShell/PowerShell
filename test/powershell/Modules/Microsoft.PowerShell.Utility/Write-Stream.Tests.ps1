@@ -10,7 +10,7 @@ Describe "Stream writer tests" -Tags "CI" {
         [CmdletBinding()]
 
         param()
-        If ($PSBoundParameters['Debug']) { $DebugPreference = 'Continue' }
+
         Write-Verbose "Verbose message"
 
         Write-Debug "Debug message"

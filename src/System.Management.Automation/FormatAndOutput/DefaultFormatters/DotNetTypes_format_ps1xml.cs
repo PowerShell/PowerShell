@@ -877,6 +877,7 @@ namespace System.Management.Automation.Runspaces
                             $sourceName = $_.PSComputerName;
                             if($sourceName -eq ""."")
                             {$sourceName = $env:COMPUTERNAME;}
+
                             return $sourceName;
                         ")
                         .AddPropertyColumn("Address")
@@ -907,26 +908,35 @@ namespace System.Management.Automation.Runspaces
                     $eventType = $_.EventType;
                     if($_.EventType -eq 100)
                     {$eventType = ""BEGIN_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 101)
                     {$eventType = ""END_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 102)
                     {$eventType = ""BEGIN_NESTED_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 103)
                     {$eventType = ""END_NESTED_SYSTEM_CHANGE"";}
+
                     return $eventType;
                 ")
                         .AddScriptBlockColumn(@"
                 $RestorePointType = $_.RestorePointType;
                 if($_.RestorePointType -eq 0)
                 { $RestorePointType = ""APPLICATION_INSTALL"";}
+
                 if($_.RestorePointType -eq 1)
                 { $RestorePointType = ""APPLICATION_UNINSTALL"";}
+
                 if($_.RestorePointType -eq 10)
                 { $RestorePointType = ""DEVICE_DRIVER_INSTALL"";}
+
                 if($_.RestorePointType -eq 12)
                 { $RestorePointType = ""MODIFY_SETTINGS"";}
+
                 if($_.RestorePointType -eq 13)
                 { $RestorePointType = ""CANCELLED_OPERATION"";}
+
                     return $RestorePointType;
                 ")
                     .EndRowDefinition()
@@ -952,26 +962,35 @@ namespace System.Management.Automation.Runspaces
                     $eventType = $_.EventType;
                     if($_.EventType -eq 100)
                     {$eventType = ""BEGIN_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 101)
                     {$eventType = ""END_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 102)
                     {$eventType = ""BEGIN_NESTED_SYSTEM_CHANGE"";}
+
                     if($_.EventType -eq 103)
                     {$eventType = ""END_NESTED_SYSTEM_CHANGE"";}
+
                     return $eventType;
                   ")
                         .AddScriptBlockColumn(@"
                     $RestorePointType = $_.RestorePointType;
                     if($_.RestorePointType -eq 0)
                     { $RestorePointType = ""APPLICATION_INSTALL"";}
+
                     if($_.RestorePointType -eq 1)
                     { $RestorePointType = ""APPLICATION_UNINSTALL"";}
+
                     if($_.RestorePointType -eq 10)
                     { $RestorePointType = ""DEVICE_DRIVER_INSTALL"";}
+
                     if($_.RestorePointType -eq 12)
                     { $RestorePointType = ""MODIFY_SETTINGS"";}
+
                     if($_.RestorePointType -eq 13)
                     { $RestorePointType = ""CANCELLED_OPERATION"";}
+
                     return $RestorePointType;
                   ")
                     .EndRowDefinition()

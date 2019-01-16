@@ -1,21 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Tracing;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation.Remoting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.PowerShell.Commands;
-using System.Security.Principal;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
+using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -88,6 +91,7 @@ namespace System.Management.Automation
             {
                 return _bypassRunspaceStateCheck;
             }
+
             set
             {
                 _bypassRunspaceStateCheck = value;
@@ -106,7 +110,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Construct a remote runspace based on the connection information
-        /// and the specified host
+        /// and the specified host.
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -120,7 +124,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="connectionInfo">connection information which identifies
         /// the remote computer</param>
-        /// <param name="host">host on the client</param>
+        /// <param name="host">Host on the client.</param>
         /// <param name="applicationArguments">
         /// <param name="name">Friendly name for remote runspace session.</param>
         /// <param name="id">Id for remote runspace.</param>
@@ -217,7 +221,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// initialsessionstate information for this runspace
+        /// Initialsessionstate information for this runspace.
         /// </summary>
         public override InitialSessionState InitialSessionState
         {
@@ -247,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return version of this runspace
+        /// Return version of this runspace.
         /// </summary>
         public override Version Version { get; } = PSVersionInfo.PSVersion;
 
@@ -257,7 +261,7 @@ namespace System.Management.Automation
         internal Version ServerVersion { get; private set; }
 
         /// <summary>
-        /// Retrieve information about current state of the runspace
+        /// Retrieve information about current state of the runspace.
         /// </summary>
         public override RunspaceStateInfo RunspaceStateInfo
         {
@@ -265,14 +269,14 @@ namespace System.Management.Automation
             {
                 lock (_syncRoot)
                 {
-                    //Do not return internal state.
+                    // Do not return internal state.
                     return _runspaceStateInfo.Clone();
                 }
             }
         }
 
         /// <summary>
-        /// This property determines whether a new thread is create for each invocation
+        /// This property determines whether a new thread is create for each invocation.
         /// </summary>
         /// <remarks>
         /// Any updates to the value of this property must be done before the Runspace is opened
@@ -306,16 +310,19 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
-        /// Gets the current availability of the Runspace
+        /// Gets the current availability of the Runspace.
         /// </summary>
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -329,7 +336,7 @@ namespace System.Management.Automation
         public override event EventHandler<RunspaceAvailabilityEventArgs> AvailabilityChanged;
 
         /// <summary>
-        /// Returns true if there are any subscribers to the AvailabilityChanged event
+        /// Returns true if there are any subscribers to the AvailabilityChanged event.
         /// </summary>
         internal override bool HasAvailabilityChangedSubscribers
         {
@@ -337,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Raises the AvailabilityChanged event
+        /// Raises the AvailabilityChanged event.
         /// </summary>
         protected override void OnAvailabilityChanged(RunspaceAvailabilityEventArgs e)
         {
@@ -356,7 +363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Connection information to this runspace
+        /// Connection information to this runspace.
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {
@@ -367,12 +374,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ConnectionInfo originally supplied by the user
+        /// ConnectionInfo originally supplied by the user.
         /// </summary>
         public override RunspaceConnectionInfo OriginalConnectionInfo { get; }
 
         /// <summary>
-        /// Gets the event manager
+        /// Gets the event manager.
         /// </summary>
         public override PSEventManager Events
         {
@@ -387,7 +394,7 @@ namespace System.Management.Automation
 #pragma warning disable 56503
 
         /// <summary>
-        /// Gets the execution context for this runspace
+        /// Gets the execution context for this runspace.
         /// </summary>
         internal override ExecutionContext GetExecutionContext
         {
@@ -398,7 +405,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the internal host is in a nested prompt
+        /// Returns true if the internal host is in a nested prompt.
         /// </summary>
         internal override bool InNestedPrompt
         {
@@ -412,7 +419,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the client remote session associated with this
-        /// runspace
+        /// runspace.
         /// </summary>
         /// <remarks>This member is actually not required
         /// for the product code. However, there are
@@ -465,6 +472,7 @@ namespace System.Management.Automation
         internal string PSSessionName
         {
             get { return RunspacePool.RemoteRunspacePoolInternal.Name; }
+
             set { RunspacePool.RemoteRunspacePoolInternal.Name = value; }
         }
 
@@ -490,7 +498,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Debugger
+        /// This is used to indicate a special loopback remote session used for JEA restrictions.
+        /// </summary>
+        internal bool IsConfiguredLoopBack
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Debugger.
         /// </summary>
         public override Debugger Debugger
         {
@@ -595,9 +612,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Dispose this runspace
+        /// Dispose this runspace.
         /// </summary>
-        /// <param name="disposing">true if called from Dispose</param>
+        /// <param name="disposing">True if called from Dispose.</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -656,7 +673,7 @@ namespace System.Management.Automation
                         _eventManager = null;
 
                         RunspacePool.Dispose();
-                        //_runspacePool = null;
+                        // _runspacePool = null;
                     }
                     catch (InvalidRunspacePoolStateException e)
                     {
@@ -750,12 +767,12 @@ namespace System.Management.Automation
         /// Creates a single disconnected remote Runspace object based on connection information and
         /// session / command identifiers.
         /// </summary>
-        /// <param name="connectionInfo">Connection object for target machine</param>
-        /// <param name="sessionId">Session Id to connect to</param>
-        /// <param name="commandId">Optional command Id to connect to</param>
-        /// <param name="host">Optional PSHost</param>
-        /// <param name="typeTable">Optional TypeTable</param>
-        /// <returns>Disconnect remote Runspace object</returns>
+        /// <param name="connectionInfo">Connection object for target machine.</param>
+        /// <param name="sessionId">Session Id to connect to.</param>
+        /// <param name="commandId">Optional command Id to connect to.</param>
+        /// <param name="host">Optional PSHost.</param>
+        /// <param name="typeTable">Optional TypeTable.</param>
+        /// <returns>Disconnect remote Runspace object.</returns>
         internal static Runspace GetRemoteRunspace(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
             RunspacePool runspacePool = RemoteRunspacePoolInternal.GetRemoteRunspacePool(
@@ -933,7 +950,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             RunspaceCapability returnCaps = RunspaceCapability.Default;
@@ -1004,18 +1021,18 @@ namespace System.Management.Automation
         #region CreatePipeline
 
         /// <summary>
-        /// Create an empty pipeline
+        /// Create an empty pipeline.
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);
         }
 
         /// <summary>
-        /// Create a pipeline from a command string
+        /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1035,8 +1052,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1071,8 +1088,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1127,12 +1144,13 @@ namespace System.Management.Automation
                     {
                         e.Source = this.ConnectionInfo.ComputerName;
                     }
+
                     throw e;
                 }
 
-                //Add the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Add the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 _runningPipelines.Add(pipeline);
             }
         }
@@ -1154,9 +1172,9 @@ namespace System.Management.Automation
                 Dbg.Assert(_runspaceStateInfo.State != RunspaceState.BeforeOpen,
                              "Runspace should not be before open when pipeline is running");
 
-                //Remove the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Remove the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 _runningPipelines.Remove(pipeline);
                 pipeline.PipelineFinishedEvent.Set();
             }
@@ -1164,14 +1182,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Check to see, if there is any other pipeline running in this
-        /// runspace. If not, then add this to the list of pipelines
+        /// runspace. If not, then add this to the list of pipelines.
         /// </summary>
-        /// <param name="pipeline">pipeline to check and add</param>
+        /// <param name="pipeline">Pipeline to check and add.</param>
         /// <param name="syncCall">whether this is being called from
         /// a synchronous method call</param>
         internal void DoConcurrentCheckAndAddToRunningPipelines(RemotePipeline pipeline, bool syncCall)
         {
-            //Concurrency check should be done under runspace lock
+            // Concurrency check should be done under runspace lock
             lock (_syncRoot)
             {
                 if (_bSessionStateProxyCallInProgress == true)
@@ -1179,10 +1197,10 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
 
-                //Delegate to pipeline to do check if it is fine to invoke if another
-                //pipeline is running.
+                // Delegate to pipeline to do check if it is fine to invoke if another
+                // pipeline is running.
                 pipeline.DoConcurrentCheck(syncCall);
-                //Finally add to the list of running pipelines.
+                // Finally add to the list of running pipelines.
                 AddToRunningPipelineList(pipeline);
             }
         }
@@ -1235,8 +1253,10 @@ namespace System.Management.Automation
                                 _applicationPrivateData = GetApplicationPrivateData();
                                 SetDebugInfo(_applicationPrivateData);
                             }
+
                             break;
                     }
+
                     break;
 
                 case RunspaceState.Disconnected:
@@ -1347,13 +1367,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Asserts if the current state of the runspace is BeforeOpen
+        /// Asserts if the current state of the runspace is BeforeOpen.
         /// </summary>
         private void AssertIfStateIsBeforeOpen()
         {
             lock (_syncRoot)
             {
-                //Call fails if RunspaceState is not BeforeOpen.
+                // Call fails if RunspaceState is not BeforeOpen.
                 if (_runspaceStateInfo.State != RunspaceState.BeforeOpen)
                 {
                     InvalidRunspaceStateException e =
@@ -1373,11 +1393,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">The new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
-        /// <returns>Previous runspace state</returns>
+        /// <returns>Previous runspace state.</returns>
         /// <remarks>
         /// Sets the internal runspace state information member variable. It also
         /// adds RunspaceStateInfo to a queue.
@@ -1394,12 +1414,12 @@ namespace System.Management.Automation
                 {
                     _runspaceStateInfo = new RunspaceStateInfo(state, reason);
 
-                    //Add _runspaceStateInfo to _runspaceEventQueue.
-                    //RaiseRunspaceStateEvents will raise event for each item
-                    //in this queue.
-                    //Note:We are doing clone here instead of passing the member
-                    //_runspaceStateInfo because we donot want outside
-                    //to change our runspace state.
+                    // Add _runspaceStateInfo to _runspaceEventQueue.
+                    // RaiseRunspaceStateEvents will raise event for each item
+                    // in this queue.
+                    // Note:We are doing clone here instead of passing the member
+                    // _runspaceStateInfo because we donot want outside
+                    // to change our runspace state.
                     RunspaceAvailability previousAvailability = _runspaceAvailability;
 
                     this.UpdateRunspaceAvailability(_runspaceStateInfo.State, false);
@@ -1440,9 +1460,9 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This
-                    //ensures that events do not get called for state
-                    //changes prior to their registration.
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
                     _runspaceEventQueue.Clear();
                 }
             }
@@ -1458,8 +1478,8 @@ namespace System.Management.Automation
                         this.OnAvailabilityChanged(new RunspaceAvailabilityEventArgs(queueItem.NewRunspaceAvailability));
                     }
 
-                    //Exception raised by events are not error condition for runspace
-                    //object.
+                    // Exception raised by events are not error condition for runspace
+                    // object.
                     if (stateChanged != null)
                     {
                         try
@@ -1475,7 +1495,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a pipeline
+        /// Creates a pipeline.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="addToHistory"></param>
@@ -1493,13 +1513,13 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Finishof")]
         private bool WaitForFinishofPipelines()
         {
-            //Take a snapshot of list of active pipelines.
-            //Note:Before we enter to this CloseHelper routine
-            //CoreClose has already set the state of Runspace
-            //to closing. So no new pipelines can be executed on this
-            //runspace and so no new pipelines will be added to
-            //_runningPipelines. However we still need to lock because
-            //running pipelines can be removed from this.
+            // Take a snapshot of list of active pipelines.
+            // Note:Before we enter to this CloseHelper routine
+            // CoreClose has already set the state of Runspace
+            // to closing. So no new pipelines can be executed on this
+            // runspace and so no new pipelines will be added to
+            // _runningPipelines. However we still need to lock because
+            // running pipelines can be removed from this.
             RemotePipeline[] runningPipelines;
 
             lock (_syncRoot)
@@ -1544,9 +1564,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles any host calls received from the server
+        /// Handles any host calls received from the server.
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
+        /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event, contains
         /// a RemoteHostCall object</param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
@@ -1580,7 +1600,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forward the events from the runspace pool to the current instance
+        /// Forward the events from the runspace pool to the current instance.
         /// </summary>
         private void HandleRunspacePoolForwardEvent(object sender, PSEventArgs e)
         {
@@ -1641,13 +1661,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if another Invoke-Command is executing
         /// in this runspace in the currently running local pipeline
-        /// ahead on the specified invoke-command
+        /// ahead on the specified invoke-command.
         /// </summary>
         /// <param name="invokeCommand">current invoke-command
         /// instance</param>
-        /// <param name="localPipelineId">local pipeline id</param>
-        /// <returns>true, if another invoke-command is running
-        /// before, false otherwise</returns>
+        /// <param name="localPipelineId">Local pipeline id.</param>
+        /// <returns>True, if another invoke-command is running
+        /// before, false otherwise.</returns>
         internal bool IsAnotherInvokeCommandExecuting(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
@@ -1690,11 +1710,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Keeps track of the current invoke command executing
-        /// within the current local pipeline
+        /// within the current local pipeline.
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
         /// which is currently being processed</param>
-        /// <param name="localPipelineId">the local pipeline id</param>
+        /// <param name="localPipelineId">The local pipeline id.</param>
         internal void SetCurrentInvokeCommand(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
@@ -1707,7 +1727,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Clears the current invoke-command reference stored within
-        /// this remote runspace
+        /// this remote runspace.
         /// </summary>
         internal void ClearInvokeCommand()
         {
@@ -1736,12 +1756,12 @@ namespace System.Management.Automation
         #region Misc Properties / Events
 
         /// <summary>
-        /// The runspace pool that this remote runspace wraps
+        /// The runspace pool that this remote runspace wraps.
         /// </summary>
         internal RunspacePool RunspacePool { get; }
 
         /// <summary>
-        /// EventHandler used to report connection URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 
@@ -1780,7 +1800,7 @@ namespace System.Management.Automation
     #region Remote Debugger
 
     /// <summary>
-    /// RemoteDebugger
+    /// RemoteDebugger.
     /// </summary>
     internal sealed class RemoteDebugger : Debugger, IDisposable
     {
@@ -1797,17 +1817,19 @@ namespace System.Management.Automation
         private UnhandledBreakpointProcessingMode _unhandledBreakpointMode;
         private bool _detachCommand;
 
-        // Impersonation flow
+#if !UNIX
+        // Windows impersonation flow
         private WindowsIdentity _identityToPersonate;
         private bool _identityPersonationChecked;
+#endif
 
         /// <summary>
-        /// RemoteDebuggerStopEvent
+        /// RemoteDebuggerStopEvent.
         /// </summary>
         public const string RemoteDebuggerStopEvent = "PSInternalRemoteDebuggerStopEvent";
 
         /// <summary>
-        /// RemoteDebuggerBreakpointUpdatedEvent
+        /// RemoteDebuggerBreakpointUpdatedEvent.
         /// </summary>
         public const string RemoteDebuggerBreakpointUpdatedEvent = "PSInternalRemoteDebuggerBreakpointUpdatedEvent";
 
@@ -1825,15 +1847,16 @@ namespace System.Management.Automation
         private RemoteDebugger() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="runspace">Associated remote runspace</param>
+        /// <param name="runspace">Associated remote runspace.</param>
         public RemoteDebugger(RemoteRunspace runspace)
         {
             if (runspace == null)
             {
                 throw new PSArgumentNullException("runspace");
             }
+
             _runspace = runspace;
 
             _unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
@@ -1850,9 +1873,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Process debugger command.
         /// </summary>
-        /// <param name="command">Debugger PSCommand</param>
-        /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <param name="command">Debugger PSCommand.</param>
+        /// <param name="output">Output.</param>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             CheckForValidateState();
@@ -1970,7 +1993,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// StopProcessCommand
+        /// StopProcessCommand.
         /// </summary>
         public override void StopProcessCommand()
         {
@@ -1985,9 +2008,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebuggerAction
+        /// SetDebuggerAction.
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction</param>
+        /// <param name="resumeAction">DebuggerResumeAction.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             CheckForValidateState();
@@ -2009,9 +2032,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// GetDebuggerStopped
+        /// GetDebuggerStopped.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             CheckForValidateState();
@@ -2027,6 +2050,7 @@ namespace System.Management.Automation
                     foreach (var item in output)
                     {
                         if (item == null) { continue; }
+
                         rtnArgs = item.BaseObject as DebuggerStopEventArgs;
                         if (rtnArgs != null) { break; }
                     }
@@ -2040,7 +2064,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebugMode
+        /// SetDebugMode.
         /// </summary>
         /// <param name="mode"></param>
         public override void SetDebugMode(DebugModes mode)
@@ -2070,7 +2094,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled</param>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             CheckForValidateState();
@@ -2121,7 +2145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// InternalProcessCommand
+        /// InternalProcessCommand.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
@@ -2132,7 +2156,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemote
+        /// IsRemote.
         /// </summary>
         internal override bool IsRemote
         {
@@ -2152,6 +2176,7 @@ namespace System.Management.Automation
             {
                 return _unhandledBreakpointMode;
             }
+
             set
             {
                 CheckForValidateState();
@@ -2181,18 +2206,20 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
             _runspace.RemoteDebuggerStop -= HandleForwardedDebuggerStopEvent;
             _runspace.RemoteDebuggerBreakpointUpdated -= HandleForwardedDebuggerBreakpointUpdatedEvent;
 
+#if !UNIX
             if (_identityToPersonate != null)
             {
                 _identityToPersonate.Dispose();
                 _identityToPersonate = null;
             }
+#endif
         }
 
         #endregion
@@ -2200,11 +2227,11 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        ///  Internal method that checks the debug state of
-        ///  the remote session and raises the DebuggerStop event
-        ///  if debugger is in stopped state.
-        ///  This is used internally to help clients get back to
-        ///  debug state when reconnecting to remote session in debug state.
+        /// Internal method that checks the debug state of
+        /// the remote session and raises the DebuggerStop event
+        /// if debugger is in stopped state.
+        /// This is used internally to help clients get back to
+        /// debug state when reconnecting to remote session in debug state.
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
@@ -2216,7 +2243,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemoteDebug
+        /// IsRemoteDebug.
         /// </summary>
         internal bool IsRemoteDebug
         {
@@ -2227,12 +2254,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets client debug info state based on server info.
         /// </summary>
-        /// <param name="debugMode">Debug mode</param>
-        /// <param name="inBreakpoint">Currently in breakpoint</param>
-        /// <param name="breakpointCount">Breakpoint count</param>
-        /// <param name="breakAll">Break All setting</param>
-        /// <param name="unhandledBreakpointMode">UnhandledBreakpointMode</param>
-        /// <param name="serverPSVersion">Server PowerShell version</param>
+        /// <param name="debugMode">Debug mode.</param>
+        /// <param name="inBreakpoint">Currently in breakpoint.</param>
+        /// <param name="breakpointCount">Breakpoint count.</param>
+        /// <param name="breakAll">Break All setting.</param>
+        /// <param name="unhandledBreakpointMode">UnhandledBreakpointMode.</param>
+        /// <param name="serverPSVersion">Server PowerShell version.</param>
         internal void SetClientDebugInfo(
             DebugModes? debugMode,
             bool inBreakpoint,
@@ -2316,7 +2343,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsDebuggerSteppingEnabled
+        /// IsDebuggerSteppingEnabled.
         /// </summary>
         internal override bool IsDebuggerSteppingEnabled
         {
@@ -2369,16 +2396,17 @@ namespace System.Management.Automation
 
             if (!invokedOnBlockedThread)
             {
-#if CORECLR
-                Threading.ThreadPool.QueueUserWorkItem(
-                    ProcessDebuggerStopEventProc,
-                    args);
-#else
                 // Otherwise run on worker thread.
+#if !UNIX
                 Utils.QueueWorkItemWithImpersonation(
                     _identityToPersonate,
                     ProcessDebuggerStopEventProc,
                     args);
+#else
+                Threading.ThreadPool.QueueUserWorkItem(
+                    ProcessDebuggerStopEventProc,
+                    args);
+
 #endif
             }
         }
@@ -2494,19 +2522,15 @@ namespace System.Management.Automation
                 throw new InvalidRunspaceStateException();
             }
 
+#if !UNIX
             if (!_identityPersonationChecked)
             {
                 _identityPersonationChecked = true;
 
                 // Save identity to impersonate.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToPersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToPersonate);
             }
+#endif
         }
 
         private void SetRemoteDebug(bool remoteDebug, RunspaceAvailability? availability)
@@ -2552,6 +2576,7 @@ namespace System.Management.Automation
             {
                 // Debugger is always inactive if RemoteScript is not selected.
                 if (_isActive) { _isActive = false; }
+
                 return;
             }
 
@@ -2565,12 +2590,12 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion
+#endregion
     }
 
-    #endregion
+#endregion
 
-    #region RemoteSessionStateProxy
+#region RemoteSessionStateProxy
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
@@ -2629,13 +2654,14 @@ namespace System.Management.Automation
             }
             catch (RemoteException e)
             {
-                if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
                     _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _setVariableCommandNotFoundException;
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2688,13 +2714,14 @@ namespace System.Management.Automation
             }
             catch (RemoteException e)
             {
-                if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
                     _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _getVariableCommandNotFoundException;
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2806,7 +2833,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the APIs to access drives out of session state
+        /// Get the APIs to access drives out of session state.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
@@ -2863,6 +2890,7 @@ namespace System.Management.Automation
 
                 return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);
             }
+
             set
             {
                 throw new PSNotSupportedException();
@@ -2972,5 +3000,5 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion
+#endregion
 }

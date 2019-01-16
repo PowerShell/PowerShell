@@ -15,17 +15,17 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PropertyCmdletProviderIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
@@ -42,10 +42,10 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // PropertyCmdletProviderIntrinsics internal
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the "real" session state.
@@ -61,7 +61,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // PropertyCmdletProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -114,7 +114,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetProperty(new string[] { path }, providerSpecificPickList, false);
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gets the specified properties from the specified item(s)
@@ -165,7 +165,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetProperty(path, providerSpecificPickList, literalPath);
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gets the specified properties from the specified item(s)
@@ -217,7 +217,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetProperty(new string[] { path }, providerSpecificPickList, context);
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-itemproperty cmdlet.
@@ -265,7 +265,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetPropertyDynamicParameters(path, providerSpecificPickList, context);
-        } // GetPropertyDynamicParameters
+        }
 
         #endregion GetProperty
 
@@ -314,7 +314,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetProperty(new string[] { path }, propertyValue, false, false);
-        } // SetProperty
+        }
 
         /// <summary>
         /// Sets the specified properties on the specified item(s)
@@ -367,7 +367,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetProperty(path, propertyValue, force, literalPath);
-        } // SetProperty
+        }
 
         /// <summary>
         /// Sets the specified properties on the specified item(s)
@@ -416,7 +416,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.SetProperty(new string[] { path }, propertyValue, context);
-        } // SetProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-itemproperty cmdlet.
@@ -463,7 +463,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetPropertyDynamicParameters(path, propertyValue, context);
-        } // SetPropertyDynamicParameters
+        }
 
         #endregion SetProperty
 
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearProperty(new string[] { path }, propertyToClear, false, false);
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Clear the specified properties from the specified item(s)
@@ -559,7 +559,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearProperty(path, propertyToClear, force, literalPath);
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Clears the specified properties from the specified item(s)
@@ -605,7 +605,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearProperty(new string[] { path }, propertyToClear, context);
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-itemproperty cmdlet.
@@ -652,14 +652,14 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearPropertyDynamicParameters(path, propertyToClear, context);
-        } // ClearPropertyDynamicParameters
+        }
 
         #endregion ClearProperty
 
         #region NewProperty
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="path">
         /// The path to the item on which the new property should be created.
@@ -710,10 +710,10 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewProperty(new string[] { path }, propertyName, propertyTypeName, value, false, false);
-        } // NewProperty
+        }
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s0 on which the new property should be created.
@@ -772,10 +772,10 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewProperty(path, propertyName, propertyTypeName, value, force, literalPath);
-        } // NewProperty
+        }
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="path">
         /// The path to the item on which the new property should be created.
@@ -831,7 +831,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.NewProperty(new string[] { path }, propertyName, type, value, context);
-        } // NewProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-itemproperty cmdlet.
@@ -886,7 +886,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewPropertyDynamicParameters(path, propertyName, type, value, context);
-        } // NewPropertyDynamicParameters
+        }
 
         #endregion NewProperty
 
@@ -930,7 +930,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveProperty(new string[] { path }, propertyName, false, false);
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Removes a property from the specified item(s)
@@ -976,7 +976,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveProperty(path, propertyName, force, literalPath);
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Removes a property from the specified item(s)
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveProperty(new string[] { path }, propertyName, context);
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-itemproperty cmdlet.
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RemovePropertyDynamicParameters(path, propertyName, context);
-        } // RemovePropertyDynamicParameters
+        }
 
         #endregion RemoveProperty
 
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenameProperty(new string[] { path }, sourceProperty, destinationProperty, false, false);
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Renames a property on the specified item(s)
@@ -1181,7 +1181,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenameProperty(path, sourceProperty, destinationProperty, force, literalPath);
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Renames a property on the specified item(s)
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RenameProperty(new string[] { path }, sourceProperty, destinationProperty, context);
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-itemproperty cmdlet.
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.RenamePropertyDynamicParameters(path, sourceProperty, destinationProperty, context);
-        } // RenamePropertyDynamicParameters
+        }
 
         #endregion RenameProperty
 
@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
                     destinationPath,
                     destinationProperty,
                     false, false);
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Copies a property on the specified item(s)
@@ -1424,7 +1424,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     force,
                     literalPath);
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Copies a property on the specified item(s)
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
                 destinationPath,
                 destinationProperty,
                 context);
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-itemproperty cmdlet.
@@ -1546,7 +1546,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.CopyPropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty, context);
-        } // CopyPropertyDynamicParameters
+        }
 
         #endregion CopyProperty
 
@@ -1616,7 +1616,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     false,
                     false);
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Moves a property on the specified item(s)
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     force,
                     literalPath);
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Moves a property on the specified item(s)
@@ -1759,7 +1759,7 @@ namespace System.Management.Automation
                 destinationPath,
                 destinationProperty,
                 context);
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-itemproperty cmdlet.
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MovePropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty, context);
-        } // MovePropertyDynamicParameters
+        }
 
         #endregion MoveProperty
 
@@ -1827,6 +1827,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // PropertyCmdletProviderIntrinsics
+    }
 }
 

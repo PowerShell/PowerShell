@@ -7,14 +7,14 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Exposes the Engine APIs for a particular instance of the engine
+    /// Exposes the Engine APIs for a particular instance of the engine.
     /// </summary>
     public class EngineIntrinsics
     {
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of ExecutionContext
+        /// Hide the default constructor since we always require an instance of ExecutionContext.
         /// </summary>
         private EngineIntrinsics()
         {
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         #region Public methods
 
         /// <summary>
-        /// Gets engine APIs to access the host
+        /// Gets engine APIs to access the host.
         /// </summary>
         public PSHost Host
         {
@@ -59,22 +59,22 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the host field");
 
                 return _host;
-            } // get
-        } // Host
+            }
+        }
 
         /// <summary>
-        /// Gets engine APIs to access the event manager
+        /// Gets engine APIs to access the event manager.
         /// </summary>
         public PSEventManager Events
         {
             get
             {
                 return _context.Events;
-            } // get
-        } // Host
+            }
+        }
 
         /// <summary>
-        /// Gets the engine APIs to access providers
+        /// Gets the engine APIs to access providers.
         /// </summary>
         public ProviderIntrinsics InvokeProvider
         {
@@ -82,10 +82,10 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.InvokeProvider;
             }
-        } // InvokeProvider
+        }
 
         /// <summary>
-        /// Gets the engine APIs to access session state
+        /// Gets the engine APIs to access session state.
         /// </summary>
         public SessionState SessionState
         {
@@ -93,10 +93,10 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.PublicSessionState;
             }
-        } // SessionState
+        }
 
         /// <summary>
-        /// Gets the engine APIs to invoke a command
+        /// Gets the engine APIs to invoke a command.
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {
@@ -111,6 +111,6 @@ namespace System.Management.Automation
         private PSHost _host;
         private CommandInvocationIntrinsics _invokeCommand;
         #endregion private data
-    } // EngineIntrinsics
+    }
 }
 

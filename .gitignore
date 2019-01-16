@@ -24,6 +24,9 @@ dotnet-uninstall-debian-packages.sh
 # Visual Studio IDE directory
 .vs/
 
+# VSCode directories that are not at the repository root
+/**/.vscode/
+
 # Project Rider IDE files
 .idea.powershell/
 
@@ -57,6 +60,20 @@ gen
 
 # macOS
 .DS_Store
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+.AppleDouble
+.LSOverride
 
 # TestsResults
 TestsResults*.xml
@@ -65,3 +82,7 @@ TestsResults*.xml
 PowerShell.sln.DotSettings.user
 *.msp
 StyleCop.Cache
+
+# GitKracken Files
+.gk/
+gkconfig.yml

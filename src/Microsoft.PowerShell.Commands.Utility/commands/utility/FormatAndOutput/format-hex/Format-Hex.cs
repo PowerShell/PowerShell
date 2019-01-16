@@ -13,9 +13,9 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Displays the hexidecimal equivalent of the input data.
+    /// Displays the hexadecimal equivalent of the input data.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
+    [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
     [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet
@@ -84,13 +84,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (String.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
             {
                 ProcessObjectContent(InputObject);
             }
             else
             {
-                List<string> pathsToProcess = String.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
+                List<string> pathsToProcess = string.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
                                               ResolvePaths(LiteralPath, true) : ResolvePaths(Path, false);
 
                 ProcessPath(pathsToProcess);
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObject"></param>
         private void ProcessObjectContent(PSObject inputObject)
         {
-            Object obj = inputObject.BaseObject;
+            object obj = inputObject.BaseObject;
             byte[] inputBytes = null;
 
             switch (obj)

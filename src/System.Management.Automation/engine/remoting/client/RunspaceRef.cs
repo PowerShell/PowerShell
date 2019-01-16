@@ -89,7 +89,11 @@ namespace System.Management.Automation.Remoting
                 ExecutionContext context = localRunspace.ExecutionContext;
 
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
+                // and if we are not in a loopback configuration mode, in which case we always force remote script commands
+                // to be parsed and evaluated on the remote session (not in the current local session).
+                RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
+                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
                 ScriptBlock scriptBlock = ScriptBlock.Create(context, line);
@@ -132,7 +136,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates the PSCommand when the runspace is not overridden
+        /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
         private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
@@ -269,11 +273,11 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Override inside a safe lock
+        /// Override inside a safe lock.
         /// </summary>
-        /// <param name="remoteRunspace">runspace to override</param>
-        /// <param name="syncObject">object to use in synchronization</param>
-        /// <param name="isRunspacePushed">set is runspace pushed</param>
+        /// <param name="remoteRunspace">Runspace to override.</param>
+        /// <param name="syncObject">Object to use in synchronization.</param>
+        /// <param name="isRunspacePushed">Set is runspace pushed.</param>
         internal void Override(RemoteRunspace remoteRunspace, object syncObject, out bool isRunspacePushed)
         {
             lock (_localSyncObject)

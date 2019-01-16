@@ -33,10 +33,11 @@ namespace System.Management.Automation
             {
                 if (typename.StartsWith(DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, StringComparison.OrdinalIgnoreCase))
                 {
-                    //Win8: 638494 if the original help is auto-generated, let the Provider help decide the format.
+                    // Win8: 638494 if the original help is auto-generated, let the Provider help decide the format.
                     return;
                 }
             }
+
             maml1.TypeNames.Clear();
             // User request at the top..
             foreach (string typeName in maml2.TypeNames)
@@ -46,7 +47,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds common properties like PSSnapIn,ModuleName from maml2 to maml1
+        /// Adds common properties like PSSnapIn,ModuleName from maml2 to maml1.
         /// </summary>
         /// <param name="maml1"></param>
         /// <param name="maml2"></param>

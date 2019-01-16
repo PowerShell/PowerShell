@@ -8,7 +8,7 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the exception thrown for all Metadata errors
+    /// Defines the exception thrown for all Metadata errors.
     /// </summary>
     [Serializable]
     public class MetadataException : RuntimeException
@@ -17,10 +17,10 @@ namespace System.Management.Automation
         internal const string BaseName = "Metadata";
 
         /// <summary>
-        /// Initializes a new instance of MetadataException with serialization parameters
+        /// Initializes a new instance of MetadataException with serialization parameters.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -28,7 +28,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of MetadataException with the message set
-        /// to typeof(MetadataException).FullName
+        /// to typeof(MetadataException).FullName.
         /// </summary>
         public MetadataException() : base(typeof(MetadataException).FullName)
         {
@@ -36,19 +36,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of MetadataException setting the message
+        /// Initializes a new instance of MetadataException setting the message.
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">The exception's message.</param>
         public MetadataException(string message) : base(message)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
         }
 
         /// <summary>
-        /// Initializes a new instance of MetadataException setting the message and innerException
+        /// Initializes a new instance of MetadataException setting the message and innerException.
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public MetadataException(string message, Exception innerException) : base(message, innerException)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -63,7 +63,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the exception thrown for all Validate attributes
+    /// Defines the exception thrown for all Validate attributes.
     /// </summary>
     [Serializable]
     [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
@@ -99,26 +99,26 @@ namespace System.Management.Automation
         internal const string InvalidValueFailure = "InvalidValueFailure";
 
         /// <summary>
-        /// Initializes a new instance of ValidationMetadataException with serialization parameters
+        /// Initializes a new instance of ValidationMetadataException with serialization parameters.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ValidationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with the message set
-        /// to typeof(ValidationMetadataException).FullName
+        /// to typeof(ValidationMetadataException).FullName.
         /// </summary>
         public ValidationMetadataException() : base(typeof(ValidationMetadataException).FullName) { }
         /// <summary>
-        /// Initializes a new instance of ValidationMetadataException setting the message
+        /// Initializes a new instance of ValidationMetadataException setting the message.
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">The exception's message.</param>
         public ValidationMetadataException(string message) : this(message, false) { }
         /// <summary>
-        /// Initializes a new instance of ValidationMetadataException setting the message and innerException
+        /// Initializes a new instance of ValidationMetadataException setting the message and innerException.
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public ValidationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ValidationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Make the positional binding swallow this exception when it's set to true
+        /// Make the positional binding swallow this exception when it's set to true.
         /// </summary>
         /// <remarks>
         /// This property is only used internally in the positional binding phase
@@ -150,11 +150,12 @@ namespace System.Management.Automation
         {
             get { return _swallowException; }
         }
+
         private bool _swallowException = false;
     }
 
     /// <summary>
-    /// Defines the exception thrown for all ArgumentTransformation attributes
+    /// Defines the exception thrown for all ArgumentTransformation attributes.
     /// </summary>
     [Serializable]
     public class ArgumentTransformationMetadataException : MetadataException
@@ -162,26 +163,26 @@ namespace System.Management.Automation
         internal const string ArgumentTransformationArgumentsShouldBeStrings = "ArgumentTransformationArgumentsShouldBeStrings";
 
         /// <summary>
-        /// Initializes a new instance of ArgumentTransformationMetadataException with serialization parameters
+        /// Initializes a new instance of ArgumentTransformationMetadataException with serialization parameters.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
-        /// to typeof(ArgumentTransformationMetadataException).FullName
+        /// to typeof(ArgumentTransformationMetadataException).FullName.
         /// </summary>
         public ArgumentTransformationMetadataException() : base(typeof(ArgumentTransformationMetadataException).FullName) { }
         /// <summary>
-        /// Initializes a new instance of ArgumentTransformationMetadataException setting the message
+        /// Initializes a new instance of ArgumentTransformationMetadataException setting the message.
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">The exception's message.</param>
         public ArgumentTransformationMetadataException(string message) : base(message) { }
         /// <summary>
-        /// Initializes a new instance of ArgumentTransformationMetadataException setting the message and innerException
+        /// Initializes a new instance of ArgumentTransformationMetadataException setting the message and innerException.
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public ArgumentTransformationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ArgumentTransformationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
@@ -191,7 +192,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the exception thrown for all parameter binding exceptions related to metadata attributes
+    /// Defines the exception thrown for all parameter binding exceptions related to metadata attributes.
     /// </summary>
     [Serializable]
     public class ParsingMetadataException : MetadataException
@@ -199,26 +200,26 @@ namespace System.Management.Automation
         internal const string ParsingTooManyParameterSets = "ParsingTooManyParameterSets";
 
         /// <summary>
-        /// Initializes a new instance of ParsingMetadataException with serialization parameters
+        /// Initializes a new instance of ParsingMetadataException with serialization parameters.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ParsingMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set
-        /// to typeof(ParsingMetadataException).FullName
+        /// to typeof(ParsingMetadataException).FullName.
         /// </summary>
         public ParsingMetadataException() : base(typeof(ParsingMetadataException).FullName) { }
         /// <summary>
-        /// Initializes a new instance of ParsingMetadataException setting the message
+        /// Initializes a new instance of ParsingMetadataException setting the message.
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">The exception's message.</param>
         public ParsingMetadataException(string message) : base(message) { }
         /// <summary>
-        /// Initializes a new instance of ParsingMetadataException setting the message and innerException
+        /// Initializes a new instance of ParsingMetadataException setting the message and innerException.
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public ParsingMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ParsingMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :

@@ -108,6 +108,27 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
         ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
     }
+    It "Should not delete the file if it already exist" {
+        # Create an existing file
+        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
+        Out-File $transcriptFilePath
+
+        $FileSystemWatcher = [System.IO.FileSystemWatcher]::new((Split-Path -Parent $transcriptFilePath), (Split-Path -Leaf $transcriptFilePath))
+
+        $Job = Register-ObjectEvent -InputObject $FileSystemWatcher -EventName "Deleted" -SourceIdentifier "FileDeleted" -Action {
+            return "FileDeleted"
+        }
+
+        try {
+            Start-Transcript -Path $transcriptFilePath
+            Stop-Transcript
+        } finally {
+            Unregister-Event -SourceIdentifier "FileDeleted"
+        }
+
+        # Nothing should have been returned by the FileSystemWatcher
+        Receive-Job $job | Should -Be $null
+    }
     It "Transcription should remain active if other runspace in the host get closed" {
         try {
             $ps = [powershell]::Create()
@@ -271,5 +292,29 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+    }
+
+    It "UseMinimalHeader should reduce length of transcript header" {
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Stop-Transcript
+        }
+
+        $transcriptMinHeaderFilePath = $transcriptFilePath + "_minimal" 
+        $scriptMinHeader = {
+            Start-Transcript -Path $transcriptMinHeaderFilePath -UseMinimalHeader
+            Stop-Transcript
+        }
+
+        & $script
+        $transcriptFilePath | Should -Exist
+        $transcriptLength = (Get-Content -Path $transcriptFilePath -Raw).Length
+        
+        & $scriptMinHeader
+        $transcriptMinHeaderFilePath | Should -Exist
+        $transcriptMinHeaderLength = (Get-Content -Path $transcriptMinHeaderFilePath -Raw).Length
+        Remove-Item $transcriptMinHeaderFilePath -ErrorAction SilentlyContinue
+
+        $transcriptMinHeaderLength | Should -BeLessThan $transcriptLength
     }
 }

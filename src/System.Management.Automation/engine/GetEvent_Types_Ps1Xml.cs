@@ -42,19 +42,19 @@ namespace System.Management.Automation.Runspaces
 
             var td1 = new TypeData(@"System.Diagnostics.Eventing.Reader.EventLogConfiguration", true);
             td1.DefaultDisplayPropertySet =
-                new PropertySetData(new [] { "LogName", "MaximumSizeInBytes", "RecordCount", "LogMode" }) { Name = "DefaultDisplayPropertySet" };
+                new PropertySetData(new[] { "LogName", "MaximumSizeInBytes", "RecordCount", "LogMode" }) { Name = "DefaultDisplayPropertySet" };
             yield return td1;
 
             var td2 = new TypeData(@"System.Diagnostics.Eventing.Reader.EventLogRecord", true);
             td2.DefaultDisplayPropertySet =
-                new PropertySetData(new [] { "TimeCreated", "ProviderName", "Id", "Message" }) { Name = "DefaultDisplayPropertySet" };
+                new PropertySetData(new[] { "TimeCreated", "ProviderName", "Id", "Message" }) { Name = "DefaultDisplayPropertySet" };
             yield return td2;
 
             var td3 = new TypeData(@"System.Diagnostics.Eventing.Reader.ProviderMetadata", true);
             td3.Members.Add("ProviderName",
                 new AliasPropertyData("ProviderName", "Name"));
             td3.DefaultDisplayPropertySet =
-                new PropertySetData(new [] { "Name", "LogLinks" }) { Name = "DefaultDisplayPropertySet" };
+                new PropertySetData(new[] { "Name", "LogLinks" }) { Name = "DefaultDisplayPropertySet" };
             yield return td3;
 
 #if !CORECLR
@@ -65,12 +65,12 @@ namespace System.Management.Automation.Runspaces
 
             var td5 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample", true);
             td5.DefaultDisplayPropertySet =
-                new PropertySetData(new [] { "Path", "InstanceName", "CookedValue" }) { Name = "DefaultDisplayPropertySet" };
+                new PropertySetData(new[] { "Path", "InstanceName", "CookedValue" }) { Name = "DefaultDisplayPropertySet" };
             yield return td5;
 
             var td6 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet", true);
             td6.DefaultDisplayPropertySet =
-                new PropertySetData(new [] { "Timestamp", "Readings" }) { Name = "DefaultDisplayPropertySet" };
+                new PropertySetData(new[] { "Timestamp", "Readings" }) { Name = "DefaultDisplayPropertySet" };
             yield return td6;
 
             var td7 = new TypeData(@"Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet", true);
@@ -81,6 +81,7 @@ namespace System.Management.Automation.Runspaces
               $strPaths += ($ctr.Path + "" :"" + ""`n"")
               $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")
           }
+
           return $strPaths"), null));
             yield return td7;
 #endif

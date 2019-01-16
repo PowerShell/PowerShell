@@ -50,8 +50,10 @@ namespace Microsoft.PowerShell.Commands
         public System.DateTime AccountExpires
         {
             get { return this.accountexpires;}
+
             set { this.accountexpires = value; }
         }
+
         private System.DateTime accountexpires;
 
         // This parameter added by hand (copied from SetLocalUserCommand), not by Cmdlet Designer
@@ -63,8 +65,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
             get { return this.accountneverexpires;}
+
             set { this.accountneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter accountneverexpires;
 
         /// <summary>
@@ -76,8 +80,10 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get { return this.description;}
+
             set { this.description = value; }
         }
+
         private string description;
 
         /// <summary>
@@ -88,8 +94,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter Disabled
         {
             get { return this.disabled;}
+
             set { this.disabled = value; }
         }
+
         private System.Management.Automation.SwitchParameter disabled;
 
         /// <summary>
@@ -102,8 +110,10 @@ namespace Microsoft.PowerShell.Commands
         public string FullName
         {
             get { return this.fullname;}
+
             set { this.fullname = value; }
         }
+
         private string fullname;
 
         /// <summary>
@@ -120,8 +130,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
 
         /// <summary>
@@ -136,8 +148,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.SecureString Password
         {
             get { return this.password;}
+
             set { this.password = value; }
         }
+
         private System.Security.SecureString password;
 
         /// <summary>
@@ -150,8 +164,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter NoPassword
         {
             get { return this.nopassword; }
+
             set { this.nopassword = value; }
         }
+
         private System.Management.Automation.SwitchParameter nopassword;
 
         /// <summary>
@@ -163,8 +179,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter PasswordNeverExpires
         {
             get { return this.passwordneverexpires; }
+
             set { this.passwordneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter passwordneverexpires;
 
         /// <summary>
@@ -176,8 +194,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter UserMayNotChangePassword
         {
             get { return this.usermaynotchangepassword;}
+
             set { this.usermaynotchangepassword = value; }
         }
+
         private System.Management.Automation.SwitchParameter usermaynotchangepassword;
         #endregion Parameter Properties
 
@@ -192,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
             }
+
             sam = new Sam();
         }
 
@@ -268,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionNewUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

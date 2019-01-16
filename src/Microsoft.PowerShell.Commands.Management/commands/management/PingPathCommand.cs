@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The valid values for the -PathType parameter for test-path
+    /// The valid values for the -PathType parameter for test-path.
     /// </summary>
     public enum TestPathType
     {
@@ -28,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// A command to determine if an item exists at a specified path
+    /// A command to determine if an item exists at a specified path.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113418")]
     [OutputType(typeof(bool))]
@@ -37,25 +38,33 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] Path
         {
             get { return _paths; }
+
             set { _paths = value; }
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] LiteralPath
         {
             get { return _paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -64,44 +73,47 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 
         /// <summary>
-        /// Gets or sets the isContainer property
+        /// Gets or sets the isContainer property.
         /// </summary>
         [Parameter]
         [Alias("Type")]
         public TestPathType PathType { get; set; } = TestPathType.Any;
 
         /// <summary>
-        /// Gets or sets the IsValid parameter
+        /// Gets or sets the IsValid parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter IsValid { get; set; } = new SwitchParameter();
@@ -124,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (this.PathType == TestPathType.Any && !IsValid)
             {
-                if (Path != null && Path.Length > 0)
+                if (Path != null && Path.Length > 0 && Path[0] != null)
                 {
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(Path[0], context);
                 }
@@ -133,15 +145,16 @@ namespace Microsoft.PowerShell.Commands
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(".", context);
                 }
             }
+
             return result;
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
         #region parameter data
 
         /// <summary>
-        /// The path to the item to ping
+        /// The path to the item to ping.
         /// </summary>
         private string[] _paths;
 
@@ -154,11 +167,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (_paths == null || _paths.Length == 0)
+            {
+                WriteError(new ErrorRecord(
+                    new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                    "NullPathNotPermitted",
+                    ErrorCategory.InvalidArgument,
+                    Path));
+
+                return;
+            }
+
             CmdletProviderContext currentContext = CmdletProviderContext;
 
             foreach (string path in _paths)
             {
                 bool result = false;
+
+                if (path == null)
+                {
+                    WriteError(new ErrorRecord(
+                        new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                        "NullPathNotPermitted",
+                        ErrorCategory.InvalidArgument,
+                        Path));
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    WriteObject(result);
+                    continue;
+                }
 
                 try
                 {
@@ -184,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 // Any of the known exceptions means the path does not exist.
                 catch (PSNotSupportedException)
                 {
@@ -200,9 +241,9 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(result);
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // PingPathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

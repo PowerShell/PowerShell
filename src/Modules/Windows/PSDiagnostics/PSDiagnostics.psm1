@@ -182,7 +182,7 @@ function Enable-PSWSManCombinedTrace
 
     if (!(Test-Path $pshome\Traces))
     {
-        mkdir -Force $pshome\Traces | out-null
+        New-Item -ItemType Directory -Force $pshome\Traces | out-null
     }
 
     if (Test-Path $logfile)
@@ -437,12 +437,12 @@ namespace Microsoft.PowerShell.Diagnostics
 }
 "@
 
-if ($psedition -eq 'Core')
- {
-    # Currently we only support these cmdlets as logman.exe is not working on Nano/Lot system.
-    Export-ModuleMember Enable-PSTrace, Disable-PSTrace, Get-LogProperties, Set-LogProperties
- }
- else
- {
-    Export-ModuleMember Start-Trace, Stop-Trace, Enable-WSManTrace, Disable-WSManTrace, Enable-PSTrace, Disable-PSTrace, Enable-PSWSManCombinedTrace, Disable-PSWSManCombinedTrace, Get-LogProperties, Set-LogProperties
- }
+if (Get-Command logman.exe -Type Application -ErrorAction SilentlyContinue)
+{
+    Export-ModuleMember Disable-PSTrace, Disable-PSWSManCombinedTrace, Disable-WSManTrace, Enable-PSTrace, Enable-PSWSManCombinedTrace, Enable-WSManTrace, Get-LogProperties, Set-LogProperties, Start-Trace, Stop-Trace
+}
+else
+{
+    # Currently we only support these cmdlets as logman.exe is not available on systems like Nano and IoT
+    Export-ModuleMember Disable-PSTrace, Enable-PSTrace, Get-LogProperties, Set-LogProperties
+}

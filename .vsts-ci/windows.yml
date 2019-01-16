@@ -1,4 +1,26 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
 queue:
   name: Hosted VS2017
   parallel: 2 # Limit to two agents at a time
@@ -7,12 +29,13 @@ queue:
       Purpose: UnelevatedPesterTests
     ElevatedPesterTests_xUnit_Packaging:
       Purpose: ElevatedPesterTests_xUnit_Packaging
+  timeoutInMinutes: 120
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
-  # Avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 resources:
@@ -30,9 +53,15 @@ steps:
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - powershell: |
-      git submodule update --init
-    displayName: SubModule Init
-    condition: succeededOrFailed()
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
+
+      if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+    condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
 
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
@@ -65,6 +94,6 @@ steps:
   - powershell: |
       Import-Module .\tools\Appveyor.psm1
       Restore-PSOptions
-      Invoke-AppveyorFinish
+      Invoke-AppveyorFinish -NuGetKey $(NUGET_KEY)
     displayName: Finish
     condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')

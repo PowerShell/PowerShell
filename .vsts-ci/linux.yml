@@ -1,4 +1,26 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -8,11 +30,14 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- job: Linux_CI
 
-  queue:
+  pool:
     name: Hosted Ubuntu 1604
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-Process
@@ -51,9 +76,15 @@ phases:
     condition: succeededOrFailed()
 
   - powershell: |
-      git submodule update --init
-    displayName: SubModule Init
-    condition: succeededOrFailed()
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
+
+      if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+    condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
 
   - powershell: |
       tools/travis.ps1 -Stage Bootstrap
@@ -62,7 +93,7 @@ phases:
 
   - powershell: |
       $ErrorActionPreference = 'continue'
-      tools/travis.ps1
+      tools/travis.ps1 -NugetKey $(NUGET_KEY)
     displayName: Build and test
     condition: succeeded()
 

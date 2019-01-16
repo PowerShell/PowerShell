@@ -142,8 +142,8 @@ namespace System.Management.Automation.Provider
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
         object ClearContentDynamicParameters(string path);
-    } // IContentCmdletProvider
+    }
 
     #endregion IContentCmdletProvider
-} // namespace System.Management.Automation
+}
 

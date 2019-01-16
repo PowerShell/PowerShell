@@ -84,6 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)90;
                 _needClientSideFiltering = true;
             }
+
             if ((91 <= endOfCharacterRange) && (endOfCharacterRange <= 94))
             {
                 endOfCharacterRange = (char)95;
@@ -98,6 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)44;
                 _needClientSideFiltering = true;
             }
+
             if (endOfCharacterRange == 45)
             {
                 endOfCharacterRange = (char)46;

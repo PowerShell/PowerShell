@@ -8,7 +8,7 @@ using System.Security.AccessControl;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -46,7 +46,7 @@ namespace System.Management.Automation
             }
 
             return permissionCmdletProvider;
-        } // GetPermissionProviderInstance
+        }
 
         #endregion private methods
 
@@ -81,7 +81,7 @@ namespace System.Management.Automation
             Collection<PSObject> contextResults = context.GetAccumulatedObjects() ?? new Collection<PSObject>();
 
             return contextResults;
-        } // GetSecurityDescriptor
+        }
 
         /// <summary>
         /// Gets the security descriptor from the specified item.
@@ -128,7 +128,7 @@ namespace System.Management.Automation
             {
                 GetSecurityDescriptor(providerInstance, providerPath, sections, context);
             }
-        } // GetSecurityDescriptor
+        }
 
         private void GetSecurityDescriptor(
             CmdletProvider providerInstance,
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // GetSecurityDescriptor
+        }
 
         #endregion GetSecurityDescriptor
 
@@ -218,7 +218,7 @@ namespace System.Management.Automation
             Collection<PSObject> contextResults = context.GetAccumulatedObjects() ?? new Collection<PSObject>();
 
             return contextResults;
-        } // SetSecurityDescriptor
+        }
 
         /// <summary>
         /// Sets the security descriptor on the specified item.
@@ -274,7 +274,7 @@ namespace System.Management.Automation
                     securityDescriptor,
                     context);
             }
-        } // SetSecurityDescriptor
+        }
 
         private void SetSecurityDescriptor(
             CmdletProvider providerInstance,
@@ -363,7 +363,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // SetSecurityDescriptor
+        }
 
         #endregion SetSecurityDescriptor
 
@@ -423,7 +423,7 @@ namespace System.Management.Automation
             }
 
             return sd;
-        } // NewSecurityDescriptor
+        }
 
         private ObjectSecurity NewSecurityDescriptorFromPath(
             CmdletProvider providerInstance,
@@ -478,7 +478,7 @@ namespace System.Management.Automation
             }
 
             return sd;
-        } // NewSecurityDescriptor
+        }
 
         /// <summary>
         /// Gets the security descriptor from the specified item.
@@ -574,7 +574,7 @@ namespace System.Management.Automation
             }
 
             return sd;
-        } // NewSecurityDescriptorOfType
+        }
 
         #endregion NewSecurityDescriptor
     }

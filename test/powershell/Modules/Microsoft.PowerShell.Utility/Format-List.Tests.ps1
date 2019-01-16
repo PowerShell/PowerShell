@@ -23,7 +23,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}${nl}testName : testValue${nl}${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -75,7 +75,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $info = @{}
         $info.array = $al
         $result = $info | Format-List | Out-String
-        $result | Should -Match "Name  : array\s+Value : {0, 1, 2, 3...}"
+        $result | Should -Match "Name  : array\s+Value : {0, 1, 2, 3`u{2026}}" # ellipsis
     }
 
 	It "Format-List with No Objects for End-To-End should work"{
