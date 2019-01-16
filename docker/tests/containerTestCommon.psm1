@@ -239,7 +239,8 @@ function Get-DefaultPreviewConfigForPackageValidation
         'fxdependent-opensuse42.3'='linux-x64-fxdependent.tar.gz';
         'fxdependent-ubuntu14.04'='linux-x64-fxdependent.tar.gz';
         'fxdependent-ubuntu16.04'='linux-x64-fxdependent.tar.gz';
-        'fxdependent-ubuntu18.04'='linux-x64-fxdependent.tar.gz'
+        'fxdependent-ubuntu18.04'='linux-x64-fxdependent.tar.gz';
+        'fxdependent-dotnetsdk-latest'='linux-x64-fxd-dotnetsdk.tar.gz'
     }
 }
 
