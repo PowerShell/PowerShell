@@ -12,7 +12,7 @@ RUN apt-get update \
         libcurl3 \
         ca-certificates \
         libgcc1 \
-        libicu55 \
+        libicu60 \
         libssl1.0.0 \
         libstdc++6 \
         libtinfo5 \
