@@ -325,13 +325,25 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_totalInputBytes == null)
+                if (inputBytes != null)
                 {
-                    _totalInputBytes = new List<byte>(inputBytes);
+                    if (_totalInputBytes == null)
+                    {
+                        _totalInputBytes = new List<byte>(inputBytes);
+                    }
+                    else
+                    {
+                        _totalInputBytes.AddRange(inputBytes);
+                    }
                 }
                 else
                 {
-                    _totalInputBytes.AddRange(inputBytes);
+                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
+                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
+                                                                "FormatHexTypeNotSupported",
+                                                                ErrorCategory.InvalidArgument,
+                                                                obj.GetType());
+                    WriteError(errorRecord);
                 }
             }
         }
