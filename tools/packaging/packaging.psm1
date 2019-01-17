@@ -3007,7 +3007,7 @@ function New-DotnetSdkContainerFxdPackage {
     $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
 
     ## Get fxdependent package path
-    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern
+    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
