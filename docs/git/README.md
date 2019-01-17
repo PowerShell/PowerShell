@@ -4,7 +4,7 @@ Working with PowerShell repository
 #### Get the code for the first time
 
 ```sh
-git clone https://github.com/PowerShell/PowerShell
+git clone https://github.com/PowerShell/PowerShell.git
 ```
 
 Branches
