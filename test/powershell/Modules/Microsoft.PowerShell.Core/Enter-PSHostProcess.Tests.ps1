@@ -16,7 +16,6 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $powershell = [System.Diagnostics.Process]::Start($si)
         }
 
-        $IsAppveyor = $false
     }
 
     AfterAll {
@@ -25,16 +24,6 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         if ($IsWindows) {
             $powershell | Stop-Process
         }
-    }
-
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another PSHost" -Skip:$IsAppVeyor {
-        "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
-    }
-
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows -or $IsAppVeyor) {
-        "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
     }
 
     It "Can enter using NamedPipeConnectionInfo" {
