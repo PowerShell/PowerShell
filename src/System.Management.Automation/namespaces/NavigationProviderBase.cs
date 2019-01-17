@@ -335,7 +335,7 @@ namespace System.Management.Automation.Provider
                     // If the parent is empty but the child is not, return the
                     // child
 
-                    result = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                    result = NormalizePath(child);
                 }
                 else if (!string.IsNullOrEmpty(parent) &&
                          string.IsNullOrEmpty(child))
@@ -369,8 +369,8 @@ namespace System.Management.Automation.Provider
                         // Normalize the path so that only the default path separator is used as a
                         // separator even if the user types the alternate slash.
 
-                        parent = parent.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-                        child = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                        parent = NormalizePath(parent);
+                        child = NormalizePath(child);
                     }
 
                     // Joins the paths

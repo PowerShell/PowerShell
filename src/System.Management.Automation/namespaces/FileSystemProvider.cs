@@ -88,16 +88,25 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Converts all / in the path to \
+        /// Converts all / in the path to \ and on Windows shortpaths to longpaths
         /// </summary>
         /// <param name="path">
         /// The path to normalize.
         /// </param>
         /// <returns>
-        /// The path with all / normalized to \
+        /// The path with all / normalized to \ and on Windows a longpath
         /// </returns>
         private static string NormalizePath(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
+
+            // Use FileInfo to convert short paths to long paths on Windows
+#if !UNIX
+            path = (new FileInfo(path)).FullName;
+#endif
             return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
         }
 
