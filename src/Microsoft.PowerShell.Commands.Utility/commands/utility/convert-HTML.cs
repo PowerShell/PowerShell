@@ -301,10 +301,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.hashEntries.Add(new ExpressionEntryDefinition());
                 this.hashEntries.Add(new LabelEntryDefinition());
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new Type[] { typeof(string) }));
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new [] { typeof(string) }));
 
                 // Note: We accept "width" as either string or int.
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new Type[] { typeof(string), typeof(int) }));
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new [] { typeof(string), typeof(int) }));
             }
         }
 
