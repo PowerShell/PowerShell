@@ -184,5 +184,13 @@ After the object
         $returnString | Should -Match '\swidth\s*=\s*(["''])10\1'
     }
 
-}
+    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: by hashtable"{
+        $returnString = ($customObject | ConvertTo-HTML @{ l='NewAge'; e={ $_.Age + 1 } }) -join $newLine
+        $returnString | Should -Match '\b43\b'
+    }
 
+    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: directly"{
+        $returnString = ($customObject | ConvertTo-HTML { $_.Age + 1 }) -join $newLine
+        $returnString | Should -Match '\b43\b'
+    }
+}
