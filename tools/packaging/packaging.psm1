@@ -276,7 +276,7 @@ function Start-PSPackage {
                     Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
                         PackageSourcePath = $Source
@@ -2991,7 +2991,7 @@ function New-DotnetSdkContainerFxdPackage {
 
     $Version = $ReleaseTag -Replace '^v'
 
-    if ($IsWindows) {
+    if ($Environment.IsWindows) {
         $basePackagePattern = "*$Version-win-fxdependent.zip"
         $packageNamePlatform = 'win'
         $packageNameExtension = '.zip'
@@ -3025,7 +3025,7 @@ function New-DotnetSdkContainerFxdPackage {
             Write-Log "Pushed location: $tempExtractFolder"
 
             try {
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
                 } else {
                     Start-NativeExecution { tar -xf $fxdPackage }
@@ -3052,7 +3052,7 @@ function New-DotnetSdkContainerFxdPackage {
 
                 Write-Verbose -Verbose "Compressing"
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
                 } else {
                     Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
