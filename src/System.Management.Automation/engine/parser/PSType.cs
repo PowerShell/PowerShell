@@ -709,7 +709,8 @@ namespace System.Management.Automation.Language
                             if (overload.Item1.IsStatic == functionMemberAst.IsStatic ||
                                 !functionMemberAst.IsConstructor)
                             {
-                                _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
+                                _parser.ReportError(
+                                    functionMemberAst.NameExtent ?? functionMemberAst.Extent,
                                     nameof(ParserStrings.MemberAlreadyDefined),
                                     ParserStrings.MemberAlreadyDefined,
                                     functionMemberAst.Name);
