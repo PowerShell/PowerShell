@@ -316,10 +316,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
-                                                                "FormatHexTypeNotSupported",
-                                                                ErrorCategory.InvalidArgument,
-                                                                obj.GetType());
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        new ArgumentException(errorMessage),
+                        "FormatHexTypeNotSupported",
+                        ErrorCategory.InvalidArgument,
+                        obj.GetType());
                     WriteError(errorRecord);
                 }
             }
@@ -339,10 +340,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
-                                                                "FormatHexTypeNotSupported",
-                                                                ErrorCategory.InvalidArgument,
-                                                                obj.GetType());
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        new ArgumentException(errorMessage),
+                        "FormatHexTypeNotSupported",
+                        ErrorCategory.InvalidArgument,
+                        obj.GetType());
                     WriteError(errorRecord);
                 }
             }
