@@ -169,12 +169,12 @@ After the object
         $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
 
-    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: by hashtable"{
+    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: by hashtable" {
         $returnString = ($customObject | ConvertTo-HTML @{ l='NewAge'; e={ $_.Age + 1 } }) -join $newLine
         $returnString | Should -Match '\b43\b'
     }
 
-    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: directly"{
+    It "Test ConvertTo-HTML supports scriptblock-based calculated properties: directly" {
         $returnString = ($customObject | ConvertTo-HTML { $_.Age + 1 }) -join $newLine
         $returnString | Should -Match '\b43\b'
     }
