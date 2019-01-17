@@ -34,7 +34,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
         "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
     }
-    
+
     It "Can enter using NamedPipeConnectionInfo" {
         $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
         $rs = [runspacefactory]::CreateRunspace($npInfo)
