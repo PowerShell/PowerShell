@@ -54,6 +54,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         try
         {
             $docsToTest = @(
+                './.github/SUPPORT.md'
                 './.github/CONTRIBUTING.md'
                 './*.md'
                 './demos/python/*.md'
