@@ -196,7 +196,7 @@ namespace ModuleCmdlets
         $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
         $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
     }
- }
+}
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
     BeforeAll {

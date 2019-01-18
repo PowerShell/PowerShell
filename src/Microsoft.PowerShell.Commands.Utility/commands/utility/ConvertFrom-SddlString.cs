@@ -32,14 +32,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public AccessRightTypeNames Type
-        { 
+        {
             get { return _type; }
+
             set
             {
                 _isTypeSet = true;
                 _type = value;
-            } 
+            }
         }
+
         private AccessRightTypeNames _type;
         private bool _isTypeSet = false;
 
@@ -136,9 +138,10 @@ namespace Microsoft.PowerShell.Commands
                 List<string> accessRightList = GetApplicableAccessRights(ace.AccessMask, typeName);
                 if (accessRightList.Count > 0)
                 {
-                    string accessRights = String.Join(", ", accessRightList);
+                    string accessRights = string.Join(", ", accessRightList);
                     aceString.Append($" ({accessRights})");
                 }
+
                 aceStringList.Add(aceString.ToString());
             }
 
@@ -181,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
             /// FileSystemRights.
             /// </summary>
             FileSystemRights,
-            
+
             /// <summary>
             /// RegistryRights.
             /// </summary>
@@ -207,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
 
             /// <summary>
             /// EventWaitHandleRights.
-            /// </summary>            
+            /// </summary>
             EventWaitHandleRights
         }
     }

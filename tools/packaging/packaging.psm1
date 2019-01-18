@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -273,7 +273,7 @@ function Start-PSPackage {
             "fxdependent" {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
                 if ($IsWindows) {
@@ -691,8 +691,6 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
-                } elseif ($Environment.IsDebian8) {
-                    $DebDistro = "debian.8"
                 } elseif ($Environment.IsDebian9) {
                     $DebDistro = "debian.9"
                 } else {
@@ -759,7 +757,7 @@ function New-UnixPackage {
         if ($pscmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
-            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
+            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link
@@ -795,7 +793,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
-            Write-Log "Adding macOS launch opplication..."
+            Write-Log "Adding macOS launch application..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
@@ -1127,7 +1125,6 @@ function Get-PackageDependencies
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
@@ -1155,9 +1152,9 @@ function Test-Dependencies
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
@@ -1186,8 +1183,8 @@ function New-AfterScripts
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
@@ -1204,8 +1201,8 @@ function New-AfterScripts
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
     }
 
@@ -2530,6 +2527,7 @@ function New-MSIPackage
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
+        $FilesWxsPath = New-PreviewFileWxs -FilesWxsPath $FilesWxsPath
     }
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
@@ -2581,7 +2579,14 @@ function New-MSIPackage
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
+    if ($isPreview)
+    {
+        $wixObjFragmentPath = Join-Path $env:Temp "files-preview.wixobj"
+    }
+    else
+    {
+        $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
+    }
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
@@ -2615,6 +2620,11 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    if ($isPreview)
+    {
+        # remove the temporary generated files.wxs for preview builds
+        Remove-Item -ErrorAction SilentlyContinue $FilesWxsPath -Force
+    }
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -2634,6 +2644,36 @@ function New-MSIPackage
         }
         throw $errorMessage
     }
+}
+
+# generate a files.wxs for preview builds
+# so that the component ids are different than the stable builds
+# the file is created in the temp folder
+function New-PreviewFileWxs
+{
+    param
+    (
+        # File describing the MSI file components from the asset folder
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs"
+    )
+
+    Write-Verbose "Generating new component Ids for Files-Preview.wxs" -Verbose
+    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
+    foreach($component in $filesAssetXml.GetElementsByTagName('Component'))
+    {
+        $component.Id = $component.Id + "_Preview"
+    }
+
+    foreach($componentRef in $filesAssetXml.GetElementsByTagName('ComponentRef'))
+    {
+        $componentRef.Id = $componentRef.Id + "_Preview"
+    }
+
+    $previewFilesWxsPath = Join-Path ([System.IO.Path]::GetTempPath()) "Files-Preview.wxs"
+    $filesAssetXml.Save($previewFilesWxsPath)
+    $previewFilesWxsPath
 }
 
 # verify no files have been added or removed
@@ -2927,4 +2967,98 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     }
 
     $packageVersion
+}
+
+<#
+.SYNOPSIS
+Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
+
+.PARAMETER FxdPackagePath
+Path to the folder containing the fxdependent package.
+
+.PARAMETER ReleaseTag
+Release tag to construct the package name.
+#>
+function New-DotnetSdkContainerFxdPackage {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter(Mandatory)] $FxdPackagePath,
+        [Parameter(Mandatory)] $ReleaseTag
+    )
+
+    $Version = $ReleaseTag -Replace '^v'
+
+    if ($IsWindows) {
+        $basePackagePattern = "*$Version-win-fxdependent.zip"
+        $packageNamePlatform = 'win'
+        $packageNameExtension = '.zip'
+    } else {
+        $basePackagePattern = "*$Version-linux-x64-fxdependent.tar.gz"
+        $packageNamePlatform = 'linux-x64'
+        $packageNameExtension = '.tar.gz'
+    }
+
+    $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
+
+    ## Get fxdependent package path
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern
+
+    Write-Log "Fxd Package Path: $fxdPackage"
+
+    if ($fxdPackage) {
+        if ($PSCmdlet.ShouldProcess("Create the reduced framework dependent package based of $fxPackage")) {
+
+            ## Extract fxd package
+            $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
+            Push-Location $tempExtractFolder
+
+            Write-Log "Pushed location: $tempExtractFolder"
+
+            try {
+                if ($IsWindows) {
+                    Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
+                } else {
+                    Start-NativeExecution { tar -xf $fxdPackage }
+                }
+
+                ## Remove unnecessary files
+                $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+                Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+
+                $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
+
+                # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+                # win10-x64 (Nano Server)
+                # win-arm (Nano Server)
+                # linux-musl-x64 (Alpine 3.8)
+                # linux-x64 (bionic / stretch)
+                # unix, linux, win for dependencies
+                # win-x64 to get PowerShell.Native components
+                $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+
+                $runtimeFolder | ForEach-Object {
+                    Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+                }
+
+                Write-Verbose -Verbose "Compressing"
+
+                if ($IsWindows) {
+                    Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
+                } else {
+                    Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+                }
+
+                Write-Log "Compressing complete"
+
+            } finally {
+                Pop-Location
+            }
+        }
+    }
+
+    if (Test-Path "$FxdPackagePath/$packageName") {
+        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$FxdPackagePath/$packageName"
+    } else {
+        Write-Log "Package not found: $FxdPackagePath/$packageName"
+    }
 }

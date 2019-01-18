@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
 
             /// <summary>
             /// Allocate only one line for displaying the StatusDescription or the CurrentOperation,
-            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line
+            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line.
             /// </summary>
             Full = 3,
 
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
 
             // Fifth and Sixth lines: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(" ");
                 RenderFullDescription(this.CurrentOperation, indent, maxWidth, rawUI, strCollection, isFullPlus);
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell
 
             // Third line: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(
                     StringUtil.TruncateToBufferCellWidth(
@@ -451,11 +451,13 @@ namespace Microsoft.PowerShell
             {
                 ++lines;
             }
+
             if (SecondsRemaining >= 0)
             {
                 ++lines;
             }
-            if (!String.IsNullOrEmpty(CurrentOperation))
+
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 if (isFullPlus)
                 {
@@ -492,7 +494,7 @@ namespace Microsoft.PowerShell
                 // Start with 1 for the Activity, and 1 for the Status.
 
                 int lines = 2;
-                if (!String.IsNullOrEmpty(CurrentOperation))
+                if (!string.IsNullOrEmpty(CurrentOperation))
                 {
                     ++lines;
                 }

@@ -8,7 +8,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "set-alias" cmdlet
+    /// The implementation of the "set-alias" cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113390")]
     [OutputType(typeof(AliasInfo))]
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         result = SessionState.Internal.SetAliasItem(aliasToSet, Force, MyInvocation.CommandOrigin);
                     }

@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
+        /// Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
         /// The powerShell instance passed need to have a non null Runspace.
         /// </summary>
         /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
@@ -544,6 +544,7 @@ namespace System.Management.Automation
                     {
                         name = nameValue.ToString();
                     }
+
                     if (name != null)
                     {
                         object value = null;
@@ -1835,6 +1836,7 @@ namespace System.Management.Automation
                     {
                         // Script block in a hash table, could be something like:
                         //     dir | ft @{ Expression = { $_ } }
+
                         if (parent.Parent.Parent.Parent is HashtableAst)
                         {
                             parent = parent.Parent.Parent.Parent;

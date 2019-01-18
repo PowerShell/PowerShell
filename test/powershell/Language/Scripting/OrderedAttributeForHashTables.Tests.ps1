@@ -60,7 +60,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
 
         $script:a = $null
 
-        {$script:a = dir | select-object -property Name, (
+        {$script:a = Get-ChildItem | select-object -property Name, (
                     [ordered]@{Name="IsDirectory";
                                Expression ={$_.PSIsContainer}})} | Should -Not -Throw
 

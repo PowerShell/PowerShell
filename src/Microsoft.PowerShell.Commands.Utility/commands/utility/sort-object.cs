@@ -16,37 +16,47 @@ namespace Microsoft.PowerShell.Commands
     public sealed class SortObjectCommand : OrderObjectBase
     {
         #region Command Line Switches
+
         /// <summary>
-        /// This param specifies if sort order is ascending.
+        /// Gets or sets a value indicating whether a stable sort is required.
+        /// </summary>
+        /// <value></value>
+        /// <remarks>
+        /// Items that are duplicates according to the sort algorithm will appear
+        /// in the same relative order in a stable sort.
+        /// </remarks>
+        [Parameter(ParameterSetName = "Default")]
+        public SwitchParameter Stable { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the sort order is descending.
         /// </summary>
         [Parameter]
         public SwitchParameter Descending
         {
             get { return DescendingOrder; }
+
             set { DescendingOrder = value; }
         }
+
         /// <summary>
-        /// This param specifies if only unique objects are filtered.
+        /// Gets or sets a value indicating whether the sort filters out any duplicate objects.
         /// </summary>
         /// <value></value>
         [Parameter]
-        public SwitchParameter Unique
-        {
-            get { return _unique; }
-            set { _unique = value; }
-        }
-        private bool _unique;
+        public SwitchParameter Unique { get; set; }
+
         #endregion
 
         /// <summary>
-        /// This param specifies you only want the top N items returned.
+        /// Gets or sets the number of items to return in a Top N sort.
         /// </summary>
-        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Top", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
         public int Top { get; set; } = 0;
 
         /// <summary>
-        /// This param specifies you only want the bottom N items returned.
+        /// Gets or sets the number of items to return in a Bottom N sort.
         /// </summary>
         [Parameter(ParameterSetName = "Bottom", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
@@ -96,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             // versions of PowerShell).
             dataToSort.Sort(comparer);
 
-            if (_unique)
+            if (Unique)
             {
                 // Move unique entries to the front of the list (this is significantly faster
                 // than removing them)
@@ -116,7 +126,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Identify how many items will be in the heap and the current number of items
             int heapCount = 0;
-            int heapCapacity = Top > 0 ? Top : Bottom;
+            int heapCapacity = Stable ? int.MaxValue
+                                      : Top > 0 ? Top : Bottom;
 
             // Identify the comparator (the value all comparisons will be made against based on whether we're
             // doing a Top N or Bottom N sort)
@@ -132,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
             int comparator = Top > 0 ? -1 : 1;
 
             // For unique sorts, use a sorted set to avoid adding unique items to the heap
-            SortedSet<OrderByPropertyEntry> uniqueSet = _unique ? new SortedSet<OrderByPropertyEntry>(orderByPropertyComparer) : null;
+            SortedSet<OrderByPropertyEntry> uniqueSet = Unique ? new SortedSet<OrderByPropertyEntry>(orderByPropertyComparer) : null;
 
             // Tracking the index is necessary so that unsortable items can be output at the end, in the order
             // in which they were received.
@@ -146,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If we're doing a unique sort and the entry is not unique, discard the duplicate entry
-                if (_unique && !uniqueSet.Add(dataToSort[dataIndex]))
+                if (Unique && !uniqueSet.Add(dataToSort[dataIndex]))
                 {
                     discardedDuplicates++;
                     if (dataIndex != dataToSort.Count - discardedDuplicates)
@@ -156,6 +167,7 @@ namespace Microsoft.PowerShell.Commands
                         dataToSort[dataIndex] = dataToSort[dataToSort.Count - discardedDuplicates];
                         dataIndex--;
                     }
+
                     continue;
                 }
 
@@ -178,6 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
                     childIndex = parentIndex;
                 }
+
                 heapCount++;
 
                 // If the heap size is too large, remove the root and rearrange the heap
@@ -239,13 +252,14 @@ namespace Microsoft.PowerShell.Commands
             // Track the number of items that will be output from the data once it is sorted
             int sortedItemCount = dataToProcess.Count;
 
-            // If -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, invoke
-            // an in-place full sort
-            if ((Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
+            // If -Stable, -Top & -Bottom were not used, invoke an in-place full sort
+            if (!Stable && Top == 0 && Bottom == 0)
             {
                 sortedItemCount = FullSort(dataToProcess, comparer);
             }
-            // Otherwise, use an indexed min-/max-heap to perform an in-place sort of all objects
+            // Otherwise, use an indexed min-/max-heap to perform an in-place heap sort (heap
+            // sorts are inheritantly stable, meaning they will preserve the respective order
+            // of duplicate objects as they are sorted on the heap)
             else
             {
                 sortedItemCount = Heapify(dataToProcess, comparer);

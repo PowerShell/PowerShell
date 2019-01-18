@@ -217,7 +217,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Uses reflection to create new instance of the appropriate ReflectedCaller
+        /// Uses reflection to create new instance of the appropriate ReflectedCaller.
         /// </summary>
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {
@@ -227,10 +227,12 @@ namespace System.Management.Automation.Interpreter
             {
                 types.Add(pi.ParameterType);
             }
+
             if (info.ReturnType != typeof(void))
             {
                 types.Add(info.ReturnType);
             }
+
             Type[] arrTypes = types.ToArray();
 
             return (CallInstruction)Activator.CreateInstance(GetHelperType(info, arrTypes), info);
@@ -241,6 +243,7 @@ namespace System.Management.Automation.Interpreter
         #region Instruction
 
         public sealed override int ProducedStack { get { return Info.ReturnType == typeof(void) ? 0 : 1; } }
+
         public sealed override int ConsumedStack { get { return ArgumentCount; } }
 
         public sealed override string InstructionName
@@ -262,6 +265,7 @@ namespace System.Management.Automation.Interpreter
         private readonly int _argumentCount;
 
         public override MethodInfo Info { get { return _target; } }
+
         public override int ArgumentCount { get { return _argumentCount; } }
 
         internal MethodInfoCallInstruction(MethodInfo target, int argumentCount)
@@ -330,6 +334,7 @@ namespace System.Management.Automation.Interpreter
             {
                 newArgs[i] = args[i + 1];
             }
+
             return newArgs;
         }
 
@@ -352,6 +357,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.StackIndex = first;
             }
+
             return 1;
         }
     }

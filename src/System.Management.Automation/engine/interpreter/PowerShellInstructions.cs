@@ -39,6 +39,7 @@ namespace System.Management.Automation.Interpreter
                     context.Debugger.OnSequencePointHit(functionContext);
                 }
             }
+
             return +1;
         }
 

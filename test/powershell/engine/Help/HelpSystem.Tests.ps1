@@ -339,7 +339,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
 }
 
 Describe "Get-Help should find pattern alias" -Tags "CI" {
-    # Remove test alias
+    BeforeAll {
+        Set-Alias -Name testAlias1 -Value Where-Object
+    }
+
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
     }
@@ -355,10 +358,15 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
     }
 
     It "Get-Help should find alias with * pattern" {
-        Set-Alias -Name testAlias1 -Value Where-Object
         $help = Get-Help testAlias1*
         $help.Category | Should -BeExactly "Alias"
         $help.Synopsis | Should -BeExactly "Where-Object"
+    }
+
+    It "Help alias should be same as Get-Help alias" {
+        $help1 = Get-Help testAlias*
+        $help2 = help testAlias*
+        Compare-Object $help1 $help2 | Should -BeNullOrEmpty
     }
 }
 
@@ -467,5 +475,72 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
 
         $helpObj = Get-Help -Name $CmdletName -Full
         $helpObj.description | Out-String | Should -Match $CmdletName
+    }
+}
+
+Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags @('CI') {
+
+    BeforeAll {
+        $userHelpRoot = GetCurrentUserHelpRoot
+
+        ## Clear all help from user scope.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
+
+        ## Delete help from global scope if it exists.
+        $currentCulture = (Get-Culture).Name
+        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+        if (Test-Path $coreHelpFilePath) {
+            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Should return help objects for two parameters" {
+        $help = Get-Help -Name Get-Command -Parameter Verb, Noun
+        $help | Should -HaveCount 2
+        $help[0].Name | Should -BeExactly 'Verb'
+        $help[1].Name | Should -BeExactly 'Noun'
+    }
+}
+
+Describe "Help failure cases" -Tags Feature {
+    It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
+        @{ command = "help" },
+        @{ command = "get-help" }
+    ){
+        param($command)
+
+        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+    }
+}
+
+Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
+    BeforeAll {
+        $fakePager = @'
+        param(
+            [Parameter]
+            $customCommandArgs,
+
+            [Parameter(ValueFromPipelineByPropertyName)]
+            $Name
+        )
+
+        $b = [System.Text.Encoding]::UTF8.GetBytes($Name)
+        return [System.Convert]::ToBase64String($b)
+'@
+        $fakePagerFolder = Join-Path $TestDrive "path with space"
+        $fakePagerPath = Join-Path $fakePagerFolder "fakepager.ps1"
+        New-Item -ItemType File -Path $fakePagerPath -Force > $null
+        Set-Content -Path $fakePagerPath -Value $fakePager
+
+        $SavedEnvPager = $env:PAGER
+        $env:PAGER = $fakePagerPath
+    }
+    AfterAll {
+        $env:PAGER = $SavedEnvPager
+    }
+
+    It 'help renders when using a PAGER with a space in the path' {
+        help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
     }
 }

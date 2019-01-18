@@ -91,7 +91,11 @@ namespace System.Management.Automation
                 new ExperimentalFeature(name: "PSImplicitRemotingBatching",
                                         description: "Batch implicit remoting proxy commands to improve performance",
                                         source: EngineSource,
-                                        isEnabled: false)
+                                        isEnabled: false),
+                new ExperimentalFeature(name: "PSUseAbbreviationExpansion",
+                                        description: "Allow tab completion of cmdlets and functions by abbreviation",
+                                        source: EngineSource,
+                                        isEnabled: false),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -151,6 +155,7 @@ namespace System.Management.Automation
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
                 }
             }
+
             return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -228,6 +233,7 @@ namespace System.Management.Automation
             {
                 action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
             }
+
             return action;
         }
 
@@ -334,9 +340,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = ExperimentAction.None;
     }
 }

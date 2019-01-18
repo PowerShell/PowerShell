@@ -8,14 +8,14 @@ Describe "Tee-Object" -Tags "CI" {
 
 	    It "Should return the output to the screen and to the variable" {
 	        $teefile = $testfile
-	        echo teeobjecttest1 | Tee-Object -variable teeresults
+	        Write-Output teeobjecttest1 | Tee-Object -variable teeresults
 	        $teeresults         | Should -BeExactly "teeobjecttest1"
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
 	    }
 
 	    It "Should tee the output to a file" {
 	        $teefile = $testfile
-	        echo teeobjecttest3  | Tee-Object $teefile
+	        Write-Output teeobjecttest3  | Tee-Object $teefile
 	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
 	    }

@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -66,7 +66,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return results;
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the content reader for the specified item.
@@ -143,7 +143,7 @@ namespace System.Management.Automation
             }
 
             return results;
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the content reader for the item at the specified path.
@@ -215,8 +215,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetContentReaderPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
@@ -276,7 +277,7 @@ namespace System.Management.Automation
                     out providerInstance);
 
             return GetContentReaderDynamicParameters(providerInstance, path, newContext);
-        } // GetContentReaderDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
@@ -351,8 +352,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetContentReaderDynamicParameters
+        }
 
         #endregion GetContentReader
 
@@ -405,7 +407,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return results;
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the content writer for the specified item.
@@ -480,7 +482,7 @@ namespace System.Management.Automation
             }
 
             return results;
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the content writer for the item at the specified path.
@@ -551,8 +553,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetContentWriterPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
@@ -617,8 +620,9 @@ namespace System.Management.Automation
 
                 return GetContentWriterDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
-        } // GetContentWriterDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
@@ -693,8 +697,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetContentWriterDynamicParameters
+        }
 
         #endregion GetContentWriter
 
@@ -742,7 +747,7 @@ namespace System.Management.Automation
             ClearContent(paths, context);
 
             context.ThrowFirstErrorOrDoNothing();
-        } // ClearContent
+        }
 
         /// <summary>
         /// Clears all of the content from the specified item.
@@ -805,7 +810,7 @@ namespace System.Management.Automation
                     ClearContentPrivate(providerInstance, providerPath, context);
                 }
             }
-        } // ClearContent
+        }
 
         /// <summary>
         /// Clears the content from the item at the specified path.
@@ -875,7 +880,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // ClearContentPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-content cmdlet.
@@ -940,11 +945,12 @@ namespace System.Management.Automation
 
                 return ClearContentDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
-        } // ClearContentDynamicParameters
+        }
 
         /// <summary>
-        /// Calls the provider to get the clear-content dynamic parameters
+        /// Calls the provider to get the clear-content dynamic parameters.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider to call
@@ -1015,13 +1021,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // ClearContentDynamicParameters
+        }
 
         #endregion ClearContent
 
         #endregion IContentCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

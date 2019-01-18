@@ -53,7 +53,7 @@ namespace System.Management.Automation
         #region IEnumerable/IEnumerator members
 
         /// <summary>
-        /// Gets the current object as an IEnumerator
+        /// Gets the current object as an IEnumerator.
         /// </summary>
         /// <returns>
         /// The current object as an IEnumerator.
@@ -96,6 +96,7 @@ namespace System.Management.Automation
                     result = true;
                     break;
                 }
+
                 result = false;
 
                 if (_isSingleScopeLookup)
@@ -108,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the current scoped item
+        /// Gets the current scoped item.
         /// </summary>
 
         T IEnumerator<T>.Current
@@ -181,6 +182,7 @@ namespace System.Management.Automation
         {
             get { return _initialScope; }
         }
+
         private SessionStateScope _initialScope;
 
         #region private members
@@ -235,10 +237,10 @@ namespace System.Management.Automation
         private bool _isInitialized;
 
         #endregion private members
-    } // class ScopedItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for variables
+    /// The scope searcher for variables.
     /// </summary>
     internal class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
     {
@@ -293,10 +295,10 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // VariableScopeItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for aliases
+    /// The scope searcher for aliases.
     /// </summary>
     internal class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
     {
@@ -346,10 +348,10 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // AliasScopeItemSearcher
+    }
 
     /// <summary>
-    /// The scope searcher for functions
+    /// The scope searcher for functions.
     /// </summary>
     internal class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
     {
@@ -425,6 +427,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
 
@@ -432,11 +435,12 @@ namespace System.Management.Automation
         {
             get { return _name; }
         }
-        private string _name = String.Empty;
-    } // FunctionScopeItemSearcher
+
+        private string _name = string.Empty;
+    }
 
     /// <summary>
-    /// The scope searcher for drives
+    /// The scope searcher for drives.
     /// </summary>
     internal class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
     {
@@ -477,7 +481,8 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
-    } // DriveScopeItemSearcher
-} // namespace System.Management.Automation
+    }
+}

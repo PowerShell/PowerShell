@@ -273,8 +273,8 @@ function CompareCounterSets
     for ($i = 1; $i -lt $setA.Length; $i++)
     {
         $setA[$i].CounterSamples.Length | Should -Be $setB[$i].CounterSamples.Length
-        $samplesA = ($setA[$i].CounterSamples | sort -Property Path)
-        $samplesB = ($setB[$i].CounterSamples | sort -Property Path)
+        $samplesA = ($setA[$i].CounterSamples | Sort-Object -Property Path)
+        $samplesB = ($setB[$i].CounterSamples | Sort-Object -Property Path)
         (DateTimesAreEqualish $setA[$i].TimeStamp $setB[$i].TimeStamp) | Should -BeTrue
         for ($j = 0; $j -lt $samplesA.Length; $j++)
         {

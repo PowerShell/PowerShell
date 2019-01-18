@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
             ObjectSecurity sd = null;
             path = NormalizePath(path);
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             ObjectSecurity securityDescriptor)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                     SetSecurityDescriptor(path, sd, sections);
                 }
             }
-        } // SetSecurityDescriptor
+        }
 
         private void SetSecurityDescriptor(string path, ObjectSecurity sd, AccessControlSections sections)
         {

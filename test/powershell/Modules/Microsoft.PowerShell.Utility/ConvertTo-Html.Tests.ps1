@@ -170,7 +170,7 @@ After the object
     }
 
     It "Test ConvertTo-HTML supports scriptblock-based calculated properties: by hashtable" {
-        $returnString = ($customObject | ConvertTo-HTML @{ l='NewAge'; e={ $_.Age + 1 } }) -join $newLine
+        $returnString = ($customObject | ConvertTo-HTML @{ l = 'NewAge'; e = { $_.Age + 1 } }) -join $newLine
         $returnString | Should -Match '\b43\b'
     }
 

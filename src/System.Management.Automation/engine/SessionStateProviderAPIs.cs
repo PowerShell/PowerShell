@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a PowerShell session
+    /// Holds the state of a PowerShell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -31,6 +31,7 @@ namespace System.Management.Automation
                 return ExecutionContext.TopLevelSessionState.Providers;
             }
         }
+
         private Dictionary<string, List<ProviderInfo>> _providers =
             new Dictionary<string, List<ProviderInfo>>(
                     SessionStateConstants.DefaultDictionaryCapacity, StringComparer.OrdinalIgnoreCase);
@@ -49,6 +50,7 @@ namespace System.Management.Automation
                 return ExecutionContext.TopLevelSessionState.ProvidersCurrentWorkingDrive;
             }
         }
+
         private Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
 
         /// <summary>
@@ -118,6 +120,7 @@ namespace System.Management.Automation
                 // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
                 this.ExecutionContext.ReportEngineStartupError(e);
             }
+
             return provider;
         }
 
@@ -226,8 +229,9 @@ namespace System.Management.Automation
             {
                 drive.DriveBeingCreated = false;
             }
+
             return result;
-        } // ValidateDriveWithProvider
+        }
 
         /// <summary>
         /// Gets an instance of a provider given the provider ID.
@@ -255,7 +259,7 @@ namespace System.Management.Automation
             ProviderInfo provider = GetSingleProvider(providerId);
 
             return GetProviderInstance(provider);
-        } // GetProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of a provider given the provider information.
@@ -277,7 +281,7 @@ namespace System.Management.Automation
             }
 
             return provider.CreateInstance();
-        } // GetProviderInstance
+        }
 
         /// <summary>
         /// Creates an exception for the case where the provider name matched multiple providers.
@@ -355,7 +359,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an DriveCmdletProvider given the provider information.
@@ -390,7 +394,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an DriveCmdletProvider given the provider ID.
@@ -425,7 +429,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider ID.
@@ -463,7 +467,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider.
@@ -498,7 +502,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider ID.
@@ -533,7 +537,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider ID.
@@ -571,7 +575,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider.
@@ -606,7 +610,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider ID.
@@ -641,7 +645,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an NavigationCmdletProvider given the provider.
@@ -676,7 +680,7 @@ namespace System.Management.Automation
             }
 
             return navigationCmdletProvider;
-        } // GetNavigationProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an NavigationCmdletProvider given the provider ID.
@@ -715,7 +719,7 @@ namespace System.Management.Automation
             }
 
             return navigationCmdletProvider;
-        } // GetNavigationProviderInstance
+        }
 
         #region GetProvider
 
@@ -735,7 +739,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -753,10 +757,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsProviderLoaded
+        }
 
         /// <summary>
-        /// Gets the provider of the specified name
+        /// Gets the provider of the specified name.
         /// </summary>
         /// <param name="name">
         /// The name of the provider to retrieve
@@ -773,7 +777,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<ProviderInfo> GetProvider(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -791,11 +795,12 @@ namespace System.Management.Automation
 
                 throw e;
             }
+
             return GetProvider(providerName);
         }
 
         /// <summary>
-        /// Gets the provider of the specified name
+        /// Gets the provider of the specified name.
         /// </summary>
         /// <param name="name">
         /// The name of the provider to retrieve
@@ -834,6 +839,7 @@ namespace System.Management.Automation
                     throw NewAmbiguousProviderName(name, matchingProviders);
                 }
             }
+
             return matchingProviders[0];
         }
 
@@ -875,17 +881,17 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!String.IsNullOrEmpty(providerName.PSSnapInName))
+            if (!string.IsNullOrEmpty(providerName.PSSnapInName))
             {
                 // Be sure the PSSnapin/Module name matches
 
                 foreach (ProviderInfo provider in matchingProviders)
                 {
-                    if (String.Equals(
+                    if (string.Equals(
                             provider.PSSnapInName,
                             providerName.PSSnapInName,
                            StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(
+                        string.Equals(
                             provider.ModuleName,
                             providerName.PSSnapInName,
                             StringComparison.OrdinalIgnoreCase))
@@ -901,11 +907,12 @@ namespace System.Management.Automation
                     result.Add(provider);
                 }
             }
+
             return result;
-        } // GetProvider
+        }
 
         /// <summary>
-        /// Gets all the CoreCommandProviders
+        /// Gets all the CoreCommandProviders.
         /// </summary>
         internal IEnumerable<ProviderInfo> ProviderList
         {
@@ -920,14 +927,15 @@ namespace System.Management.Automation
                         result.Add(provider);
                     }
                 }
+
                 return result;
-            } // get
-        } // Providers
+            }
+        }
 
         /// <summary>
         /// Copy the Providers from another session state instance...
         /// </summary>
-        /// <param name="ss">the session state instance to copy from...</param>
+        /// <param name="ss">The session state instance to copy from...</param>
         internal void CopyProviders(SessionStateInternal ss)
         {
             if (ss == null || ss.Providers == null)
@@ -1023,7 +1031,7 @@ namespace System.Management.Automation
                             "InitializeDefaultDrivesException",
                             SessionStateStrings.InitializeDefaultDrivesException,
                             provider,
-                            String.Empty,
+                            string.Empty,
                             e);
 
                     context.WriteError(
@@ -1069,12 +1077,12 @@ namespace System.Management.Automation
                     {
                         context.WriteError(exception.ErrorRecord);
                     }
-                } // foreach (drive in newDrives)
+                }
             }
-        } // InitializeProvider
+        }
 
         /// <summary>
-        /// Creates and adds a provider to the provider container
+        /// Creates and adds a provider to the provider container.
         /// </summary>
         /// <param name="provider">
         /// The provider to add.
@@ -1269,7 +1277,7 @@ namespace System.Management.Automation
             // Now write out the result
 
             return provider;
-        } // NewProvider
+        }
 
         private ProviderInfo ProviderExists(ProviderInfo provider)
         {
@@ -1285,6 +1293,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -1314,14 +1323,14 @@ namespace System.Management.Automation
 
                 foreach (ProviderInfo existingProvider in existingProviders)
                 {
-                    //making sure that we are not trying to add the same provider by checking the provider name & type of the new and existing providers.
+                    // making sure that we are not trying to add the same provider by checking the provider name & type of the new and existing providers.
                     if (string.IsNullOrEmpty(provider.PSSnapInName) && (string.Equals(existingProvider.Name, provider.Name, StringComparison.OrdinalIgnoreCase) &&
                         (existingProvider.GetType().Equals(provider.GetType()))))
                     {
                         isDuplicateProvider = true;
                     }
 
-                    //making sure that we are not trying to add the same provider by checking the PSSnapinName of the new and existing providers.
+                    // making sure that we are not trying to add the same provider by checking the PSSnapinName of the new and existing providers.
                     else if (string.Equals(existingProvider.PSSnapInName, provider.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                     {
                         isDuplicateProvider = true;
@@ -1387,7 +1396,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw PSTraceSource.NewArgumentException("providerName");
             }
@@ -1526,7 +1535,7 @@ namespace System.Management.Automation
                     ProvidersCurrentWorkingDrive.Remove(provider);
                 }
             }
-        } // RemoveProvider
+        }
 
         /// <summary>
         /// Removes the provider from the providers dictionary.
@@ -1558,7 +1567,7 @@ namespace System.Management.Automation
         #endregion RemoveProvider
 
         /// <summary>
-        /// Gets the count of the number of providers that are loaded
+        /// Gets the count of the number of providers that are loaded.
         /// </summary>
         internal int ProviderCount
         {
@@ -1569,10 +1578,11 @@ namespace System.Management.Automation
                 {
                     count += matchingProviders.Count;
                 }
+
                 return count;
             }
-        } // ProviderCount
-    } // SessionStateInternal class
+        }
+    }
 }
 
 #pragma warning restore 56500

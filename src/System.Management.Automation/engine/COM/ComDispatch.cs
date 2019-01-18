@@ -7,7 +7,7 @@ using COM = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Summary description for IDispatch.
+    /// The IDispatch interface.
     /// </summary>
     [Guid("00020400-0000-0000-c000-000000000046")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

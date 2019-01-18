@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             else
             {
-                underlyingType = typeof(Int32);
+                underlyingType = typeof(int);
             }
 
             ModuleBuilder mb = s_moduleBuilder.Value;

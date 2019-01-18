@@ -44,7 +44,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = Start-Job -ScriptBlock { Start-Sleep 15 }
+            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 15 }
         }
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -93,7 +93,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
                         throw "Receive-Job behaves suspiciously: Cannot receive $n results in 5 minutes."
                     }
 
-                    # sleep for 300 ms to allow data to be produced
+                    # Wait to allow data to be produced
                     Start-Sleep -Milliseconds 300
 
                     if ($keep)
@@ -159,7 +159,7 @@ Describe "Debug-job test" -tag "Feature" {
     # we check this via implication.
     # if we're debugging a job, then the debugger will have a callstack
     It "Debug-Job will break into debugger" -pending {
-        $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { sleep 1 } }').Invoke()
+        $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { Start-Sleep 1 } }').Invoke()
         $ps.Commands.Clear()
         $ps.Runspace.Debugger.GetCallStack() | Should -BeNullOrEmpty
         Start-Sleep 3

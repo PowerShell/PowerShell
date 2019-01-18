@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Text;
-using System.Security;
-using System.Management.Automation;
 using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 // Once Serialization is available on CoreCLR: using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Microsoft.PowerShell.Commands
@@ -84,13 +85,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (String.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(this.ParameterSetName, "ByInputObject", StringComparison.OrdinalIgnoreCase))
             {
                 ProcessObjectContent(InputObject);
             }
             else
             {
-                List<string> pathsToProcess = String.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
+                List<string> pathsToProcess = string.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
                                               ResolvePaths(LiteralPath, true) : ResolvePaths(Path, false);
 
                 ProcessPath(pathsToProcess);
@@ -235,69 +236,17 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObject"></param>
         private void ProcessObjectContent(PSObject inputObject)
         {
-            Object obj = inputObject.BaseObject;
-            byte[] inputBytes = null;
+            object obj = inputObject.BaseObject;
 
-            switch (obj)
+            if (obj is System.IO.FileSystemInfo fsi)
             {
-                case System.IO.FileSystemInfo fsi:
                     string[] path = { fsi.FullName };
                     List<string> pathsToProcess = ResolvePaths(path, true);
                     ProcessPath(pathsToProcess);
                     return;
-                case string str:
-                    inputBytes = Encoding.GetBytes(str);
-                    break;
-                case byte b:
-                    inputBytes = new byte[] { b };
-                    break;
-                case byte[] byteArray:
-                    inputBytes = byteArray;
-                    break;
-                case Int32 iInt32:
-                    inputBytes = BitConverter.GetBytes(iInt32);
-                    break;
-                case Int32[] i32s:
-                    int i32 = 0;
-                    inputBytes = new byte[sizeof(Int32) * i32s.Length];
-                    Span<byte> inputStreamArray32 = inputBytes;
-
-                    foreach (Int32 value in i32s)
-                    {
-                        BitConverter.TryWriteBytes(inputStreamArray32.Slice(i32), value);
-                        i32 += sizeof(Int32);
-                    }
-
-                    break;
-                case Int64 iInt64:
-                    inputBytes = BitConverter.GetBytes(iInt64);
-                    break;
-                case Int64[] inputInt64s:
-                    int i64 = 0;
-                    inputBytes = new byte[sizeof(Int64) * inputInt64s.Length];
-                    Span<byte> inputStreamArray64 = inputBytes;
-
-                    foreach (Int64 value in inputInt64s)
-                    {
-                        BitConverter.TryWriteBytes(inputStreamArray64.Slice(i64), value);
-                        i64 += sizeof(Int64);
-                    }
-
-                    break;
-
-                // If the object type is not supported, throw an error. Once Serialization is
-                // available on CoreCLR, other types will be supported.
-                default:
-                {
-                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
-                                                                "FormatHexTypeNotSupported",
-                                                                ErrorCategory.InvalidArgument,
-                                                                obj.GetType());
-                    WriteError(errorRecord);
-                    break;
-                }
             }
+
+            byte[] inputBytes = ConvertToByteArray(obj);
 
             if (inputBytes != null)
             {
@@ -312,6 +261,94 @@ namespace Microsoft.PowerShell.Commands
                     WriteHexidecimal(inputBytes, null, 0);
                 }
             }
+            else
+            {
+                string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
+                ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
+                                                            "FormatHexTypeNotSupported",
+                                                            ErrorCategory.InvalidArgument,
+                                                            obj.GetType());
+                WriteError(errorRecord);
+            }
+        }
+
+        private byte[] ConvertToByteArray(object inputObject)
+        {
+            if (inputObject is string str)
+            {
+                return Encoding.GetBytes(str);
+            }
+
+            var baseType = inputObject.GetType();
+            byte[] result = null;
+            int elements = 1;
+            bool isArray = false;
+            bool isBool = false;
+            bool isEnum = false;
+            if (baseType.IsArray)
+            {
+                baseType = baseType.GetElementType();
+                dynamic dynamicObject = inputObject;
+                elements = (int)dynamicObject.Length;
+                isArray = true;
+            }
+
+            if (baseType.IsEnum)
+            {
+                baseType = baseType.GetEnumUnderlyingType();
+                isEnum = true;
+            }
+
+            if (baseType.IsPrimitive && elements > 0)
+            {
+                if (baseType == typeof(bool))
+                {
+                    isBool = true;
+                }
+
+                var elementSize = Marshal.SizeOf(baseType);
+                result = new byte[elementSize * elements];
+                if (!isArray)
+                {
+                    inputObject = new object[] { inputObject };
+                }
+
+                int index = 0;
+                foreach (dynamic obj in (Array)inputObject)
+                {
+                    if (elementSize == 1)
+                    {
+                        result[index] = (byte)obj;
+                    }
+                    else
+                    {
+                        dynamic toBytes;
+                        if (isEnum)
+                        {
+                            toBytes = Convert.ChangeType(obj, baseType);
+                        }
+                        else if (isBool)
+                        {
+                            // bool is 1 byte apparently
+                            toBytes = Convert.ToByte(obj);
+                        }
+                        else
+                        {
+                            toBytes = obj;
+                        }
+
+                        var bytes = BitConverter.GetBytes(toBytes);
+                        for (int i = 0; i < bytes.Length; i++)
+                        {
+                            result[i + index] = bytes[i];
+                        }
+                    }
+
+                    index += elementSize;
+                }
+            }
+
+            return result;
         }
 
         #endregion

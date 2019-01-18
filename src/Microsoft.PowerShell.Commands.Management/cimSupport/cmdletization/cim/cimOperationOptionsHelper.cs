@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     result = MergeOptions(result, instanceRelatedToThisOperation);
                 }
             }
+
             return result;
         }
 
@@ -114,7 +115,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     }
 
     /// <summary>
-    /// CimQuery supports building of queries against CIM object model
+    /// CimQuery supports building of queries against CIM object model.
     /// </summary>
     internal static class CimOperationOptionsHelper
     {

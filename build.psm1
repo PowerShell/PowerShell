@@ -128,7 +128,6 @@ function Get-EnvironmentInformation
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
-        $environment += @{'IsDebian8' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '8'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
@@ -866,7 +865,7 @@ function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [Parameter(Position=0)]
-        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
+        [string[]]$Path = @("$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
@@ -884,6 +883,7 @@ function Start-PSPester {
         [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
         [switch]$IncludeFailingTest,
+        [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
         [string]$Title = 'PowerShell Core Tests'
@@ -897,6 +897,11 @@ function Start-PSPester {
     if ($IncludeFailingTest.IsPresent)
     {
         $Path += "$PSScriptRoot/tools/failingTests"
+    }
+
+    if($IncludeCommonTests.IsPresent)
+    {
+        $path = += "$PSScriptRoot/test/common"
     }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -1369,7 +1374,6 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
         [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
 
@@ -1382,10 +1386,9 @@ function Start-PSxUnit {
     }
 
     try {
-        Push-Location $PSScriptRoot/test/csharp
+        Push-Location $PSScriptRoot/test/xUnit
 
         # Path manipulation to obtain test project output directory
-        dotnet restore
 
         if(-not $Environment.IsWindows)
         {
@@ -1417,30 +1420,22 @@ function Start-PSxUnit {
             }
         }
 
-        # Run sequential tests first, and then run the tests that can execute in parallel
-        if (Test-Path $SequentialTestResultsFile) {
-            Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
-        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        dotnet build --configuration $Options.configuration
 
-        $extraParams = @()
+        if (Test-Path $ParallelTestResultsFile) {
+            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
 
         # we are having intermittent issues on macOS with these tests failing.
         # VSTS has suggested forcing them to be sequential
         if($env:TF_BUILD -and $IsMacOS)
         {
             Write-Log 'Forcing parallel xunit tests to run sequentially.'
-            $extraParams += @(
-                '-parallel'
-                'none'
-            )
+            dotnet test -p:ParallelizeTestCollections=false --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
+        } else {
+            dotnet test --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         }
 
-        if (Test-Path $ParallelTestResultsFile) {
-            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
@@ -1556,6 +1551,7 @@ function Start-PSBootstrap {
                 $Deps += "libunwind8"
                 if ($Environment.IsUbuntu14) { $Deps += "libicu52" }
                 elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
+                elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
@@ -1650,8 +1646,8 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0 --no-document"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }

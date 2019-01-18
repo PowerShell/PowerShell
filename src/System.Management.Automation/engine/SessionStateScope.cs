@@ -37,7 +37,7 @@ namespace System.Management.Automation
             {
                 _scriptScope = this;
             }
-        } // SessionStateScope constructor
+        }
 
         #endregion constructor
 
@@ -65,12 +65,14 @@ namespace System.Management.Automation
         internal SessionStateScope ScriptScope
         {
             get { return _scriptScope; }
+
             set
             {
                 Diagnostics.Assert(value != null, "Caller to verify scope is not null");
                 _scriptScope = value;
             }
         }
+
         private SessionStateScope _scriptScope;
 
         /// <summary>
@@ -94,6 +96,7 @@ namespace System.Management.Automation
         /// other variables use the variable apis to find the variable and get/set it.
         /// </summary>
         internal Stack<MutableTuple> DottedScopes { get { return _dottedScopes; } }
+
         private readonly Stack<MutableTuple> _dottedScopes = new Stack<MutableTuple>();
 
         #region Drives
@@ -149,7 +152,7 @@ namespace System.Management.Automation
                     automountedDrives.Add(newDrive.Name, newDrive);
                 }
             }
-        } // New Drive
+        }
 
         /// <summary>
         /// Removes the specified drive from this scope.
@@ -191,7 +194,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Removes all the drives from the scope.
@@ -200,7 +203,7 @@ namespace System.Management.Automation
         {
             GetDrives().Clear();
             GetAutomountedDrives().Clear();
-        } // RemoveAllDrives
+        }
 
         /// <summary>
         /// Retrieves the drive of the specified name.
@@ -231,8 +234,9 @@ namespace System.Management.Automation
                 // manually removed drives.
                 GetAutomountedDrives().TryGetValue(name, out result);
             }
+
             return result;
-        } // GetDrive
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the drives in this scope.
@@ -257,9 +261,10 @@ namespace System.Management.Automation
                         result.Add(drive);
                     }
                 }
+
                 return result;
             }
-        } // Drives
+        }
         #endregion Drives
 
         #region Variables
@@ -286,7 +291,7 @@ namespace System.Management.Automation
             PSVariable result;
             TryGetVariable(name, origin, false, out result);
             return result;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Gets the specified variable from the variable table.
@@ -300,7 +305,7 @@ namespace System.Management.Automation
         internal PSVariable GetVariable(string name)
         {
             return GetVariable(name, ScopeOrigin);
-        } // GetVariable
+        }
 
         /// <summary>
         /// Looks up a variable, returns true and the variable if found and is visible, throws if the found variable is not visible,
@@ -308,8 +313,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">The name of the variable.</param>
         /// <param name="origin">The command origin (where the scope was created), used to decide if the variable is visible.</param>
-        /// <param name="fromNewOrSet">true if looking up the variable as part of a new or set variable operation</param>
-        /// <param name="variable">The variable, if one is found in scope</param>
+        /// <param name="fromNewOrSet">True if looking up the variable as part of a new or set variable operation.</param>
+        /// <param name="variable">The variable, if one is found in scope.</param>
         /// <exception cref="SessionStateException">Thrown if the variable is not visible based on CommandOrigin.</exception>
         /// <returns>True if there is a variable in scope, false otherwise.</returns>
         internal bool TryGetVariable(string name, CommandOrigin origin, bool fromNewOrSet, out PSVariable variable)
@@ -327,6 +332,7 @@ namespace System.Management.Automation
                 SessionState.ThrowIfNotVisible(origin, variable);
                 return true;
             }
+
             return false;
         }
 
@@ -403,6 +409,7 @@ namespace System.Management.Automation
                 {
                     throw new NotImplementedException("fastPath");
                 }
+
                 variable = new PSVariable(name, variableToSet.Value, variableToSet.Options, variableToSet.Attributes) { Description = variableToSet.Description };
                 GetPrivateVariables()[name] = variable;
                 return variable;
@@ -493,14 +500,14 @@ namespace System.Management.Automation
             _variables[name] = variable;
             variable.SessionState = sessionState;
             return variable;
-        } // SetVariable
+        }
 
         /// <summary>
         /// Sets a variable to scope without any checks.
         /// This is intended to be used only for global scope.
         /// </summary>
-        /// <param name="variableToSet">PSVariable to set</param>
-        /// <param name="sessionState">SessionState for variable</param>
+        /// <param name="variableToSet">PSVariable to set.</param>
+        /// <param name="sessionState">SessionState for variable.</param>
         /// <returns></returns>
         internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
         {
@@ -591,7 +598,7 @@ namespace System.Management.Automation
             _variables[variable.Name] = variable;
             variable.SessionState = sessionState;
             return variable;
-        } // NewVariable
+        }
 
         /// <summary>
         /// Removes a variable from the variable table.
@@ -642,7 +649,7 @@ namespace System.Management.Automation
             // Finally mark the variable itself has having been removed so
             // anyone holding a reference to it can be aware of this.
             variable.WasRemoved = true;
-        } // RemoveVariable
+        }
 
         internal bool TrySetLocalParameterValue(string name, object value)
         {
@@ -690,7 +697,7 @@ namespace System.Management.Automation
             {
                 return GetAliases().Values;
             }
-        } // AliasTable
+        }
 
         /// <summary>
         /// Gets the specified alias from the alias table.
@@ -711,7 +718,7 @@ namespace System.Management.Automation
             GetAliases().TryGetValue(name, out result);
 
             return result;
-        } // GetAlias
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -783,7 +790,7 @@ namespace System.Management.Automation
             AddAliasToCache(name, value);
 
             return aliasInfos[name];
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -899,7 +906,7 @@ namespace System.Management.Automation
             AddAliasToCache(name, value);
 
             return result;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -966,12 +973,13 @@ namespace System.Management.Automation
 
                 RemoveAliasFromCache(aliasInfo.Name, aliasInfo.Definition);
             }
+
             aliasInfos[aliasToSet.Name] = aliasToSet;
 
             AddAliasToCache(aliasToSet.Name, aliasToSet.Definition);
 
             return aliasToSet;
-        } // SetAliasItem
+        }
 
         /// <summary>
         /// Removes a alias from the alias table.
@@ -1014,7 +1022,7 @@ namespace System.Management.Automation
             }
 
             aliasInfos.Remove(name);
-        } // RemoveAlias
+        }
 
         #endregion aliases
 
@@ -1028,8 +1036,8 @@ namespace System.Management.Automation
             get
             {
                 return GetFunctions();
-            } // get
-        } // FunctionTable
+            }
+        }
 
         /// <summary>
         /// Gets the specified function from the function table.
@@ -1051,7 +1059,7 @@ namespace System.Management.Automation
             GetFunctions().TryGetValue(name, out result);
 
             return result;
-        } // GetFunction
+        }
 
         /// <summary>
         /// Sets an function to the given function declaration.
@@ -1086,7 +1094,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, null, ScopedItemOptions.Unspecified, force, origin, context);
-        } // SetFunction
+        }
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
@@ -1124,7 +1132,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, originalFunction, ScopedItemOptions.Unspecified, force, origin, context);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Sets an function to the given function declaration.
@@ -1167,7 +1175,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, context, null);
-        } // SetFunction
+        }
 
         internal FunctionInfo SetFunction(
             string name,
@@ -1324,7 +1332,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // SetFunction
+        }
 
         /// <summary>
         /// Removes a function from the function table.
@@ -1366,8 +1374,9 @@ namespace System.Management.Automation
                     GetAllScopeFunctions().Remove(name);
                 }
             }
+
             functionInfos.Remove(name);
-        } // RemoveFunction
+        }
 
         #endregion functions
 
@@ -1381,8 +1390,8 @@ namespace System.Management.Automation
             get
             {
                 return _cmdlets;
-            } // get
-        } // CmdletTable
+            }
+        }
 
         /// <summary>
         /// Gets the specified cmdlet from the cmdlet table.
@@ -1412,7 +1421,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdlet
+        }
 
         /// <summary>
         /// Adds a cmdlet to the cmdlet cache.
@@ -1505,7 +1514,6 @@ namespace System.Management.Automation
                     }
                 }
             }
-
             catch (ArgumentException)
             {
                 throwNotSupported = true;
@@ -1522,7 +1530,7 @@ namespace System.Management.Automation
             }
 
             return _cmdlets[name][0];
-        } // AddCmdlet
+        }
 
         /// <summary>
         /// Removes a cmdlet from the cmdlet table.
@@ -1561,12 +1569,12 @@ namespace System.Management.Automation
                 // Remove the entry is the list is now empty
                 if (cmdlets.Count == 0)
                 {
-                    //Remove the key
+                    // Remove the key
                     _cmdlets.Remove(name);
                     return;
                 }
             }
-        }// RemoveCmdlet
+        }
 
         /// <summary>
         /// Removes a cmdlet entry from the cmdlet table.
@@ -1587,7 +1595,7 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             _cmdlets.Remove(name);
-        }// RemoveCmdletEntry
+        }
 
         #endregion Cmdlets
 
@@ -1695,7 +1703,7 @@ namespace System.Management.Automation
             return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
 
-        private Dictionary<String, PSDriveInfo> _drives;
+        private Dictionary<string, PSDriveInfo> _drives;
 
         /// <summary>
         /// Contains the drives that have been automounted by the system.
@@ -1708,7 +1716,7 @@ namespace System.Management.Automation
                    (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
 
-        private Dictionary<String, PSDriveInfo> _automountedDrives;
+        private Dictionary<string, PSDriveInfo> _automountedDrives;
 
         private Dictionary<string, PSVariable> _variables;
         private Dictionary<string, PSVariable> GetPrivateVariables()
@@ -1978,6 +1986,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-    } // class SessionStateScope
-} // namespace System.Management.Automation
+    }
+}
 

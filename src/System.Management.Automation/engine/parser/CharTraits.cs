@@ -259,6 +259,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.VarNameFirst) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -270,6 +271,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.IdentifierStart) != 0;
             }
+
             return char.IsLetter(c);
         }
 
@@ -281,6 +283,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & (CharTraits.IdentifierStart | CharTraits.Digit)) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -291,6 +294,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.HexDigit) != 0;
             }
+
             return false;
         }
 
@@ -301,6 +305,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.Digit) != 0;
             }
+
             return false;
         }
 
@@ -311,6 +316,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.TypeSuffix) != 0;
             }
+
             return false;
         }
 
@@ -321,6 +327,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.MultiplierStart) != 0;
             }
+
             return false;
         }
 

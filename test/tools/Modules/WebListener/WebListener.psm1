@@ -120,7 +120,7 @@ function Start-WebListener
         }
 
         $initTimeoutSeconds  = 15
-        $appDll              = 'WebListener.dll'
+        $appExe              = (get-command WebListener).Path
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
@@ -136,7 +136,7 @@ function Start-WebListener
         $Job = Start-Job {
             $path = Split-Path -parent (get-command WebListener).Path -Verbose
             Push-Location $path -Verbose
-            'appDLL: {0}' -f $using:appDll
+            'appEXE: {0}' -f $using:appExe
             'serverPfxPath: {0}' -f $using:serverPfxPath
             'serverPfxPassword: {0}' -f $using:serverPfxPassword
             'HttpPort: {0}' -f $using:HttpPort
@@ -144,14 +144,15 @@ function Start-WebListener
             'Tls11Port: {0}' -f $using:Tls11Port
             'TlsPort: {0}' -f $using:TlsPort
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            dotnet $using:appDll $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
+            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
         }
+
         $Script:WebListener = [WebListener]@{
             HttpPort  = $HttpPort
             HttpsPort = $HttpsPort
             Tls11Port = $Tls11Port
             TlsPort   = $TlsPort
-            Job       = $Job
+            Job   = $Job
         }
 
         # Count iterations of $sleepMilliseconds instead of using system time to work around possible CI VM sleep/delays
@@ -172,8 +173,7 @@ function Start-WebListener
             $jobVerbose =  $Job.ChildJobs[0].Verbose | Out-String
             $Job | Stop-Job
             $Job | Remove-Job -Force
-            $message = 'WebListener did not start before the timeout was reached.{0}Errors:{0}{1}{0}Output:{0}{2}{0}Verbose:{0}{3}' -f
-                ([System.Environment]::NewLine), $jobErrors, $jobOutput, $jobVerbose
+            $message = 'WebListener did not start before the timeout was reached.{0}Errors:{0}{1}{0}Output:{0}{2}{0}Verbose:{0}{3}' -f ([System.Environment]::NewLine), $jobErrors, $jobOutput, $jobVerbose
             throw $message
         }
         return $Script:WebListener

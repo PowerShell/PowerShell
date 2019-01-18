@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -52,28 +52,28 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(scopeID))
             {
-                if (String.Equals(
+                if (string.Equals(
                         scopeID,
                         StringLiterals.Global,
                         StringComparison.OrdinalIgnoreCase))
                 {
                     result = GlobalScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Local,
                             StringComparison.OrdinalIgnoreCase))
                 {
                     result = _currentScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Private,
                             StringComparison.OrdinalIgnoreCase))
                 {
                     result = _currentScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Script,
                             StringComparison.OrdinalIgnoreCase))
@@ -109,7 +109,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetScopeByID
+        }
 
         /// <summary>
         /// Given a scope ID, walks the scope list to the appropriate scope and returns it.
@@ -148,7 +148,7 @@ namespace System.Management.Automation
             }
 
             return processingScope;
-        } // GetScopeByID
+        }
 
         /// <summary>
         /// The global scope of session state.  Can be accessed
@@ -195,6 +195,7 @@ namespace System.Management.Automation
                         inGlobalScopeLineage = true;
                         break;
                     }
+
                     scope = scope.Parent;
                 }
 
@@ -205,7 +206,7 @@ namespace System.Management.Automation
 
                 _currentScope = value;
             }
-        } // CurrentScope
+        }
 
         /// <summary>
         /// Gets the session state current script scope.
@@ -237,8 +238,9 @@ namespace System.Management.Automation
             {
                 newScope.ScriptScope = newScope;
             }
+
             return newScope;
-        } // NewScope
+        }
 
         /// <summary>
         /// Removes the current scope from the scope tree and
@@ -304,7 +306,7 @@ namespace System.Management.Automation
                     // Ignore all exceptions from the provider as we are
                     // going to force the removal anyway
                 }
-            } // foreach drive
+            }
 
             scope.RemoveAllDrives();
 
@@ -315,9 +317,10 @@ namespace System.Management.Automation
             {
                 _currentScope = _currentScope.Parent;
             }
+
             scope.Parent = null;
-        } // RemoveScope
-    } // SessionStateInternal class
+        }
+    }
 }
 
 #pragma warning restore 56500
