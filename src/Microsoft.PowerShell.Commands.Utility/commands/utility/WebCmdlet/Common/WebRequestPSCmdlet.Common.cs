@@ -1142,11 +1142,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
-            // Default behavior is continue to send body content anyway after a short period
-            // Here it send the two part as a whole.
-            request.Headers.ExpectContinue = false;
-
             return (request);
         }
 
