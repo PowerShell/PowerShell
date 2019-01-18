@@ -721,7 +721,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
         if ($PSVersionTable.GitCommitId.Contains("-g")) {
             $productVersion | Should -BeExactly $PSVersionTable.GitCommitId
         } else {
-            $PSVersionTable.GitCommitId | Should -Match $productVersion
+            $productVersion | Should -Match $PSVersionTable.GitCommitId
         }
         $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core"
     }
