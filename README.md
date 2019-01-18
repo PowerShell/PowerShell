@@ -170,13 +170,9 @@ If you have any problems building, please consult the developer [FAQ][].
 [windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=32
 [linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
 [macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
-[av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
-[av-site]: https://ci.appveyor.com/project/PowerShell/powershell
 [windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
 [linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
 [macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
-[av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
-[av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://codecov.io/gh/PowerShell/PowerShell
 [cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
 [cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
