@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonObject class.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
     public static class JsonObject
     {
         private class DuplicateMemberHashSet : HashSet<string>
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="input">The json text to convert.</param>
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A PSObject.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, out ErrorRecord error)
         {
             return ConvertFromJson(input, returnHashtable: false, out error);
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, out ErrorRecord error)
         {
             return ConvertFromJson(input, returnHashtable, maxDepth: 1024, out error);
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
             if (input == null)
@@ -95,13 +95,9 @@ namespace Microsoft.PowerShell.Commands
                 JsonSerializerSettings serializerSettings = new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.None,
-                    MetadataPropertyHandling = MetadataPropertyHandling.Ignore
+                    MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                    MaxDepth = maxDepth
                 };
-
-                if (maxDepth != null)
-                {
-                    serializerSettings.MaxDepth = maxDepth;
-                }
 
                 var obj = JsonConvert.DeserializeObject(input, serializerSettings);
 
