@@ -220,7 +220,6 @@ function Get-DefaultPreviewConfigForPackageValidation
 {
     # format: <DockerfileFolderName>=<PartOfPackageFilename>
     @{  'centos7'='rhel.7';
-        'debian.8'='debian.8';
         'debian.9'='debian.9';
         'fedora26'='rhel.7';
         'fedora27'='rhel.7';
@@ -231,7 +230,6 @@ function Get-DefaultPreviewConfigForPackageValidation
         'ubuntu16.04'='ubuntu.16.04';
         'ubuntu18.04'='ubuntu.18.04';
         'fxdependent-centos7'='linux-x64-fxdependent.tar.gz';
-        'fxdependent-debian.8'='linux-x64-fxdependent.tar.gz';
         'fxdependent-debian.9'='linux-x64-fxdependent.tar.gz';
         'fxdependent-fedora27'='linux-x64-fxdependent.tar.gz';
         'fxdependent-fedora28'='linux-x64-fxdependent.tar.gz';
@@ -251,7 +249,6 @@ function Get-DefaultStableConfigForPackageValidation
 {
     # format: <DockerfileFolderName>=<PartOfPackageFilename>
     @{  'centos7'='rhel.7';
-        'debian.8'='debian.8';
         'debian.9'='debian.9';
         'fedora26'='rhel.7';
         'fedora27'='rhel.7';
@@ -260,7 +257,6 @@ function Get-DefaultStableConfigForPackageValidation
         'ubuntu14.04'='ubuntu.14.04';
         'ubuntu16.04'='ubuntu.16.04';
         'fxdependent-centos7'='linux-x64-fxdependent.tar.gz';
-        'fxdependent-debian.8'='linux-x64-fxdependent.tar.gz';
         'fxdependent-debian.9'='linux-x64-fxdependent.tar.gz';
         'fxdependent-fedora27'='linux-x64-fxdependent.tar.gz';
         'fxdependent-opensuse42.2'='linux-x64-fxdependent.tar.gz';

@@ -4,7 +4,16 @@
 Describe "Verify Markdown Links" {
     BeforeAll {
         # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
-        start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
+        if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
+        {
+            Write-Verbose "installing markdown-link-check ..." -Verbose
+            start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
+        }
+
+        if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
+        {
+            Install-Module -Name ThreadJob -Scope CurrentUser
+        }
 
         # Cleanup jobs for reliability
         get-job | remove-job -force
@@ -15,14 +24,14 @@ Describe "Verify Markdown Links" {
         get-job | remove-job -force
     }
 
-    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Group-Object -Property directory
+    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
 
     $jobs = @{}
     # start all link verification in parallel
-    Write-Verbose -verbose "starting jobs for performance ..."
     Foreach($group in $groups)
     {
-        $job = start-job {
+        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
+        $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
             {
@@ -36,6 +45,7 @@ Describe "Verify Markdown Links" {
         $jobs.add($group.name,$job)
     }
 
+    Write-Verbose -verbose "Getting and printing results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
@@ -49,9 +59,9 @@ Describe "Verify Markdown Links" {
             Context "Verify links in $file" {
                 # failures look like `[✖] https://someurl` (perhaps without the https://)
                 # passes look like `[✓] https://someurl` (perhaps without the https://)
-                $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4) }
+                $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4).Trim() }
                 $passes = $result -like '*[✓]*' | ForEach-Object {
-                    @{url=$_.Substring(4)}
+                    @{url=$_.Substring(4).Trim() }
                 }
                 $trueFailures = @()
                 $verifyFailures = @()
@@ -82,13 +92,25 @@ Describe "Verify Markdown Links" {
                 if($trueFailures)
                 {
                     it "<url> should work" -TestCases $trueFailures  {
+                        param($url)
+
+                        $prefix = $url.Substring(0,7)
+
+                        # Logging for diagnosability.  AzDevOps sometimes redacts the full url.
+                        Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
                             # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
-                            $null = Invoke-WebRequest -uri $url -RetryIntervalSec 2 -MaximumRetryCount 5
+                            try{
+                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
+                            }
+                            catch
+                            {
+                                throw "retry of url failed with error: $($_.Message)"
+                            }
                         }
                         else {
-                            throw "Tool reported Url as unreachable"
+                            throw "Tool reported Url as unreachable."
                         }
                     }
                 }

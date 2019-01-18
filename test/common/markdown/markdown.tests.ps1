@@ -54,6 +54,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         try
         {
             $docsToTest = @(
+                './.github/SUPPORT.md'
                 './.github/CONTRIBUTING.md'
                 './*.md'
                 './demos/python/*.md'
@@ -65,6 +66,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './docs/testing-guidelines/testing-guidelines.md'
                 './test/powershell/README.md'
                 './tools/*.md'
+                './github/CONTRIBUTING.md'
             )
             $filter = ($docsToTest -join ',')
 
