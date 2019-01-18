@@ -542,7 +542,7 @@ namespace System.Management.Automation.Language
 
             private void DefineProperty(PropertyMemberAst propertyMemberAst)
             {
-                if (_definedProperties.ContainsKey(propertyMemberAst.Name) || (_definedMethods.ContainsKey(propertyMemberAst.Name) && !_definedMethods[propertyMemberAst.Name].Any(m => m.Item1.IsConstructor)))
+                if (_definedProperties.ContainsKey(propertyMemberAst.Name) || (_definedMethods.ContainsKey(propertyMemberAst.Name) && !_definedMethods[propertyMemberAst.Name][0].Item1.IsConstructor))
                 {
                     _parser.ReportError(propertyMemberAst.Extent,
                         nameof(ParserStrings.MemberAlreadyDefined),
