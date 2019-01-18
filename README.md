@@ -32,7 +32,6 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 18.04][corefx-linux]               | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
 | [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
-| [Debian 8.7+][corefx-linux]                | [.deb][rl-debian8]      | [.deb][pv-debian8]    | [Instructions][in-deb8]       |
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
@@ -64,7 +63,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell_6.1.2-1.ubuntu.18.04_amd64.deb
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell_6.1.2-1.ubuntu.16.04_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell_6.1.2-1.ubuntu.14.04_amd64.deb
-[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell_6.1.2-1.debian.8_amd64.deb
 [rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell_6.1.2-1.debian.9_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell-6.1.2-1.rhel.7.x86_64.rpm
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/powershell-6.1.2-osx-x64.pkg
@@ -82,7 +80,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview_6.2.0-preview.3-1.ubuntu.18.04_amd64.deb
 [pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview_6.2.0-preview.3-1.ubuntu.16.04_amd64.deb
 [pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview_6.2.0-preview.3-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview_6.2.0-preview.3-1.debian.8_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview_6.2.0-preview.3-1.debian.9_amd64.deb
 [pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-preview-6.2.0_preview.3-1.rhel.7.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-osx-x64.pkg
@@ -99,7 +96,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-ubuntu14]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1404
 [in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1604
 [in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1804
-[in-deb8]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-8
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
 [in-centos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
 [in-rhel7]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#red-hat-enterprise-linux-rhel-7
