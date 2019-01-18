@@ -3049,7 +3049,7 @@ function New-DotnetSdkContainerFxdPackage {
                 Write-Verbose -Verbose "Compressing"
 
                 if ($Environment.IsWindows) {
-                    Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
+                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $FxdPackagePath/$packageName
                 } else {
                     Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
                 }
@@ -3063,7 +3063,17 @@ function New-DotnetSdkContainerFxdPackage {
     }
 
     if (Test-Path "$FxdPackagePath/$packageName") {
-        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$FxdPackagePath/$packageName"
+        $containerName = if ($Environment.IsWindows)
+        {
+            "signedResults"
+        }
+        else
+        {
+            "release"
+        }
+
+        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$FxdPackagePath/$packageName"
+
     } else {
         Write-Log "Package not found: $FxdPackagePath/$packageName"
     }
