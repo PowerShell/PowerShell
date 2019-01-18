@@ -665,7 +665,7 @@ namespace System.Management.Automation.Language
 
             private bool CheckForDuplicateOverload(FunctionMemberAst functionMemberAst, Type[] newParameters)
             {
-                if (_definedProperties.ContainsKey(functionMemberAst.Name) && !functionMemberAst.IsConstructor)
+                if (!functionMemberAst.IsConstructor && _definedProperties.ContainsKey(functionMemberAst.Name))
                 {
                     _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
                         nameof(ParserStrings.MemberAlreadyDefined),
