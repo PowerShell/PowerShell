@@ -7,8 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
@@ -19,12 +22,81 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
     {
+        #region HelperTypes
+
+        /// <summary>
+        /// Context for convert-to-json operation.
+        /// </summary>
+        public readonly struct ConvertToJsonContext
+        {
+            /// <summary>
+            /// Gets the maximum depth for walking the object graph.
+            /// </summary>
+            public readonly int MaxDepth;
+
+            /// <summary>
+            /// Gets the cancellation token.
+            /// </summary>
+            public readonly CancellationToken CancellationToken;
+
+            /// <summary>
+            /// Gets the StringEscapeHandling setting.
+            /// </summary>
+            public readonly StringEscapeHandling StringEscapeHandling;
+
+            /// <summary>
+            /// Gets the EnumsAsStrings setting.
+            /// </summary>
+            public readonly bool EnumsAsStrings;
+
+            /// <summary>
+            /// Gets the CompressOutput setting.
+            /// </summary>
+            public readonly bool CompressOutput;
+
+            /// <summary>
+            /// Gets the target cmdlet that is doing the convert-to-json operation.
+            /// </summary>
+            public readonly PSCmdlet Cmdlet;
+
+            /// <summary>
+            /// Constructor of ConvertToJsonContext.
+            /// </summary>
+            public ConvertToJsonContext(
+                int maxDepth,
+                CancellationToken cancellationToken,
+                StringEscapeHandling stringEscapeHandling,
+                bool enumsAsStrings,
+                bool compressOutput,
+                PSCmdlet targetCmdlet)
+            {
+                this.MaxDepth = maxDepth;
+                this.CancellationToken = cancellationToken;
+                this.StringEscapeHandling = stringEscapeHandling;
+                this.EnumsAsStrings = enumsAsStrings;
+                this.CompressOutput = compressOutput;
+                this.Cmdlet = targetCmdlet;
+            }
+        }
+
         private class DuplicateMemberHashSet : HashSet<string>
         {
-            public DuplicateMemberHashSet(int capacity) : base(capacity, StringComparer.OrdinalIgnoreCase)
+            public DuplicateMemberHashSet(int capacity)
+                : base(capacity, StringComparer.OrdinalIgnoreCase)
             {
             }
         }
+
+        /// <summary>
+        /// Exception used for cancellation.
+        /// </summary>
+        private class StoppingException : System.Exception
+        {
+        }
+
+        #endregion HelperTypes
+
+        #region ConvertFromJson
 
         /// <summary>
         /// Convert a Json string back to an object of type PSObject.
@@ -340,5 +412,349 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
+        #endregion ConvertFromJson
+
+        #region ConvertToJson
+
+        /// <summary>
+        /// Convert an object to JSON string.
+        /// </summary>
+        public static string ConvertToJson(object objectToProcess, in ConvertToJsonContext context)
+        {
+            try
+            {
+                // Pre-process the object so that it serializes the same, except that properties whose
+                // values cannot be evaluated are treated as having the value null.
+                object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.None,
+                    MaxDepth = 1024,
+                    StringEscapeHandling = context.StringEscapeHandling
+                };
+
+                if (context.EnumsAsStrings)
+                {
+                    jsonSettings.Converters.Add(new StringEnumConverter());
+                }
+
+                if (!context.CompressOutput)
+                {
+                    jsonSettings.Formatting = Formatting.Indented;
+                }
+
+                return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
+            }
+            catch (StoppingException)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Return an alternate representation of the specified object that serializes the same JSON, except
+        /// that properties that cannot be evaluated are treated as having the value null.
+        /// Primitive types are returned verbatim.  Aggregate types are processed recursively.
+        /// </summary>
+        /// <param name="obj">The object to be processed.</param>
+        /// <param name="currentDepth">The current depth into the object graph.</param>
+        /// <param name="context">The context to use for the convert-to-json operation.</param>
+        /// <returns>An object suitable for serializing to JSON.</returns>
+        private static object ProcessValue(object obj, int currentDepth, in ConvertToJsonContext context)
+        {
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                throw new StoppingException();
+            }
+
+            PSObject pso = obj as PSObject;
+
+            if (pso != null)
+                obj = pso.BaseObject;
+
+            object rv = obj;
+            bool isPurePSObj = false;
+            bool isCustomObj = false;
+
+            if (obj == null
+                || DBNull.Value.Equals(obj)
+                || obj is string
+                || obj is char
+                || obj is bool
+                || obj is DateTime
+                || obj is DateTimeOffset
+                || obj is Guid
+                || obj is Uri
+                || obj is double
+                || obj is float
+                || obj is decimal)
+            {
+                rv = obj;
+            }
+            else if (obj is Newtonsoft.Json.Linq.JObject jObject)
+            {
+                rv = jObject.ToObject<Dictionary<object, object>>();
+            }
+            else
+            {
+                Type t = obj.GetType();
+
+                if (t.IsPrimitive)
+                {
+                    rv = obj;
+                }
+                else if (t.IsEnum)
+                {
+                    // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
+                    // because JavaScript does not support the necessary precision.
+                    Type enumUnderlyingType = Enum.GetUnderlyingType(obj.GetType());
+                    if (enumUnderlyingType.Equals(typeof(Int64)) || enumUnderlyingType.Equals(typeof(UInt64)))
+                    {
+                        rv = obj.ToString();
+                    }
+                    else
+                    {
+                        rv = obj;
+                    }
+                }
+                else
+                {
+                    if (currentDepth > context.MaxDepth)
+                    {
+                        if (pso != null && pso.immediateBaseObjectIsEmpty)
+                        {
+                            // The obj is a pure PSObject, we convert the original PSObject to a string,
+                            // instead of its base object in this case
+                            rv = LanguagePrimitives.ConvertTo(pso, typeof(string),
+                                CultureInfo.InvariantCulture);
+                            isPurePSObj = true;
+                        }
+                        else
+                        {
+                            rv = LanguagePrimitives.ConvertTo(obj, typeof(String),
+                                CultureInfo.InvariantCulture);
+                        }
+                    }
+                    else
+                    {
+                        IDictionary dict = obj as IDictionary;
+                        if (dict != null)
+                        {
+                            rv = ProcessDictionary(dict, currentDepth, in context);
+                        }
+                        else
+                        {
+                            IEnumerable enumerable = obj as IEnumerable;
+                            if (enumerable != null)
+                            {
+                                rv = ProcessEnumerable(enumerable, currentDepth, in context);
+                            }
+                            else
+                            {
+                                rv = ProcessCustomObject<JsonIgnoreAttribute>(obj, currentDepth, in context);
+                                isCustomObj = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            rv = AddPsProperties(pso, rv, currentDepth, isPurePSObj, isCustomObj, in context);
+
+            return rv;
+        }
+
+        /// <summary>
+        /// Add to a base object any properties that might have been added to an object (via PSObject) through the Add-Member cmdlet.
+        /// </summary>
+        /// <param name="psObj">The containing PSObject, or null if the base object was not contained in a PSObject.</param>
+        /// <param name="obj">The base object that might have been decorated with additional properties.</param>
+        /// <param name="depth">The current depth into the object graph.</param>
+        /// <param name="isPurePSObj">The processed object is a pure PSObject.</param>
+        /// <param name="isCustomObj">The processed object is a custom object.</param>
+        /// <param name="context">The context for the operation.</param>
+        /// <returns>
+        /// The original base object if no additional properties had been added,
+        /// otherwise a dictionary containing the value of the original base object in the "value" key
+        /// as well as the names and values of an additional properties.
+        /// </returns>
+        private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
+        {
+            PSObject pso = psObj as PSObject;
+
+            if (pso == null)
+                return obj;
+
+            // when isPurePSObj is true, the obj is guaranteed to be a string converted by LanguagePrimitives
+            if (isPurePSObj)
+                return obj;
+
+            bool wasDictionary = true;
+            IDictionary dict = obj as IDictionary;
+
+            if (dict == null)
+            {
+                wasDictionary = false;
+                dict = new Dictionary<string, object>();
+                dict.Add("value", obj);
+            }
+
+            AppendPsProperties(pso, dict, depth, isCustomObj, in context);
+
+            if (wasDictionary == false && dict.Count == 1)
+                return obj;
+
+            return dict;
+        }
+
+        /// <summary>
+        /// Append to a dictionary any properties that might have been added to an object (via PSObject) through the Add-Member cmdlet.
+        /// If the passed in object is a custom object (not a simple object, not a dictionary, not a list, get processed in ProcessCustomObject method),
+        /// we also take Adapted properties into account. Otherwise, we only consider the Extended properties.
+        /// When the object is a pure PSObject, it also gets processed in "ProcessCustomObject" before reaching this method, so we will
+        /// iterate both extended and adapted properties for it. Since it's a pure PSObject, there will be no adapted properties.
+        /// </summary>
+        /// <param name="psObj">The containing PSObject, or null if the base object was not contained in a PSObject.</param>
+        /// <param name="receiver">The dictionary to which any additional properties will be appended.</param>
+        /// <param name="depth">The current depth into the object graph.</param>
+        /// <param name="isCustomObject">The processed object is a custom object.</param>
+        /// <param name="context">The context for the operation.</param>
+        private static void AppendPsProperties(PSObject psObj, IDictionary receiver, int depth, bool isCustomObject, in ConvertToJsonContext context)
+        {
+            // serialize only Extended and Adapted properties..
+            PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
+                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psObj,
+                    isCustomObject ? PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted) :
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+            foreach (PSPropertyInfo prop in srcPropertiesToSearch)
+            {
+                object value = null;
+                try
+                {
+                    value = prop.Value;
+                }
+                catch (Exception)
+                {
+                }
+
+                if (!receiver.Contains(prop.Name))
+                {
+                    receiver[prop.Name] = ProcessValue(value, depth + 1, in context);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return an alternate representation of the specified dictionary that serializes the same JSON, except
+        /// that any contained properties that cannot be evaluated are treated as having the value null.
+        /// </summary>
+        private static object ProcessDictionary(IDictionary dict, int depth, in ConvertToJsonContext context)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
+
+            foreach (DictionaryEntry entry in dict)
+            {
+                string name = entry.Key as string;
+                if (name == null)
+                {
+                    // use the error string that matches the message from JavaScriptSerializer
+                    string errorMsg = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.NonStringKeyInDictionary,
+                        dict.GetType().FullName);
+
+                    var exception = new InvalidOperationException(errorMsg);
+                    if (context.Cmdlet != null)
+                    {
+                        var errorRecord = new ErrorRecord(exception, "NonStringKeyInDictionary", ErrorCategory.InvalidOperation, dict);
+                        context.Cmdlet.ThrowTerminatingError(errorRecord);
+                    }
+                    else
+                    {
+                        throw exception;
+                    }
+                }
+
+                result.Add(name, ProcessValue(entry.Value, depth + 1, in context));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Return an alternate representation of the specified collection that serializes the same JSON, except
+        /// that any contained properties that cannot be evaluated are treated as having the value null.
+        /// </summary>
+        private static object ProcessEnumerable(IEnumerable enumerable, int depth, in ConvertToJsonContext context)
+        {
+            List<object> result = new List<object>();
+
+            foreach (object o in enumerable)
+            {
+                result.Add(ProcessValue(o, depth + 1, in context));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Return an alternate representation of the specified aggregate object that serializes the same JSON, except
+        /// that any contained properties that cannot be evaluated are treated as having the value null.
+        ///
+        /// The result is a dictionary in which all public fields and public gettable properties of the original object
+        /// are represented.  If any exception occurs while retrieving the value of a field or property, that entity
+        /// is included in the output dictionary with a value of null.
+        /// </summary>
+        private static object ProcessCustomObject<T>(object o, int depth, in ConvertToJsonContext context)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            Type t = o.GetType();
+
+            foreach (FieldInfo info in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!info.IsDefined(typeof(T), true))
+                {
+                    object value;
+                    try
+                    {
+                        value = info.GetValue(o);
+                    }
+                    catch (Exception)
+                    {
+                        value = null;
+                    }
+
+                    result.Add(info.Name, ProcessValue(value, depth + 1, in context));
+                }
+            }
+
+            foreach (PropertyInfo info2 in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (!info2.IsDefined(typeof(T), true))
+                {
+                    MethodInfo getMethod = info2.GetGetMethod();
+                    if ((getMethod != null) && (getMethod.GetParameters().Length <= 0))
+                    {
+                        object value;
+                        try
+                        {
+                            value = getMethod.Invoke(o, new object[0]);
+                        }
+                        catch (Exception)
+                        {
+                            value = null;
+                        }
+
+                        result.Add(info2.Name, ProcessValue(value, depth + 1, in context));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion ConvertToJson
     }
 }
