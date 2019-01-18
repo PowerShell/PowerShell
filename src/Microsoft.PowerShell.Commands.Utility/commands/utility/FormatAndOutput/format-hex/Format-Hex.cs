@@ -207,10 +207,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (IOException fileException)
+            catch (IOException ioException)
             {
                 // IOException takes care of FileNotFoundException, DirectoryNotFoundException, and PathTooLongException
-                WriteError(new ErrorRecord(fileException, "FormatHexIOError", ErrorCategory.WriteError, path));
+                WriteError(new ErrorRecord(ioException, "FormatHexIOError", ErrorCategory.WriteError, path));
             }
             catch (ArgumentException argException)
             {
