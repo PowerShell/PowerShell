@@ -22,9 +22,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newTestFile = "NewTestFile.txt"
             $testContent = "Some Content"
             $testContent2 = "More Content"
-            $reservedNames = "CON", "PRN", "AUX", "CLOCK$", "NUL",
-                             "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-                             "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+            $reservedNamesTests = @(
+                # other formally reserved names work with .Net Core 3.0
+                @{ deviceName = "CLOCK$" }
+            )
         }
 
         BeforeEach {
@@ -154,51 +155,39 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $contentAfter.Count | Should -Be 0
         }
 
-         It "Copy-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-             }
+         It "Copy-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
          }
 
-         It "Move-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
-             }
+         It "Move-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
          }
 
-         It "Rename-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
-             }
+         It "Rename-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+             param($deviceName)
+            { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
          }
 
-         It "Copy-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-             }
+         It "Copy-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
          }
 
-         It "Move-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Move-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
-         It "Rename-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Rename-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
          It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(

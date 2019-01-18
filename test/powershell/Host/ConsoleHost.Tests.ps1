@@ -716,9 +716,14 @@ Describe "Console host api tests" -Tag CI {
 Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
-        $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
-        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
-        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
+        $pwsh.VersionInfo.FileVersion | Should -Match $PSVersionTable.PSVersion.ToString().Split("-")[0]
+        $productVersion = $pwsh.VersionInfo.ProductVersion.Replace("-dirty","").Replace(" Commits: ","-").Replace(" SHA: ","-g")
+        if ($PSVersionTable.GitCommitId.Contains("-g")) {
+            $productVersion | Should -BeExactly $PSVersionTable.GitCommitId
+        } else {
+            $PSVersionTable.GitCommitId | Should -Match $productVersion
+        }
+        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {

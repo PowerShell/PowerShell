@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Use FileInfo to convert short paths to long paths on Windows
 #if !UNIX
-            path = (new FileInfo(path)).FullName;
+            path = Path.GetFullPath(path);
 #endif
             return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
         }
