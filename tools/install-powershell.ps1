@@ -18,24 +18,24 @@
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 #>
-[CmdletBinding(DefaultParameterSetName="Daily")]
+[CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
-    [Parameter(ParameterSetName="Daily")]
+    [Parameter(ParameterSetName = "Daily")]
     [string] $Destination,
 
-    [Parameter(ParameterSetName="Daily")]
+    [Parameter(ParameterSetName = "Daily")]
     [switch] $Daily,
 
-    [Parameter(ParameterSetName="Daily")]
+    [Parameter(ParameterSetName = "Daily")]
     [switch] $DoNotOverwrite,
 
-    [Parameter(ParameterSetName="Daily")]
+    [Parameter(ParameterSetName = "Daily")]
     [switch] $AddToPath,
 
-    [Parameter(ParameterSetName="MSI")]
+    [Parameter(ParameterSetName = "MSI")]
     [switch] $UseMSI,
 
-    [Parameter(ParameterSetName="MSI")]
+    [Parameter(ParameterSetName = "MSI")]
     [switch] $Quiet,
 
     [Parameter()]
@@ -47,13 +47,13 @@ $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
+$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
 
 if (-not $Destination) {
-    $Destination = if ($IsWinEnv) {
-        "$env:LOCALAPPDATA\Microsoft\powershell"
+    if ($IsWinEnv) {
+        $Destination = "$env:LOCALAPPDATA\Microsoft\powershell"
     } else {
-        "~/.powershell"
+        $Destination = "~/.powershell"
     }
 
     if ($Daily) {
@@ -96,17 +96,126 @@ Function Remove-Destination([string] $Destination) {
     }
 }
 
-$architecture = if (-not $IsWinEnv) {
-    "x64"
+<#
+.Synopsis
+    Parameter validation for Add-PathTToSettingsToSettings.
+.DESCRIPTION
+    Validates that the parameter being validated:
+    - is not null
+    - is a folder and exists
+    - and that it does not exist in settings where settings is:
+        = the process PATH for Linux/OSX
+        - the registry PATHs for Windows
+#>
+class ValidatePathNotInSettingsAttribute : System.Management.Automation.ValidateArgumentsAttribute {
+    [void] Validate([object] $Arguments, [System.Management.Automation.EngineIntrinsics] $engineIntrinsics) {
+        $Path = $Arguments
+        if ([string]::IsNullOrWhiteSpace($Path)) {
+            Throw [System.ArgumentNullException]::new()
+        }
+
+        # Remove ending DirectorySeparatorChar for comparison purposes
+        $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
+
+        if (-not [System.IO.Directory]::Exists($Path)) {
+            Throw [System.IO.DirectoryNotFoundException]::new()
+        }
+
+        # [System.Environment]::GetEnvironmentVariable automatically expands all variables
+        [System.Array] $InstalledPaths = @()
+        if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
+            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)).Split([System.IO.Path]::PathSeparator))
+            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)).Split([System.IO.Path]::PathSeparator))
+        } else {
+            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process).Split([System.IO.Path]::PathSeparator))
+        }
+
+        # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
+        $InstalledPaths = $InstalledPaths.ForEach( { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) } )
+
+        # Throw if $InstalledPaths is in setting
+        if ($InstalledPaths -icontains $Path) {
+            Throw [System.ArgumentException]::new("Path already exists.")
+        }
+    }
+}
+
+<#
+.Synopsis
+    Adds a Path to settings (Supports Windows Only)
+.DESCRIPTION
+    Adds the target path to the target registry.
+.Parameter Path
+    The path to add to the registry. It is validated with ValidatePathNotInSettings which ensures that:
+    -The path exists
+    -Is a directory
+    -Is not in the registry (HKCU or HKLM)
+.Parameter Target
+    The target hive to install the Path to.
+    Must be either User or Machine
+    Defaults to User
+#>
+Function Add-PathTToSettings {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [ValidatePathNotInSettings()]
+        [string] $Path,
+
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateSet([System.EnvironmentVariableTarget]::User, [System.EnvironmentVariableTarget]::Machine)]
+        [System.EnvironmentVariableTarget] $Target = ([System.EnvironmentVariableTarget]::User)
+    )
+
+    if (-not $IsWinEnv) {
+        return
+    }
+
+    if ($Target -eq [System.EnvironmentVariableTarget]::User) {
+        [string] $Environment = 'Environment'
+        [Microsoft.Win32.RegistryKey] $Key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($Environment, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree)
+    } else {
+        [string] $Environment = 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+        [Microsoft.Win32.RegistryKey] $Key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($Environment, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree)
+    }
+
+    # $key is null here if it the user was unable to get ReadWriteSubTree access.
+    if ($null -eq $Key) {
+        throw [System.Security.SecurityException]::new("Unable to access the target registry")
+    }
+
+    # Get current unexpanded value
+    [string] $CurrentUnexpandedValue = $Key.GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+
+    # Keep current PathValueKind if possible/appropriate
+    try {
+        [Microsoft.Win32.RegistryValueKind] $PathValueKind = $Key.GetValueKind('PATH')
+    } catch {
+        [Microsoft.Win32.RegistryValueKind] $PathValueKind = [Microsoft.Win32.RegistryValueKind]::ExpandString
+    }
+
+    # Evaluate new path
+    $NewPathValue = [string]::Concat($CurrentUnexpandedValue.TrimEnd([System.IO.Path]::PathSeparator), [System.IO.Path]::PathSeparator, $Path)
+
+    # Upgrade PathValueKind to [Microsoft.Win32.RegistryValueKind]::ExpandString if appropriate
+    if ($NewPathValue.Contains('%')) { $PathValueKind = [Microsoft.Win32.RegistryValueKind]::ExpandString }
+
+    $Key.SetValue("PATH", $NewPathValue, $PathValueKind)
+}
+
+if (-not $IsWinEnv) {
+    $architecture = "x64"
 } else {
     switch ($env:PROCESSOR_ARCHITECTURE) {
-        "AMD64" { "x64" }
-        "x86"   { "x86" }
-        default  { throw "PowerShell package for OS architecture '$_' is not supported." }
+        "AMD64" { $architecture = "x64" }
+        "x86" { $architecture = "x86" }
+        default { throw "PowerShell package for OS architecture '$_' is not supported." }
     }
 }
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-New-Item -ItemType Directory -Path $tempDir -Force > $null
+New-Item -ItemType Directory -Path $tempDir -Force -ErrorAction SilentlyContinue
 try {
     # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
     # aborted: Could not create SSL/TLS secure channel. error.
@@ -126,21 +235,21 @@ try {
         if (-not (Get-PackageSource -Name powershell-core-daily -ErrorAction SilentlyContinue)) {
             $packageSource = "https://powershell.myget.org/F/powershell-core-daily"
             Write-Verbose "Register powershell-core-daily package source '$packageSource' with PackageManagement" -Verbose
-            Register-PackageSource -Name powershell-core-daily -Location $packageSource -ProviderName nuget -Trusted > $null
+            Register-PackageSource -Name powershell-core-daily -Location $packageSource -ProviderName nuget -Trusted -ErrorAction SilentlyContinue
         }
 
-        $packageName = if ($IsWinEnv) {
-            "powershell-win-x64-win7-x64"
+        if ($IsWinEnv) {
+            $packageName = "powershell-win-x64-win7-x64"
         } elseif ($IsLinuxEnv) {
-            "powershell-linux-x64"
+            $packageName = "powershell-linux-x64"
         } elseif ($IsMacOSEnv) {
-            "powershell-osx-x64"
+            $packageName = "powershell-osx-x64"
         }
 
         $package = Find-Package -Source powershell-core-daily -AllowPrereleaseVersions -Name $packageName
         Write-Verbose "Daily package found. Name: $packageName; Version: $($package.Version)" -Verbose
 
-        Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
+        Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion -ErrorAction SilentlyContinue
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
     } else {
         $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
@@ -150,16 +259,16 @@ try {
             $release = $metadata.ReleaseTag -replace '^v'
         }
 
-        $packageName = if ($IsWinEnv) {
+        if ($IsWinEnv) {
             if ($UseMSI) {
-                "PowerShell-${release}-win-${architecture}.msi"
+                $packageName = "PowerShell-${release}-win-${architecture}.msi"
             } else {
-                "PowerShell-${release}-win-${architecture}.zip"
+                $packageName = "PowerShell-${release}-win-${architecture}.zip"
             }
         } elseif ($IsLinuxEnv) {
-            "powershell-${release}-linux-${architecture}.tar.gz"
+            $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
         } elseif ($IsMacOSEnv) {
-            "powershell-${release}-osx-${architecture}.tar.gz"
+            $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
         }
 
         $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
@@ -182,11 +291,11 @@ try {
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        New-Item -ItemType Directory -Path $contentPath > $null
+        New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
-                $process = Start-Process msiexec -ArgumentList "/i",$packagePath,"/quiet" -Wait -PassThru
+                $process = Start-Process msiexec -ArgumentList "/i", $packagePath, "/quiet" -Wait -PassThru
                 if ($process.exitcode -ne 0) {
                     throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
                 }
@@ -199,13 +308,14 @@ try {
             tar zxf $packagePath -C $contentPath
         }
     }
+
     if (-not $UseMSI) {
         Remove-Destination $Destination
         if (Test-Path $Destination) {
             Write-Verbose "Copying files" -Verbose
             # only copy files as folders will already exist at $Destination
             Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
-                $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
+                $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath, "")
                 Copy-Item $_.fullname -Destination $DestinationFilePath
             }
         } else {
@@ -219,7 +329,7 @@ try {
         if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-            New-Item -Path "~/.rcedit" -Type Directory -Force > $null
+            New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
             Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
         }
 
@@ -231,17 +341,32 @@ try {
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
     if ($AddToPath -and -not $UseMSI) {
-        if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
-            ## Add to the Machine scope 'Path' environment variable
-            $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-            $machinePath = $Destination + [System.IO.Path]::PathSeparator + $machinePath
-            [System.Environment]::SetEnvironmentVariable("Path", $machinePath, "Machine")
-            Write-Verbose "'$Destination' is added to the Path" -Verbose
-        }
+        if ($IsWinEnv) {
+            if ((-not ($Destination.StartsWith($ENV:USERPROFILE))) -and
+                (-not ($Destination.StartsWith($ENV:APPDATA))) -and
+                (-not ($Destination.StartsWith($env:LOCALAPPDATA)))) {
+                $TargetRegistry = [System.EnvironmentVariableTarget]::Machine
+                try {
+                    Add-PathTToSettings -Path $Destination -Target $TargetRegistry
+                } catch {
+                    Write-Verbose -Message "Unable to save the new path in the machine wide registry."
+                    $TargetRegistry = [System.EnvironmentVariableTarget]::User
+                }
+            } else {
+                $TargetRegistry = [System.EnvironmentVariableTarget]::User
+            }
 
-        if (-not $IsWinEnv) {
+            # If failed to install to machine wide path or path was not appropriate for machine wide path
+            if ($TargetRegistry -eq [System.EnvironmentVariableTarget]::User) {
+                try {
+                    Add-PathTToSettings -Path $Destination -Target $TargetRegistry
+                } catch {
+                    Write-Verbose -Message "Unable to save the new path in the registry for the current user"
+                }
+            }
+        } else {
             $targetPath = Join-Path -Path $Destination -ChildPath "pwsh"
-            $symlink = if ($IsLinuxEnv) { "/usr/bin/pwsh" } elseif ($IsMacOSEnv) { "/usr/local/bin/pwsh" }
+            if ($IsLinuxEnv) { $symlink = "/usr/bin/pwsh" } elseif ($IsMacOSEnv) { $symlink = "/usr/local/bin/pwsh" }
             $needNewSymlink = $true
 
             if (Test-Path -Path $symlink) {
@@ -249,8 +374,7 @@ try {
                 if ($linkItem.LinkType -ne "SymbolicLink") {
                     Write-Warning "'$symlink' already exists but it's not a symbolic link. Abort adding to PATH."
                     $needNewSymlink = $false
-                }
-                elseif ($linkItem.Target -contains $targetPath) {
+                } elseif ($linkItem.Target -contains $targetPath) {
                     ## The link already points to the target
                     Write-Verbose "'$symlink' already points to '$targetPath'" -Verbose
                     $needNewSymlink = $false
@@ -259,7 +383,7 @@ try {
 
             if ($needNewSymlink) {
                 $uid = id -u
-                $SUDO = if ($uid -ne "0") { "sudo" } else { "" }
+                if ($uid -ne "0") { $SUDO = "sudo" } else { $SUDO = "" }
 
                 Write-Verbose "Make symbolic link '$symlink' point to '$targetPath'..." -Verbose
                 Invoke-Expression -Command "$SUDO ln -fs $targetPath $symlink"

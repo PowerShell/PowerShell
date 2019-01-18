@@ -16,9 +16,9 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
 
         # give the containers something to do, otherwise they will exit and be removed
         Write-Verbose -verbose "setting up docker container PowerShell server"
-        $server = docker run -d $imageName powershell -c start-sleep $timeout
+        $server = docker run -d $imageName powershell -c Start-Sleep -Seconds $timeout
         Write-Verbose -verbose "setting up docker container PowerShell client"
-        $client = docker run -d $imageName powershell -c start-sleep $timeout
+        $client = docker run -d $imageName powershell -c Start-Sleep -Seconds $timeout
 
         # get fullpath to installed core powershell
         Write-Verbose -verbose "Getting path to PowerShell core"

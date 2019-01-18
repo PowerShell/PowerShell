@@ -302,7 +302,7 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 ## Recommended Training and Reading
 
 - Video: [Get Started with PowerShell][remoting] from Channel9
-- [eBooks from PowerShell.org](https://powershell.org/ebooks/)
+- [eBooks from PowerShell.org](https://leanpub.com/u/devopscollective)
 - [eBooks from PowerShell.com][ebooks-powershell.com]
 - [eBooks List][ebook-list] by Martin Schvartzman
 - [Tutorial from MVP][tutorial]
@@ -322,9 +322,9 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 - [Windows PowerShell in Action][in-action] by Bruce Payette
 - [Windows PowerShell Cookbook][cookbook] by Lee Holmes
 
-[in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
+[in-action]: https://www.amazon.com/Windows-PowerShell-Action-Bruce-Payette/dp/1633430294
 [cookbook]: http://shop.oreilly.com/product/9780596801519.do
-[ebook-list]: https://blogs.technet.microsoft.com/pstips/2014/05/26/free-powershell-ebooks/
+[ebook-list]: https://martin77s.wordpress.com/2014/05/26/free-powershell-ebooks/
 [ebooks-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [tutorial]: http://www.computerperformance.co.uk/powershell/index.htm
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
