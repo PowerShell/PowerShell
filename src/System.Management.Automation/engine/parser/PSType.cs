@@ -542,7 +542,7 @@ namespace System.Management.Automation.Language
 
             private void DefineProperty(PropertyMemberAst propertyMemberAst)
             {
-                if (_definedProperties.ContainsKey(propertyMemberAst.Name) || _definedMethods.ContainsKey(propertyMemberAst.Name))
+                if (_definedProperties.ContainsKey(propertyMemberAst.Name) || _definedMethods.ContainsKey(propertyMemberAst.Name) && !_definedMethods[propertyMemberAst.Name].Any(m => m.Item1.IsConstructor))
                 {
                     _parser.ReportError(propertyMemberAst.Extent,
                         nameof(ParserStrings.MemberAlreadyDefined),
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Language
 
             private bool CheckForDuplicateOverload(FunctionMemberAst functionMemberAst, Type[] newParameters)
             {
-                if (_definedProperties.ContainsKey(functionMemberAst.Name))
+                if (_definedProperties.ContainsKey(functionMemberAst.Name) && !functionMemberAst.IsConstructor)
                 {
                     _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
                         nameof(ParserStrings.MemberAlreadyDefined),
