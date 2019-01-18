@@ -471,7 +471,9 @@ namespace Microsoft.PowerShell.Commands
             PSObject pso = obj as PSObject;
 
             if (pso != null)
+            {
                 obj = pso.BaseObject;
+            }
 
             object rv = obj;
             bool isPurePSObj = false;
@@ -584,11 +586,15 @@ namespace Microsoft.PowerShell.Commands
             PSObject pso = psObj as PSObject;
 
             if (pso == null)
+            {
                 return obj;
+            }
 
             // when isPurePSObj is true, the obj is guaranteed to be a string converted by LanguagePrimitives
             if (isPurePSObj)
+            {
                 return obj;
+            }
 
             bool wasDictionary = true;
             IDictionary dict = obj as IDictionary;
@@ -603,7 +609,9 @@ namespace Microsoft.PowerShell.Commands
             AppendPsProperties(pso, dict, depth, isCustomObj, in context);
 
             if (wasDictionary == false && dict.Count == 1)
+            {
                 return obj;
+            }
 
             return dict;
         }

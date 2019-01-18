@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace Microsoft.PowerShell.Commands
@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertToJsonCommand : PSCmdlet
     {
-        #region parameters
         /// <summary>
         /// Gets or sets the InputObject property.
         /// </summary>
@@ -77,10 +76,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
 
-        #endregion parameters
-
-        #region overrides
-
         /// <summary>
         /// Prerequisite checks.
         /// </summary>
@@ -127,6 +122,8 @@ namespace Microsoft.PowerShell.Commands
                     Compress.IsPresent,
                     targetCmdlet: this);
 
+                // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
+                // in that case, we shouldn't write the null to the output pipe.
                 string output = JsonObject.ConvertToJson(objectToProcess, in context);
                 if (output != null)
                 {
@@ -142,7 +139,5 @@ namespace Microsoft.PowerShell.Commands
         {
             cancellationSource.Cancel();
         }
-
-        #endregion overrides
     }
 }
