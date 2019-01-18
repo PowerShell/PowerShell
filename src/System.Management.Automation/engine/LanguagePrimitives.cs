@@ -2904,10 +2904,10 @@ namespace System.Management.Automation
             }
 
             typeConversion.WriteLine("Converting to integer.");
-            TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
-                return integerConverter.ConvertFrom(strToConvert);
+                return Convert.ChangeType(Parser.ScanNumber(strToConvert, resultType), resultType,
+                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
             {
@@ -2946,18 +2946,21 @@ namespace System.Management.Automation
                                                      TypeTable backupTable)
         {
             Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
+            var strToConvert = valueToConvert as string;
 
-            if (((string)valueToConvert).Length == 0)
+            if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
                 // This is not wrapped in a try/catch because it can't fail.
                 return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
             }
 
+            object parsedNumber = null;
             typeConversion.WriteLine("Converting to decimal.");
             try
             {
-                return Convert.ChangeType(valueToConvert, resultType,
+                parsedNumber = Parser.ScanNumber(strToConvert, resultType);
+                return Convert.ChangeType(parsedNumber, resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -2967,7 +2970,10 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        return ConvertNumericThroughDouble(valueToConvert, resultType);
+                        if (parsedNumber != null)
+                        {
+                            return ConvertNumericThroughDouble(parsedNumber, resultType);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -2977,7 +2983,7 @@ namespace System.Management.Automation
 
                 throw new PSInvalidCastException("InvalidCastFromStringToDecimal", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+                    strToConvert, resultType.ToString(), e.Message);
             }
         }
 
@@ -2989,8 +2995,9 @@ namespace System.Management.Automation
                                                   TypeTable backupTable)
         {
             Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
+            var strToConvert = valueToConvert as string;
 
-            if (((string)valueToConvert).Length == 0)
+            if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
                 // This is not wrapped in a try/catch because it can't fail.
@@ -3000,7 +3007,7 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Converting to double or single.");
             try
             {
-                return Convert.ChangeType(valueToConvert, resultType,
+                return Convert.ChangeType(Parser.ScanNumber(strToConvert, resultType), resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -3008,7 +3015,7 @@ namespace System.Management.Automation
                 typeConversion.WriteLine("Exception converting to double or single: \"{0}\".", e.Message);
                 throw new PSInvalidCastException("InvalidCastFromStringToDoubleOrSingle", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+                    strToConvert, resultType.ToString(), e.Message);
             }
         }
 
