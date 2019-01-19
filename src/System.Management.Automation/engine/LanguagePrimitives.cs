@@ -2906,7 +2906,18 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Converting to integer.");
             try
             {
-                return Convert.ChangeType(Parser.ScanNumber(strToConvert, resultType), resultType,
+                try
+                {
+                    return Convert.ChangeType(
+                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                        resultType,
+                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                }
+                catch (ParseException)
+                {
+                }
+
+                return Convert.ChangeType(strToConvert, resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -2955,12 +2966,22 @@ namespace System.Management.Automation
                 return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
             }
 
-            object parsedNumber = null;
             typeConversion.WriteLine("Converting to decimal.");
             try
             {
-                parsedNumber = Parser.ScanNumber(strToConvert, resultType);
-                return Convert.ChangeType(parsedNumber, resultType,
+                typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
+                try
+                {
+                    return Convert.ChangeType(
+                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                        resultType,
+                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                }
+                catch (ParseException)
+                {
+                }
+
+                return Convert.ChangeType(strToConvert, resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -2970,10 +2991,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        if (parsedNumber != null)
-                        {
-                            return ConvertNumericThroughDouble(parsedNumber, resultType);
-                        }
+                        return ConvertNumericThroughDouble(strToConvert, resultType);
                     }
                     catch (Exception ex)
                     {
@@ -3007,7 +3025,19 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Converting to double or single.");
             try
             {
-                return Convert.ChangeType(Parser.ScanNumber(strToConvert, resultType), resultType,
+                typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
+                try
+                {
+                    return Convert.ChangeType(
+                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                        resultType,
+                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                }
+                catch (ParseException)
+                {
+                }
+
+                return Convert.ChangeType(strToConvert, resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
