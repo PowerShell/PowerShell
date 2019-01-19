@@ -88,7 +88,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers type of Index expression on Dictionary' {
         $ast = {
-            [System.Collections.Generic.Dictionary[int, DateTime]]::new()[1]
+            [System.Collections.Generic.Dictionary[int, System.DateTime]]::new()[1]
         }.ast.EndBlock.Statements[0].PipelineElements[0].Expression
         $res = [AstTypeInference]::InferTypeOf( $ast )
 
@@ -231,7 +231,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers type from static member property" {
-        $res = [AstTypeInference]::InferTypeOf( { [DateTime]::Now }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { [System.DateTime]::UtcNow }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.DateTime'
     }
@@ -1019,7 +1019,7 @@ Describe "Type inference Tests" -tags "CI" {
     It 'Infers type of function member' {
         $res = [AstTypeInference]::InferTypeOf( {
                 class X {
-                    [DateTime] GetDate() { return [datetime]::Now }
+                    [System.DateTime] GetDate() { return [System.DateTime]::UtcNow }
                 }
             }.Ast.Find( {param($ast) $ast -is [System.Management.Automation.Language.FunctionMemberAst]}, $true))
 
@@ -1028,7 +1028,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers type of MemberExpression on class property' {
         class X {
-            [DateTime] $Date
+            [System.DateTime] $Date
         }
         $x = [X]::new()
         $res = [AstTypeInference]::InferTypeOf( {
@@ -1041,7 +1041,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers type of MemberExpression on class Method' {
         class X {
-            [DateTime] GetDate() { return [DateTime]::Now }
+            [System.DateTime] GetDate() { return [System.DateTime]::UtcNow }
         }
         $x = [X]::new()
         $res = [AstTypeInference]::InferTypeOf( {

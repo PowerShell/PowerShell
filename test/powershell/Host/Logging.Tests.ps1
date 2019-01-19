@@ -294,7 +294,7 @@ Path:.*
 
             [string] $contentFile = Join-Path -Path $workingDirectory -ChildPath ('pwsh.log.txt')
             # get log items after current time.
-            [DateTime] $after = [DateTime]::Now
+            [System.DateTimeOffset] $after = [System.DateTimeOffset]::Now
         }
     }
 
@@ -465,7 +465,7 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
             $logName = 'PowerShellCore'
 
             # get log items after current time.
-            [DateTime] $after = [DateTime]::Now
+            [System.DateTimeOffset] $after = [System.DateTimeOffset]::Now
             Clear-PSEventLog -Name "$logName/Operational"
         }
     }

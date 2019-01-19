@@ -8,13 +8,13 @@ function Wait-UntilTrue
         [int]$TimeoutInMilliseconds = 10000,
         [int]$IntervalInMilliseconds = 1000
         )
-    # Get the current time
-    $startTime = [DateTime]::Now
+    # Using UtcNow to be timezone safe.
+    $startTime = [datetime]::UtcNow
 
     # Loop until the script block evaluates to true
     while (-not ($sb.Invoke())) {
         # If the timeout period has passed, return false
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
+        if ([datetime]::UtcNow.Subtract($startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
         # Sleep for the specified interval

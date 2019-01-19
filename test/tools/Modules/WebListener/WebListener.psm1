@@ -40,7 +40,7 @@ function New-ClientCertificate
 
     $certificateParameters = @{
         OutCertPath = $CertificatePath
-        StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
+        StartDate = [System.DateTimeOffset]::Now.Subtract([timespan]::FromDays(30))
         Duration = [timespan]::FromDays(365)
         Passphrase = $Passphrase
         CertificateFormat = 'Pfx'
@@ -67,7 +67,7 @@ function New-ServerCertificate
 
     $certificateParameters = @{
         OutCertPath = $CertificatePath
-        StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
+        StartDate = [System.DateTimeOffset]::Now.Subtract([timespan]::FromDays(30))
         Duration = [timespan]::FromDays(1000)
         Passphrase = $Passphrase
         KeyUsage = 'DigitalSignature','KeyEncipherment'

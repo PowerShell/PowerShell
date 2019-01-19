@@ -1415,7 +1415,7 @@ function Start-PSxUnit {
             }
         }
 
-        dotnet build --configuration $Options.configuration 
+        dotnet build --configuration $Options.configuration
 
         if (Test-Path $ParallelTestResultsFile) {
             Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
@@ -2380,11 +2380,11 @@ assembly
         # CLASSES
         class assemblies {
             # attributes
-            [datetime]$timestamp
+            [System.DateTimeOffset]$timestamp
             # child elements
             [System.Collections.Generic.List[testAssembly]]$assembly
             assemblies() {
-                $this.timestamp = [datetime]::now
+                $this.timestamp = [System.DateTimeOffset]::Now
                 $this.assembly = [System.Collections.Generic.List[testAssembly]]::new()
             }
             static [assemblies] op_Addition([assemblies]$ls, [assemblies]$rs) {

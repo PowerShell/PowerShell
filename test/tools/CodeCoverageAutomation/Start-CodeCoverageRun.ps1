@@ -90,7 +90,7 @@ function Write-LogPassThru
         $Path = "$env:Temp\CodeCoverageRunLogs.txt"
     )
 
-    $message = "{0:d} - {0:t} : {1}" -f ([datetime]::now),$message
+    $message = "{0:d} - {0:t} : {1}" -f ([System.DateTimeOffset]::Now),$message
     Add-Content -Path $Path -Value $Message -PassThru -Force
 }
 
@@ -364,11 +364,11 @@ finally
     if(Test-Path $azureLogDrive)
     {
         ##Create yyyy-dd folder
-        $monthFolder = "{0:yyyy-MM}" -f [datetime]::Now
+        $monthFolder = "{0:yyyy-MM}" -f [System.DateTimeOffset]::Now
         $monthFolderFullPath = New-Item -Path (Join-Path $azureLogDrive $monthFolder) -ItemType Directory -Force
         $windowsFolderPath = New-Item (Join-Path $monthFolderFullPath "Windows") -ItemType Directory -Force
 
-        $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy_MM_dd}-{0:hh_mm_ss}.zip" -f [datetime]::Now)
+        $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy_MM_dd}-{0:hh_mm_ss}.zip" -f [System.DateTimeOffset]::Now)
         Compress-Archive -Path $elevatedLogs,$unelevatedLogs,$outputLog -DestinationPath $destinationPath
         Copy-Item $destinationPath $windowsFolderPath -Force -ErrorAction SilentlyContinue
 

@@ -714,11 +714,12 @@ function Invoke-OpenCover
             # poll for process exit every 60 seconds
             # timeout of 12 hours
             # Runs currently take about 8-9 hours, we picked 12 hours to be substantially larger.
-            $timeOut = ([datetime]::Now).AddHours(12)
+            # Using UtcNow to be timezone safe.
+            $deadline = ([datetime]::UtcNow).AddHours(12)
 
             $openCoverExited = $false
 
-            while([datetime]::Now -lt $timeOut)
+            while([datetime]::UtcNow.CompareTo($deadline) -le 0)
             {
                 Start-Sleep -Seconds 60
                 $openCoverProcess = Get-Process "OpenCover.Console" -ErrorAction SilentlyContinue

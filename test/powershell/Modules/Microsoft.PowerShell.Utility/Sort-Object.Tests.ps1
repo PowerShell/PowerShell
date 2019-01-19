@@ -89,9 +89,10 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	It "Sort-Object with HistoryInfo object should work"{
 		Add-Type -TypeDefinition "public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}"
 
-		$historyInfo1 = [pscustomobject]@{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo2 = [pscustomobject]@{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo3 = [pscustomobject]@{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
+		# Using UtcNow to be timezone safe.
+		$historyInfo1 = [pscustomobject]@{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::UtcNow;"EndTime" = [datetime]::UtcNow.AddSeconds(5);}
+		$historyInfo2 = [pscustomobject]@{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::UtcNow;"EndTime" = [datetime]::UtcNow.AddSeconds(5);}
+		$historyInfo3 = [pscustomobject]@{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [datetime]::UtcNow;"EndTime" = [datetime]::UtcNow.AddSeconds(5);}
 
 		$historyInfos = @($historyInfo1,$historyInfo2,$historyInfo3)
 
@@ -410,9 +411,10 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 
 		Add-Type -TypeDefinition 'public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}'
 		$unsortedData = @(
-			[pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
-			[pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
-			[pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
+			# Using UtcNow to be timezone safe.
+			[pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[datetime]::UtcNow;EndTime=[datetime]::UtcNow.AddSeconds(5)}
+			[pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[datetime]::UtcNow;EndTime=[datetime]::UtcNow.AddSeconds(5)}
+			[pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[datetime]::UtcNow;EndTime=[datetime]::UtcNow.AddSeconds(5)}
 		)
 
 		It 'Return the <nSortType> N sorted in <orderType> order' -TestCases $topBottomAscendingDescending {
