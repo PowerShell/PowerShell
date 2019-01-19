@@ -445,11 +445,6 @@ namespace System.Management.Automation
 
             NounName = nounName;
             VerbName = verbName;
-
-            if (VerbName == VerbsCommon.Get)
-            {
-                ConfirmImpact = ConfirmImpact.Low;
-            }
         }
     }
 
@@ -1124,15 +1119,15 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
-            Type commonType = GetCommonType(typeof(int),element.GetType());
+            Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
-                    throw new ValidationMetadataException(
-                    "ValidationRangeElementType",
-                    null,
-                    Metadata.ValidateRangeElementType,
-                    element.GetType().Name,
-                    typeof(int).Name);
+                throw new ValidationMetadataException(
+                "ValidationRangeElementType",
+                null,
+                Metadata.ValidateRangeElementType,
+                element.GetType().Name,
+                typeof(int).Name);
             }
 
             object resultValue;
@@ -1199,7 +1194,7 @@ namespace System.Management.Automation
                             element.ToString());
                     }
                     break;
-                }
+            }
         }
 
         private void ValidateRange(object element)
@@ -2080,7 +2075,8 @@ namespace System.Management.Automation
                 // because a value-type value cannot be null.
                 if (!isEmpty && !isElementValueType)
                 {
-                    do {
+                    do
+                    {
                         object element = ienum.Current;
                         if (element == null || element == AutomationNull.Value)
                         {
