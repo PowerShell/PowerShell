@@ -938,7 +938,7 @@ function Wait-UntilSuccess
             }
         }
 
-        # Sleep for the specified interval
+        # Wait
         Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
@@ -1073,7 +1073,7 @@ function Wait-PSWinEvent
 
     do
     {
-        sleep $pause
+        Start-Sleep -Seconds $pause
 
         $recordsToReturn = @()
 

@@ -478,6 +478,31 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
     }
 }
 
+Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags @('CI') {
+
+    BeforeAll {
+        $userHelpRoot = GetCurrentUserHelpRoot
+
+        ## Clear all help from user scope.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
+
+        ## Delete help from global scope if it exists.
+        $currentCulture = (Get-Culture).Name
+        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+        if (Test-Path $coreHelpFilePath) {
+            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Should return help objects for two parameters" {
+        $help = Get-Help -Name Get-Command -Parameter Verb, Noun
+        $help | Should -HaveCount 2
+        $help[0].Name | Should -BeExactly 'Verb'
+        $help[1].Name | Should -BeExactly 'Noun'
+    }
+}
+
 Describe "Help failure cases" -Tags Feature {
     It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
         @{ command = "help" },
@@ -486,5 +511,36 @@ Describe "Help failure cases" -Tags Feature {
         param($command)
 
         { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+    }
+}
+
+Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
+    BeforeAll {
+        $fakePager = @'
+        param(
+            [Parameter]
+            $customCommandArgs,
+
+            [Parameter(ValueFromPipelineByPropertyName)]
+            $Name
+        )
+
+        $b = [System.Text.Encoding]::UTF8.GetBytes($Name)
+        return [System.Convert]::ToBase64String($b)
+'@
+        $fakePagerFolder = Join-Path $TestDrive "path with space"
+        $fakePagerPath = Join-Path $fakePagerFolder "fakepager.ps1"
+        New-Item -ItemType File -Path $fakePagerPath -Force > $null
+        Set-Content -Path $fakePagerPath -Value $fakePager
+
+        $SavedEnvPager = $env:PAGER
+        $env:PAGER = $fakePagerPath
+    }
+    AfterAll {
+        $env:PAGER = $SavedEnvPager
+    }
+
+    It 'help renders when using a PAGER with a space in the path' {
+        help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
     }
 }

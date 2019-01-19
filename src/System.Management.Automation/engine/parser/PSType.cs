@@ -1132,11 +1132,52 @@ namespace System.Management.Automation.Language
 
             internal void DefineEnum()
             {
+                var typeConstraintAst = _enumDefinitionAst.BaseTypes.FirstOrDefault();
+                var underlyingType = typeConstraintAst == null ? typeof(int) : typeConstraintAst.TypeName.GetReflectionType();
+
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, typeof(int));
+                var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
-                int value = 0;
+
+                dynamic value = 0;
+                dynamic maxValue = 0;
+                switch (Type.GetTypeCode(underlyingType))
+                {
+                    case TypeCode.Byte:
+                        maxValue = byte.MaxValue;
+                        break;
+                    case TypeCode.Int16:
+                        maxValue = short.MaxValue;
+                        break;
+                    case TypeCode.Int32:
+                        maxValue = int.MaxValue;
+                        break;
+                    case TypeCode.Int64:
+                        maxValue = long.MaxValue;
+                        break;
+                    case TypeCode.SByte:
+                        maxValue = sbyte.MaxValue;
+                        break;
+                    case TypeCode.UInt16:
+                        maxValue = ushort.MaxValue;
+                        break;
+                    case TypeCode.UInt32:
+                        maxValue = uint.MaxValue;
+                        break;
+                    case TypeCode.UInt64:
+                        maxValue = ulong.MaxValue;
+                        break;
+                    default:
+                        _parser.ReportError(
+                            typeConstraintAst.Extent,
+                            nameof(ParserStrings.InvalidUnderlyingType),
+                            ParserStrings.InvalidUnderlyingType,
+                            underlyingType);
+                        break;
+                }
+
                 bool valueTooBig = false;
+
                 foreach (var member in _enumDefinitionAst.Members)
                 {
                     var enumerator = (PropertyMemberAst)member;
@@ -1145,65 +1186,70 @@ namespace System.Management.Automation.Language
                         object constValue;
                         if (IsConstantValueVisitor.IsConstant(enumerator.InitialValue, out constValue, false, false))
                         {
-                            if (constValue is int)
+                            if (!LanguagePrimitives.TryConvertTo(constValue, underlyingType, out value))
                             {
-                                value = (int)constValue;
-                            }
-                            else
-                            {
-                                if (!LanguagePrimitives.TryConvertTo(constValue, out value))
+                                if (constValue != null &&
+                                    LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
                                 {
-                                    if (constValue != null &&
-                                        LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
-                                    {
-                                        _parser.ReportError(enumerator.InitialValue.Extent,
-                                            nameof(ParserStrings.EnumeratorValueTooLarge),
-                                            ParserStrings.EnumeratorValueTooLarge);
-                                    }
-                                    else
-                                    {
-                                        _parser.ReportError(enumerator.InitialValue.Extent,
-                                            nameof(ParserStrings.CannotConvertValue),
-                                            ParserStrings.CannotConvertValue,
-                                            ToStringCodeMethods.Type(typeof(int)));
-                                    }
+                                    _parser.ReportError(
+                                        enumerator.InitialValue.Extent,
+                                        nameof(ParserStrings.EnumeratorValueOutOfBounds),
+                                        ParserStrings.EnumeratorValueOutOfBounds,
+                                        ToStringCodeMethods.Type(underlyingType));
+                                }
+                                else
+                                {
+                                    _parser.ReportError(
+                                        enumerator.InitialValue.Extent,
+                                        nameof(ParserStrings.CannotConvertValue),
+                                        ParserStrings.CannotConvertValue,
+                                        ToStringCodeMethods.Type(underlyingType));
                                 }
                             }
                         }
                         else
                         {
-                            _parser.ReportError(enumerator.InitialValue.Extent,
+                            _parser.ReportError(
+                                enumerator.InitialValue.Extent,
                                 nameof(ParserStrings.EnumeratorValueMustBeConstant),
                                 ParserStrings.EnumeratorValueMustBeConstant);
                         }
+
+                        valueTooBig = value > maxValue;
                     }
-                    else if (valueTooBig)
+
+                    if (valueTooBig)
                     {
-                        _parser.ReportError(enumerator.Extent,
-                            nameof(ParserStrings.EnumeratorValueTooLarge),
-                            ParserStrings.EnumeratorValueTooLarge);
+                        _parser.ReportError(
+                            enumerator.Extent,
+                            nameof(ParserStrings.EnumeratorValueOutOfBounds),
+                            ParserStrings.EnumeratorValueOutOfBounds,
+                            ToStringCodeMethods.Type(underlyingType));
                     }
 
                     if (definedEnumerators.Contains(enumerator.Name))
                     {
-                        _parser.ReportError(enumerator.Extent,
+                        _parser.ReportError(
+                            enumerator.Extent,
                             nameof(ParserStrings.MemberAlreadyDefined),
                             ParserStrings.MemberAlreadyDefined,
                             enumerator.Name);
                     }
-                    else
+                    else if (value != null)
                     {
+                        value = Convert.ChangeType(value, underlyingType);
                         definedEnumerators.Add(enumerator.Name);
                         enumBuilder.DefineLiteral(enumerator.Name, value);
-                        if (value < int.MaxValue)
-                        {
-                            value += 1;
-                            valueTooBig = false;
-                        }
-                        else
-                        {
-                            valueTooBig = true;
-                        }
+                    }
+
+                    if (value < maxValue)
+                    {
+                        value += 1;
+                        valueTooBig = false;
+                    }
+                    else
+                    {
+                        valueTooBig = true;
                     }
                 }
 

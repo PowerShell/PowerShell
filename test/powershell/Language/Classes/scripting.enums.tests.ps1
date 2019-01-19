@@ -70,6 +70,40 @@ Describe 'enums' -Tags "CI" {
         It 'E5 has correct value' { [E5]::e0 | Should -Be ([E5]40) }
         It 'E6 has correct value' { [E6]::e0 | Should -Be ([E6]38) }
     }
+
+    Context 'Enum with non-default underlying type' {
+        enum EX1 : byte { A;B;C;D }
+        enum EX2 : sbyte { A;B;C;D }
+        enum EX3 : short { A;B;C;D }
+        enum EX4 : ushort { A;B;C;D }
+        enum EX5 : int { A;B;C;D }
+        enum EX6 : uint { A;B;C;D }
+        enum EX7 : long { A;B;C;D }
+        enum EX8 : ulong { A;B;C;D }
+
+        It 'EX1 has the specified underlying type' { [Enum]::GetUnderlyingType([EX1]) | Should -Be ([byte]) }
+        It 'EX2 has the specified underlying type' { [Enum]::GetUnderlyingType([EX2]) | Should -Be ([sbyte]) }
+        It 'EX3 has the specified underlying type' { [Enum]::GetUnderlyingType([EX3]) | Should -Be ([short]) }
+        It 'EX4 has the specified underlying type' { [Enum]::GetUnderlyingType([EX4]) | Should -Be ([ushort]) }
+        It 'EX5 has the specified underlying type' { [Enum]::GetUnderlyingType([EX5]) | Should -Be ([int]) }
+        It 'EX6 has the specified underlying type' { [Enum]::GetUnderlyingType([EX6]) | Should -Be ([uint]) }
+        It 'EX7 has the specified underlying type' { [Enum]::GetUnderlyingType([EX7]) | Should -Be ([long]) }
+        It 'EX8 has the specified underlying type' { [Enum]::GetUnderlyingType([EX8]) | Should -Be ([ulong]) }
+    }
+
+    Context 'Enum with negative user-specified values' {
+        enum V1 {
+            A = -4
+            B = [int]::MinValue
+            C
+        }
+
+        It 'Negative values are correctly assigned to members' {
+            [V1]::A.value__ | Should -Be -4
+            [V1]::B.value__ | Should -Be -2147483648
+            [V1]::C.value__ | Should -Be -2147483647
+        }
+    }
 }
 
 Describe 'Basic enum errors' -Tags "CI" {
@@ -82,9 +116,11 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo { x; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { X; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo1 { x = [foo2]::x } enum foo2 { x = [foo1]::x }' CycleInEnumInitializers,CycleInEnumInitializers 0,28 -SkipAndCheckRuntimeError
-    ShouldBeParseError 'enum foo { e = [int]::MaxValue;  e2 }' EnumeratorValueTooLarge 33 -SkipAndCheckRuntimeError
-    ShouldBeParseError 'enum foo { e = [int]::MaxValue + 1 }' EnumeratorValueTooLarge 15 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo { e = [int]::MaxValue;  e2 }' EnumeratorValueOutOfBounds 33 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo { e = [int]::MaxValue + 1 }' EnumeratorValueOutOfBounds 15 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo : byte { e = -1 }' EnumeratorValueOutOfBounds 22 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = $foo }' EnumeratorValueMustBeConstant 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = "hello" }' CannotConvertValue 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { a;b;c;' MissingEndCurlyBrace 10
+    ShouldBeParseError 'enum foo : string { a }' InvalidUnderlyingType 11 -SkipAndCheckRuntimeError
 }
