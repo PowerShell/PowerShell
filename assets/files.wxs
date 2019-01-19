@@ -1734,32 +1734,6 @@
               <File Id="fil94E5AE8C0F25406EA6F009B9B3D96210" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.strings.psd1" />
             </Component>
           </Directory>
-          <Directory Name="fullclr" Id="dir74FD3CF359C34EE3A3FE157E87EB2202">
-            <Component Id="cmp0EE4A8E812A94A63ADB42CD71D8AAFBF" Guid="{15d162ec-17a7-4b34-8386-44c8b7a53eb5}">
-              <File Id="fil02CBF66201AE4684BCE8E9E9CCE18F03" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.NuGetProvider.dll" />
-            </Component>
-            <Component Id="cmp32CC9AA0E2CD4FB6B97B0AEEA26BD070" Guid="{bec6ae65-4461-43a9-8850-ceeacde768a2}">
-              <File Id="fil707E8B5CF74A4FEE944B072CCBC2A418" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.ArchiverProviders.dll" />
-            </Component>
-            <Component Id="cmpFAD1EA7014C44C10841A34AF62E9A319" Guid="{920309f7-e2e5-4d63-ba17-d70a762df371}">
-              <File Id="fil20E2EF1E60EA452EA4AE7080DC5C9352" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsiProvider.dll" />
-            </Component>
-            <Component Id="cmpBF4000FBDC824DEB8816BE2A76662CF7" Guid="{5cc8c6cf-49f3-4538-bf13-47dcd1c48c41}">
-              <File Id="fil39A73761CBF84A9BA95C7237DF4496A8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsuProvider.dll" />
-            </Component>
-            <Component Id="cmp4ADF123533534E699FB24A63D28C6C60" Guid="{36b5e775-b7b2-4534-9f02-da74e538b555}">
-              <File Id="filDC04DD482848484FB436C6D27D30F951" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.dll" />
-            </Component>
-            <Component Id="cmp5D34C68D473547DEBCE4FCFC6E37FACC" Guid="{2c2d044a-be86-42fe-8674-53c6677b59db}">
-              <File Id="fil78402BDEC2EA439AA313206EAD730947" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-            </Component>
-            <Component Id="cmpE86FFEE1491D48FEAB50B7625E3255AD" Guid="{a8219ed5-8804-464a-9b2f-98bdc11672d1}">
-              <File Id="fil0EF79BF9AE9C4BDFB2F1F9E4D313B9AF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.CoreProviders.dll" />
-            </Component>
-            <Component Id="cmp5643928A5F414B09BC30E5DA0FB400EA" Guid="{a1a31494-73f4-40d3-8574-fad0d76b0eca}">
-              <File Id="filF9E7D1C528C248BAB6E02ED013A4CE19" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PowerShell.PackageManagement.dll" />
-            </Component>
-          </Directory>
           <Directory Name="coreclr" Id="dirD84258F96F80409BA8CD117DCD52EC6E">
             <Directory Name="netstandard1.6" Id="dir36C6ABDA5E944E2BA2FDCEC46507A030">
               <Component Id="cmp34C3B0C6B0944FAB92E6CF935C932FE1" Guid="{9448a704-abcd-4d00-abc6-4098c4b7c0f3}">
