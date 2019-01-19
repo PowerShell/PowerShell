@@ -242,8 +242,7 @@ namespace System.Management.Automation.Language
                 return 0;
             }
 
-            var parser = new Parser();
-            var tokenizer = parser._tokenizer;
+            var tokenizer = (new Parser())._tokenizer;
             tokenizer.Initialize(null, str, null);
             tokenizer.AllowSignedNumbers = true;
             var token = tokenizer.NextToken() as NumberToken;

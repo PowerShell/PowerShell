@@ -2904,6 +2904,7 @@ namespace System.Management.Automation
             }
 
             typeConversion.WriteLine("Converting to integer.");
+            TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
                 try
@@ -2917,8 +2918,7 @@ namespace System.Management.Automation
                 {
                 }
 
-                return Convert.ChangeType(strToConvert, resultType,
-                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                return integerConverter.ConvertFrom(strToConvert);
             }
             catch (Exception e)
             {
