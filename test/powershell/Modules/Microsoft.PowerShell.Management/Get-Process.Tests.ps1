@@ -16,10 +16,10 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -FileVersionInfo" {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
         if ($IsWindows) {
-            $PSVersionTable.PSVersion | Should -MatchExactly $pwshVersion.FileVersion
+            $PSVersionTable.PSVersion.ToString().Split("-")[0] | Should -MatchExactly $pwshVersion.FileVersion
             $gitCommitId = $PSVersionTable.GitCommitId
             if ($gitCommitId.StartsWith("v")) { $gitCommitId = $gitCommitId.Substring(1) }
-            $pwshVersion.ProductVersion.Replace("-dirty","") | Should -BeExactly $gitCommitId
+            $pwshVersion.ProductVersion.Replace("-dirty","").Replace(" Commits:","-'").Replace(" SHA:","-g") | Should -BeExactly $gitCommitId
         } else {
             $pwshVersion.FileVersion | Should -BeNullOrEmpty
         }
