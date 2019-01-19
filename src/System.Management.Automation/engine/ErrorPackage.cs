@@ -210,7 +210,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the operation which
+        /// Text description of the operation which
         /// encountered the error.
         /// </summary>
         /// <value>text description of the operation</value>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the error.
+        /// Text description of the error.
         /// </summary>
         /// <value>text description of the error</value>
         /// <remarks>
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         private bool _reasonIsExceptionType;
 
         /// <summary>
-        /// text description of the target object.
+        /// Text description of the target object.
         /// </summary>
         /// <value>text description of the target object</value>
         /// <remarks>
@@ -317,7 +317,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the type of the target object.
+        /// Text description of the type of the target object.
         /// </summary>
         /// <value>text description of the type of the target object</value>
         /// <remarks>
@@ -350,7 +350,7 @@ namespace System.Management.Automation
 
         #region Methods
         /// <summary>
-        /// concise text description based on
+        /// Concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
         /// <returns>Concise text description.</returns>
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// concise text description based on
+        /// Concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
         /// <param name="uiCultureInfo">Culture in which to display message.</param>
@@ -499,7 +499,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// additional details about an
+    /// Additional details about an
     /// <see cref="System.Management.Automation.ErrorRecord"/>
     /// </summary>
     /// <remarks>
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
         #region Remoting
 
         /// <summary>
-        /// isSerialized is set to true if this error record is serialized.
+        /// IsSerialized is set to true if this error record is serialized.
         /// </summary>
         private bool _isSerialized = false;
 

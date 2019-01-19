@@ -34,12 +34,12 @@ namespace System.Management.Automation
         NotStarted = 0,
 
         /// <summary>
-        /// execution of command in progress.
+        /// Execution of command in progress.
         /// </summary>
         Running = 1,
 
         /// <summary>
-        /// execution of command completed in all
+        /// Execution of command completed in all
         /// computernames/runspaces.
         /// </summary>
         Completed = 2,
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         #endregion public_properties
 
         /// <summary>
-        /// override for ToString()
+        /// Override for ToString()
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -591,7 +591,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// unique identifier for this job.
+        /// Unique identifier for this job.
         /// </summary>
         public Guid InstanceId { get; } = Guid.NewGuid();
 
@@ -2193,7 +2193,7 @@ namespace System.Management.Automation
 
         private bool _moreData = true;
         /// <summary>
-        /// indicates if more data is available.
+        /// Indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.
@@ -2284,7 +2284,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// used by Invoke-Command cmdlet to show/hide computername property value.
+        /// Used by Invoke-Command cmdlet to show/hide computername property value.
         /// Format and Output has capability to understand RemoteObjects and this property lets
         /// Format and Output decide whether to show/hide computername.
         /// Default is true.
@@ -2928,12 +2928,12 @@ namespace System.Management.Automation
         public Runspace Runspace { get; }
 
         /// <summary>
-        /// helper associated with this entity.
+        /// Helper associated with this entity.
         /// </summary>
         internal ExecutionCmdletHelper Helper { get; } = null;
 
         /// <summary>
-        /// used by Invoke-Command cmdlet to show/hide computername property value.
+        /// Used by Invoke-Command cmdlet to show/hide computername property value.
         /// Format and Output has capability to understand RemoteObjects and this property lets
         /// Format and Output decide whether to show/hide computername.
         /// Default is true.
@@ -3689,7 +3689,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// register for throttle complete from the specified
+        /// Register for throttle complete from the specified
         /// throttlemanager.
         /// </summary>
         /// <param name="throttleManager"></param>
@@ -3699,7 +3699,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// unregister for throttle complete from the specified
+        /// Unregister for throttle complete from the specified
         /// throttle manager.
         /// </summary>
         /// <param name="throttleManager"></param>
@@ -4175,7 +4175,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">True if called by Dispose().</param>
         protected override void Dispose(bool disposing)

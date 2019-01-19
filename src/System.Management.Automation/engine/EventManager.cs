@@ -2518,7 +2518,7 @@ namespace System.Management.Automation
         public override string StatusMessage { get; } = null;
 
         /// <summary>
-        /// indicates if more data is available.
+        /// Indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.

@@ -88,7 +88,7 @@ namespace System.Management.Automation.Internal
         private PipelineWriter _externalWriter;
 
         /// <summary>
-        /// for diagnostic purposes.
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()

@@ -961,7 +961,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// constructor to create a WSManConnectionInfo with a
+        /// Constructor to create a WSManConnectionInfo with a
         /// uri specified and the default credentials,
         /// default server life time and default open
         /// timeout.
@@ -1085,12 +1085,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// string for http scheme.
+        /// String for http scheme.
         /// </summary>
         public const string HttpScheme = "http";
 
         /// <summary>
-        /// string for https scheme.
+        /// String for https scheme.
         /// </summary>
         public const string HttpsScheme = "https";
 
@@ -1245,7 +1245,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// returns connection string without the scheme portion.
+        /// Returns connection string without the scheme portion.
         /// </summary>
         /// <param name="connectionUri">
         /// The uri from which the string will be extracted
@@ -1401,12 +1401,12 @@ namespace System.Management.Automation.Runspaces
 #endif
 
         /// <summary>
-        /// default port for http scheme.
+        /// Default port for http scheme.
         /// </summary>
         private const int DefaultPortHttp = 80;
 
         /// <summary>
-        /// default port for https scheme.
+        /// Default port for https scheme.
         /// </summary>
         private const int DefaultPortHttps = 443;
 
@@ -1418,7 +1418,7 @@ namespace System.Management.Automation.Runspaces
         private const int DefaultPort = 0;
 
         /// <summary>
-        /// default remote host name.
+        /// Default remote host name.
         /// </summary>
         private const string DefaultComputerName = "localhost";
 

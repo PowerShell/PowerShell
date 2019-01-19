@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM microsoft/dotnet:3.0.100-preview-sdk
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION
@@ -13,17 +13,7 @@ RUN apt-get update \
         ca-certificates \
         apt-transport-https \
         locales \
-        git \
-        wget
-
-# Install dotnet-runtime
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-RUN mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-ADD https://packages.microsoft.com/config/debian/8/prod.list .
-RUN mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        dotnet-runtime-2.1 
+        git
 
 # Setup the locale
 ENV LANG en_US.UTF-8

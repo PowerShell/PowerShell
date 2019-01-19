@@ -737,7 +737,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// public method for dispose.
+        /// Public method for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected void Dispose(bool disposing)

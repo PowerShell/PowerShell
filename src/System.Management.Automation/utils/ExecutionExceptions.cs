@@ -603,7 +603,7 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// see <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
         /// </summary>
         /// <value>ErrorRecord</value>
         /// <remarks>
@@ -887,7 +887,7 @@ namespace System.Management.Automation
 
         #region properties
         /// <summary>
-        /// see <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -996,7 +996,7 @@ namespace System.Management.Automation
 
         #region properties
         /// <summary>
-        /// see <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
         /// </summary>
         /// <value></value>
         /// <remarks>

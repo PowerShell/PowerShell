@@ -14,7 +14,7 @@ namespace System.Management.Automation.Runspaces
     class LocalRunspace : RunspaceBase
     {
         /// <summary>
-        /// initialize default values of preference vars.
+        /// Initialize default values of preference vars.
         /// </summary>
         /// <returns>Does not return a value.</returns>
         private void InitializeDefaults()

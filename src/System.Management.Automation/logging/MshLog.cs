@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
         private static int s_nextSequenceNumber = 0;
 
         /// <summary>
-        /// generate next sequence id to be attached to current event.
+        /// Generate next sequence id to be attached to current event.
         /// </summary>
         /// <value></value>
         private static string NextSequenceNumber
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for command states.
+    /// Enum for command states.
     /// </summary>
     internal enum CommandState
     {
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for provider states.
+    /// Enum for provider states.
     /// </summary>
     internal enum ProviderState
     {

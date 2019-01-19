@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// overrides the method of CmdletProvider, considering the additional
+        /// Overrides the method of CmdletProvider, considering the additional
         /// dynamic parameters of FileSystemProvider.
         /// </summary>
         /// <returns>

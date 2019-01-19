@@ -4617,75 +4617,124 @@ namespace System.Management.Automation.Language
 
         private StatementAst EnumDefinitionRule(List<AttributeBaseAst> customAttributes, Token enumToken)
         {
-            // G  enum-statement:
-            // G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
-            // G
-            // G  enum-name:
-            // G      simple-name
-            // G
-            // G  enum-member-list:
-            // G      enum-member  new-lines:opt
-            // G      enum-member-list   enum-member
+            //G  enum-statement:
+            //G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
+            //G      'enum'   new-lines:opt   enum-name   ':'  enum-underlying-type  '{'   enum-member-list   '}'
+            //G
+            //G  enum-name:
+            //G      simple-name
+            //G
+            //G  enum-underlying-type:
+            //G      new-lines:opt   valid-type-name   new-lines:opt
+            //G
+            //G  enum-member-list:
+            //G      enum-member  new-lines:opt
+            //G      enum-member-list   enum-member
+
+            const TypeCode ValidUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
 
             SkipNewlines();
             var name = SimpleNameRule();
             if (name == null)
             {
-                ReportIncompleteInput(After(enumToken),
+                ReportIncompleteInput(
+                    After(enumToken),
                     nameof(ParserStrings.MissingNameAfterKeyword),
                     ParserStrings.MissingNameAfterKeyword,
                     enumToken.Text);
                 return new ErrorStatementAst(enumToken.Extent);
             }
 
-            SkipNewlines();
-            Token lCurly = NextToken();
-            if (lCurly.Kind != TokenKind.LCurly)
+            TypeConstraintAst underlyingTypeConstraint = null;
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
             {
-                // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
+                SetTokenizerMode(TokenizerMode.Signature);
+                Token colonToken = PeekToken();
+                if (colonToken.Kind == TokenKind.Colon)
+                {
+                    this.SkipToken();
+                    SkipNewlines();
+                    ITypeName underlyingType;
+                    Token unused;
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    if (underlyingType == null)
+                    {
+                        ReportIncompleteInput(
+                            After(colonToken),
+                            nameof(ParserStrings.TypeNameExpected),
+                            ParserStrings.TypeNameExpected);
+                    }
+                    else
+                    {
+                        var resolvedType = underlyingType.GetReflectionType();
+                        if (resolvedType == null || !ValidUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
+                        {
+                            ReportError(
+                                underlyingType.Extent,
+                                nameof(ParserStrings.InvalidUnderlyingType),
+                                ParserStrings.InvalidUnderlyingType,
+                                underlyingType.Name);
+                        }
+                        underlyingTypeConstraint = new TypeConstraintAst(underlyingType.Extent, underlyingType);
+                    }
+                }
 
-                UngetToken(lCurly);
-                ReportIncompleteInput(After(name),
-                    nameof(ParserStrings.MissingTypeBody),
-                    ParserStrings.MissingTypeBody,
-                    enumToken.Kind.Text());
-                return new ErrorStatementAst(ExtentOf(enumToken, name));
+                SkipNewlines();
+                Token lCurly = NextToken();
+                if (lCurly.Kind != TokenKind.LCurly)
+                {
+                    // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
+
+                    UngetToken(lCurly);
+                    ReportIncompleteInput(
+                        After(name),
+                        nameof(ParserStrings.MissingTypeBody),
+                        ParserStrings.MissingTypeBody,
+                        enumToken.Kind.Text());
+                    return new ErrorStatementAst(ExtentOf(enumToken, name));
+                }
+
+                IScriptExtent lastExtent = lCurly.Extent;
+                MemberAst member;
+                List<MemberAst> members = new List<MemberAst>();
+                while ((member = EnumMemberRule()) != null)
+                {
+                    members.Add(member);
+                    lastExtent = member.Extent;
+                }
+
+                var rCurly = NextToken();
+                if (rCurly.Kind != TokenKind.RCurly)
+                {
+                    UngetToken(rCurly);
+                    ReportIncompleteInput(
+                        After(lCurly),
+                        rCurly.Extent,
+                        nameof(ParserStrings.MissingEndCurlyBrace),
+                        ParserStrings.MissingEndCurlyBrace);
+                }
+
+                var startExtent = customAttributes != null && customAttributes.Count > 0
+                                          ? customAttributes[0].Extent
+                                          : enumToken.Extent;
+                var extent = ExtentOf(startExtent, rCurly);
+                var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
+                if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
+                {
+                    // No need to report error since there is error reported in method StatementRule
+                    List<Ast> nestedAsts = new List<Ast>();
+                    nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
+                    nestedAsts.Add(enumDefn);
+                    return new ErrorStatementAst(startExtent, nestedAsts);
+                }
+
+                return enumDefn;
             }
-
-            IScriptExtent lastExtent = lCurly.Extent;
-            MemberAst member;
-            List<MemberAst> members = new List<MemberAst>();
-            while ((member = EnumMemberRule()) != null)
+            finally
             {
-                members.Add(member);
-                lastExtent = member.Extent;
+                SetTokenizerMode(oldTokenizerMode);
             }
-
-            var rCurly = NextToken();
-            if (rCurly.Kind != TokenKind.RCurly)
-            {
-                UngetToken(rCurly);
-                ReportIncompleteInput(After(lCurly),
-                    rCurly.Extent,
-                    nameof(ParserStrings.MissingEndCurlyBrace),
-                    ParserStrings.MissingEndCurlyBrace);
-            }
-
-            var startExtent = customAttributes != null && customAttributes.Count > 0
-                                      ? customAttributes[0].Extent
-                                      : enumToken.Extent;
-            var extent = ExtentOf(startExtent, rCurly);
-            var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, null);
-            if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
-            {
-                // no need to report error since there is error reported in method StatementRule
-                List<Ast> nestedAsts = new List<Ast>();
-                nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
-                nestedAsts.Add(enumDefn);
-                return new ErrorStatementAst(startExtent, nestedAsts);
-            }
-
-            return enumDefn;
         }
 
         private MemberAst EnumMemberRule()

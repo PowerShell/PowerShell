@@ -15,17 +15,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal enum EnumerableExpansion
     {
         /// <summary>
-        /// process core only, ignore IEumerable.
+        /// Process core only, ignore IEumerable.
         /// </summary>
         CoreOnly,
 
         /// <summary>
-        /// process IEnumerable, ignore core.
+        /// Process IEnumerable, ignore core.
         /// </summary>
         EnumOnly,
 
         /// <summary>
-        /// process both core and IEnumerable, core first.
+        /// Process both core and IEnumerable, core first.
         /// </summary>
         Both,
     }
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
-        /// cache for resource strings in format.ps1xml.
+        /// Cache for resource strings in format.ps1xml.
         /// </summary>
         internal DisplayResourceManagerCache displayResourceManagerCache = new DisplayResourceManagerCache();
     }
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FormatErrorPolicy
     {
         /// <summary>
-        /// if true, display error messages.
+        /// If true, display error messages.
         /// </summary>
         internal bool ShowErrorsAsMessages
         {
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool? _showErrorsAsMessages;
 
         /// <summary>
-        /// if true, display an error string in the formatted display
+        /// If true, display an error string in the formatted display
         /// (e.g. cell in a table)
         /// </summary>
         internal bool ShowErrorsInFormattedOutput
@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool? _showErrorsInFormattedOutput;
 
         /// <summary>
-        /// string to display in the formatted display (e.g. cell in a table)
+        /// String to display in the formatted display (e.g. cell in a table)
         /// when the evaluation of a PSPropertyExpression fails.
         /// </summary>
         internal string errorStringInFormattedOutput = "#ERR";
 
         /// <summary>
-        /// string to display in the formatted display (e.g. cell in a table)
+        /// String to display in the formatted display (e.g. cell in a table)
         /// when a format operation on a value fails.
         /// </summary>
         internal string formatErrorStringInFormattedOutput = "#FMTERR";
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal string name;
 
         /// <summary>
-        /// optional expression for conditional binding.
+        /// Optional expression for conditional binding.
         /// </summary>
         internal ExpressionToken conditionToken = null;
     }
@@ -285,12 +285,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FrameToken : FormatToken
     {
         /// <summary>
-        /// item associated with this frame definition.
+        /// Item associated with this frame definition.
         /// </summary>
         internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
 
         /// <summary>
-        /// frame info associated with this frame definition.
+        /// Frame info associated with this frame definition.
         /// </summary>
         internal FrameInfoDefinition frameInfoDefinition = new FrameInfoDefinition();
     }
@@ -298,19 +298,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FrameInfoDefinition
     {
         /// <summary>
-        /// left indentation for a frame is relative to the parent frame.
+        /// Left indentation for a frame is relative to the parent frame.
         /// it must be a value >=0.
         /// </summary>
         internal int leftIndentation = 0;
 
         /// <summary>
-        /// right indentation for a frame is relative to the parent frame.
+        /// Right indentation for a frame is relative to the parent frame.
         /// it must be a value >=0.
         /// </summary>
         internal int rightIndentation = 0;
 
         /// <summary>
-        /// it can have the following values:
+        /// It can have the following values:
         /// 0 : ignore
         /// greater than 0 : it represents the indentation for the first line (i.e. "first line indent").
         ///                  The first line will be indented by the indicated number of characters.
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract class PropertyTokenBase : FormatToken
     {
         /// <summary>
-        /// optional expression for conditional binding.
+        /// Optional expression for conditional binding.
         /// </summary>
         internal ExpressionToken conditionToken = null;
 
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class CompoundPropertyToken : PropertyTokenBase
     {
         /// <summary>
-        /// an inline control or a reference to a control definition.
+        /// An inline control or a reference to a control definition.
         /// </summary>
         internal ControlBase control = null;
     }
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Control Definitions: common data
 
     /// <summary>
-    /// root class for all the control types.
+    /// Root class for all the control types.
     /// </summary>
     internal abstract class ControlBase
     {
@@ -410,23 +410,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// reference to a control.
+    /// Reference to a control.
     /// </summary>
     internal sealed class ControlReference : ControlBase
     {
         /// <summary>
-        /// name of the control we refer to, it cannot be null.
+        /// Name of the control we refer to, it cannot be null.
         /// </summary>
         internal string name = null;
 
         /// <summary>
-        /// type of the control we refer to, it cannot be null.
+        /// Type of the control we refer to, it cannot be null.
         /// </summary>
         internal Type controlType = null;
     }
 
     /// <summary>
-    /// base class for all control definitions
+    /// Base class for all control definitions
     /// NOTE: this is an extensibility point, if a new control
     /// needs to be created, it has to be derived from this class.
     /// </summary>
@@ -444,17 +444,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to hold a definition of a control.
+    /// Class to hold a definition of a control.
     /// </summary>
     internal sealed class ControlDefinition
     {
         /// <summary>
-        /// name of the control we define, it cannot be null.
+        /// Name of the control we define, it cannot be null.
         /// </summary>
         internal string name = null;
 
         /// <summary>
-        /// body of the control we define, it cannot be null.
+        /// Body of the control we define, it cannot be null.
         /// </summary>
         internal ControlBody controlBody = null;
     }
@@ -487,62 +487,62 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class StartGroup
     {
         /// <summary>
-        /// expression to be used to select the grouping.
+        /// Expression to be used to select the grouping.
         /// </summary>
         internal ExpressionToken expression = null;
 
         /// <summary>
-        /// an inline control or a reference to a control definition.
+        /// An inline control or a reference to a control definition.
         /// </summary>
         internal ControlBase control = null;
 
         /// <summary>
-        /// alternative (and simplified) representation for the control
+        /// Alternative (and simplified) representation for the control
         /// RULE: if the control object is null, use this one.
         /// </summary>
         internal TextToken labelTextToken = null;
     }
 
     /// <summary>
-    /// container for control definitions.
+    /// Container for control definitions.
     /// </summary>
     internal sealed class FormatControlDefinitionHolder
     {
         /// <summary>
-        /// list of control definitions.
+        /// List of control definitions.
         /// </summary>
         internal List<ControlDefinition> controlDefinitionList = new List<ControlDefinition>();
     }
 
     /// <summary>
-    /// definition of a view.
+    /// Definition of a view.
     /// </summary>
     internal sealed class ViewDefinition
     {
         internal DatabaseLoadingInfo loadingInfo;
 
         /// <summary>
-        /// the name of this view. Must not be null.
+        /// The name of this view. Must not be null.
         /// </summary>
         internal string name;
 
         /// <summary>
-        /// applicability of the view. Mandatory.
+        /// Applicability of the view. Mandatory.
         /// </summary>
         internal AppliesTo appliesTo = new AppliesTo();
 
         /// <summary>
-        /// optional grouping directive.
+        /// Optional grouping directive.
         /// </summary>
         internal GroupBy groupBy;
 
         /// <summary>
-        /// container for optional local formatting directives.
+        /// Container for optional local formatting directives.
         /// </summary>
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
-        /// main control for the view (e.g. reference to a control or a control body.
+        /// Main control for the view (e.g. reference to a control or a control body.
         /// </summary>
         internal ControlBase mainControl;
 
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// base class for all the "shape"-Directive classes.
+    /// Base class for all the "shape"-Directive classes.
     /// </summary>
     internal abstract class FormatDirective
     {
@@ -930,22 +930,22 @@ namespace System.Management.Automation
     public enum Alignment
     {
         /// <summary>
-        /// not defined.
+        /// Not defined.
         /// </summary>
         Undefined = 0,
 
         /// <summary>
-        /// left of the cell, contents will trail with a ... if exceeded - ex "Display..."
+        /// Left of the cell, contents will trail with a ... if exceeded - ex "Display..."
         /// </summary>
         Left = 1,
 
         /// <summary>
-        /// center of the cell.
+        /// Center of the cell.
         /// </summary>
         Center = 2,
 
         /// <summary>
-        /// right of the cell, contents will lead with a ... if exceeded - ex "...456"
+        /// Right of the cell, contents will lead with a ... if exceeded - ex "...456"
         /// </summary>
         Right = 3,
     }

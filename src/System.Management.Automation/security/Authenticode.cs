@@ -49,7 +49,7 @@ namespace System.Management.Automation
     internal static class SignatureHelper
     {
         /// <summary>
-        /// tracer for SignatureHelper.
+        /// Tracer for SignatureHelper.
         /// </summary>
         [Dbg.TraceSource("SignatureHelper",
                           "tracer for SignatureHelper")]

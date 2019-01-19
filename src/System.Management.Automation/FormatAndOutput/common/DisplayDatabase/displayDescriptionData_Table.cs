@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Table View Definitions
 
     /// <summary>
-    /// alignment values
+    /// Alignment values
     /// NOTE: we do not use an enum because this will have to be
     /// serialized and ERS/serialization do not support enumerations.
     /// </summary>
@@ -26,23 +26,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// definition of a table control.
+    /// Definition of a table control.
     /// </summary>
     internal sealed class TableControlBody : ControlBody
     {
         /// <summary>
-        /// optional, if not present, use data off the default table row definition.
+        /// Optional, if not present, use data off the default table row definition.
         /// </summary>
         internal TableHeaderDefinition header = new TableHeaderDefinition();
 
         /// <summary>
-        /// default row definition
+        /// Default row definition
         /// It's mandatory.
         /// </summary>
         internal TableRowDefinition defaultDefinition;
 
         /// <summary>
-        /// optional list of row definition overrides. It can be empty if there are no overrides.
+        /// Optional list of row definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<TableRowDefinition> optionalDefinitionList = new List<TableRowDefinition>();
 
@@ -68,18 +68,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// information about the table header
+    /// Information about the table header
     /// NOTE: if an instance of this class is present, the list must not be empty.
     /// </summary>
     internal sealed class TableHeaderDefinition
     {
         /// <summary>
-        /// if true, direct the outputter to suppress table header printing.
+        /// If true, direct the outputter to suppress table header printing.
         /// </summary>
         internal bool hideHeader;
 
         /// <summary>
-        /// mandatory list of column header definitions.
+        /// Mandatory list of column header definitions.
         /// </summary>
         internal List<TableColumnHeaderDefinition> columnHeaderDefinitionList =
                             new List<TableColumnHeaderDefinition>();
@@ -103,44 +103,44 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TableColumnHeaderDefinition
     {
         /// <summary>
-        /// optional label
+        /// Optional label
         /// If not present, use the name of the property from the matching
         /// mandatory row description.
         /// </summary>
         internal TextToken label = null;
 
         /// <summary>
-        /// general alignment for the column
+        /// General alignment for the column
         /// If not present, either use the one from the row definition
         /// or the data driven heuristics.
         /// </summary>
         internal int alignment = TextAlignment.Undefined;
 
         /// <summary>
-        /// width of the column.
+        /// Width of the column.
         /// </summary>
         internal int width = 0; // undefined
     }
 
     /// <summary>
-    /// definition of the data to be displayed in a table row.
+    /// Definition of the data to be displayed in a table row.
     /// </summary>
     internal sealed class TableRowDefinition
     {
         /// <summary>
-        /// applicability clause
+        /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo;
 
         /// <summary>
-        /// if true, the current table row should be allowed
+        /// If true, the current table row should be allowed
         /// to wrap to multiple lines, else truncated.
         /// </summary>
         internal bool multiLine;
 
         /// <summary>
-        /// mandatory list of column items.
+        /// Mandatory list of column items.
         /// It cannot be empty.
         /// </summary>
         internal List<TableRowItemDefinition> rowItemDefinitionList = new List<TableRowItemDefinition>();
@@ -166,17 +166,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// cell definition inside a row.
+    /// Cell definition inside a row.
     /// </summary>
     internal sealed class TableRowItemDefinition
     {
         /// <summary>
-        /// optional alignment to override the default one at the header level.
+        /// Optional alignment to override the default one at the header level.
         /// </summary>
         internal int alignment = TextAlignment.Undefined;
 
         /// <summary>
-        /// format directive body telling how to format the cell
+        /// Format directive body telling how to format the cell
         /// RULE: the body can only contain
         ///     * TextToken
         ///     * PropertyToken
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// public constructor for TableControl that only takes 'tableControlRows'.
+        /// Public constructor for TableControl that only takes 'tableControlRows'.
         /// </summary>
         /// <param name="tableControlRow"></param>
         public TableControl(TableControlRow tableControlRow) : this()
@@ -297,7 +297,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// public constructor for TableControl that takes both 'tableControlRows' and 'tableControlColumnHeaders'.
+        /// Public constructor for TableControl that takes both 'tableControlRows' and 'tableControlColumnHeaders'.
         /// </summary>
         /// <param name="tableControlRow"></param>
         /// <param name="tableControlColumnHeaders"></param>

@@ -180,7 +180,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// default constructor.
+        /// Default constructor.
         /// </summary>
         internal RunspacePoolInternal() { }
 
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// the connection associated with this runspace pool.
+        /// The connection associated with this runspace pool.
         /// </summary>
         public virtual RunspaceConnectionInfo ConnectionInfo
         {

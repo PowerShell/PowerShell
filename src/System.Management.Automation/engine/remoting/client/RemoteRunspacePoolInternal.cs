@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Properties
 
         /// <summary>
-        /// the connection associated with this runspace pool.
+        /// The connection associated with this runspace pool.
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {

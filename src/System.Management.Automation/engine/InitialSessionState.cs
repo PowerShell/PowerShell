@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateAliasEntry : SessionStateCommandEntry
     {
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         /// <summary>
-        /// ctor for Custom-Shell - Do we need this?
+        /// Ctor for Custom-Shell - Do we need this?
         /// </summary>
         protected InitialSessionState()
         {
@@ -3042,7 +3042,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// if <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
+        /// If <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
         private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
@@ -4069,12 +4069,30 @@ End
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
-            return @"
-[Console]::Clear()
+            if (Platform.IsWindows)
+            {
+                // use $RawUI so this works over remoting where there isn't a physical console
+                return @"
+$RawUI = $Host.UI.RawUI
+$RawUI.CursorPosition = @{X=0;Y=0}
+$RawUI.SetBufferContents(
+    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
+            }
+            else
+            {
+                // Porting note: non-Windows platforms use `clear`
+                return @"
+& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+# .Link
+# https://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
+            }
         }
 
         /// <summary>
@@ -4117,7 +4135,7 @@ param(
     ${Examples},
 
     [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
-    [string]
+    [string[]]
     ${Parameter},
 
     [string[]]
@@ -4159,10 +4177,36 @@ param(
     }
     elseif ($help -ne $null)
     {
+        $customPagerCommand = """"
+        $customPagerCommandArgs = """"
+        $customPagerCommandLine = """"
+
+        if ($env:PAGER)
+        {
+            $customPagerCommandLine = $env:PAGER
+
+            # Split the command line into tokens, respecting quoting.
+            $customPagerCommand, $customPagerCommandArgs = & { Write-Output -- $customPagerCommandLine }
+
+            # See if the first token refers to a known command (executable),
+            # and if not, see if the command line as a whole is an executable path.
+            $cmds = Get-Command $customPagerCommand, $customPagerCommandLine -ErrorAction Ignore
+            if (-not $cmds) {
+                # Custom command is invalid; ignore it, but issue a warning.
+                Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $customPagerCommandLine""
+                $customPagerCommand = $null # use default command
+            }
+            elseif ($cmds.Count -eq 1 -and $cmds[0].Source -eq $customPagerCommandLine) {
+                # The full command line is an unquoted path to an existing executable
+                # with embedded spaces.
+                $customPagerCommand = $customPagerCommandLine
+                $customPagerCommandArgs = $null
+            }
+        }
+
         # Respect PAGER, use more on Windows, and use less on Linux
-        $moreCommand,$moreArgs = $env:PAGER -split '\s+'
-        if ($moreCommand) {
-            $help | & $moreCommand $moreArgs
+        if ($customPagerCommand) {
+            $help | & $customPagerCommand $customPagerCommandArgs
         } elseif ($IsWindows) {
             $help | more.com
         } else {

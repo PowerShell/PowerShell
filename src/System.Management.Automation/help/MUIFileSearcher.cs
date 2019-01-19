@@ -89,7 +89,7 @@ namespace System.Management.Automation
         private Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// search for files using the target, searchPaths member of this class.
+        /// Search for files using the target, searchPaths member of this class.
         /// </summary>
         private void SearchForFiles()
         {

@@ -29,5 +29,5 @@ steps:
     displayName: 'NuGet push'
     inputs:
       command: push
-      publishVstsFeed: 'https://mscodehub.pkgs.visualstudio.com/_packaging/pscore-release/nuget/v3/index.json'
+      publishVstsFeed: 'pscore-release'
       publishFeedCredentials: 'AzArtifactsFeed'

@@ -271,7 +271,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// data structure handler for communicating with client.
+        /// Data structure handler for communicating with client.
         /// </summary>
         internal ServerRunspacePoolDataStructureHandler DataStructureHandler { get; }
 
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// the client runspacepool id.
+        /// The client runspacepool id.
         /// </summary>
         internal Guid InstanceId { get; }
 
@@ -703,7 +703,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// handler to the runspace pool state changed events.
+        /// Handler to the runspace pool state changed events.
         /// </summary>
         /// <param name="sender">Sender of this events.</param>
         /// <param name="eventArgs">arguments which describe the
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// handler to the runspace pool psevents.
+        /// Handler to the runspace pool psevents.
         /// </summary>
         private void HandleRunspacePoolForwardEvent(object sender, PSEventArgs e)
         {

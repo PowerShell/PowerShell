@@ -138,7 +138,7 @@ namespace System.Management.Automation
         private bool _blockingEnumerator = false;
 
         /// <summary>
-        /// whether the ref count was incremented when
+        /// Whether the ref count was incremented when
         /// BlockingEnumerator was updated.
         /// </summary>
         private bool _refCountIncrementedForBlockingEnumerator = false;

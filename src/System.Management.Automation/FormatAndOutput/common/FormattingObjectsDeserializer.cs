@@ -11,7 +11,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to deserialize property bags into formatting objects
+    /// Class to deserialize property bags into formatting objects
     /// by using ERS functionality.
     /// </summary>
     internal sealed class FormatObjectDeserializer
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal TerminatingErrorContext TerminatingErrorContext { get; private set; }
 
         /// <summary>
-        /// expansion of TAB character to the following string.
+        /// Expansion of TAB character to the following string.
         /// </summary>
         private const string TabExpansionString = "    ";
 
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// given a raw object out of the pipeline, it deserializes it accordingly to
+        /// Given a raw object out of the pipeline, it deserializes it accordingly to
         /// its type.
         /// If the object is not one of the well known ones (i.e. derived from FormatInfoData)
         /// it just returns the object unchanged.

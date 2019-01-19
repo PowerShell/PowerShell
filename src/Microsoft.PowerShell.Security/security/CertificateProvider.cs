@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class CertificateProviderCodeSigningDynamicParameters
     {
         /// <summary>
-        /// switch that controls whether we only return
+        /// Switch that controls whether we only return
         /// code signing certs.
         /// </summary>
         [Parameter()]
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
     public struct DnsNameRepresentation
     {
         /// <summary>
-        /// punycode version of DNS name.
+        /// Punycode version of DNS name.
         /// </summary>
         private string _punycodeName;
 
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         private string _unicodeName;
 
         /// <summary>
-        /// ambiguous constructor of a DnsNameRepresentation.
+        /// Ambiguous constructor of a DnsNameRepresentation.
         /// </summary>
         public DnsNameRepresentation(string inputDnsName)
         {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// specific constructor of a DnsNameRepresentation.
+        /// Specific constructor of a DnsNameRepresentation.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Punycode")]
         public DnsNameRepresentation(
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// value comparison.
+        /// Value comparison.
         /// </summary>
         public bool Equals(DnsNameRepresentation dnsName)
         {
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get property of Punycode.
+        /// Get property of Punycode.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Punycode")]
         public string Punycode
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get property of Unicode.
+        /// Get property of Unicode.
         /// </summary>
         public string Unicode
         {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get display string.
+        /// Get display string.
         /// </summary>
         public override string ToString()
         {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class ProviderRemoveItemDynamicParameters
     {
         /// <summary>
-        /// switch that controls whether we should delete private key
+        /// Switch that controls whether we should delete private key
         /// when remove a certificate.
         /// </summary>
         [Parameter()]
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// native IntPtr store handle.
+        /// Native IntPtr store handle.
         /// </summary>
 
         public IntPtr StoreHandle
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// string store name.
+        /// String store name.
         /// </summary>
         public string StoreName
         {
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// true if a real store is open.
+        /// True if a real store is open.
         /// </summary>
 
         public bool Valid
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
         #region tracer
 
         /// <summary>
-        /// tracer for certificate provider.
+        /// Tracer for certificate provider.
         /// </summary>
         [TraceSource("CertificateProvider",
                       "The core command provider for certificates")]
@@ -517,21 +517,21 @@ namespace Microsoft.PowerShell.Commands
         private bool _hasAttemptedToLoadPkiModule = false;
 
         /// <summary>
-        /// lock that guards access to the following static members
+        /// Lock that guards access to the following static members
         /// -- storeLocations
         /// -- pathCache.
         /// </summary>
         private static object s_staticLock = new object();
 
         /// <summary>
-        /// list of store locations. They do not change once initialized.
+        /// List of store locations. They do not change once initialized.
         ///
         /// Synchronized on staticLock.
         /// </summary>
         private static List<X509StoreLocation> s_storeLocations = null;
 
         /// <summary>
-        /// cache that stores paths and their associated objects.
+        /// Cache that stores paths and their associated objects.
         ///
         /// key is full path to store-location/store/certificate
         /// value is X509StoreLocation/X509NativeStore/X509Certificate2 object
@@ -541,12 +541,12 @@ namespace Microsoft.PowerShell.Commands
         private static Hashtable s_pathCache = null;
 
         /// <summary>
-        /// we allow either / or \ to be the path separator.
+        /// We allow either / or \ to be the path separator.
         /// </summary>
         private static readonly char[] s_pathSeparators = new char[] { '/', '\\' };
 
         /// <summary>
-        /// regex pattern that defines a valid cert path.
+        /// Regex pattern that defines a valid cert path.
         /// </summary>
         private const string certPathPattern = @"^\\((?<StoreLocation>CurrentUser|LocalMachine)(\\(?<StoreName>[a-zA-Z]+)(\\(?<Thumbprint>[0-9a-f]{40}))?)?)?$";
 
@@ -1939,7 +1939,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// fetches the store-location/store/certificate at the
+        /// Fetches the store-location/store/certificate at the
         /// specified path.
         /// </summary>
         /// <param name="path">Path to the item.</param>
@@ -2357,7 +2357,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get the name of the specified certificate.
+        /// Get the name of the specified certificate.
         /// </summary>
         /// <param name="cert"></param>
         /// <returns>Cert name .</returns>
@@ -2423,7 +2423,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get X509StoreLocation object at path.
+        /// Get X509StoreLocation object at path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>X509StoreLocation object.</returns>
@@ -2445,7 +2445,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get the X509NativeStore object at path.
+        /// Get the X509NativeStore object at path.
         /// </summary>
         /// <param name="path">Path to store.</param>
         /// <param name="test">True if this should be a test for path existence. Returns True or False.</param>
@@ -2472,7 +2472,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets the X509NativeStore at the specified path.
+        /// Gets the X509NativeStore at the specified path.
         /// Adds to cache if not already there.
         /// </summary>
         /// <param name="storePath">Path to the store.</param>
@@ -2509,7 +2509,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets X509NativeStore objects or their name at the specified path.
+        /// Gets X509NativeStore objects or their name at the specified path.
         /// </summary>
         /// <param name="path">Path to the store.</param>
         /// <param name="recurse">Recursively return all items if true.</param>
@@ -2900,7 +2900,7 @@ namespace Microsoft.PowerShell.Commands
         private string _oid;
 
         /// <summary>
-        /// constructor of an EnhancedKeyUsageRepresentation.
+        /// Constructor of an EnhancedKeyUsageRepresentation.
         /// </summary>
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Oid")]
@@ -2912,7 +2912,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// value comparison.
+        /// Value comparison.
         /// </summary>
         public bool Equals(EnhancedKeyUsageRepresentation keyUsage)
         {
@@ -2936,7 +2936,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get property of friendlyName.
+        /// Get property of friendlyName.
         /// </summary>
         public string FriendlyName
         {
@@ -2947,7 +2947,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get property of oid.
+        /// Get property of oid.
         /// </summary>
         public string ObjectId
         {
@@ -2958,7 +2958,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// get display string.
+        /// Get display string.
         /// </summary>
         public override string ToString()
         {
@@ -2969,14 +2969,14 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// class for SendAsTrustedIssuer.
+    /// Class for SendAsTrustedIssuer.
     /// </summary>
 
     [SuppressMessage("Microsoft.Design", "CA1053:StaticHolderTypesShouldNotHaveConstructors")]
     public sealed class SendAsTrustedIssuerProperty
     {
         /// <summary>
-        /// get property of SendAsTrustedIssuer.
+        /// Get property of SendAsTrustedIssuer.
         /// </summary>
 
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
@@ -3012,7 +3012,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// set property of SendAsTrustedIssuer.
+        /// Set property of SendAsTrustedIssuer.
         /// </summary>
 
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
@@ -3125,7 +3125,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     /// <summary>
-    /// class for ekulist.
+    /// Class for ekulist.
     /// </summary>
 
     public sealed class EnhancedKeyUsageProperty
@@ -3133,7 +3133,7 @@ namespace Microsoft.PowerShell.Commands
         private List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
 
         /// <summary>
-        /// get property of EKUList.
+        /// Get property of EKUList.
         /// </summary>
         public List<EnhancedKeyUsageRepresentation> EnhancedKeyUsageList
         {
@@ -3144,7 +3144,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// constructor for EnhancedKeyUsageProperty.
+        /// Constructor for EnhancedKeyUsageProperty.
         /// </summary>
         public EnhancedKeyUsageProperty(X509Certificate2 cert)
         {
@@ -3169,7 +3169,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// class for DNSNameList.
+    /// Class for DNSNameList.
     /// </summary>
 
     public sealed class DnsNameProperty
@@ -3180,7 +3180,7 @@ namespace Microsoft.PowerShell.Commands
         private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
-        /// get property of DnsNameList.
+        /// Get property of DnsNameList.
         /// </summary>
         public List<DnsNameRepresentation> DnsNameList
         {
@@ -3191,7 +3191,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// constructor for EkuList.
+        /// Constructor for EkuList.
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
@@ -3258,7 +3258,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// downlevel helper function to determine if the OS is WIN8 and above.
+    /// Downlevel helper function to determine if the OS is WIN8 and above.
     /// </summary>
     internal static class DownLevelHelper
     {
@@ -3372,12 +3372,12 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// container for helper functions that use pinvoke into crypt32.dll.
+    /// Container for helper functions that use pinvoke into crypt32.dll.
     /// </summary>
     internal static class Crypt32Helpers
     {
         /// <summary>
-        /// lock that guards access to the following static members
+        /// Lock that guards access to the following static members
         /// -- storeNames.
         /// </summary>
         private static object s_staticLock = new object();
@@ -3385,7 +3385,7 @@ namespace Microsoft.PowerShell.Commands
         internal static List<string> storeNames = new List<string>();
 
         /// <summary>
-        /// get a list of store names at the specified location.
+        /// Get a list of store names at the specified location.
         /// </summary>
         [ArchitectureSensitive]
         internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
@@ -3430,7 +3430,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// call back function used by CertEnumSystemStore
+        /// Call back function used by CertEnumSystemStore
         ///
         /// Currently, there is no managed support for enumerating store
         /// names on a machine. We use the win32 function CertEnumSystemStore()

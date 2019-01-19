@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis; // for fxcop.
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -508,7 +508,7 @@ namespace System.Management.Automation
         // a BeginStop operation.
 
         /// <summary>
-        /// true if AsyncResult monitors Async BeginInvoke().
+        /// True if AsyncResult monitors Async BeginInvoke().
         /// false otherwise.
         /// </summary>
         internal bool IsAssociatedWithAsyncInvoke { get; }
@@ -3649,7 +3649,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
         /// <exception cref="InvalidOperationException">An attempt was made to use the scriptblock outside of the engine.</exception>
-        internal SteppablePipeline GetSteppablePipeline()
+        public SteppablePipeline GetSteppablePipeline()
         {
             ExecutionContext context = GetContextFromTLS();
             SteppablePipeline spl = GetSteppablePipeline(context, CommandOrigin.Internal);
@@ -4157,7 +4157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// clear the internal reference to remote powershell.
+        /// Clear the internal reference to remote powershell.
         /// </summary>
         internal void ClearRemotePowerShell()
         {

@@ -547,12 +547,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// lock object.
+        /// Lock object.
         /// </summary>
         private readonly object myLock = new object();
 
         /// <summary>
-        /// number of active operations.
+        /// Number of active operations.
         /// </summary>
         private UInt32 operationCount = 0;
 
@@ -569,12 +569,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private ConcurrentQueue<CimBaseAction> actionQueue;
 
         /// <summary>
-        /// lock object.
+        /// Lock object.
         /// </summary>
         private readonly object cimSessionProxyCacheLock = new object();
 
         /// <summary>
-        /// cache all <see cref="CimSessionProxy"/> objects related to
+        /// Cache all <see cref="CimSessionProxy"/> objects related to
         /// the current operation.
         /// </summary>
         private List<CimSessionProxy> cimSessionProxyCache;

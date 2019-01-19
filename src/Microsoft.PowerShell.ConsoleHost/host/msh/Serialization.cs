@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell
         internal enum DataFormat
         {
             /// <summary>
-            /// text format -- i.e. stream text just as out-default would display it.
+            /// Text format -- i.e. stream text just as out-default would display it.
             /// </summary>
 
             Text = 0,

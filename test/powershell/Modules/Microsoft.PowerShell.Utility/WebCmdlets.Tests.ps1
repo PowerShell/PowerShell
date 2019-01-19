@@ -1171,6 +1171,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue02'))
     }
 
+    It "Verifies Invoke-WebRequest does not sent expect 100-continue headers by default" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $response = Invoke-WebRequest -Uri $uri
+        $result = $response.Content | ConvertFrom-Json
+
+        $result.headers.Expect | Should -BeNullOrEmpty
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
+    }
+
+    It "Verifies Invoke-WebRequest sends expect 100-continue header when defined in -Headers" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $response = Invoke-WebRequest -Uri $uri -Headers @{Expect = '100-continue'}
+        $result = $response.Content | ConvertFrom-Json
+
+        $result.headers.Expect | Should -BeExactly '100-continue'
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
+    }
+
     #endregion Content Header Inclusion
 
     Context "HTTPS Tests" {
@@ -2507,6 +2529,26 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             {Invoke-RestMethod -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
                 Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
+    }
+
+    It "Verifies Invoke-RestMethod does not sent expect 100-continue headers by default" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $result = Invoke-RestMethod -Uri $uri
+
+        $result.headers.Expect | Should -BeNullOrEmpty
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
+    }
+
+    It "Verifies Invoke-RestMethod sends expect 100-continue header when defined in -Headers" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $result = Invoke-RestMethod -Uri $uri -Headers @{Expect = '100-continue'}
+
+        $result.headers.Expect | Should -BeExactly '100-continue'
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
     }
 
     #region charset encoding tests

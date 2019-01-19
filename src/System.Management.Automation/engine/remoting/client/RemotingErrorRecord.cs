@@ -28,14 +28,14 @@ namespace System.Management.Automation.Runspaces
         private OriginInfo _originInfo;
 
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="errorRecord">The error record that is wrapped.</param>
         /// <param name="originInfo">Origin information.</param>
         public RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo) : this(errorRecord, originInfo, null) { }
 
         /// <summary>
-        /// constructor that is used to wrap an error record.
+        /// Constructor that is used to wrap an error record.
         /// </summary>
         /// <param name="errorRecord"></param>
         /// <param name="originInfo"></param>
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Remoting
         private Guid _instanceId;
 
         /// <summary>
-        /// public constructor.
+        /// Public constructor.
         /// </summary>
         /// <param name="computerName">Machine name.</param>
         /// <param name="runspaceID">Instance id of runspace.</param>
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Remoting
         { }
 
         /// <summary>
-        /// public constructor.
+        /// Public constructor.
         /// </summary>
         /// <param name="computerName">Machine name.</param>
         /// <param name="runspaceID">Instance id of runspace.</param>

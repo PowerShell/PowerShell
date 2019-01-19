@@ -14,7 +14,7 @@ using System.Text;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// helper class for secure string related functionality.
+    /// Helper class for secure string related functionality.
     /// </summary>
     internal static class SecureStringHelper
     {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// get the contents of a SecureString as byte[]
+        /// Get the contents of a SecureString as byte[]
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
+        /// Return contents of the SecureString after encrypting
         /// using DPAPI and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">SecureString to protect.</param>
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
+        /// Return contents of the SecureString after encrypting
         /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">Input string to encrypt.</param>
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
+        /// Return contents of the SecureString after encrypting
         /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
         /// <param name="input">Input string to encrypt.</param>

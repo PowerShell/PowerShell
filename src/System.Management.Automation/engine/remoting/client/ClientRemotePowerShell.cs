@@ -80,7 +80,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// whether input is available when this object is created.
+        /// Whether input is available when this object is created.
         /// </summary>
         internal bool NoInput
         {
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// data structure handler object.
+        /// Data structure handler object.
         /// </summary>
         internal ClientPowerShellDataStructureHandler DataStructureHandler
         {

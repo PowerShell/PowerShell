@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -659,7 +660,9 @@ namespace System.Management.Automation
 
                     foreach (KeyValuePair<string, AliasInfo> aliasEntry in _context.EngineSessionState.GetAliasTable())
                     {
-                        if (aliasMatcher.IsMatch(aliasEntry.Key))
+                        if (aliasMatcher.IsMatch(aliasEntry.Key) ||
+                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
+                            FuzzyMatcher.IsFuzzyMatch(aliasEntry.Key, _commandName)))
                         {
                             matchingAliases.Add(aliasEntry.Value);
                         }
@@ -723,7 +726,7 @@ namespace System.Management.Automation
         {
             CommandInfo result = null;
 
-            if ((_commandResolutionOptions & SearchResolutionOptions.ResolveFunctionPatterns) != 0)
+            if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns))
             {
                 if (_matchingFunctionEnumerator == null)
                 {
@@ -737,17 +740,26 @@ namespace System.Management.Automation
 
                     foreach (DictionaryEntry functionEntry in _context.EngineSessionState.GetFunctionTable())
                     {
-                        if (functionMatcher.IsMatch((string)functionEntry.Key))
+                        if (functionMatcher.IsMatch((string)functionEntry.Key) ||
+                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
+                            FuzzyMatcher.IsFuzzyMatch(functionEntry.Key.ToString(), _commandName)))
                         {
                             matchingFunction.Add((CommandInfo)functionEntry.Value);
+                        }
+                        else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+                        {
+                            if (_commandName.Equals(ModuleUtils.AbbreviateName((string)functionEntry.Key), StringComparison.OrdinalIgnoreCase))
+                            {
+                                matchingFunction.Add((CommandInfo)functionEntry.Value);
+                            }
                         }
                     }
 
                     // Process functions from modules
-                    CommandInfo c = GetFunctionFromModules(_commandName);
-                    if (c != null)
+                    CommandInfo cmdInfo = GetFunctionFromModules(_commandName);
+                    if (cmdInfo != null)
                     {
-                        matchingFunction.Add(c);
+                        matchingFunction.Add(cmdInfo);
                     }
 
                     _matchingFunctionEnumerator = matchingFunction.GetEnumerator();
@@ -942,17 +954,18 @@ namespace System.Management.Automation
         private CmdletInfo GetNextCmdlet()
         {
             CmdletInfo result = null;
+            bool useAbbreviationExpansion = _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion);
 
             if (_matchingCmdlet == null)
             {
-                if ((_commandResolutionOptions & SearchResolutionOptions.CommandNameIsPattern) != 0)
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || useAbbreviationExpansion)
                 {
                     Collection<CmdletInfo> matchingCmdletInfo = new Collection<CmdletInfo>();
 
                     PSSnapinQualifiedName PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
 
-                    if (PSSnapinQualifiedCommandName == null)
+                    if (!useAbbreviationExpansion && PSSnapinQualifiedCommandName == null)
                     {
                         return null;
                     }
@@ -968,13 +981,22 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher.IsMatch(cmdlet.Name))
+                            if (cmdletMatcher.IsMatch(cmdlet.Name) ||
+                                (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
+                                FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
                                 if (string.IsNullOrEmpty(PSSnapinQualifiedCommandName.PSSnapInName) ||
                                     (PSSnapinQualifiedCommandName.PSSnapInName.Equals(
                                         cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase)))
                                 {
                                     // If PSSnapin is specified, make sure they match
+                                    matchingCmdletInfo.Add(cmdlet);
+                                }
+                            }
+                            else if (useAbbreviationExpansion)
+                            {
+                                if (_commandName.Equals(ModuleUtils.AbbreviateName(cmdlet.Name), StringComparison.OrdinalIgnoreCase))
+                                {
                                     matchingCmdletInfo.Add(cmdlet);
                                 }
                             }
@@ -986,7 +1008,7 @@ namespace System.Management.Automation
                 else
                 {
                     _matchingCmdlet = _context.CommandDiscovery.GetCmdletInfo(_commandName,
-                        (_commandResolutionOptions & SearchResolutionOptions.SearchAllScopes) != 0);
+                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.SearchAllScopes));
                 }
             }
 
@@ -1380,7 +1402,8 @@ namespace System.Management.Automation
                         _commandName,
                         _context.CommandDiscovery.GetLookupDirectoryPaths(),
                         _context,
-                        acceptableCommandNames: null);
+                        acceptableCommandNames: null,
+                        useFuzzyMatch: _commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch));
             }
             else
             {
@@ -1578,5 +1601,13 @@ namespace System.Management.Automation
         ResolveFunctionPatterns = 0x02,
         CommandNameIsPattern = 0x04,
         SearchAllScopes = 0x08,
+
+        /// <summary>Use fuzzy matching.</summary>
+        FuzzyMatch = 0x10,
+
+        /// <summary>
+        /// Enable searching for cmdlets/functions by abbreviation expansion.
+        /// </summary>
+        UseAbbreviationExpansion = 0x20,
     }
 }

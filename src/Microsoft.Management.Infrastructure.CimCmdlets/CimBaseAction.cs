@@ -124,12 +124,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// action completed event.
+        /// Action completed event.
         /// </summary>
         private ManualResetEventSlim completeEvent;
 
         /// <summary>
-        /// response result.
+        /// Response result.
         /// </summary>
         protected CimResponseType responseType;
 

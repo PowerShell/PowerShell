@@ -139,6 +139,7 @@ cron
 crontab
 crossgen
 crossgen'ing
+crossplatform
 csharp
 csmacnz
 csphysicallyinstalledmemory
@@ -789,6 +790,7 @@ lockdown
 lukexjeremy
 deserializing
 kiazhi
+v6.1.2
  - CHANGELOG.md
 aavdberg
 azkarmoulana

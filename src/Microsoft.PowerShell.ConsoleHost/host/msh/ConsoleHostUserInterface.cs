@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
         // }
 
         /// <summary>
-        /// true if command completion is currently running.
+        /// True if command completion is currently running.
         /// </summary>
 
         internal bool IsCommandCompletionRunning
@@ -135,13 +135,13 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// true if the Read* functions should read from the stdin stream instead of from the win32 console.
+        /// True if the Read* functions should read from the stdin stream instead of from the win32 console.
         /// </summary>
 
         internal bool ReadFromStdin { get; set; }
 
         /// <summary>
-        /// true if the host shouldn't write out prompts.
+        /// True if the host shouldn't write out prompts.
         /// </summary>
 
         internal bool NoPrompt { get; set; }

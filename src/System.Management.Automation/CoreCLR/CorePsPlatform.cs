@@ -231,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// function for choosing directory location of PowerShell for profile loading.
+        /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
         public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {

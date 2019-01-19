@@ -14,7 +14,7 @@ using System.Reflection;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class containing miscellaneous helpers to deal with
+    /// Class containing miscellaneous helpers to deal with
     /// PSObject manipulation.
     /// </summary>
     internal static class PSObjectHelper
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// it gets the display name value.
+        /// It gets the display name value.
         /// </summary>
         /// <param name="target">Shell object to process.</param>
         /// <param name="expressionFactory">Expression factory to create PSPropertyExpression.</param>
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to convert an PSObject into a string
+        /// Helper to convert an PSObject into a string
         /// It takes into account enumerations (use display name)
         /// </summary>
         /// <param name="so">Shell object to process.</param>
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// format an object using a provided format string directive.
+        /// Format an object using a provided format string directive.
         /// </summary>
         /// <param name="directive">Format directive object to use.</param>
         /// <param name="val">Object to format.</param>
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to retrieve the default property set of a shell object.
+        /// Helper to retrieve the default property set of a shell object.
         /// </summary>
         /// <param name="so">Shell object to process.</param>
         /// <returns>Resolved expression; empty list if not found.</returns>
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to retrieve the value of an PSPropertyExpression and to format it.
+        /// Helper to retrieve the value of an PSPropertyExpression and to format it.
         /// </summary>
         /// <param name="so">Shell object to process.</param>
         /// <param name="enumerationLimit">Limit on IEnumerable enumeration.</param>
@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal delegate ScriptBlock CreateScriptBlockFromString(string scriptBlockString);
 
     /// <summary>
-    /// helper class to create PSPropertyExpression's from format.ps1xml data structures.
+    /// Helper class to create PSPropertyExpression's from format.ps1xml data structures.
     /// </summary>
     internal sealed class PSPropertyExpressionFactory
     {
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// create an expression from an expression token.
+        /// Create an expression from an expression token.
         /// </summary>
         /// <param name="et">Expression token to use.</param>
         /// <returns>Constructed expression.</returns>
@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// create an expression from an expression token.
+        /// Create an expression from an expression token.
         /// </summary>
         /// <param name="et">Expression token to use.</param>
         /// <param name="loadingInfo">The context from which the file was loaded.</param>
