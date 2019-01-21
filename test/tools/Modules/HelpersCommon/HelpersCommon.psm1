@@ -17,7 +17,7 @@ function Wait-UntilTrue
         if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
-        # Sleep for the specified interval
+        # Wait
         Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true

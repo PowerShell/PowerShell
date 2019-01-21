@@ -1289,8 +1289,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="CycleInEnumInitializers" xml:space="preserve">
     <value>Cannot define enum because of a cycle in the initialization expressions.</value>
   </data>
-  <data name="EnumeratorValueTooLarge" xml:space="preserve">
-    <value>Enumerator value is too large for a System.Int.</value>
+  <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
+    <value>Enumerator value is either too large or too small for {0}.</value>
   </data>
   <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
     <value>Enumerator value must be a constant value.</value>
@@ -1315,6 +1315,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="TypeNameExpected" xml:space="preserve">
     <value>Type name expected.</value>
+  </data>
+  <data name="InvalidUnderlyingType" xml:space="preserve">
+    <value>'{0}' is not a valid underlying type for enums. Expected a builtin integral type (one of byte, sbyte, short, ushort, int, uint, long or ulong)</value>
   </data>
   <data name="InterfaceNameExpected" xml:space="preserve">
     <value>'{0}': Interface name expected.</value>

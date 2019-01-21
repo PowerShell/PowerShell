@@ -99,6 +99,42 @@ Describe "FormatHex" -tags "CI" {
                 Count = 1
                 ExpectedResult = "00000000000000000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
             }
+            @{
+                Name = "Can process enum type 'fhx -InputObject ([DisplayHintType]::DateTime)'"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType]::DateTime
+                Count = 1
+                ExpectedResult = "00000000000000000000   02 00 00 00                                      ...."
+            }
+            @{
+                Name = "Can process DisplayHintType[] type 'fhx -InputObject ([DisplayHintType[]](DateTime, Time))'"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType[]]([Microsoft.PowerShell.Commands.DisplayHintType]::DateTime)
+                Count = 1
+                ExpectedResult = "00000000000000000000   02 00 00 00                                      ...."
+            }
+            @{
+                Name = "Can process DisplayHintType[] type 'fhx -InputObject ([DisplayHintType[]](DateTime, Time))'"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType[]]([Microsoft.PowerShell.Commands.DisplayHintType]::DateTime, [Microsoft.PowerShell.Commands.DisplayHintType]::Time)
+                Count = 1
+                ExpectedResult = "00000000000000000000   02 00 00 00 01 00 00 00                          ........"
+            }
+            @{
+                Name = "Can process char type 'fhx -InputObject ([char]`'A`')'"
+                InputObject = [char]'A'
+                Count = 1
+                ExpectedResult = "00000000000000000000   41                                               A"
+            }
+            @{
+                Name = "Can process char[] type 'fhx -InputObject ([char[]](`'A`'))'"
+                InputObject = [char[]]('A')
+                Count = 1
+                ExpectedResult = "00000000000000000000   41                                               A"
+            }
+            @{
+                Name = "Can process char[] type 'fhx -InputObject ([char[]](`'A`', 'B'))'"
+                InputObject = [char[]]('A', 'B')
+                Count = 1
+                ExpectedResult = "00000000000000000000   41 42                                            AB"
+            }
         )
 
         It "<Name>" -TestCase $testCases{
@@ -172,6 +208,44 @@ Describe "FormatHex" -tags "CI" {
                 InputObject = "hello world"
                 Count = 1
                 ExpectedResult = "00000000000000000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
+            }
+            @{
+                Name = "Can process enum type '[DisplayHintType]::DateTime | fhx"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType]::DateTime
+                Count = 1
+                ExpectedResult = "00000000000000000000   02 00 00 00                                      ...."
+            }
+            @{
+                Name = "Can process DisplayHintType[] type '[DisplayHintType[]](DateTime) | fhx'"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType[]]([Microsoft.PowerShell.Commands.DisplayHintType]::DateTime)
+                Count = 1
+                ExpectedResult = "00000000000000000000   02 00 00 00                                      ...."
+            }
+            @{
+                Name = "Can process DisplayHintType[] type '[DisplayHintType[]](DateTime, Time) | fhx'"
+                InputObject = [Microsoft.PowerShell.Commands.DisplayHintType[]]([Microsoft.PowerShell.Commands.DisplayHintType]::DateTime, [Microsoft.PowerShell.Commands.DisplayHintType]::Time)
+                Count = 2
+                ExpectedResult = "00000000000000000000   02 00 00 00                                      ...."
+                ExpectedSecondResult = "00000000000000000000   01 00 00 00                                      ...."
+            }
+            @{
+                Name = "Can process char type '[char]`'A`' | fhx'"
+                InputObject = [char]'A'
+                Count = 1
+                ExpectedResult = "00000000000000000000   41                                               A"
+            }
+            @{
+                Name = "Can process char[] type '[char[]](`'A`') | fhx'"
+                InputObject = [char[]]('A')
+                Count = 1
+                ExpectedResult = "00000000000000000000   41                                               A"
+            }
+            @{
+                Name = "Can process char[] type '[char[]](`'A`', 'B') | fhx'"
+                InputObject = [char[]]('A', 'B')
+                Count = 2
+                ExpectedResult = "00000000000000000000   41                                               A"
+                ExpectedSecondResult = "00000000000000000000   42                                               B"
             }
         )
 

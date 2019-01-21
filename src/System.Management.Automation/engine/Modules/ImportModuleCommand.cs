@@ -1259,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            if (manifestEntries.Any(s => FixupFileName(string.Empty, s, ".ps1xml").EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
+            if (manifestEntries.Any(s => FixupFileName(string.Empty, s, ".ps1xml", isImportingModule: true).EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
             {
                 return true;
             }
