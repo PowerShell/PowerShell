@@ -153,24 +153,6 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
         (Count-ObjectDepth -InputObject:$json) | Should -Be $Depth
     }
 
-    It 'Can convert an object with depth equal to <Depth> when Depth param is set to 0 and AsHashtable switch set to <AsHashtable>' -TestCases $testCasesJsonDepthWithAndWithoutAsHashtableSwitch {
-        Param($AsHashtable, $Depth)
-        $nestedJson = New-NestedJson -Depth:$Depth
-
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth:0
-
-        if ($AsHashtable)
-        {
-            $json | Should -BeOfType Hashtable
-        }
-        else
-        {
-            $json | Should -BeOfType PSCustomObject
-        }
-
-        (Count-ObjectDepth -InputObject:$json) | Should -Be $Depth
-    }
-
     It 'Fails to convert an object with greater depth than Depth param set to <Depth> and AsHashtable switch set to <AsHashtable>' -TestCases $testCasesJsonDepthWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable, $Depth)
         $nestedJson = New-NestedJson -Depth:($Depth + 1)
