@@ -62,12 +62,20 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Constructor of ConvertToJsonContext.
             /// </summary>
+            public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
+                : this(maxDepth, enumsAsStrings, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+            {
+            }
+
+            /// <summary>
+            /// Constructor of ConvertToJsonContext.
+            /// </summary>
             public ConvertToJsonContext(
                 int maxDepth,
-                CancellationToken cancellationToken,
-                StringEscapeHandling stringEscapeHandling,
                 bool enumsAsStrings,
                 bool compressOutput,
+                CancellationToken cancellationToken,
+                StringEscapeHandling stringEscapeHandling,
                 PSCmdlet targetCmdlet)
             {
                 this.MaxDepth = maxDepth;

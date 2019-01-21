@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int _depth = 2;
         private const int maxDepthAllowed = 100;
-        private CancellationTokenSource cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource cancellationSource = new CancellationTokenSource();
 
         /// <summary>
         /// Gets or sets the Depth property.
@@ -116,10 +116,10 @@ namespace Microsoft.PowerShell.Commands
 
                 var context = new JsonObject.ConvertToJsonContext(
                     Depth,
-                    cancellationSource.Token,
-                    EscapeHandling,
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
+                    cancellationSource.Token,
+                    EscapeHandling,
                     targetCmdlet: this);
 
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
