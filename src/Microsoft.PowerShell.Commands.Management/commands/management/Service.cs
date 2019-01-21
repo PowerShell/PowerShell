@@ -14,6 +14,7 @@ using System.ComponentModel; // Win32Exception
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices; // Marshal, DllImport
 using System.Security.Permissions;
+using System.Security.AccessControl;
 using NakedWin32Handle = System.IntPtr;
 using DWORD = System.UInt32;
 
@@ -1574,13 +1575,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SecurityDescriptor
         {
-            get { return securityDescriptor; }
-            set
-            {
-                securityDescriptor = value;
-            }
+            get;
+            set;
         }
-        private string securityDescriptor ;
 
         /// <summary>
         /// The following is the definition of the input parameter "Status".
@@ -1736,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
-                        NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER | NativeMethods.ACCESS_SYSTEM_SECURITY
+                        NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER
                         );
 
                     if (IntPtr.Zero == hService)
@@ -1890,22 +1887,22 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Handle the '-SecurityDescriptor' parameter
+                    RawSecurityDescriptor rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptor);
+                    RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
+                    DiscretionaryAcl  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
 
-                    IntPtr psecurityDescriptor = IntPtr.Zero;
+                    byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
+                    discretionaryAcl.GetBinaryForm(rawDacl, 0);
+                    rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
+                    byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
+                    rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
 
-                    bool returnStatus = NativeMethods.ConvertStringSecurityDescriptorToSecurityDescriptorW(
-                                                    securityDescriptor,
-                                                    NativeMethods.stringSDRevision,
-                                                    psecurityDescriptor,
-                                                    IntPtr.Zero);
-
-                    if(!string.IsNullOrEmpty(securityDescriptor))
+                    if(!string.IsNullOrEmpty(SecurityDescriptor))
                     {
-                        bool status = NativeMethods.SetServiceObjectSecurity(
-                            hService,
-                            psecurityDescriptor,
-                            IntPtr.Zero
-                            );
+                        status = NativeMethods.SetServiceObjectSecurity(
+                                    hService,
+                                    SecurityInfos.DiscretionaryAcl,
+                                    securityDescriptorByte);
                     }
 
                     if (!status)
@@ -2617,10 +2614,8 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_CONFIG_DESCRIPTION = 1;
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
-        internal const DWORD WRITE_DAC =18;
-        internal const DWORD WRITE_OWNER =19;
-        internal const DWORD ACCESS_SYSTEM_SECURITY =24;
-        internal const DWORD stringSDRevision = 1;
+        internal const DWORD WRITE_DAC = 262144;
+        internal const DWORD WRITE_OWNER =524288;
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 
@@ -2746,17 +2741,8 @@ namespace Microsoft.PowerShell.Commands
         internal static extern
         bool SetServiceObjectSecurity(
             NakedWin32Handle hSCManager,
-            DWORD dwSecurityInformation,
-            IntPtr lpSecurityDescriptor
-            );
-
-        [DllImport(PinvokeDllNames.ConvertStringSecurityDescriptorToSecurityDescriptorWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern
-        bool ConvertStringSecurityDescriptorToSecurityDescriptorW(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string stringSecurityDescriptor,
-            DWORD stringSDRevision,
-            IntPtr psecurityDescriptor,
-            IntPtr psecurityDescriptorSize
+            System.Security.AccessControl.SecurityInfos dwSecurityInformation,
+            byte[] lpSecurityDescriptor
             );
 
         /// <summary>
