@@ -2747,10 +2747,6 @@ function Test-FileWxs
     {
         if ($indexedAssetFiles -inotcontains $file)
         {
-            $name = Split-Path -Path $file -Leaf
-            if ($name -eq '.nupkg.metadata') {
-                break;
-            }
             $passed = $false
             $folder = Split-Path -Path $file
             $heatNode = $heatNodesByFile[$file]
