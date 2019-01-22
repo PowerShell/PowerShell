@@ -39,10 +39,14 @@ try {
     $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true}
 
     if($FxDependent.IsPresent) {
+        $projectAssetsZipName = 'linuxFxDependantProjectAssetssymbols.zip'
         $buildParams.Add("Runtime", "fxdependent")
     } elseif ($Alpine.IsPresent) {
+        $projectAssetsZipName = 'linuxAlpineProjectAssetssymbols.zip'
         $buildParams.Add("Runtime", 'alpine-x64')
     } else {
+        # make the artifact name unique
+        $projectAssetsZipName = "linuxProjectAssets-$((get-date).Ticks)-symbols.zip"
         $buildParams.Add("Crossgen", $true)
     }
 
@@ -84,9 +88,11 @@ Write-Verbose "Exporting project.assets files ..." -verbose
 
 $projectAssetsCounter = 1
 $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
-$projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
+$projectAssetsZip = Join-Path -Path $destination -ChildPath $projectAssetsZipName
 Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
-    $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
+    $subfolder = $_.FullName.Replace($location,'')
+    $subfolder.Replace('project.assets.json','')
+    $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
     New-Item -Path $itemDestination -ItemType Directory -Force
     $file = $_.FullName
     Write-Verbose "Copying $file to $itemDestination" -verbose
