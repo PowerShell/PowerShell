@@ -74,12 +74,8 @@ Describe -Name "Windows MSI" -Fixture {
     }
     AfterEach {
         if ($Error.Count -ne 0 -and !$uploadedLog) {
-            if ($env:APPVEYOR) {
-                Push-AppveyorArtifact $msiLog
-            } else {
-                Copy-Item -Path $msiLog -Destination $env:temp -Force
-                Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            }
+            Copy-Item -Path $msiLog -Destination $env:temp -Force
+            Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
             $uploadedLog = $true
         }
     }
