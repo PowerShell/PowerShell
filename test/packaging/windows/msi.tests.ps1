@@ -76,7 +76,7 @@ Describe -Name "Windows MSI" -Fixture {
         if ($Error.Count -ne 0 -and !$uploadedLog) {
             Copy-Item -Path $msiLog -Destination $env:temp -Force
             Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true
+            $uploadedLog = $true 
         }
     }
 
