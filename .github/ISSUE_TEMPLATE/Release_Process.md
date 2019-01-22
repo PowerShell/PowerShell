@@ -12,7 +12,7 @@ Please **only** use this template if you are a maintainer.
 
 # Release Process for v6.x.x
 
-- [ ] Verify that PowerShell-Native has been updated/released as needed.
+- [ ] Verify that `PowerShell-Native` has been updated/released as needed.
 - [ ] Check for `PowerShellGet` and `PackageManagement` release plans.
 - [ ] Start process to sync Azure DevOps artifacts feed such as modules and NuGet packages.
 - [ ] Create a private branch named `release-v6.x.x` in Azure Dev Ops repository.
