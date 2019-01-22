@@ -1749,32 +1749,6 @@
               <File Id="fil94E5AE8C0F25406EA6F009B9B3D96210" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.strings.psd1" />
             </Component>
           </Directory>
-          <Directory Name="fullclr" Id="dir74FD3CF359C34EE3A3FE157E87EB2202">
-            <Component Id="cmp0EE4A8E812A94A63ADB42CD71D8AAFBF" Guid="{15d162ec-17a7-4b34-8386-44c8b7a53eb5}">
-              <File Id="fil02CBF66201AE4684BCE8E9E9CCE18F03" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.NuGetProvider.dll" />
-            </Component>
-            <Component Id="cmp32CC9AA0E2CD4FB6B97B0AEEA26BD070" Guid="{bec6ae65-4461-43a9-8850-ceeacde768a2}">
-              <File Id="fil707E8B5CF74A4FEE944B072CCBC2A418" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.ArchiverProviders.dll" />
-            </Component>
-            <Component Id="cmpFAD1EA7014C44C10841A34AF62E9A319" Guid="{920309f7-e2e5-4d63-ba17-d70a762df371}">
-              <File Id="fil20E2EF1E60EA452EA4AE7080DC5C9352" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsiProvider.dll" />
-            </Component>
-            <Component Id="cmpBF4000FBDC824DEB8816BE2A76662CF7" Guid="{5cc8c6cf-49f3-4538-bf13-47dcd1c48c41}">
-              <File Id="fil39A73761CBF84A9BA95C7237DF4496A8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsuProvider.dll" />
-            </Component>
-            <Component Id="cmp4ADF123533534E699FB24A63D28C6C60" Guid="{36b5e775-b7b2-4534-9f02-da74e538b555}">
-              <File Id="filDC04DD482848484FB436C6D27D30F951" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.dll" />
-            </Component>
-            <Component Id="cmp5D34C68D473547DEBCE4FCFC6E37FACC" Guid="{2c2d044a-be86-42fe-8674-53c6677b59db}">
-              <File Id="fil78402BDEC2EA439AA313206EAD730947" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-            </Component>
-            <Component Id="cmpE86FFEE1491D48FEAB50B7625E3255AD" Guid="{a8219ed5-8804-464a-9b2f-98bdc11672d1}">
-              <File Id="fil0EF79BF9AE9C4BDFB2F1F9E4D313B9AF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.CoreProviders.dll" />
-            </Component>
-            <Component Id="cmp5643928A5F414B09BC30E5DA0FB400EA" Guid="{a1a31494-73f4-40d3-8574-fad0d76b0eca}">
-              <File Id="filF9E7D1C528C248BAB6E02ED013A4CE19" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PowerShell.PackageManagement.dll" />
-            </Component>
-          </Directory>
           <Directory Name="coreclr" Id="dirD84258F96F80409BA8CD117DCD52EC6E">
             <Directory Name="netstandard1.6" Id="dir36C6ABDA5E944E2BA2FDCEC46507A030">
               <Component Id="cmp34C3B0C6B0944FAB92E6CF935C932FE1" Guid="{9448a704-abcd-4d00-abc6-4098c4b7c0f3}">
@@ -2839,20 +2813,16 @@
       <ComponentRef Id="cmp16789176DD8EDBC99C26E1230DB2BDDF" />
       <ComponentRef Id="cmpDDD9F623B3DC4A6DB15A013734FFFACB" />
       <ComponentRef Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" />
-      <ComponentRef Id="cmp0EE4A8E812A94A63ADB42CD71D8AAFBF" />
       <ComponentRef Id="cmp34C3B0C6B0944FAB92E6CF935C932FE1" />
       <ComponentRef Id="cmp8C23BECAFDBB4039A255DE6246A30726" />
       <ComponentRef Id="cmpB672EAD9CF9F45619E709AD0DD50D685" />
-      <ComponentRef Id="cmp32CC9AA0E2CD4FB6B97B0AEEA26BD070" />
       <ComponentRef Id="cmp3F09B23AC8E74CEB9C09BD3BDF48DE0B" />
       <ComponentRef Id="cmp2A7508B89C784581B8FEF2BB5C810CB7" />
       <ComponentRef Id="cmpB9EF9DAB25064D92A757E7D390CC8922" />
       <ComponentRef Id="cmp830D1B7987E04CC8962F5A49AABE9E51" />
       <ComponentRef Id="cmpC608F4A8321145619930DC01B24BD25E" />
       <ComponentRef Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01" />
-      <ComponentRef Id="cmpFAD1EA7014C44C10841A34AF62E9A319" />
       <ComponentRef Id="cmpBCEF6DF1461C426BB07539392C7299E1" />
-      <ComponentRef Id="cmpBF4000FBDC824DEB8816BE2A76662CF7" />
       <ComponentRef Id="cmpD59302B61FD5436C873FB46D8EFB3443" />
       <ComponentRef Id="cmp092D1859608844F78D3211718ED31171" />
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
@@ -2860,17 +2830,14 @@
       <ComponentRef Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" />
       <ComponentRef Id="cmpE773C5B7686C496DAD2111AF1950D73E" />
       <ComponentRef Id="cmpB42E81A3AE804C20B209D05172709994" />
-      <ComponentRef Id="cmp4ADF123533534E699FB24A63D28C6C60" />
       <ComponentRef Id="cmpF297CB46D5944DC38C68B376140BDF5C" />
       <ComponentRef Id="cmpC2EEED1CA2094DB1B760297F2374216A" />
       <ComponentRef Id="cmpE9DB812405C44652B6BEF707AFDC345E" />
-      <ComponentRef Id="cmp5D34C68D473547DEBCE4FCFC6E37FACC" />
       <ComponentRef Id="cmpBC02FE7785014E318FEB24F66A654B6F" />
       <ComponentRef Id="cmp709F3BBEA37940E880346DAA83642B50" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
       <ComponentRef Id="cmp06639B424B054D12A42F24F28FB682E7" />
       <ComponentRef Id="cmp8B763D3852654517B3E25C9CA5247D5F" />
-      <ComponentRef Id="cmpE86FFEE1491D48FEAB50B7625E3255AD" />
       <ComponentRef Id="cmpC0C47C3075164964B8F8428CE44F7144" />
       <ComponentRef Id="cmpA3A50C81E1704ABF9022F6ECE265165E" />
       <ComponentRef Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83" />
@@ -2888,7 +2855,6 @@
       <ComponentRef Id="cmpFA5437B93E1D4D2BAD7472174958DC87" />
       <ComponentRef Id="cmp26C26BCEF1DC43BDB85CAB78643AABDB" />
       <ComponentRef Id="cmpE5263E977524400BB2CDF62B5DC1D0DB" />
-      <ComponentRef Id="cmp5643928A5F414B09BC30E5DA0FB400EA" />
       <ComponentRef Id="cmp84599819161549BC82898469571ADE7B" />
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
       <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
