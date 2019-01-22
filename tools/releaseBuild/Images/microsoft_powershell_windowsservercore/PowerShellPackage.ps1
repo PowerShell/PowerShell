@@ -156,10 +156,12 @@ try{
 
         $projectAssetsCounter = 1
         $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
-        $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
+        $projectAssetsZip = Join-Path -Path $destination -ChildPath 'windowsProjectAssetssymbols.zip'
         Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
-            $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
-            New-Item -Path $itemDestination -ItemType Directory -Force
+            $subfolder = $_.FullName.Replace($location,'')
+            $subfolder.Replace('project.assets.json','')
+            $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
+                    New-Item -Path $itemDestination -ItemType Directory -Force
             $file = $_.FullName
             Write-Verbose "Copying $file to $itemDestination" -verbose
             Copy-Item -Path $file -Destination "$itemDestination\" -Force

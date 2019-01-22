@@ -2312,7 +2312,8 @@ function Copy-PSGalleryModules
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+        # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
         Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }

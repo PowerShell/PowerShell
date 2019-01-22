@@ -276,7 +276,7 @@ function Start-PSPackage {
                     Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
                         PackageSourcePath = $Source
@@ -2988,7 +2988,7 @@ function New-DotnetSdkContainerFxdPackage {
 
     $Version = $ReleaseTag -Replace '^v'
 
-    if ($IsWindows) {
+    if ($Environment.IsWindows) {
         $basePackagePattern = "*$Version-win-fxdependent.zip"
         $packageNamePlatform = 'win'
         $packageNameExtension = '.zip'
@@ -2998,10 +2998,13 @@ function New-DotnetSdkContainerFxdPackage {
         $packageNameExtension = '.tar.gz'
     }
 
+    Write-Log "basePackagePattern: $basePackagePattern"
+    Write-Log "fxdPackagePath: $FxdPackagePath"
+
     $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
 
     ## Get fxdependent package path
-    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern
+    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
@@ -3015,7 +3018,7 @@ function New-DotnetSdkContainerFxdPackage {
             Write-Log "Pushed location: $tempExtractFolder"
 
             try {
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
                 } else {
                     Start-NativeExecution { tar -xf $fxdPackage }
@@ -3042,8 +3045,8 @@ function New-DotnetSdkContainerFxdPackage {
 
                 Write-Verbose -Verbose "Compressing"
 
-                if ($IsWindows) {
-                    Compress-Archive -Path . -Destination $FxdPackagePath/$packageName
+                if ($Environment.IsWindows) {
+                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $FxdPackagePath/$packageName
                 } else {
                     Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
                 }
@@ -3057,7 +3060,17 @@ function New-DotnetSdkContainerFxdPackage {
     }
 
     if (Test-Path "$FxdPackagePath/$packageName") {
-        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$FxdPackagePath/$packageName"
+        $containerName = if ($Environment.IsWindows)
+        {
+            "signedResults"
+        }
+        else
+        {
+            "release"
+        }
+
+        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$FxdPackagePath/$packageName"
+
     } else {
         Write-Log "Package not found: $FxdPackagePath/$packageName"
     }

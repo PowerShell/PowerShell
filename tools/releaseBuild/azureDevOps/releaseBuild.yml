@@ -37,3 +37,37 @@ jobs:
     buildName: alpine
 
 - template: templates/mac.yml
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: x64
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: x86
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: arm
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: arm64
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: fxdependent
+
+- template: templates/windows-component-governance.yml
+
+- template: templates/windows-package-signing.yml
+  parameters:
+    parentJobs:
+      - build_windows_x64
+      - build_windows_x86
+      - build_windows_arm
+      - build_windows_arm64
+      - build_windows_fxdependent
+
+- template: templates/mac-package-signing.yml
+
