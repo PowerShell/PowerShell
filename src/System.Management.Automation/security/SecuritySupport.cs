@@ -1731,7 +1731,10 @@ namespace System.Management.Automation
 
         private static void VerifyAmsiUninitializeCalled()
         {
-            Debug.Assert((!AmsiInitialized) || AmsiUninitializeCalled, "AMSI should have been uninitialized.");
+            if (AmsiInitialized && !AmsiUninitializeCalled)
+            {
+                WinUninitialize();
+            }
         }
 
         internal class AmsiNativeMethods
