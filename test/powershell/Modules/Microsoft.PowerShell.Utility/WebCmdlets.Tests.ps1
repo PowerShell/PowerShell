@@ -482,6 +482,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-WebRequest supports request that returns page containing CodPage 936 data." {
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'CP936'
+        $command = "Invoke-WebRequest -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $Result.Output.Encoding.CodePage | Should -Be 936
+        $Result.Output.Content | Should -Match '测试123'
+    }
+
     It "Invoke-WebRequest validate timeout option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
@@ -1889,6 +1900,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $result = ExecuteWebCommand -command $command
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
+    }
+
+    It "Invoke-RestMethod supports request that returns page containing Code Page 936 data." {
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'CP936'
+        $command = "Invoke-RestMethod -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $Result.Output | Should -Match '测试123'
     }
 
     It "Invoke-RestMethod validate timeout option" {
