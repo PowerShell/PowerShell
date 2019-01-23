@@ -1843,15 +1843,6 @@ function New-ReferenceAssembly
         throw "New-ReferenceAssembly can be only executed on Windows platform."
     }
 
-    $genAPIFolder = New-TempFolder
-    $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
-    $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
-    $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
-
-    Write-Log "Working directory: $genAPIFolder."
-
-    #region GenAPI
-
     $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
 
     if (-not (Test-Path $genAPIExe))
@@ -1861,23 +1852,78 @@ function New-ReferenceAssembly
 
     Write-Log "GenAPI nuget package saved and expanded."
 
-    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
+    $genAPIFolder = New-TempFolder
+    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+    Write-Log "Working directory: $genAPIFolder."
 
-    if (-not (Test-Path $linuxSMAPath))
-    {
-        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
+    $SMAReferenceAssembly = $null
+    $assemblyNames = @(
+        "System.Management.Automation",
+        "Microsoft.PowerShell.Commands.Utility"
+    )
+
+    foreach ($assemblyName in $assemblyNames) {
+
+        $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
+        $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
+        $filteredSource = Join-Path $projectFolder "${assembly}_Filtered.cs"
+
+        $linuxDllPath = Join-Path $Linux64BinPath "$assemblyName.dll"
+        if (-not (Test-Path $linuxDllPath)) {
+            throw "$assemblyName.dll was not found at: $Linux64BinPath"
+        }
+
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+
+        Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
+        Write-Log "Reference assembly file generated at: $generatedSource"
+
+        CleanupGeneratedSourceCode -assemblyName $assemblyName -generatedSource $generatedSource -filteredSource $filteredSource
+
+        try
+        {
+            Push-Location $projectFolder
+
+            $csProj = GenerateCSProjectContent -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
+            $csProj | Out-File -FilePath "$projectFolder/$assemblyName.csproj" -Force
+
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
+
+            Start-NativeExecution { dotnet build -c Release }
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/netstandard2.0/$assemblyName.dll"
+            if ($null -eq $refBinPath) {
+                throw "Reference assembly was not built."
+            }
+
+            Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+            Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            if ($assemblyName -eq "System.Management.Automation") {
+                $SMAReferenceAssembly = $refBinPath
+            }
+        }
+        finally
+        {
+            Pop-Location
+        }
     }
 
-    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
-    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    if (Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
 
-    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
-
-    Write-Log "Reference assembly file generated at: $smaCs"
-
-    #endregion GenAPI
-
-    #region Cleanup SMA.cs
+function CleanupGeneratedSourceCode
+{
+    param(
+        [string] $assemblyName,
+        [string] $generatedSource,
+        [string] $filteredSource
+    )
 
     $patternsToRemove = @(
         '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]'
@@ -1891,78 +1937,93 @@ function New-ReferenceAssembly
         'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)'
         '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
         '[System.Management.Automation.ArgumentEncodingCompletionsAttribute]'
+        '[Microsoft.PowerShell.Commands.AddMemberCommand'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
+        '[System.Management.Automation.OutputTypeAttribute(typeof(Microsoft.PowerShell.MarkdownRender'
+        '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
+        '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
+        '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
+        '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
         )
 
-    $reader = [System.IO.File]::OpenText($smaCs)
-    $writer = [System.IO.File]::CreateText($smaCsFiltered)
+    $patternsToReplace = @(
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+            Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "public partial struct ConvertToJsonContext"
+            Replacement = "public readonly struct ConvertToJsonContext"
+        }
+    )
+
+    $reader = [System.IO.File]::OpenText($generatedSource)
+    $writer = [System.IO.File]::CreateText($filteredSource)
 
     while($null -ne ($line = $reader.ReadLine()))
     {
-        $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
+        $lineWasProcessed = $false
+        foreach ($patternToReplace in $patternsToReplace)
+        {
+            if ($assemblyName -eq $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+                $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
+                $lineWasProcessed = $true
+                break
+            }
+        }
 
-        if ($null -ne $match)
-        {
-            $writer.WriteLine("//$line")
+        if (!$lineWasProcessed) {
+            $match = Select-String -InputObject $line -Pattern $patternsToRemove -SimpleMatch
+            if ($null -ne $match)
+            {
+                $line = "//$line"
+            }
         }
-        else
-        {
-            $writer.WriteLine($line)
-        }
+
+        $writer.WriteLine($line)
     }
+
     if ($null -ne $reader)
     {
         $reader.Close()
     }
+
     if ($null -ne $writer)
     {
         $writer.Close()
     }
 
-    Move-Item $smaCsFiltered $smaCs -Force
+    Move-Item $filteredSource $generatedSource -Force
+    Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
+}
 
-    Write-Log "Reference assembly code cleanup complete."
+function GenerateCSProjectContent
+{
+    param(
+        [string] $AssemblyName,
+        [string] $RefAssemblyVersion,
+        [string] $SnkFilePath,
+        [string] $SMAReferencePath
+    )
 
-    #endregion Cleanup SMA.cs
-
-    #region Build SMA ref assembly
-
-    try
-    {
-        Push-Location $smaProjectFolder
-
-        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
-
-        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
-
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaProjectFolder/System.Management.Automation.csproj"
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaCs"
-
-        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
-
-        Start-NativeExecution { dotnet build -c Release }
-
-        $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
-
-        if ($null -eq $refBinPath)
-        {
-            throw "Reference assembly was not built."
+    switch ($assemblyName) {
+        "System.Management.Automation" {
+            $csProj = $packagingStrings.'System.Management.Automation' -f $RefAssemblyVersion, $SnkFilePath
         }
 
-        Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+        "Microsoft.PowerShell.Commands.Utility" {
+            $csProj = $packagingStrings.'Microsoft.PowerShell.Commands.Utility' -f $RefAssemblyVersion, $SnkFilePath, $SMAReferencePath
+        }
 
-        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
-    }
-    finally
-    {
-        Pop-Location
-    }
-
-    if (Test-Path $genAPIFolder)
-    {
-        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+        default {
+            throw "It's not yet supported to generate reference assembly for '$assemblyName'"
+        }
     }
 
-    #endregion Build SMA ref assembly
+    return $csProj
 }
 
 <#
