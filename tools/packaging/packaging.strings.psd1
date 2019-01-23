@@ -149,7 +149,7 @@ open {0}
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha08" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
     <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
   </ItemGroup>

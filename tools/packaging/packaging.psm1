@@ -1696,6 +1696,10 @@ function New-UnifiedNugetPackage
     }
 }
 
+<#
+  Copy the generated reference assemblies to the 'ref/netstandard2.0' folder properly.
+  This is a helper function used by 'New-UnifiedNugetPackage'
+#>
 function CopyReferenceAssemblies
 {
     param(
@@ -1898,7 +1902,7 @@ function New-ReferenceAssembly
 
         $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
         $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
-        $filteredSource = Join-Path $projectFolder "${assembly}_Filtered.cs"
+        $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
 
         $linuxDllPath = Join-Path $Linux64BinPath "$assemblyName.dll"
         if (-not (Test-Path $linuxDllPath)) {
