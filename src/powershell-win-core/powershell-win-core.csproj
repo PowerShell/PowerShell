@@ -9,6 +9,7 @@
     <UseWPF>true</UseWPF>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
+    <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
