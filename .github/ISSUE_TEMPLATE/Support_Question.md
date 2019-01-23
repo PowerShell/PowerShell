@@ -2,7 +2,7 @@
 name: Support Question ❓
 about: If you have a question, you can try asking in the PowerShell Slack channel first. If you need official support, refer to the [PowerShell Support Lifecycle](https://aka.ms/pslifecycle)
 title: "[SUPPORT] Support Question"
-labels: support
+labels: Issue-Question
 assignees: ''
 
 ---
