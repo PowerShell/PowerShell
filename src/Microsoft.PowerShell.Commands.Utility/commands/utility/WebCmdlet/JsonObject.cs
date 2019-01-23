@@ -159,6 +159,7 @@ namespace Microsoft.PowerShell.Commands
                     input,
                     new JsonSerializerSettings
                     {
+                        // This TypeNameHandling setting is required to be secure.
                         TypeNameHandling = TypeNameHandling.None,
                         MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
                         MaxDepth = 1024
@@ -437,6 +438,7 @@ namespace Microsoft.PowerShell.Commands
                 object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
                 var jsonSettings = new JsonSerializerSettings
                 {
+                    // This TypeNameHandling setting is required to be secure.
                     TypeNameHandling = TypeNameHandling.None,
                     MaxDepth = 1024,
                     StringEscapeHandling = context.StringEscapeHandling
