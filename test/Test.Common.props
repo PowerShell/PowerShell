@@ -6,6 +6,7 @@
 
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RuntimeFrameworkVersion>3.0.0-preview-27122-01</RuntimeFrameworkVersion>
+    <LangVersion>Latest</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
