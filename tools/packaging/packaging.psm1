@@ -1556,7 +1556,6 @@ function New-UnifiedNugetPackage
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
         New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
-        $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
         {
@@ -1568,8 +1567,7 @@ function New-UnifiedNugetPackage
 
             #region ref
             $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
-            Copy-Item $refBinFullName -Destination $refFolder -Force
-            Write-Log "Copied file $refBinFullName to $refFolder"
+            CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -1694,6 +1692,40 @@ function New-UnifiedNugetPackage
         if (Test-Path $tmpPackageRoot)
         {
             Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+function CopyReferenceAssemblies
+{
+    param(
+        [string] $assemblyName,
+        [string] $refBinPath,
+        [string] $refNugetPath,
+        [string[]] $assemblyFileList
+    )
+
+    switch ($assemblyName) {
+        "Microsoft.PowerShell.Commands.Utility" {
+            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
+            Copy-Item $ref_Utility -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        }
+
+        "Microsoft.PowerShell.SDK" {
+            foreach ($asmFileName in $assemblyFileList) {
+                $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
+                if (Test-Path -Path $refFile) {
+                    Copy-Item $refFile -Destination $refNugetPath -Force
+                    Write-Log "Copied file $refFile to $refNugetPath"
+                }
+            }
+        }
+
+        default {
+            $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
+            Copy-Item $ref_SMA -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_SMA to $refNugetPath"
         }
     }
 }
