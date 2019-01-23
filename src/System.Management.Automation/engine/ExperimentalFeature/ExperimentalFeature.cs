@@ -56,6 +56,15 @@ namespace System.Management.Automation
             Enabled = isEnabled;
         }
 
+        /// <summary>
+        /// A private constructor for ExperimentalFeature that is supposed to be used
+        /// only for declaring new experimental features within this type.
+        /// </summary>
+        private ExperimentalFeature(string name, string description)
+            : this(name, description, source: EngineSource, isEnabled: false)
+        {
+        }
+
         #endregion
 
         #region Static Members
@@ -85,25 +94,17 @@ namespace System.Management.Automation
                 /* Register engine experimental features here. Follow the same pattern as the example:
                 new ExperimentalFeature(
                     name: "PSFileSystemProviderV2",
-                    description: "Replace the old FileSystemProvider with cleaner design and faster code",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
                     name: "PSImplicitRemotingBatching",
-                    description: "Batch implicit remoting proxy commands to improve performance",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Batch implicit remoting proxy commands to improve performance"),
                 new ExperimentalFeature(
                     name: "PSUseAbbreviationExpansion",
-                    description: "Allow tab completion of cmdlets and functions by abbreviation",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Allow tab completion of cmdlets and functions by abbreviation"),
                 new ExperimentalFeature(
                     name: "PSTempDrive",
-                    description: "Create TEMP: PS Drive mapped to user's temporary directory path",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Create TEMP: PS Drive mapped to user's temporary directory path"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
