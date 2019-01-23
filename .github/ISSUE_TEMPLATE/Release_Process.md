@@ -1,8 +1,12 @@
 ---
 name: Release Process
 about: Maintainers Only - Release Process
+title: "[RELEASE] Release Issue"
+labels: maintainers
+assignees: ''
 
 ---
+
 <!--
 
 This template is for maintainers to create an issues to track the release process.
