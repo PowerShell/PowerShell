@@ -32,17 +32,13 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     }
 
     It "Can enter and exit another PSHost" {
-        Wait-UntilTrue {
-            (Test-Path $pwsh_started) -eq $true
-        }
+        Wait-UntilTrue { Test-Path $pwsh_started }
 
         "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
     }
 
     It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-        Wait-UntilTrue {
-            (Test-Path $powershell_started) -eq $true
-        }
+        Wait-UntilTrue { Test-Path $powershell_started }
 
         "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
     }
