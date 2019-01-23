@@ -1,6 +1,9 @@
 ---
 name: Security Issue
 about: Security Issue
+title: "[SECURITY] Security Issue"
+labels: secuirty
+assignees: ''
 
 ---
 
