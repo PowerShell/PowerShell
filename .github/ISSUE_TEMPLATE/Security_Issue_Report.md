@@ -1,7 +1,7 @@
 ---
 name: Security Issue
 about: Security Issue
-title: "[SECURITY] Security Issue"
+title: "[SECURITY] !!! READ TEMPLATE COMPLETELY FIRST!!!"
 labels: secuirty
 assignees: ''
 
