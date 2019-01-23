@@ -2,7 +2,7 @@
 name: Security Issue
 about: Security Issue
 title: "[SECURITY] !!! READ TEMPLATE COMPLETELY FIRST!!!"
-labels: secuirty
+labels: Issue-Bug
 assignees: ''
 
 ---
