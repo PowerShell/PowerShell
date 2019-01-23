@@ -1000,6 +1000,19 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            if (ExperimentalFeature.IsEnabled("PSTempDrive"))
+            {
+                PSDriveInfo newPSDriveInfo =
+                    new PSDriveInfo(
+                        DriveNames.TempDrive,
+                        ProviderInfo,
+                        Path.GetTempPath(),
+                        SessionStateStrings.TempDriveDescription,
+                        credential: null,
+                        displayRoot: null);
+                results.Add(newPSDriveInfo);
+            }
+
             return results;
         }
 
