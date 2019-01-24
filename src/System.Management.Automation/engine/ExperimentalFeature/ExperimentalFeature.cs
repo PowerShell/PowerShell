@@ -46,8 +46,12 @@ namespace System.Management.Automation
         public bool Enabled { get; private set; }
 
         /// <summary>
-        /// Constructor for ExperimentalFeature.
+        /// Initialize a new instance of the <see cref="ExperimentalFeature"/> class.
         /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
+        /// <param name="source">The source where the experimental feature is defined.</param>
+        /// <param name="isEnabled">Indicate whether the experimental feature is enabled.</param>
         internal ExperimentalFeature(string name, string description, string source, bool isEnabled)
         {
             Name = name;
@@ -57,9 +61,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A private constructor for ExperimentalFeature that is supposed to be used
-        /// only for declaring new experimental features within this type.
+        /// Initialize a new instance of the <see cref="ExperimentalFeature"/> class.
+        /// This is a private constructor only for declaring new experimental features within this type.
         /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
         private ExperimentalFeature(string name, string description)
             : this(name, description, source: EngineSource, isEnabled: false)
         {
