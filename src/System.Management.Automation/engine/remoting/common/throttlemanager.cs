@@ -26,18 +26,18 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// class describing event args which a helper class
+    /// Class describing event args which a helper class
     /// implementing IThrottleOperation need to throw.
     /// </summary>
     internal sealed class OperationStateEventArgs : EventArgs
     {
         /// <summary>
-        /// operation state.
+        /// Operation state.
         /// </summary>
         internal OperationState OperationState { get; set; }
 
         /// <summary>
-        /// the original event which actually resulted in this
+        /// The original event which actually resulted in this
         /// event being raised.
         /// </summary>
         internal EventArgs BaseEvent { get; set; }
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         /// <summary>
-        /// default throttle limit - the maximum number of operations
+        /// Default throttle limit - the maximum number of operations
         /// to be processed at a time.
         /// </summary>
         private static int s_DEFAULT_THROTTLE_LIMIT = 32;

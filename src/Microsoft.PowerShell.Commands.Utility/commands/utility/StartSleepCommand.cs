@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region IDisposable
         /// <summary>
-        ///  Dispose method of IDisposable interface.
+        /// Dispose method of IDisposable interface.
         /// </summary>
         public void Dispose()
         {
@@ -43,8 +43,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Seconds", ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
-        [ValidateRangeAttribute(0, int.MaxValue / 1000)]
-        public int Seconds { get; set; }
+        [ValidateRangeAttribute(0.0, (double)(int.MaxValue / 1000))]
+        public double Seconds { get; set; }
 
         /// <summary>
         /// Allows sleep time to be specified in milliseconds.
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case "Seconds":
-                    sleepTime = Seconds * 1000;
+                    sleepTime = (int)(Seconds * 1000);
                     break;
 
                 case "Milliseconds":

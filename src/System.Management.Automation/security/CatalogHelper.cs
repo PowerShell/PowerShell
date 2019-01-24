@@ -42,7 +42,7 @@ namespace System.Management.Automation
     public class CatalogInformation
     {
         /// <summary>
-        /// status of catalog.
+        /// Status of catalog.
         /// </summary>
         public CatalogValidationStatus Status { get; set; }
 

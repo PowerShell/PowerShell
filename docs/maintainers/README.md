@@ -24,6 +24,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 - Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
 - Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Andrew Menagarishvili ([anmenaga](https://github.com/anmenaga))
 
 ## Former Repository Maintainers
 

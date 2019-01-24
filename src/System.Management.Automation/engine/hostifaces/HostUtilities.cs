@@ -21,9 +21,15 @@ namespace System.Management.Automation
 {
     internal enum SuggestionMatchType
     {
+        /// <summary>Match on a command.</summary>
         Command = 0,
+        /// <summary>Match based on exception message.</summary>
         Error = 1,
-        Dynamic = 2
+        /// <summary>Match by running a script block.</summary>
+        Dynamic = 2,
+
+        /// <summary>Match by fully qualified ErrorId.</summary>
+        ErrorId = 3
     }
 
     #region Public HostUtilities Class
@@ -58,6 +64,13 @@ namespace System.Management.Automation
             $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
         ";
 
+        private static string s_getFuzzyMatchedCommands = @"
+            [System.Diagnostics.DebuggerHidden()]
+            param([string] $formatString)
+
+            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
+        ";
+
         private static ArrayList s_suggestions = new ArrayList(
             new Hashtable[] {
                 NewSuggestion(1, "Transactions", SuggestionMatchType.Command, "^Start-Transaction",
@@ -68,7 +81,15 @@ namespace System.Management.Automation
                     ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
                     ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
                     new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
-                    true)
+                    true),
+                NewSuggestion(
+                    id: 4,
+                    category: "General",
+                    matchType: SuggestionMatchType.ErrorId,
+                    rule: "CommandNotFoundException",
+                    suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
+                    suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
+                    enabled: true)
             }
         );
 
@@ -428,6 +449,13 @@ namespace System.Management.Automation
                             }
                         }
                     }
+                    else if (matchType == SuggestionMatchType.ErrorId)
+                    {
+                        if (lastError != null && lastError is ErrorRecord errorRecord)
+                        {
+                            matchText = errorRecord.FullyQualifiedErrorId;
+                        }
+                    }
                     else
                     {
                         suggestion["Enabled"] = false;
@@ -511,6 +539,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Create suggestion with string rule and suggestion.
         /// </summary>
+        /// <param name="id">Identifier for the suggestion.</param>
+        /// <param name="category">Category for the suggestion.</param>
+        /// <param name="matchType">Suggestion match type.</param>
+        /// <param name="rule">Rule to match.</param>
+        /// <param name="suggestion">Suggestion to return.</param>
+        /// <param name="enabled">True if the suggestion is enabled.</param>
+        /// <returns>Hashtable representing the suggestion.</returns>
         private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, string suggestion, bool enabled)
         {
             Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
@@ -520,6 +555,32 @@ namespace System.Management.Automation
             result["MatchType"] = matchType;
             result["Rule"] = rule;
             result["Suggestion"] = suggestion;
+            result["Enabled"] = enabled;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Create suggestion with string rule and scriptblock suggestion.
+        /// </summary>
+        /// <param name="id">Identifier for the suggestion.</param>
+        /// <param name="category">Category for the suggestion.</param>
+        /// <param name="matchType">Suggestion match type.</param>
+        /// <param name="rule">Rule to match.</param>
+        /// <param name="suggestion">Scriptblock to run that returns the suggestion.</param>
+        /// <param name="suggestionArgs">Arguments to pass to suggestion scriptblock.</param>
+        /// <param name="enabled">True if the suggestion is enabled.</param>
+        /// <returns>Hashtable representing the suggestion.</returns>
+        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
+        {
+            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+
+            result["Id"] = id;
+            result["Category"] = category;
+            result["MatchType"] = matchType;
+            result["Rule"] = rule;
+            result["Suggestion"] = suggestion;
+            result["SuggestionArgs"] = suggestionArgs;
             result["Enabled"] = enabled;
 
             return result;

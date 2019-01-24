@@ -1160,7 +1160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// new-psdrive always supports ShouldProcess.
+        /// New-psdrive always supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess => true;

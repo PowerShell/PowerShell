@@ -30,7 +30,7 @@ namespace System.Diagnostics.Eventing.Reader
         private EventLogHandle _handle;
 
         /// <summary>
-        /// events buffer holds batched event (handles).
+        /// Events buffer holds batched event (handles).
         /// </summary>
         private IntPtr[] _eventsBuffer;
         /// <summary>

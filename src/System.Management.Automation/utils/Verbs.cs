@@ -201,7 +201,7 @@ namespace System.Management.Automation
     public static class VerbsData
     {
         /// <summary>
-        /// backup.
+        /// Backup.
         /// </summary>
         public const string Backup = "Backup";
 
@@ -457,7 +457,7 @@ namespace System.Management.Automation
         public const string Debug = "Debug";
 
         /// <summary>
-        /// calculate/identify resources consumed by a specified operation or retrieve statistics about a resource.
+        /// Calculate/identify resources consumed by a specified operation or retrieve statistics about a resource.
         /// </summary>
         public const string Measure = "Measure";
 

@@ -38,7 +38,7 @@ namespace System.Management.Automation
     internal abstract class Adapter
     {
         /// <summary>
-        /// tracer for this and derivate classes.
+        /// Tracer for this and derivate classes.
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
         protected static PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
@@ -1873,7 +1873,7 @@ namespace System.Management.Automation
         #endregion base
     }
     /// <summary>
-    /// ordered and case insensitive hashtable.
+    /// Ordered and case insensitive hashtable.
     /// </summary>
     internal class CacheTable
     {
@@ -4094,7 +4094,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// this is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
+        /// This is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
         /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
@@ -4601,7 +4601,7 @@ namespace System.Management.Automation
         #endregion virtual
     }
     /// <summary>
-    /// adapter for properties in the inside PSObject if it has a null BaseObject.
+    /// Adapter for properties in the inside PSObject if it has a null BaseObject.
     /// </summary>
     internal class PSObjectAdapter : MemberRedirectionAdapter
     {
@@ -4659,7 +4659,7 @@ namespace System.Management.Automation
         #endregion virtual
     }
     /// <summary>
-    /// adapter for properties inside a member set.
+    /// Adapter for properties inside a member set.
     /// </summary>
     internal class PSMemberSetAdapter : MemberRedirectionAdapter
     {

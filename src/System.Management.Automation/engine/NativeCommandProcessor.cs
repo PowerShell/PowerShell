@@ -374,7 +374,7 @@ namespace System.Management.Automation
         private Host.Coordinates _startPosition;
 
         /// <summary>
-        /// object used for synchronization between StopProcessing thread and
+        /// Object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
         private object _sync = new object();

@@ -3,42 +3,43 @@
 
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     BeforeAll {
+        $pwsh_started = New-TemporaryFile
         $si = [System.Diagnostics.ProcessStartInfo]::new()
         $si.FileName = "pwsh"
-        $si.Arguments = "-noexit"
+        $si.Arguments = "-noexit -command 'pwsh' > '$pwsh_started'"
         $si.RedirectStandardInput = $true
         $si.RedirectStandardOutput = $true
         $si.RedirectStandardError = $true
         $pwsh = [System.Diagnostics.Process]::Start($si)
 
         if ($IsWindows) {
+            $powershell_started = New-TemporaryFile
             $si.FileName = "powershell"
+            $si.Arguments = "-noexit -command 'powershell' >'$powershell_started'"
             $powershell = [System.Diagnostics.Process]::Start($si)
         }
 
-        if ($env:AppVeyor) {
-            $IsAppveyor = $true
-        }
-        else {
-            $IsAppveyor = $false
-        }
     }
 
     AfterAll {
         $pwsh | Stop-Process
+        Remove-Item $pwsh_started -Force -ErrorAction SilentlyContinue
 
         if ($IsWindows) {
             $powershell | Stop-Process
+            Remove-Item $powershell_started -Force -ErrorAction SilentlyContinue
         }
     }
 
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another PSHost" -Skip:$IsAppVeyor {
+    It "Can enter and exit another PSHost" {
+        Wait-UntilTrue { Test-Path $pwsh_started }
+
         "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
     }
 
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows -or $IsAppVeyor) {
+    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
+        Wait-UntilTrue { Test-Path $powershell_started }
+
         "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
     }
 

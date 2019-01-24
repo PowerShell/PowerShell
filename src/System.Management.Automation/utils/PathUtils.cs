@@ -228,7 +228,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
+        /// Resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
+        /// Resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
@@ -428,6 +428,24 @@ namespace System.Management.Automation
 
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
+        }
+
+        internal static bool TryDeleteFile(string filepath)
+        {
+            if (IO.File.Exists(filepath))
+            {
+                try
+                {
+                    IO.File.Delete(filepath);
+                    return true;
+                }
+                catch (IOException)
+                {
+                    // file is in use on Windows
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -273,10 +273,10 @@ function Start-PSPackage {
             "fxdependent" {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
                         PackageSourcePath = $Source
@@ -691,8 +691,6 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
-                } elseif ($Environment.IsDebian8) {
-                    $DebDistro = "debian.8"
                 } elseif ($Environment.IsDebian9) {
                     $DebDistro = "debian.9"
                 } else {
@@ -795,7 +793,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
-            Write-Log "Adding macOS launch opplication..."
+            Write-Log "Adding macOS launch application..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
@@ -1127,7 +1125,6 @@ function Get-PackageDependencies
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
@@ -1155,9 +1152,9 @@ function Test-Dependencies
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
@@ -1556,7 +1553,6 @@ function New-UnifiedNugetPackage
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
         New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
-        $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
         {
@@ -1568,8 +1564,7 @@ function New-UnifiedNugetPackage
 
             #region ref
             $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
-            Copy-Item $refBinFullName -Destination $refFolder -Force
-            Write-Log "Copied file $refBinFullName to $refFolder"
+            CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -1694,6 +1689,44 @@ function New-UnifiedNugetPackage
         if (Test-Path $tmpPackageRoot)
         {
             Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+<#
+  Copy the generated reference assemblies to the 'ref/netstandard2.0' folder properly.
+  This is a helper function used by 'New-UnifiedNugetPackage'
+#>
+function CopyReferenceAssemblies
+{
+    param(
+        [string] $assemblyName,
+        [string] $refBinPath,
+        [string] $refNugetPath,
+        [string[]] $assemblyFileList
+    )
+
+    switch ($assemblyName) {
+        "Microsoft.PowerShell.Commands.Utility" {
+            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
+            Copy-Item $ref_Utility -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        }
+
+        "Microsoft.PowerShell.SDK" {
+            foreach ($asmFileName in $assemblyFileList) {
+                $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
+                if (Test-Path -Path $refFile) {
+                    Copy-Item $refFile -Destination $refNugetPath -Force
+                    Write-Log "Copied file $refFile to $refNugetPath"
+                }
+            }
+        }
+
+        default {
+            $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
+            Copy-Item $ref_SMA -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_SMA to $refNugetPath"
         }
     }
 }
@@ -1843,15 +1876,6 @@ function New-ReferenceAssembly
         throw "New-ReferenceAssembly can be only executed on Windows platform."
     }
 
-    $genAPIFolder = New-TempFolder
-    $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
-    $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
-    $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
-
-    Write-Log "Working directory: $genAPIFolder."
-
-    #region GenAPI
-
     $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
 
     if (-not (Test-Path $genAPIExe))
@@ -1861,23 +1885,78 @@ function New-ReferenceAssembly
 
     Write-Log "GenAPI nuget package saved and expanded."
 
-    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
+    $genAPIFolder = New-TempFolder
+    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+    Write-Log "Working directory: $genAPIFolder."
 
-    if (-not (Test-Path $linuxSMAPath))
-    {
-        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
+    $SMAReferenceAssembly = $null
+    $assemblyNames = @(
+        "System.Management.Automation",
+        "Microsoft.PowerShell.Commands.Utility"
+    )
+
+    foreach ($assemblyName in $assemblyNames) {
+
+        $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
+        $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
+        $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
+
+        $linuxDllPath = Join-Path $Linux64BinPath "$assemblyName.dll"
+        if (-not (Test-Path $linuxDllPath)) {
+            throw "$assemblyName.dll was not found at: $Linux64BinPath"
+        }
+
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+
+        Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
+        Write-Log "Reference assembly file generated at: $generatedSource"
+
+        CleanupGeneratedSourceCode -assemblyName $assemblyName -generatedSource $generatedSource -filteredSource $filteredSource
+
+        try
+        {
+            Push-Location $projectFolder
+
+            $csProj = GenerateCSProjectContent -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
+            $csProj | Out-File -FilePath "$projectFolder/$assemblyName.csproj" -Force
+
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
+
+            Start-NativeExecution { dotnet build -c Release }
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/netstandard2.0/$assemblyName.dll"
+            if ($null -eq $refBinPath) {
+                throw "Reference assembly was not built."
+            }
+
+            Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+            Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            if ($assemblyName -eq "System.Management.Automation") {
+                $SMAReferenceAssembly = $refBinPath
+            }
+        }
+        finally
+        {
+            Pop-Location
+        }
     }
 
-    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
-    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    if (Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
 
-    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
-
-    Write-Log "Reference assembly file generated at: $smaCs"
-
-    #endregion GenAPI
-
-    #region Cleanup SMA.cs
+function CleanupGeneratedSourceCode
+{
+    param(
+        [string] $assemblyName,
+        [string] $generatedSource,
+        [string] $filteredSource
+    )
 
     $patternsToRemove = @(
         '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]'
@@ -1891,78 +1970,93 @@ function New-ReferenceAssembly
         'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)'
         '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
         '[System.Management.Automation.ArgumentEncodingCompletionsAttribute]'
+        '[Microsoft.PowerShell.Commands.AddMemberCommand'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
+        '[System.Management.Automation.OutputTypeAttribute(typeof(Microsoft.PowerShell.MarkdownRender'
+        '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
+        '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
+        '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
+        '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
         )
 
-    $reader = [System.IO.File]::OpenText($smaCs)
-    $writer = [System.IO.File]::CreateText($smaCsFiltered)
+    $patternsToReplace = @(
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+            Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "public partial struct ConvertToJsonContext"
+            Replacement = "public readonly struct ConvertToJsonContext"
+        }
+    )
+
+    $reader = [System.IO.File]::OpenText($generatedSource)
+    $writer = [System.IO.File]::CreateText($filteredSource)
 
     while($null -ne ($line = $reader.ReadLine()))
     {
-        $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
+        $lineWasProcessed = $false
+        foreach ($patternToReplace in $patternsToReplace)
+        {
+            if ($assemblyName -eq $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+                $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
+                $lineWasProcessed = $true
+                break
+            }
+        }
 
-        if ($null -ne $match)
-        {
-            $writer.WriteLine("//$line")
+        if (!$lineWasProcessed) {
+            $match = Select-String -InputObject $line -Pattern $patternsToRemove -SimpleMatch
+            if ($null -ne $match)
+            {
+                $line = "//$line"
+            }
         }
-        else
-        {
-            $writer.WriteLine($line)
-        }
+
+        $writer.WriteLine($line)
     }
+
     if ($null -ne $reader)
     {
         $reader.Close()
     }
+
     if ($null -ne $writer)
     {
         $writer.Close()
     }
 
-    Move-Item $smaCsFiltered $smaCs -Force
+    Move-Item $filteredSource $generatedSource -Force
+    Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
+}
 
-    Write-Log "Reference assembly code cleanup complete."
+function GenerateCSProjectContent
+{
+    param(
+        [string] $AssemblyName,
+        [string] $RefAssemblyVersion,
+        [string] $SnkFilePath,
+        [string] $SMAReferencePath
+    )
 
-    #endregion Cleanup SMA.cs
-
-    #region Build SMA ref assembly
-
-    try
-    {
-        Push-Location $smaProjectFolder
-
-        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
-
-        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
-
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaProjectFolder/System.Management.Automation.csproj"
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaCs"
-
-        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
-
-        Start-NativeExecution { dotnet build -c Release }
-
-        $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
-
-        if ($null -eq $refBinPath)
-        {
-            throw "Reference assembly was not built."
+    switch ($assemblyName) {
+        "System.Management.Automation" {
+            $csProj = $packagingStrings.'System.Management.Automation' -f $RefAssemblyVersion, $SnkFilePath
         }
 
-        Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+        "Microsoft.PowerShell.Commands.Utility" {
+            $csProj = $packagingStrings.'Microsoft.PowerShell.Commands.Utility' -f $RefAssemblyVersion, $SnkFilePath, $SMAReferencePath
+        }
 
-        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
-    }
-    finally
-    {
-        Pop-Location
-    }
-
-    if (Test-Path $genAPIFolder)
-    {
-        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+        default {
+            throw "It's not yet supported to generate reference assembly for '$assemblyName'"
+        }
     }
 
-    #endregion Build SMA ref assembly
+    return $csProj
 }
 
 <#
@@ -2970,4 +3064,111 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     }
 
     $packageVersion
+}
+
+<#
+.SYNOPSIS
+Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
+
+.PARAMETER FxdPackagePath
+Path to the folder containing the fxdependent package.
+
+.PARAMETER ReleaseTag
+Release tag to construct the package name.
+#>
+function New-DotnetSdkContainerFxdPackage {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter(Mandatory)] $FxdPackagePath,
+        [Parameter(Mandatory)] $ReleaseTag
+    )
+
+    $Version = $ReleaseTag -Replace '^v'
+
+    if ($Environment.IsWindows) {
+        $basePackagePattern = "*$Version-win-fxdependent.zip"
+        $packageNamePlatform = 'win'
+        $packageNameExtension = '.zip'
+    } else {
+        $basePackagePattern = "*$Version-linux-x64-fxdependent.tar.gz"
+        $packageNamePlatform = 'linux-x64'
+        $packageNameExtension = '.tar.gz'
+    }
+
+    Write-Log "basePackagePattern: $basePackagePattern"
+    Write-Log "fxdPackagePath: $FxdPackagePath"
+
+    $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
+
+    ## Get fxdependent package path
+    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
+
+    Write-Log "Fxd Package Path: $fxdPackage"
+
+    if ($fxdPackage) {
+        if ($PSCmdlet.ShouldProcess("Create the reduced framework dependent package based of $fxPackage")) {
+
+            ## Extract fxd package
+            $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
+            Push-Location $tempExtractFolder
+
+            Write-Log "Pushed location: $tempExtractFolder"
+
+            try {
+                if ($Environment.IsWindows) {
+                    Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
+                } else {
+                    Start-NativeExecution { tar -xf $fxdPackage }
+                }
+
+                ## Remove unnecessary files
+                $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+                Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+
+                $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
+
+                # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+                # win10-x64 (Nano Server)
+                # win-arm (Nano Server)
+                # linux-musl-x64 (Alpine 3.8)
+                # linux-x64 (bionic / stretch)
+                # unix, linux, win for dependencies
+                # win-x64 to get PowerShell.Native components
+                $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+
+                $runtimeFolder | ForEach-Object {
+                    Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+                }
+
+                Write-Verbose -Verbose "Compressing"
+
+                if ($Environment.IsWindows) {
+                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $FxdPackagePath/$packageName
+                } else {
+                    Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+                }
+
+                Write-Log "Compressing complete"
+
+            } finally {
+                Pop-Location
+            }
+        }
+    }
+
+    if (Test-Path "$FxdPackagePath/$packageName") {
+        $containerName = if ($Environment.IsWindows)
+        {
+            "signedResults"
+        }
+        else
+        {
+            "release"
+        }
+
+        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$FxdPackagePath/$packageName"
+
+    } else {
+        Write-Log "Package not found: $FxdPackagePath/$packageName"
+    }
 }

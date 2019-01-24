@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// internal class to manage the grouping algorithm for the
+    /// Internal class to manage the grouping algorithm for the
     /// format-xxx commands.
     /// </summary>
     internal sealed class GroupingInfoManager
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// compute the string value of the grouping property.
+        /// Compute the string value of the grouping property.
         /// </summary>
         /// <param name="so">Object to use to compute the property value.</param>
         /// <returns>True if there was an update.</returns>
@@ -101,22 +101,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// value of the display label passed in.
+        /// Value of the display label passed in.
         /// </summary>
         private string _label = null;
 
         /// <summary>
-        /// value of the current active grouping key.
+        /// Value of the current active grouping key.
         /// </summary>
         private string _groupingKeyDisplayName = null;
 
         /// <summary>
-        /// name of the current grouping key.
+        /// Name of the current grouping key.
         /// </summary>
         private PSPropertyExpression _groupingKeyExpression = null;
 
         /// <summary>
-        /// the current value of the grouping key.
+        /// The current value of the grouping key.
         /// </summary>
         private object _currentGroupingKeyPropertyValue = AutomationNull.Value;
     }

@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to load the XML document into data structures.
+    /// Class to load the XML document into data structures.
     /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         /// <summary>
-        /// table of XML node tags used in the file format.
+        /// Table of XML node tags used in the file format.
         /// </summary>
         private static class XmlTags
         {
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// table of miscellanea string constant values for XML nodes.
+        /// Table of miscellanea string constant values for XML nodes.
         /// </summary>
         private static class XMLStringValues
         {
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _suppressValidation = false;
 
         /// <summary>
-        /// entry point for the loader algorithm.
+        /// Entry point for the loader algorithm.
         /// </summary>
         /// <param name="info">Information needed to load the file.</param>
         /// <param name="db">Database instance to load the file into.</param>
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition.
+        /// Entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition.
         /// </summary>
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// load the content of the XML document into the data instance.
+        /// Load the content of the XML document into the data instance.
         /// It assumes that the XML document has been successfully loaded.
         /// </summary>
         /// <param name="doc">XML document to load from, cannot be null.</param>
@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region load formatting data from FormatViewDefinition
 
         /// <summary>
-        /// load the content of the ExtendedTypeDefinition instance into the db.
+        /// Load the content of the ExtendedTypeDefinition instance into the db.
         /// Only support following view controls:
         ///     TableControl
         ///     ListControl
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Expression Loading
         /// <summary>
-        /// helper to verify the text of a string block and
+        /// Helper to verify the text of a string block and
         /// log an error if an exception is thrown.
         /// </summary>
         /// <param name="scriptBlockText">Script block string to verify.</param>
@@ -1942,7 +1942,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper class to wrap the loading of a script block/property name alternative tag.
+        /// Helper class to wrap the loading of a script block/property name alternative tag.
         /// </summary>
         private sealed class ExpressionNodeMatch
         {
@@ -2041,7 +2041,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper class to wrap the loading of an expression (using ExpressionNodeMatch)
+        /// Helper class to wrap the loading of an expression (using ExpressionNodeMatch)
         /// plus the formatting string and an alternative text node.
         /// </summary>
         private sealed class ViewEntryNodeMatch

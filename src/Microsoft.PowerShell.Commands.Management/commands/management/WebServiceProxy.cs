@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         private string _class;
 
         /// <summary>
-        /// namespace.
+        /// Namespace.
         /// </summary>
         [Parameter(Position = 2)]
         [ValidateNotNullOrEmpty]
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         private PSCredential _credential;
 
         /// <summary>
-        /// use default credential..
+        /// Use default credential..
         /// </summary>
         [Parameter(ParameterSetName = "UseDefaultCredential")]
         [ValidateNotNull]
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         private static Dictionary<int, object> s_srccodeCache = new Dictionary<int, object>();
 
         /// <summary>
-        /// holds the hash code of the source generated.
+        /// Holds the hash code of the source generated.
         /// </summary>
         private int _sourceHash;
         /// <summary>

@@ -28,20 +28,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     #region Root of Class Hierarchy
     /// <summary>
-    /// base class from which all the formatting objects
+    /// Base class from which all the formatting objects
     /// will derive from.
     /// It provides the mechanism to preserve type information.
     /// </summary>
     internal abstract partial class FormatInfoData
     {
         /// <summary>
-        /// name of the "get" property that allows access to CLSID information.
+        /// Name of the "get" property that allows access to CLSID information.
         /// This is needed by the ERS API's.
         /// </summary>
         internal const string classidProperty = "ClassId2e4f51ef21dd47e99d3c952918aff9cd";
 
         /// <summary>
-        /// string containing a GUID, to be set by each derived class
+        /// String containing a GUID, to be set by each derived class
         /// "get" property to get CLSID information.
         /// It is named with a GUID like name to avoid potential collisions with
         /// properties of payload objects.
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract partial class ControlInfoData : PacketInfoData
     {
         /// <summary>
-        /// null by default, present only if grouping specified.
+        /// Null by default, present only if grouping specified.
         /// </summary>
         public GroupingEntry groupingEntry = null;
     }
@@ -68,14 +68,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract partial class StartData : ControlInfoData
     {
         /// <summary>
-        /// it needs to be either on FormatStartData or GroupStartData
+        /// It needs to be either on FormatStartData or GroupStartData
         /// but not both or neither.
         /// </summary>
         public ShapeInfo shapeInfo;
     }
 
     /// <summary>
-    /// sequence start: the very first message sent.
+    /// Sequence start: the very first message sent.
     /// </summary>
     internal sealed partial class FormatStartData : StartData
     {
@@ -84,17 +84,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// optional.
+        /// Optional.
         /// </summary>
         public PageHeaderEntry pageHeaderEntry;
 
         /// <summary>
-        /// optional.
+        /// Optional.
         /// </summary>
         public PageFooterEntry pageFooterEntry;
 
         /// <summary>
-        /// autosize formatting directive. If present, the output command is instructed
+        /// Autosize formatting directive. If present, the output command is instructed
         /// to get the autosize "best fit" for the device screen according to the flags
         /// this object contains.
         /// </summary>
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// sequence end: the very last message sent.
+    /// Sequence end: the very last message sent.
     /// </summary>
     internal sealed class FormatEndData : ControlInfoData
     {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// group start: message marking the beginning of a group.
+    /// Group start: message marking the beginning of a group.
     /// </summary>
     internal sealed class GroupStartData : StartData
     {
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// group end: message marking the end of a group.
+    /// Group end: message marking the end of a group.
     /// </summary>
     internal sealed class GroupEndData : ControlInfoData
     {
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// generic entry containing payload data and related formatting info.
+    /// Generic entry containing payload data and related formatting info.
     /// </summary>
     internal sealed partial class FormatEntryData : PacketInfoData
     {
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// mandatory, but depending on the shape we send in
+        /// Mandatory, but depending on the shape we send in
         /// it must match what got sent in the format start message.
         /// </summary>
         public FormatEntryInfo formatEntryInfo = null;
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// desired number of columns on the screen.
+        /// Desired number of columns on the screen.
         /// Advisory, the outputter can decide otherwise
         ///
         /// A zero value signifies let the outputter get the
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// width of the column:
+        /// Width of the column:
         /// == 0 -> let the outputter decide
         /// > 0 -> user provided value.
         /// </summary>
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// number of objects to compute the best fit.
+        /// Number of objects to compute the best fit.
         /// Zero: all the objects
         /// a positive number N: use the first N.
         /// </summary>
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public List<FormatValue> formatValueList;
 
         /// <summary>
-        /// optional information of frame data (indentation, etc.)
+        /// Optional information of frame data (indentation, etc.)
         /// </summary>
         public FrameInfo frameInfo;
     }

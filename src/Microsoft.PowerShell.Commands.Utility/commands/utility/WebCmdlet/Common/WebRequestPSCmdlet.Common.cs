@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     public enum WebSslProtocol
     {
         /// <summary>
-        ///  No SSL protocol will be set and the system defaults will be used.
+        /// No SSL protocol will be set and the system defaults will be used.
         /// </summary>
         Default = 0,
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         Tls = SslProtocols.Tls,
 
         /// <summary>
-        ///  Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
         /// </summary>
         Tls11 = SslProtocols.Tls11,
 
@@ -1142,11 +1142,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
-            // Default behavior is continue to send body content anyway after a short period
-            // Here it send the two part as a whole.
-            request.Headers.ExpectContinue = false;
-
             return (request);
         }
 
@@ -1445,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// the main execution method for cmdlets derived from WebRequestPSCmdlet.
+        /// The main execution method for cmdlets derived from WebRequestPSCmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {

@@ -402,8 +402,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        ///  Returns the directory path for job run output for the specified
-        ///  scheduled job definition.
+        /// Returns the directory path for job run output for the specified
+        /// scheduled job definition.
         /// </summary>
         /// <param name="definitionName">Definition name.</param>
         /// <returns>Directory Path.</returns>

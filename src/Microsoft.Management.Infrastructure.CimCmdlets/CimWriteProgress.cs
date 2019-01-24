@@ -100,22 +100,22 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private int activityID;
 
         /// <summary>
-        /// current operation text of the given activity.
+        /// Current operation text of the given activity.
         /// </summary>
         private string currentOperation;
 
         /// <summary>
-        /// status description of the given activity.
+        /// Status description of the given activity.
         /// </summary>
         private string statusDescription;
 
         /// <summary>
-        /// percentage completed of the given activity.
+        /// Percentage completed of the given activity.
         /// </summary>
         private UInt32 percentageCompleted;
 
         /// <summary>
-        /// how many seconds remained for the given activity.
+        /// How many seconds remained for the given activity.
         /// </summary>
         private UInt32 secondsRemaining;
 

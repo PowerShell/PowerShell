@@ -148,7 +148,7 @@ namespace System.Management.Automation.Remoting
         [MarshalAs(UnmanagedType.LPWStr)] string code);
 
     /// <summary>
-    ///  Callback that handles shell shutdown notification events.
+    /// Callback that handles shell shutdown notification events.
     /// </summary>
     /// <param name="state"></param>
     /// <param name="timedOut"></param>
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting
         internal class WSManPluginEntryDelegatesInternal
         {
             /// <summary>
-            /// wsManPluginShutdownPluginCallbackNative.
+            /// WsManPluginShutdownPluginCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShutdownPluginCallbackNative;

@@ -1062,7 +1062,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// sets the history string to the specified one.
+        /// Sets the history string to the specified one.
         /// </summary>
         /// <param name="historyString">History string to set to.</param>
         internal override void SetHistoryString(string historyString)
@@ -1312,7 +1312,7 @@ namespace System.Management.Automation.Runspaces
     internal class PipelineStopper
     {
         /// <summary>
-        /// stack of current executing pipeline processor.
+        /// Stack of current executing pipeline processor.
         /// </summary>
         private Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
 

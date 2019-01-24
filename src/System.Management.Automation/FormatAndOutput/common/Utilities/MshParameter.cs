@@ -12,7 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// normalized parameter class to be constructed from the command line parameters
+    /// Normalized parameter class to be constructed from the command line parameters
     /// using the metadata information provided by an instance of CommandParameterDefinition
     /// it's basically the hash table with the normalized values.
     /// </summary>
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// metadata base class for hashtable entry definitions
+    /// Metadata base class for hashtable entry definitions
     /// it contains the key name and the allowable types
     /// it also provides hooks for type expansion.
     /// </summary>
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// metadata abstract base class to contain hash entries definitions.
+    /// Metadata abstract base class to contain hash entries definitions.
     /// </summary>
     internal abstract class CommandParameterDefinition
     {
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal virtual MshParameter CreateInstance() { return new MshParameter(); }
 
         /// <summary>
-        /// for a key name, verify it is a legal entry:
+        /// For a key name, verify it is a legal entry:
         ///     1. it must match (partial match allowed)
         ///     2. it must be unambiguous (if partial match)
         /// If an error condition occurs, an exception will be thrown.
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// engine to process a generic object[] from the command line and
+    /// Engine to process a generic object[] from the command line and
     /// generate a list of MshParameter objects , given the metadata provided by
     /// a class derived from CommandParameterDefinition.
     /// </summary>

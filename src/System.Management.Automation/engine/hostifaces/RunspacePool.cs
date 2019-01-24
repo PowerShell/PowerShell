@@ -228,12 +228,12 @@ namespace System.Management.Automation.Runspaces
         Disconnecting = 6,
 
         /// <summary>
-        ///  The RunspacePool has been disconnected.
+        /// The RunspacePool has been disconnected.
         /// </summary>
         Disconnected = 7,
 
         /// <summary>
-        ///  The RunspacePool is being connected.
+        /// The RunspacePool is being connected.
         /// </summary>
         Connecting = 8,
     }
@@ -399,7 +399,7 @@ namespace System.Management.Automation.Runspaces
         #region Internal Properties
 
         /// <summary>
-        /// true if AsyncResult monitors Async Open.
+        /// True if AsyncResult monitors Async Open.
         /// false otherwise.
         /// </summary>
         internal bool IsAssociatedWithAsyncOpen { get; }

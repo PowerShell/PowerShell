@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
         public sealed class ThrowErrorCommand : WriteOrThrowErrorCommand
         {
             /// <summary>
-            /// constructor.
+            /// Constructor.
             /// </summary>
             public ThrowErrorCommand()
             {

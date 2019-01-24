@@ -275,7 +275,7 @@ namespace System.Management.Automation
         public abstract string TypeNameOfValue { get; }
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public abstract PSMemberInfo Copy();
@@ -433,7 +433,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1035,7 +1035,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// used by the adapters to keep intermediate data used between DoGetProperty and
+        /// Used by the adapters to keep intermediate data used between DoGetProperty and
         /// DoGetValue or DoSetValue.
         /// </summary>
         internal string typeOfValue;
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -1444,7 +1444,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo,
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo,
         /// Note that it returns another reference to the variable, not a reference
         /// to a new variable...
         /// </summary>
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2198,7 +2198,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2426,7 +2426,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2518,7 +2518,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -2984,7 +2984,7 @@ namespace System.Management.Automation
         public override string TypeNameOfValue => adapter.BaseParameterizedPropertyType(this);
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3196,7 +3196,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3460,7 +3460,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
@@ -3546,7 +3546,7 @@ namespace System.Management.Automation
         #region virtual implementation
 
         /// <summary>
-        /// returns a new PSMemberInfo that is a copy of this PSMemberInfo.
+        /// Returns a new PSMemberInfo that is a copy of this PSMemberInfo.
         /// </summary>
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()

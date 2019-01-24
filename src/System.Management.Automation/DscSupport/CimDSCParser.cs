@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     public sealed class ArgumentToConfigurationDataTransformationAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
-        /// convert a file of ConfigurationData into a hashtable.
+        /// Convert a file of ConfigurationData into a hashtable.
         /// </summary>
         /// <param name="engineIntrinsics"></param>
         /// <param name="inputData"></param>
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// get text from SecureString.
+        /// Get text from SecureString.
         /// </summary>
         /// <param name="value">Value of SecureString.</param>
         /// <returns>Decoded string.</returns>
@@ -1477,7 +1477,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// update range restriction for meta configuration keywords
+        /// Update range restriction for meta configuration keywords
         /// the restrictions are for
         /// ConfigurationModeFrequency: 15-44640
         /// RefreshFrequency: 30-44640.
@@ -3306,7 +3306,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// if a partial configuration is in 'Pull' Mode, it needs a configuration source.
+        /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
         /// <param name="resourceId"></param>
         /// <returns></returns>
@@ -3334,7 +3334,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
         /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
         /// <param name="nodeName">The node being defined.</param>
@@ -3441,7 +3441,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Return an error to indicate a value is out of range for a dynamic keyword property.
+        /// Return an error to indicate a value is out of range for a dynamic keyword property.
         /// </summary>
         /// <param name="property"></param>
         /// <param name="name"></param>

@@ -7,7 +7,7 @@ using System.Management.Automation.Remoting;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// class which has list of job objects currently active in the system.
+    /// Class which has list of job objects currently active in the system.
     /// </summary>
     public abstract class Repository<T> where T : class
     {
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         protected abstract Guid GetKey(T item);
 
         /// <summary>
-        /// internal constructor.
+        /// Internal constructor.
         /// </summary>
         protected Repository(string identifier)
         {
@@ -140,7 +140,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// class which has list of job objects currently active in the system.
+    /// Class which has list of job objects currently active in the system.
     /// </summary>
     public class JobRepository : Repository<Job>
     {
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// internal constructor.
+        /// Internal constructor.
         /// </summary>
         internal JobRepository() : base("job")
         {

@@ -10,7 +10,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the out-lineoutput command
+    /// Implementation for the out-lineoutput command
     /// it provides a wrapper for the OutCommandInner class,
     /// which is the general purpose output command.
     /// </summary>
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// command line switch for ILineOutput communication channel.
+        /// Command line switch for ILineOutput communication channel.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0)]
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         private object _lineOutput = null;
 
         /// <summary>
-        /// set inner command.
+        /// Set inner command.
         /// </summary>
         public OutLineOutputCommand()
         {

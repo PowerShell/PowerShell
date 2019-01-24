@@ -271,7 +271,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// block the ps thread until ACK message or Error happened.
+        /// Block the ps thread until ACK message or Error happened.
         /// </summary>
         private void WaitForAckMessage()
         {
@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// target computername.
+        /// Target computername.
         /// </summary>
         internal string TargetComputerName
         {

@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell
 #region Mode
 
         /// <summary>
-        /// flags used by ConsoleControl.GetMode and ConsoleControl.SetMode.
+        /// Flags used by ConsoleControl.GetMode and ConsoleControl.SetMode.
         /// </summary>
         [Flags]
         internal enum ConsoleModes : uint
@@ -961,7 +961,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// set the output buffer's size.
+        /// Set the output buffer's size.
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// <param name="newSize"></param>

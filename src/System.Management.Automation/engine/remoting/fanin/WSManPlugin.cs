@@ -82,7 +82,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// class that holds plugin + shell context information used to handle
+    /// Class that holds plugin + shell context information used to handle
     /// shutdown notifications.
     ///
     /// Explicit destruction and release of the IntPtrs is not required because
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// static constructor to listen to unhandled exceptions
+        /// Static constructor to listen to unhandled exceptions
         /// from the AppDomain and log the errors
         /// Note: It is not necessary to instantiate IWSManNativeApi here because it is not used.
         /// </summary>
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// adds shell session to activeShellSessions store and returns the id
+        /// Adds shell session to activeShellSessions store and returns the id
         /// at which the session is added.
         /// </summary>
         /// <param name="newShellSession"></param>
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// unlock the shell / command specified so that the shell / command
+        /// Unlock the shell / command specified so that the shell / command
         /// starts sending data to the client.
         /// </summary>
         /// <param name="pluginContext"></param>
@@ -942,7 +942,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// used to create PSPrincipal object from senderDetails struct.
+        /// Used to create PSPrincipal object from senderDetails struct.
         /// </summary>
         /// <param name="senderDetails"></param>
         /// <returns></returns>
@@ -1119,7 +1119,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// static func to take care of unmanaged to managed transitions.
+        /// Static func to take care of unmanaged to managed transitions.
         /// </summary>
         /// <param name="pluginContext"></param>
         /// <param name="requestDetails"></param>
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// performs deinitialization during shutdown.
+        /// Performs deinitialization during shutdown.
         /// </summary>
         /// <param name="pluginContext"></param>
         internal static void PerformShutdown(
@@ -1389,7 +1389,7 @@ namespace System.Management.Automation.Remoting
         #region Utilities
 
         /// <summary>
-        /// report operation complete to WSMan and supply a reason (if any)
+        /// Report operation complete to WSMan and supply a reason (if any)
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// extract message from exception (if any) and report operation complete with it to WSMan.
+        /// Extract message from exception (if any) and report operation complete with it to WSMan.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="reasonForClose"></param>

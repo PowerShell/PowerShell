@@ -34,7 +34,7 @@ using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// helper fns.
+    /// Helper fns.
     /// </summary>
     internal static class Utils
     {
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         internal static string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
-        /// helper fn to check byte[] arg for null.
+        /// Helper fn to check byte[] arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for empty or null.
+        /// Helper fn to check arg for empty or null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for null.
+        /// Helper fn to check arg for null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// helper fn to check arg for null.
+        /// Helper fn to check arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
@@ -341,7 +341,7 @@ namespace System.Management.Automation
         #region Versioning related methods
 
         /// <summary>
-        /// returns current major version of monad ( that is running ) in a string
+        /// Returns current major version of monad ( that is running ) in a string
         /// format.
         /// </summary>
         /// <returns>String.</returns>

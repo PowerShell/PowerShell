@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// enum for rest return type.
+        /// Enum for rest return type.
         /// </summary>
         public enum RestReturnType
         {
@@ -409,12 +409,22 @@ namespace Microsoft.PowerShell.Commands
                         Exception ex = null;
 
                         string str = StreamHelper.DecodeStream(responseStream, ref encoding);
+
+                        string encodingVerboseName;
+                        try
+                        {
+                            encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
+                        }
+                        catch (NotSupportedException)
+                        {
+                            encodingVerboseName = encoding.EncodingName;
+                        }
                         // NOTE: Tests use this verbose output to verify the encoding.
                         WriteVerbose(string.Format
                         (
                             System.Globalization.CultureInfo.InvariantCulture,
                             "Content encoding: {0}",
-                            string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName)
+                            encodingVerboseName)
                         );
                         bool convertSuccess = false;
 

@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _username;
 
         /// <summary>
-        /// match eventlog entries by the InstanceIds
+        /// Match eventlog entries by the InstanceIds
         /// gets or sets an array of instanceIds.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "LogName")]
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         private long[] _instanceIds = null;
 
         /// <summary>
-        /// match eventlog entries by the Index
+        /// Match eventlog entries by the Index
         /// gets or sets an array of indexes.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         private int[] _indexes = null;
 
         /// <summary>
-        /// match eventlog entries by the EntryType
+        /// Match eventlog entries by the EntryType
         /// gets or sets an array of EntryTypes.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _entryTypes = null;
 
         /// <summary>
-        /// get or sets an array of Source.
+        /// Get or sets an array of Source.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty()]
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         private string _message;
 
         /// <summary>
-        /// returns Log Entry as base object.
+        /// Returns Log Entry as base object.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
         public SwitchParameter AsBaseObject { get; set; }
@@ -1091,7 +1091,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// show eventviewer of this computer.
+        /// Show eventviewer of this computer.
         /// </summary>
         [Parameter(Position = 0)]
         [Alias("CN")]

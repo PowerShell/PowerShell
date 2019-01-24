@@ -67,19 +67,19 @@ namespace System.Management.Automation.Remoting
         private Timer _keyExchangeTimer;
 
         /// <summary>
-        /// indicates that the client has previously completed the session key exchange.
+        /// Indicates that the client has previously completed the session key exchange.
         /// </summary>
         private bool _keyExchanged = false;
 
         /// <summary>
-        /// this is to queue up a disconnect request when a key exchange is in process
+        /// This is to queue up a disconnect request when a key exchange is in process
         /// the session will be disconnect once the exchange is complete
         /// intermediate disconnect requests are tracked by this flag.
         /// </summary>
         private bool _pendingDisconnect = false;
 
         /// <summary>
-        /// processes events in the queue. If there are no
+        /// Processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control

@@ -108,7 +108,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes.
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -2235,7 +2235,7 @@ namespace System.Management.Automation
 
         #region Internal helpers
         /// <summary>
-        /// throws if the pipeline is stopping.
+        /// Throws if the pipeline is stopping.
         /// </summary>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         internal void ThrowIfStopping()
@@ -2245,7 +2245,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// throws if the caller is trying to call WriteObject/WriteError
+        /// Throws if the caller is trying to call WriteObject/WriteError
         /// from the wrong thread, or not during a call to
         /// BeginProcessing/ProcessRecord/EndProcessing.
         /// </summary>

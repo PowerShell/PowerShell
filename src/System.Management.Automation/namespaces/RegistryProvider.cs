@@ -3177,7 +3177,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// checks if the given path is the top container path (the one containing the hives)
+        /// Checks if the given path is the top container path (the one containing the hives)
         /// </summary>
         /// <param name="path">
         /// path to check
@@ -3204,7 +3204,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// checks the container. if the container is the hive container (Registry::\)
+        /// Checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception.
         /// </summary>
         /// <param name="path">Path to check.</param>
@@ -3224,7 +3224,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// checks the container. if the container is the hive container (Registry::\)
+        /// Checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception.
         /// </summary>
         /// <param name="sourcePath">Source path to check.</param>
@@ -3760,7 +3760,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// helper to wrap property values when sent to the pipeline into an PSObject;
+        /// Helper to wrap property values when sent to the pipeline into an PSObject;
         /// it adds the name of the property as a note.
         /// </summary>
         /// <param name="value">The property to be written.</param>
@@ -3879,7 +3879,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// helper to infer the RegistryValueKind from an object.
+        /// Helper to infer the RegistryValueKind from an object.
         /// </summary>
         /// <param name="value">Object whose RegistryValueKind has to be determined.</param>
         /// <returns>Corresponding RegistryValueKind.</returns>
@@ -3950,7 +3950,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// helper to read back an existing registry key value.
+        /// Helper to read back an existing registry key value.
         /// </summary>
         /// <param name="key">Key to read the value from.</param>
         /// <param name="valueName">Name of the value to read.</param>

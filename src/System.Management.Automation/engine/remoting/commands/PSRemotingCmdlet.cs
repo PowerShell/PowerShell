@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         protected const string SSHHostHashParameterSet = "SSHHostHashParam";
 
         /// <summary>
-        /// runspace parameter set.
+        /// Runspace parameter set.
         /// </summary>
         protected const string SessionParameterSet = "Session";
 
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
 
         /// <summary>
-        /// default application name for the connection uri.
+        /// Default application name for the connection uri.
         /// </summary>
         protected const string DefaultPowerShellRemoteShellAppName = "WSMan";
 
@@ -3181,12 +3181,12 @@ namespace Microsoft.PowerShell.Commands
         protected const string InstanceIdParameterSet = "InstanceId";
 
         /// <summary>
-        /// session id parameter set.
+        /// Session id parameter set.
         /// </summary>
         protected const string IdParameterSet = "Id";
 
         /// <summary>
-        /// name parameter set.
+        /// Name parameter set.
         /// </summary>
         protected const string NameParameterSet = "Name";
 
@@ -4256,7 +4256,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         None = 0,
         /// <summary>
-        /// use the Internet Explorer proxy configuration for the current user.
+        /// Use the Internet Explorer proxy configuration for the current user.
         ///  Internet Explorer proxy settings for the current active network connection.
         ///  This option requires the user profile to be loaded, so the option can
         ///  be directly used when called within a process that is running under
@@ -4266,7 +4266,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         IEConfig = 1,
         /// <summary>
-        /// proxy settings configured for WinHTTP, using the ProxyCfg.exe utility.
+        /// Proxy settings configured for WinHTTP, using the ProxyCfg.exe utility.
         /// </summary>
         WinHttpConfig = 2,
         /// <summary>
@@ -4274,7 +4274,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         AutoDetect = 4,
         /// <summary>
-        /// do not use a proxy server - resolves all host names locally.
+        /// Do not use a proxy server - resolves all host names locally.
         /// </summary>
         NoProxyServer = 8
     }

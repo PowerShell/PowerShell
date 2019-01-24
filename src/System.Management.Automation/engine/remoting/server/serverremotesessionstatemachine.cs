@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
         private RemoteSessionState _state;
 
         /// <summary>
-        /// timer used for key exchange.
+        /// Timer used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// processes events in the queue. If there are no
+        /// Processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control

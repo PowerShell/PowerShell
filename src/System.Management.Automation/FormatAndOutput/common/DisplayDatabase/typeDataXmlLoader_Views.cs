@@ -10,7 +10,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to load the XML document into data structures.
+    /// Class to load the XML document into data structures.
     /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase

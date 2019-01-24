@@ -70,7 +70,7 @@ namespace System.Management.Automation
         internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
-        /// wildcard pattern converted to regex pattern.
+        /// Wildcard pattern converted to regex pattern.
         /// </summary>
         internal string PatternConvertedToRegex
         {

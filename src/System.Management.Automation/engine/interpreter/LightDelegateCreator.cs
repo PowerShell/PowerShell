@@ -67,7 +67,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// true if the compiled delegate has the same type as the lambda;
+        /// True if the compiled delegate has the same type as the lambda;
         /// false if the type was changed for interpretation.
         /// </summary>
         internal bool SameDelegateType

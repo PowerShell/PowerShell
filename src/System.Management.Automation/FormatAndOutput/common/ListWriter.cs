@@ -9,23 +9,23 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to write object properties in list form by using
+    /// Class to write object properties in list form by using
     /// the host screen interfaces.
     /// </summary>
     internal class ListWriter
     {
         /// <summary>
-        /// labels already padded with blanks, separator characters, etc.
+        /// Labels already padded with blanks, separator characters, etc.
         /// </summary>
         private string[] _propertyLabels;
 
         /// <summary>
-        /// display length of the property labels in the array (all the same length)
+        /// Display length of the property labels in the array (all the same length)
         /// </summary>
         private int _propertyLabelsDisplayLength = 0;
 
         /// <summary>
-        /// column width of the screen.
+        /// Column width of the screen.
         /// </summary>
         private int _columnWidth = 0;
 
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write the values of the properties of an object.
+        /// Write the values of the properties of an object.
         /// </summary>
         /// <param name="values">Array with the values in form of formatted strings.</param>
         /// <param name="lo">LineOutput interface to write to.</param>
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper, writing a single property to the screen.
+        /// Helper, writing a single property to the screen.
         /// It wraps the value of the property if it is tool long to fit.
         /// </summary>
         /// <param name="k">Index of property to write.</param>
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper to split a line that is too long to fit and pad it to the left
+        /// Internal helper to split a line that is too long to fit and pad it to the left
         /// with a given string.
         /// </summary>
         /// <param name="prependString">String to add to the left.</param>
@@ -227,19 +227,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// set to true when the width of the screen is too small to do anything useful.
+        /// Set to true when the width of the screen is too small to do anything useful.
         /// </summary>
         private bool _disabled = false;
 
         private const string Separator = " : ";
 
         /// <summary>
-        /// minimum width for the property label field.
+        /// Minimum width for the property label field.
         /// </summary>
         private const int MinLabelWidth = 1;
 
         /// <summary>
-        /// minimum width for the property value field.
+        /// Minimum width for the property value field.
         /// </summary>
         private const int MinFieldWidth = 1;
     }

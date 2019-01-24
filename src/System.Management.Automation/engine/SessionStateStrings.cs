@@ -54,7 +54,7 @@ namespace System.Management.Automation
         internal const string HomePath = "~";
 
         /// <summary>
-        /// name of the global variable table in Variable scopes of session state.
+        /// Name of the global variable table in Variable scopes of session state.
         /// </summary>
         internal const string Global = "GLOBAL";
 
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         internal const string Script = "SCRIPT";
 
         /// <summary>
-        /// session state string used as resource name in exceptions.
+        /// Session state string used as resource name in exceptions.
         /// </summary>
         internal const string SessionState = "SessionState";
 

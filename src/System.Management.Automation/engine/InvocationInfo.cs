@@ -218,7 +218,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  The line number in the executing script that contained this cmdlet.
+        /// The line number in the executing script that contained this cmdlet.
         /// </summary>
         /// <value>The script line number or -1 if not executing in a script.</value>
         public int ScriptLineNumber
@@ -323,7 +323,7 @@ namespace System.Management.Automation
         public int PipelineLength { get; internal set; }
 
         /// <summary>
-        /// which element this command was in the containing pipeline.
+        /// Which element this command was in the containing pipeline.
         /// </summary>
         /// <value>which element this command was in the containing pipeline</value>
         public int PipelinePosition { get; internal set; }

@@ -83,15 +83,27 @@ namespace System.Management.Automation
             // Initialize the readonly collection 'EngineExperimentalFeatures'.
             var engineFeatures = new ExperimentalFeature[] {
                 /* Register engine experimental features here. Follow the same pattern as the example:
-                new ExperimentalFeature(name: "PSFileSystemProviderV2",
-                                        description: "Replace the old FileSystemProvider with cleaner design and faster code",
-                                        source: EngineSource,
-                                        isEnabled: false),
+                new ExperimentalFeature(
+                    name: "PSFileSystemProviderV2",
+                    description: "Replace the old FileSystemProvider with cleaner design and faster code",
+                    source: EngineSource,
+                    isEnabled: false),
                 */
-                new ExperimentalFeature(name: "PSImplicitRemotingBatching",
-                                        description: "Batch implicit remoting proxy commands to improve performance",
-                                        source: EngineSource,
-                                        isEnabled: false)
+                new ExperimentalFeature(
+                    name: "PSImplicitRemotingBatching",
+                    description: "Batch implicit remoting proxy commands to improve performance",
+                    source: EngineSource,
+                    isEnabled: false),
+                new ExperimentalFeature(
+                    name: "PSUseAbbreviationExpansion",
+                    description: "Allow tab completion of cmdlets and functions by abbreviation",
+                    source: EngineSource,
+                    isEnabled: false),
+                new ExperimentalFeature(
+                    name: "PSTempDrive",
+                    description: "Create TEMP: PS Drive mapped to user's temporary directory path",
+                    source: EngineSource,
+                    isEnabled: false),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

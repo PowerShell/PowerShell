@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         private int _cmdCount = 1;
         private PSWmiChildJob _job;
         /// <summary>
-        /// current operation state.
+        /// Current operation state.
         /// </summary>
         internal WmiState State
         {
@@ -1607,7 +1607,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _moreData = false;
         /// <summary>
-        /// indicates if more data is available.
+        /// Indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.
@@ -1865,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// it receives Management objects.
+        /// It receives Management objects.
         /// </summary>
         private void NewObject(object sender, ObjectReadyEventArgs obj)
         {

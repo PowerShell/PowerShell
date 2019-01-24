@@ -13,40 +13,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Wide View Definitions
 
     /// <summary>
-    /// in line definition of a wide control.
+    /// In line definition of a wide control.
     /// </summary>
     internal sealed class WideControlBody : ControlBody
     {
         /// <summary>
-        /// number of columns to use for wide display.
+        /// Number of columns to use for wide display.
         /// </summary>
         internal int columns = 0;
 
         /// <summary>
-        /// default wide entry definition
+        /// Default wide entry definition
         /// It's mandatory.
         /// </summary>
         internal WideControlEntryDefinition defaultEntryDefinition = null;
 
         /// <summary>
-        /// optional list of list entry definition overrides. It can be empty if there are no overrides.
+        /// Optional list of list entry definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<WideControlEntryDefinition> optionalEntryList = new List<WideControlEntryDefinition>();
     }
 
     /// <summary>
-    /// definition of the data to be displayed in a list entry.
+    /// Definition of the data to be displayed in a list entry.
     /// </summary>
     internal sealed class WideControlEntryDefinition
     {
         /// <summary>
-        /// applicability clause
+        /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo = null;
 
         /// <summary>
-        /// format directive body telling how to format the cell
+        /// Format directive body telling how to format the cell
         /// RULE: the body can only contain
         ///     * TextToken
         ///     * PropertyToken
