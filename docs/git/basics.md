@@ -24,7 +24,8 @@ During the installation process, choose these recommended settings:
 
 #### Linux
 
-Install by using the package manager on your system.  A list of all the package managers and commands can be found [here][linux-git-dl]
+Install by using the package manager on your system.
+A list of all the package managers and commands can be found [here][linux-git-dl].
 
 Interactive tutorials
 ----------------------
