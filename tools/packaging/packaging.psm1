@@ -1919,7 +1919,7 @@ function New-ReferenceAssembly
         {
             Push-Location $projectFolder
 
-            $sourceProjectRoot = Join-Path $PSScriptRoot 'projects' 'reference'
+            $sourceProjectRoot = Join-Path $PSScriptRoot 'projects/reference'
             $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
             Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
 
@@ -2215,7 +2215,7 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder
     }
 
-    $projectFolder = Join-Path $PSScriptRoot 'projects' 'nuget'
+    $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)
