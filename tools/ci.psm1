@@ -173,7 +173,7 @@ function Invoke-AppVeyorFull
         Invoke-AppVeyorBuild
         Invoke-AppVeyorTest -ErrorAction Continue
         Invoke-AppveyorFinish
-    }
+    } finally {}
 }
 
 # Implements the AppVeyor 'build_script' step
