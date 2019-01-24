@@ -12,7 +12,7 @@ assignees: ''
 
 ## Official support
 
-[PowerShell Support Lifecycle](http://aka.ms/pslifecycle)
+[PowerShell Support Lifecycle](https://aka.ms/pslifecycle)
 
 ## Community Resources
 
