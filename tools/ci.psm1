@@ -168,12 +168,10 @@ function Invoke-AppVeyorFull
         Clear-PSRepo
     }
 
-    try {
-        Invoke-AppVeyorInstall
-        Invoke-AppVeyorBuild
-        Invoke-AppVeyorTest -ErrorAction Continue
-        Invoke-AppveyorFinish
-    } finally {}
+    Invoke-AppVeyorInstall
+    Invoke-AppVeyorBuild
+    Invoke-AppVeyorTest -ErrorAction Continue
+    Invoke-AppveyorFinish
 }
 
 # Implements the AppVeyor 'build_script' step
