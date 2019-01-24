@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-unix", "src\powe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.MarkdownRender", "src\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj", "{43D4F8DA-A7DE-494B-81B0-BDE3CFD7B1F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csharp.tests", "test\csharp\csharp.tests.csproj", "{08704934-9764-48CE-86DB-BCF0A1CF7899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnit.tests", "test\xUnit\xUnit.tests.csproj", "{08704934-9764-48CE-86DB-BCF0A1CF7899}"
 EndProject
 # Configuration mapping comment
 # All global configurations must be mapped to project configurations
