@@ -221,7 +221,7 @@ function Invoke-AppVeyorInstall
         1..(Get-Random -Minimum 15 -Maximum 126) | ForEach-Object { $password = $password + [char]$randomObj.next(45,126) }
 
         # Account
-        $userName = 'Remote'
+        $userName = 'ciRemote'
         New-LocalUser -username $userName -password $password
         Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
 
