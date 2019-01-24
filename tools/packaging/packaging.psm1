@@ -11,7 +11,7 @@ $DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
-        # PowerShell packages use Semantic Versioning http://semver.org/
+        # PowerShell packages use Semantic Versioning https://semver.org/
         [Parameter(ParameterSetName = "Version")]
         [string]$Version,
 
