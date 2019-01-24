@@ -46,7 +46,7 @@ namespace System.Management.Automation
         public bool Enabled { get; private set; }
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="ExperimentalFeature"/> class.
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
         /// </summary>
         /// <param name="name">The name of the experimental feature.</param>
         /// <param name="description">A description of the experimental feature.</param>
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="ExperimentalFeature"/> class.
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
         /// This is a private constructor only for declaring new experimental features within this type.
         /// </summary>
         /// <param name="name">The name of the experimental feature.</param>
