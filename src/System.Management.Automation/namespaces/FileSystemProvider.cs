@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region CmdletProvider members
-        // OneDrive placeholder support (issue #8315)
+        // OneDrive placeholder support
 #if !UNIX
         [DllImport("ntdll.dll")]
         static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
