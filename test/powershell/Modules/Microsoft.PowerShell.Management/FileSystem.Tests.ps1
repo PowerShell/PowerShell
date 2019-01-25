@@ -451,7 +451,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
             Get-Content -Path $symLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create a symbolic link to nothing" {
@@ -459,7 +460,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $symLinkToNothing | Should -BeTrue
             $link = Get-Item -Path $symLinkToNothing
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $nonFile
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -Be $nonFile.ToString()
         }
         It "New-Item emits an error when path to symbolic link already exists." {
             { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | Should -Throw -ErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
@@ -470,7 +472,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
@@ -479,7 +482,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link = Get-Item -Path $symLinkToDir
             $link | Should -BeOfType System.IO.DirectoryInfo
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -BeExactly $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir
