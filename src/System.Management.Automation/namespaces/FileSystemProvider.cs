@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         [DllImport("ntdll.dll")]
         static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
         [DllImport("ntdll.dll")]
-        static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
+        internal static extern char RtlSetProcessPlaceholderCompatibilityMode(char pcm);
 
         const sbyte PHCM_APPLICATION_DEFAULT = 0;
         const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
