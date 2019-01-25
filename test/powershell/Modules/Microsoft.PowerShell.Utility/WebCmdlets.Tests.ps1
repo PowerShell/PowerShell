@@ -484,14 +484,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-WebRequest supports sending request as UTF-8." {
         $uri = Get-WebListenerUrl -Test 'POST'
+        # Body must contain non-ASCII characters
         $command = "Invoke-WebRequest -Uri '$uri' -Body 'проверка' -ContentType 'application/json; charset=utf-8' -Method 'POST'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        $Result.Output.Encoding.BodyName | Should -Be 'utf-8'
+        $Result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
         $object = $Result.Output.Content | ConvertFrom-Json
-        $object.Data| Should -BeExactly 'проверка'
+        $object.Data | Should -BeExactly 'проверка'
     }
 
     It "Invoke-WebRequest supports request that returns page containing CodPage 936 data." {
@@ -1916,6 +1917,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod supports sending requests as UTF8" {
         $uri = Get-WebListenerUrl -Test POST
+        # Body must contain non-ASCII characters
         $command = "Invoke-RestMethod -Uri '$uri' -body 'проверка' -ContentType 'application/json; charset=utf-8' -method 'POST'"
 
         $result = ExecuteWebCommand -command $command
