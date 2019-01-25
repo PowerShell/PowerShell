@@ -1109,46 +1109,39 @@ namespace System.Management.Automation
                     // the principle used in serialization is that serialization
                     // never throws, and if something can't be serialized nothing
                     // is written. So we write the elements only if encryption succeeds
-                    try
+                    string encryptedString;
+                    if (_context.cryptoHelper != null)
                     {
-                        string encryptedString;
-                        if (_context.cryptoHelper != null)
-                        {
-                            encryptedString = _context.cryptoHelper.EncryptSecureString(secureString);
-                        }
-                        else
-                        {
-                            encryptedString = Microsoft.PowerShell.SecureStringHelper.Protect(secureString);
-                        }
-
-                        if (property != null)
-                        {
-                            WriteStartElement(SerializationStrings.SecureStringTag);
-                            WriteNameAttribute(property);
-                        }
-                        else
-                        {
-                            WriteStartElement(SerializationStrings.SecureStringTag);
-                        }
-
-                        if (streamName != null)
-                        {
-                            WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
-                        }
-
-                        // Note: We do not use WriteRaw for serializing secure string. WriteString
-                        // does necessary escaping which may be needed for certain
-                        // characters.
-                        _writer.WriteString(encryptedString);
-
-                        _writer.WriteEndElement();
-
-                        return true;
+                        encryptedString = _context.cryptoHelper.EncryptSecureString(secureString);
                     }
-                    catch (PSCryptoException)
+                    else
                     {
-                        // do nothing
+                        encryptedString = Microsoft.PowerShell.SecureStringHelper.Protect(secureString);
                     }
+
+                    if (property != null)
+                    {
+                        WriteStartElement(SerializationStrings.SecureStringTag);
+                        WriteNameAttribute(property);
+                    }
+                    else
+                    {
+                        WriteStartElement(SerializationStrings.SecureStringTag);
+                    }
+
+                    if (streamName != null)
+                    {
+                        WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
+                    }
+
+                    // Note: We do not use WriteRaw for serializing secure string. WriteString
+                    // does necessary escaping which may be needed for certain
+                    // characters.
+                    _writer.WriteString(encryptedString);
+
+                    _writer.WriteEndElement();
+
+                    return true;
                 }
             }
 
