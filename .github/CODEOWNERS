@@ -14,6 +14,7 @@
 
 # Area: Documentation
 .github/    @joeyaiello @TravisEz13
+*.md        @joeyaiello @TravisEz13
 
 # Area: Test
 # @JamesWTruher @TravisEz13 @adityapatwardhan
