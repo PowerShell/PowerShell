@@ -263,7 +263,7 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
         $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
         $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
         $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
-        $minBuildRequired     = ([System.Environment]::OSVersion.Version.Major -eq 10 -and [System.Environment]::OSVersion.Version.Build -ge 14972) -or ([System.Environment]::OSVersion.Version.Major -ge 11)
+        $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
         $developerMode = $developerModeEnabled -and $minBuildRequired
     }
 
