@@ -341,20 +341,16 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region CmdletProvider members
-        // OneDrive placeholder support (issue #8315)
+        // OneDrive placeholder support
 #if !UNIX
         [DllImport("ntdll.dll")]
-        static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
+        internal static extern char RtlQueryProcessPlaceholderCompatibilityMode();
         [DllImport("ntdll.dll")]
-        static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
+        internal static extern char RtlSetProcessPlaceholderCompatibilityMode(char pcm);
 
-        const sbyte PHCM_APPLICATION_DEFAULT = 0;
-        const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
-        const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
-        const sbyte PHCM_MAX = 2;
-        const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
-        const sbyte PHCM_ERROR_NO_TEB = -2;
-
+        internal const char PHCM_DISGUISE_PLACEHOLDER = (char) 1;
+        internal const char PHCM_EXPOSE_PLACEHOLDERS = (char) 2;
+        
 #endif
 
 
@@ -389,11 +385,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             // OneDrive placeholder support (issue #8315)
-            // make it so OneDrive placeholders are perceived as such with all their attributes accessible
+            // make it so OneDrive placeholders are perceived as such with *all* their attributes accessible
 #if !UNIX
             if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 17134 ||
 
-                            Environment.OSVersion.Version.Major >= 11)
+                Environment.OSVersion.Version.Major >= 11)
 
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
