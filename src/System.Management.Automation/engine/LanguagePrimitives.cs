@@ -1896,10 +1896,11 @@ namespace System.Management.Automation
             /// <summary>
             /// Convert from sourceValue to the specified type.
             /// </summary>
-            /// <param name="sourceValue">value to be converted.</param>
-            /// <param name="destinationType">type to which sourceValue should be converted to.</param>
-            /// <param name="formatProvider">format provider for the conversion.</param>
-            /// <param name="ignoreCase">whether to ignore the case.</param>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <param name="formatProvider">Format provider for the conversion.</param>
+            /// <param name="ignoreCase">Whether to ignore the case.</param>
+            /// <returns>The object after conversion.</returns>
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, true);
@@ -1992,9 +1993,9 @@ namespace System.Management.Automation
             /// <summary>
             /// Verify if conversion from sourceValue can be done to type destinationType.
             /// </summary>
-            /// <param name="sourceValue">value to be converted.</param>
-            /// <param name="destinationType">type to which sourceValue should be converted to.</param>
-            /// <returns>Whether the sourceValue can be converted to destinationType.</param>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <returns>Whether the sourceValue can be converted to destinationType.</returns>
             public override bool CanConvertFrom(object sourceValue, Type destinationType)
             {
                 return sourceValue is string && destinationType.IsEnum;
