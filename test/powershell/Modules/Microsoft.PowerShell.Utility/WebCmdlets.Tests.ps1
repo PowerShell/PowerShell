@@ -482,7 +482,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
-    It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
+    It "Invoke-WebRequest supports sending request as UTF-8." {
         $uri = Get-WebListenerUrl -Test 'POST'
         $command = "Invoke-WebRequest -Uri '$uri' -Body 'проверка' -ContentType 'application/json; charset=utf-8' -Method 'POST'"
 
