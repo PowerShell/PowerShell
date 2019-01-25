@@ -256,7 +256,7 @@ function Update-AppVeyorTestResults
     param(
         [string] $resultsFile
     )
-    if(!$pushedResults -or !$pushedResults)
+    if(!$pushedResults)
     {
             Write-Warning "Failed to push all artifacts for $resultsFile"
     }
