@@ -60,16 +60,25 @@ namespace Microsoft.PowerShell.Commands
             public readonly PSCmdlet Cmdlet;
 
             /// <summary>
-            /// Constructor of ConvertToJsonContext.
+            /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
             /// </summary>
+            /// <param name="maxDepth">The maximum depth to visit the object.</param>
+            /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+            /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
                 : this(maxDepth, enumsAsStrings, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
             {
             }
 
             /// <summary>
-            /// Constructor of ConvertToJsonContext.
+            /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
             /// </summary>
+            /// <param name="maxDepth">The maximum depth to visit the object.</param>
+            /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+            /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
+            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
+            /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
+            /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
             public ConvertToJsonContext(
                 int maxDepth,
                 bool enumsAsStrings,
