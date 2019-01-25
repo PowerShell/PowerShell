@@ -132,22 +132,7 @@ NuspecTemplate = @'
     </metadata>
 </package>
 '@
-RefAssemblyCsProj = @'
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>{0}</Version>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>{1}</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha08" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
-  </ItemGroup>
-</Project>
-'@
+
 NuGetConfigFile = @'
 <configuration>
   <packageSources>

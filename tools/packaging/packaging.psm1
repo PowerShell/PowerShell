@@ -1911,7 +1911,7 @@ function New-ReferenceAssembly
         {
             Push-Location $projectFolder
 
-            $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
+            $sourceProjectRoot = Join-Path $PSScriptRoot 'projects/reference'
             $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
             Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
 
