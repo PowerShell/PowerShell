@@ -348,11 +348,10 @@ namespace Microsoft.PowerShell.Commands
         [DllImport("ntdll.dll")]
         internal static extern char RtlSetProcessPlaceholderCompatibilityMode(char pcm);
 
-        internal const char PHCM_DISGUISE_PLACEHOLDER = (char) 1;
-        internal const char PHCM_EXPOSE_PLACEHOLDERS = (char) 2;
+        internal const char PHCM_DISGUISE_PLACEHOLDER = (char)1;
+        internal const char PHCM_EXPOSE_PLACEHOLDERS = (char)2;
         
 #endif
-
 
         /// <summary>
         /// Starts the File System provider.  This method sets the Home for the
@@ -384,13 +383,12 @@ namespace Microsoft.PowerShell.Commands
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                 }
             }
+           
             // OneDrive placeholder support (issue #8315)
             // make it so OneDrive placeholders are perceived as such with *all* their attributes accessible
 #if !UNIX
-            if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 17134 ||
-
-                Environment.OSVersion.Version.Major >= 11)
-
+            if (((Environment.OSVersion.Version.Major == 10) && (Environment.OSVersion.Version.Build >= 17134)) ||
+                (Environment.OSVersion.Version.Major >= 11))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
                 if (PHCM_DISGUISE_PLACEHOLDER == RtlQueryProcessPlaceholderCompatibilityMode())
