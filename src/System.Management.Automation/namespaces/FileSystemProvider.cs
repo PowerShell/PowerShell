@@ -348,8 +348,8 @@ namespace Microsoft.PowerShell.Commands
         [DllImport("ntdll.dll")]
         internal static extern char RtlSetProcessPlaceholderCompatibilityMode(char pcm);
 
-        internal const char PHCM_DISGUISE_PLACEHOLDER = (char)1;
-        internal const char PHCM_EXPOSE_PLACEHOLDERS = (char)2;
+        internal const char PhcmDisguisePlaceholder = (char)1;
+        internal const char PhcmExposePlaceholders = (char)2;
         
 #endif
 
@@ -387,26 +387,15 @@ namespace Microsoft.PowerShell.Commands
             // OneDrive placeholder support (issue #8315)
             // make it so OneDrive placeholders are perceived as such with *all* their attributes accessible
 #if !UNIX
-// temporarily disable to check if this is the cause of the failing test in Windows CI
-/*
-Should succeed to create a symbolic link without elevation and in developer mode 
-2019-01-25T19:22:04.2868365Z       Expected no exception to be thrown, but an exception "Administrator privilege required for this operation." was thrown from D:\a\1\s\test\powershell\Modules\Microsoft.PowerShell.Management\New-Item.Tests.ps1:279 char:11
-2019-01-25T19:22:04.2868504Z           +         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target ...
-2019-01-25T19:22:04.2868670Z           +           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.
-2019-01-25T19:22:04.2868805Z       279:         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
-2019-01-25T19:22:04.2868936Z       at <ScriptBlock>, D:\a\1\s\test\powershell\Modules\Microsoft.PowerShell.Management\New-Item.Tests.ps1: line 279
- */ 
- #if CANT_BE_DEFINED_OR_ELSE 
-            if (((Environment.OSVersion.Version.Major == 10) && (Environment.OSVersion.Version.Build >= 17134)) ||
-                (Environment.OSVersion.Version.Major >= 11))
+            Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
+            if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (PHCM_DISGUISE_PLACEHOLDER == RtlQueryProcessPlaceholderCompatibilityMode())
+                if (PhcmDisguisePlaceholder == RtlQueryProcessPlaceholderCompatibilityMode())
                 {
-                    RtlSetProcessPlaceholderCompatibilityMode(PHCM_EXPOSE_PLACEHOLDERS);
+                    RtlSetProcessPlaceholderCompatibilityMode(PhcmExposePlaceholders);
                 }
             }
-#endif
 #endif
 
             return providerInfo;
