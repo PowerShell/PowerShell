@@ -1567,13 +1567,13 @@ namespace Microsoft.PowerShell.Commands
         internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
 
         /// <summary>
-        /// The following is the definition of the input parameter "SecurityDescriptor".
-        /// Changes the SecurityDescriptor of the service.
+        /// The following is the definition of the input parameter "SecurityDescriptorSddl".
+        /// Sets the SecurityDescriptorSddl of the service using a SDDL string.
         /// </summary>
         [Parameter]
         [Alias("sd")]
         [ValidateNotNullOrEmpty]
-        public string SecurityDescriptor
+        public string SecurityDescriptorSddl
         {
             get;
             set;
@@ -1886,35 +1886,32 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // Handle the '-SecurityDescriptor' parameter
-                    RawSecurityDescriptor rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptor);
-                    RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
-                    DiscretionaryAcl  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
-
-                    byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
-                    discretionaryAcl.GetBinaryForm(rawDacl, 0);
-                    rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
-                    byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
-                    rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
-
-                    if(!string.IsNullOrEmpty(SecurityDescriptor))
+                    // Handle the '-SecurityDescriptorSddl' parameter
+                    if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
+                        var rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptorSddl);
+                        RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
+                        var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
+
+                        byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
+                        discretionaryAcl.GetBinaryForm(rawDacl, 0);
+                        rawSecurityDescriptor.DiscretionaryAcl = new RawAcl(rawDacl, 0);
+                        byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
+                        rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
+
                         status = NativeMethods.SetServiceObjectSecurity(
                                     hService,
                                     SecurityInfos.DiscretionaryAcl,
                                     securityDescriptorByte);
-                    }
 
-                    if (!status)
-                    {
-                        int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
-                        WriteNonTerminatingError(
-                            service,
-                            exception,
-                            "CouldNotSetServiceSecurityDescriptor",
-                            ServiceResources.CouldNotSetServiceSecurityDescriptor,
-                            ErrorCategory.PermissionDenied);
+
+                        if (!status)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            string errorMessage = StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl,Name,exception.Message);
+                            throw new Exception(errorMessage);
+                        }
                     }
 
                     if (PassThru.IsPresent)

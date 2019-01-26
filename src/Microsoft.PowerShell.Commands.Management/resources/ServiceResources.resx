@@ -168,8 +168,8 @@
   <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
     <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
   </data>
-  <data name="CouldNotSetServiceSecurityDescriptor" xml:space="preserve">
-    <value>Service '{1} ({0})' security descriptor cannot be configured due to the following error: {2}</value>
+  <data name="CouldNotSetServiceSecurityDescriptorSddl" xml:space="preserve">
+    <value>Service '{0}' security descriptor cannot be configured due to the following error: {1}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
