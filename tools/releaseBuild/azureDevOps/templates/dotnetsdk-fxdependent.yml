@@ -33,7 +33,7 @@ jobs:
 
   - powershell: |
       $azureVersion = $env:ReleaseTagVar.ToLowerInvariant() -replace '\.', '-'
-      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
     displayName: 'Set Version for Blob Storage'
