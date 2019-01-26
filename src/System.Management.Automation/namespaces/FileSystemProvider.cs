@@ -387,6 +387,16 @@ namespace Microsoft.PowerShell.Commands
             // OneDrive placeholder support (issue #8315)
             // make it so OneDrive placeholders are perceived as such with *all* their attributes accessible
 #if !UNIX
+// temporarily disable to check if this is the cause of the failing test in Windows CI
+/*
+Should succeed to create a symbolic link without elevation and in developer mode 
+2019-01-25T19:22:04.2868365Z       Expected no exception to be thrown, but an exception "Administrator privilege required for this operation." was thrown from D:\a\1\s\test\powershell\Modules\Microsoft.PowerShell.Management\New-Item.Tests.ps1:279 char:11
+2019-01-25T19:22:04.2868504Z           +         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target ...
+2019-01-25T19:22:04.2868670Z           +           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.
+2019-01-25T19:22:04.2868805Z       279:         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
+2019-01-25T19:22:04.2868936Z       at <ScriptBlock>, D:\a\1\s\test\powershell\Modules\Microsoft.PowerShell.Management\New-Item.Tests.ps1: line 279
+ */ 
+ #if CANT_BE_DEFINED_OR_ELSE 
             if (((Environment.OSVersion.Version.Major == 10) && (Environment.OSVersion.Version.Build >= 17134)) ||
                 (Environment.OSVersion.Version.Major >= 11))
             {
@@ -396,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
                     RtlSetProcessPlaceholderCompatibilityMode(PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
-
+#endif
 #endif
 
             return providerInfo;
