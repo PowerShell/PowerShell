@@ -1674,7 +1674,7 @@ namespace Microsoft.PowerShell.Commands
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    var mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
