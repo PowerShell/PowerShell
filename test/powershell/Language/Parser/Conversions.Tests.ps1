@@ -127,7 +127,7 @@ namespace TestTypeResolution {
 "@
         $location = & $powershell -noprofile -command $command
         # need to resolve short filename to long filename using FileInfo
-        $location | Should -Be ([System.IO.FileInfo]::new($cmdletDllPath)).FullName
+        $location | Should -Be ([System.IO.Path]::GetFullPath($cmdletDllPath))
     }
 }
 
