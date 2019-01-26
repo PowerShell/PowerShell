@@ -25,20 +25,20 @@ If you are new to PowerShell and would like to learn more, we recommend reviewin
 
 You can download and install a PowerShell package for any of the following platforms.
 
-| Supported Platform                              | Downloads (stable)      | Downloads (preview)   | How to Install                |
-| ------------------------------------------------| ------------------------| ----------------------| ------------------------------|
-| [Windows (x64)][corefx-win]                     | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
-| [Windows (x86)][corefx-win]                     | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
-| [Ubuntu 18.04][corefx-linux]                    | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
-| [Ubuntu 16.04][corefx-linux]                    | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
-| [Ubuntu 14.04][corefx-linux]                    | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
-| [Debian 9][corefx-linux]                        | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
-| [CentOS 7][corefx-linux]                        | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
-| [Red Hat Enterprise Linux 7][corefx-linux]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
-| [openSUSE 42.3, openSUSE Leap 15][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
-| [Fedora 27, Fedora 28][corefx-linux]            | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
-| [macOS 10.12+][corefx-macos]                    | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
-| Docker                                          |                         |                       | [Instructions][in-docker]     |
+| Supported Platform                         | Downloads (stable)      | Downloads (preview)   | How to Install                |
+| -------------------------------------------| ------------------------| ----------------------| ------------------------------|
+| [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
+| [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
+| [Ubuntu 18.04][corefx-linux]               | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
+| [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
+| [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
+| [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
+| [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
+| [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
+| [openSUSE 42.3][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
+| [Fedora 27, Fedora 28][corefx-linux]       | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
+| [macOS 10.12+][corefx-macos]               | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
+| Docker                                     |                         |                       | [Instructions][in-docker]     |
 
 You can download and install a PowerShell package for any of the following platforms, **which are supported by the community.**
 
