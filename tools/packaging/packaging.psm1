@@ -3113,7 +3113,7 @@ function New-DotnetSdkContainerFxdPackage {
     $destinationPackageFullName = Join-Path $DestinationPath $packageName
 
     ## Get fxdependent package path
-    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
+    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName | Select-Object -First 1
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
@@ -3154,8 +3154,7 @@ function New-DotnetSdkContainerFxdPackage {
 
                 Write-Verbose -Verbose "Compressing"
 
-                if (-not (Test-Path $DestinationPath))
-                {
+                if (-not (Test-Path $DestinationPath)) {
                     $null = New-Item -ItemType Directory -Path $DestinationPath
                 }
 
@@ -3174,16 +3173,12 @@ function New-DotnetSdkContainerFxdPackage {
     }
 
     if (Test-Path $destinationPackageFullName) {
-        $containerName = if ($Environment.IsWindows)
-        {
+        $containerName = if ($Environment.IsWindows) {
             "signedResults"
-        }
-        else
-        {
+        } else {
             "release"
         }
 
-    if (Test-Path "$destinationPackageFullName") {
         Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$destinationPackageFullName"
     } else {
         Write-Log "Package not found: $destinationPackageFullName"

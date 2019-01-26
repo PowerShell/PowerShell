@@ -41,7 +41,7 @@ jobs:
     parentJobs:
       - build_fxdependent
     poolName: Hosted Ubuntu 1604
-    buildName: Linux-x64
+    buildName: Linux
 
 - template: templates/mac.yml
 

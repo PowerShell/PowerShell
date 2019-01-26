@@ -5,7 +5,7 @@ parameters:
 
 jobs:
 - job: dotnetfxd_${{ parameters.buildName }}
-  displayName: Create fxdependent package dotnet sdk
+  displayName: Create fxdependent package dotnet sdk - ${{ parameters.buildName }}
   dependsOn:
     ${{ parameters.parentJobs }}
   condition: succeeded()
@@ -20,7 +20,7 @@ jobs:
     displayName: 'Download Artifacts'
     inputs:
       downloadType: specific
-      itemPattern:
+      itemPattern: |
         **/*.tar.gz
         **/*.zip
       downloadPath: '$(System.ArtifactsDirectory)/finished'
@@ -32,7 +32,7 @@ jobs:
     displayName: 'Create fxdependent package for dotnet sdk docker image'
 
   - powershell: |
-      $azureVersion = $env:ReleaseTagVar.ToLowerInvariant() -replace '\.', '-'
+      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
