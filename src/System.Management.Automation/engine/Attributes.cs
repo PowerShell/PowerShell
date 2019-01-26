@@ -1123,11 +1123,11 @@ namespace System.Management.Automation
             if (commonType == null)
             {
                 throw new ValidationMetadataException(
-                "ValidationRangeElementType",
-                null,
-                Metadata.ValidateRangeElementType,
-                element.GetType().Name,
-                typeof(int).Name);
+                    "ValidationRangeElementType",
+                    innerException: null,
+                    Metadata.ValidateRangeElementType,
+                    element.GetType().Name,
+                    typeof(int).Name);
             }
 
             object resultValue;
