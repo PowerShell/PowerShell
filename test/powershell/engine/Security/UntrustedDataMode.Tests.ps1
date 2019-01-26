@@ -403,7 +403,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             ## Run this in the global scope, so value of $globalVar will be marked as untrusted
             $result = Execute-Script -Script @'
             $globalVar = "uri"
-            New-Object -TypeName $globalVar -ArgumentList 'http://www.bing.com'
+            New-Object -TypeName $globalVar -ArgumentList 'https://www.bing.com'
 '@
             $result | Should Not BeNullOrEmpty
         }

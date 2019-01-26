@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// Gets or sets the input object to join into text.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { get; set; }
+        public PSObject[] InputObject { get; set; }
 
         /// <inheritdoc />
         protected override void BeginProcessing()
@@ -106,40 +106,46 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <inheritdoc />
         protected override void ProcessRecord()
         {
-            if (InputObject != null && InputObject != AutomationNull.Value)
+            if (InputObject != null)
             {
-                var inputValue = Property == null
-                                    ? InputObject
-                                    : Property.GetValues(InputObject, false, true).FirstOrDefault()?.Result;
+                foreach (PSObject inputObject in InputObject)
+                {
+                    if (inputObject != null && inputObject != AutomationNull.Value)
+                    {
+                        var inputValue = Property == null
+                                            ? inputObject
+                                            : Property.GetValues(inputObject, false, true).FirstOrDefault()?.Result;
 
-                // conversion to string always succeeds.
-                if (!LanguagePrimitives.TryConvertTo<string>(inputValue, _cultureInfo, out var stringValue))
-                {
-                    throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", ExtendedTypeSystem.InvalidCastCannotRetrieveString, null);
-                }
+                        // conversion to string always succeeds.
+                        if (!LanguagePrimitives.TryConvertTo<string>(inputValue, _cultureInfo, out var stringValue))
+                        {
+                            throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", ExtendedTypeSystem.InvalidCastCannotRetrieveString, null);
+                        }
 
-                if (_firstInputObject)
-                {
-                    _firstInputObject = false;
-                }
-                else
-                {
-                    _outputBuilder.Append(Separator);
-                }
+                        if (_firstInputObject)
+                        {
+                            _firstInputObject = false;
+                        }
+                        else
+                        {
+                            _outputBuilder.Append(Separator);
+                        }
 
-                if (_quoteChar != char.MinValue)
-                {
-                    _outputBuilder.Append(_quoteChar);
-                    _outputBuilder.Append(stringValue);
-                    _outputBuilder.Append(_quoteChar);
-                }
-                else if (string.IsNullOrEmpty(FormatString))
-                {
-                    _outputBuilder.Append(stringValue);
-                }
-                else
-                {
-                    _outputBuilder.AppendFormat(_cultureInfo, FormatString, inputValue);
+                        if (_quoteChar != char.MinValue)
+                        {
+                            _outputBuilder.Append(_quoteChar);
+                            _outputBuilder.Append(stringValue);
+                            _outputBuilder.Append(_quoteChar);
+                        }
+                        else if (string.IsNullOrEmpty(FormatString))
+                        {
+                            _outputBuilder.Append(stringValue);
+                        }
+                        else
+                        {
+                            _outputBuilder.AppendFormat(_cultureInfo, FormatString, inputValue);
+                        }
+                    }
                 }
             }
         }

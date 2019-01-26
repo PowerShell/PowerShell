@@ -206,7 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// EnumerateInstancesAsync operation of <see cref="CimSession"/> object.
     /// </para>
     /// <para>
-    /// (See http://channel9.msdn.com/posts/J.Van.Gogh/Reactive-Extensions-API-in-depth-Contract/)
+    /// (See https://channel9.msdn.com/posts/J.Van.Gogh/Reactive-Extensions-API-in-depth-Contract/)
     /// for the IObserver/IObservable contact
     /// - the only possible sequence is OnNext* (OnCompleted|OnError)?
     /// - callbacks are serialized

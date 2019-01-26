@@ -138,46 +138,6 @@ open {0}
 </package>
 '@
 
-    'System.Management.Automation' = @'
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>{0}</Version>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>{1}</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <LangVersion>Latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
-  </ItemGroup>
-</Project>
-'@
-
-    'Microsoft.PowerShell.Commands.Utility' = @'
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>{0}</Version>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>{1}</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <LangVersion>Latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Management.Automation">
-    <HintPath>{2}</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
-  </ItemGroup>
-</Project>
-'@
-
     NuGetConfigFile = @'
 <configuration>
   <packageSources>

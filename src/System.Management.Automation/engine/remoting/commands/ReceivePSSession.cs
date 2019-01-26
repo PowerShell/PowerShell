@@ -62,8 +62,9 @@ namespace Microsoft.PowerShell.Commands
     /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
-    [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
-         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
+    [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037",
+        RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class ReceivePSSessionCommand : PSRemotingCmdlet
     {
         #region Parameters

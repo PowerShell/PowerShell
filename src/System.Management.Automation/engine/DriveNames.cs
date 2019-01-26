@@ -28,5 +28,10 @@ namespace System.Management.Automation
         /// The default FunctionProvider drive name.
         /// </summary>
         internal const string FunctionDrive = "Function";
+
+        /// <summary>
+        /// The Temp drive name.
+        /// </summary>
+        internal const string TempDrive = "Temp";
     }
 }

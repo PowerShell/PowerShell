@@ -1587,7 +1587,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
                 # Build tools
                 $Deps += "cmake"

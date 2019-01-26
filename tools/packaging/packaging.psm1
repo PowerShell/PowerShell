@@ -11,7 +11,7 @@ $DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
-        # PowerShell packages use Semantic Versioning http://semver.org/
+        # PowerShell packages use Semantic Versioning https://semver.org/
         [Parameter(ParameterSetName = "Version")]
         [string]$Version,
 
@@ -1432,7 +1432,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp2.1")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1563,7 +1563,7 @@ function New-UnifiedNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp2.1') -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1694,7 +1694,7 @@ function New-UnifiedNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/netstandard2.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
   This is a helper function used by 'New-UnifiedNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -1897,6 +1897,7 @@ function New-ReferenceAssembly
 
     foreach ($assemblyName in $assemblyNames) {
 
+        Write-Log "Building reference assembly for '$assemblyName'"
         $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
         $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
         $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
@@ -1918,15 +1919,19 @@ function New-ReferenceAssembly
         {
             Push-Location $projectFolder
 
-            $csProj = GenerateCSProjectContent -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
-            $csProj | Out-File -FilePath "$projectFolder/$assemblyName.csproj" -Force
+            $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
+            $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
+            Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
 
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
 
-            Start-NativeExecution { dotnet build -c Release }
+            $arguments = GenerateBuildArguments -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netstandard2.0/$assemblyName.dll"
+            Write-Log "Running: dotnet $arguments"
+            Start-NativeExecution -sb {dotnet $arguments}
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp2.1/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -1950,6 +1955,10 @@ function New-ReferenceAssembly
     }
 }
 
+<#
+  Helper function for New-ReferenceAssembly to further clean up the
+  C# source code generated from GenApi.exe.
+#>
 function CleanupGeneratedSourceCode
 {
     param(
@@ -2033,7 +2042,11 @@ function CleanupGeneratedSourceCode
     Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
 }
 
-function GenerateCSProjectContent
+<#
+  Helper function for New-ReferenceAssembly to get the arguments
+  for building reference assemblies.
+#>
+function GenerateBuildArguments
 {
     param(
         [string] $AssemblyName,
@@ -2042,21 +2055,18 @@ function GenerateCSProjectContent
         [string] $SMAReferencePath
     )
 
-    switch ($assemblyName) {
-        "System.Management.Automation" {
-            $csProj = $packagingStrings.'System.Management.Automation' -f $RefAssemblyVersion, $SnkFilePath
-        }
+    $arguments = @('build')
+    $arguments += @('-c','Release')
+    $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
+    $arguments += "/p:SnkFile=$SnkFilePath"
 
+    switch ($AssemblyName) {
         "Microsoft.PowerShell.Commands.Utility" {
-            $csProj = $packagingStrings.'Microsoft.PowerShell.Commands.Utility' -f $RefAssemblyVersion, $SnkFilePath, $SMAReferencePath
-        }
-
-        default {
-            throw "It's not yet supported to generate reference assembly for '$assemblyName'"
+            $arguments += "/p:SmaRefFile=$SMAReferencePath"
         }
     }
 
-    return $csProj
+    return $arguments
 }
 
 <#
@@ -2205,7 +2215,7 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder
     }
 
-    $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
+    $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)

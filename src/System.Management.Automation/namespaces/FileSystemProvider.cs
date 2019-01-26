@@ -799,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // "The Windows API has many functions that also have Unicode versions to permit
                         // an extended-length path for a maximum total path length of 32,767 characters"
-                        // See http://msdn.microsoft.com/library/aa365247.aspx#maxpath
+                        // See https://msdn.microsoft.com/library/aa365247.aspx#maxpath
                         string errorMsg = StringUtil.Format(FileSystemProviderStrings.SubstitutePathTooLong, driveName);
                         throw new InvalidOperationException(errorMsg);
                     }
@@ -998,6 +998,19 @@ namespace Microsoft.PowerShell.Commands
                     {
                     }
                 }
+            }
+
+            if (ExperimentalFeature.IsEnabled("PSTempDrive"))
+            {
+                PSDriveInfo newPSDriveInfo =
+                    new PSDriveInfo(
+                        DriveNames.TempDrive,
+                        ProviderInfo,
+                        Path.GetTempPath(),
+                        SessionStateStrings.TempDriveDescription,
+                        credential: null,
+                        displayRoot: null);
+                results.Add(newPSDriveInfo);
             }
 
             return results;
@@ -2436,8 +2449,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
-            if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 14972 ||
-                Environment.OSVersion.Version.Major >= 11)
+
+            Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
+            if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
