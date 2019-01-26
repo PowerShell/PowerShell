@@ -799,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // "The Windows API has many functions that also have Unicode versions to permit
                         // an extended-length path for a maximum total path length of 32,767 characters"
-                        // See http://msdn.microsoft.com/library/aa365247.aspx#maxpath
+                        // See https://msdn.microsoft.com/library/aa365247.aspx#maxpath
                         string errorMsg = StringUtil.Format(FileSystemProviderStrings.SubstitutePathTooLong, driveName);
                         throw new InvalidOperationException(errorMsg);
                     }
@@ -1000,6 +1000,19 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            if (ExperimentalFeature.IsEnabled("PSTempDrive"))
+            {
+                PSDriveInfo newPSDriveInfo =
+                    new PSDriveInfo(
+                        DriveNames.TempDrive,
+                        ProviderInfo,
+                        Path.GetTempPath(),
+                        SessionStateStrings.TempDriveDescription,
+                        credential: null,
+                        displayRoot: null);
+                results.Add(newPSDriveInfo);
+            }
+
             return results;
         }
 
@@ -1052,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
             // Make sure the path is either drive rooted or UNC Path
-            if (!IsAbsolutePath(path) && !IsUNCPath(path))
+            if (!IsAbsolutePath(path) && !Utils.PathIsUnc(path))
             {
                 return false;
             }
@@ -2436,8 +2449,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
-            if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 14972 ||
-                Environment.OSVersion.Version.Major >= 11)
+
+            Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
+            if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
@@ -4676,7 +4690,7 @@ namespace Microsoft.PowerShell.Commands
         protected override string GetParentPath(string path, string root)
         {
             string parentPath = base.GetParentPath(path, root);
-            if (!IsUNCPath(path))
+            if (!Utils.PathIsUnc(path))
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
             }
@@ -4712,11 +4726,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static bool IsUNCPath(string path)
-        {
-            return path.StartsWith("\\\\", StringComparison.Ordinal);
-        }
-
         /// <summary>
         /// Determines if the specified path is a root of a UNC share
         /// by counting the path separators "\" following "\\". If only
@@ -4735,7 +4744,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.IsNullOrEmpty(path))
             {
-                if (IsUNCPath(path))
+                if (Utils.PathIsUnc(path))
                 {
                     int lastIndex = path.Length - 1;
 
@@ -4863,8 +4872,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (originalPathComparison.StartsWith(basePathComparison, StringComparison.OrdinalIgnoreCase))
                     {
-                        bool isUNCPath = IsUNCPath(result);
-                        if (!isUNCPath)
+                        if (!Utils.PathIsUnc(result))
                         {
                             // Add the base path back on so that it can be used for
                             // processing
@@ -6935,17 +6943,6 @@ namespace Microsoft.PowerShell.Commands
             internal static extern int PathGetDriveNumber(string path);
 
             /// <summary>
-            /// Determines if a path string is a valid Universal Naming Convention (UNC) path, as opposed to a path based on a drive letter.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed
-            /// </param>
-            /// <returns>Returns TRUE if the string is a valid UNC path; otherwise, FALSE.</returns>
-            [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool PathIsUNC(string path);
-
-            /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
             /// This implementation is based on the 'PathIsNetworkPath' API.
             /// </summary>
@@ -6958,7 +6955,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                if (PathIsUNC(path))
+                if (Utils.PathIsUnc(path))
                 {
                     return true;
                 }

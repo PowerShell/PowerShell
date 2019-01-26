@@ -95,7 +95,7 @@ Function Test-DailyBuild
     # APPVEYOR_SCHEDULED_BUILD is True means that we are in an AppVeyor Scheduled build
     # APPVEYOR_REPO_TAG_NAME means we are building a tag in AppVeyor
     # BUILD_REASON is Schedule means we are in a VSTS Scheduled build
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME) -or $env:BUILD_REASON -eq 'Schedule')
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule')
     {
         return $true
     }
@@ -117,11 +117,7 @@ Function Test-DailyBuild
 # Returns the commit message for the current build
 function Get-CommitMessage
 {
-    if ($env:APPVEYOR_REPO_COMMIT_MESSAGE)
-    {
-        return $env:APPVEYOR_REPO_COMMIT_MESSAGE
-    }
-    elseif ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+    if ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
     {
         # We are in VSTS and have a commit ID in the Source Version Message
         $commitId = $Matches[1]
@@ -146,11 +142,7 @@ Function Set-BuildVariable
         $Value
     )
 
-    if($env:AppVeyor)
-    {
-        Set-AppveyorBuildVariable @PSBoundParameters
-    }
-    elseif($env:TF_BUILD)
+    if($env:TF_BUILD)
     {
         #In VSTS
         Write-Host "##vso[task.setvariable variable=$Name;]$Value"
@@ -165,7 +157,6 @@ Function Set-BuildVariable
 }
 
 # Emulates running all of AppVeyor but locally
-# should not be used on AppVeyor
 function Invoke-AppVeyorFull
 {
     param(
@@ -177,27 +168,10 @@ function Invoke-AppVeyorFull
         Clear-PSRepo
     }
 
-    if($env:APPVEYOR)
-    {
-        throw "This function is to simulate appveyor, but not to be run from appveyor!"
-    }
-
-    if($APPVEYOR_SCHEDULED_BUILD)
-    {
-        $env:APPVEYOR_SCHEDULED_BUILD = 'True'
-    }
-    try {
-        Invoke-AppVeyorInstall
-        Invoke-AppVeyorBuild
-        Invoke-AppVeyorTest -ErrorAction Continue
-        Invoke-AppveyorFinish
-    }
-    finally {
-        if($APPVEYOR_SCHEDULED_BUILD -and $env:APPVEYOR_SCHEDULED_BUILD)
-        {
-            Remove-Item env:APPVEYOR_SCHEDULED_BUILD
-        }
-    }
+    Invoke-AppVeyorInstall
+    Invoke-AppVeyorBuild
+    Invoke-AppVeyorTest -ErrorAction Continue
+    Invoke-AppveyorFinish
 }
 
 # Implements the AppVeyor 'build_script' step
@@ -225,43 +199,14 @@ function Invoke-AppVeyorInstall
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     $releaseTag = Get-ReleaseTag
-    if($env:APPVEYOR_BUILD_NUMBER)
-    {
-        Update-AppveyorBuild -Version $releaseTag
-    }
 
     if(Test-DailyBuild){
-        if($env:APPVEYOR)
-        {
-            $buildName = "[Daily]"
-
-            # Add daily to title if it's not already there
-            # It can be there already for rerun requests
-            if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
-            {
-                $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
-            }
-            elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
-            {
-                $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
-            }
-            elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
-            {
-                $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
-            }
-            else
-            {
-                $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
-            }
-
-            Update-AppveyorBuild -message $buildName
-        }
-        elseif ($env:BUILD_REASON -eq 'Schedule') {
+        if ($env:BUILD_REASON -eq 'Schedule') {
             Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
         }
     }
 
-    if ($env:APPVEYOR -or $env:TF_BUILD)
+    if ($env:TF_BUILD)
     {
         #
         # Generate new credential for appveyor (only) remoting tests.
@@ -274,7 +219,7 @@ function Invoke-AppVeyorInstall
         1..(Get-Random -Minimum 15 -Maximum 126) | ForEach-Object { $password = $password + [char]$randomObj.next(45,126) }
 
         # Account
-        $userName = 'appVeyorRemote'
+        $userName = 'ciRemote'
         New-LocalUser -username $userName -password $password
         Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
 
@@ -311,46 +256,9 @@ function Update-AppVeyorTestResults
     param(
         [string] $resultsFile
     )
-
-    if($env:Appveyor)
+    if(!$pushedResults)
     {
-        $retryCount = 0
-        $pushedResults = $false
-        $pushedArtifacts = $false
-        while( (!$pushedResults -or !$pushedResults) -and $retryCount -lt 3)
-        {
-            if($retryCount -gt 0)
-            {
-                Write-Verbose "Retrying updating test artifacts..."
-            }
-
-            $retryCount++
-            $resolvedResultsPath = (Resolve-Path $resultsFile)
-            try {
-                (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", $resolvedResultsPath)
-                $pushedResults = $true
-            }
-            catch {
-                Write-Warning "Pushing test result failed..."
-            }
-
-            try {
-                Push-AppveyorArtifact $resolvedResultsPath
-                $pushedArtifacts = $true
-            }
-            catch {
-                Write-Warning "Pushing test Artifact failed..."
-            }
-        }
-
-        if(!$pushedResults -or !$pushedResults)
-        {
             Write-Warning "Failed to push all artifacts for $resultsFile"
-        }
-    }
-    else
-    {
-        Write-Warning "Not running in appveyor, skipping upload of test results: $resultsFile"
     }
 }
 

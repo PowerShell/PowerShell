@@ -1,6 +1,9 @@
 ---
 name: Bug report 🐛
 about: Report errors or unexpected behavior 🤔
+title: "[BUG] My bug report"
+labels: Issue-Bug
+assignees: ''
 
 ---
 <!--

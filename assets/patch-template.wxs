@@ -3,7 +3,7 @@
     <Patch 
         AllowRemoval="yes"
         Manufacturer="Microsoft Powershell" 
-        MoreInfoURL="http://github.com/powershell/powershell"
+        MoreInfoURL="https://github.com/powershell/powershell"
         DisplayName="Sample Patch" 
         Description="Small Update Patch" 
         Classification="Update"
