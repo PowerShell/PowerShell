@@ -198,6 +198,17 @@ namespace System.Management.Automation
             return null;
         }
 
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            // obj should never be null
+            Diagnostics.Assert(obj != null, "Input object is null");
+
+            ManagementBaseObject wmiObject = (ManagementBaseObject)obj;
+            return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
+                ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
+
+        }
+
         /// <summary>
         /// Retrieves all the members available in the object.
         /// The adapter implementation is encouraged to cache all properties/methods available
@@ -872,6 +883,9 @@ namespace System.Management.Automation
 
         #region Abstract Methods
 
+        protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+        protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
@@ -1049,6 +1063,45 @@ namespace System.Management.Automation
             }
 
             return new PSMethod(method.Name, this, wmiObject, method) as T;
+        }
+
+        protected override T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
+        {
+            if (wmiObject.SystemProperties != null)
+            {
+                foreach (PropertyData property in wmiObject.SystemProperties)
+                {
+                    if (predicate(property.Name))
+                    {
+                        return new PSProperty(property.Name, this, wmiObject, property) as T;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        protected override T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
+        {
+            Diagnostics.Assert((wmiObject != null), "Input arguments should not be null.");
+
+            if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
+            {
+                return null;
+            }
+
+            CacheTable table;
+            table = GetInstanceMethodTable(wmiObject, true);
+
+            foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
+            {
+                if (predicate(methodEntry.Name))
+                {
+                    return new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T;
+                }
+            }
+
+            return null;
         }
     }
 

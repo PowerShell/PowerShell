@@ -1888,7 +1888,7 @@ namespace System.Management.Automation
                 rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, extent, context));
             PSObject errorWrap = PSObject.AsPSObject(new ErrorRecord(rte.ErrorRecord, rte));
 
-            PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
+            PSNoteProperty note = new PSNoteProperty(MshCommandRuntime.WriteErrorStreamPropertyName, true);
             errorWrap.Properties.Add(note);
 
             // If this is an error pipe for a hosting application (i.e.: no downstream cmdlet),

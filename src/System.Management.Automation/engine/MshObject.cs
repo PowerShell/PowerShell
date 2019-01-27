@@ -111,6 +111,23 @@ namespace System.Management.Automation
             return members;
         }
 
+        internal static PSMemberInfo TypeTableGetFirstOrDefaultMemberDelegate(PSObject msjObj, MemberNamePredicate predicate)
+        {
+            TypeTable table = msjObj.GetTypeTable();
+            return TypeTableGetFirstOrDefaultMemberDelegate(msjObj, table, predicate);
+        }
+
+        internal static PSMemberInfo TypeTableGetFirstOrDefaultMemberDelegate(PSObject msjObj, TypeTable typeTableToUse, MemberNamePredicate predicate)
+        {
+            if (typeTableToUse == null)
+            {
+                return default;
+            }
+            var member = typeTableToUse.GetFirstOrDefaultMember(msjObj.InternalTypeNames, predicate);
+
+            return member;
+        }
+
         private static T AdapterGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             if (msjObj.isDeserialized)
@@ -127,6 +144,28 @@ namespace System.Management.Automation
 
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
             PSObject.memberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
+            return retValue;
+        }
+
+        private static PSMemberInfo AdapterGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (msjObj.isDeserialized && typeof(PSPropertyInfo).IsAssignableFrom(typeof(T)))
+            {
+                if (msjObj.adaptedMembers == null)
+                {
+                    return null;
+                }
+
+                foreach (var adaptedMember in msjObj.adaptedMembers)
+                {
+                    if (predicate(adaptedMember.Name))
+                    {
+                        return adaptedMember as T;
+                    }
+                }
+            }
+
+            T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, predicate);
             return retValue;
         }
 
@@ -194,6 +233,18 @@ namespace System.Management.Automation
             return null;
         }
 
+        private static PSMemberInfo DotNetGetFirstOrDefaultMemberDelegate(PSObject msjObj, MemberNamePredicate predicate)
+        {
+            // Don't lookup dotnet member if the object doesn't insist.
+            if (msjObj.InternalBaseDotNetAdapter != null)
+            {
+                PSMemberInfo retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<PSMemberInfo>(msjObj._immediateBaseObject, predicate);
+                return retValue;
+            }
+
+            return null;
+        }
+
         private static readonly Collection<CollectionEntry<PSMemberInfo>> s_memberCollection = GetMemberCollection(PSMemberViewTypes.All);
         private static readonly Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
@@ -234,6 +285,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                         true, true, "type table members"));
                 }
                 else
@@ -241,6 +293,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         msjObj => TypeTableGetMembersDelegate<PSMemberInfo>(msjObj, backupTypeTable),
                         (msjObj, name) => TypeTableGetMemberDelegate<PSMemberInfo>(msjObj, backupTypeTable, name),
+                        (msjObj, predicate) => TypeTableGetFirstOrDefaultMemberDelegate(msjObj, backupTypeTable, predicate),
                         true, true, "type table members"));
                 }
             }
@@ -250,6 +303,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMemberInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMemberInfo>,
+                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "adapted members"));
@@ -260,6 +314,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMemberInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMemberInfo>,
+                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members"));
@@ -275,24 +330,28 @@ namespace System.Management.Automation
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                     PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
+                    PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                     shouldReplicateWhenReturning: true,
                     shouldCloneWhenReturning: true,
                     collectionNameForTracing: "type table members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMethodInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMethodInfo>,
+                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "adapted members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMethodInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMethodInfo>,
+                    PSObject.DotNetGetFirstOrDefaultMemberDelegate,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members")
             };
             return returnValue;
         }
+
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the
@@ -331,6 +390,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                         true, true, "type table members"));
                 }
                 else
@@ -338,6 +398,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         msjObj => TypeTableGetMembersDelegate<PSPropertyInfo>(msjObj, backupTypeTable),
                         (msjObj, name) => TypeTableGetMemberDelegate<PSPropertyInfo>(msjObj, backupTypeTable, name),
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                         true, true, "type table members"));
                 }
             }
@@ -347,6 +408,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                     PSObject.AdapterGetMembersDelegate<PSPropertyInfo>,
                     PSObject.AdapterGetMemberDelegate<PSPropertyInfo>,
+                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                     false, false, "adapted members"));
             }
 
@@ -355,6 +417,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                     PSObject.DotNetGetMembersDelegate<PSPropertyInfo>,
                     PSObject.DotNetGetMemberDelegate<PSPropertyInfo>,
+                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                     false, false, "clr members"));
             }
 
@@ -2309,6 +2372,29 @@ namespace System.Management.Automation
             get => _isHelpObject;
             set => _isHelpObject = value;
         }
+
+        /// <summary>
+        /// Gets an instance member if it's name matches the predicate. Otherwise null.
+        /// </summary>
+        internal PSMemberInfo GetFirstPropertyOrDefault(MemberNamePredicate predicate)
+        {
+            if (_instanceMembers != null)
+            {
+                foreach (var instanceMember in _instanceMembers)
+                {
+                    var found = predicate.Invoke(instanceMember.Name);
+                    if (found)
+                    {
+                        return instanceMember;
+                    }
+                }
+            }
+
+            return Properties.GetFirstOrDefault(predicate);
+
+        }
+
+
 
         private bool _isHelpObject = false;
 

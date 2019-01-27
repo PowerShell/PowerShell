@@ -3633,6 +3633,11 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
+        internal PSMemberInfo GetFirstOrDefaultMember(ConsolidatedString types, MemberNamePredicate predicate)
+        {
+            return GetMembers(types).FirstOrDefault(t => predicate.Invoke(t.Name));
+        }
+
         internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
         {
             if ((types == null) || string.IsNullOrEmpty(types.Key))
@@ -4527,5 +4532,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion internal methods
+
+
     }
 }

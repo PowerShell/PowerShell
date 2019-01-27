@@ -128,6 +128,30 @@ namespace System.Management.Automation
             return property;
         }
 
+        private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            PSAdaptedProperty property = null;
+
+            try
+            {
+                property = _externalAdapter.GetProperty(obj, predicate);
+            }
+            catch (Exception exception)
+            {
+                throw new ExtendedTypeSystemException(
+                    "PSPropertyAdapter.GetProperty",
+                    exception,
+                    ExtendedTypeSystem.GetProperty, "predicate", obj.ToString());
+            }
+
+            if (property != null)
+            {
+                InitializeProperty(property, obj);
+            }
+
+            return property;
+        }
+
         /// <summary>
         /// Ensures that the adapter and base object are set in the given PSAdaptedProperty.
         /// </summary>
@@ -323,5 +347,8 @@ namespace System.Management.Automation
         /// Returns the type for a given property.
         /// </summary>
         public abstract string GetPropertyTypeName(PSAdaptedProperty adaptedProperty);
+
+        internal abstract PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate propertyName);
+
     }
 }

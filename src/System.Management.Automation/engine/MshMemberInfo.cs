@@ -3115,6 +3115,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMemberInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3125,6 +3126,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMethodInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3135,6 +3137,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3682,6 +3685,8 @@ namespace System.Management.Automation
         }
     }
 
+    internal delegate bool MemberNamePredicate(string memberName);
+
     /// <summary>
     /// Serves as the collection of members in an PSObject or MemberSet.
     /// </summary>
@@ -3812,6 +3817,8 @@ namespace System.Management.Automation
         public abstract IEnumerator<T> GetEnumerator();
 
         #endregion IEnumerable
+
+        internal abstract PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate);
     }
 
     /// <summary>
@@ -4261,6 +4268,20 @@ namespace System.Management.Automation
                 return _members.Values.OfType<T>().ToList().GetEnumerator();
             }
         }
+
+        internal override PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate)
+        {
+
+            foreach (string name in _members.Keys)
+            {
+                if (predicate.Invoke(name))
+                {
+                    return (T)_members[name];
+                }
+            }
+
+            return null;
+        }
     }
 
     #region CollectionEntry
@@ -4271,11 +4292,14 @@ namespace System.Management.Automation
 
         internal delegate T GetMemberDelegate(PSObject obj, string name);
 
-        internal CollectionEntry(GetMembersDelegate getMembers, GetMemberDelegate getMember,
+        internal delegate PSMemberInfo GetFirstOrDefaultDelegate(PSObject obj, MemberNamePredicate predicate);
+
+        internal CollectionEntry(GetMembersDelegate getMembers, GetMemberDelegate getMember, GetFirstOrDefaultDelegate getGetFirstOrDefault,
             bool shouldReplicateWhenReturning, bool shouldCloneWhenReturning, string collectionNameForTracing)
         {
             GetMembers = getMembers;
             GetMember = getMember;
+            GetGetFirstOrDefault = getGetFirstOrDefault;
             ShouldReplicateWhenReturning = shouldReplicateWhenReturning;
             ShouldCloneWhenReturning = shouldCloneWhenReturning;
             CollectionNameForTracing = collectionNameForTracing;
@@ -4284,12 +4308,15 @@ namespace System.Management.Automation
         internal GetMembersDelegate GetMembers { get; }
 
         internal GetMemberDelegate GetMember { get; }
+        public GetFirstOrDefaultDelegate GetGetFirstOrDefault { get; }
 
         internal bool ShouldReplicateWhenReturning { get; }
 
         internal bool ShouldCloneWhenReturning { get; }
 
         internal string CollectionNameForTracing { get; }
+
+
     }
 
     #endregion CollectionEntry
@@ -4900,6 +4927,21 @@ namespace System.Management.Automation
         public override IEnumerator<T> GetEnumerator()
         {
             return new Enumerator<T>(this);
+        }
+
+        internal override PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate)
+        {
+            for (int i = 0; i < Collections.Count; i++)
+            {
+                var collectionEntry = Collections[i];
+                var res = collectionEntry.GetGetFirstOrDefault(_mshOwner, predicate);
+                if (res != null)
+                {
+                    return res;
+                }
+            }
+
+            return null;
         }
 
         #endregion overrides

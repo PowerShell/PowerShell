@@ -84,6 +84,48 @@ namespace System.Management.Automation
             return null;
         }
 
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
+            bool lookingForParameterizedProperties = typeof(T).IsAssignableFrom(typeof(PSParameterizedProperty));
+            if (lookingForProperties || lookingForParameterizedProperties)
+            {
+                foreach (ComProperty prop in _comTypeInfo.Properties.Values)
+                {
+                    if (prop.IsParameterized)
+                    {
+                        if (lookingForParameterizedProperties)
+                        {
+                            if (predicate.Invoke(prop.Name))
+                            {
+                                return new PSParameterizedProperty(prop.Name, this, obj, prop) as T;
+                            }
+                        }
+                    }
+                    else if (lookingForProperties)
+                    {
+                        return new PSParameterizedProperty(prop.Name, this, obj, prop) as T;
+                    }
+                }
+            }
+
+            bool lookingForMethods = typeof(T).IsAssignableFrom(typeof(PSMethod));
+
+            if (lookingForMethods)
+            {
+                foreach (ComMethod method in _comTypeInfo.Methods.Values)
+                {
+                    if (predicate.Invoke(method.Name))
+                    {
+                        var mshMethod = new PSMethod(method.Name, this, obj, method);
+                        return mshMethod as T;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Retrieves all the members available in the object.
         /// The adapter implementation is encouraged to cache all properties/methods available

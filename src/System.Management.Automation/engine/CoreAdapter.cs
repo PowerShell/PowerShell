@@ -89,6 +89,9 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected abstract T GetMember<T>(object obj, string memberName) where T : PSMemberInfo;
 
+
+        private protected abstract T GetMember<T>(object o, MemberNamePredicate predicate) where T : PSMemberInfo;
+
         /// <summary>
         /// Retrieves all the members available in the object.
         /// The adapter implementation is encouraged to cache all properties/methods available
@@ -381,6 +384,21 @@ namespace System.Management.Automation
             {
                 throw NewException(e, "CatchFromBaseGetMember", "CatchFromBaseGetMemberTI",
                     ExtendedTypeSystem.ExceptionGettingMember, memberName);
+            }
+        }
+
+
+        public T BaseGetMember<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            try
+            {
+                return this.GetMember<T>(obj, predicate);
+            }
+            catch (ExtendedTypeSystemException) { throw; }
+            catch (Exception e)
+            {
+                throw NewException(e, "CatchFromBaseGetMember", "CatchFromBaseGetMemberTI",
+                    ExtendedTypeSystem.ExceptionGettingMember, "predicate");
             }
         }
 
@@ -1871,6 +1889,7 @@ namespace System.Management.Automation
         #endregion
 
         #endregion base
+
     }
     /// <summary>
     /// Ordered and case insensitive hashtable.
@@ -1903,6 +1922,19 @@ namespace System.Management.Automation
 
                 return this.memberCollection[indexObj];
             }
+        }
+
+        public object GetOrDefault(MemberNamePredicate predicate)
+        {
+            foreach (var entry in _indexes)
+            {
+                if (predicate(entry.Key))
+                {
+                    return entry.Value;
+                }
+            }
+
+            return null;
         }
     }
 
@@ -3472,6 +3504,43 @@ namespace System.Management.Automation
             return null;
         }
 
+        private protected T GetDotNetProperty<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
+            bool lookingForParameterizedProperties = IsTypeParameterizedProperty(typeof(T));
+            if (!lookingForProperties && !lookingForParameterizedProperties)
+            {
+                return null;
+            }
+
+            CacheTable typeTable = _isStatic
+                ? GetStaticPropertyReflectionTable((Type)obj)
+                : GetInstancePropertyReflectionTable(obj.GetType());
+
+            object entry = typeTable.GetOrDefault(predicate);
+            if (entry == null)
+            {
+                return null;
+            }
+
+            if (entry is PropertyCacheEntry propertyEntry && lookingForProperties)
+            {
+                var isHidden = propertyEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                return new PSProperty(propertyEntry.member.Name, this, obj, propertyEntry) { IsHidden = isHidden } as T;
+            }
+
+            if (entry is ParameterizedPropertyCacheEntry parameterizedPropertyEntry && lookingForParameterizedProperties)
+            {
+                // TODO: check for HiddenAttribute
+                // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
+                // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
+                return new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
+                    this, obj, parameterizedPropertyEntry) as T;
+            }
+
+            return null;
+        }
+
         internal T GetDotNetMethod<T>(object obj, string methodName) where T : PSMemberInfo
         {
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
@@ -3502,6 +3571,39 @@ namespace System.Management.Automation
             }
 
             return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
+        }
+
+        private protected T GetDotNetMethod<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
+            {
+                return null;
+            }
+
+            CacheTable typeTable = _isStatic
+                ? GetStaticMethodReflectionTable((Type)obj)
+                : GetInstanceMethodReflectionTable(obj.GetType());
+
+            var methodCacheEntry = (MethodCacheEntry)typeTable.GetOrDefault(predicate);
+            if (methodCacheEntry == null)
+            {
+                return null;
+            }
+
+            MethodBase firstMethod = methodCacheEntry[0].method;
+            var isCtor = firstMethod is ConstructorInfo;
+            bool isSpecial = !isCtor && firstMethod.IsSpecialName;
+            bool isHidden = false;
+            foreach (var method in methodCacheEntry.methodInformationStructures)
+            {
+                if (method.method.GetCustomAttributes(typeof(HiddenAttribute), false).Any())
+                {
+                    isHidden = true;
+                    break;
+                }
+            }
+
+            return PSMethod.Create(firstMethod.Name, this, obj, methodCacheEntry, isSpecial, isHidden) as T;
         }
 
         internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
@@ -3674,6 +3776,145 @@ namespace System.Management.Automation
             T returnValue = GetDotNetProperty<T>(obj, memberName);
             if (returnValue != null) return returnValue;
             return GetDotNetMethod<T>(obj, memberName);
+        }
+
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            return GetFirstPropertyOrDefault<T>(obj, predicate) ?? GetFirstMethodOrDefault<T>(obj, predicate) ??
+                   GetFirstEventOrDefault<T>(obj, predicate) ?? GetFirstDynamicMemberOrDefault<T>(obj, predicate);
+        }
+
+        private protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            var idmop = obj as IDynamicMetaObjectProvider;
+            if (idmop == null || obj is PSObject)
+            {
+                return null;
+            }
+
+            if (!typeof(T).IsAssignableFrom(typeof(PSDynamicMember)))
+            {
+                return null;
+            }
+
+            foreach (var name in idmop.GetMetaObject(Expression.Variable(idmop.GetType())).GetDynamicMemberNames())
+            {
+                if (predicate(name))
+                {
+                    return new PSDynamicMember(name) as T;
+                }
+            }
+
+            return null;
+        }
+
+        private protected T GetFirstEventOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
+            {
+                return null;
+            }
+
+            var table = _isStatic
+                ? GetStaticEventReflectionTable((Type)obj)
+                : GetInstanceEventReflectionTable(obj.GetType());
+
+            foreach (var psEvent in table.Values)
+            {
+                if (predicate(psEvent.events[0].Name))
+                {
+                    return new PSEvent(psEvent.events[0]) as T;
+                }
+            }
+
+            return null;
+        }
+
+        private protected T GetFirstMethodOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
+            {
+                return null;
+            }
+
+            CacheTable table = _isStatic
+                ? GetStaticMethodReflectionTable((Type)obj)
+                : GetInstanceMethodReflectionTable(obj.GetType());
+
+            for (int i = 0; i < table.memberCollection.Count; i++)
+            {
+                var method = (MethodCacheEntry)table.memberCollection[i];
+                var isCtor = method[0].method is ConstructorInfo;
+                var name = isCtor ? "new" : method[0].method.Name;
+
+                if (predicate(name))
+                {
+                    bool isSpecial = !isCtor && method[0].method.IsSpecialName;
+                    bool isHidden = false;
+                    foreach (var m in method.methodInformationStructures)
+                    {
+                        if (m.method.GetCustomAttributes(typeof(HiddenAttribute), false).Any())
+                        {
+                            isHidden = true;
+                            break;
+                        }
+                    }
+
+                    var retVal = PSMethod.Create(name, this, obj, method, isSpecial, isHidden) as T;
+                    return retVal;
+                }
+            }
+
+            return null;
+        }
+
+        private protected T GetFirstPropertyOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
+            bool lookingForParameterizedProperties = IsTypeParameterizedProperty(typeof(T));
+            if (!lookingForProperties && !lookingForParameterizedProperties)
+            {
+                return null;
+            }
+
+            CacheTable table = _isStatic
+                ? GetStaticPropertyReflectionTable((Type)obj)
+                : GetInstancePropertyReflectionTable(obj.GetType());
+
+            for (int i = 0; i < table.memberCollection.Count; i++)
+            {
+                var propertyEntry = table.memberCollection[i] as PropertyCacheEntry;
+                if (propertyEntry != null)
+                {
+                    if (lookingForProperties)
+                    {
+
+                        if (predicate(propertyEntry.member.Name))
+                        {
+                            var isHidden = propertyEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                            var retVal = new PSProperty(propertyEntry.member.Name, this,
+                                    obj, propertyEntry)
+                                { IsHidden = isHidden } as T;
+                            return retVal;
+                        }
+                    }
+                }
+                else if (lookingForParameterizedProperties)
+                {
+                    var parameterizedPropertyEntry = (ParameterizedPropertyCacheEntry)table.memberCollection[i];
+                    if (predicate(propertyEntry.member.Name))
+                    {
+                        // TODO: check for HiddenAttribute
+                        // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
+                        // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
+                        var retVal = new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
+                            this, obj, parameterizedPropertyEntry) as T;
+                        return retVal;
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -4375,6 +4616,8 @@ namespace System.Management.Automation
         #endregion parameterized property
 
         #endregion virtual
+
+
     }
 
     #region DotNetAdapterWithOnlyPropertyLookup
@@ -4387,6 +4630,43 @@ namespace System.Management.Automation
     /// </remarks>
     internal class BaseDotNetAdapterForAdaptedObjects : DotNetAdapter
     {
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            PSProperty property = base.GetDotNetProperty<PSProperty>(obj, predicate);
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (property != null))
+            {
+                return property as T;
+            }
+
+            // In order to not break v1..base dotnet adapter should not return methods
+            // when accessed with T as PSMethod.. accessing method with PSMemberInfo
+            // is ok as property always gets precedence over methods and duplicates
+            // are ignored.
+            if (typeof(T) == typeof(PSMemberInfo))
+            {
+                T returnValue = base.GetDotNetMethod<T>(obj, predicate);
+                // We only return a method if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (returnValue != null && property == null)
+                {
+                    return returnValue;
+                }
+            }
+
+            if (IsTypeParameterizedProperty(typeof(T)))
+            {
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+                // We only return a parameterized property if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (parameterizedProperty != null && property == null)
+                {
+                    return parameterizedProperty as T;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Return a collection representing the <paramref name="obj"/> object's
         /// members as returned by CLR reflection.
@@ -4628,6 +4908,11 @@ namespace System.Management.Automation
             return ((PSObject)obj).Members[memberName] as T;
         }
 
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            return ((PSObject)obj).GetFirstPropertyOrDefault(predicate) as T;
+        }
+
         /// <summary>
         /// Retrieves all the members available in the object.
         /// The adapter implementation is encouraged to cache all properties/methods available
@@ -4685,6 +4970,19 @@ namespace System.Management.Automation
         protected override T GetMember<T>(object obj, string memberName)
         {
             return ((PSMemberSet)obj).Members[memberName] as T;
+        }
+
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            foreach (var mem in ((PSMemberSet)obj).Members)
+            {
+                if (predicate(mem.Name))
+                {
+                    return mem as T;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -4755,6 +5053,8 @@ namespace System.Management.Automation
         /// <param name="propertyName">Name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected abstract PSProperty DoGetProperty(object obj, string propertyName);
+
+        private protected abstract PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate);
 
         /// <summary>
         /// Retrieves all the properties available in the object.
@@ -4843,6 +5143,40 @@ namespace System.Management.Automation
             }
 
             return returnValue;
+        }
+
+        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        {
+            PSProperty property = DoGetFirstPropertyOrDefault(obj, predicate);
+
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)))
+            {
+                return DoGetFirstPropertyOrDefault(obj, predicate) as T;
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
+            {
+                T returnValue = base.GetDotNetMethod<T>(obj, predicate);
+                // We only return a method if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (returnValue != null && property == null)
+                {
+                    return returnValue;
+                }
+            }
+
+            if (IsTypeParameterizedProperty(typeof(T)))
+            {
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+                // We only return a parameterized property if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (parameterizedProperty != null && property == null)
+                {
+                    return parameterizedProperty as T;
+                }
+            }
+
+            return null;
         }
     }
 
@@ -4957,6 +5291,18 @@ namespace System.Management.Automation
             }
 
             return new PSProperty(nodes[0].LocalName, this, obj, nodes);
+        }
+
+
+        private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            XmlNode node = FindFirstNodeOrDefault(obj, predicate);
+            if (node == null)
+            {
+                return null;
+            }
+
+            return new PSProperty(node.LocalName, this, obj, node);
         }
 
         /// <summary>
@@ -5200,6 +5546,39 @@ namespace System.Management.Automation
 
             return retValue.ToArray();
         }
+
+        private static XmlNode FindFirstNodeOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            List<XmlNode> retValue = new List<XmlNode>();
+            XmlNode node = (XmlNode)obj;
+
+            if (node.Attributes != null)
+            {
+                foreach (XmlNode attribute in node.Attributes)
+                {
+                    if (predicate(attribute.LocalName))
+                    {
+                        return node;
+                    }
+                }
+            }
+
+            foreach (XmlNode childNode in node.ChildNodes)
+            {
+                if (childNode is XmlWhitespace)
+                {
+                    // Win8: 437544 ignore whitespace
+                    continue;
+                }
+
+                if (predicate(childNode.LocalName))
+                {
+                    return childNode;
+                }
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
@@ -5208,6 +5587,7 @@ namespace System.Management.Automation
     internal class DataRowAdapter : PropertyOnlyAdapter
     {
         #region virtual
+
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
@@ -5248,6 +5628,22 @@ namespace System.Management.Automation
             string columnName = dataRow.Table.Columns[propertyName].ColumnName;
             return new PSProperty(columnName, this, obj, columnName);
         }
+
+        private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            DataRow dataRow = (DataRow)obj;
+
+            foreach (DataColumn property in dataRow.Table.Columns)
+            {
+                if (predicate(property.ColumnName))
+                {
+                    return new PSProperty(property.ColumnName, this, obj, property.ColumnName);
+                }
+            }
+
+            return null;
+        }
+
 
         /// <summary>
         /// Returns the name of the type corresponding to the property.
@@ -5355,6 +5751,23 @@ namespace System.Management.Automation
             string columnName = dataRowView.Row.Table.Columns[propertyName].ColumnName;
             return new PSProperty(columnName, this, obj, columnName);
         }
+
+        private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            DataRowView dataRowView = (DataRowView)obj;
+
+            foreach (DataColumn column in dataRowView.Row.Table.Columns)
+            {
+                string columnName = column.ColumnName;
+                if (predicate(columnName))
+                {
+                    return new PSProperty(columnName, this, obj, columnName);
+                }
+            }
+
+            return null;
+        }
+
 
         /// <summary>
         /// Returns the name of the type corresponding to the property.
