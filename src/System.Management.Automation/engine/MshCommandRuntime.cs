@@ -28,6 +28,12 @@ namespace System.Management.Automation
     /// </summary>
     internal class MshCommandRuntime : ICommandRuntime2
     {
+        internal const string WriteErrorStreamPropertyName = "WriteErrorStream";
+        internal const string WriteWarningStreamPropertyName = "WriteWarningStream";
+        internal const string WriteVerboseStreamPropertyName = "WriteVerboseStream";
+        internal const string WriteDebugStreamPropertyName = "WriteDebugStream";
+        internal const string WriteInformationStreamPropertyName = "WriteInformationStream";
+
         #region private_members
 
         /// <summary>
@@ -488,9 +494,9 @@ namespace System.Management.Automation
 
                     // Add note property so that the debug output is formatted correctly.
                     PSObject debugWrap = PSObject.AsPSObject(record);
-                    if (debugWrap.Members["WriteDebugStream"] == null)
+                    if (debugWrap.Members[WriteDebugStreamPropertyName] == null)
                     {
-                        debugWrap.Properties.Add(new PSNoteProperty("WriteDebugStream", true));
+                        debugWrap.Properties.Add(new PSNoteProperty(WriteDebugStreamPropertyName, true));
                     }
 
                     DebugOutputPipe.Add(debugWrap);
@@ -579,9 +585,9 @@ namespace System.Management.Automation
 
                     // Add note property so that the verbose output is formatted correctly.
                     PSObject verboseWrap = PSObject.AsPSObject(record);
-                    if (verboseWrap.Members["WriteVerboseStream"] == null)
+                    if (verboseWrap.Members[WriteVerboseStreamPropertyName] == null)
                     {
-                        verboseWrap.Properties.Add(new PSNoteProperty("WriteVerboseStream", true));
+                        verboseWrap.Properties.Add(new PSNoteProperty(WriteVerboseStreamPropertyName, true));
                     }
 
                     VerboseOutputPipe.Add(verboseWrap);
@@ -670,9 +676,9 @@ namespace System.Management.Automation
 
                     // Add note property so that the warning output is formatted correctly.
                     PSObject warningWrap = PSObject.AsPSObject(record);
-                    if (warningWrap.Members["WriteWarningStream"] == null)
+                    if (warningWrap.Members[WriteWarningStreamPropertyName] == null)
                     {
-                        warningWrap.Properties.Add(new PSNoteProperty("WriteWarningStream", true));
+                        warningWrap.Properties.Add(new PSNoteProperty(WriteWarningStreamPropertyName, true));
                     }
 
                     WarningOutputPipe.AddWithoutAppendingOutVarList(warningWrap);
@@ -735,9 +741,9 @@ namespace System.Management.Automation
 
                     // Add note property so that the information output is formatted correctly.
                     PSObject informationWrap = PSObject.AsPSObject(record);
-                    if (informationWrap.Members["WriteInformationStream"] == null)
+                    if (informationWrap.Members[WriteInformationStreamPropertyName] == null)
                     {
-                        informationWrap.Properties.Add(new PSNoteProperty("WriteInformationStream", true));
+                        informationWrap.Properties.Add(new PSNoteProperty(WriteInformationStreamPropertyName, true));
                     }
 
                     InformationOutputPipe.Add(informationWrap);
@@ -2845,9 +2851,9 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError && errorWrap.Members["writeErrorStream"] == null)
+            if (!isNativeError && errorWrap.Members[WriteErrorStreamPropertyName] == null)
             {
-                PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
+                PSNoteProperty note = new PSNoteProperty(WriteErrorStreamPropertyName, true);
                 errorWrap.Properties.Add(note);
             }
 
@@ -3566,7 +3572,7 @@ namespace System.Management.Automation
                 CBhost.InternalUI.TranscribeResult(inquireCaption);
                 CBhost.InternalUI.TranscribeResult(inquireMessage);
 
-                System.Text.StringBuilder textChoices = new System.Text.StringBuilder();
+                Text.StringBuilder textChoices = new Text.StringBuilder();
                 foreach (ChoiceDescription choice in choices)
                 {
                     if (textChoices.Length > 0)

@@ -23,6 +23,7 @@
 //
 
 using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -155,33 +156,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// based on note properties of a PSObject object.
         /// </summary>
         /// <param name="so">PSObject.</param>
-        internal void SetStreamTypeFromPSObject(
-            System.Management.Automation.PSObject so)
+        internal void SetStreamTypeFromPSObject(PSObject so)
         {
-            if (PSObjectHelper.IsWriteErrorStream(so))
+            WriteStreamType GetStreamType(string propertyName)
             {
-                writeStream = WriteStreamType.Error;
+                switch (propertyName)
+                {
+                    case MshCommandRuntime.WriteErrorStreamPropertyName:
+                        return WriteStreamType.Error;
+                    case MshCommandRuntime.WriteWarningStreamPropertyName:
+                        return WriteStreamType.Warning;
+                    case MshCommandRuntime.WriteVerboseStreamPropertyName:
+                        return WriteStreamType.Verbose;
+                    case MshCommandRuntime.WriteDebugStreamPropertyName:
+                        return WriteStreamType.Debug;
+                    case MshCommandRuntime.WriteInformationStreamPropertyName:
+                        return WriteStreamType.Information;
+                    default:
+                        return WriteStreamType.None;
+                }
             }
-            else if (PSObjectHelper.IsWriteWarningStream(so))
+
+
+            bool IsStreamName(string name)
             {
-                writeStream = WriteStreamType.Warning;
+                switch (name)
+                {
+                    case MshCommandRuntime.WriteErrorStreamPropertyName:
+                    case MshCommandRuntime.WriteWarningStreamPropertyName:
+                    case MshCommandRuntime.WriteVerboseStreamPropertyName:
+                    case MshCommandRuntime.WriteDebugStreamPropertyName:
+                    case MshCommandRuntime.WriteInformationStreamPropertyName:
+                        return true;
+                    default:
+                        return false;
+                }
             }
-            else if (PSObjectHelper.IsWriteVerboseStream(so))
-            {
-                writeStream = WriteStreamType.Verbose;
-            }
-            else if (PSObjectHelper.IsWriteDebugStream(so))
-            {
-                writeStream = WriteStreamType.Debug;
-            }
-            else if (PSObjectHelper.IsWriteInformationStream(so))
-            {
-                writeStream = WriteStreamType.Information;
-            }
-            else
-            {
-                writeStream = WriteStreamType.None;
-            }
+
+            var member = so.GetFirstInstanceMemberOrDefault(IsStreamName);
+            writeStream = member != null ? GetStreamType(member.Name) : WriteStreamType.None;
         }
     }
     #endregion

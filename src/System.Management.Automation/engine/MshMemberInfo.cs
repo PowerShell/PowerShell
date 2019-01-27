@@ -3682,6 +3682,8 @@ namespace System.Management.Automation
         }
     }
 
+    internal delegate bool MemberNamePredicate(string memberName);
+
     /// <summary>
     /// Serves as the collection of members in an PSObject or MemberSet.
     /// </summary>

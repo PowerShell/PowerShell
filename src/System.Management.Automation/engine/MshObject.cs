@@ -2310,6 +2310,28 @@ namespace System.Management.Automation
             set => _isHelpObject = value;
         }
 
+        /// <summary>
+        /// Gets an instance member if it's name matches the predicate. Otherwise null.
+        /// </summary>
+        internal PSMemberInfo GetFirstInstanceMemberOrDefault(MemberNamePredicate predicate)
+        {
+            if (_instanceMembers == null)
+            {
+                return null;
+            }
+
+            foreach (var instanceMember in _instanceMembers)
+            {
+                var found = predicate.Invoke(instanceMember.Name);
+                if (found)
+                {
+                    return instanceMember;
+                }
+            }
+
+            return null;
+        }
+
         private bool _isHelpObject = false;
 
         #endregion
