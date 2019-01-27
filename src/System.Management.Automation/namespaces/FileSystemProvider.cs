@@ -344,13 +344,16 @@ namespace Microsoft.PowerShell.Commands
         // OneDrive placeholder support
 #if !UNIX
         [DllImport("ntdll.dll")]
-        internal static extern char RtlQueryProcessPlaceholderCompatibilityMode();
+        internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
         [DllImport("ntdll.dll")]
-        internal static extern char RtlSetProcessPlaceholderCompatibilityMode(char pcm);
+        internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
 
-        internal const char PhcmDisguisePlaceholder = (char)1;
-        internal const char PhcmExposePlaceholders = (char)2;
-        
+        internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
+        internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
+        internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
+        internal const sbyte PHCM_MAX = 2;
+        internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
+        internal const sbyte PHCM_ERROR_NO_TEB = -2;
 #endif
 
         /// <summary>
@@ -391,9 +394,9 @@ namespace Microsoft.PowerShell.Commands
             if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (PhcmDisguisePlaceholder == RtlQueryProcessPlaceholderCompatibilityMode())
+                if (PHCM_DISGUISE_PLACEHOLDER == RtlQueryProcessPlaceholderCompatibilityMode())
                 {
-                    RtlSetProcessPlaceholderCompatibilityMode(PhcmExposePlaceholders);
+                    RtlSetProcessPlaceholderCompatibilityMode(PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
 #endif
