@@ -1566,7 +1566,8 @@ namespace System.Management.Automation
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(entry.Key, functionPatterns, false))
                     {
                         sessionState.ExportedFunctions.Add(entry.Value);
-                        string message = StringUtil.Format(Modules.ExportingFunction, entry.Key);
+                        string filename = Path.GetFileName(sessionState.Module.Path);
+                        string message = StringUtil.Format(Modules.ExportingFunction, entry.Key, filename);
                         cmdlet.WriteVerbose(message);
                     }
                 }

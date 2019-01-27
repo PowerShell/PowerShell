@@ -7356,6 +7356,13 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(Modules.ImportingFunction, prefixedName);
                 cmdlet.WriteVerbose(message);
             }
+            else
+            {
+                string manifestFilename = Path.GetFileName(cmdlet.Context.PreviousModuleProcessed);
+                string moduleFileName = Path.GetFileName(sourceModule.Path);
+                message = StringUtil.Format(Modules.NotImportingFunction, func.Name, moduleFileName, manifestFilename);
+                cmdlet.WriteVerbose(message);
+            }
         }
 
         private static void SetCommandVisibility(bool isImportModulePrivate, CommandInfo command)

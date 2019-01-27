@@ -294,6 +294,9 @@
   <data name="ImportingFunction" xml:space="preserve">
     <value>Importing function '{0}'.</value>
   </data>
+  <data name="NotImportingFunction" xml:space="preserve">
+    <value>Not exporting function '{0}' from '{1}' via '{2}'.</value>
+  </data>
   <data name="ImportingCmdlet" xml:space="preserve">
     <value>Importing cmdlet '{0}'.</value>
   </data>
@@ -307,7 +310,7 @@
     <value>Exporting cmdlet '{0}'.</value>
   </data>
   <data name="ExportingFunction" xml:space="preserve">
-    <value>Exporting function '{0}'.</value>
+    <value>Exporting function '{0}' from '{1}'.</value>
   </data>
   <data name="ExportingAlias" xml:space="preserve">
     <value>Exporting alias '{0}'.</value>
