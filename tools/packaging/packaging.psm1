@@ -3173,13 +3173,7 @@ function New-DotnetSdkContainerFxdPackage {
     }
 
     if (Test-Path $destinationPackageFullName) {
-        $containerName = if ($Environment.IsWindows) {
-            "signedResults"
-        } else {
-            "release"
-        }
-
-        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$destinationPackageFullName"
+        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
     } else {
         Write-Log "Package not found: $destinationPackageFullName"
     }

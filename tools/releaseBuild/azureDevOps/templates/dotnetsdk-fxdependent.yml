@@ -63,7 +63,7 @@ jobs:
       itemPattern: |
         **/*fxd-dotnetsdk.zip
         **/*fxd-dotnetsdk.tar.gz
-      downloadPath: '$(System.ArtifactsDirectory)\release'
+      downloadPath: '$(System.ArtifactsDirectory)'
     condition: succeeded()
 
   - powershell: |
