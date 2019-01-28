@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
 param ( [switch]$Force, [switch]$UseExistingMsi )
 
 $script:Constants =  @{
@@ -9,31 +8,6 @@ $script:Constants =  @{
     TestImageName = "remotetestimage"
     MsiName       = "PSCore.msi"
     Token         = "" # in this particular use we don't need a token
-}
-
-function Get-AppVeyorBuildArtifact {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$build,
-        [string]$downloadFolder = '.',
-        [string]$artifactFilter = '*.msi',
-        [string]$artifactLocalFileName = $Constants.MsiName
-    )
-
-    $headers = @{
-      'Authorization' = "Bearer {0}" -f $Constants.Token
-      'Content-type' = 'application/json'
-    }
-
-    # here we just take the first artifact, but you could specify its file name
-    # $artifactFileName = 'MyWebApp.zip'
-    $artifact = $artifacts | Where-Object {$_.fileName -like $artifactFilter} | Select-Object -First 1
-    $artifactFileName = $artifact.fileName
-
-    # artifact will be downloaded as
-    $localArtifactPath = "$downloadFolder\$artifactLocalFileName"
-    return $localArtifactPath
 }
 
 ############
