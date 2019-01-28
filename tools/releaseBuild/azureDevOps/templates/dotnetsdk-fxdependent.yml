@@ -49,9 +49,9 @@ jobs:
     displayName: 'Download FxDependent dotnet sdx artifacts'
     inputs:
       downloadType: specific
-      itemPattern:
-        **/*dotnet*.tar.gz
-        **/*dotnet*.zip
+      itemPattern: |
+        **/*fxd-dotnetsdk.zip
+        **/*fxd-dotnetsdk.tar.gz
       downloadPath: '$(System.ArtifactsDirectory)\release'
     condition: succeeded()
 
