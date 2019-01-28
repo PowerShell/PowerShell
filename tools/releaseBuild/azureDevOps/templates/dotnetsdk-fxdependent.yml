@@ -45,6 +45,17 @@ jobs:
   pool: Package ES CodeHub Lab E
   steps:
 
+  - powershell: |
+      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
+    displayName: 'Run setReleaseTag.ps1'
+
+  - powershell: |
+      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
+      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set Version for Blob Storage'
+
   - task: DownloadBuildArtifacts@0
     displayName: 'Download FxDependent dotnet sdx artifacts'
     inputs:
