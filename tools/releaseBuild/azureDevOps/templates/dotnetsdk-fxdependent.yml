@@ -38,15 +38,32 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: 'Set Version for Blob Storage'
 
+- job:
+  displayName: Upload fxdependent package dotnet sdk - ${{ parameters.buildName }}
+  dependsOn: dotnetfxd_${{ parameters.buildName }}
+  condition: succeeded()
+  pool: Package ES CodeHub Lab E
+  steps:
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download FxDependent dotnet sdx artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern:
+        **/*dotnet*.tar.gz
+        **/*dotnet*.zip
+      downloadPath: '$(System.ArtifactsDirectory)\release'
+    condition: succeeded()
+
+  - powershell: |
+      Get-ChildItem '$(System.ArtifactsDirectory)\release'
+    displayName: List downloaded artifacts
+
   - task: AzureFileCopy@1
     displayName: 'Upload to azure'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\finished\release'
+      SourcePath: '$(System.ArtifactsDirectory)\release'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
-
-
-
-
