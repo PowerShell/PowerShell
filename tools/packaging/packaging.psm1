@@ -2899,7 +2899,7 @@ function Test-FileWxs
                 Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
-        elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
+        elseif ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
         }

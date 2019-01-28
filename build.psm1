@@ -553,6 +553,9 @@ function Restore-PSModuleToBuild
     Write-Log "Restore PowerShell modules to $publishPath"
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
     Copy-PSGalleryModules -Destination $modulesDir -CsProjPath "$PSScriptRoot\src\Modules\PSGalleryModules.csproj"
+
+    # Remove .nupkg.metadata files
+    Get-ChildItem $PublishPath -Filter '.nupkg.metadata' -Recurse | ForEach-Object { Remove-Item $_.FullName -ErrorAction SilentlyContinue -Force }
 }
 
 function Restore-PSPester
@@ -1200,10 +1203,7 @@ function Publish-TestResults
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
 
-        if($env:BUILD_REASON -ne 'PullRequest')
-        {
-            Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
-        }
+        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
     }
 }
 

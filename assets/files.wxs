@@ -1988,12 +1988,6 @@
           <File Id="fil3779A5AC06BDD2A3AB680DBA83FEAFD1" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.resources.dll" />
         </Component>
       </Directory>
-      <Component Id="cmp7641086BD8244AFAAA244FAB40CE60BC" Guid="{2dc3fc9a-086e-4bae-85a4-03322c6a682f}">
-        <File Id="fil65BC2FC2686842A4B38CCBF9F54B2DD3" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26919.02.dll" />
-      </Component>
-      <Component Id="cmp2B1B284B631547EEB86D29E84D2E9611" Guid="{1d6e6de9-0af0-4669-9cf8-d731d43f3e8a}">
-        <File Id="fil1B414FC15B084BD9B4F5B1ACC5EC5084" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26919.02.dll" />
-      </Component>
       <Directory Name="Schemas" Id="dir1DB5B24CC3494785974A51F28F128069">
         <Directory Name="PSMaml" Id="dirAC38B2C7629B42DC836E01F976A10EC9">
           <Component Id="cmp8A3254D57ABF4F828B08648187233EE4" Guid="{a3884164-5b6c-4854-9fd7-81a0721f7cab}">
@@ -2157,6 +2151,12 @@
           </Component>
         </Directory>
       </Directory>
+      <Component Id="cmp4E7DFAA0FFC64A2086B5E85167A999CA" Guid="{81b42f7d-6762-40c2-9d60-6556237257bb}">
+        <File Id="fil3656BAD514F342A1851A7B407BF26FF2" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27129.04.dll" />
+      </Component>
+      <Component Id="cmp31ACA290CAB14FC7BBE32FA6A742DC1F" Guid="{cd6a9423-1a98-4770-a760-6685c93df590}">
+        <File Id="filE94DF8CA4F8C4B948FF884E2114A3EF9" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27129.04.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2794,8 +2794,6 @@
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
       <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
       <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
-      <ComponentRef Id="cmp7641086BD8244AFAAA244FAB40CE60BC" />
-      <ComponentRef Id="cmp2B1B284B631547EEB86D29E84D2E9611" />
       <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
       <ComponentRef Id="cmp8A3254D57ABF4F828B08648187233EE4" />
       <ComponentRef Id="cmpC29B22A77B6341C88E4D6CD2876F3BCF" />
@@ -2850,6 +2848,8 @@
       <ComponentRef Id="cmpED253ABCC1354C58A65CD4D41F7ABB3A" />
       <ComponentRef Id="cmp074868368CB24A33962BC4DB7B809C4F" />
       <ComponentRef Id="cmpFF8643F8CC97462CAC20815F6071203B" />
+      <ComponentRef Id="cmp4E7DFAA0FFC64A2086B5E85167A999CA" />
+      <ComponentRef Id="cmp31ACA290CAB14FC7BBE32FA6A742DC1F" />
     </ComponentGroup>
   </Fragment>
 </Wix>
