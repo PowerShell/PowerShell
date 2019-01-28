@@ -35,7 +35,7 @@ You can download and install a PowerShell package for any of the following platf
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
-| [OpenSUSE 42.2][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse422]|
+| [openSUSE 42.3][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
 | [Fedora 27, Fedora 28][corefx-linux]       | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
 | [macOS 10.12+][corefx-macos]               | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | Docker                                     |                         |                       | [Instructions][in-docker]     |
@@ -100,7 +100,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
 [in-centos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
 [in-rhel7]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse-422
+[in-opensuse]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse
 [in-fedora]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora
 [in-archlinux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#arch-linux
 [in-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
@@ -111,9 +111,9 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-tar-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6#binary-archives
 [in-raspbian]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#raspbian
 [in-arm]: https://docs.microsoft.com/powershell/scripting/setup/powershell-core-on-arm?view=powershell-6
-[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#windows
-[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux
-[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#macos
+[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#windows
+[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#linux
+[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#macos
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
