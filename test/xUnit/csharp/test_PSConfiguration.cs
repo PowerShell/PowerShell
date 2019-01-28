@@ -264,9 +264,9 @@ namespace PSTests.Sequential
 
         public void CleanupConfigFiles()
         {
-            var count = 10;
+            var maxPause = 10;
 
-            while (count-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
+            while (maxPause-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
             {
                 var pause = false;
 
@@ -274,7 +274,7 @@ namespace PSTests.Sequential
                 {
                     File.Delete(systemWideConfigFile);
                 }
-                catch
+                catch (IOException)
                 {
                     pause = true;
                 }
@@ -283,7 +283,7 @@ namespace PSTests.Sequential
                 {
                     File.Delete(currentUserConfigFile);
                 }
-                catch
+                catch (IOException)
                 {
                     pause = true;
                 }
