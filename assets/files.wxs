@@ -2217,6 +2217,12 @@
       <Component Id="cmpB28FF85D361548D29C90E05F1F9DA4CE" Guid="{90a4491f-d038-47b9-8aed-27c594ee8fdc}">
         <File Id="fil7F692C9DD31A4581B2C138D415FAE9E1" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Windows.Forms.dll" />
       </Component>
+      <Component Id="cmp4E7DFAA0FFC64A2086B5E85167A999CA" Guid="{81b42f7d-6762-40c2-9d60-6556237257bb}">
+        <File Id="fil3656BAD514F342A1851A7B407BF26FF2" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27129.04.dll" />
+      </Component>
+      <Component Id="cmp31ACA290CAB14FC7BBE32FA6A742DC1F" Guid="{cd6a9423-1a98-4770-a760-6685c93df590}">
+        <File Id="filE94DF8CA4F8C4B948FF884E2114A3EF9" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27129.04.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2930,6 +2936,8 @@
       <ComponentRef Id="cmp09A947F50F8A49E697F60B8E3F1044CD" />
       <ComponentRef Id="cmp2F9D50E3E1F546ABAD233BB100DD66D6" />
       <ComponentRef Id="cmpB28FF85D361548D29C90E05F1F9DA4CE" />
+      <ComponentRef Id="cmp4E7DFAA0FFC64A2086B5E85167A999CA" />
+      <ComponentRef Id="cmp31ACA290CAB14FC7BBE32FA6A742DC1F" />
     </ComponentGroup>
   </Fragment>
 </Wix>

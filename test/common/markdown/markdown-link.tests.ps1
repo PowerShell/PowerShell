@@ -96,7 +96,7 @@ Describe "Verify Markdown Links" {
 
                         $prefix = $url.Substring(0,7)
 
-                        # Logging for diagnosability.  AzDevOps sometimes redacts the full url.
+                        # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
                         Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
@@ -106,11 +106,11 @@ Describe "Verify Markdown Links" {
                             }
                             catch
                             {
-                                throw "retry of url failed with error: $($_.Message)"
+                                throw "retry of URL failed with error: $($_.Message)"
                             }
                         }
                         else {
-                            throw "Tool reported Url as unreachable."
+                            throw "Tool reported URL as unreachable."
                         }
                     }
                 }
