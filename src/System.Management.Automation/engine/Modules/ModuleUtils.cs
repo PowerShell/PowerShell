@@ -25,6 +25,9 @@ namespace System.Management.Automation.Internal
         private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden, BufferSize = 16384 };
 
+        private static readonly string EnCulturePath = Path.DirectorySeparatorChar + "en";
+        private static readonly string EnUsCulturePath = Path.DirectorySeparatorChar + "en-us";
+
         /// <summary>
         /// Check if a directory is likely a localized resources folder.
         /// </summary>
@@ -33,8 +36,8 @@ namespace System.Management.Automation.Internal
         internal static bool IsPossibleResourceDirectory(string dir)
         {
             // Assume locale directories do not contain modules.
-            if (dir.EndsWith(Path.DirectorySeparatorChar + "en", StringComparison.OrdinalIgnoreCase) ||
-                dir.EndsWith(Path.DirectorySeparatorChar + "en-us", StringComparison.OrdinalIgnoreCase))
+            if (dir.EndsWith(EnCulturePath, StringComparison.OrdinalIgnoreCase) ||
+                dir.EndsWith(EnUsCulturePath, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
