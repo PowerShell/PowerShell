@@ -97,7 +97,7 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/README.md#understand-branches)).
 1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/).
 
-A list of Area Experts can be found [here][experts]
+A list of Area Experts can be found [here][experts].
 
 ### Area Expert Responsibilities
 
