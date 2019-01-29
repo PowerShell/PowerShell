@@ -40,5 +40,7 @@ Please **only** use this template if you are a maintainer.
   make sure all changes are either already in master or have
 - [ ] Delete the release branch.
 - [ ] Trigger the docker image release.
+    - [ ] Update tags.yml.
 - [ ] Test and publish NuGet packages on NuGet.org
+- [ ] Trigger Snap release builds and release on [snapcraft.io](https://snapcraft.io)
 - [ ] Retain builds.
