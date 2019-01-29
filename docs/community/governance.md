@@ -82,7 +82,7 @@ After the RFC has been discussed, a unanimous vote will be required for the new 
 
 ## Repository Maintainers
 
-Repository Maintainers are trusted users of the PowerShell community responsible for maintaining consistency and quality of PowerShell code/repository.
+Repository Maintainers are trusted stewards of the PowerShell community/repository responsible for maintaining consistency and quality of PowerShell code.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
 For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
