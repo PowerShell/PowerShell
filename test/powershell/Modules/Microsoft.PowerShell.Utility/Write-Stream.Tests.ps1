@@ -116,7 +116,10 @@ Describe "Stream writer tests" -Tags "CI" {
         }
 
         It "Write-Information accepts `$Null" {
-            $null | Write-Information -ErrorAction Stop | Should -BeNullOrEmpty
+            $streamPath = Join-Path $testdrive information.txt
+            $null | Write-Information -Tags myTag -ErrorAction Stop -InformationAction SilentlyContinue -InformationVariable i
+            $i.Tags | Should -BeExactly "myTag"
+            $i.MessageData | Should -BeNullOrEmpty
         }
     }
 }
