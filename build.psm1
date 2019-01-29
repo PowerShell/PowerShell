@@ -388,13 +388,15 @@ Fix steps:
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
-        $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
+        if ($null -ne $refAssemblies) {
+            $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
-        if (Test-Path $refDestFolder -PathType Container) {
-            Remove-Item $refDestFolder -Force -Recurse -ErrorAction Stop
+            if (Test-Path $refDestFolder -PathType Container) {
+                Remove-Item $refDestFolder -Force -Recurse -ErrorAction Stop
+            }
+            New-Item -Path $refDestFolder -ItemType Directory -Force -ErrorAction Stop > $null
+            Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
         }
-        New-Item -Path $refDestFolder -ItemType Directory -Force -ErrorAction Stop > $null
-        Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
     } finally {
         Pop-Location
     }
