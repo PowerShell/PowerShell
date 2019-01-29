@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of a File System Provider.  This provider
     /// allows for stateless namespace navigation of the file system.
     /// </summary>
-    
     [CmdletProvider(FileSystemProvider.ProviderName, ProviderCapabilities.Credentials | ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess)]
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
