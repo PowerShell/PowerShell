@@ -231,16 +231,16 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb", "nupkg"
+                    "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg", "nupkg"
+                "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg"
             }
@@ -509,7 +509,7 @@ function New-TarballPackage {
 
             if (Test-Path -Path $packagePath) {
                 Write-Log "You can find the tarball package at $packagePath"
-                return $packagePath
+                return (Get-Item $packagePath)
             } else {
                 throw "Failed to create $packageName"
             }
@@ -940,7 +940,7 @@ function New-MacOsDistributionPackage
     try
     {
         # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} > $null
     }
     finally
     {
@@ -948,7 +948,7 @@ function New-MacOsDistributionPackage
         Remove-item -Path $tempDir -Recurse -Force
     }
 
-    return $newPackagePath
+    return (Get-Item $newPackagePath)
 }
 function Get-FpmArguments
 {
@@ -2234,7 +2234,8 @@ function New-NugetContentPackage
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
     {
-        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+        # Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+        Get-Item $nupkgFile
     }
     else
     {

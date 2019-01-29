@@ -359,6 +359,15 @@ elseif($Stage -eq 'Build')
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         foreach($package in $packages)
         {
+            if (Test-Path $package)
+            {
+                Write-Log "Package found: $package"
+            }
+            else
+            {
+                Write-Error -Message "Package NOT found: $package"
+            }
+
             # Publish the packages to the nuget feed if:
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
@@ -368,17 +377,36 @@ elseif($Stage -eq 'Build')
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
+
+            if($isDailyBuild)
+            {
+                if ($package -isnot [System.IO.FileInfo])
+                {
+                    $packageObj = Get-Item $package
+                    Write-Error -Message "The PACKAGE is not a FileInfo object"
+                }
+                else
+                {
+                    $packageObj = $package
+                }
+
+                Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+
+                Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+            }
         }
+
         if ($IsLinux)
         {
             # Create and package Raspbian .tgz
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
-            Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
+            $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
+            Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
 
         if ($isDailyBuild)
         {
-            New-TestPackage -Destination $pwd
+            New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
         }
     }
 
