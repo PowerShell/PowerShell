@@ -68,7 +68,7 @@ jobs:
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\release'
-    displayName: List downloaded artifacts
+    displayName: Capture list of downloaded artifacts
 
   - task: AzureFileCopy@1
     displayName: 'Upload to azure'

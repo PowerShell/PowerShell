@@ -3090,7 +3090,11 @@ function New-DotnetSdkContainerFxdPackage {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory)] $FxdPackagePath,
+
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory)] $ReleaseTag,
+
         [Parameter(Mandatory)] $DestinationPath
     )
 
@@ -3113,7 +3117,7 @@ function New-DotnetSdkContainerFxdPackage {
     $destinationPackageFullName = Join-Path $DestinationPath $packageName
 
     ## Get fxdependent package path
-    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName | Select-Object -First 1
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern.FullName | Select-Object -First 1 -ExpandProperty FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
