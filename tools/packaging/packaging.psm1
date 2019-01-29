@@ -3090,7 +3090,12 @@ function New-DotnetSdkContainerFxdPackage {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory)] $FxdPackagePath,
-        [Parameter(Mandatory)] $ReleaseTag
+
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory)] $ReleaseTag,
+
+        [Parameter(Mandatory)] $DestinationPath
     )
 
     $Version = $ReleaseTag -Replace '^v'
@@ -3109,9 +3114,10 @@ function New-DotnetSdkContainerFxdPackage {
     Write-Log "fxdPackagePath: $FxdPackagePath"
 
     $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
+    $destinationPackageFullName = Join-Path $DestinationPath $packageName
 
     ## Get fxdependent package path
-    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern.FullName | Select-Object -First 1 -ExpandProperty FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
@@ -3152,10 +3158,14 @@ function New-DotnetSdkContainerFxdPackage {
 
                 Write-Verbose -Verbose "Compressing"
 
+                if (-not (Test-Path $DestinationPath)) {
+                    $null = New-Item -ItemType Directory -Path $DestinationPath
+                }
+
                 if ($Environment.IsWindows) {
-                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $FxdPackagePath/$packageName
+                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $destinationPackageFullName -Force
                 } else {
-                    Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+                    Start-NativeExecution { tar -czf "$destinationPackageFullName" . }
                 }
 
                 Write-Log "Compressing complete"
@@ -3166,19 +3176,9 @@ function New-DotnetSdkContainerFxdPackage {
         }
     }
 
-    if (Test-Path "$FxdPackagePath/$packageName") {
-        $containerName = if ($Environment.IsWindows)
-        {
-            "signedResults"
-        }
-        else
-        {
-            "release"
-        }
-
-        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$FxdPackagePath/$packageName"
-
+    if (Test-Path $destinationPackageFullName) {
+        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
     } else {
-        Write-Log "Package not found: $FxdPackagePath/$packageName"
+        Write-Log "Package not found: $destinationPackageFullName"
     }
 }
