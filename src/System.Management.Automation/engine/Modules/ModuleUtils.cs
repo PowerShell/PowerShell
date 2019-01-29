@@ -26,8 +26,10 @@ namespace System.Management.Automation.Internal
                                         new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden, BufferSize = 16384 };
 
         /// <summary>
-        /// Check if a directory is likely a localized resources folder
+        /// Check if a directory is likely a localized resources folder.
         /// </summary>
+        /// <param name="dir">Directory to check if it is a possible resource folder.</param>
+        /// <returns>True if the directory name matches a culture.</returns>
         internal static bool IsPossibleResourceDirectory(string dir)
         {
             // Assume locale directories do not contain modules.
@@ -38,6 +40,7 @@ namespace System.Management.Automation.Internal
             }
 
             dir = Path.GetFileName(dir);
+
             // Use some simple pattern matching to avoid the call into GetCultureInfo when we know it will fail (and throw).
             if ((dir.Length == 2 && char.IsLetter(dir[0]) && char.IsLetter(dir[1]))
                 ||
