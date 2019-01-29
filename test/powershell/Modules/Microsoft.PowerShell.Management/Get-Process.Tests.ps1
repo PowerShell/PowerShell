@@ -22,7 +22,8 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
             $pwshVersion.FileBuildPart | Should -BeExactly $PSVersionTable.PSVersion.Patch
             $gitCommitId = $PSVersionTable.GitCommitId
             if ($gitCommitId.StartsWith("v")) { $gitCommitId = $gitCommitId.Substring(1) }
-            $pwshVersion.ProductVersion.Replace(" Commits: ","-").Replace(" SHA: ","-g") | Should -BeExactly $gitCommitId
+            $productVersion = $pwshVersion.ProductVersion.Replace(" Commits: ","-").Replace(" SHA: ","-g")
+            $gitCommitId | Should -Match $productVersion
         } else {
             $pwshVersion.FileVersion | Should -BeNullOrEmpty
         }
