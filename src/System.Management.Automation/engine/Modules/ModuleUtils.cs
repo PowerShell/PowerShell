@@ -486,7 +486,7 @@ namespace System.Management.Automation.Internal
                         }
                     }
 
-                    string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(modulePath);
+                    string moduleShortName = Path.GetFileNameWithoutExtension(modulePath);
 
                     IDictionary<string, CommandTypes> exportedCommands = AnalysisCache.GetExportedCommands(modulePath, testOnly: false, context);
 
