@@ -4,7 +4,7 @@
 
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
-Repository Maintainers are the only people with write permissions into `master`.
+Repository Maintainers are the only people with write permissions for the `master` branch.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance).
 Area experts are responsible for code reviews, issue triage, and providing their expertise to others.
 * **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
@@ -82,7 +82,7 @@ After the RFC has been discussed, a unanimous vote will be required for the new 
 
 ## Repository Maintainers
 
-Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code.
+Repository Maintainers are trusted users of the PowerShell community responsible for maintaining consistency and quality of PowerShell code/repository.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
 For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
@@ -96,6 +96,8 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 1. `git push` to all branches *except* `master`.
 1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/README.md#understand-branches)).
 1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/).
+
+A list of Area Experts can be found [here][experts]
 
 ### Area Expert Responsibilities
 
@@ -134,3 +136,4 @@ See our [Pull Request Process][pull-request-process]
 [pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md
+[experts]: ../../.github/CODEOWNERS
