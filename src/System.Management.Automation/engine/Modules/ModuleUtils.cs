@@ -16,32 +16,25 @@ namespace System.Management.Automation.Internal
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
         private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = 0 };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden };
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
         private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden, BufferSize = 16384 };
 
         /// <summary>
-        /// Check if a directory could be a module folder.
+        /// Check if a directory is likely a localized resources folder
         /// </summary>
-        internal static bool IsPossibleModuleDirectory(string dir)
+        internal static bool IsPossibleResourceDirectory(string dir)
         {
-            // We shouldn't be searching in hidden directories.
-            FileAttributes attributes = File.GetAttributes(dir);
-            if (0 != (attributes & FileAttributes.Hidden))
-            {
-                return false;
-            }
-
             // Assume locale directories do not contain modules.
-            if (dir.EndsWith(@"\en", StringComparison.OrdinalIgnoreCase) ||
-                dir.EndsWith(@"\en-us", StringComparison.OrdinalIgnoreCase))
+            if (dir.EndsWith(Path.DirectorySeparatorChar + "en", StringComparison.OrdinalIgnoreCase) ||
+                dir.EndsWith(Path.DirectorySeparatorChar + "en-us", StringComparison.OrdinalIgnoreCase))
             {
-                return false;
+                return true;
             }
 
             dir = Path.GetFileName(dir);
@@ -55,12 +48,12 @@ namespace System.Management.Automation.Internal
                     // This might not throw on invalid culture still
                     // 4096 is considered the unknown locale - so assume that could be a module
                     var cultureInfo = new CultureInfo(dir);
-                    return cultureInfo.LCID == 4096;
+                    return cultureInfo.LCID != 4096;
                 }
                 catch { }
             }
 
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -75,6 +68,7 @@ namespace System.Management.Automation.Internal
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
 
+            bool firstSubDirs = true;
             while (directoriesToCheck.Count > 0)
             {
                 string directoryToCheck = directoriesToCheck.Dequeue();
@@ -83,7 +77,7 @@ namespace System.Management.Automation.Internal
                     string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     foreach (string toAdd in subDirectories)
                     {
-                        if (IsPossibleModuleDirectory(toAdd))
+                        if (firstSubDirs || !IsPossibleResourceDirectory(toAdd))
                         {
                             directoriesToCheck.Enqueue(toAdd);
                         }
@@ -105,6 +99,8 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+
+            firstSubDirs = false;
         }
 
         /// <summary>
@@ -304,17 +300,14 @@ namespace System.Management.Automation.Internal
                 {
                     foreach (var subdirectory in subdirectories)
                     {
-                        if (IsPossibleModuleDirectory(subdirectory))
+                        if (subdirectory.EndsWith("Microsoft.PowerShell.Management", StringComparison.OrdinalIgnoreCase) ||
+                            subdirectory.EndsWith("Microsoft.PowerShell.Utility", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (subdirectory.EndsWith("Microsoft.PowerShell.Management", StringComparison.OrdinalIgnoreCase) ||
-                                subdirectory.EndsWith("Microsoft.PowerShell.Utility", StringComparison.OrdinalIgnoreCase))
-                            {
-                                directoriesToCheck.AddFirst(subdirectory);
-                            }
-                            else
-                            {
-                                directoriesToCheck.AddLast(subdirectory);
-                            }
+                            directoriesToCheck.AddFirst(subdirectory);
+                        }
+                        else
+                        {
+                            directoriesToCheck.AddLast(subdirectory);
                         }
                     }
                 }
