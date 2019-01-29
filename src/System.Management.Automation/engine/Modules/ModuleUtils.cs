@@ -16,14 +16,14 @@ namespace System.Management.Automation.Internal
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
         private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden };
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
         private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = System.IO.FileAttributes.Hidden, BufferSize = 16384 };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden, BufferSize = 16384 };
 
         private static readonly string EnCulturePath = Path.DirectorySeparatorChar + "en";
         private static readonly string EnUsCulturePath = Path.DirectorySeparatorChar + "en-us";
