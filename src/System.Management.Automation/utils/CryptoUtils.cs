@@ -92,14 +92,14 @@ namespace System.Management.Automation.Internal
             uint dwFlags,
             ref PSSafeCryptKey phKey)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
         ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
         public static bool CryptDestroyKey(IntPtr hKey)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Internal
             uint dwProvType,
             uint dwFlags)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Internal
         ///dwFlags: DWORD->unsigned int
         public static bool CryptReleaseContext(IntPtr hProv, uint dwFlags)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
 
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Internal
             ref int pdwDataLen,
             int dwBufLen)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Internal
             byte[] pbData,
             ref int pdwDataLen)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Internal
             byte[] pbData,
             ref uint pdwDataLen)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Internal
             uint dwFlags,
             ref PSSafeCryptKey phKey)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: BOOL->int
@@ -207,13 +207,13 @@ namespace System.Management.Automation.Internal
                                                     uint dwFlags,
                                                     ref PSSafeCryptKey phKey)
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 
         /// Return Type: DWORD->unsigned int
         public static uint GetLastError()
         {
-            throw new PSCryptoException();;
+            throw new PSCryptoException();
         }
 #else
 

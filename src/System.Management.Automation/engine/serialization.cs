@@ -1108,7 +1108,9 @@ namespace System.Management.Automation
                 {
                     // the principle used in serialization is that serialization
                     // never throws, and if something can't be serialized nothing
-                    // is written. So we write the elements only if encryption succeeds
+                    // is written. So we write the elements only if encryption succeeds.
+                    // However, in the case for non-Windows where secure string encryption
+                    // is not yet supported, a PSCryptoException will be thrown.
                     string encryptedString;
                     if (_context.cryptoHelper != null)
                     {
