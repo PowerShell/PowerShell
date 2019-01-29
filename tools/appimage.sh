@@ -6,7 +6,7 @@
 # The license of this code and of https://github.com/probonopd/AppImages/raw/e05cbebc62c86f8c602d74d9050bbfbf10df1c69/functions.sh
 # is the MIT License, see https://github.com/probonopd/AppImages/blob/e05cbebc62c86f8c602d74d9050bbfbf10df1c69/LICENSE
 #
-# Generate AppImage, http://appimage.org
+# Generate AppImage, https://appimage.org
 #
 # The resulting PowerShell AppImage is known to run on
 # CentOS-7.0-1406-x86_64-GnomeLive.iso
@@ -99,7 +99,7 @@ get_desktopintegration()
 # TODO:
 # Handle multiple versions of the same AppImage?
 # Handle removed AppImages? Currently we are just setting TryExec=
-# See http://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DELETE
+# See https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DELETE
 # Possibly move this to the C runtime that is part of every AppImage?
 
 # Exit on errors
@@ -112,7 +112,7 @@ if [ ! -z "$DEBUG" ] ; then
 fi
 
 THIS="$0"
-args=("$@") # http://stackoverflow.com/questions/3190818/
+args=("$@") # https://stackoverflow.com/questions/3190818/
 NUMBER_OF_ARGS="$#"
 
 # Please do not change $VENDORPREFIX as it will allow for desktop files
@@ -167,7 +167,7 @@ trap atexit EXIT
 # Note that the following handles 0, 1 or more arguments (file paths)
 # which can include blanks but uses a bashism; can the same be achieved
 # in POSIX-shell? (FIXME)
-# http://stackoverflow.com/questions/3190818
+# https://stackoverflow.com/questions/3190818
 atexit()
 {
   if [ -z "$SKIP" ] ; then
@@ -262,7 +262,7 @@ if [ ! -z "$DESKTOPINTEGRATION" ] ; then
 fi
 
 # Check whether dependencies are present in base system (we do not bundle these)
-# http://cgit.freedesktop.org/xdg/desktop-file-utils/
+# https://cgit.freedesktop.org/xdg/desktop-file-utils/
 check_dep desktop-file-validate
 check_dep update-desktop-database
 check_dep desktop-file-install

@@ -35,7 +35,7 @@ You can download and install a PowerShell package for any of the following platf
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
-| [OpenSUSE 42.2][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse422]|
+| [openSUSE 42.3][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
 | [Fedora 27, Fedora 28][corefx-linux]       | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
 | [macOS 10.12+][corefx-macos]               | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | Docker                                     |                         |                       | [Instructions][in-docker]     |
@@ -56,7 +56,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | macOS                               | [64-bit][rl-macos-tar]                           | [64-bit][pv-macos-tar]                          | [Instructions][in-tar-macos]                   |
 | Linux                               | [64-bit][rl-linux-tar]                           | [64-bit][pv-linux-tar]                          | [Instructions][in-tar-linux]                   |
 | Windows (arm) **Experimental**      | [32-bit][rl-winarm]/[64-bit][rl-winarm64]        | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
-| Raspbian (Stretch) **Experimental** | [.tgz][rl-raspbian]                              | [.tgz][pv-raspbian]                             | [Instructions][in-raspbian]                    |
+| Raspbian (Stretch) **Experimental** | [.tgz][rl-raspbian]                              | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/PowerShell-6.1.2-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.2/PowerShell-6.1.2-win-x86.msi
@@ -89,7 +89,8 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/PowerShell-6.2.0-preview.3-win-x64.zip
 [pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-osx-x64.tar.gz
 [pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-x64.tar.gz
-[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-arm32.tar.gz
+[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-arm32.tar.gz
+[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.3/powershell-6.2.0-preview.3-linux-arm64.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
@@ -99,7 +100,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
 [in-centos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
 [in-rhel7]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse-422
+[in-opensuse]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse
 [in-fedora]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora
 [in-archlinux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#arch-linux
 [in-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
@@ -110,9 +111,9 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-tar-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6#binary-archives
 [in-raspbian]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#raspbian
 [in-arm]: https://docs.microsoft.com/powershell/scripting/setup/powershell-core-on-arm?view=powershell-6
-[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#windows
-[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux
-[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#macos
+[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#windows
+[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#linux
+[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md#macos
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
@@ -166,17 +167,12 @@ If you have any problems building, please consult the developer [FAQ][].
 [az-macos-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=14
 [az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-static-analysis?branchName=master
 [az-spell-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=22
-[tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
 [windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=32
 [linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
 [macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
-[av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
-[av-site]: https://ci.appveyor.com/project/PowerShell/powershell
 [windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
 [linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
 [macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
-[av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
-[av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://codecov.io/gh/PowerShell/PowerShell
 [cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
 [cf-site]: https://www.codefactor.io/repository/github/powershell/powershell

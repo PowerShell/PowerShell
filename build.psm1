@@ -15,7 +15,7 @@ $tagsUpToDate = $false
 # When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
 # Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
 # This function can ensure that tags have been fetched.
-# This function is used during the setup phase in tools/appveyor.psm1 and tools/travis.ps1
+# This function is used during the setup phase in tools/ci.psm1 and tools/travis.ps1
 function Sync-PSTags
 {
     param(
@@ -1615,7 +1615,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
                 # Build tools
                 $Deps += "cmake"
@@ -2312,7 +2312,8 @@ function Copy-PSGalleryModules
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+        # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
         Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }

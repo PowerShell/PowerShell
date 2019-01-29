@@ -5,6 +5,7 @@
 // characters
 //#define TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
+using System;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -93,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str, offset);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -108,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -123,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(character);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -178,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
                 }
-                catch (HostException)
+                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.
@@ -204,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return raw.WindowSize.Height;
                 }
-                catch (HostException)
+                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.

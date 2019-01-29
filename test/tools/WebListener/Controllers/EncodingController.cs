@@ -30,7 +30,27 @@ namespace mvc.Controllers
             mediaType.Encoding = Encoding.UTF8;
             return View();
         }
-        
+
+        public async void Cp936()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var encoding = Encoding.GetEncoding(936);
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            mediaType.Encoding = encoding;
+            Response.ContentType = mediaType.ToString();
+            var body = new byte[]
+            {
+                178,
+                226,
+                202,
+                212,
+                49,
+                50,
+                51
+            };
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

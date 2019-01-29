@@ -1,6 +1,9 @@
 ---
 name: Documentation Issue 📚
 about: File issues regarding documentation within the [PowerShell-Docs](https://github.com/powershell/powershell-docs) repository
+title: "[DOCS] Documentation Issue"
+labels: CL-Docs
+assignees: ''
 
 ---
 
