@@ -115,8 +115,8 @@ Describe "Stream writer tests" -Tags "CI" {
             (Compare-Object $result $returnValue -SyncWindow 0).length | Should -Be 0
         }
 
-        It "Write-Information accespts `$Null" {
-            $null | Write-Information | Should -BeNullOrEmpty
+        It "Write-Information accepts `$Null" {
+            $null | Write-Information -ErrorAction Stop | Should -BeNullOrEmpty
         }
     }
 }
