@@ -177,7 +177,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-
             bool IsStreamName(string name)
             {
                 switch (name)

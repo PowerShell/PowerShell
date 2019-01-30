@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal static class OutOfBandFormatViewManager
     {
-        static bool IsNotRemotingProperty(string name)
+        private static bool IsNotRemotingProperty(string name)
         {
             var isRemotingPropertyName =  name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)

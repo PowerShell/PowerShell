@@ -172,7 +172,6 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-
         internal static string CimTypeToTypeNameDisplayString(CimType cimType)
         {
             switch (cimType)

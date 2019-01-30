@@ -4271,7 +4271,6 @@ namespace System.Management.Automation
 
         internal override PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate)
         {
-
             foreach (string name in _members.Keys)
             {
                 if (predicate.Invoke(name))
@@ -4308,15 +4307,14 @@ namespace System.Management.Automation
         internal GetMembersDelegate GetMembers { get; }
 
         internal GetMemberDelegate GetMember { get; }
-        public GetFirstOrDefaultDelegate GetGetFirstOrDefault { get; }
+
+        internal GetFirstOrDefaultDelegate GetGetFirstOrDefault { get; }
 
         internal bool ShouldReplicateWhenReturning { get; }
 
         internal bool ShouldCloneWhenReturning { get; }
 
         internal string CollectionNameForTracing { get; }
-
-
     }
 
     #endregion CollectionEntry

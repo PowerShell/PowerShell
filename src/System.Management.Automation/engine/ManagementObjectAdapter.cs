@@ -884,6 +884,7 @@ namespace System.Management.Automation
         #region Abstract Methods
 
         protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+
         protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
 
         /// <summary>
