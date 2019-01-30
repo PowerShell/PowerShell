@@ -1867,21 +1867,17 @@ namespace Microsoft.PowerShell.Commands
         /// Provides a mode property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        public static string Mode(PSObject instance)
-        {
-            return Mode(instance, includeHardLink: true);
-        }
+        public static string Mode(PSObject instance) => Mode(instance, includeHardLink: true);
 
         /// <summary>
-        /// Provides a mode property for FileSystemInfo including HardLinks
+        /// Provides a ModeWithoutHardLink property for FileSystemInfo, without HardLinks for performance reasons.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        public static string ModeWithoutHardLink(PSObject instance)
-        {
-            return Mode(instance, includeHardLink: false);
-        }
+        public static string ModeWithoutHardLink(PSObject instance) => Mode(instance, includeHardLink: false);
 
         private static string Mode(PSObject instance, bool includeHardLink)
         {
@@ -1902,6 +1898,7 @@ namespace Microsoft.PowerShell.Commands
             mode[2] = (fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly ? 'r' : '-';
             mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
             mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
+
             // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
             // Porting note: these need to be handled specially
             bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);

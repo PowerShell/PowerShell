@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -83,7 +82,7 @@ return $_.Length";
                         .AddScriptBlockColumn(LengthScriptBlock)
                         .AddPropertyColumn("Name")
                     .EndRowDefinition()
-                    .EndTable());
+                .EndTable());
 
             yield return new FormatViewDefinition("children",
                 ListControl.Create()
