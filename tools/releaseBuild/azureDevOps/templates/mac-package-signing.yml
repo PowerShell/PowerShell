@@ -85,4 +85,4 @@ jobs:
       ContainerName: '$(AzureVersion)'
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run MpCmdRun.exe'
+    displayName: 'Run Defender Scan'

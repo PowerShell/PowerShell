@@ -77,6 +77,9 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)\rpm'
     condition: and(eq(variables['buildName'], 'RPM'),succeeded())
 
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run Defender Scan'
+
   - task: AzureFileCopy@1
     displayName: 'Upload to azure deb and tar.gz'
     inputs:

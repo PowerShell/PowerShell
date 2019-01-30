@@ -42,7 +42,7 @@ jobs:
       version: $(version)
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run MpCmdRun.exe'
+    displayName: 'Run Defender Scan'
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
     displayName: 'Run CredScan'
