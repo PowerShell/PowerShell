@@ -1870,6 +1870,21 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         public static string Mode(PSObject instance)
         {
+            return Mode(instance, includeHardLink: true);
+        }
+
+        /// <summary>
+        /// Provides a mode property for FileSystemInfo including HardLinks
+        /// </summary>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
+        public static string ModeWithoutHardlink(PSObject instance)
+        {
+            return Mode(instance, includeHardLink: false);
+        }
+
+        private static string Mode(PSObject instance, bool includeHardLink)
+        {
             if (instance == null)
             {
                 return string.Empty;
@@ -1890,7 +1905,7 @@ namespace Microsoft.PowerShell.Commands
             // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
             // Porting note: these need to be handled specially
             bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-            bool isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo);
+            bool isHardLink = includeHardLink ? InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo) : false;
             mode[5] = isReparsePoint || isHardLink ? 'l' : '-';
 
             return new string(mode);

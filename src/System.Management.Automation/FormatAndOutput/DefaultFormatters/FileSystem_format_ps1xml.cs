@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -58,7 +59,7 @@ return $_.Length";
                     .AddHeader(Alignment.Right, label: "Length", width: 14)
                     .AddHeader()
                     .StartRowDefinition(wrap: true)
-                        .AddPropertyColumn("Mode")
+                        .AddPropertyColumn("ModeWithoutHardlink")
                         .AddScriptBlockColumn(@"
                                     [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
                                 ")
@@ -66,6 +67,23 @@ return $_.Length";
                         .AddPropertyColumn("Name")
                     .EndRowDefinition()
                 .EndTable());
+
+            yield return new FormatViewDefinition("childrenWithHardlink",
+                TableControl.Create()
+                    .GroupByProperty("PSParentPath", customControl: sharedControls[0])
+                    .AddHeader(Alignment.Left, label: "Mode", width: 7)
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 25)
+                    .AddHeader(Alignment.Right, label: "Length", width: 14)
+                    .AddHeader()
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("Mode")
+                        .AddScriptBlockColumn(@"
+                                        [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
+                                    ")
+                        .AddScriptBlockColumn(LengthScriptBlock)
+                        .AddPropertyColumn("Name")
+                    .EndRowDefinition()
+                    .EndTable());
 
             yield return new FormatViewDefinition("children",
                 ListControl.Create()
