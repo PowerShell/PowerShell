@@ -59,7 +59,7 @@ return $_.Length";
                     .AddHeader(Alignment.Right, label: "Length", width: 14)
                     .AddHeader()
                     .StartRowDefinition(wrap: true)
-                        .AddPropertyColumn("ModeWithoutHardlink")
+                        .AddPropertyColumn("ModeWithoutHardLink")
                         .AddScriptBlockColumn(@"
                                     [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
                                 ")
@@ -78,8 +78,8 @@ return $_.Length";
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("Mode")
                         .AddScriptBlockColumn(@"
-                                        [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
-                                    ")
+                                    [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
+                                ")
                         .AddScriptBlockColumn(LengthScriptBlock)
                         .AddPropertyColumn("Name")
                     .EndRowDefinition()

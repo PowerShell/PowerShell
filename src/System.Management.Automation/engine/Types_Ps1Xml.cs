@@ -183,8 +183,8 @@ namespace System.Management.Automation.Runspaces
             var td19 = new TypeData(@"System.IO.DirectoryInfo", true);
             td19.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
-            td19.Members.Add("ModeWithoutHardlink",
-                new CodePropertyData("ModeWithoutHardlink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardlink"), null));
+            td19.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td19.Members.Add("BaseName",
                 new ScriptPropertyData(@"BaseName", GetScriptBlock(@"$this.Name"), null));
             td19.Members.Add("Target",
@@ -197,8 +197,8 @@ namespace System.Management.Automation.Runspaces
             var td20 = new TypeData(@"System.IO.FileInfo", true);
             td20.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
-            td20.Members.Add("ModeWithoutHardlink",
-                new CodePropertyData("ModeWithoutHardlink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardlink"), null));
+            td20.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td20.Members.Add("VersionInfo",
                 new ScriptPropertyData(@"VersionInfo", GetScriptBlock(@"[System.Diagnostics.FileVersionInfo]::GetVersionInfo($this.FullName)"), null));
             td20.Members.Add("BaseName",
