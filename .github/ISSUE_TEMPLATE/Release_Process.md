@@ -1,7 +1,7 @@
 ---
 name: Release Process
 about: Maintainers Only - Release Process
-title: "[RELEASE] Release Process for v6.x.x"
+title: "Release Process for v6.x.x"
 labels: Issue-Meta
 assignees: ''
 
