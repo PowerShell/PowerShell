@@ -65,9 +65,12 @@ namespace PSTests.Parallel
             }
         }
 
-        [Fact]
+        [SkippableFact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
+            // Temporarily skipping because test fails randomly fairly often
+            Skip.IfNot(false);
+
             // CreateDefault2 is intentional.
             InitialSessionState iss = InitialSessionState.CreateDefault();
 
