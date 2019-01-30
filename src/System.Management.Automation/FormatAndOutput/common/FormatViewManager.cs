@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 if (DefaultScalarTypes.IsTypeInList(typeNames) ||
-                    HasNonRemotingProperties(so))
+                    !HasNonRemotingProperties(so))
                 {
                     // we force a ToString() on well known types
                     return GenerateOutOfBandObjectAsToString(so);
