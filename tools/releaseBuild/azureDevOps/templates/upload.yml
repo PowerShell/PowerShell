@@ -1,0 +1,40 @@
+parameters:
+  architecture: x86
+  msi: yes
+
+steps:
+- powershell: |
+      $packagePath = "$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-${{ parameters.architecture }}.msi"
+      if(Test-Path -Path $packagePath)
+      {
+          Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+      }
+  displayName: '[create script] upload signed msi - ${{ parameters.architecture }}'
+  condition: and(succeeded(), eq(variables['msi'], 'yes'))
+
+- task: AzureFileCopy@1
+  displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-${{ parameters.architecture }}.msi'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq(variables['msi'], 'yes'))
+
+- powershell: |
+      $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-${{ parameters.architecture }}.zip"
+      if(Test-Path -Path $packagePath)
+      {
+          Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+      }
+  displayName: '[create script] upload signed zip - ${{ parameters.architecture }}'
+
+- task: AzureFileCopy@1
+  displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-${{ parameters.architecture }}.zip'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
