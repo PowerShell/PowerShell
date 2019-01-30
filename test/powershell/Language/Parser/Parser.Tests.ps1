@@ -937,38 +937,40 @@ foo``u{2195}abc
         }
 
         $testInvalidNumerals = @(
-            @{ Script = "16p" }
-            @{ Script = "1_6" }
-            @{ Script = "80x" }
-            @{ Script = "20ux" }
-            @{ Script = "18uu" }
-            @{ Script = "21ss" }
-            @{ Script = "100ll" }
-            @{ Script = "100Il" }
-            @{ Script = "100Is" }
-            @{ Script = "100sn" }
-            @{ Script = "100In" }
-            @{ Script = "100yu" }
-            @{ Script = "150su" }
-            @{ Script = "160ud" }
-            @{ Script = "160ld" }
-            @{ Script = "160yd" }
-            @{ Script = "160sd" }
-            @{ Script = "160dd" }
-            @{ Script = "10ds" }
-            @{ Script = "10ud" }
-            @{ Script = "16sl" }
-            @{ Script = "188lu" }
-            @{ Script = "500sgb" }
-            @{ Script = "10000usgb" }
-            @{ Script = "10000.0usgb" }
-            @{ Script = "1uykb" }
-            @{ Script = "10_000ul" }
+            @{ Script = "16p"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "1_6"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "80x"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "20ux"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "18uu"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "21ss"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100ll"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100Il"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100Is"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100un"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100ln"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100sn"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100In"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "100yu"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "150su"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "160ud"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "160ld"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "160yd"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "160sd"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "160dd"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "10ds"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "10ud"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "16sl"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "188lu"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "500sgb"; ErrorID = "BadNumericConstant" }
+            @{ Script = "10000usgb"; ErrorID = "BadNumericConstant" }
+            @{ Script = "10000.0usgb"; ErrorID = "BadNumericConstant" }
+            @{ Script = "1uykb"; ErrorID = "BadNumericConstant" }
+            @{ Script = "10_000ul"; ErrorID = "CommandNotFoundException" }
         )
 
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
-            param($Script)
-             {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
+            param($Script, $ErrorID)
+            {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw -ErrorId $ErrorID
         }
     }
 
