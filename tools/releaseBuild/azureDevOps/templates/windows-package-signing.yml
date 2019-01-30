@@ -65,25 +65,30 @@ jobs:
   - template: upload.yml
     parameters:
       architecture: x86
+      version: $(version)
 
   - template: upload.yml
     parameters:
       architecture: x64
+      version: $(version)
 
   - template: upload.yml
     parameters:
       architecture: arm32
+      version: $(version)
       msi: no
 
   - template: upload.yml
     parameters:
       architecture: arm64
+      version: $(version)
       msi: no
 
   - template: upload.yml
     parameters:
       architecture: fxdependent
+      version: $(version)
       msi: no
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run MpCmdRun.exe'
+    displayName: 'Run Defender Scan'
