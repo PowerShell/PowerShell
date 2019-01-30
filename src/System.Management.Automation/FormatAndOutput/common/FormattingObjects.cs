@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool isHelpObject = false;
 
         /// <summary>
-        /// Helper method to set the WriteStreamType property
+        /// Helper method to set the <see cref="writeStream"/> field
         /// based on note properties of a PSObject object.
         /// </summary>
         /// <param name="so">PSObject.</param>

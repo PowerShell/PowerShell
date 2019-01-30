@@ -2376,25 +2376,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance member if it's name matches the predicate. Otherwise null.
         /// </summary>
-        internal PSMemberInfo GetFirstPropertyOrDefault(MemberNamePredicate predicate)
+        internal PSPropertyInfo GetFirstPropertyOrDefault(MemberNamePredicate predicate)
         {
             if (_instanceMembers != null)
             {
                 foreach (var instanceMember in _instanceMembers)
                 {
-                    var found = predicate.Invoke(instanceMember.Name);
-                    if (found)
+                    if (instanceMember is PSPropertyInfo propInfo)
                     {
-                        return instanceMember;
+                        var found = predicate.Invoke(propInfo.Name);
+                        if (found)
+                        {
+                            return propInfo;
+                        }
                     }
                 }
             }
 
-            return Properties.GetFirstOrDefault(predicate);
-
+            return Properties.GetFirstOrDefault(predicate) as PSPropertyInfo;
         }
-
-
 
         private bool _isHelpObject = false;
 
