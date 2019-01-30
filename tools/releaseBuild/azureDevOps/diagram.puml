@@ -1,0 +1,42 @@
+@startuml
+
+archimate #Business "Build DEB"  as BuildDEB <<business-process>>
+archimate #Business "Build RPM"  as BuildRPM <<business-process>>
+archimate #Business "Build Alpine"  as BuildAlpine <<business-process>>
+archimate #Business "Build Linux-FxDependent"  as BuildLinuxFx <<business-process>>
+archimate #Business "Upload DEB"  as UploadDEB <<business-process>>
+archimate #Business "Upload RPM"  as UploadRPM <<business-process>>
+archimate #Business "Upload Alpine"  as UploadAlpine <<business-process>>
+archimate #Business "Upload Linux-FxDependent"  as UploadLinuxFx <<business-process>>
+
+archimate #Business "Build macOS"  as BuildMac <<business-process>>
+archimate #Business "macOS Package Signing and Upload"  as SignMac <<business-process>>
+
+archimate #Business "Build Windows - x64"  as BuildWinX64 <<business-process>>
+archimate #Business "Build Windows - x86"  as BuildWinX86 <<business-process>>
+archimate #Business "Build Windows - arm32"  as BuildWinArm32 <<business-process>>
+archimate #Business "Build Windows - arm64"  as BuildWinArm64 <<business-process>>
+archimate #Business "Build Windows - FxDependent"  as BuildWinFx <<business-process>>
+archimate #Business "Windows Package Signing and Upload"  as SignWin <<business-process>>
+
+archimate #Business "ComponentRegistration"  as BuildWinFx <<business-process>>
+
+archimate #Business "Compliance"  as Compliance <<business-process>>
+
+BuildDEB -down-> UploadDEB
+BuildRPM -down-> UploadRPM
+BuildLinuxFx -down-> UploadLinuxFx
+BuildAlpine -down-> UploadAlpine
+
+BuildMac -down-> SignMac
+
+BuildWinX64 -down-> SignWin
+BuildWinX86 -down-> SignWin
+BuildWinArm32 -down-> SignWin
+BuildWinArm64 -down-> SignWin
+BuildWinFx -down-> SignWin
+
+BuildWinX86 -down-> Compliance
+BuildWinX64 -down-> Compliance
+BuildWinFx -down-> Compliance
+@enduml
