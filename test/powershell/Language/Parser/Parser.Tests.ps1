@@ -961,11 +961,11 @@ foo``u{2195}abc
             @{ Script = "10ud"; ErrorID = "CommandNotFoundException" }
             @{ Script = "16sl"; ErrorID = "CommandNotFoundException" }
             @{ Script = "188lu"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "500sgb"; ErrorID = "BadNumericConstant" }
-            @{ Script = "10000usgb"; ErrorID = "BadNumericConstant" }
-            @{ Script = "10000.0usgb"; ErrorID = "BadNumericConstant" }
-            @{ Script = "1uykb"; ErrorID = "BadNumericConstant" }
-            @{ Script = "10_000ul"; ErrorID = "CommandNotFoundException" }
+            @{ Script = "500sgb"; ErrorID = "ParseException" }
+            @{ Script = "10000usgb"; ErrorID = "ParseException" }
+            @{ Script = "10000.0usgb"; ErrorID = "ParseException" }
+            @{ Script = "1uykb"; ErrorID = "ParseException" }
+            @{ Script = "10_000ul"; ErrorID = "ParseException" }
         )
 
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
