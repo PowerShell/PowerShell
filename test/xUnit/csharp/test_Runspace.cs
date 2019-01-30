@@ -6,7 +6,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Xunit;
 
-namespace PSTests.Parallel
+namespace PSTests.Sequential
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
@@ -65,12 +65,9 @@ namespace PSTests.Parallel
             }
         }
 
-        [SkippableFact]
+        [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
-            // Temporarily skipping because test fails randomly fairly often
-            Skip.IfNot(false);
-
             // CreateDefault2 is intentional.
             InitialSessionState iss = InitialSessionState.CreateDefault();
 
