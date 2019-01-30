@@ -965,7 +965,7 @@ foo``u{2195}abc
             @{ Script = "10000usgb"; ErrorID = "ParseException" }
             @{ Script = "10000.0usgb"; ErrorID = "ParseException" }
             @{ Script = "1uykb"; ErrorID = "ParseException" }
-            @{ Script = "10_000ul"; ErrorID = "ParseException" }
+            @{ Script = "10_000ul"; ErrorID = "CommandNotFoundException" }
         )
 
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
