@@ -33,9 +33,9 @@ jobs:
       disableNugetPack: true
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Set ReleaseTag Variable'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
        Write-Verbose -Verbose "$(Architecture)"

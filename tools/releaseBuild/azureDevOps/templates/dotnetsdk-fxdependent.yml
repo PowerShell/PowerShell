@@ -12,9 +12,9 @@ jobs:
   pool: ${{ parameters.poolName }}
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Run setReleaseTag.ps1'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download Artifacts'
@@ -31,13 +31,6 @@ jobs:
       New-DotnetSdkContainerFxdPackage -FxdPackagePath "$(System.ArtifactsDirectory)/finished" -ReleaseTag $(ReleaseTagVar) -DestinationPath "$(System.ArtifactsDirectory)/finished/release"
     displayName: 'Create fxdependent package for dotnet sdk docker image'
 
-  - powershell: |
-      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
-      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: 'Set Version for Blob Storage'
-
 - job:
   displayName: Upload fxdependent package dotnet sdk - ${{ parameters.buildName }}
   dependsOn: dotnetfxd_${{ parameters.buildName }}
@@ -45,16 +38,9 @@ jobs:
   pool: Package ES CodeHub Lab E
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Run setReleaseTag.ps1'
-
-  - powershell: |
-      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
-      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: 'Set Version for Blob Storage'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download FxDependent dotnet sdx artifacts'
@@ -77,4 +63,4 @@ jobs:
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
+      ContainerName: '$(AzureVersion)-internal'

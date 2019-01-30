@@ -10,9 +10,9 @@ jobs:
     name: Package ES CodeHub Lab E
 
   steps:
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Set ReleaseTag Variable'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
@@ -25,19 +25,6 @@ jobs:
       dir "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
-
-  - powershell: |
-       $version = '$(ReleaseTagVar)'.Substring(1)
-       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-
-       $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
-       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-
-    displayName: 'Set Version Variable'
 
   - template: expand-compliance.yml
     parameters:

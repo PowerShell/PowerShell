@@ -10,9 +10,9 @@ jobs:
     build: ${{ parameters.buildName }}
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Run setReleaseTag.ps1'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
       Write-Verbose -Verbose "$(build)"
@@ -50,16 +50,9 @@ jobs:
     buildName: ${{ parameters.buildName }}
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Set ReleaseTag'
-
-  - powershell: |
-      $azureVersion = $env:ReleaseTagVar.ToLowerInvariant() -replace '\.', '-'
-      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: 'Set Version for Blob Storage'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download Deb Artifacts'
