@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we failed the default display name, let's try some well known names
             // trying to get something potentially useful
             string[] knownPatterns = new string[] {
-                "name", "id", "key",  "*key", "*name", "*id",
+                "name", "id", "key", "*key", "*name", "*id",
             };
 
             // go over the patterns, looking for the first match
