@@ -2,8 +2,8 @@ parameters:
   parentJobs: []
 
 jobs:
-- job: public_compliance
-  displayName: Public Compliance
+- job: compliance
+  displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
