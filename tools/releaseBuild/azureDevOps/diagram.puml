@@ -1,5 +1,6 @@
 @startuml
 
+' Define the build tasks as business processes
 archimate #Business "Build DEB"  as BuildDEB <<business-process>>
 archimate #Business "Build RPM"  as BuildRPM <<business-process>>
 archimate #Business "Build Alpine"  as BuildAlpine <<business-process>>
@@ -19,24 +20,42 @@ archimate #Business "Build Windows - arm64"  as BuildWinArm64 <<business-process
 archimate #Business "Build Windows - FxDependent"  as BuildWinFx <<business-process>>
 archimate #Business "Windows Package Signing and Upload"  as SignWin <<business-process>>
 
-archimate #Business "ComponentRegistration"  as BuildWinFx <<business-process>>
+archimate #Business "ComponentRegistration"  as BuildCG <<business-process>>
 
 archimate #Business "Compliance"  as Compliance <<business-process>>
 
+' Define finishing the build as a goal filled
+archimate #Goal "Finish"  as Finish <<goal-filled>>
+
+' map the various Upload task dependencies
 BuildDEB -down-> UploadDEB
 BuildRPM -down-> UploadRPM
 BuildLinuxFx -down-> UploadLinuxFx
 BuildAlpine -down-> UploadAlpine
 
+' map all of the SignMac task dependencies
 BuildMac -down-> SignMac
 
+' map all of the SignWin task dependencies
 BuildWinX64 -down-> SignWin
 BuildWinX86 -down-> SignWin
 BuildWinArm32 -down-> SignWin
 BuildWinArm64 -down-> SignWin
 BuildWinFx -down-> SignWin
 
+' map all of the Compliance task dependencies
 BuildWinX86 -down-> Compliance
 BuildWinX64 -down-> Compliance
 BuildWinFx -down-> Compliance
+
+' map all leafs to finish
+Compliance -down-> Finish
+UploadAlpine -down-> Finish
+UploadDEB -down-> Finish
+UploadRPM -down-> Finish
+UploadLinuxFx -down-> Finish
+SignWin -down-> Finish
+SignMac -down-> Finish
+BuildCG -down-> Finish
+
 @enduml
