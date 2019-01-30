@@ -111,19 +111,19 @@ namespace System.Management.Automation
             return members;
         }
 
-        internal static PSMemberInfo TypeTableGetFirstOrDefaultMemberDelegate(PSObject msjObj, MemberNamePredicate predicate)
+        internal static T TypeTableGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             TypeTable table = msjObj.GetTypeTable();
-            return TypeTableGetFirstOrDefaultMemberDelegate(msjObj, table, predicate);
+            return TypeTableGetFirstOrDefaultMemberDelegate<T>(msjObj, table, predicate);
         }
 
-        internal static PSMemberInfo TypeTableGetFirstOrDefaultMemberDelegate(PSObject msjObj, TypeTable typeTableToUse, MemberNamePredicate predicate)
+        internal static T TypeTableGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, TypeTable typeTableToUse, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             if (typeTableToUse == null)
             {
                 return default;
             }
-            var member = typeTableToUse.GetFirstOrDefaultMember(msjObj.InternalTypeNames, predicate);
+            var member = typeTableToUse.GetFirstOrDefaultMember<T>(msjObj.InternalTypeNames, predicate);
 
             return member;
         }
@@ -285,7 +285,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
                         true, true, "type table members"));
                 }
                 else
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         msjObj => TypeTableGetMembersDelegate<PSMemberInfo>(msjObj, backupTypeTable),
                         (msjObj, name) => TypeTableGetMemberDelegate<PSMemberInfo>(msjObj, backupTypeTable, name),
-                        (msjObj, predicate) => TypeTableGetFirstOrDefaultMemberDelegate(msjObj, backupTypeTable, predicate),
+                        (msjObj, predicate) => TypeTableGetFirstOrDefaultMemberDelegate<PSMemberInfo>(msjObj, backupTypeTable, predicate),
                         true, true, "type table members"));
                 }
             }
@@ -330,7 +330,7 @@ namespace System.Management.Automation
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                     PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
-                    PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                    PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: true,
                     shouldCloneWhenReturning: true,
                     collectionNameForTracing: "type table members"),
@@ -390,7 +390,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                         true, true, "type table members"));
                 }
                 else
@@ -398,7 +398,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         msjObj => TypeTableGetMembersDelegate<PSPropertyInfo>(msjObj, backupTypeTable),
                         (msjObj, name) => TypeTableGetMemberDelegate<PSPropertyInfo>(msjObj, backupTypeTable, name),
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                         true, true, "type table members"));
                 }
             }
@@ -2392,6 +2392,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
 
             return Properties.GetFirstOrDefault(predicate) as PSPropertyInfo;
         }

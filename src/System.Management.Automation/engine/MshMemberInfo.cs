@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMemberInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3126,7 +3126,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMethodInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3137,7 +3137,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate,
+                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                 true, true, "type table members"));
             return returnValue;
         }

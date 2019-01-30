@@ -3633,9 +3633,9 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
-        internal PSMemberInfo GetFirstOrDefaultMember(ConsolidatedString types, MemberNamePredicate predicate)
+        internal T GetFirstOrDefaultMember<T>(ConsolidatedString types, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            return GetMembers(types).FirstOrDefault(t => predicate.Invoke(t.Name));
+            return GetMembers(types).FirstOrDefault(t => t is T && predicate.Invoke(t.Name)) as T;
         }
 
         internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
