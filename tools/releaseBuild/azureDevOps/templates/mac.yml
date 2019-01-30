@@ -5,7 +5,7 @@ jobs:
 - job: ${{ parameters.jobName }}
   displayName: Build macOS
   condition: succeeded()
-  pool: Hosted macOS Preview
+  pool: Hosted Mac Internal
   steps:
   #- task: <task type name>@<version>
   #  inputs:
