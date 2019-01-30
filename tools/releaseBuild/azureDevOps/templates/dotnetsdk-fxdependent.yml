@@ -26,6 +26,10 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)/finished'
 
   - powershell: |
+      Get-ChildItem '$(System.ArtifactsDirectory)/finished' -recurse
+    displayName: Capture list of downloaded artifacts
+
+  - powershell: |
       Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
       Import-Module $(Build.SourcesDirectory)/tools/packaging -Force
       New-DotnetSdkContainerFxdPackage -FxdPackagePath "$(System.ArtifactsDirectory)/finished" -ReleaseTag $(ReleaseTagVar) -DestinationPath "$(System.ArtifactsDirectory)/finished/release"
