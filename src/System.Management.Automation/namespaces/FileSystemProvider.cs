@@ -341,21 +341,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region CmdletProvider members
-        // OneDrive placeholder support
-#if !UNIX
-        [DllImport("ntdll.dll")]
-        internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
-        [DllImport("ntdll.dll")]
-        internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
-
-        internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
-        internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
-        internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
-        internal const sbyte PHCM_MAX = 2;
-        internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
-        internal const sbyte PHCM_ERROR_NO_TEB = -2;
-#endif
-
         /// <summary>
         /// Starts the File System provider.  This method sets the Home for the
         /// provider to providerInfo.Home if specified, and %USERPROFILE%
@@ -386,17 +371,19 @@ namespace Microsoft.PowerShell.Commands
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                 }
             }
-           
+
             // OneDrive placeholder support (issue #8315)
             // make it so OneDrive placeholders are perceived as such with *all* their attributes accessible
 #if !UNIX
+            // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
+            // are only supported starting with Windows 10 version 1803 (build 17134)
             Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
             if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (PHCM_DISGUISE_PLACEHOLDER == RtlQueryProcessPlaceholderCompatibilityMode())
+                if (NativeMethods.PHCM_DISGUISE_PLACEHOLDER == NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode())
                 {
-                    RtlSetProcessPlaceholderCompatibilityMode(PHCM_EXPOSE_PLACEHOLDERS);
+                    NativeMethods.RtlSetProcessPlaceholderCompatibilityMode(NativeMethods.PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
 #endif
@@ -7088,6 +7075,32 @@ namespace Microsoft.PowerShell.Commands
                 Hidden = 0x0002,
                 Directory = 0x0010
             }
+
+            // OneDrive placeholder support
+#if !UNIX
+            /// <summary>
+            /// Returns the placeholder compatibility mode for the current process.
+            /// </summary>
+            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx)</returns>
+            [DllImport("ntdll.dll")]
+            internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
+
+            /// <summary>
+            /// Sets the placeholder compatibility mode for the current process.
+            /// </summary>
+            /// <param name="pcm">The placeholder compatibility mode to set.</param>
+            /// <returns>The process's previous placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
+            [DllImport("ntdll.dll")]
+            internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
+
+            internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
+            internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
+            internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
+            internal const sbyte PHCM_MAX = 2;
+            internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
+            internal const sbyte PHCM_ERROR_NO_TEB = -2;
+#endif
+
         }
 
         /// <summary>
@@ -7493,8 +7506,10 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the status of the delimiter parameter.  Returns true
         /// if the delimiter was explicitly specified by the user, false otherwise.
         /// </summary>
-        public bool DelimiterSpecified { get; private set;
-// get
+        public bool DelimiterSpecified
+        {
+            get; private set;
+            // get
         }
     }
 
@@ -7997,10 +8012,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     BY_HANDLE_FILE_INFORMATION infoOne;
                     BY_HANDLE_FILE_INFORMATION infoTwo;
-                    if (   GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
+                    if (GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
                         && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
                     {
-                        return    infoOne.VolumeSerialNumber == infoTwo.VolumeSerialNumber
+                        return infoOne.VolumeSerialNumber == infoTwo.VolumeSerialNumber
                                && infoOne.FileIndexHigh == infoTwo.FileIndexHigh
                                && infoOne.FileIndexLow == infoTwo.FileIndexLow;
                     }
