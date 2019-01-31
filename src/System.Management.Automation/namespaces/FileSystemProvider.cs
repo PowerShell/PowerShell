@@ -1907,6 +1907,54 @@ namespace Microsoft.PowerShell.Commands
             return new string(mode);
         }
 
+        /// <summary>
+        /// Returns the name or Name -> Target for FileSystemInfos
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static string NameString(PSObject instance)
+        {
+            if (instance == null)
+            {
+                return string.Empty;
+            }
+
+            FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
+            if (fileInfo == null)
+            {
+                return string.Empty;
+            }
+
+            return InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance).First()}"
+                : fileInfo.Name;
+        }
+
+        /// <summary>
+        /// Returns the name or Name -> Target for FileSystemInfos
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static string LengthString(PSObject instance)
+        {
+            return instance?.BaseObject is FileInfo fileInfo
+                ? fileInfo.Attributes.HasFlag(FileAttributes.Offline) ? $"({fileInfo.Length})" : fileInfo.Length.ToString()
+                : "";
+        }
+
+        /// <summary>
+        /// Returns the a string representation of last write time
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static string LastWriteTimeString(PSObject instance)
+        {
+            //[String]::Format(""{ 0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? string.Format("{0,10} {1,8}", fileInfo.LastWriteTime.ToString("d"), fileInfo.LastWriteTime.ToString("t"))
+                : "";
+        }
+
         #region RenameItem
 
         /// <summary>

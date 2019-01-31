@@ -191,6 +191,12 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td19.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td19.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td19.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td19.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td19.DefaultDisplayProperty = @"Name";
             yield return td19;
 
@@ -207,6 +213,12 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td20.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td20.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td20.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td20.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td20.DefaultDisplayPropertySet =
                 new PropertySetData(new[] { "LastWriteTime", "Length", "Name" }) { Name = "DefaultDisplayPropertySet" };
             yield return td20;
