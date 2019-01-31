@@ -27,7 +27,7 @@ jobs:
       }
     displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
 
-  - template: insert-nuget-config.yml
+  - template: insert-nuget-config-azfeed.yml
 
 
   - powershell: |

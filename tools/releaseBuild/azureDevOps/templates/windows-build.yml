@@ -53,7 +53,7 @@ jobs:
        Write-Host -Object "##$vstsCommandString"
     displayName: 'Skip FxDependent for PS v6.0.*'
 
-  - template: insert-nuget-config.yml
+  - template: insert-nuget-config-azfeed.yml
 
   - powershell: |
        docker container prune --force

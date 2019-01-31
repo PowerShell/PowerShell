@@ -49,7 +49,7 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - template: insert-nuget-config.yml
+  - template: insert-nuget-config-azfeed.yml
 
   - powershell: |
        ./tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-x64-component-registration
