@@ -1892,20 +1892,17 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            char[] mode = new char[6];
+            char[] mode = new char[5];
             mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
             mode[1] = (fileInfo.Attributes & FileAttributes.Archive) == FileAttributes.Archive ? 'a' : '-';
             mode[2] = (fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly ? 'r' : '-';
             mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
             mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
-
             // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
             // Porting note: these need to be handled specially
             bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-
             bool isHardLink = includeHardLink ? InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo) : false;
-            var notHardLinkChar = includeHardLink ? '-' : ' '; // if we haven't checked for hardlinks, don't show '-'
-            mode[5] = isReparsePoint || isHardLink ? 'l' : notHardLinkChar;
+            mode[0] = isReparsePoint || isHardLink ? 'l' : mode[0];
 
             return new string(mode);
         }
