@@ -119,7 +119,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $streamPath = Join-Path $testdrive information.txt
             $null | Write-Information -Tags myTag -ErrorAction Stop -InformationAction SilentlyContinue -InformationVariable i
             $i.Tags | Should -BeExactly "myTag"
-            $i.MessageData | Should -BeNullOrEmpty
+            $i.MessageData | Should -Be $null
         }
     }
 }
