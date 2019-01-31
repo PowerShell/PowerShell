@@ -17,7 +17,7 @@ steps:
   parameters:
     artifactPath: $(Build.StagingDirectory)\signedPackages
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
-  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
+    condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - task: AzureFileCopy@1
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
