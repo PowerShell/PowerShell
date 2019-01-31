@@ -2885,6 +2885,35 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Attempts to use Parser.ScanNumber to get the value of a numeric string.
+        /// WARNING: Only ParseExceptions are handled; others may arise from Convert.ChangeType()
+        /// </summary>
+        /// <param name="strToConvert">The string to attempt to scan and get numeric value</param>
+        /// <param name="resultType">The resulting value type to convert to.</param>
+        /// <param name="result">The resulting numeric value.</param>
+        /// <returns>
+        /// true if the parse succeeds, false if a parse exception arises.
+        /// In all other cases, an exception will be thrown.
+        /// </returns>
+        private static bool TryScanNumber(string strToConvert, Type resultType, out object result)
+        {
+            try
+            {
+                result = Convert.ChangeType(
+                    Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                    resultType,
+                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                return true;
+            }
+            catch (ParseException)
+            {
+                // Only parse exceptions are handled; all others must be handled by the caller
+                result = null;
+                return false;
+            }
+        }
+
         private static object ConvertStringToInteger(object valueToConvert,
                                                      Type resultType,
                                                      bool recursion,
@@ -2907,18 +2936,14 @@ namespace System.Management.Automation
             TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
-                try
+                if (TryScanNumber(strToConvert, resultType, out object result))
                 {
-                    return Convert.ChangeType(
-                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
-                        resultType,
-                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                    return result;
                 }
-                catch (ParseException)
+                else
                 {
+                    return integerConverter.ConvertFrom(strToConvert);
                 }
-
-                return integerConverter.ConvertFrom(strToConvert);
             }
             catch (Exception e)
             {
@@ -2970,19 +2995,15 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
-                try
+                if (TryScanNumber(strToConvert, resultType, out object result))
                 {
-                    return Convert.ChangeType(
-                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
-                        resultType,
+                    return result;
+                }
+                else
+                {
+                    return Convert.ChangeType(strToConvert, resultType,
                         System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                 }
-                catch (ParseException)
-                {
-                }
-
-                return Convert.ChangeType(strToConvert, resultType,
-                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
             {
@@ -3026,19 +3047,16 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
-                try
+
+                if (TryScanNumber(strToConvert, resultType, out object result))
                 {
-                    return Convert.ChangeType(
-                        Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
-                        resultType,
+                    return result;
+                }
+                else
+                {
+                    return Convert.ChangeType(strToConvert, resultType,
                         System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                 }
-                catch (ParseException)
-                {
-                }
-
-                return Convert.ChangeType(strToConvert, resultType,
-                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
             {
