@@ -1,8 +1,8 @@
 ---
 name: Bug report 🐛
 about: Report errors or unexpected behavior 🤔
-title: "[BUG] My bug report"
-labels: Issue-Bug
+title: "My bug report"
+labels: Issue-Question
 assignees: ''
 
 ---
