@@ -1735,44 +1735,24 @@
             </Component>
           </Directory>
           <Directory Name="coreclr" Id="dirD84258F96F80409BA8CD117DCD52EC6E">
-            <Directory Name="netstandard1.6" Id="dir36C6ABDA5E944E2BA2FDCEC46507A030">
-              <Component Id="cmp34C3B0C6B0944FAB92E6CF935C932FE1" Guid="{9448a704-abcd-4d00-abc6-4098c4b7c0f3}">
-                <File Id="fil60DA5526FBCF44C0B28F936D6291EE7A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
+            <Directory Name="netstandard2.0" Id="dir7412D53B0487498E8197451AA63B9953">
+              <Component Id="cmp819F1885245B46C0982FFDD7301BFC21" Guid="{1e45a0cb-afef-4e49-a6ff-06be797602bf}">
+                <File Id="filCDCEC7CC51DD44BBA28FF3DD0ED04289" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
               </Component>
-              <Component Id="cmp74B6A4E8CF2742DD842400EFEBB154D4" Guid="{be96fa01-2e21-49a7-940a-f5bf2545f34d}">
-                <File Id="filF060858D96B541CDA2CB89B26E2A2078" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.CoreProviders.dll" />
+              <Component Id="cmpE0A78C8CA25E4D20AAB3E64A1AA55E07" Guid="{79196ce3-bcd6-463a-871a-43efd55b7c2a}">
+                <File Id="fil8010D5F9E942488DA55A4119A9EAC82E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.dll" />
               </Component>
-              <Component Id="cmpBC02FE7785014E318FEB24F66A654B6F" Guid="{121b9ff6-bcf3-4c89-ba7f-5f02d1f3625d}">
-                <File Id="filA28BF22885BF4D60B49DA839449156BA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.dll" />
+              <Component Id="cmp0F685BFF00054470A02D82A5237DD4D2" Guid="{9055ec37-4b01-4e3f-88e0-514c46afe62d}">
+                <File Id="fil7C866EE64B72463AB55EB563E1CE635F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
               </Component>
-              <Component Id="cmp8E44B29E23574008A28E61BF8E705680" Guid="{e457849f-9738-4477-a62d-1fe22aea9a28}">
-                <File Id="filF62373CE2EEB4FE8A35114C6BEE3217A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.ArchiverProviders.dll" />
+              <Component Id="cmp51F4B23B87C6428B81ABAA8E8C913B99" Guid="{0379ac21-49e3-4c20-8794-035a82ae5e79}">
+                <File Id="filFE28EDE13153410F8BA2EC9AA0E7155D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.NuGetProvider.dll" />
               </Component>
-              <Component Id="cmpFA5437B93E1D4D2BAD7472174958DC87" Guid="{d0a61390-cee1-4853-b9b1-e5673c5ada72}">
-                <File Id="fil2536081E84024DD8909B7A9826440194" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.NuGetProvider.dll" />
+              <Component Id="cmpE4A3A9C6EBE34E9AAF4EB02937545542" Guid="{f3e121a2-aeda-4682-902d-c14d5a8b0685}">
+                <File Id="fil7EBFC52E021D46CA9CCC2B6D6FE59AA4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.CoreProviders.dll" />
               </Component>
-              <Component Id="cmpF13D9769FBE945B09326776DC9877740" Guid="{2ed1bcca-fb7c-47c4-b497-24e2000b80ea}">
-                <File Id="filC2A780F4FC7846A3AA0EC196DC2EB3DC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PowerShell.PackageManagement.dll" />
-              </Component>
-            </Directory>
-            <Directory Name="netcoreapp2.0" Id="dir5A70D643DC074C688A9D384DCB510527">
-              <Component Id="cmp830D1B7987E04CC8962F5A49AABE9E51" Guid="{725027de-d7de-4592-a62c-96b94e160201}">
-                <File Id="fil606941DC840148528F6592437B9F77BF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.NuGetProvider.dll" />
-              </Component>
-              <Component Id="cmpC608F4A8321145619930DC01B24BD25E" Guid="{e28ab469-36e1-48df-89da-5ce5be4e3907}">
-                <File Id="filC70278E0F9D144B3B2D0E2C0C26CFF24" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.CoreProviders.dll" />
-              </Component>
-              <Component Id="cmpE29B1178E25C47DC988CC57B6DDA3B15" Guid="{c33cde5e-af60-4413-ae98-78ea1d68ac86}">
-                <File Id="fil2FAE874C41C5433A885100ABD474C506" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-              </Component>
-              <Component Id="cmp26C26BCEF1DC43BDB85CAB78643AABDB" Guid="{e4828be6-600d-41ad-8769-09c35c494c5f}">
-                <File Id="filD4B2050209414FC3B0A4E491A029451B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
-              </Component>
-              <Component Id="cmpE5263E977524400BB2CDF62B5DC1D0DB" Guid="{854ff356-26e6-434b-946d-3534b005fd00}">
-                <File Id="filC36F9474D2B44F8EA32697BD3DA6BB30" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PowerShell.PackageManagement.dll" />
-              </Component>
-              <Component Id="cmp3D4940617EE5426384A6BF086E79CC63" Guid="{eed1d8f2-c221-4045-bd68-67dff1397994}">
-                <File Id="filAF4E9B53E206442694D19AE8442377C6" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.dll" />
+              <Component Id="cmp5297F3A0CC784D5FB179A2C5128882BA" Guid="{1f305763-6b89-453f-9948-9f0aa7f9fc97}">
+                <File Id="filFC19A06D3A82476CA6B5CD6717D53C39" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PowerShell.PackageManagement.dll" />
               </Component>
             </Directory>
           </Directory>
@@ -2748,27 +2728,22 @@
       <ComponentRef Id="cmp16789176DD8EDBC99C26E1230DB2BDDF" />
       <ComponentRef Id="cmpDDD9F623B3DC4A6DB15A013734FFFACB" />
       <ComponentRef Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" />
-      <ComponentRef Id="cmp34C3B0C6B0944FAB92E6CF935C932FE1" />
       <ComponentRef Id="cmp8C23BECAFDBB4039A255DE6246A30726" />
       <ComponentRef Id="cmpB672EAD9CF9F45619E709AD0DD50D685" />
       <ComponentRef Id="cmp3F09B23AC8E74CEB9C09BD3BDF48DE0B" />
       <ComponentRef Id="cmp2A7508B89C784581B8FEF2BB5C810CB7" />
       <ComponentRef Id="cmpB9EF9DAB25064D92A757E7D390CC8922" />
-      <ComponentRef Id="cmp830D1B7987E04CC8962F5A49AABE9E51" />
-      <ComponentRef Id="cmpC608F4A8321145619930DC01B24BD25E" />
       <ComponentRef Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01" />
       <ComponentRef Id="cmpBCEF6DF1461C426BB07539392C7299E1" />
       <ComponentRef Id="cmpD59302B61FD5436C873FB46D8EFB3443" />
       <ComponentRef Id="cmp092D1859608844F78D3211718ED31171" />
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
-      <ComponentRef Id="cmp74B6A4E8CF2742DD842400EFEBB154D4" />
       <ComponentRef Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" />
       <ComponentRef Id="cmpE773C5B7686C496DAD2111AF1950D73E" />
       <ComponentRef Id="cmpB42E81A3AE804C20B209D05172709994" />
       <ComponentRef Id="cmpF297CB46D5944DC38C68B376140BDF5C" />
       <ComponentRef Id="cmpC2EEED1CA2094DB1B760297F2374216A" />
       <ComponentRef Id="cmpE9DB812405C44652B6BEF707AFDC345E" />
-      <ComponentRef Id="cmpBC02FE7785014E318FEB24F66A654B6F" />
       <ComponentRef Id="cmp709F3BBEA37940E880346DAA83642B50" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
       <ComponentRef Id="cmp06639B424B054D12A42F24F28FB682E7" />
@@ -2776,24 +2751,17 @@
       <ComponentRef Id="cmpC0C47C3075164964B8F8428CE44F7144" />
       <ComponentRef Id="cmpA3A50C81E1704ABF9022F6ECE265165E" />
       <ComponentRef Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83" />
-      <ComponentRef Id="cmp8E44B29E23574008A28E61BF8E705680" />
       <ComponentRef Id="cmp5718E385260F4B5F8B199ECAA3E72CD9" />
       <ComponentRef Id="cmp98E30699A7504181B61707E99DCC0EC1" />
       <ComponentRef Id="cmpFB8B96A05278462A97061B8C5FE3C92E" />
-      <ComponentRef Id="cmpE29B1178E25C47DC988CC57B6DDA3B15" />
       <ComponentRef Id="cmpA83063651AF54638A78187CA67953118" />
       <ComponentRef Id="cmp2B41C7F93EAA4322B3FAED6F2BE95724" />
       <ComponentRef Id="cmp6DDBFA3A9FED42B3AFDCDD4BE0416533" />
       <ComponentRef Id="cmp988678E2987C440F828A11DC2BDC7BFB" />
       <ComponentRef Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" />
       <ComponentRef Id="cmp61560691133844F886A1E72130659721" />
-      <ComponentRef Id="cmpFA5437B93E1D4D2BAD7472174958DC87" />
-      <ComponentRef Id="cmp26C26BCEF1DC43BDB85CAB78643AABDB" />
-      <ComponentRef Id="cmpE5263E977524400BB2CDF62B5DC1D0DB" />
       <ComponentRef Id="cmp84599819161549BC82898469571ADE7B" />
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
-      <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
-      <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
       <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
       <ComponentRef Id="cmp8A3254D57ABF4F828B08648187233EE4" />
       <ComponentRef Id="cmpC29B22A77B6341C88E4D6CD2876F3BCF" />
@@ -2850,6 +2818,12 @@
       <ComponentRef Id="cmpFF8643F8CC97462CAC20815F6071203B" />
       <ComponentRef Id="cmp4E7DFAA0FFC64A2086B5E85167A999CA" />
       <ComponentRef Id="cmp31ACA290CAB14FC7BBE32FA6A742DC1F" />
+      <ComponentRef Id="cmp819F1885245B46C0982FFDD7301BFC21" />
+      <ComponentRef Id="cmpE0A78C8CA25E4D20AAB3E64A1AA55E07" />
+      <ComponentRef Id="cmp0F685BFF00054470A02D82A5237DD4D2" />
+      <ComponentRef Id="cmp51F4B23B87C6428B81ABAA8E8C913B99" />
+      <ComponentRef Id="cmpE4A3A9C6EBE34E9AAF4EB02937545542" />
+      <ComponentRef Id="cmp5297F3A0CC784D5FB179A2C5128882BA" />
     </ComponentGroup>
   </Fragment>
 </Wix>
