@@ -86,11 +86,6 @@ namespace System.Management.Automation.Language
         /// The character is the first character of some operator (and hence is not part of a token that starts a number).
         /// </summary>
         ForceStartNewTokenAfterNumber = 0x0800,
-
-        /// <summary>
-        /// The character is a binary digit.
-        /// </summary>
-        BinaryDigit = 0x1000,
     }
 
     internal static class CharExtensions
@@ -150,8 +145,8 @@ namespace System.Management.Automation.Language
 /*        - */ CharTraits.ForceStartNewTokenAfterNumber,
 /*        . */ CharTraits.ForceStartNewTokenAfterNumber,
 /*        / */ CharTraits.ForceStartNewTokenAfterNumber,
-/*        0 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst | CharTraits.BinaryDigit,
-/*        1 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst | CharTraits.BinaryDigit,
+/*        0 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
+/*        1 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
 /*        2 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
 /*        3 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
 /*        4 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
@@ -329,26 +324,10 @@ namespace System.Management.Automation.Language
         }
 
         // Return true if the character is a decimal digit.
-        internal static bool IsDecimalDigit(this char c)
-        {
-            if (c < 128)
-            {
-                return (s_traits[c] & CharTraits.Digit) != 0;
-            }
-
-            return false;
-        }
+        internal static bool IsDecimalDigit(this char c) => (uint)(c - '0') <= 9;
 
         // Return true if the character is a binary digit.
-        internal static bool IsBinaryDigit(this char c)
-        {
-            if (c < 128)
-            {
-                return (s_traits[c] & CharTraits.BinaryDigit) != 0;
-            }
-
-            return false;
-        }
+        internal static bool IsBinaryDigit(this char c) => (uint)(c - '0') <= 1;
 
         // Return true if the character is a type suffix character.
         internal static bool IsTypeSuffix(this char c)
