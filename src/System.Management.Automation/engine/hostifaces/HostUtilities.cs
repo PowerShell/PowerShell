@@ -76,18 +76,31 @@ namespace System.Management.Automation
         private static ArrayList InitializeSuggestions()
         {
             ArrayList suggestions = new ArrayList(
-                new Hashtable[] {
-                    NewSuggestion(1, "Transactions", SuggestionMatchType.Command, "^Start-Transaction",
-                        SuggestionStrings.Suggestion_StartTransaction, true),
-                    NewSuggestion(2, "Transactions", SuggestionMatchType.Command, "^Use-Transaction",
-                        SuggestionStrings.Suggestion_UseTransaction, true),
-                    NewSuggestion(3, "General", SuggestionMatchType.Dynamic,
-                        ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
-                        ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
-                        new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
-                        true)
-                }
-            );
+                new Hashtable[]
+                {
+                    NewSuggestion(
+                        id: 1,
+                        category: "Transactions",
+                        matchType: SuggestionMatchType.Command,
+                        rule: "^Start-Transaction",
+                        suggestion: SuggestionStrings.Suggestion_StartTransaction,
+                        enabled: true),
+                    NewSuggestion(
+                        id: 2,
+                        category: "Transactions",
+                        matchType: SuggestionMatchType.Command,
+                        rule: "^Use-Transaction",
+                        suggestion: SuggestionStrings.Suggestion_UseTransaction,
+                        enabled: true),
+                    NewSuggestion(
+                        id: 3,
+                        category: "General",
+                        matchType: SuggestionMatchType.Dynamic,
+                        rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
+                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
+                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
+                        enabled: true)
+                });
 
             if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
             {
@@ -99,8 +112,7 @@ namespace System.Management.Automation
                         rule: "CommandNotFoundException",
                         suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
                         suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
-                        enabled: true)
-                );
+                        enabled: true));
             }
 
             return suggestions;
