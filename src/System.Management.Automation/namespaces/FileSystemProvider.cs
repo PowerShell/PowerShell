@@ -7081,7 +7081,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Returns the placeholder compatibility mode for the current process.
             /// </summary>
-            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx)</returns>
+            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
             [DllImport("ntdll.dll")]
             internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
 
@@ -7100,7 +7100,6 @@ namespace Microsoft.PowerShell.Commands
             internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
             internal const sbyte PHCM_ERROR_NO_TEB = -2;
 #endif
-
         }
 
         /// <summary>
