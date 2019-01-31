@@ -1,12 +1,14 @@
 parameters:
   artifactPath:
   artifactFilter: '*'
+  condition: succeeded()
 
 steps:
   - powershell: |
         Get-ChildItem -Path '${{ parameters.artifactPath }}' -File -filter '${{ parameters.artifactFilter }}' |
-            Select-Item -ExpandProperty FullName |
+            Select-Object -ExpandProperty FullName |
                 ForEach-Object {
                     Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$_"
                 }
     displayName: Upload Final Artifacts ${{ parameters.artifactFilter }} from ${{ parameters.artifactPath }}
+    condition: ${{ parameters.condition }}
