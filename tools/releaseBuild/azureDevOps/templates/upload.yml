@@ -11,7 +11,7 @@ steps:
           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
       }
   displayName: '[create script] upload signed msi - ${{ parameters.architecture }}'
-  condition: and(succeeded(), eq(variables['msi'], 'yes'))
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - task: AzureFileCopy@1
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
@@ -21,7 +21,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq(variables['msi'], 'yes'))
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - powershell: |
       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip"
