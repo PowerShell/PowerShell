@@ -3117,7 +3117,7 @@ function New-DotnetSdkContainerFxdPackage {
     $destinationPackageFullName = Join-Path $DestinationPath $packageName
 
     ## Get fxdependent package path
-    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern.FullName | Select-Object -First 1 -ExpandProperty FullName
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern | Select-Object -First 1 -ExpandProperty FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
