@@ -42,7 +42,6 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_FileSystemTypes(CustomControl[] sharedControls)
         {
-
             yield return new FormatViewDefinition("children",
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
