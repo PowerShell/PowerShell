@@ -1950,9 +1950,13 @@ namespace Microsoft.PowerShell.Commands
         public static string LastWriteTimeString(PSObject instance)
         {
             //[String]::Format(""{ 0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
-            return instance?.BaseObject is FileSystemInfo fileInfo
-                ? string.Format("{0,10} {1,8}", fileInfo.LastWriteTime.ToString("d"), fileInfo.LastWriteTime.ToString("t"))
-                : "";
+            if (instance?.BaseObject is FileSystemInfo fileInfo)
+            {
+                var fileInfoLastWriteTime = fileInfo.LastWriteTime;
+                return string.Format("{0,10} {1,8}", fileInfoLastWriteTime.ToString("d"), fileInfoLastWriteTime.ToString("t"));
+            }
+
+            return "";
         }
 
         #region RenameItem
