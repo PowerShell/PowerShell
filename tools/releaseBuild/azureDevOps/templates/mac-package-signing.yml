@@ -54,22 +54,8 @@ jobs:
 
   - template: upload-final-results.yml
     parameters:
-      artifactPath: $(System.ArtifactsDirectory)\rpm\release
+      artifactPath: $(System.ArtifactsDirectory)
       artifactFilter: "*.tar.gz"
-
-  # - powershell: |
-  #     dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | foreach-object {
-  #        $fullname = $_.fullname
-  #        Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$fullname"
-  #     }
-  #   displayName: 'Upload tar.gz'
-
-  # - powershell: |
-  #     dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | foreach-object {
-  #         $fullname = $_.fullname
-  #         Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$fullname"
-  #     }
-  #   displayName: 'Upload macOS signed package'
 
   - powershell: |
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"

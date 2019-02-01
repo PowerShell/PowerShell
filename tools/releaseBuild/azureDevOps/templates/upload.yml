@@ -4,15 +4,6 @@ parameters:
   msi: yes
 
 steps:
-# - powershell: |
-#       $packagePath = "$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi"
-#       if(Test-Path -Path $packagePath)
-#       {
-#           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
-#       }
-#   displayName: '[create script] upload signed msi - ${{ parameters.architecture }}'
-#   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
-
 - template: upload-final-results.yml
   parameters:
     artifactPath: $(Build.StagingDirectory)\signedPackages
@@ -28,14 +19,6 @@ steps:
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
-
-# - powershell: |
-#       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip"
-#       if(Test-Path -Path $packagePath)
-#       {
-#           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
-#       }
-#   displayName: '[create script] upload signed zip - ${{ parameters.architecture }}'
 
 - template: upload-final-results.yml
   parameters:

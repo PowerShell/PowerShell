@@ -93,13 +93,6 @@ jobs:
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
 
-  # - powershell: |
-  #       $packagePath = "$(System.ArtifactsDirectory)\finished\release"
-  #       Get-ChildItem -Path $packagePath -File | Select-Item -ExpandProperty FullName | ForEach-Object {
-  #           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$_"
-  #       }
-  #   displayName: 'Upload as Artifacts - DEB and tar.gz'
-
   - task: AzureFileCopy@1
     displayName: 'Upload to Azure - RPM'
     inputs:
@@ -113,11 +106,3 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\rpm\release
-
-  # - powershell: |
-  #       $packagePath = "$(System.ArtifactsDirectory)\rpm\release"
-
-  #       Get-ChildItem -Path $packagePath -File | Select-Item -ExpandProperty FullName | ForEach-Object {
-  #           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$_"
-  #       }
-  #   displayName: 'Upload as Artifacts - RPM'
