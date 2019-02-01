@@ -488,14 +488,14 @@ Describe 'method conversion' -Tags 'CI' {
     }
 
     $TestCases = @(
-        @{ Number = "100y"; Value = 100; Type = [int] }
-        @{ Number = "100uy"; Value = 100.0; Type = [double] }
-        @{ Number = "1200u"; Value = 1200s; Type = [short] }
-        @{ Number = "1200L"; Value = 1200; Type = [int] }
-        @{ Number = "127ul"; Value = 127ul; Type = [ulong] }
-        @{ Number = "127d"; Value = 127uy; Type = [byte] }
-        @{ Number = "127s"; Value = 127y; Type = [sbyte] }
-        @{ Number = "127y"; Value = 127u; Type = [uint] }
+        @{ Number = "100y"; Value = "100"; Type = [int] }
+        @{ Number = "100uy"; Value = "100"; Type = [double] }
+        @{ Number = "1200u"; Value = "1200"; Type = [short] }
+        @{ Number = "1200L"; Value = "1200"; Type = [int] }
+        @{ Number = "127ul"; Value = "127"; Type = [ulong] }
+        @{ Number = "127d"; Value = "127"; Type = [byte] }
+        @{ Number = "127s"; Value = "127"; Type = [sbyte] }
+        @{ Number = "127y"; Value = "127"; Type = [uint] }
     )
     It "Correctly casts <Number> to value <Value> as type <Type>" -TestCases $TestCases {
         param($Number, $Value, $Type)
@@ -514,7 +514,7 @@ Describe 'method conversion' -Tags 'CI' {
     It "Fails to cast invalid PowerShell-Style suffixed numeral <Number>" -TestCases $TestCases {
         param($Number)
 
-        $Result = $Number -as $Type
+        $Result = $Number -as [int]
         $Result | Should -BeNullOrEmpty
     }
 }
