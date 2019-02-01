@@ -2893,7 +2893,7 @@ namespace System.Management.Automation
         /// <param name="resultType">The resulting value type to convert to.</param>
         /// <param name="result">The resulting numeric value.</param>
         /// <returns>
-        /// true if the parse succeeds, false if a parse exception arises.
+        /// True if the parse succeeds, false if a parse exception arises.
         /// In all other cases, an exception will be thrown.
         /// </returns>
         private static bool TryScanNumber(string strToConvert, Type resultType, out object result)
