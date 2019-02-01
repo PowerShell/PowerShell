@@ -1,0 +1,80 @@
+parameters:
+  parentJobs: []
+  poolName: Hosted Ubuntu 1604
+  buildName: Linux-x64
+
+jobs:
+- job: dotnetfxd_${{ parameters.buildName }}
+  displayName: Create fxdependent package dotnet sdk - ${{ parameters.buildName }}
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  condition: succeeded()
+  pool: ${{ parameters.poolName }}
+  steps:
+
+  - powershell: |
+      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
+    displayName: 'Run setReleaseTag.ps1'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        **/*.tar.gz
+        **/*.zip
+      downloadPath: '$(System.ArtifactsDirectory)/finished'
+
+  - powershell: |
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      Import-Module $(Build.SourcesDirectory)/tools/packaging -Force
+      New-DotnetSdkContainerFxdPackage -FxdPackagePath "$(System.ArtifactsDirectory)/finished" -ReleaseTag $(ReleaseTagVar) -DestinationPath "$(System.ArtifactsDirectory)/finished/release"
+    displayName: 'Create fxdependent package for dotnet sdk docker image'
+
+  - powershell: |
+      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
+      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set Version for Blob Storage'
+
+- job:
+  displayName: Upload fxdependent package dotnet sdk - ${{ parameters.buildName }}
+  dependsOn: dotnetfxd_${{ parameters.buildName }}
+  condition: succeeded()
+  pool: Package ES CodeHub Lab E
+  steps:
+
+  - powershell: |
+      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
+    displayName: 'Run setReleaseTag.ps1'
+
+  - powershell: |
+      $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
+      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion-internal"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set Version for Blob Storage'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download FxDependent dotnet sdx artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        **/*fxd-dotnetsdk.zip
+        **/*fxd-dotnetsdk.tar.gz
+      downloadPath: '$(System.ArtifactsDirectory)'
+    condition: succeeded()
+
+  - powershell: |
+      Get-ChildItem '$(System.ArtifactsDirectory)\release'
+    displayName: Capture list of downloaded artifacts
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload to azure'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\release'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
