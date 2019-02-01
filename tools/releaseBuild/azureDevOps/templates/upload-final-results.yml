@@ -5,7 +5,7 @@ parameters:
 
 steps:
   - powershell: |
-        Get-ChildItem -Path '${{ parameters.artifactPath }}' -File -filter '${{ parameters.artifactFilter }}' |
+        Get-ChildItem -Path '${{ parameters.artifactPath }}' -File -filter '${{ parameters.artifactFilter }}' -ErrorAction SilentlyContinue |
             Select-Object -ExpandProperty FullName |
                 ForEach-Object {
                     Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$_"
