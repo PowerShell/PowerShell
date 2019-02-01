@@ -1734,7 +1734,7 @@
               <File Id="fil94E5AE8C0F25406EA6F009B9B3D96210" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.strings.psd1" />
             </Component>
           </Directory>
-          <Directory Name="coreclr" Id="dirD84258F96F80409BA8CD117DCD52EC6E">
+          <Directory Name="coreclr" Id="dir95255D69241447C5A82808FD961E1DD0">
             <Directory Name="netstandard2.0" Id="dir7412D53B0487498E8197451AA63B9953">
               <Component Id="cmp819F1885245B46C0982FFDD7301BFC21" Guid="{1e45a0cb-afef-4e49-a6ff-06be797602bf}">
                 <File Id="filCDCEC7CC51DD44BBA28FF3DD0ED04289" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
