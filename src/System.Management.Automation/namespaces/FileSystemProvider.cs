@@ -1908,10 +1908,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the name or Name -> Target for FileSystemInfos
+        /// Returns the name or Name -> Target for FileSystemInfos.
         /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
             if (instance == null)
@@ -1931,32 +1931,31 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the name or Name -> Target for FileSystemInfos
+        /// Returns the Length of a File, in parenthesis for offline files, and empty string for directories.
         /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>Length as a string.</returns>
         public static string LengthString(PSObject instance)
         {
             return instance?.BaseObject is FileInfo fileInfo
                 ? fileInfo.Attributes.HasFlag(FileAttributes.Offline) ? $"({fileInfo.Length})" : fileInfo.Length.ToString()
-                : "";
+                : string.Empty;
         }
 
         /// <summary>
-        /// Returns the a string representation of last write time
+        /// Returns the a string representation of LastWriteTime.
         /// </summary>
         /// <param name="instance"></param>
-        /// <returns></returns>
+        /// <returns>LastWriteTime formatted as short date + short time.</returns>
         public static string LastWriteTimeString(PSObject instance)
         {
-            //[String]::Format(""{ 0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
             if (instance?.BaseObject is FileSystemInfo fileInfo)
             {
                 var fileInfoLastWriteTime = fileInfo.LastWriteTime;
                 return string.Format("{0,10} {1,8}", fileInfoLastWriteTime.ToString("d"), fileInfoLastWriteTime.ToString("t"));
             }
 
-            return "";
+            return string.Empty;
         }
 
         #region RenameItem
