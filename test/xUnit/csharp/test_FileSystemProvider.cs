@@ -107,9 +107,9 @@ namespace PSTests.Parallel
                 executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             }
 
-            Assert.Equal("d-----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));
-            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r", "-").Replace("a", "-"));
-            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r", "-").Replace("a", "-"));
+            Assert.Equal("d----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));
+            Assert.Equal("-----", FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r", "-").Replace("a", "-"));
+            Assert.Equal("-----", FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r", "-").Replace("a", "-"));
         }
 
         [Fact]
