@@ -191,8 +191,8 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td19.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
-            td19.Members.Add("NameString",
-                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td19.Members.Add("TargetName",
+                new CodePropertyData("TargetName", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "TargetName"), null) { IsHidden = true });
             td19.Members.Add("LengthString",
                 new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
             td19.Members.Add("LastWriteTimeString",
@@ -213,8 +213,8 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td20.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
-            td20.Members.Add("NameString",
-                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td20.Members.Add("TargetName",
+                new CodePropertyData("TargetName", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "TargetName"), null) { IsHidden = true });
             td20.Members.Add("LengthString",
                 new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
             td20.Members.Add("LastWriteTimeString",

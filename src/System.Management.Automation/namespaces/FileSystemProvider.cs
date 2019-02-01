@@ -1892,27 +1892,27 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
+            bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
+            bool isHardLink = includeHardLink ? InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo) : false;
+
             char[] mode = new char[5];
-            mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
+            mode[0] = isReparsePoint || isHardLink
+                    ? 'l'
+                    : (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
             mode[1] = (fileInfo.Attributes & FileAttributes.Archive) == FileAttributes.Archive ? 'a' : '-';
             mode[2] = (fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly ? 'r' : '-';
             mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
             mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
-            // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
-            // Porting note: these need to be handled specially
-            bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-            bool isHardLink = includeHardLink ? InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo) : false;
-            mode[0] = isReparsePoint || isHardLink ? 'l' : mode[0];
 
             return new string(mode);
         }
 
         /// <summary>
-        /// Returns the name or Name -> Target for FileSystemInfos.
+        /// Provides a TargetName property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
-        public static string NameString(PSObject instance)
+        public static string TargetName(PSObject instance)
         {
             if (instance == null)
             {
@@ -1931,7 +1931,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the Length of a File, in parenthesis for offline files, and empty string for directories.
+        /// Provides a LengthString property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>Length as a string.</returns>
@@ -1943,9 +1943,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the a string representation of LastWriteTime.
+        /// Provides a LastWriteTimeString property for FileSystemInfo.
         /// </summary>
-        /// <param name="instance"></param>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>LastWriteTime formatted as short date + short time.</returns>
         public static string LastWriteTimeString(PSObject instance)
         {
