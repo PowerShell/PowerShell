@@ -52,4 +52,4 @@ The release build is fairly complicated.  The definition is at `./azureDevOps/re
 
 Here is a diagram of the build:
 
-[![Release Build diagram](azureDevOps/diagram.png)](azureDevOps/diagram.png)
+[![Release Build diagram](https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/releaseBuild/azureDevOps/diagram.svg?sanitize=true)](https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/releaseBuild/azureDevOps/diagram.svg?sanitize=true)
