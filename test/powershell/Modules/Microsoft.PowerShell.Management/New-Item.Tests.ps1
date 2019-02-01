@@ -255,7 +255,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
     }
 
-    It "New-Item -ItemType SymbolicLink should be able to create a relative link" {
+    It "New-Item -ItemType SymbolicLink should be able to create a relative link" -Skip:(!$IsWindows) {
         try {
             Push-Location $TestDrive
             $relativeFilePath = "." + [System.IO.Path]::DirectorySeparatorChar + "relativefile.txt"
