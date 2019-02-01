@@ -2887,7 +2887,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Attempts to use Parser.ScanNumber to get the value of a numeric string.
-        /// WARNING: Only ParseExceptions are handled; others may arise from Convert.ChangeType()
+        /// WARNING: Only ParseExceptions are handled; others may arise from Convert.ChangeType().
         /// </summary>
         /// <param name="strToConvert">The string to convert to a number.</param>
         /// <param name="resultType">The resulting value type to convert to.</param>
