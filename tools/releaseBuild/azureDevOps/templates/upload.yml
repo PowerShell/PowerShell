@@ -4,14 +4,11 @@ parameters:
   msi: yes
 
 steps:
-- powershell: |
-      $packagePath = "$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi"
-      if(Test-Path -Path $packagePath)
-      {
-          Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
-      }
-  displayName: '[create script] upload signed msi - ${{ parameters.architecture }}'
-  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(Build.StagingDirectory)\signedPackages
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
+    condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - task: AzureFileCopy@1
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
@@ -23,13 +20,10 @@ steps:
     ContainerName: '$(AzureVersion)'
   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
-- powershell: |
-      $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip"
-      if(Test-Path -Path $packagePath)
-      {
-          Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
-      }
-  displayName: '[create script] upload signed zip - ${{ parameters.architecture }}'
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(System.ArtifactsDirectory)\signed
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
 
 - task: AzureFileCopy@1
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
