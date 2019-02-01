@@ -2936,7 +2936,7 @@ namespace System.Management.Automation
             TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
-                if (TryScanNumber(strToConvert, resultType, out object result)))
+                if (TryScanNumber(strToConvert, resultType, out object result))
                 {
                     return result;
                 }
@@ -2995,7 +2995,7 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
-                if (TryScanNumber(strToConvert, resultType, out object result)
+                if (TryScanNumber(strToConvert, resultType, out object result))
                 {
                     return result;
                 }
