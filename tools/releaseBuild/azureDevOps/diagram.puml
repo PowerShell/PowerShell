@@ -1,31 +1,36 @@
 @startuml
 
 ' Define the build tasks as business processes
-archimate #Business "Build DEB"  as BuildDEB <<business-process>>
-archimate #Business "Build RPM"  as BuildRPM <<business-process>>
-archimate #Business "Build Alpine"  as BuildAlpine <<business-process>>
-archimate #Business "Build Linux-FxDependent"  as BuildLinuxFx <<business-process>>
-archimate #Business "Upload DEB"  as UploadDEB <<business-process>>
-archimate #Business "Upload RPM"  as UploadRPM <<business-process>>
-archimate #Business "Upload Alpine"  as UploadAlpine <<business-process>>
-archimate #Business "Upload Linux-FxDependent"  as UploadLinuxFx <<business-process>>
+agent "Build DEB"  as BuildDEB
+agent "Build RPM"  as BuildRPM
+agent "Build Alpine"  as BuildAlpine
+agent "Build Linux-FxDependent"  as BuildLinuxFx
 
-archimate #Business "Build macOS"  as BuildMac <<business-process>>
-archimate #Business "macOS Package Signing and Upload"  as SignMac <<business-process>>
+artifact "Upload DEB"  as UploadDEB
+artifact "Upload RPM"  as UploadRPM
+artifact "Upload Alpine"  as UploadAlpine
+artifact "Upload Linux-FxDependent"  as UploadLinuxFx
 
-archimate #Business "Build Windows - x64"  as BuildWinX64 <<business-process>>
-archimate #Business "Build Windows - x86"  as BuildWinX86 <<business-process>>
-archimate #Business "Build Windows - arm32"  as BuildWinArm32 <<business-process>>
-archimate #Business "Build Windows - arm64"  as BuildWinArm64 <<business-process>>
-archimate #Business "Build Windows - FxDependent"  as BuildWinFx <<business-process>>
-archimate #Business "Windows Package Signing and Upload"  as SignWin <<business-process>>
+agent "Build macOS"  as BuildMac
+agent "macOS Package Signing and Upload"  as SignMac
 
-archimate #Business "ComponentRegistration"  as BuildCG <<business-process>>
+agent "Build Windows - x64"  as BuildWinX64
+agent "Build Windows - x86"  as BuildWinX86
+agent "Build Windows - arm32"  as BuildWinArm32
+agent "Build Windows - arm64"  as BuildWinArm64
+agent "Build Windows - FxDependent"  as BuildWinFx
+agent "Windows Package Signing and Upload"  as SignWin
 
-archimate #Business "Compliance"  as Compliance <<business-process>>
+agent "ComponentRegistration"  as BuildCG
+
+agent "Compliance"  as Compliance
+
+agent "Create & Upload FxDependent SDK - Linux" as BuildLinuxFxSdk
+agent "Create & Upload FxDependent SDK - Windows" as BuildWinFxSdk
 
 ' Define finishing the build as a goal filled
-archimate #Goal "Finish"  as Finish <<goal-filled>>
+control "Finish"  as Finish
+control "Start" as Start
 
 ' map the various Upload task dependencies
 BuildDEB -down-> UploadDEB
@@ -48,14 +53,29 @@ BuildWinX86 -down-> Compliance
 BuildWinX64 -down-> Compliance
 BuildWinFx -down-> Compliance
 
+BuildLinuxFx -down-> BuildLinuxFxSdk
+SignWin -down-> BuildWinFxSdk
+
 ' map all leafs to finish
-Compliance -down-> Finish
-UploadAlpine -down-> Finish
-UploadDEB -down-> Finish
-UploadRPM -down-> Finish
-UploadLinuxFx -down-> Finish
-SignWin -down-> Finish
-SignMac -down-> Finish
-BuildCG -down-> Finish
+Compliance ~~ Finish
+UploadAlpine ~~ Finish
+UploadDEB ~~ Finish
+UploadRPM ~~ Finish
+UploadLinuxFx ~~ Finish
+SignMac ~~ Finish
+BuildCG ~~ Finish
+BuildLinuxFxSdk ~~ Finish
+BuildWinFxSdk ~~ Finish
+
+Start ~~ BuildDEB
+Start ~~ BuildRPM
+Start ~~ BuildAlpine
+Start ~~ BuildLinuxFx
+Start ~~ BuildMac
+Start ~~ BuildWinX64
+Start ~~ BuildWinX86
+Start ~~ BuildWinFx
+Start ~~ BuildWinArm32
+Start ~~ BuildWinArm64
 
 @enduml
