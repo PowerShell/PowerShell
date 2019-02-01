@@ -91,6 +91,7 @@ function Start-PSPackage {
         }
 
         $Script:Options = Get-PSOptions
+        $actualParams = @()
 
         $crossGenCorrect = $false
         if ($Runtime -match "arm") {
@@ -98,6 +99,7 @@ function Start-PSPackage {
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
+            $actualParams += '-CrossGen'
             $crossGenCorrect = $true
         }
 
@@ -106,10 +108,14 @@ function Start-PSPackage {
         # Require PSModuleRestore for packaging without symbols
         # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $actualParams += '-PSModuleRestore'
             $PSModuleRestoreCorrect = $true
         }
         elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
             $PSModuleRestoreCorrect = $true
+        }
+        else {
+            $actualParams += '-PSModuleRestore'
         }
 
         $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
@@ -139,6 +145,8 @@ function Start-PSPackage {
             # This check serves as a simple gate to ensure that the user knows what he is doing, and
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
+
+
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
@@ -150,6 +158,8 @@ function Start-PSPackage {
                 $params += '-PSModuleRestore'
             }
 
+            $actualParams += '-Runtime ' + $Script:Options.Runtime
+
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
             } else {
@@ -157,7 +167,9 @@ function Start-PSPackage {
             }
 
             $params += '-Configuration', $Configuration
+            $actualParams += '-Configuration ' + $Script:Options.Configuration
 
+            Write-Warning "Build started with unexpected parameters 'Start-PSBuild $actualParams"
             throw "Please ensure you have run 'Start-PSBuild $params'!"
         }
 
