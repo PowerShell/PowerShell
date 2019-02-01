@@ -2906,9 +2906,9 @@ namespace System.Management.Automation
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                 return true;
             }
-            catch (ParseException)
+            catch (Exception)
             {
-                // Only parse exceptions are handled; all others must be handled by the caller
+                // Parse or convert failed
                 result = null;
                 return false;
             }
@@ -2936,7 +2936,7 @@ namespace System.Management.Automation
             TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
-                if (TryScanNumber(strToConvert, resultType, out object result))
+                if (TryScanNumber(strToConvert, resultType, out object result)))
                 {
                     return result;
                 }
@@ -2995,14 +2995,13 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
-                if (TryScanNumber(strToConvert, resultType, out object result))
+                if (TryScanNumber(strToConvert, resultType, out object result)
                 {
                     return result;
                 }
                 else
                 {
-                    return Convert.ChangeType(strToConvert, resultType,
-                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                    return Convert.ChangeType(strToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
                 }
             }
             catch (Exception e)
@@ -3054,8 +3053,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return Convert.ChangeType(strToConvert, resultType,
-                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                    return Convert.ChangeType(strToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
                 }
             }
             catch (Exception e)
