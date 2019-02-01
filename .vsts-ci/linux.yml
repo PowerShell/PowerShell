@@ -32,7 +32,7 @@ phases:
     displayName: Set TEMP to AGENT_TEMPDIRECTORY
     condition: succeededOrFailed()
 
-  - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config.yml
+  - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
       sudo apt-get update

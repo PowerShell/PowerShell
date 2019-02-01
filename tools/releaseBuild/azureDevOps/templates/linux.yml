@@ -27,7 +27,7 @@ jobs:
       }
     displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
 
-  - template: insert-nuget-config.yml
+  - template: insert-nuget-config-azfeed.yml
 
 
   - powershell: |
@@ -81,7 +81,7 @@ jobs:
     displayName: 'Run Defender Scan'
 
   - task: AzureFileCopy@1
-    displayName: 'Upload to azure deb and tar.gz'
+    displayName: 'Upload to Azure - DEB and tar.gz'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\finished\release'
       azureSubscription: '$(AzureFileCopySubscription)'
@@ -89,8 +89,12 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
 
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\finished\release
+
   - task: AzureFileCopy@1
-    displayName: 'Upload to azure rpm'
+    displayName: 'Upload to Azure - RPM'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
       azureSubscription: '$(AzureFileCopySubscription)'
@@ -98,3 +102,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-unsigned'
     condition: and(eq(variables['buildName'], 'RPM'),succeeded())
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\rpm\release
