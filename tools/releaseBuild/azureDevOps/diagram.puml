@@ -1,32 +1,46 @@
 @startuml
 
-' Define the build tasks as business processes
-agent "Build DEB"  as BuildDEB
-agent "Build RPM"  as BuildRPM
-agent "Build Alpine"  as BuildAlpine
-agent "Build Linux-FxDependent"  as BuildLinuxFx
+folder "Linux Builds" {
+    ' Define the build tasks as business processes
+    agent "DEB"  as BuildDEB
+    agent "RPM"  as BuildRPM
+    agent "Alpine"  as BuildAlpine
+    agent "Linux-FxDependent"  as BuildLinuxFx
 
-artifact "Upload DEB"  as UploadDEB
-artifact "Upload RPM"  as UploadRPM
-artifact "Upload Alpine"  as UploadAlpine
-artifact "Upload Linux-FxDependent"  as UploadLinuxFx
+}
 
-agent "Build macOS"  as BuildMac
-agent "macOS Package Signing and Upload"  as SignMac
+agent "macOS Build"  as BuildMac
 
-agent "Build Windows - x64"  as BuildWinX64
-agent "Build Windows - x86"  as BuildWinX86
-agent "Build Windows - arm32"  as BuildWinArm32
-agent "Build Windows - arm64"  as BuildWinArm64
-agent "Build Windows - FxDependent"  as BuildWinFx
-agent "Windows Package Signing and Upload"  as SignWin
+folder "Windows Builds" as WinBuilds {
+    agent "x64"  as BuildWinX64
+    agent "x86"  as BuildWinX86
+    agent "arm32"  as BuildWinArm32
+    agent "arm64"  as BuildWinArm64
+    agent "FxDependent"  as BuildWinFx
+}
 
 agent "ComponentRegistration"  as BuildCG
 
+folder "Linux Package Scanning and Upload" {
+    agent "DEB"  as UploadDEB
+    agent "RPM"  as UploadRPM
+    agent "Alpine"  as UploadAlpine
+    agent "Linux-FxDependent"  as UploadLinuxFx
+}
+
+folder "Package Signing and Upload" {
+    agent "macOS"  as SignMac
+
+    agent "Windows"  as SignWin
+}
+
+
 agent "Compliance"  as Compliance
 
-agent "Create & Upload FxDependent SDK - Linux" as BuildLinuxFxSdk
-agent "Create & Upload FxDependent SDK - Windows" as BuildWinFxSdk
+folder "Create & Upload FxDependent DotNet SDK" {
+    agent "Linux" as BuildLinuxFxSdk
+    agent "Windows" as BuildWinFxSdk
+}
 
 ' Define finishing the build as a goal filled
 control "Finish"  as Finish
@@ -42,11 +56,12 @@ BuildAlpine -down-> UploadAlpine
 BuildMac -down-> SignMac
 
 ' map all of the SignWin task dependencies
-BuildWinX64 -down-> SignWin
-BuildWinX86 -down-> SignWin
-BuildWinArm32 -down-> SignWin
-BuildWinArm64 -down-> SignWin
-BuildWinFx -down-> SignWin
+WinBuilds -down-> SignWin
+'BuildWinX64 -down-> SignWin
+'BuildWinX86 -down-> SignWin
+'BuildWinArm32 -down-> SignWin
+'BuildWinArm64 -down-> SignWin
+'BuildWinFx -down-> SignWin
 
 ' map all of the Compliance task dependencies
 BuildWinX86 -down-> Compliance
@@ -77,5 +92,6 @@ Start ~~ BuildWinX86
 Start ~~ BuildWinFx
 Start ~~ BuildWinArm32
 Start ~~ BuildWinArm64
+Start ~~ BuildCG
 
 @enduml
