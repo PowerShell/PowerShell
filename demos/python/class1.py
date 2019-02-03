@@ -5,7 +5,7 @@ import json
 # Define a class with a method that returns JSON
 class returnsjson:
     def __init__(self):
-        print("Loaded class")
+        the_object = self
     def method1(self):
         return json.dumps(['foo',
                             {
