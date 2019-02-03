@@ -4,6 +4,8 @@ import json
 
 # Define a class with a method that returns JSON
 class returnsjson:
+    def __init__(self):
+        print("Loaded class")
     def method1(self):
         return json.dumps(['foo',
                             {
@@ -14,5 +16,4 @@ class returnsjson:
                             1,2,3])
 
 c = returnsjson()
-print (c.method1())
-                                  
+print(c.method1())
