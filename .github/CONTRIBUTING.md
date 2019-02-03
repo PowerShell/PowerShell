@@ -349,7 +349,7 @@ Signing the CLA process is simple and can be done in less than a minute.
 You don't have to do this up-front.
 You can simply clone, fork, and submit your pull request as usual.
 When your pull request is created, it is checked by the CLA bot.
-If you have signed the CLA, the status check will be set to `passing`.  Otherwise it will stay at `pending`.
+If you have signed the CLA, the status check will be set to `passing`.  Otherwise, it will stay at `pending`.
 Once you sign a CLA, all your existing and future pull requests will have the status check automatically set at `passing`.
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
