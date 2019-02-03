@@ -418,7 +418,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkType:Mode:ModeWithoutHardlink:Name:Target:TargetName:VersionInfo"
+        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkType:Mode:ModeWithoutHardlink:Name:NameString:Target:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue
