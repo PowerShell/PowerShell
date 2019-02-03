@@ -341,7 +341,7 @@ is also appropriate, as is using Markdown syntax.
 ## Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
-you need to [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
+you should to [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
 If you've already contributed to PowerShell or Microsoft repositories in the past, congratulations!
 You've already completed this step.
 This a one-time requirement for the PowerShell project.
