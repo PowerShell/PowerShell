@@ -1908,11 +1908,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Provides a TargetName property for FileSystemInfo.
+        /// Provides a NameString property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
-        public static string TargetName(PSObject instance)
+        public static string NameString(PSObject instance)
         {
             if (instance == null)
             {
