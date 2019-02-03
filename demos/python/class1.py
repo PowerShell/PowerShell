@@ -4,7 +4,7 @@ import json
 
 # Define a class with a method that returns JSON
 class returnsjson:
-    def method1(this):
+    def method1(self):
         return json.dumps(['foo',
                             {
                                 'bar': ('baz', None, 1.0, 2),
