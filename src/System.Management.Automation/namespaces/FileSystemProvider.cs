@@ -1869,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        public static string Mode(PSObject instance) => Mode(instance, includeHardLink: true);
+        public static string Mode(PSObject instance) => Mode(instance, excludeHardLink: false);
 
         /// <summary>
         /// Provides a ModeWithoutHardLink property for FileSystemInfo, without HardLinks for performance reasons.
@@ -1877,34 +1877,31 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        public static string ModeWithoutHardLink(PSObject instance) => Mode(instance, includeHardLink: false);
+        public static string ModeWithoutHardLink(PSObject instance) => Mode(instance, excludeHardLink: true);
 
-        private static string Mode(PSObject instance, bool includeHardLink)
+        private static string Mode(PSObject instance, bool excludeHardLink)
         {
-            if (instance == null)
+            string ToModeString(FileSystemInfo fileSystemInfo)
             {
-                return string.Empty;
+                FileAttributes fileAttributes = fileSystemInfo.Attributes;
+                bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
+                bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
+                bool isHardLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
+
+                var mode = new char[]
+                {
+                    isReparsePoint || isHardLink ? 'l' : isDirectory ? 'd' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Archive)   ? 'a' : '-',
+                    fileAttributes.HasFlag(FileAttributes.ReadOnly)  ? 'r' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Hidden)    ? 'h' : '-',
+                    fileAttributes.HasFlag(FileAttributes.System)    ? 's' : '-',
+                };
+                return new string(mode);
             }
 
-            FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
-            if (fileInfo == null)
-            {
-                return string.Empty;
-            }
-
-            bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-            bool isHardLink = includeHardLink ? InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo) : false;
-
-            char[] mode = new char[5];
-            mode[0] = isReparsePoint || isHardLink
-                    ? 'l'
-                    : (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
-            mode[1] = (fileInfo.Attributes & FileAttributes.Archive) == FileAttributes.Archive ? 'a' : '-';
-            mode[2] = (fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly ? 'r' : '-';
-            mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
-            mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
-
-            return new string(mode);
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? ToModeString(fileInfo)
+                : string.Empty;
         }
 
         /// <summary>
@@ -1914,20 +1911,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            if (instance == null)
-            {
-                return string.Empty;
-            }
-
-            FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
-            if (fileInfo == null)
-            {
-                return string.Empty;
-            }
-
-            return InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
-                ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance).First()}"
-                : fileInfo.Name;
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                    ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance).First()}"
+                    : fileInfo.Name
+                : string.Empty;
         }
 
         /// <summary>
@@ -1938,7 +1926,9 @@ namespace Microsoft.PowerShell.Commands
         public static string LengthString(PSObject instance)
         {
             return instance?.BaseObject is FileInfo fileInfo
-                ? fileInfo.Attributes.HasFlag(FileAttributes.Offline) ? $"({fileInfo.Length})" : fileInfo.Length.ToString()
+                ? fileInfo.Attributes.HasFlag(FileAttributes.Offline)
+                    ? $"({fileInfo.Length})"
+                    : fileInfo.Length.ToString()
                 : string.Empty;
         }
 
@@ -1949,13 +1939,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>LastWriteTime formatted as short date + short time.</returns>
         public static string LastWriteTimeString(PSObject instance)
         {
-            if (instance?.BaseObject is FileSystemInfo fileInfo)
-            {
-                var fileInfoLastWriteTime = fileInfo.LastWriteTime;
-                return string.Format("{0,10} {1,8}", fileInfoLastWriteTime.ToString("d"), fileInfoLastWriteTime.ToString("t"));
-            }
-
-            return string.Empty;
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? string.Format(CultureInfo.CurrentCulture, "{0,10:d} {0,8:t}", fileInfo.LastWriteTime)
+                : string.Empty;
         }
 
         #region RenameItem
@@ -7971,16 +7957,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-            {
-                // Note that this class also has a enum called FileAttributes, so use fully qualified name
-                return (fileInfo.Attributes & System.IO.FileAttributes.ReparsePoint)
-                       == System.IO.FileAttributes.ReparsePoint;
-            }
-            else
-            {
-                return Platform.NonWindowsIsSymLink(fileInfo);
-            }
+            return Platform.IsWindows
+                ? fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint)
+                : Platform.NonWindowsIsSymLink(fileInfo);
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)
