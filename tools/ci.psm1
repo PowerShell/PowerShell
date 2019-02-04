@@ -791,7 +791,9 @@ function Invoke-LinuxTests
             Write-Host "Tests failed. See the issue below."
             Throw $resultError
         }
-        else {}
+        else {
+            Write-Host "Tests did not fail! Nice job :)"
+        }
     }
     else {
         $result = 'PASS'

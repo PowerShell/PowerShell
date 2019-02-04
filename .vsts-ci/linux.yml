@@ -93,11 +93,6 @@ jobs:
     displayName: Build and test
     condition: succeeded()
 
-  - powershell: |
-      Write-Host "Tests did not fail!"
-    displayName: After Success
-    condition: succeeded()
-
   # Uploads any packages as an artifact
   - powershell: |
       Get-ChildItem -Path *.rpm, *.deb, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
