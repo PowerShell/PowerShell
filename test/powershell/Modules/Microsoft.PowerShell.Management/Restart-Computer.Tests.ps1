@@ -12,7 +12,7 @@ try
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $restartTesthookName
 
-    Describe "Restart-Computer" -Tag Feature {
+    Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
         # if we throw in BeforeEach, the test will fail and the restart will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $restartTesthookName) ) {
@@ -73,7 +73,7 @@ try
         Context "Restart-Computer Error Conditions" {
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value 0x300000
-                Restart-Computer -ErrorVariable RestartError 2>$null
+                Restart-Computer -ErrorVariable RestartError 2> $null
                 $RestartError.Exception.Message | Should -Match 0x300000
             }
 

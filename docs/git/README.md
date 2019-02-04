@@ -4,22 +4,8 @@ Working with PowerShell repository
 #### Get the code for the first time
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell
+git clone https://github.com/PowerShell/PowerShell.git
 ```
-
-The PowerShell repository has **submodules**.
-They are required to build and test PowerShell.
-That's why you need `--recursive`, when you `git clone`.
-
-If you already cloned the repo without `--recursive`, update submodules manually
-
-```sh
-git submodule init
-git submodule update
-```
-
-See [FAQ](../FAQ.md#why-is-my-submodule-empty) for details.
-
 
 Branches
 ---------
@@ -44,7 +30,7 @@ Branches
 Use **git rebase** instead of **git merge** and **git pull**, when you're updating your feature-branch.
 
 ```sh
-# fetch updates all remote branch references in the repo and all submodules
+# fetch updates all remote branch references in the repo
 # --all : tells it to do it for all remotes (handy, when you use your fork)
 # -p : tells it to remove obsolete remote branch references (when they are removed from remote)
 git fetch --all -p

@@ -51,7 +51,7 @@ You can use your favorite editor to write scripts.
 We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
-- [Using Visual Studio Code (VS Code)][use-vscode-editor]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode?view=powershell-6)
 
 PowerShell Debugger
 ----
@@ -59,11 +59,10 @@ PowerShell Debugger
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
 
-- [Using Visual Studio Code (VS Code)][use-vscode-debugger]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode?view=powershell-6#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
 [use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
@@ -134,6 +133,6 @@ Commercial Resources
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
-[quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
+[quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
-[basic-cookbooks]:https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6
+[basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6

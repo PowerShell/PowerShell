@@ -90,7 +90,7 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
         "some text" > $TestDrive\out.txt | Out-Null
         Get-Content $TestDrive\out.txt | Should -BeExactly "some text"
 
-        echo "some more text" > $TestDrive\out.txt | Out-Null
+        Write-Output "some more text" > $TestDrive\out.txt | Out-Null
         Get-Content $TestDrive\out.txt | Should -BeExactly "some more text"
     }
 }

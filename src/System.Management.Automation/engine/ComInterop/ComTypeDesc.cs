@@ -15,8 +15,8 @@ namespace System.Management.Automation.ComInterop
     {
         private string _typeName;
         private string _documentation;
-        //Hashtable is threadsafe for multiple readers single writer.
-        //Enumerating and writing is mutually exclusive so require locking.
+        // Hashtable is threadsafe for multiple readers single writer.
+        // Enumerating and writing is mutually exclusive so require locking.
         private Hashtable _putRefs;
         private ComMethodDesc _getItem;
         private ComMethodDesc _setItem;
@@ -27,6 +27,7 @@ namespace System.Management.Automation.ComInterop
             {
                 ComRuntimeHelpers.GetInfoFromType(typeInfo, out _typeName, out _documentation);
             }
+
             TypeLib = typeLibDesc;
         }
 
@@ -84,6 +85,7 @@ namespace System.Management.Automation.ComInterop
                 method = Funcs[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }
@@ -105,6 +107,7 @@ namespace System.Management.Automation.ComInterop
                 method = Puts[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }
@@ -126,9 +129,11 @@ namespace System.Management.Automation.ComInterop
                 method = _putRefs[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }
+
         internal void AddPutRef(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);

@@ -24,6 +24,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 - Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
 - Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Andrew Menagarishvili ([anmenaga](https://github.com/anmenaga))
 
 ## Former Repository Maintainers
 
@@ -60,7 +61,7 @@ If you are a Repository Maintainer, you:
 1. **SHOULD** encourage contributors to write meaningful, descriptive git commits
 1. **SHOULD NOT** merge pull requests with a failed CI build
   (unless, for instance, the pull request is being submitted to fix broken CI)
-1. **SHOULD NOT** merge pull requests without the label `cla-signed` or `cla-not-required` from the Microsoft CLA bot
+1. **SHOULD NOT** merge pull requests without the status check passing from the Microsoft CLA bot
   (unless the CLA bot is broken, and CLA signing can be confirmed through other means)
 1. **SHOULD NOT** merge pull requests too quickly after they're submitted.
   Even if the pull request meets all the requirements, people should have time to give their input

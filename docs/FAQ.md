@@ -2,8 +2,8 @@
 
 ## Where can I learn PowerShell's syntax?
 
-[SS64.com](http://ss64.com/ps/syntax.html) is a good resource.
-[Microsoft Docs](https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting) is another excellent resource.
+[SS64.com](https://ss64.com/ps/syntax.html) is a good resource.
+[Microsoft Docs](https://docs.microsoft.com/powershell/scripting/overview?view=powershell-6) is another excellent resource.
 
 ## What are the best practices and style?
 
@@ -21,14 +21,14 @@ The [PoshCode][] unofficial guide is our reference.
 
 ### Things that create a scope
 
-- [functions](http://ss64.com/ps/syntax-functions.html)
-- [call operator](http://ss64.com/ps/call.html) (`& { }`)
-- [script invocations](http://ss64.com/ps/syntax-run.html)
+- [functions](https://ss64.com/ps/syntax-functions.html)
+- [call operator](https://ss64.com/ps/call.html) (`& { }`)
+- [script invocations](https://ss64.com/ps/syntax-run.html)
 
 ### Things that operate in the current scope
 
-- [source operator](http://ss64.com/ps/source.html) (`. { }`)
-- [statements](http://ss64.com/ps/statements.html) (`if .. else`, `for`, `switch`, etc.)
+- [source operator](https://ss64.com/ps/source.html) (`. { }`)
+- [statements](https://ss64.com/ps/statements.html) (`if .. else`, `for`, `switch`, etc.)
 
 ## Why didn't an error throw an exception?
 
@@ -37,7 +37,7 @@ Setting `$ErrorActionPreference = 'Stop'` will likely do what you want;
 that is, cause non-terminating errors instead to terminate.
 Read [An Introduction To Error Handling in PowerShell][error] for more information.
 
-[error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
+[error]: https://gist.github.com/TravisEz13/9bb811c63b88501f3beec803040a9996
 
 ## Where do I get the PowerShell Core SDK package?
 
@@ -102,49 +102,3 @@ Additionally, if you've just unzipped their binary drops (or used their obtain
 scripts, which do essentially the same thing), you must manually delete the
 folder, as the .NET CLI team re-engineered how their binaries are setup, such
 that new packages' binaries get stomped on by old packages' binaries.
-
-## Why is my submodule empty?
-
-If a submodule (such as `src/libpsl-native/test/googletest`) is empty, that means it is
-uninitialized.
-If you've already cloned, you can do this with:
-
-```sh
-git submodule init
-git submodule update
-```
-
-You can verify that the submodules were initialized properly with:
-
-```sh
-git submodule status
-```
-
-If they're initialized, it will look like this:
-
-```output
-c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
-```
-
-If they're not, there will be minuses in front (and the folders will be empty):
-
-```output
--c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
-```
-
-Please note that the commit hashes for the submodules have likely changed since
-this FAQ was written.
-
-## Why does my submodule say "HEAD detached at" some commit?
-
-When a submodule is first initialized and updated, it is not checked out to a
-branch, but the very exact commit that the super-project (this PowerShell
-repository) has recorded for the submodule.
-This behavior is intended.
-
-If you want to check out an actual branch, just do so with `git checkout <branch>`.
-A submodule is just a Git repository; it just happens to be nested inside another repository.
-
-Please read the Git Book chapter on [submodules][].
-
-[submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules

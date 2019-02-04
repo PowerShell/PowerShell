@@ -10,7 +10,6 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -279,8 +278,10 @@ namespace System.Management.Automation
                 {
                     commandTypes = commandTypeToAdd;
                 }
+
                 result[command] = commandTypes;
             }
+
             return true;
         }
 
@@ -444,7 +445,7 @@ namespace System.Management.Automation
         /// Also re-cache the module if the cached item is stale.
         /// </summary>
         /// <param name="modulePath">Path to the module to get exported types from.</param>
-        /// <param name="context">Current Context</param>
+        /// <param name="context">Current Context.</param>
         /// <returns></returns>
         internal static ConcurrentDictionary<string, TypeAttributes> GetExportedClasses(string modulePath, ExecutionContext context)
         {
@@ -706,6 +707,7 @@ namespace System.Management.Automation
             fixed (byte* b = bytes) *((int*)b) = val;
             stream.Write(bytes, 0, 4);
         }
+
         private static unsafe void Write(long val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
@@ -1012,6 +1014,7 @@ namespace System.Management.Automation
                 {
                     Task.Delay(10000).ContinueWith(_ => result.Cleanup());
                 }
+
                 return result;
             }
         }
@@ -1041,6 +1044,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 retryCount -= 1;
                 Thread.Sleep(25); // Sleep a bit to give time for another process to finish writing the cache
             } while (retryCount > 0);
@@ -1071,6 +1075,12 @@ namespace System.Management.Automation
             }
 
             string cacheFileName = "ModuleAnalysisCache";
+
+            // When multiple copies of pwsh are on the system, they should use their own copy of the cache.
+            // Append hash of `$PSHOME` to cacheFileName.
+            string hashString = CRC32Hash.ComputeHash(Utils.DefaultPowerShellAppBase);
+            cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+
             if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
             {
                 // If any experimental features are enabled, we cannot use the default cache file because those
@@ -1080,8 +1090,8 @@ namespace System.Management.Automation
                 //
                 // Here we will generate a cache file name that represent the combination of enabled feature names.
                 // We first convert enabled feature names to lower case, then we sort the feature names, and then
-                // compute an SHA1 hash from the sorted feature names. We will use a short SHA name (first 8 chars)
-                // to generate the cache file name.
+                // compute an CRC32 hash from the sorted feature names. We will use the CRC32 hash to generate the
+                // cache file name.
                 int index = 0;
                 string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
                 foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
@@ -1092,17 +1102,10 @@ namespace System.Management.Automation
                 Array.Sort(featureNames);
                 string allNames = string.Join(Environment.NewLine, featureNames);
 
-                // Use SHA1 because it's faster.
+                // Use CRC32 because it's faster.
                 // It's very unlikely to get collision from hashing the combinations of enabled features names.
-                byte[] hashBytes;
-                using (var sha1 = SHA1.Create())
-                {
-                    hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(allNames));
-                }
-
-                // Use the first 8 characters of the hash string for a short SHA. 
-                string stringVal = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", String.Empty);
-                cacheFileName = String.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, stringVal);
+                hashString = CRC32Hash.ComputeHash(allNames);
+                cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
             }
 
 #if UNIX

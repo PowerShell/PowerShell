@@ -83,12 +83,11 @@ Describe "Out-File" -Tags "CI" {
         $actual[3]  | Should -Match "some test text"
         $actual[4]  | Should -BeNullOrEmpty
         $actual[5]  | Should -BeNullOrEmpty
-        $actual[6]  | Should -BeNullOrEmpty
-        $actual[7]  | Should -Match "text"
-        $actual[8]  | Should -Match "----"
-        $actual[9]  | Should -Match "some test text"
+        $actual[6]  | Should -Match "text"
+        $actual[7]  | Should -Match "----"
+        $actual[8]  | Should -Match "some test text"
+        $actual[9]  | Should -BeNullOrEmpty
         $actual[10] | Should -BeNullOrEmpty
-        $actual[11] | Should -BeNullOrEmpty
     }
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {
@@ -100,7 +99,7 @@ Describe "Out-File" -Tags "CI" {
         $actual[0] | Should -BeNullOrEmpty
         $actual[1] | Should -BeExactly "text"
         $actual[2] | Should -BeExactly "----"
-        $actual[3] | Should -BeExactly "some te..."
+        $actual[3] | Should -BeExactly "some test`u{2026}" # ellipsis
     }
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {
@@ -119,12 +118,11 @@ Describe "Out-File" -Tags "CI" {
         $actual[3]  | Should -Match "some test text"
         $actual[4]  | Should -BeNullOrEmpty
         $actual[5]  | Should -BeNullOrEmpty
-        $actual[6]  | Should -BeNullOrEmpty
-        $actual[7]  | Should -Match "text"
-        $actual[8]  | Should -Match "----"
-        $actual[9]  | Should -Match "some test text"
+        $actual[6]  | Should -Match "text"
+        $actual[7]  | Should -Match "----"
+        $actual[8]  | Should -Match "some test text"
+        $actual[9]  | Should -BeNullOrEmpty
         $actual[10] | Should -BeNullOrEmpty
-        $actual[11] | Should -BeNullOrEmpty
 
         # reset to not read only so it can be deleted
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false

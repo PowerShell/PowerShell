@@ -301,8 +301,8 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { [int]foo() { try { throw "foo"} catch [ArgumentException] {} catch {throw $_} } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [int]foo() { try { throw "foo"} catch [ArgumentException] {return 1} catch {} } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [int]foo() { while ($false) { return 1 } } }' MethodHasCodePathNotReturn 15
-    ShouldBeParseError 'class C { [int]foo() { try { mkdir foo } finally { rm -rec foo } } }' MethodHasCodePathNotReturn 15
-    ShouldBeParseError 'class C { [int]foo() { try { mkdir foo; return 1 } catch { } } }' MethodHasCodePathNotReturn 15
+    ShouldBeParseError 'class C { [int]foo() { try { New-Item -ItemType Directory foo } finally { rm -rec foo } } }' MethodHasCodePathNotReturn 15
+    ShouldBeParseError 'class C { [int]foo() { try { New-Item -ItemType Directory foo; return 1 } catch { } } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [bool] Test() { if ($false) { return $true; } } }' MethodHasCodePathNotReturn 17
 
     ShouldBeParseError 'class C { [int]$i; [void] foo() {$i = 10} }' MissingThis 33
@@ -390,11 +390,11 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It "Verb should be Get (class C2)" {$c.VerbName | Should -BeExactly 'Get'}
     It "Noun should be Thing (class C2)" {$c.NounName | Should -BeExactly 'Thing'}
 
-    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
+    It  "SupportsShouldProcess should be $true" { $c.SupportsShouldProcess | Should -BeTrue }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
     Context "Support ConfirmImpact as an attribute" {
         It  "ConfirmImpact should be high" {
-            [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
+            [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             $t.Count | Should -Be 1
             $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute
@@ -587,7 +587,6 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 visibleX visibleY
 -------- --------
       10       12
-
 
 
 "@

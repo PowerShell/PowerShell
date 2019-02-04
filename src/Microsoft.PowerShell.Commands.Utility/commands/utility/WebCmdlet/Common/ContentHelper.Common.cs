@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 foreach (var header in headerCollection)
                 {
                     // Headers may have multiple entries with different values
@@ -132,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool CheckIsJson(string contentType)
         {
-            if (String.IsNullOrEmpty(contentType))
+            if (string.IsNullOrEmpty(contentType))
                 return false;
 
             // the correct type for JSON content, as specified in RFC 4627
@@ -151,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool CheckIsText(string contentType)
         {
-            if (String.IsNullOrEmpty(contentType))
+            if (string.IsNullOrEmpty(contentType))
                 return false;
 
             // any text, xml or json types are text
@@ -188,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool CheckIsXml(string contentType)
         {
-            if (String.IsNullOrEmpty(contentType))
+            if (string.IsNullOrEmpty(contentType))
                 return false;
 
             // RFC 3023: Media types with the suffix "+xml" are XML
@@ -202,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string GetContentTypeSignature(string contentType)
         {
-            if (String.IsNullOrEmpty(contentType))
+            if (string.IsNullOrEmpty(contentType))
                 return null;
 
             string sig = contentType.Split(s_contentTypeParamSeparator, 2)[0].ToUpperInvariant();

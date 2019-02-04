@@ -1,4 +1,28 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/misc-analysis.yml
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -8,11 +32,14 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- job: Linux_CI
 
-  queue:
+  pool:
     name: Hosted Ubuntu 1604
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-Process
@@ -50,10 +77,7 @@ phases:
     displayName: Set TEMP to AGENT_TEMPDIRECTORY
     condition: succeededOrFailed()
 
-  - powershell: |
-      git submodule update --init
-    displayName: SubModule Init
-    condition: succeededOrFailed()
+  - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
       tools/travis.ps1 -Stage Bootstrap
@@ -62,7 +86,7 @@ phases:
 
   - powershell: |
       $ErrorActionPreference = 'continue'
-      tools/travis.ps1
+      tools/travis.ps1 -NugetKey $(NUGET_KEY)
     displayName: Build and test
     condition: succeeded()
 

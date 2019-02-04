@@ -41,7 +41,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         $count = 0
         while (($hostRS.RunspaceAvailability -ne 'Available') -and ($count++ -lt 60))
         {
-            sleep -Milliseconds 500
+            Start-Sleep -Milliseconds 500
         }
         It "Verifies that the attached-to host runspace is available" {
             ($hostRS.RunspaceAvailability -eq 'Available') | Should -BeTrue

@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionStateVariable entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateVariableEntry entry)
         {
             PSVariable v = new PSVariable(entry.Name, entry.Value,
@@ -62,7 +62,7 @@ namespace System.Management.Automation
             PSVariable resultItem = GetVariableItem(variablePath, out scope, origin);
 
             return resultItem;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         internal PSVariable GetVariable(string name)
         {
             return GetVariable(name, CommandOrigin.Internal);
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -123,7 +123,7 @@ namespace System.Management.Automation
             object resultItem = GetVariableValue(variablePath, out context, out scope);
 
             return resultItem;
-        } // GetVariableValue
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -391,7 +391,7 @@ namespace System.Management.Automation
                 {
                     // Since more than one path was resolved, this is an error.
 
-                    //Before throwing exception. Close the readers to avoid sharing violation.
+                    // Before throwing exception. Close the readers to avoid sharing violation.
                     foreach (IContentReader r in readers)
                     {
                         r.Close();
@@ -502,7 +502,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // GetVariableFromProvider
+        }
 #pragma warning restore 0162
 
         /// <summary>
@@ -556,8 +556,9 @@ namespace System.Management.Automation
                 result = ((IEnumerator<PSVariable>)searcher).Current;
                 scope = searcher.CurrentLookupScope;
             }
+
             return result;
-        } // GetVariableItem
+        }
 
         /// <summary>
         /// Looks up the specified variable and returns the context under which
@@ -588,7 +589,7 @@ namespace System.Management.Automation
             out SessionStateScope scope)
         {
             return GetVariableItem(variablePath, out scope, CommandOrigin.Internal);
-        } // GetVariableItem
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -639,7 +640,7 @@ namespace System.Management.Automation
             }
 
             return resultItem;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -896,10 +897,10 @@ namespace System.Management.Automation
                     {
                     }
                 }
-            } // if resultItem != null
+            }
 
             return resultItem;
-        } // GetVariableValueAtScope
+        }
 
         internal object GetAutomaticVariableValue(AutomaticVariable variable)
         {
@@ -1026,7 +1027,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariable(PSVariable variable, bool force, CommandOrigin origin)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1138,6 +1139,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variablePath");
             }
+
             CmdletProviderContext context = null;
             SessionStateScope scope = null;
 
@@ -1178,6 +1180,7 @@ namespace System.Management.Automation
                 {
                     varResult.Options = varResult.Options | ScopedItemOptions.Private;
                 }
+
                 result = varResult;
             }
             else
@@ -1359,8 +1362,9 @@ namespace System.Management.Automation
                     }
 #endif
             }
+
             return result;
-        } // SetVariable
+        }
 
         /// <summary>
         /// Set a variable in session state.
@@ -1398,7 +1402,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariableAtScope(PSVariable variable, string scopeID, bool force, CommandOrigin origin)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1413,7 +1417,7 @@ namespace System.Management.Automation
                     force,
                     this,
                     origin);
-        } // SetVariableAtScope
+        }
 
         #region NewVariable
 
@@ -1434,7 +1438,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariable(PSVariable variable, bool force)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1444,10 +1448,10 @@ namespace System.Management.Automation
                     variable,
                     force,
                     this);
-        } // NewVariable
+        }
 
         /// <summary>
-        /// Creates a new variable in the specified scope
+        /// Creates a new variable in the specified scope.
         /// </summary>
         /// <param name="variable">
         /// The variable to create
@@ -1478,7 +1482,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariableAtScope(PSVariable variable, string scopeID, bool force)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1493,7 +1497,7 @@ namespace System.Management.Automation
                     variable,
                     force,
                     this);
-        } // NewVariableAtScope
+        }
 
         #endregion NewVariable
 
@@ -1580,7 +1584,7 @@ namespace System.Management.Automation
                 RemoveItem(new string[] { variablePath.QualifiedName }, false, context);
                 context.ThrowFirstErrorOrDoNothing();
             }
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Removes a variable from the variable table.
@@ -1629,7 +1633,7 @@ namespace System.Management.Automation
             {
                 scope.RemoveVariable(variablePath.QualifiedName, force);
             }
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Remove a variable from session state. This interface supports
@@ -1691,7 +1695,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariableAtScope(string name, string scopeID, bool force)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1723,7 +1727,7 @@ namespace System.Management.Automation
                     context.ThrowFirstErrorOrDoNothing();
                 }
             }
-        } // RemoveVariableAtScope
+        }
 
         /// <summary>
         /// Remove a variable from session state.
@@ -1785,7 +1789,7 @@ namespace System.Management.Automation
             SessionStateScope lookupScope = GetScopeByID(scopeID);
 
             lookupScope.RemoveVariable(variablePath.QualifiedName, force);
-        } // RemoveVariableAtScope
+        }
 
         /// <summary>
         /// Gets a flattened view of the variables that are visible using
@@ -1869,7 +1873,7 @@ namespace System.Management.Automation
         internal List<PSVariable> ExportedVariables { get; } = new List<PSVariable>();
 
         #endregion variables
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

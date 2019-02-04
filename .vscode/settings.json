@@ -22,16 +22,16 @@
 
   // Sets the codeformatting options to follow the given indent style in a way that is compatible with PowerShell syntax. For more information about the brace styles please refer to https://github.com/PoshCode/PowerShellPracticeAndStyle/issues/81.
   "powershell.codeFormatting.preset": "OTBS",
-  
+
   // Adds a space between a keyword and its associated scriptblock expression.
   "powershell.codeFormatting.whitespaceBeforeOpenBrace": true,
-  
+
   // Adds a space between a keyword (if, elseif, while, switch, etc) and its associated conditional expression.
   "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
-  
+
   // Adds spaces before and after an operator ('=', '+', '-', etc.).
   "powershell.codeFormatting.whitespaceAroundOperator": true,
-  
+
   // Adds a space after a separator (',' and ';').
   "powershell.codeFormatting.whitespaceAfterSeparator": true
 }

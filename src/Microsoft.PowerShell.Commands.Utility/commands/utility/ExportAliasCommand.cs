@@ -42,8 +42,10 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value ?? "."; }
         }
+
         private string _path = ".";
 
         /// <summary>
@@ -54,6 +56,7 @@ namespace Microsoft.PowerShell.Commands
         public string LiteralPath
         {
             get { return _path; }
+
             set
             {
                 if (value == null)
@@ -67,6 +70,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -76,8 +80,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return _names; }
+
             set { _names = value ?? new string[] { "*" }; }
         }
+
         private string[] _names = new string[] { "*" };
 
         /// <summary>
@@ -96,6 +102,7 @@ namespace Microsoft.PowerShell.Commands
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         /// <summary>
@@ -114,11 +121,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _append;
             }
+
             set
             {
                 _append = value;
             }
         }
+
         private bool _append;
 
         /// <summary>
@@ -131,11 +140,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -149,11 +160,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -182,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
             // First get the alias table (from the proper scope if necessary)
             IDictionary<string, AliasInfo> aliasTable = null;
 
-            if (!String.IsNullOrEmpty(Scope))
+            if (!string.IsNullOrEmpty(Scope))
             {
                 // This can throw PSArgumentException and PSArgumentOutOfRangeException
                 // but just let them go as this is terminal for the pipeline and the
@@ -305,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
             // file to vary based on locale.
 
             string result =
-                String.Format(
+                string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
                     formatString,
                     alias.Name,

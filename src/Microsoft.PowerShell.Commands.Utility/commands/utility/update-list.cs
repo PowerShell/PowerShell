@@ -52,8 +52,8 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "InputObject".
         /// List of InputObjects where the updates needs to applied to the specific property.
         /// </summary>
-        //[Parameter(ValueFromPipeline = true, ParameterSetName = "AddRemoveSet")]
-        //[Parameter(ValueFromPipeline = true, ParameterSetName = "ReplaceSet")]
+        // [Parameter(ValueFromPipeline = true, ParameterSetName = "AddRemoveSet")]
+        // [Parameter(ValueFromPipeline = true, ParameterSetName = "ReplaceSet")]
         [Parameter(ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty()]
         public PSObject InputObject { get; set; }
@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "Property".
         /// Defines which property of the input object should be updated with Add and Remove actions.
         /// </summary>
-        //[Parameter(Position = 0, ParameterSetName = "AddRemoveSet")]
-        //[Parameter(Position = 0, ParameterSetName = "ReplaceSet")]
+        // [Parameter(Position = 0, ParameterSetName = "AddRemoveSet")]
+        // [Parameter(Position = 0, ParameterSetName = "ReplaceSet")]
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty()]
         public string Property { get; set; }
@@ -134,14 +134,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 hash.Add("Add", Add);
             }
+
             if (Remove != null)
             {
                 hash.Add("Remove", Remove);
             }
+
             if (Replace != null)
             {
                 hash.Add("Replace", Replace);
             }
+
             return hash;
         }
 
@@ -155,6 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Add.Add(obj);
                 }
             }
+
             if (Remove != null)
             {
                 foreach (object obj in Remove)
@@ -162,6 +166,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Remove.Add(obj);
                 }
             }
+
             if (Replace != null)
             {
                 foreach (object obj in Replace)
@@ -169,6 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Replace.Add(obj);
                 }
             }
+
             return listModifier;
         }
 

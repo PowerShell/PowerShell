@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// Command to execute.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [ValidateTrustedData]
         public string Command { get; set; }
 
         #endregion parameters

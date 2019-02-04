@@ -19,7 +19,7 @@ namespace System.Management.Automation.Runspaces
     public class InvalidPipelineStateException : SystemException
     {
         /// <summary>
-        /// Initializes a new instance of the InvalidPipelineStateException class
+        /// Initializes a new instance of the InvalidPipelineStateException class.
         /// </summary>
         public InvalidPipelineStateException()
             : base(StringUtil.Format(RunspaceStrings.InvalidPipelineStateStateGeneral))
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Initializes a new instance of the InvalidPipelineStateException class
-        /// with a specified error message
+        /// with a specified error message.
         /// </summary>
         /// <param name="message">
         /// The error message that explains the reason for the exception.
@@ -55,12 +55,12 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Initializes a new instance of the InvalidPipelineStateException and defines value of
-        /// CurrentState and ExpectedState
+        /// CurrentState and ExpectedState.
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.
         /// </param>
-        /// <param name="currentState">Current state of pipeline</param>
-        /// <param name="expectedState">Expected state of pipeline</param>
+        /// <param name="currentState">Current state of pipeline.</param>
+        /// <param name="expectedState">Expected state of pipeline.</param>
         internal InvalidPipelineStateException(string message, PipelineState currentState, PipelineState expectedState)
         : base(message)
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         /// <summary>
-        /// Gets CurrentState of the pipeline
+        /// Gets CurrentState of the pipeline.
         /// </summary>
         public PipelineState CurrentState
         {
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets ExpectedState of the pipeline
+        /// Gets ExpectedState of the pipeline.
         /// </summary>
         public PipelineState ExpectedState
         {
@@ -126,16 +126,16 @@ namespace System.Management.Automation.Runspaces
     #region PipelineState
 
     /// <summary>
-    /// Enumerated type defining the state of the Pipeline
+    /// Enumerated type defining the state of the Pipeline.
     /// </summary>
     public enum PipelineState
     {
         /// <summary>
-        /// The pipeline has not been started
+        /// The pipeline has not been started.
         /// </summary>
         NotStarted = 0,
         /// <summary>
-        /// The pipeline is executing
+        /// The pipeline is executing.
         /// </summary>
         Running = 1,
         /// <summary>
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// Type which has information about PipelineState and Exception
-    /// associated with PipelineState
+    /// associated with PipelineState.
     /// </summary>
     public sealed class PipelineStateInfo
     {
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor for state changes not resulting from an error.
         /// </summary>
-        /// <param name="state">Execution state</param>
+        /// <param name="state">Execution state.</param>
         internal PipelineStateInfo(PipelineState state)
             : this(state, null)
         {
@@ -191,9 +191,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor to support cloning
+        /// Copy constructor to support cloning.
         /// </summary>
-        /// <param name="pipelineStateInfo">source information</param>
+        /// <param name="pipelineStateInfo">Source information.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
@@ -230,9 +230,9 @@ namespace System.Management.Automation.Runspaces
         #endregion public_properties
 
         /// <summary>
-        /// Clones this object
+        /// Clones this object.
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal PipelineStateInfo Clone()
         {
             return new PipelineStateInfo(this);
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Runspaces
         #region constructors
 
         /// <summary>
-        /// Constructor PipelineStateEventArgs from PipelineStateInfo
+        /// Constructor PipelineStateEventArgs from PipelineStateInfo.
         /// </summary>
         /// <param name="pipelineStateInfo">The current state of the
         /// pipeline.</param>
@@ -282,7 +282,7 @@ namespace System.Management.Automation.Runspaces
         #region constructor
 
         /// <summary>
-        /// Explicit default constructor
+        /// Explicit default constructor.
         /// </summary>
         internal Pipeline(Runspace runspace)
             : this(runspace, new CommandCollection())
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Runspaces
         #region properties
 
         /// <summary>
-        /// gets the runspace this pipeline is created on.
+        /// Gets the runspace this pipeline is created on.
         /// </summary>
         public abstract Runspace Runspace { get; }
 
@@ -341,11 +341,12 @@ namespace System.Management.Automation.Runspaces
         internal virtual bool IsChild
         {
             get { return false; }
+
             set { }
         }
 
         /// <summary>
-        /// gets input writer for this pipeline.
+        /// Gets input writer for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Input.Write(), the caller writes to the
@@ -367,7 +368,7 @@ namespace System.Management.Automation.Runspaces
         public abstract PipelineReader<PSObject> Output { get; }
 
         /// <summary>
-        /// gets the error output reader for this pipeline.
+        /// Gets the error output reader for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Error.Read(), the caller reads from the
@@ -398,6 +399,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _hadErrors; }
         }
+
         private bool _hadErrors;
 
         internal void SetHadErrors(bool status)
@@ -406,13 +408,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// gets the unique identifier for this pipeline. This identifier is unique with in
+        /// Gets the unique identifier for this pipeline. This identifier is unique with in
         /// the scope of Runspace.
         /// </summary>
         public long InstanceId { get; }
 
         /// <summary>
-        /// gets the collection of commands for this pipeline.
+        /// Gets the collection of commands for this pipeline.
         /// </summary>
         public CommandCollection Commands { get; private set; }
 
@@ -533,7 +535,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>If using synchronous exectute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
@@ -597,7 +599,7 @@ namespace System.Management.Automation.Runspaces
         public abstract Collection<PSObject> Invoke(IEnumerable input);
 
         /// <summary>
-        /// Invoke the pipeline asynchronously
+        /// Invoke the pipeline asynchronously.
         /// </summary>
         /// <remarks>
         /// 1) Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -664,7 +666,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the command collection.
         /// </summary>
-        /// <param name="commands">command collection to set</param>
+        /// <param name="commands">Command collection to set.</param>
         /// <remarks>called by ClientRemotePipeline</remarks>
         internal void SetCommandCollection(CommandCollection commands)
         {
@@ -672,10 +674,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Sets the history string to the one that is specified
+        /// Sets the history string to the one that is specified.
         /// </summary>
-        /// <param name="historyString">history string to set</param>
-        internal abstract void SetHistoryString(String historyString);
+        /// <param name="historyString">History string to set.</param>
+        internal abstract void SetHistoryString(string historyString);
 
         /// <summary>
         /// Invokes a remote command and immediately disconnects if

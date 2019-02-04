@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal abstract class HelpProviderWithCache : HelpProvider
     {
         /// <summary>
-        /// Constructor for HelpProviderWithCache
+        /// Constructor for HelpProviderWithCache.
         /// </summary>
         internal HelpProviderWithCache(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         #region Help Provider Interface
 
         /// <summary>
-        /// _helpCache is a hashtable to stores helpInfo
+        /// _helpCache is a hashtable to stores helpInfo.
         /// </summary>
         /// <remarks>
         /// This hashtable is made case-insensitive so that helpInfo can be retrieved case insensitively.
@@ -33,8 +33,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Exact match help for a target.
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
-        /// <returns>The HelpInfo found. Null if nothing is found</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>The HelpInfo found. Null if nothing is found.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             string target = helpRequest.Target;
@@ -77,8 +77,8 @@ namespace System.Management.Automation
         /// <summary>
         /// This is for implementing custom match algorithm.
         /// </summary>
-        /// <param name="target">target to search</param>
-        /// <param name="key">key used in cache table</param>
+        /// <param name="target">Target to search.</param>
+        /// <param name="key">Key used in cache table.</param>
         /// <returns></returns>
         protected virtual bool CustomMatch(string target, string key)
         {
@@ -94,22 +94,22 @@ namespace System.Management.Automation
         /// If DoExactMatchHelp is overridden, cache check will be done first in ExactMatchHelp before the
         /// logic in DoExactMatchHelp is in place.
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         internal virtual void DoExactMatchHelp(HelpRequest helpRequest)
         {
         }
 
         /// <summary>
-        /// Search help for a target
+        /// Search help for a target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             string target = helpRequest.Target;
@@ -159,8 +159,8 @@ namespace System.Management.Automation
         ///
         /// Child class of this one may choose to override this function.
         /// </summary>
-        /// <param name="target">target string</param>
-        /// <returns>wild card pattern created</returns>
+        /// <param name="target">Target string.</param>
+        /// <returns>Wild card pattern created.</returns>
         internal virtual string GetWildCardPattern(string target)
         {
             if (WildcardPattern.ContainsWildcardCharacters(target))
@@ -176,8 +176,8 @@ namespace System.Management.Automation
         /// Child class can choose to override SearchHelp of DoSearchHelp depending on
         /// whether it want to reuse the logic in SearchHelp for this class.
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>
-        /// <returns>a collection of help info objects</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>A collection of help info objects.</returns>
         internal virtual IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             yield break;
@@ -186,18 +186,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an help entry to cache.
         /// </summary>
-        /// <param name="target">the key of the help entry</param>
-        /// <param name="helpInfo">helpInfo object as the value of the help entry</param>
+        /// <param name="target">The key of the help entry.</param>
+        /// <param name="helpInfo">HelpInfo object as the value of the help entry.</param>
         internal void AddCache(string target, HelpInfo helpInfo)
         {
             _helpCache[target] = helpInfo;
         }
 
         /// <summary>
-        /// Get help entry from cache
+        /// Get help entry from cache.
         /// </summary>
-        /// <param name="target">the key for the help entry to retrieve</param>
-        /// <returns>the HelpInfo in cache corresponding the key specified</returns>
+        /// <param name="target">The key for the help entry to retrieve.</param>
+        /// <returns>The HelpInfo in cache corresponding the key specified.</returns>
         internal HelpInfo GetCache(string target)
         {
             return (HelpInfo)_helpCache[target];

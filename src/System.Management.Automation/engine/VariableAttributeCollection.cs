@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// has already been done, this function will add the attribute without checking
         /// and possibly updating the value.
         /// </summary>
-        /// <param name="item">The attribute to add</param>
+        /// <param name="item">The attribute to add.</param>
         internal void AddAttributeNoCheck(Attribute item)
         {
             base.InsertItem(this.Count, item);
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                     engine = context.EngineIntrinsics;
                 }
 
-                variableValue = argumentTransformation.Transform(engine, variableValue);
+                variableValue = argumentTransformation.TransformInternal(engine, variableValue);
             }
 
             if (!PSVariable.IsValidValue(variableValue, item))

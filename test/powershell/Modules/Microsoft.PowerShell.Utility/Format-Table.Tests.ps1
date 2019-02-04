@@ -31,7 +31,7 @@ Describe "Format-Table" -Tags "CI" {
                 $info = @{}
                 $info.array = $al
                 $result = $info | Format-Table | Out-String
-                $result | Should -Match "array\s+{0, 1, 2, 3...}"
+                $result | Should -Match "array\s+{0, 1, 2, 3`u{2026}}" # ellipsis
         }
 
         It "Format-Table with Negative Count should work" {
@@ -255,8 +255,9 @@ Left Center Right
 
         It "Format-Table should not have trailing whitespace if there is truncation: <view>" -TestCases @(
             # `u{2B758} is a double-byte Japanese character
-            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----1..."      },
-            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------123..."}
+            # `u{2026} is the ellipsis
+            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----123`u{2026}"      },
+            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------12345`u{2026}"}
         ) {
             param($view, $object, $expected)
 
@@ -338,7 +339,6 @@ gHeader
 1       2       3
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,7,4; variation = "4 row, 1 row, 2 row"; expectedTable = @"
 
@@ -348,7 +348,6 @@ Head
 er
 ---- ------- ----
 1    2       3
-
 
 
 "@ },
@@ -362,7 +361,6 @@ er
 1    2    3
 
 
-
 "@ },
             @{ view = "Default"; widths = 14,7,3; variation = "1 row, 1 row, 3 row"; expectedTable = @"
 
@@ -371,7 +369,6 @@ LongLongHeader Header2 Hea
                        3
 -------------- ------- ---
 1              2       3
-
 
 
 "@ },
@@ -383,7 +380,6 @@ Head
 er
 ----
 1
-
 
 
 "@ }
@@ -480,36 +476,33 @@ er
             @{ view = "Default"; widths = 4,7,5; variation = "narrow values"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $false; expectedTable = @"
 
 Long*Header2*Heade
-Long*********r3
+Long**********r3
 Head
 er
 ----*-------*-----
 1**********2***3
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,7,5; variation = "narrow values with wrap"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $true; expectedTable = @"
 
 Long*Header2*Heade
-Long*********r3
+Long**********r3
 Head
 er
 ----*-------*-----
-1**********2*3
-
+1**********2***3
 
 
 "@ },
             @{ view = "Default"; widths = 4,7,5; variation = "wide values"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
 
 Long*Header2*Heade
-Long*********r3
+Long**********r3
 Head
 er
 ----*-------*-----
-1...*...5678*12...
-
+123`u{2026}*`u{2026}345678*1234`u{2026}
 
 
 "@ },
@@ -521,15 +514,14 @@ ngH
 ead
 er
 ---
-123
-
+12`u{2026}
 
 
 "@ },
             @{ view = "Default"; widths = 4,8,6; variation = "wide values with wrap, 1st column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 Long**Header2*Header
-Long**********3
+Long************3
 Head
 er
 ----**-------*------
@@ -537,42 +529,38 @@ er
 5
 
 
-
 "@ },
             @{ view = "Default"; widths = 5,7,6; variation = "wide values with wrap, 2nd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 LongL*Header2*Header
-ongHe*********3
+ongHe***********3
 ader
 -----*-------*------
 12345*1234567*123456
 ************8
 
 
-
 "@ },
             @{ view = "Default"; widths = 5,8,5; variation = "wide values with wrap, 3rd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 LongL**Header2*Heade
-ongHe**********r3
+ongHe***********r3
 ader
 -----**-------*-----
 12345*12345678*12345
-***************6
-
+*****************6
 
 
 "@ },
             @{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap, all 3 columns"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 Long*Header2*Heade
-Long*********r3
+Long**********r3
 Head
 er
 ----*-------*-----
 1234*1234567*12345
-5**********8*6
-
+5**********8***6
 
 
 "@ },
@@ -586,7 +574,6 @@ er
 ---
 123
 45
-
 
 
 "@ }
@@ -690,7 +677,6 @@ abc  bcd
 1    1234
 
 
-
 "@ },
             @{ variation = "both columns"; obj = [pscustomobject]@{abc="1234";bcd="1234"},[pscustomobject]@{abc="1";bcd="1"}; expectedTable = @"
 
@@ -700,7 +686,6 @@ abc  bcd
 1    1
 
 
-
 "@ },
             @{ variation = "second column"; obj = [pscustomobject]@{abc="123";bcd="1234"},[pscustomobject]@{abc="1";bcd="123"}; expectedTable = @"
 
@@ -708,7 +693,6 @@ abc bcd
 --- ---
 123 1234
 1   123
-
 
 
 "@ }
@@ -726,14 +710,12 @@ a     b
 abc 123
 
 
-
 "@ },
             @{ variation = "left/left"; obj = [PSCustomObject]@{a="abc";b="abc"}; expectedTable = @"
 
 a   b
 -   -
 abc abc
-
 
 
 "@ },
@@ -744,14 +726,12 @@ abc abc
 123 abc
 
 
-
 "@ },
             @{ variation = "right/right"; obj = [PSCustomObject]@{a=123;b=123}; expectedTable = @"
 
   a   b
   -   -
 123 123
-
 
 
 "@ }
@@ -771,7 +751,6 @@ A B Name
     multiline content
 
 
-
 "@ },
             @{ variation = "left"; obj = [pscustomobject] @{Name="This`nIs some random`nmultiline content";A=1;B=2}; expectedTable = @"
 
@@ -782,7 +761,6 @@ Is some random
 multiline content
 
 
-
 "@ },
             @{ variation = "middle"; obj = [pscustomobject] @{A=1;Name="This`nIs some random`nmultiline content";B=2}; expectedTable = @"
 
@@ -791,7 +769,6 @@ A Name                                  B
 1 This                                  2
   Is some random
   multiline content
-
 
 
 "@ }
@@ -813,5 +790,26 @@ A Name                                  B
             finally {
                 [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
             }
+        }
+
+        It "-RepeatHeader should output the header at every screen full" -Skip:([Console]::WindowHeight -eq 0) {
+            $numHeaders = 4
+            $numObjects = [Console]::WindowHeight * $numHeaders
+            $out = 1..$numObjects | ForEach-Object { @{foo=$_} } | Format-Table -RepeatHeader | Out-String
+            $lines = $out.Split([System.Environment]::NewLine)
+            ($lines | Select-String "Name\s*Value").Count | Should -Be ($numHeaders + 1)
+        }
+
+        It "Should be formatted correctly if width is declared and using center alignment" {
+            $expectedTable = @"
+
+   one
+   ---
+    1
+
+
+"@
+            $output = [pscustomobject] @{ one = 1 } | Format-Table @{ l='one'; e='one'; width=10; alignment='center' } | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
     }

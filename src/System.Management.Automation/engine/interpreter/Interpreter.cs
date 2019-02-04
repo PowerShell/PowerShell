@@ -75,6 +75,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return 0;
                 }
+
                 return ClosureVariables.Count;
             }
         }
@@ -122,7 +123,7 @@ namespace System.Management.Automation.Interpreter
 
         /// <summary>
         /// If the target that 'Goto' jumps to is inside the current catch block or the subsequent finally block,
-        /// we delay the call to 'Abort' method, because we want to finish the catch/finally blocks
+        /// we delay the call to 'Abort' method, because we want to finish the catch/finally blocks.
         /// </summary>
         internal static void AbortThreadIfRequested(InterpretedFrame frame, int targetLabelIndex)
         {

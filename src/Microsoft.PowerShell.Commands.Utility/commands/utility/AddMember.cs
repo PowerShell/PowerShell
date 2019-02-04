@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject
         {
             set { _inputObject = value; }
+
             get { return _inputObject; }
         }
 
@@ -50,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
         public PSMemberTypes MemberType
         {
             set { _memberType = value; }
+
             get { return _memberType; }
         }
 
@@ -61,6 +63,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             set { _memberName = value; }
+
             get { return _memberName; }
         }
 
@@ -72,6 +75,7 @@ namespace Microsoft.PowerShell.Commands
         public object Value
         {
             set { _value1 = value; }
+
             get { return _value1; }
         }
 
@@ -83,6 +87,7 @@ namespace Microsoft.PowerShell.Commands
         public object SecondValue
         {
             set { _value2 = value; }
+
             get { return _value2; }
         }
 
@@ -98,6 +103,7 @@ namespace Microsoft.PowerShell.Commands
         public string TypeName
         {
             set { _typeName = value; }
+
             get { return _typeName; }
         }
 
@@ -111,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             set { _force = value; }
+
             get { return _force; }
         }
 
@@ -126,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             set { _passThru = value; }
+
             get { return _passThru; }
         }
 
@@ -145,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
         public string NotePropertyName
         {
             set { _notePropertyName = value; }
+
             get { return _notePropertyName; }
         }
 
@@ -157,6 +166,7 @@ namespace Microsoft.PowerShell.Commands
         public object NotePropertyValue
         {
             set { _notePropertyValue = value; }
+
             get { return _notePropertyValue; }
         }
 
@@ -172,6 +182,7 @@ namespace Microsoft.PowerShell.Commands
         public IDictionary NotePropertyMembers
         {
             get { return _property; }
+
             set { _property = value; }
         }
 
@@ -242,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 Type value2Type = (Type)GetParameterType(_value2, typeof(Type));
                 return new PSAliasProperty(_memberName, value1Str, value2Type);
             }
+
             return new PSAliasProperty(_memberName, value1Str);
         }
 
@@ -264,11 +276,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 value1MethodInfo = (MethodInfo)GetParameterType(_value1, typeof(MethodInfo));
             }
+
             MethodInfo value2MethodInfo = null;
             if (HasBeenSpecified(_value2))
             {
                 value2MethodInfo = (MethodInfo)GetParameterType(_value2, typeof(MethodInfo));
             }
+
             return new PSCodeProperty(_memberName, value1MethodInfo, value2MethodInfo);
         }
 
@@ -279,6 +293,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return new PSMemberSet(_memberName);
             }
+
             Collection<PSMemberInfo> value1Collection =
                 (Collection<PSMemberInfo>)GetParameterType(_value1, typeof(Collection<PSMemberInfo>));
             return new PSMemberSet(_memberName, value1Collection);
@@ -320,11 +335,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 value1ScriptBlock = (ScriptBlock)GetParameterType(_value1, typeof(ScriptBlock));
             }
+
             ScriptBlock value2ScriptBlock = null;
             if (HasBeenSpecified(_value2))
             {
                 value2ScriptBlock = (ScriptBlock)GetParameterType(_value2, typeof(ScriptBlock));
             }
+
             return new PSScriptProperty(_memberName, value1ScriptBlock, value2ScriptBlock);
         }
 
@@ -346,6 +363,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(_inputObject);
                 }
+
                 return;
             }
 
@@ -370,8 +388,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         memberCount++;
                     }
+
                     memberCountHelper = memberCountHelper >> 1;
                 }
+
                 if (memberCount != 1)
                 {
                     ThrowTerminatingError(NewError("WrongMemberCount", "WrongMemberCount", null, _memberType.ToString()));
@@ -461,6 +481,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             _inputObject.Members.Add(member);
             return true;
         }
@@ -492,6 +513,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 UpdateTypeNames();
             }
+
             if (result && _passThru)
             {
                 WriteObject(_inputObject);
@@ -504,6 +526,7 @@ namespace Microsoft.PowerShell.Commands
             Type type;
             string typeNameInUse = _typeName;
             if (LanguagePrimitives.TryConvertTo(_typeName, out type)) { typeNameInUse = type.FullName; }
+
             _inputObject.TypeNames.Insert(0, typeNameInUse);
         }
 
@@ -571,6 +594,7 @@ namespace Microsoft.PowerShell.Commands
                     var result = LanguagePrimitives.ConvertTo<string>(target);
                     return result;
                 }
+
                 return inputData;
             }
         }

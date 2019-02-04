@@ -5,10 +5,6 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-# Path to a directory to store modules we temporarily need to test PowerShell
-$script:TestModuleDirPath = Join-Path ([System.IO.Path]::GetTempPath()) 'PwshTestModules'
-$null = New-Item -Force -ItemType Directory -Path $script:TestModuleDirPath
-
 $dotnetCLIChannel = "release"
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
@@ -19,7 +15,7 @@ $tagsUpToDate = $false
 # When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
 # Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
 # This function can ensure that tags have been fetched.
-# This function is used during the setup phase in tools/appveyor.psm1 and tools/travis.ps1
+# This function is used during the setup phase in tools/ci.psm1 and tools/travis.ps1
 function Sync-PSTags
 {
     param(
@@ -132,7 +128,6 @@ function Get-EnvironmentInformation
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
-        $environment += @{'IsDebian8' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '8'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
@@ -148,6 +143,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
+        $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -160,7 +156,8 @@ function Get-EnvironmentInformation
             $environment.IsDebian -or
             $environment.IsUbuntu -or
             $environment.IsRedHatFamily -or
-            $environment.IsSUSEFamily)
+            $environment.IsSUSEFamily -or
+            $environment.IsAlpine)
         ) {
             throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
@@ -222,9 +219,10 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("fxdependent",
+        [ValidateSet("alpine-x64",
+                     "fxdependent",
                      "linux-arm",
-                     "linux-musl-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -271,7 +269,8 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
-            git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3
+            # Excluded src/Modules/nuget.config as this is required for release build.
+            git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3 --exclude src/Modules/nuget.config
         } finally {
             Pop-Location
         }
@@ -553,7 +552,10 @@ function Restore-PSModuleToBuild
 
     Write-Log "Restore PowerShell modules to $publishPath"
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-    Copy-PSGalleryModules -Destination $modulesDir
+    Copy-PSGalleryModules -Destination $modulesDir -CsProjPath "$PSScriptRoot\src\Modules\PSGalleryModules.csproj"
+
+    # Remove .nupkg.metadata files
+    Get-ChildItem $PublishPath -Filter '.nupkg.metadata' -Recurse | ForEach-Object { Remove-Item $_.FullName -ErrorAction SilentlyContinue -Force }
 }
 
 function Restore-PSPester
@@ -562,7 +564,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.4.2"
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.4.4"
 }
 
 function Compress-TestContent {
@@ -591,9 +593,10 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
+                     "alpine-x64",
                      "fxdependent",
                      "linux-arm",
-                     "linux-musl-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -724,7 +727,7 @@ function New-PSOptions {
 # Get the Options of the last build
 function Get-PSOptions {
     param(
-        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not ocurred.')]
+        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not occurred.')]
         [switch]
         $DefaultToNew
     )
@@ -845,8 +848,8 @@ function Publish-PSTestTools {
         }
     }
 
-    # Get the SelfSignedCertificate module so the web listener can use it
-    Save-Module -Name SelfSignedCertificate -Path $script:TestModuleDirPath -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false
+    # `dotnet restore` on test project is not called if product projects have been restored unless -Force is specified.
+    Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
 }
 
 function Get-ExperimentalFeatureTests {
@@ -865,7 +868,7 @@ function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [Parameter(Position=0)]
-        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
+        [string[]]$Path = @("$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
@@ -883,6 +886,7 @@ function Start-PSPester {
         [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
         [switch]$IncludeFailingTest,
+        [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
         [string]$Title = 'PowerShell Core Tests'
@@ -890,12 +894,17 @@ function Start-PSPester {
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
-          Restore-PSPester
+        Restore-PSPester
     }
 
     if ($IncludeFailingTest.IsPresent)
     {
         $Path += "$PSScriptRoot/tools/failingTests"
+    }
+
+    if($IncludeCommonTests.IsPresent)
+    {
+        $path = += "$PSScriptRoot/test/common"
     }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -951,7 +960,7 @@ function Start-PSPester {
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $newPathFragment = $TestModulePath + $TestModulePathSeparator + $script:TestModuleDirPath + $TestModulePathSeparator
+    $newPathFragment = $TestModulePath + $TestModulePathSeparator
     $command += '$env:PSModulePath = '+"'$newPathFragment'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
@@ -1194,10 +1203,7 @@ function Publish-TestResults
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
 
-        if($env:BUILD_REASON -ne 'PullRequest')
-        {
-            Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
-        }
+        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
     }
 }
 
@@ -1368,7 +1374,6 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
         [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
 
@@ -1381,10 +1386,9 @@ function Start-PSxUnit {
     }
 
     try {
-        Push-Location $PSScriptRoot/test/csharp
+        Push-Location $PSScriptRoot/test/xUnit
 
         # Path manipulation to obtain test project output directory
-        dotnet restore
 
         if(-not $Environment.IsWindows)
         {
@@ -1416,30 +1420,22 @@ function Start-PSxUnit {
             }
         }
 
-        # Run sequential tests first, and then run the tests that can execute in parallel
-        if (Test-Path $SequentialTestResultsFile) {
-            Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
-        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        dotnet build --configuration $Options.configuration
 
-        $extraParams = @()
+        if (Test-Path $ParallelTestResultsFile) {
+            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
 
         # we are having intermittent issues on macOS with these tests failing.
         # VSTS has suggested forcing them to be sequential
         if($env:TF_BUILD -and $IsMacOS)
         {
             Write-Log 'Forcing parallel xunit tests to run sequentially.'
-            $extraParams += @(
-                '-parallel'
-                'none'
-            )
+            dotnet test -p:ParallelizeTestCollections=false --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
+        } else {
+            dotnet test --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         }
 
-        if (Test-Path $ParallelTestResultsFile) {
-            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
@@ -1536,16 +1532,6 @@ function Start-PSBootstrap {
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
-            try {
-                # Update googletest submodule for linux native cmake
-                Push-Location $PSScriptRoot
-                $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
-                Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
-                git submodule --quiet update --init -- $submodule
-            } finally {
-                Pop-Location
-            }
-
             if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
                 Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
                 return
@@ -1565,6 +1551,7 @@ function Start-PSBootstrap {
                 $Deps += "libunwind8"
                 if ($Environment.IsUbuntu14) { $Deps += "libicu52" }
                 elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
+                elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
@@ -1628,7 +1615,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "$baseCommand $Deps"
                 }
             } elseif ($Environment.IsMacOS) {
-                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+                precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
                 # Build tools
                 $Deps += "cmake"
@@ -1642,6 +1629,12 @@ function Start-PSBootstrap {
 
                 # Install patched version of curl
                 Start-NativeExecution { brew install curl --with-openssl --with-gssapi } -IgnoreExitcode
+            } elseif ($Environment.IsAlpine) {
+                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
+
+                Start-NativeExecution {
+                    Invoke-Expression "apk add $Deps"
+                }
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1653,8 +1646,8 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
@@ -2062,8 +2055,9 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("linux-arm",
-                     "linux-musl-x64",
+        [ValidateSet("alpine-x64",
+                     "linux-arm",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -2198,6 +2192,7 @@ function Start-CrossGen {
         "System.IO.Pipes.dll"
         "System.Diagnostics.FileVersionInfo.dll"
         "System.Collections.Specialized.dll"
+        "Microsoft.ApplicationInsights.dll"
     )
 
     # Common PowerShell libraries to crossgen
@@ -2272,7 +2267,13 @@ function Copy-PSGalleryModules
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Destination
+        [string]$CsProjPath,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Destination,
+
+        [Parameter()]
+        [switch]$Force
     )
 
     if (!$Destination.EndsWith("Modules")) {
@@ -2280,7 +2281,8 @@ function Copy-PSGalleryModules
     }
 
     Find-DotNet
-    Restore-PSPackage
+
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
@@ -2290,7 +2292,7 @@ function Copy-PSGalleryModules
         throw "Can't find nuget global cache"
     }
 
-    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
+    $psGalleryProj = [xml](Get-Content -Raw $CsProjPath)
 
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include
@@ -2310,7 +2312,8 @@ function Copy-PSGalleryModules
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+        # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
         Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }
@@ -2984,6 +2987,31 @@ $script:RESX_TEMPLATE = @'
 </root>
 '@
 
+function Get-UniquePackageFolderName {
+    param(
+        [Parameter(Mandatory)] $Root
+    )
+
+    $packagePath = Join-Path $Root 'TestPackage'
+
+    $triesLeft = 10
+
+    while(Test-Path $packagePath) {
+        $suffix = Get-Random
+
+        # Not using Guid to avoid maxpath problems as in example below.
+        # Example: 'TestPackage-ba0ae1db-8512-46c5-8b6c-1862d33a2d63\test\powershell\Modules\Microsoft.PowerShell.Security\TestData\CatalogTestData\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.schema.mof'
+        $packagePath = Join-Path $Root "TestPackage_$suffix"
+        $triesLeft--
+
+        if ($triesLeft -le 0) {
+            throw "Could find unique folder name for package path"
+        }
+    }
+
+    $packagePath
+}
+
 function New-TestPackage
 {
     [CmdletBinding()]
@@ -3004,13 +3032,14 @@ function New-TestPackage
 
     $rootFolder = $env:TEMP
 
+    # In some build agents, typically macOS on AzDevOps, $env:TEMP might not be set.
     if (-not $rootFolder -and $env:TF_BUILD) {
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
     Write-Verbose -Verbose "RootFolder: $rootFolder"
+    $packageRoot = Get-UniquePackageFolderName -Root $rootFolder
 
-    $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
     Write-Verbose -Verbose "PackagePath: $packagePath"
@@ -3052,4 +3081,36 @@ function New-TestPackage
     }
 
     [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot, $packagePath)
+}
+
+function New-NugetConfigFile
+{
+    param(
+        [Parameter(Mandatory=$true)] [string] $NugetFeedUrl,
+        [Parameter(Mandatory=$true)] [string] $FeedName,
+        [Parameter(Mandatory=$true)] [string] $UserName,
+        [Parameter(Mandatory=$true)] [string] $ClearTextPAT,
+        [Parameter(Mandatory=$true)] [string] $Destination
+    )
+
+    $nugetConfigTemplate = @'
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="[FEEDNAME]" value="[FEED]" />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  </packageSources>
+  <packageSourceCredentials>
+    <[FEEDNAME]>
+      <add key="Username" value="[USERNAME]" />
+      <add key="ClearTextPassword" value="[PASSWORD]" />
+    </[FEEDNAME]>
+  </packageSourceCredentials>
+</configuration>
+'@
+
+    $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+
+    Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
 }

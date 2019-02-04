@@ -14,7 +14,7 @@ using System.Text;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// helper class for secure string related functionality
+    /// Helper class for secure string related functionality.
     /// </summary>
     internal static class SecureStringHelper
     {
@@ -28,14 +28,14 @@ namespace Microsoft.PowerShell
         /// The binary data must be byte[] version of unicode char[],
         /// otherwise the results are unpredictable.
         /// </summary>
-        /// <param name="data"> input data </param>
-        /// <returns> a SecureString  </returns>
+        /// <param name="data">Input data.</param>
+        /// <returns>A SecureString .</returns>
         private static SecureString New(byte[] data)
         {
             if ((data.Length % 2) != 0)
             {
                 // If the data is not an even length, they supplied an invalid key
-                String error = Serialization.InvalidKey;
+                string error = Serialization.InvalidKey;
                 throw new PSArgumentException(error);
             }
 
@@ -63,10 +63,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// get the contents of a SecureString as byte[]
+        /// Get the contents of a SecureString as byte[]
         /// </summary>
-        /// <param name="s"> input string </param>
-        /// <returns> contents of s (char[]) converted to byte[] </returns>
+        /// <param name="s">Input string.</param>
+        /// <returns>Contents of s (char[]) converted to byte[].</returns>
         [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
@@ -99,8 +99,8 @@ namespace Microsoft.PowerShell
         /// method can be changed to use a better encoding
         /// such as base64.
         /// </summary>
-        /// <param name="data"> binary data to encode  </param>
-        /// <returns> a string representing encoded data </returns>
+        /// <param name="data">Binary data to encode.</param>
+        /// <returns>A string representing encoded data.</returns>
         internal static string ByteArrayToString(byte[] data)
         {
             StringBuilder sb = new StringBuilder();
@@ -117,8 +117,8 @@ namespace Microsoft.PowerShell
         /// Convert a string obtained using ByteArrayToString()
         /// back to byte[] format.
         /// </summary>
-        /// <param name="s"> encoded input string  </param>
-        /// <returns> bin data as byte[] </returns>
+        /// <param name="s">Encoded input string.</param>
+        /// <returns>Bin data as byte[].</returns>
         internal static byte[] ByteArrayFromString(string s)
         {
             //
@@ -141,11 +141,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using DPAPI and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using DPAPI and encoding the encrypted blob as a string.
         /// </summary>
-        /// <param name="input"> SecureString to protect </param>
-        /// <returns> a string (see summary)  </returns>
+        /// <param name="input">SecureString to protect.</param>
+        /// <returns>A string (see summary) .</returns>
         internal static string Protect(SecureString input)
         {
             Utils.CheckSecureStringArg(input, "input");
@@ -173,8 +173,8 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Protect()
         /// </summary>
-        /// <param name="input"> encrypted string </param>
-        /// <returns> SecureString  </returns>
+        /// <param name="input">Encrypted string.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Unprotect(string input)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
@@ -198,13 +198,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
-        /// <param name="input"> input string to encrypt </param>
-        /// <param name="key"> encryption key </param>
-        /// <returns> a string (see summary)  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="input">Input string to encrypt.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
             EncryptionResult output = null;
@@ -228,13 +227,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
-        /// <param name="input"> input string to encrypt </param>
-        /// <param name="key"> encryption key </param>
-        /// <returns> a string (see summary)  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="input">Input string to encrypt.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, byte[] key)
         {
             return Encrypt(input, key, null);
@@ -296,10 +294,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        /// <param name="input"> encrypted string </param>
-        /// <param name="key"> encryption key </param>
-        /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        /// <returns> SecureString  </returns>
+        /// <param name="input">Encrypted string.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <param name="IV">Encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, SecureString key, byte[] IV)
         {
             SecureString output = null;
@@ -328,10 +326,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        /// <param name="input"> encrypted string </param>
-        /// <param name="key"> encryption key </param>
-        /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        /// <returns> SecureString  </returns>
+        /// <param name="input">Encrypted string.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <param name="IV">Encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, byte[] key, byte[] IV)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
@@ -381,7 +379,7 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     /// Helper class to return encryption results, and the IV used to
-    /// do the encryption
+    /// do the encryption.
     /// </summary>
     internal class EncryptionResult
     {
@@ -392,14 +390,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets the encrypted data
+        /// Gets the encrypted data.
         /// </summary>
-        internal String EncryptedData { get; }
+        internal string EncryptedData { get; }
 
         /// <summary>
-        /// Gets the IV used to encrypt the data
+        /// Gets the IV used to encrypt the data.
         /// </summary>
-        internal String IV { get; }
+        internal string IV { get; }
     }
 
 #if CORECLR
@@ -418,7 +416,7 @@ namespace Microsoft.PowerShell
     internal static class ProtectedData
     {
         /// <summary>
-        /// Protect
+        /// Protect.
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
@@ -442,13 +440,14 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
                 unsafe
                 {
                     if (!CAPI.CryptProtectData(new IntPtr(&dataIn),
-                                                String.Empty,
+                                                string.Empty,
                                                 new IntPtr(&entropy),
                                                 IntPtr.Zero,
                                                 IntPtr.Zero,
@@ -496,7 +495,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Unprotect
+        /// Unprotect.
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
@@ -523,6 +522,7 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;

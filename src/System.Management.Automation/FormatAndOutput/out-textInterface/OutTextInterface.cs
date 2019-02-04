@@ -10,28 +10,29 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the out-lineoutput command
+    /// Implementation for the out-lineoutput command
     /// it provides a wrapper for the OutCommandInner class,
-    /// which is the general purpose output command
+    /// which is the general purpose output command.
     /// </summary>
     [Cmdlet(VerbsData.Out, "LineOutput")]
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// command line switch for ILineOutput communication channel
+        /// Command line switch for ILineOutput communication channel.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0)]
         public object LineOutput
         {
             get { return _lineOutput; }
+
             set { _lineOutput = value; }
         }
 
         private object _lineOutput = null;
 
         /// <summary>
-        /// set inner command
+        /// Set inner command.
         /// </summary>
         public OutLineOutputCommand()
         {
@@ -52,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ProcessWrongTypeLineOutput(_lineOutput);
             }
+
             ((OutCommandInner)this.implementation).LineOutput = lo;
 
             base.BeginProcessing();

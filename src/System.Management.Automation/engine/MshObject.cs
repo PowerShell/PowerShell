@@ -87,6 +87,7 @@ namespace System.Management.Automation
                 PSObject.memberResolution.WriteLine("\"{0}\" present in type table.", name);
                 return memberAsT;
             }
+
             PSObject.memberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
                 name, member.GetType(), typeof(T));
             return null;
@@ -104,6 +105,7 @@ namespace System.Management.Automation
             {
                 return new PSMemberInfoInternalCollection<T>();
             }
+
             PSMemberInfoInternalCollection<T> members = typeTableToUse.GetMembers<T>(msjObj.InternalTypeNames);
             PSObject.memberResolution.WriteLine("Type table members: {0}.", members.Count);
             return members;
@@ -117,10 +119,12 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 T adaptedMember = msjObj.adaptedMembers[name] as T;
                 PSObject.memberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
+
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
             PSObject.memberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
             return retValue;
@@ -142,6 +146,7 @@ namespace System.Management.Automation
                     returnValue.Add(tAsU);
                 }
             }
+
             return returnValue;
         }
 
@@ -153,9 +158,11 @@ namespace System.Management.Automation
                 {
                     return new PSMemberInfoInternalCollection<T>();
                 }
+
                 PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.adaptedMembers.Count);
                 return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.adaptedMembers);
             }
+
             PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
             PSObject.memberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
             return retValue;
@@ -237,6 +244,7 @@ namespace System.Management.Automation
                         true, true, "type table members"));
                 }
             }
+
             if ((viewType & PSMemberViewTypes.Adapted) == PSMemberViewTypes.Adapted)
             {
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
@@ -246,6 +254,7 @@ namespace System.Management.Automation
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "adapted members"));
             }
+
             if ((viewType & PSMemberViewTypes.Base) == PSMemberViewTypes.Base)
             {
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
@@ -255,6 +264,7 @@ namespace System.Management.Automation
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members"));
             }
+
             return returnValue;
         }
 
@@ -331,6 +341,7 @@ namespace System.Management.Automation
                         true, true, "type table members"));
                 }
             }
+
             if ((viewType & PSMemberViewTypes.Adapted) == PSMemberViewTypes.Adapted)
             {
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
@@ -338,6 +349,7 @@ namespace System.Management.Automation
                     PSObject.AdapterGetMemberDelegate<PSPropertyInfo>,
                     false, false, "adapted members"));
             }
+
             if ((viewType & PSMemberViewTypes.Base) == PSMemberViewTypes.Base)
             {
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
@@ -345,6 +357,7 @@ namespace System.Management.Automation
                     PSObject.DotNetGetMemberDelegate<PSPropertyInfo>,
                     false, false, "clr members"));
             }
+
             return returnValue;
         }
 
@@ -392,23 +405,30 @@ namespace System.Management.Automation
         private static AdapterSet MappedInternalAdapterSet(object obj)
         {
             if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
+
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
+
             if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
 #if !UNIX
             if (obj is ManagementClass) { return PSObject.s_managementClassAdapter; }
+
             if (obj is ManagementBaseObject) { return PSObject.s_managementObjectAdapter; }
+
             if (obj is DirectoryEntry) { return PSObject.s_directoryEntryAdapter; }
 #endif
             if (obj is DataRowView) { return PSObject.s_dataRowViewAdapter; }
+
             if (obj is DataRow) { return PSObject.s_dataRowAdapter; }
+
             if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
+
             return null;
         }
 
         /// <summary>
         /// Returns the adapter corresponding to obj.GetType()
         /// </summary>
-        /// <returns>the adapter set corresponding to obj.GetType()</returns>
+        /// <returns>The adapter set corresponding to obj.GetType().</returns>
         internal static AdapterSet GetMappedAdapter(object obj, TypeTable typeTable)
         {
             Type objectType = obj.GetType();
@@ -495,7 +515,7 @@ namespace System.Management.Automation
         #endregion private to the constructors
 
         /// <summary>
-        /// Initializes a new instance of PSObject with an PSCustomObject BaseObject
+        /// Initializes a new instance of PSObject with an PSCustomObject BaseObject.
         /// </summary>
         public PSObject()
         {
@@ -504,7 +524,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of PSObject with an PSCustomObject BaseObject
-        /// with an initial capacity for members
+        /// with an initial capacity for members.
         /// </summary>
         /// <param name="instanceMemberCapacity">The initial capacity for the instance member collection.</param>
         public PSObject(int instanceMemberCapacity) : this()
@@ -515,8 +535,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSObject wrapping obj (accessible through BaseObject).
         /// </summary>
-        /// <param name="obj">object we are wrapping</param>
-        /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null</exception>
+        /// <param name="obj">Object we are wrapping.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="obj"/> is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
         public PSObject(object obj)
         {
@@ -524,14 +544,15 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("obj");
             }
+
             CommonInitialization(obj);
         }
 
         /// <summary>
-        /// Creates a PSObject from an ISerializable context
+        /// Creates a PSObject from an ISerializable context.
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         protected PSObject(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -571,7 +592,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the main field in the class representing
-        /// the System.Object we are encapsulating
+        /// the System.Object we are encapsulating.
         /// </summary>
         private object _immediateBaseObject;
 
@@ -622,6 +643,7 @@ namespace System.Management.Automation
                 return _adapterSet;
             }
         }
+
         private AdapterSet _adapterSet;
 
         internal bool hasGeneratedReservedMembers;
@@ -646,8 +668,10 @@ namespace System.Management.Automation
 
                 return _instanceMembers;
             }
+
             set => _instanceMembers = value;
         }
+
         private PSMemberInfoInternalCollection<PSMemberInfo> _instanceMembers;
 
         internal static bool HasInstanceMembers(object obj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers)
@@ -662,6 +686,7 @@ namespace System.Management.Automation
                                                                         out psobj._instanceMembers);
                     }
                 }
+
                 instanceMembers = psobj._instanceMembers;
             }
             else if (obj != null)
@@ -687,18 +712,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects
+        /// Null for live objects but not null for deserialized objects.
         /// </summary>
         internal PSMemberInfoInternalCollection<PSPropertyInfo> adaptedMembers;
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects
+        /// Null for live objects but not null for deserialized objects.
         /// </summary>
         internal PSMemberInfoInternalCollection<PSPropertyInfo> clrMembers;
 
         /// <summary>
-        /// Set to true when the BaseObject is PSCustomObject
+        /// Set to true when the BaseObject is PSCustomObject.
         /// </summary>
         internal bool immediateBaseObjectIsEmpty;
 
@@ -711,7 +736,7 @@ namespace System.Management.Automation
         #region properties
 
         /// <summary>
-        /// Gets the member collection
+        /// Gets the member collection.
         /// </summary>
         public PSMemberInfoCollection<PSMemberInfo> Members
         {
@@ -731,6 +756,7 @@ namespace System.Management.Automation
                 return _members;
             }
         }
+
         private PSMemberInfoIntegratingCollection<PSMemberInfo> _members;
 
         /// <summary>
@@ -754,6 +780,7 @@ namespace System.Management.Automation
                 return _properties;
             }
         }
+
         private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
 
         /// <summary>
@@ -777,6 +804,7 @@ namespace System.Management.Automation
                 return _methods;
             }
         }
+
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
         /// <summary>
@@ -829,6 +857,7 @@ namespace System.Management.Automation
                             object baseObj = BaseObject;
                             // In most cases, the TypeNames will be modified after it's returned
                             if (baseObj != null) { PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(baseObj.GetType()); }
+
                             return _typeNames;
                         }
                     }
@@ -864,6 +893,7 @@ namespace System.Management.Automation
 
                 return _typeNames;
             }
+
             set => _typeNames = value;
         }
 
@@ -878,6 +908,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             return PSObject.GetMappedAdapter(obj, null).OriginalAdapter.BaseGetTypeNameHierarchy(obj);
         }
 
@@ -946,12 +977,14 @@ namespace System.Management.Automation
             {
                 return obj;
             }
+
             if (mshObj == AutomationNull.Value)
                 return null;
             if (mshObj.immediateBaseObjectIsEmpty)
             {
                 return obj;
             }
+
             object returnValue;
             do
             {
@@ -969,6 +1002,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             var objType = obj as Type ?? obj.GetType();
             return dotNetStaticAdapter.BaseGetMember<PSMemberInfo>(objType, methodName);
         }
@@ -977,11 +1011,11 @@ namespace System.Management.Automation
         /// If obj is an PSObject it will be returned as is, otherwise
         /// a new PSObject will be created based on obj.
         /// </summary>
-        /// <param name="obj">object to be wrapped</param>
+        /// <param name="obj">Object to be wrapped.</param>
         /// <returns>
         /// obj or a new PSObject whose BaseObject is obj
         /// </returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="obj"/> is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
         public static PSObject AsPSObject(object obj)
         {
@@ -1062,6 +1096,7 @@ namespace System.Management.Automation
             {
                 return obj.ToString();
             }
+
             return " ";
         }
 
@@ -1075,10 +1110,12 @@ namespace System.Management.Automation
                 returnValue.Append(PSObject.ToString(context, obj, separator, format, formatProvider, false, false));
                 returnValue.Append(separatorToUse);
             }
+
             if (returnValue.Length == 0)
             {
                 return string.Empty;
             }
+
             int separatorLength = separatorToUse.Length;
             returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
             return returnValue.ToString();
@@ -1095,12 +1132,15 @@ namespace System.Management.Automation
                     PSObject mshObj = PSObject.AsPSObject(obj);
                     returnValue.Append(PSObject.ToString(context, mshObj, separator, format, formatProvider, false, false));
                 }
+
                 returnValue.Append(separatorToUse);
             }
+
             if (returnValue.Length == 0)
             {
                 return string.Empty;
             }
+
             int separatorLength = separatorToUse.Length;
             returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
             return returnValue.ToString();
@@ -1116,6 +1156,7 @@ namespace System.Management.Automation
                 {
                     returnValue.Append("; ");
                 }
+
                 isFirst = false;
                 returnValue.Append(property.Name);
                 returnValue.Append("=");
@@ -1125,10 +1166,12 @@ namespace System.Management.Automation
 
                 returnValue.Append(PSObject.ToString(context, propertyValue, separator, format, formatProvider, false, false));
             }
+
             if (isFirst)
             {
                 return string.Empty;
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }
@@ -1136,7 +1179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of obj.
         /// </summary>
-        /// <param name="context">ExecutionContext used to fetch the separator. </param>
+        /// <param name="context">ExecutionContext used to fetch the separator.</param>
         /// <param name="obj">
         /// object we are trying to call ToString on. If this is not an PSObject we try
         /// enumerating and if that fails we call obj.ToString.
@@ -1144,15 +1187,36 @@ namespace System.Management.Automation
         /// If it is not present, and the BaseObject is null we try listing the properties.
         /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
-        /// <returns>A string representation of the object</returns>
+        /// <returns>A string representation of the object.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
         internal static string ToStringParser(ExecutionContext context, object obj)
         {
+            return ToStringParser(context, obj, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Returns the string representation of obj.
+        /// </summary>
+        /// <param name="context">ExecutionContext used to fetch the separator.</param>
+        /// <param name="obj">
+        /// object we are trying to call ToString on. If this is not an PSObject we try
+        /// enumerating and if that fails we call obj.ToString.
+        /// If this is an PSObject, we look for a brokered ToString.
+        /// If it is not present, and the BaseObject is null we try listing the properties.
+        /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
+        /// </param>
+        /// <param name="formatProvider">The formatProvider to be passed to ToString.</param>
+        /// <returns>A string representation of the object.</returns>
+        /// <exception cref="ExtendedTypeSystemException">
+        /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
+        /// </exception>
+        internal static string ToStringParser(ExecutionContext context, object obj, IFormatProvider formatProvider)
+        {
             try
             {
-                return ToString(context, obj, null, null, CultureInfo.InvariantCulture, true, true);
+                return ToString(context, obj, null, null, formatProvider, true, true);
             }
             catch (ExtendedTypeSystemException etse)
             {
@@ -1162,7 +1226,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from an PSObject instance ToString to provide a string representation for an object
+        /// Called from an PSObject instance ToString to provide a string representation for an object.
         /// </summary>
         /// <param name="context">
         /// ExecutionContext used to fetch the separator.
@@ -1176,15 +1240,15 @@ namespace System.Management.Automation
         /// If it is not present, and the BaseObject is null we try listing the properties.
         /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
-        /// <param name="separator">The separator between elements, if this is an enumeration</param>
-        /// <param name="format">the format to be passed to ToString</param>
-        /// <param name="formatProvider">the formatProvider to be passed to ToString</param>
+        /// <param name="separator">The separator between elements, if this is an enumeration.</param>
+        /// <param name="format">The format to be passed to ToString.</param>
+        /// <param name="formatProvider">The formatProvider to be passed to ToString.</param>
         /// <param name="recurse">true if we should enumerate values or properties which would cause recursive
         /// calls to this method. Such recursive calls will have recurse set to false, limiting the depth.</param>
         /// <param name="unravelEnumeratorOnRecurse">If recurse is false, this parameter is not considered. If it is true
         /// this parameter will determine how enumerators are going to be treated.
         /// </param>
-        /// <returns>A string representation of the object</returns>
+        /// <returns>A string representation of the object.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
@@ -1246,6 +1310,7 @@ namespace System.Management.Automation
                             // We do want to ignore exceptions here to try the regular ToString below.
                         }
                     }
+
                     if (unravelEnumeratorOnRecurse)
                     {
                         IEnumerator enumerator = LanguagePrimitives.GetEnumerator(obj);
@@ -1276,8 +1341,10 @@ namespace System.Management.Automation
                         {
                             return Microsoft.PowerShell.ToStringCodeMethods.Type(type);
                         }
+
                         return obj.ToString();
                     }
+
                     return objFormattable.ToString(format, formatProvider);
                 }
                 catch (Exception e)
@@ -1369,6 +1436,7 @@ namespace System.Management.Automation
                         // We do want to ignore exceptions here to try the regular ToString below.
                     }
                 }
+
                 if (unravelEnumeratorOnRecurse)
                 {
                     IEnumerator enumerator = LanguagePrimitives.GetEnumerator(mshObj);
@@ -1421,16 +1489,17 @@ namespace System.Management.Automation
         /// CodeMethod or ScriptMethod will be used, if available. Enumerations items are
         /// concatenated using $ofs.
         /// </summary>
-        /// <returns>the string representation for baseObject</returns>
-        /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
+        /// <returns>The string representation for baseObject.</returns>
+        /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public override string ToString()
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
             }
+
             return PSObject.ToString(null, this, null, null, null, true, false);
         }
 
@@ -1439,18 +1508,19 @@ namespace System.Management.Automation
         /// CodeMethod or ScriptMethod will be used, if available. Enumerations items are
         /// concatenated using $ofs.
         /// </summary>
-        /// <param name="format">repassed to baseObject's IFormattable if present</param>
-        /// <param name="formatProvider">repassed to baseObject's IFormattable if present</param>
-        /// <returns>the string representation for baseObject</returns>
-        /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
+        /// <param name="format">Repassed to baseObject's IFormattable if present.</param>
+        /// <param name="formatProvider">Repassed to baseObject's IFormattable if present.</param>
+        /// <returns>The string representation for baseObject.</returns>
+        /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
             }
+
             return PSObject.ToString(null, this, null, format, formatProvider, true, false);
         }
 
@@ -1465,6 +1535,7 @@ namespace System.Management.Automation
             {
                 result = this.BaseObject.GetType().FullName;
             }
+
             return result;
         }
 
@@ -1476,7 +1547,7 @@ namespace System.Management.Automation
         /// it is a value type, and use BaseObject.Clone() for the new PSObject,
         /// if the BaseObject is ICloneable.
         /// </summary>
-        /// <returns>a copy of this object</returns>
+        /// <returns>A copy of this object.</returns>
         public virtual PSObject Copy()
         {
             PSObject returnValue = (PSObject)this.MemberwiseClone();
@@ -1575,6 +1646,7 @@ namespace System.Management.Automation
             {
                 return 0;
             }
+
             try
             {
                 // PSObject.Base instead of BaseObject could cause an infinite
@@ -1593,7 +1665,7 @@ namespace System.Management.Automation
         /// Determines whether the specified Object is equal to the current Object.
         /// </summary>
         /// <param name="obj">The Object to compare with the current Object.</param>
-        /// <returns>true if the specified Object is equal to the current Object; otherwise, false.</returns>
+        /// <returns>True if the specified Object is equal to the current Object; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             // There is a slight difference between BaseObject and PSObject.Base.
@@ -1622,7 +1694,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
-        /// <returns>A hash code for the current Object</returns>
+        /// <returns>A hash code for the current Object.</returns>
         public override int GetHashCode()
         {
             return this.BaseObject.GetHashCode();
@@ -1659,7 +1731,7 @@ namespace System.Management.Automation
         #region public const strings
 
         /// <summary>
-        /// The name of the member set for adapted members
+        /// The name of the member set for adapted members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1667,7 +1739,7 @@ namespace System.Management.Automation
         public const string AdaptedMemberSetName = "psadapted";
 
         /// <summary>
-        /// The name of the member set for extended members
+        /// The name of the member set for extended members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1675,7 +1747,7 @@ namespace System.Management.Automation
         public const string ExtendedMemberSetName = "psextended";
 
         /// <summary>
-        /// The name of the member set for the BaseObject's members
+        /// The name of the member set for the BaseObject's members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1683,7 +1755,7 @@ namespace System.Management.Automation
         public const string BaseObjectMemberSetName = "psbase";
 
         /// <summary>
-        /// The PSObject's properties
+        /// The PSObject's properties.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1691,7 +1763,7 @@ namespace System.Management.Automation
         internal const string PSObjectMemberSetName = "psobject";
 
         /// <summary>
-        /// a shortcut to .PSObject.TypeNames
+        /// A shortcut to .PSObject.TypeNames.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1703,10 +1775,10 @@ namespace System.Management.Automation
         #region serialization
 
         /// <summary>
-        /// Implements the ISerializable contract for serializing a PSObject
+        /// Implements the ISerializable contract for serializing a PSObject.
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1755,16 +1827,19 @@ namespace System.Management.Automation
             {
                 settings.ReplicateInstance(ownerObject);
             }
+
             PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
             if (note == null)
             {
                 return defaultValue;
             }
+
             object noteValue = note.Value;
             if (noteValue == null || noteValue.GetType() != expectedType)
             {
                 return defaultValue;
             }
+
             return note.Value;
         }
 
@@ -1877,14 +1952,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is only going to be called if SerializationMethod is SpecificProperties
+        /// This is only going to be called if SerializationMethod is SpecificProperties.
         /// </summary>
         /// <param name="backupTypeTable">
         /// TypeTable to use if this PSObject.GetTypeTable() returns null. This will happen
         /// in the remoting scenario on the client side (where a LocalRunspace may not be
         /// present).
         /// </param>
-        /// <returns>A collection with only the specific properties to serialize</returns>
+        /// <returns>A collection with only the specific properties to serialize.</returns>
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
@@ -1903,6 +1978,7 @@ namespace System.Management.Automation
             {
                 return this.adaptedMembers != null;
             }
+
             return !this.immediateBaseObjectIsEmpty;
         }
 
@@ -1917,6 +1993,7 @@ namespace System.Management.Automation
             {
                 return serializedMembers;
             }
+
             PSMemberInfoInternalCollection<PSPropertyInfo> returnValue = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             foreach (PSPropertyInfo member in particularAdapter.BaseGetMembers<PSPropertyInfo>(_immediateBaseObject))
@@ -1928,7 +2005,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This flag is set to true in deserialized shellobject
+        /// This flag is set to true in deserialized shellobject.
         /// </summary>
         internal bool isDeserialized;
 
@@ -1949,10 +2026,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set base object
+        /// Set base object.
         /// </summary>
-        /// <param name="value">object which is set as core</param>
-        /// <param name="overrideTypeInfo">If true, overwrite the type information</param>
+        /// <param name="value">Object which is set as core.</param>
+        /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
         ///<remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
@@ -1967,7 +2044,7 @@ namespace System.Management.Automation
             }
         }
 
-        //This is toString value set on deserialization
+        // This is toString value set on deserialization
         private string _toStringFromDeserialization = null;
 
         internal bool preserveToString = false;
@@ -1981,6 +2058,7 @@ namespace System.Management.Automation
                 {
                     return preserveToString;
                 }
+
                 preserveToStringSet = true;
                 if (InternalTypeNames.Count == 0)
                 {
@@ -1994,7 +2072,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the to string value on deserialization
+        /// Sets the to string value on deserialization.
         /// </summary>
         internal string ToStringFromDeserialization
         {
@@ -2106,6 +2184,7 @@ namespace System.Management.Automation
                 {
                     return DeferForIDMOP(binder, arg);
                 }
+
                 return binder.FallbackBinaryOperation(GetUnwrappedObject(), arg);
             }
 
@@ -2230,6 +2309,7 @@ namespace System.Management.Automation
             get => _isHelpObject;
             set => _isHelpObject = value;
         }
+
         private bool _isHelpObject = false;
 
         #endregion
@@ -2242,13 +2322,13 @@ namespace System.Management.Automation
     public class PSCustomObject
     {
         /// <summary>
-        /// To prevent other instances than SelfInstance
+        /// To prevent other instances than SelfInstance.
         /// </summary>
         private PSCustomObject() { }
 
         internal static PSCustomObject SelfInstance = new PSCustomObject();
         /// <summary>
-        /// Returns an empty string
+        /// Returns an empty string.
         /// </summary>
         public override string ToString()
         {
@@ -2275,7 +2355,7 @@ namespace System.Management.Automation
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxiliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types.
     /// </summary>
     public static partial class ToStringCodeMethods
     {
@@ -2285,8 +2365,10 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < genericArguments.Length; i++)
             {
                 if (i > 0) { sb.Append(','); }
+
                 sb.Append(Type(genericArguments[i], dropNamespaces));
             }
+
             sb.Append(']');
         }
 
@@ -2319,6 +2401,7 @@ namespace Microsoft.PowerShell
                 {
                     sb.Append(",");
                 }
+
                 sb.Append("]");
                 result = sb.ToString();
             }
@@ -2331,6 +2414,7 @@ namespace Microsoft.PowerShell
                     {
                         return type.Name;
                     }
+
                     if (dropNamespaces)
                     {
                         if (type.IsNested)
@@ -2367,13 +2451,14 @@ namespace Microsoft.PowerShell
                     result = type.AssemblyQualifiedName;
                 }
             }
+
             return result;
         }
 
         /// <summary>
-        /// ToString implementation for Type
+        /// ToString implementation for Type.
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a Type</param>
+        /// <param name="instance">Instance of PSObject wrapping a Type.</param>
         public static string Type(PSObject instance)
         {
             if (instance == null)
@@ -2385,9 +2470,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ToString implementation for XmlNode
+        /// ToString implementation for XmlNode.
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping an XmlNode</param>
+        /// <param name="instance">Instance of PSObject wrapping an XmlNode.</param>
         public static string XmlNode(PSObject instance)
         {
             XmlNode node = (XmlNode)instance?.BaseObject;
@@ -2400,16 +2485,16 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ToString implementation for XmlNodeList
+        /// ToString implementation for XmlNodeList.
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping an XmlNodeList</param>
+        /// <param name="instance">Instance of PSObject wrapping an XmlNodeList.</param>
         public static string XmlNodeList(PSObject instance)
         {
             XmlNodeList nodes = (XmlNodeList)instance?.BaseObject;
             if (nodes == null)
             {
                 return string.Empty;
-            }   
+            }
 
             if (nodes.Count == 1)
             {
@@ -2417,6 +2502,7 @@ namespace Microsoft.PowerShell
                 {
                     return string.Empty;
                 }
+
                 return PSObject.AsPSObject(nodes[0]).ToString();
             }
 

@@ -34,7 +34,7 @@ namespace System.Management.Automation.Security
 
     /// <summary>
     /// Support class for dealing with the Windows Lockdown Policy,
-    /// Device Guard, and Constrained PowerShell
+    /// Device Guard, and Constrained PowerShell.
     /// </summary>
     public sealed class SystemPolicy
     {
@@ -43,16 +43,16 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Gets the system lockdown policy
+        /// Gets the system lockdown policy.
         /// </summary>
-        /// <returns>An EnforcementMode that describes the system policy</returns>
+        /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
+            if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
+                    if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
                     {
                         s_systemLockdownPolicy = GetLockdownPolicy(null, null);
                     }
@@ -63,13 +63,13 @@ namespace System.Management.Automation.Security
         }
 
         private static object s_systemLockdownPolicyLock = new Object();
-        private static Nullable<SystemEnforcementMode> s_systemLockdownPolicy = null;
-        private static bool s_wasSystemPolicyDebugPolicy = false;
+        private static SystemEnforcementMode? s_systemLockdownPolicy = null;
+        private static bool s_allowDebugOverridePolicy = false;
 
         /// <summary>
-        /// Gets lockdown policy as applied to a file
+        /// Gets lockdown policy as applied to a file.
         /// </summary>
-        /// <returns>An EnforcementMode that describes policy</returns>
+        /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
             // Check the WLDP API
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Security
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 if ((s_cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Security
                 hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
                 hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
 
-                if (!String.IsNullOrEmpty(path))
+                if (!string.IsNullOrEmpty(path))
                 {
                     hostInformation.szSource = path;
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Security
                     SystemEnforcementMode resultingLockdownPolicy = GetLockdownPolicyForResult(pdwLockdownState);
 
                     // If this is a query for the system-wide lockdown policy, cache it.
-                    if (String.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path))
                     {
                         s_cachedWldpSystemPolicy = resultingLockdownPolicy;
                     }
@@ -172,8 +172,11 @@ namespace System.Management.Automation.Security
                 return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }
+
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
+        private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
+        private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -182,7 +185,7 @@ namespace System.Management.Automation.Security
             // Since there is no way to get that from AppLocker, we will test the policy
             // against a random non-existent script and module. If that is allowed, then there is
             // no AppLocker script policy.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 if ((s_cachedSaferSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
@@ -216,13 +219,14 @@ namespace System.Management.Automation.Security
                                     IO.Directory.CreateDirectory(tempPath);
                                 }
 
-                                testPathScript = IO.Path.Combine(tempPath, IO.Path.GetRandomFileName() + ".ps1");
-                                testPathModule = IO.Path.Combine(tempPath, IO.Path.GetRandomFileName() + ".psm1");
+                                testPathScript = IO.Path.Combine(tempPath, AppLockerTestFileName + IO.Path.GetRandomFileName() + ".ps1");
+                                testPathModule = IO.Path.Combine(tempPath, AppLockerTestFileName + IO.Path.GetRandomFileName() + ".psm1");
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                IO.File.WriteAllText(testPathScript, "1");
-                                IO.File.WriteAllText(testPathModule, "1");
+                                string dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
+                                IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
                             catch (System.IO.IOException)
                             {
@@ -246,7 +250,7 @@ namespace System.Management.Automation.Security
                             // https://msdn.microsoft.com/library/dd378457.aspx
                             Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
-                        } // end while loop
+                        }
 
                         // Test policy.
                         result = TestSaferPolicy(testPathScript, testPathModule);
@@ -273,8 +277,10 @@ namespace System.Management.Automation.Security
                     }
                     finally
                     {
-                        if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }
-                        if (IO.File.Exists(testPathModule)) { IO.File.Delete(testPathModule); }
+                        // Ok to leave the test scripts in the temp folder if they happen to be in use
+                        // so that PowerShell will still startup.
+                        PathUtils.TryDeleteFile(testPathScript);
+                        PathUtils.TryDeleteFile(testPathModule);
                     }
 
                     s_cachedSaferSystemPolicy = result;
@@ -301,6 +307,7 @@ namespace System.Management.Automation.Security
                 return SystemEnforcementMode.None;
             }
         }
+
         private static SaferPolicy? s_cachedSaferSystemPolicy = null;
 
         private static string GetKnownFolderPath(Guid knownFolderId)
@@ -332,12 +339,13 @@ namespace System.Management.Automation.Security
             {
                 result = SecuritySupport.GetSaferPolicy(testPathModule, null);
             }
+
             return result;
         }
 
         private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
         {
-            s_wasSystemPolicyDebugPolicy = true;
+            s_allowDebugOverridePolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
             if (path != null)
@@ -382,7 +390,7 @@ namespace System.Management.Automation.Security
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
             uint pdwLockdownState = 0;
-            Object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
+            object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
             if (result != null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
@@ -392,10 +400,11 @@ namespace System.Management.Automation.Security
             // If the system-wide debug policy had no preference, then there is no enforcement.
             return SystemEnforcementMode.None;
         }
+
         private static bool s_hadMissingWldpAssembly = false;
 
         /// <summary>
-        /// Gets lockdown policy as applied to a COM object
+        /// Gets lockdown policy as applied to a COM object.
         /// </summary>
         /// <returns>True if the COM object is allowed, False otherwise.</returns>
         internal static bool IsClassInApprovedList(Guid clsid)
@@ -416,9 +425,9 @@ namespace System.Management.Automation.Security
                         // Hook for testability. If we've got an environmental override, say that ADODB.Parameter
                         // is not allowed.
                         // 0000050b-0000-0010-8000-00aa006d2ea4 = ADODB.Parameter
-                        if (s_wasSystemPolicyDebugPolicy)
+                        if (s_allowDebugOverridePolicy)
                         {
-                            if (String.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
                             {
                                 return false;
                             }
@@ -435,7 +444,7 @@ namespace System.Management.Automation.Security
                 // Hook for testability. IsClassInApprovedList is only called when the system is in global lockdown mode,
                 // so this wouldn't be allowed in regular ConstrainedLanguage mode.
                 // f6d90f11-9c73-11d3-b32e-00c04f990bb4 = MSXML2.DOMDocument
-                if (String.Equals(clsid.ToString(), "f6d90f11-9c73-11d3-b32e-00c04f990bb4", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(clsid.ToString(), "f6d90f11-9c73-11d3-b32e-00c04f990bb4", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -498,7 +507,7 @@ namespace System.Management.Automation.Security
         internal static bool XamlWorkflowSupported { get; set; }
 
         /// <summary>
-        /// Native constants for dealing with the lockdown policy
+        /// Native constants for dealing with the lockdown policy.
         /// </summary>
         internal class WldpNativeConstants
         {
@@ -513,7 +522,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// The different host IDs understood by the lockdown policy
+        /// The different host IDs understood by the lockdown policy.
         /// </summary>
         internal enum WLDP_HOST_ID
         {
@@ -528,7 +537,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Host information structure to contain the lockdown policy request
+        /// Host information structure to contain the lockdown policy request.
         /// </summary>
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct WLDP_HOST_INFORMATION
@@ -548,7 +557,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Native methods for dealing with the lockdown policy
+        /// Native methods for dealing with the lockdown policy.
         /// </summary>
         internal class WldpNativeMethods
         {

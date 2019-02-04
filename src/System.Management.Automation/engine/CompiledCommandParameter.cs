@@ -191,7 +191,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Gets the name of the parameter
+        /// Gets the name of the parameter.
         /// </summary>
         internal string Name { get; private set; }
 
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the parameter set data for this parameter for the specified parameter set
+        /// Gets the parameter set data for this parameter for the specified parameter set.
         /// </summary>
         /// <param name="parameterSetFlag">
         /// The parameter set to get the parameter set data for.
@@ -374,6 +374,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -446,6 +447,7 @@ namespace System.Management.Automation
                 {
                     this.CannotBeNull = true;
                 }
+
                 return;
             }
 
@@ -464,6 +466,7 @@ namespace System.Management.Automation
                     Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
                     Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
                 }
+
                 return;
             }
 
@@ -547,6 +550,7 @@ namespace System.Management.Automation
             {
                 IsPipelineParameterInSomeParameterSet = true;
             }
+
             if (parameter.Mandatory)
             {
                 IsMandatoryInSomeParameterSet = true;
@@ -563,7 +567,7 @@ namespace System.Management.Automation
         }
 
         #endregion helper methods
-    } // CompiledCommandParameter
+    }
 
     /// <summary>
     /// The types of collections that are supported as parameter types.

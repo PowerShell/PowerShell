@@ -2,7 +2,7 @@ resources:
 - repo: self
   clean: true
 queue:
-  name: Hosted macOS Preview
+  name: Hosted Mac Internal
 name: macOS_$(Build.SourceBranchName)_$(Build.BuildId)
 steps:
 #- task: <task type name>@<version>
@@ -22,15 +22,26 @@ steps:
   inputs:
     scriptPath: 'tools/releaseBuild/macOS/createPowerShell.sh'
   displayName: 'Create /PowerShell'
+- powershell: |
+    Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
+    git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
+  displayName: Clone PowerShell Repo to /PowerShell
 - task: ShellScript@2
   inputs:
     scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
-    args: '-location $(Build.SourcesDirectory) -BootStrap'
+    args: '-location $(PowerShellRoot) -BootStrap'
   displayName: 'Bootstrap VM'
-- task: ShellScript@2
-  inputs:
-    scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
-    args: '-ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(Build.SourcesDirectory) -Build'
-    disableAutoCwd: true
-    cwd: 'tools/releaseBuild/macOS'
+- powershell: |
+   Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+   New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)/src/Modules"
+
+   if(-not (Test-Path "$(PowerShellRoot)/src/Modules/nuget.config"))
+   {
+       throw "nuget.config is not created"
+   }
+  displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+- powershell: |
+    $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+    $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(PowerShellRoot) -Build
+    $env:AZDEVOPSFEEDPAT = $null
   displayName: 'Build and Package'

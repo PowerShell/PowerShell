@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-runtime-bionic
+FROM microsoft/dotnet:2.1.7-runtime-bionic
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION

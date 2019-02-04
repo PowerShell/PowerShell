@@ -29,32 +29,19 @@ param (
     [switch] $Build
 )
 
-# We must build in /PowerShell
-$repoRoot = '/PowerShell'
-if ($BootStrap.IsPresent) {
-    $repoRoot = $location
-}
+$repoRoot = $location
 
 if ($Build.IsPresent) {
-    # cleanup the folder but don't delete it or the build agent will loose ownership of the folder
-    Write-Verbose -Message "cleaning /PowerShell" -Verbose
-    Get-ChildItem -Path /PowerShell/* -Attributes Hidden, Normal, Directory | Remove-Item -Recurse -Force
-
-    # clone the repository to the location we must build from
-    Write-Verbose -Message "cloning to /PowerShell" -Verbose
-    git clone $location /PowerShell
     $releaseTagParam = @{}
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
     }
 }
 
-
 Push-Location
 try {
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
-    git submodule update --init --recursive --quiet
     Import-Module "$repoRoot/build.psm1"
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing

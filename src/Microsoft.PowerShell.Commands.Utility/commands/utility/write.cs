@@ -165,7 +165,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public Object MessageData { get; set; }
+        [AllowNull]
+        public object MessageData { get; set; }
 
         /// <summary>
         /// Any tags to be associated with this information.
@@ -317,11 +318,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     e = new WriteErrorException(msg);
                 }
+
                 string errid = ErrorId;
-                if (String.IsNullOrEmpty(errid))
+                if (string.IsNullOrEmpty(errid))
                 {
                     errid = e.GetType().FullName;
                 }
+
                 errorRecord = new ErrorRecord(
                     e,
                     errid,
@@ -329,29 +332,30 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if (this.Exception != null && !String.IsNullOrEmpty(msg))
+                if (this.Exception != null && !string.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
             }
 
             string recact = RecommendedAction;
-            if (!String.IsNullOrEmpty(recact))
+            if (!string.IsNullOrEmpty(recact))
             {
                 if (errorRecord.ErrorDetails == null)
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }
+
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
 
-            if (!String.IsNullOrEmpty(CategoryActivity))
+            if (!string.IsNullOrEmpty(CategoryActivity))
                 errorRecord.CategoryInfo.Activity = CategoryActivity;
-            if (!String.IsNullOrEmpty(CategoryReason))
+            if (!string.IsNullOrEmpty(CategoryReason))
                 errorRecord.CategoryInfo.Reason = CategoryReason;
-            if (!String.IsNullOrEmpty(CategoryTargetName))
+            if (!string.IsNullOrEmpty(CategoryTargetName))
                 errorRecord.CategoryInfo.TargetName = CategoryTargetName;
-            if (!String.IsNullOrEmpty(CategoryTargetType))
+            if (!string.IsNullOrEmpty(CategoryTargetType))
                 errorRecord.CategoryInfo.TargetType = CategoryTargetType;
 
             /* 2005/01/25 removing throw-error
@@ -370,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
-                if (!String.IsNullOrEmpty(CategoryActivity))
+                if (!string.IsNullOrEmpty(CategoryActivity))
                     errorRecord.CategoryInfo.Activity = CategoryActivity;
                 else
                     errorRecord.CategoryInfo.Activity = "Write-Error";
@@ -400,13 +404,13 @@ namespace Microsoft.PowerShell.Commands
 
     /* 2005/01/25 removing throw-error
         /// <summary>
-        /// This class implements Write-Error command
+        /// This class implements Write-Error command.
         /// </summary>
         [Cmdlet("Throw", "Error", DefaultParameterSetName = "NoException")]
         public sealed class ThrowErrorCommand : WriteOrThrowErrorCommand
         {
             /// <summary>
-            /// constructor
+            /// Constructor.
             /// </summary>
             public ThrowErrorCommand()
             {
@@ -433,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException()
             : base(StringUtil.Format(WriteErrorStrings.WriteErrorException))
         {
@@ -442,8 +446,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message)
             : base(message)
         {
@@ -452,9 +456,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message,
                                           Exception innerException)
             : base(message, innerException)
@@ -466,9 +470,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serialization constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
             : base(info, context)

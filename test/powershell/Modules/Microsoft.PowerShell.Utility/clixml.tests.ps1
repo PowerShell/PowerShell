@@ -194,7 +194,7 @@ Describe "CliXml test" -Tags "CI" {
 
         It "should import PSCredential" -Skip:(!$IsWindows) {
             $UserName = "Foo"
-            $pass = ConvertTo-SecureString "bar" -AsPlainText -Force
+            $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
             $cred =  [PSCredential]::new($UserName, $pass)
             $path = "$testdrive/cred.xml"
             $cred | Export-Clixml -Path $path
@@ -218,14 +218,14 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         $skipNotWindows = ! $shouldRunTest
         if ( $shouldRunTest )
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2> $null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
         if ( $shouldRunTest )
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2> $null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -238,7 +238,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         $count = 0
         while (!$calcProc -and ($count++ -lt 20))
         {
-            $calcProc = Get-Process -Name 'win32calc','calculator' 2>$null
+            $calcProc = Get-Process -Name 'win32calc','calculator' 2> $null
             Start-Sleep -Milliseconds 500
         }
 

@@ -26,7 +26,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", MemberName);
+            return string.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", MemberName);
         }
 
         public IDispatchComObject DispatchComObject { get; }

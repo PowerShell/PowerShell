@@ -24,11 +24,8 @@ During the installation process, choose these recommended settings:
 
 #### Linux
 
-Install by using the package manager:
-
-```sh
-sudo apt-get install git
-```
+Install by using the package manager on your system.
+A list of all the package managers and commands can be found [here][linux-git-dl].
 
 Interactive tutorials
 ----------------------
@@ -78,7 +75,6 @@ git config --global credential.helper store
 
 Alternatively, you can use [SSH key][].
 In this case, you may want to use git-ssh even for HTTPS Git URLs.
-It will help you to use submodules transparently.
 
 ```
 git config --global url.git@github.com:.insteadOf https://github.com/
@@ -88,3 +84,4 @@ git config --global url.git@github.com:.insteadOf https://github.com/
 [SSH key]: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+[linux-git-dl]: https://git-scm.com/download/linux

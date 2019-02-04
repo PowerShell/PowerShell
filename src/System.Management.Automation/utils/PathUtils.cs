@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines generic utilities and helper methods for PowerShell
+    /// Defines generic utilities and helper methods for PowerShell.
     /// </summary>
     internal static class PathUtils
     {
@@ -20,16 +20,16 @@ namespace System.Management.Automation
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="encoding">encoding (this method will convert the command line string to an Encoding instance)</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="encoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>
-        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
-        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
-        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
+        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing.</param>
+        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing.</param>
+        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed).</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
         internal static void MasterStreamOpen(
             PSCmdlet cmdlet,
@@ -54,16 +54,16 @@ namespace System.Management.Automation
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="resolvedEncoding">encoding (this method will convert the command line string to an Encoding instance)</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="resolvedEncoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>
-        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
-        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
-        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
+        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing.</param>
+        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing.</param>
+        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed).</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
         internal static void MasterStreamOpen(
             PSCmdlet cmdlet,
@@ -172,7 +172,7 @@ namespace System.Management.Automation
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
-        } // void MasterStreamOpen
+        }
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {
@@ -228,8 +228,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
@@ -240,8 +240,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
@@ -275,6 +275,7 @@ namespace System.Management.Automation
                 {
                     ReportMultipleFilesNotSupported(command);
                 }
+
                 if (filePaths.Count == 0)
                 {
                     ReportWildcardingFailure(command, filePath);
@@ -286,6 +287,7 @@ namespace System.Management.Automation
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(command);
@@ -300,6 +302,7 @@ namespace System.Management.Automation
                     ReportWrongProviderType(command, provider.FullName);
                 }
             }
+
             return path;
         }
 
@@ -359,6 +362,7 @@ namespace System.Management.Automation
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
                     rootedPath = Path.Combine(currentPath.ProviderPath, moduleNameOrPath);
                 }
+
                 if (string.IsNullOrEmpty(rootedPath))
                 {
                     string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();
@@ -424,6 +428,24 @@ namespace System.Management.Automation
 
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
+        }
+
+        internal static bool TryDeleteFile(string filepath)
+        {
+            if (IO.File.Exists(filepath))
+            {
+                try
+                {
+                    IO.File.Delete(filepath);
+                    return true;
+                }
+                catch (IOException)
+                {
+                    // file is in use on Windows
+                }
+            }
+
+            return false;
         }
     }
 }

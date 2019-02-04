@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Remoting.Server;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
-using System.Threading;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting.Server;
+using System.Management.Automation.Tracing;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
-using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Diagnostics.Debug;
 
 namespace System.Management.Automation.Remoting
@@ -24,9 +25,18 @@ namespace System.Management.Automation.Remoting
     {
         #region Strings
 
-        internal const string DefaultAppDomainName = "DefaultAppDomain";
+
         internal const string NamedPipeNamePrefix = "PSHost.";
+#if UNIX
+        internal const string DefaultAppDomainName = "None";
+        // This `CoreFxPipe` prefix is defined by CoreFx
+        internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
+#else
+        internal const string DefaultAppDomainName = "DefaultAppDomain";
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
+#endif
+        // On non-Windows, .NET named pipes are limited to up to 104 characters
+        internal const int MaxNamedPipeNameSize = 104;
 
         #endregion
 
@@ -36,8 +46,8 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="procId">Process Id</param>
-        /// <returns>Pipe name</returns>
+        /// <param name="procId">Process Id.</param>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             int procId)
         {
@@ -49,8 +59,8 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="proc">Process object</param>
-        /// <returns>Pipe name</returns>
+        /// <param name="proc">Process object.</param>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             System.Diagnostics.Process proc)
         {
@@ -61,9 +71,9 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process Id and appdomain name information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="procId">Process Id</param>
+        /// <param name="procId">Process Id.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             int procId,
             string appDomainName)
@@ -75,9 +85,9 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process and appdomain name information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="proc">Process object</param>
+        /// <param name="proc">Process object.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             System.Diagnostics.Process proc,
             string appDomainName)
@@ -92,11 +102,35 @@ namespace System.Management.Automation.Remoting
                 appDomainName = DefaultAppDomainName;
             }
 
-            return NamedPipeNamePrefix +
-                    proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture) + "." +
-                    proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
-                    CleanAppDomainNameForPipeName(appDomainName) + "." +
-                    proc.ProcessName;
+            System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
+            pipeNameBuilder.Append(NamedPipeNamePrefix)
+                // The starttime is there to prevent another process easily guessing the pipe name
+                // and squatting on it.
+                // There is a limit of 104 characters in total including the temp path to the named pipe file
+                // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
+#if UNIX
+                .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1,8))
+#else
+                .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
+#endif
+                .Append('.')
+                .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
+                .Append('.')
+                .Append(CleanAppDomainNameForPipeName(appDomainName))
+                .Append('.')
+                .Append(proc.ProcessName);
+#if UNIX
+            int charsToTrim = pipeNameBuilder.Length - MaxNamedPipeNameSize;
+            if (charsToTrim > 0)
+            {
+                // TODO: In the case the pipe name is truncated, the user cannot connect to it using the cmdlet
+                // unless we add a `-Force` type switch as it attempts to validate the current process name
+                // matches the process name in the pipe name
+                pipeNameBuilder.Remove(MaxNamedPipeNameSize + 1, charsToTrim);
+            }
+#endif
+
+            return pipeNameBuilder.ToString();
         }
 
         private static string CleanAppDomainNameForPipeName(string appDomainName)
@@ -108,7 +142,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns the current process AppDomain name.
         /// </summary>
-        /// <returns>AppDomain Name string</returns>
+        /// <returns>AppDomain Name string.</returns>
         internal static string GetCurrentAppDomainName()
         {
 #if CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
@@ -122,7 +156,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Native API for Named Pipes
+    /// Native API for Named Pipes.
     /// </summary>
     internal static class NamedPipeNative
     {
@@ -198,7 +232,7 @@ namespace System.Management.Automation.Remoting
             public bool InheritHandle;
 
             /// <summary>
-            /// Initializes a new instance of the SECURITY_ATTRIBUTES class
+            /// Initializes a new instance of the SECURITY_ATTRIBUTES class.
             /// </summary>
             public SECURITY_ATTRIBUTES()
             {
@@ -290,8 +324,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="reason">Listener end reason</param>
-        /// <param name="restartListener">Restart listener</param>
+        /// <param name="reason">Listener end reason.</param>
+        /// <param name="restartListener">Restart listener.</param>
         public ListenerEndedEventArgs(
             Exception reason,
             bool restartListener)
@@ -394,7 +428,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a RemoteSessionNamedPipeServer with the current process and AppDomain information.
         /// </summary>
-        /// <returns>RemoteSessionNamedPipeServer</returns>
+        /// <returns>RemoteSessionNamedPipeServer.</returns>
         public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer()
         {
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
@@ -406,7 +440,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor.  Creates named pipe server with provided pipe name.
         /// </summary>
-        /// <param name="pipeName">Named Pipe name</param>
+        /// <param name="pipeName">Named Pipe name.</param>
         internal RemoteSessionNamedPipeServer(
             string pipeName)
         {
@@ -433,7 +467,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="namespaceName">Named pipe namespace name.</param>
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
-        /// <returns>NamedPipeServerStream</returns>
+        /// <returns>NamedPipeServerStream.</returns>
         private NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,
@@ -441,9 +475,12 @@ namespace System.Management.Automation.Remoting
             CommonSecurityDescriptor securityDesc)
         {
             if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
+#if !UNIX
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Create optional security attributes based on provided PipeSecurity.
@@ -494,6 +531,16 @@ namespace System.Management.Automation.Remoting
                 pipeHandle.Dispose();
                 throw;
             }
+#else
+            return new NamedPipeServerStream(
+                pipeName: coreName,
+                direction: PipeDirection.InOut,
+                maxNumberOfServerInstances: 1,
+                transmissionMode: PipeTransmissionMode.Byte,
+                options: PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
+                inBufferSize: _namedPipeBufferSizeForRemoting,
+                outBufferSize: _namedPipeBufferSizeForRemoting);
+#endif
         }
 
         static RemoteSessionNamedPipeServer()
@@ -502,10 +549,7 @@ namespace System.Management.Automation.Remoting
 
             // All PowerShell instances will start with the named pipe
             // and listener created and running.
-            if (Platform.IsWindows)
-            {
-                IPCNamedPipeServerEnabled = true;
-            }
+            IPCNamedPipeServerEnabled = true;
 
             CreateIPCNamedPipeServerSingleton();
 #if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
@@ -518,13 +562,14 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -532,6 +577,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -539,6 +585,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -574,6 +621,7 @@ namespace System.Management.Automation.Remoting
                 {
                     throw new InvalidOperationException(RemotingErrorIdStrings.NamedPipeAlreadyListening);
                 }
+
                 IsListenerRunning = true;
 
                 // Create listener thread.
@@ -581,7 +629,7 @@ namespace System.Management.Automation.Remoting
                 listenerThread.Name = _threadName;
                 listenerThread.IsBackground = true;
                 listenerThread.Start(clientConnectCallback);
-            } // Lock _syncObject.
+            }
         }
 
         #endregion
@@ -590,6 +638,9 @@ namespace System.Management.Automation.Remoting
 
         internal static CommonSecurityDescriptor GetServerPipeSecurity()
         {
+#if UNIX
+            return null;
+#else
             // Built-in Admin SID
             SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             DiscretionaryAcl dacl = new DiscretionaryAcl(false, false, 1);
@@ -618,6 +669,7 @@ namespace System.Management.Automation.Remoting
             }
 
             return securityDesc;
+#endif
         }
 
         /// <summary>
@@ -631,7 +683,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Process listening thread.
         /// </summary>
-        /// <param name="state">client callback delegate</param>
+        /// <param name="state">Client callback delegate.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
@@ -658,7 +710,11 @@ namespace System.Management.Automation.Remoting
 
                 try
                 {
+#if UNIX
+                    userName = System.Environment.UserName;
+#else
                     userName = WindowsIdentity.GetCurrent().Name;
+#endif
                 }
                 catch (System.Security.SecurityException) { }
 
@@ -679,6 +735,7 @@ namespace System.Management.Automation.Remoting
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 // Error during connection handling.  Don't try to restart listening thread.
@@ -771,7 +828,7 @@ namespace System.Management.Automation.Remoting
         /// This method supports PowerShell running in "NamedPipeServerMode", which is used for
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
-        /// <param name="configurationName">name of the configuration to use</param>
+        /// <param name="configurationName">Name of the configuration to use.</param>
         internal static void RunServerMode(string configurationName)
         {
             IPCNamedPipeServerEnabled = true;
@@ -925,7 +982,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -933,6 +990,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -940,6 +998,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -958,7 +1017,7 @@ namespace System.Management.Automation.Remoting
         /// Connect to named pipe server.  This is a blocking call until a
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
-        /// <param name="timeout">Connection attempt timeout in milliseconds</param>
+        /// <param name="timeout">Connection attempt timeout in milliseconds.</param>
         public void Connect(
             int timeout)
         {
@@ -1018,7 +1077,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor.  Creates Named Pipe based on process object.
         /// </summary>
         /// <param name="process">Target process object for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         public RemoteSessionNamedPipeClient(
             System.Diagnostics.Process process, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(process, appDomainName))
@@ -1028,7 +1087,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor. Creates Named Pipe based on process Id.
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         public RemoteSessionNamedPipeClient(
             int procId, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(procId, appDomainName))
@@ -1037,7 +1096,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor. Creates Named Pipe based on name argument.
         /// </summary>
-        /// <param name="pipeName">Named Pipe name</param>
+        /// <param name="pipeName">Named Pipe name.</param>
         internal RemoteSessionNamedPipeClient(
            string pipeName)
         {
@@ -1046,7 +1105,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException("pipeName");
             }
 
-            _pipeName = @"\\.\pipe\" + pipeName;
+            _pipeName = pipeName;
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
@@ -1064,7 +1123,9 @@ namespace System.Management.Automation.Remoting
             string coreName)
         {
             if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
             _pipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
@@ -1096,66 +1157,30 @@ namespace System.Management.Automation.Remoting
             int elapsedTime = 0;
             _connecting = true;
 
+            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
+                serverName: ".",
+                pipeName: _pipeName,
+                direction: PipeDirection.InOut,
+                options: PipeOptions.Asynchronous);
+
+            namedPipeClientStream.Connect();
+
             do
             {
-                // Wait in 100 mSec increments.
-                if (!NamedPipeNative.WaitNamedPipe(_pipeName, 100))
+                if (!namedPipeClientStream.IsConnected)
                 {
+                    Thread.Sleep(100);
                     elapsedTime = unchecked(Environment.TickCount - startTime);
                     continue;
                 }
 
                 _connecting = false;
-                return OpenNamedPipe();
+                return namedPipeClientStream;
             } while (_connecting && (elapsedTime < timeout));
 
             _connecting = false;
 
             throw new TimeoutException(RemotingErrorIdStrings.ConnectNamedPipeTimeout);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Helper method to open a named pipe via native APIs and return in
-        /// .Net NamedPipeClientStream wrapper object.
-        /// </summary>
-        private NamedPipeClientStream OpenNamedPipe()
-        {
-            // Create pipe flags.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
-            // Get handle to pipe.
-            SafePipeHandle pipeHandle = NamedPipeNative.CreateFile(
-                _pipeName,
-                NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                0,
-                IntPtr.Zero,
-                NamedPipeNative.OPEN_EXISTING,
-                pipeFlags,
-                IntPtr.Zero);
-
-            int lastError = Marshal.GetLastWin32Error();
-            if (pipeHandle.IsInvalid)
-            {
-                throw new System.ComponentModel.Win32Exception(lastError);
-            }
-
-            try
-            {
-                return new NamedPipeClientStream(
-                    PipeDirection.InOut,
-                    true,                   // IsAsync
-                    true,                   // IsConnected
-                    pipeHandle);
-            }
-            catch (Exception)
-            {
-                pipeHandle.Dispose();
-                throw;
-            }
         }
 
         #endregion
@@ -1174,14 +1199,14 @@ namespace System.Management.Automation.Remoting
         /// Constructor. Creates Named Pipe based on process Id, app domain name and container object root path.
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         /// <param name="containerObRoot">Container OB root.</param>
         public ContainerSessionNamedPipeClient(
             int procId,
             string appDomainName,
             string containerObRoot)
         {
-            if (String.IsNullOrEmpty(containerObRoot))
+            if (string.IsNullOrEmpty(containerObRoot))
             {
                 throw new PSArgumentNullException("containerObRoot");
             }

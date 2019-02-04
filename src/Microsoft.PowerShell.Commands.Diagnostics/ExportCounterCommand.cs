@@ -46,8 +46,10 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string _path;
         private string _resolvedPath;
 
@@ -65,8 +67,10 @@ namespace Microsoft.PowerShell.Commands
         public string FileFormat
         {
             get { return _format; }
+
             set { _format = value; }
         }
+
         private string _format = "blg";
 
         //
@@ -78,8 +82,10 @@ namespace Microsoft.PowerShell.Commands
         public UInt32 MaxSize
         {
             get { return _maxSize; }
+
             set { _maxSize = value; }
         }
+
         private UInt32 _maxSize = 0;
 
         //
@@ -98,8 +104,10 @@ namespace Microsoft.PowerShell.Commands
         public PerformanceCounterSampleSet[] InputObject
         {
             get { return _counterSampleSets; }
+
             set { _counterSampleSets = value; }
         }
+
         private PerformanceCounterSampleSet[] _counterSampleSets = new PerformanceCounterSampleSet[0];
 
         //
@@ -110,8 +118,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private SwitchParameter _force;
 
         //
@@ -122,8 +132,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Circular
         {
             get { return _circular; }
+
             set { _circular = value; }
         }
+
         private SwitchParameter _circular;
 
         private ResourceManager _resourceMgr = null;
@@ -236,6 +248,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     res = _pdhHelper.AddRelogCountersPreservingPaths(_counterSampleSets[0]);
                 }
+
                 if (res != 0)
                 {
                     ReportPdhError(res, true);
@@ -287,6 +300,7 @@ namespace Microsoft.PowerShell.Commands
                         ReportPdhError(res, true);
                     }
                 }
+
                 res = _pdhHelper.WriteRelogSample(set.Timestamp);
                 if (res != 0)
                 {
@@ -353,6 +367,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {
