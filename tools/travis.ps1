@@ -1,50 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
     [String]$Stage = 'Build',
     [String]$NugetKey
 )
-
-Import-Module $PSScriptRoot/../build.psm1 -Force
-Import-Module $PSScriptRoot/packaging -Force
-
-function Send-DailyWebHook
-{
-    param (
-        [Parameter(Mandatory=$true,Position=0)][ValidateSet("Pass","Fail")]$result
-        )
-
-    # Only send web hook if the environment variable is present
-    # Varible should be set in Travis-CI.org settings
-    if ($env:WebHookUrl)
-    {
-        Write-Log "Sending DailyWebHook with result '$result'."
-        $webhook = $env:WebHookUrl
-
-        $Body = @{
-                'text'= @"
-Build Result: $result </br>
-OS Type: $($PSVersionTable.OS) </br>
-<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
-<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
-"@
-        }
-
-        $params = @{
-            Headers = @{'accept'='application/json'}
-            Body = $Body | convertto-json
-            Method = 'Post'
-            URI = $webhook
-        }
-
-        Invoke-RestMethod @params
-    }
-    else
-    {
-        Write-Log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
-    }
-}
 
 function Get-ReleaseTag
 {
