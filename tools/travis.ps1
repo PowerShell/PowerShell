@@ -4,42 +4,7 @@ param(
     [String]$NugetKey
 )
 
-$isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
-
 $commitMessage = [string]::Empty
-
-# For PRs, Travis-ci strips out [ and ] so read the message directly from git
-if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
-{
-    $commitId = $null
-    if ($env:TRAVIS_EVENT_TYPE)
-    {
-        # We are in Travis-CI
-        $commitId = $env:TRAVIS_PULL_REQUEST_SHA
-
-        # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
-        # the commit SHA of the HEAD commit of the PR.
-        $commitMessage = git log --format=%B -n 1 $commitId
-        Write-Log -message "commitMessage: $commitMessage"
-    }
-    elseif($env:TF_BUILD)
-    {
-        if($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
-        {
-            # We are in VSTS and have a commit ID in the Source Version Message
-            $commitId = $Matches[1]
-            $commitMessage = git log --format=%B -n 1 $commitId
-        }
-        else
-        {
-            Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
-        }
-    }
-}
-else
-{
-    $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
-}
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 # or the environment variable `FORCE_FEATURE` equals `True`
