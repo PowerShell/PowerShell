@@ -1888,7 +1888,7 @@ namespace Microsoft.PowerShell.Commands
                 bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
                 bool isHardLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
 
-                var mode = new char[]
+                Span<char> mode = stackalloc char[]
                 {
                     isReparsePoint || isHardLink ? 'l' : isDirectory ? 'd' : '-',
                     fileAttributes.HasFlag(FileAttributes.Archive)   ? 'a' : '-',
