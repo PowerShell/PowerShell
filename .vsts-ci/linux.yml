@@ -92,12 +92,12 @@ jobs:
     condition: succeeded()
 
   - powershell: |
-      echo oh no it failed big sad this is just a placeholder
+      Write-Host "Tests failed."
     displayName: After Failure
     condition: failed()
 
   - powershell: |
-      echo yay it didnt fail big happy this is just a placeholder
+      Write-Host "Tests did not fail!"
     displayName: After Success
     condition: succeeded()
 
