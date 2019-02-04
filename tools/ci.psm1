@@ -631,3 +631,65 @@ function Get-DailyBadge
     if ( $response.StatusCode -ne 200 ) { throw "Could not read badge '$BadgeUrl'" }
     $response.Content
 }
+
+function Set-DailyBuildBadge
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param ( [Parameter(Mandatory=$true,Position=0)]$content )
+    $method = "PUT"
+    $headerDate = '2015-12-11'
+
+    $storageAccountName = $Env:TestResultAccountName
+    $storageAccountKey = $Env:TestResultAccountKey
+
+    # this is the url referenced in README.MD which displays the badge
+    $platform = if ( $IsLinux ) { "Linux" } else { "OSX" }
+    $Url = "https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.${platform}.svg"
+
+    $body = $content
+    $bytes = ([System.Text.Encoding]::UTF8.GetBytes($body))
+    $contentLength = $bytes.length
+
+    $now = [datetime]::UtcNow.ToString("R", [System.Globalization.CultureInfo]::InvariantCulture)
+    $headers = @{
+        "x-ms-date"      = $now
+        "cache-control"  = "no-cache"
+        "x-ms-blob-type" = "BlockBlob"
+        "x-ms-version"   = "$headerDate"
+    }
+
+    $contentType = "image/svg+xml"
+    # more info: https://docs.microsoft.com/rest/api/storageservices/fileservices/put-blob
+    $sb = [text.stringbuilder]::new()
+    # can't use AppendLine because the `r`n causes the command to fail, it must be `n and only `n
+    $null = $sb.Append("$method`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("$contentLength`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("$contentType`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+
+    $null = $sb.Append("x-ms-blob-type:" + $headers["x-ms-blob-type"] + "`n")
+    $null = $sb.Append("x-ms-date:" + $headers["x-ms-date"] + "`n")
+    $null = $sb.Append("x-ms-version:" + $headers["x-ms-version"] + "`n")
+    $null = $sb.Append("/" + $storageAccountName + ([System.Uri]::new($url).AbsolutePath))
+
+    $dataToMac = [System.Text.Encoding]::UTF8.GetBytes($sb.ToString())
+    $accountKeyBytes = [System.Convert]::FromBase64String($storageAccountKey)
+    $hmac = [System.Security.Cryptography.HMACSHA256]::new($accountKeyBytes)
+    $signature = [System.Convert]::ToBase64String($hmac.ComputeHash($dataToMac))
+
+    $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
+
+    if ( $PSCmdlet.ShouldProcess("$signaturestring"))
+    {
+        # if this fails, it will throw, you can't check the response for a success code
+        $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
+    }
+}
