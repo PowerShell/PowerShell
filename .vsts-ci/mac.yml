@@ -55,7 +55,8 @@ jobs:
   - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
-      tools/ci.psm1 -Stage Bootstrap
+      Import-Module .\tools\ci.psm1
+      Invoke-LinuxTests
     displayName: Bootstrap
     condition: succeeded()
 
@@ -66,12 +67,12 @@ jobs:
     condition: succeeded()
 
   - powershell: |
-      tools/ci.psm1 -Stage Failure
+      oh no it failed big sad this is just a placeholder
     displayName: After Failure
     condition: failed()
 
   - powershell: |
-      tools/ci.psm1 -Stage Success
+      yay it didnt fail big happy this is just a placeholder
     displayName: After Success
     condition: succeeded()
 
