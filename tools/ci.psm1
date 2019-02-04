@@ -401,14 +401,14 @@ function Invoke-AppVeyorAfterTest
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
         $codeCoverageArtifacts | ForEach-Object {
-            Push-Artifact -Path $_
+            Push-Artifact -Path $_ -Name 'CodeCoverage'
         }
 
         New-TestPackage -Destination (Get-Location).Path
         $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
-        Push-Artifact $testPackageFullName
+        Push-Artifact $testPackageFullName -Name 'artifacts'
     }
 }
 
@@ -568,7 +568,7 @@ function Invoke-AppveyorFinish
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
-                Push-Artifact -Path $_
+                Push-Artifact -Path $_ -Name 'artifacts'
             }
             else
             {
