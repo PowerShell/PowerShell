@@ -788,6 +788,7 @@ function Invoke-LinuxTests
 
         # if the tests did not pass, throw the reason why
         if ( $result -eq "FAIL" ) {
+            Write-Host "Tests failed. See the issue below."
             Throw $resultError
         }
         else {}

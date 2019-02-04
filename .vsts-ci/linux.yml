@@ -94,11 +94,6 @@ jobs:
     condition: succeeded()
 
   - powershell: |
-      Write-Host "Tests failed."
-    displayName: After Failure
-    condition: failed()
-
-  - powershell: |
       Write-Host "Tests did not fail!"
     displayName: After Success
     condition: succeeded()
