@@ -615,7 +615,7 @@ function Get-ReleaseTag
     return $preReleaseVersion
 }
 
-function Run-LinuxTests
+function Invoke-LinuxTests
 {
     $createPackages = $false
     $isFullBuild = $hasFeatureTag
