@@ -796,9 +796,9 @@ function Run-LinuxTests
         if ( $result -eq "FAIL" ) {
             Throw $resultError
         }
+        else {}
     }
-    else($Stage -in 'Failure', 'Success')
-    {
+    else($Stage -in 'Failure', 'Success') {
         $result = 'PASS'
         if($Stage -eq 'Failure')
         {
