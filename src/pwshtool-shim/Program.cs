@@ -10,33 +10,21 @@ namespace pwshtool_shim
             var currentPath = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
             var isWindows = Environment.OSVersion.Platform == System.PlatformID.Win32NT;
 
-            if (isWindows)
-            {
-                var winPath = Path.Combine(currentPath, "win", "pwsh.dll");
-                Console.WriteLine ($"Attempting to start {winPath}");
+            string platformFolder = isWindows ? "win" : "unix";
 
-                if (File.Exists(winPath))
-                {
-                    System.Diagnostics.Process.Start("dotnet", $"{winPath}").WaitForExit();
-                }
-                else
-                {
-                    throw new FileNotFoundException(winPath);
-                }
+            string argsString = args.Length > 0 ? string.Join(" ", args) : null;
+            var pwshPath = Path.Combine(currentPath, platformFolder, "pwsh.dll");
+            string processArgs = string.IsNullOrEmpty(argsString) ? $"{pwshPath}" : $"{pwshPath} -c {argsString}";
+
+            Console.WriteLine($"Attempting to start {winPath}");
+
+            if (File.Exists(pwshPath))
+            {
+                System.Diagnostics.Process.Start("dotnet", processArgs).WaitForExit();
             }
             else
             {
-                var unixPath = Path.Combine(currentPath, "unix", "pwsh.dll");
-                Console.WriteLine ($"Attempting to start {unixPath}");
-
-                if (File.Exists(unixPath))
-                {
-                    System.Diagnostics.Process.Start("dotnet", $"{unixPath}").WaitForExit();
-                }
-                else
-                {
-                    throw new FileNotFoundException(unixPath);
-                }
+                throw new FileNotFoundException(pwshPath);
             }
         }
     }
