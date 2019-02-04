@@ -4,26 +4,6 @@ param(
     [String]$NugetKey
 )
 
-function Get-ReleaseTag
-{
-    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-
-    $releaseTag = $metadata.PreviewReleaseTag
-    $previewVersion = $releaseTag.Split('-')
-    $previewPrefix = $previewVersion[0]
-    $previewLabel = $previewVersion[1].replace('.','')
-
-    if($isDailyBuild)
-    {
-        $previewLabel= "daily{0}" -f $previewLabel
-    }
-
-    $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-
-    return $preReleaseVersion
-}
-
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
 # the location in azure is public readonly
