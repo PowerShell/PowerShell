@@ -55,7 +55,7 @@ jobs:
   - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
-      tools/travis.ps1 -Stage Bootstrap
+      tools/ci.psm1 -Stage Bootstrap
     displayName: Bootstrap
     condition: succeeded()
 
@@ -66,12 +66,12 @@ jobs:
     condition: succeeded()
 
   - powershell: |
-      tools/travis.ps1 -Stage Failure
+      tools/ci.psm1 -Stage Failure
     displayName: After Failure
     condition: failed()
 
   - powershell: |
-      tools/travis.ps1 -Stage Success
+      tools/ci.psm1 -Stage Success
     displayName: After Success
     condition: succeeded()
 
