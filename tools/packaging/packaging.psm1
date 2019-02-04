@@ -940,7 +940,7 @@ function New-MacOsDistributionPackage
     try
     {
         # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} > $null
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
     }
     finally
     {
@@ -2234,7 +2234,6 @@ function New-NugetContentPackage
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
     {
-        # Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
         Get-Item $nupkgFile
     }
     else
