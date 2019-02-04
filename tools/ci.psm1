@@ -710,7 +710,6 @@ function Run-LinuxTests
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
         $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title 'Pester Sudo'
-
         # Running tests that require sudo, with specified experimental features enabled
         $sudoResultsWithExpFeatures = @()
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
