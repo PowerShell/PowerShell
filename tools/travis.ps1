@@ -4,23 +4,6 @@ param(
     [String]$NugetKey
 )
 
-# This function retrieves the appropriate svg to be used when presenting
-# the daily test run badge
-# the location in azure is public readonly
-function Get-DailyBadge
-{
-    param (
-        [Parameter(Mandatory=$true,Position=0)][ValidateSet("Pass","Fail")]$result
-        )
-    $PASS = "https://jimtru1979.blob.core.windows.net/badges/DailyBuild.Pass.svg"
-    $FAIL = "https://jimtru1979.blob.core.windows.net/badges/DailyBuild.Fail.svg"
-
-    if ( $result -eq "Pass" ) { $BadgeUrl = $PASS } else { $BadgeUrl = $FAIL }
-    $response = Invoke-WebRequest -Uri $BadgeUrl
-    if ( $response.StatusCode -ne 200 ) { throw "Could not read badge '$BadgeUrl'" }
-    $response.Content
-}
-
 # This function uses Azure REST api to update the daily test pass results
 # it relies on writing a specific SVG into a constant location so the
 # README.MD can report on the status of the daily test pass
