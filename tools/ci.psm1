@@ -797,7 +797,7 @@ function Run-LinuxTests
         }
         else {}
     }
-    else($Stage -in 'Failure', 'Success') {
+    else {
         $result = 'PASS'
         if($Stage -eq 'Failure')
         {
