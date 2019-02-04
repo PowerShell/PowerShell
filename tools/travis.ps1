@@ -75,12 +75,6 @@ elseif($Stage -eq 'Build')
         $noSudoPesterParam['IncludeFailingTest'] = $true
     }
 
-    # Get the experimental feature names and the tests associated with them
-    $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
-
-    # Running tests which do not require sudo.
-    $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title 'Pester No Sudo'
-
     # Running tests that do not require sudo, with specified experimental features enabled
     $noSudoResultsWithExpFeatures = @()
     foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
