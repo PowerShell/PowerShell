@@ -32,6 +32,7 @@ variables:
 resources:
 - repo: self
   clean: true
+
 jobs:
 - job: Linux_CI
 
