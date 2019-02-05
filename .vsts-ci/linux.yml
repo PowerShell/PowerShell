@@ -84,7 +84,7 @@ jobs:
       Import-Module ./tools/ci.psm1
       $env:NugetKey = $(NUGET_KEY)
       Invoke-LinuxTests
-    displayName: Build and test
+    displayName: Bootstrap, Build, Test
     condition: succeeded()
 
   # Uploads any packages as an artifact
