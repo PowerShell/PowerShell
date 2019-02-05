@@ -587,15 +587,12 @@ function Invoke-AppveyorFinish
 
 function Invoke-LinuxTests
 {
-    $createPackages = $isFullBuild
-    $isFullBuild = Test-DailyBuild
     Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
     $releaseTag = Get-ReleaseTag
-    Write-Host -Foreground Green "Executing ci.psm1 on a Linux based operating system with params:"
-    Write-Host -Foreground Green "`$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
+    Write-Host -Foreground Green "Executing ci.psm1 on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
@@ -626,7 +623,8 @@ function Invoke-LinuxTests
         $noSudoPesterParam['Tag'] = @('CI')
         $noSudoPesterParam['ThrowOnFailure'] = $true
     }
-
+    $createPackages = $isFullBuild
+    $isFullBuild = Test-DailyBuild
     if ($hasRunFailingTestTag) {
         $noSudoPesterParam['IncludeFailingTest'] = $true
     }
