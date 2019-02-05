@@ -466,8 +466,12 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
     $releaseTag = $metadata.PreviewReleaseTag
-    $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-    $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
+    if($env:BUILD_BUILID)	
+    {	
+        # In Azure DevOps
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
+    }
     return $releaseTag
 }
 
