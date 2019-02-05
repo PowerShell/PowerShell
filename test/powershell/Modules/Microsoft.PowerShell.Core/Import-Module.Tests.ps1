@@ -154,18 +154,19 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.exe
     }
 
-    It "PS should try to load the binary module from a file path" -TestCases (
+    It "PS should try to load the binary module from a file path with extension: <extension>" -TestCases (
         @{extension = "dll"},
         @{extension = "exe"}
      ) {
          param ($extension)
 
         $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
-        $assemblyLocation, $cmdletOutput = pwsh {
-            $module = Import-Module $TestModulePath -Passthru
-            $module.ImplementingAssembly.Location
+        $assemblyLocation, $cmdletOutput = Start-Job -ScriptBlock {
+            $module = Import-Module $using:TestModulePath -Passthru;
+            $module.ImplementingAssembly.Location;
             Test-BinaryModuleCmdlet1
-        }
+        } | Wait-Job -Timeout 30 | Receive-Job
+
         $assemblyLocation | Should -BeExactly $TestModulePath
         $cmdletOutput | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
@@ -174,65 +175,45 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $exe = Join-Path $TESTDRIVE System.exe
         New-ModuleManifest -Path $psdFile -RootModule $exe
-        try
-        {
-            $module = pwsh { Import-Module $psdFile -PassThru }
-            $module | Should -Not -BeNullOrEmpty
-            $module.ModuleType.ToString() | Should -Be 'Binary'
-            $module.RootModule | Should -Be $exe
-            $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'].Name | Should -Be 'Test-BinaryModuleCmdlet1'
-        }
-        finally
-        {
-            Remove-Item $psdFile
-        }
+
+        $module = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru } | Wait-Job -Timeout 30 | Receive-Job
+        $module | Should -Not -BeNullOrEmpty
+        $module.ModuleType.ToString() | Should -Be 'Binary'
+        $module.RootModule | Should -Be $exe
+        $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'] | Should -Be 'Test-BinaryModuleCmdlet1'
     }
 
     It 'PS should be able to load the executable as a nested module' {
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $exe = Join-Path $TESTDRIVE System.exe
         New-ModuleManifest -Path $psdFile -NestedModules $exe
-        try
-        {
-            $module, $location = pwsh {
-                $module = Import-Module $psdFile -PassThru
-                # return the module and the nested module assembly location
-                $module
-                $module.NestedModules[0].ImplementingAssembly.Location
-            }
-            $module | Should -Not -BeNullOrEmpty
-            $module.ModuleType.ToString() | Should -Be 'Manifest'
-            $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'].Name | Should -Be 'Test-BinaryModuleCmdlet1'
-            $module.NestedModules | Should -Not -BeNullOrEmpty
-            $location | Should -Be $exe
-        }
-        finally
-        {
-            Remove-Item $psdFile
-        }
+        $module, $location = Start-Job -ScriptBlock {
+            $module = Import-Module $using:psdFile -PassThru
+            # return the module and the nested module assembly location
+            $module
+            $module.NestedModules[0].ImplementingAssembly.Location
+        } | Wait-Job -Timeout 30 | Receive-Job
+
+        $module | Should -Not -BeNullOrEmpty
+        $module.ModuleType.ToString() | Should -Be 'Manifest'
+        $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'] | Should -Be 'Test-BinaryModuleCmdlet1'
+        $module.NestedModules | Should -Not -BeNullOrEmpty
+        $location | Should -Be $exe
     }
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
         New-ModuleManifest -Path $psdFile -NestedModules $nestedModule
-        try
-        {
-            $module, $location = pwsh {
-                $module = Import-Module $psdFile -PassThru
-                # return the module and the assembly location
-                $module
-                $module.NestedModules[0].ImplementingAssembly.Location
-            }
-            $module.NestedModules | Should -Not -BeNullOrEmpty
-            $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
-            $location | Should -Be $assemblyLocation
-        }
-        finally
-        {
-            Remove-Module $module -ErrorAction SilentlyContinue
-            Remove-Item $psdFile
-        }
+        $module, $location = Start-Job -ScriptBlock {
+            $module = Import-Module $using:psdFile -PassThru
+            # return the module and the assembly location
+            $module
+            $module.NestedModules[0].ImplementingAssembly.Location
+        } | Wait-Job -Timeout 30 | Receive-Job
+        $module.NestedModules | Should -Not -BeNullOrEmpty
+        $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
+        $location | Should -Be $assemblyLocation
     }
 
     It 'Should load from ModuleBase path before looking up in GAC' -Skip:(-not $IsWindows) {
@@ -336,7 +317,6 @@ Describe "Circular nested module test" -tags "CI" {
 
     AfterAll {
         Remove-Module -Name CircularNestedModuleTest -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $moduleFolder -Force -Recurse
     }
 
     It "Loading the module should succeed and return a module with circular nested module" {
