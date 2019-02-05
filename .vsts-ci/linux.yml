@@ -83,6 +83,7 @@ jobs:
       Import-Module ./tools/ci.psm1
       Invoke-Bootstrap-Stage
     displayName: Bootstrap
+    condition: succeeded()
 
   - powershell: |
       $ErrorActionPreference = 'continue'
