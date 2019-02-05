@@ -733,6 +733,14 @@ function Invoke-LinuxTests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         foreach($package in $packages)
         {
+            if (Test-Path $package)
+            {
+                Write-Log "Package found: $package"
+            }
+            else
+            {
+                Write-Error -Message "Package NOT found: $package"
+            }
             # Publish the packages to the nuget feed if:
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
