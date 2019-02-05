@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 .SYNOPSIS
   Idempotently removes extra PowerShell Core paths from the machine, user and/or process environment scope with no reordering.

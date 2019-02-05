@@ -44,7 +44,7 @@ $Script:community_login_map = @{
 }
 
 $Script:attribution_ignore_list = @(
-    'dependabot[bot]@users.noreply.github.com'
+    'dependabot[bot]@users.noreply.github.com' # dependency bumping bot
 )
 
 ##############################
