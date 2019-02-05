@@ -45,6 +45,11 @@ jobs:
       Get-Process
     displayName: Capture Processes
     condition: succeededOrFailed()
+ 
+ - powershell: |
+      sudo apt-get update
+    displayName: Update packages
+    condition: succeededOrFailed()
 
   - powershell: |
       Get-ChildItem -Path env:
