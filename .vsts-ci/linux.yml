@@ -80,11 +80,16 @@ jobs:
   - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
+      Import-Module ./tools/ci.psm1
+      Invoke-Bootstrap-Stage
+    displayName: Bootstrap
+
+  - powershell: |
       $ErrorActionPreference = 'continue'
       Import-Module ./tools/ci.psm1
       $env:NugetKey = $(NUGET_KEY)
       Invoke-LinuxTests
-    displayName: Bootstrap, Build, Test
+    displayName: Build and Test
     condition: succeeded()
 
   # Uploads any packages as an artifact
