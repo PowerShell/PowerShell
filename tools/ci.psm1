@@ -589,7 +589,6 @@ function Invoke-Bootstrap-Stage
 
 function Invoke-LinuxTests
 {
-    Sync-PSTags -AddRemoteIfMissing
     $releaseTag = Get-ReleaseTag
     Write-Host -Foreground Green "Executing ci.psm1 build and test on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
