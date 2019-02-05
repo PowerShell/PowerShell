@@ -194,7 +194,7 @@ function Invoke-AppVeyorBuild
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
 }
 
-# Implements the AppVeyor 'install' step
+# Implements the CI 'install' step
 function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
@@ -263,7 +263,7 @@ function Update-AppVeyorTestResults
     }
 }
 
-# Implement AppVeyor 'Test_script'
+# Implement CI 'Test_script'
 function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
@@ -599,23 +599,13 @@ function Invoke-LinuxTests
 {
     $createPackages = $false
     $isFullBuild = $hasFeatureTag
-
-    if($Stage -eq 'Bootstrap')
-    {
-        if($cronBuild -and $env:TF_BUILD)
-        {
-            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
-        }
-
-        Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
-        # Make sure we have all the tags
-        Sync-PSTags -AddRemoteIfMissing
-        Start-PSBootstrap -Package:$createPackages
-    }
-    elseif($Stage -eq 'Build')
+    Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
+    # Make sure we have all the tags
+    Sync-PSTags -AddRemoteIfMissing
+    Start-PSBootstrap -Package:$createPackages
+    if($Stage -eq 'Build')
     {
         $releaseTag = Get-ReleaseTag
-
         Write-Host -Foreground Green "Executing ci.psm1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
 
         $originalProgressPreference = $ProgressPreference
