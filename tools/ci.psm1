@@ -91,16 +91,12 @@ function Add-UserToGroup
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    # PS_DAILY_BUILD says that we have previously determined that this is a daily build
-    # APPVEYOR_SCHEDULED_BUILD is True means that we are in an AppVeyor Scheduled build
-    # APPVEYOR_REPO_TAG_NAME means we are building a tag in AppVeyor
-    # BUILD_REASON is Schedule means we are in a VSTS Scheduled build
     if(($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule')
     {
         return $true
     }
 
-    # if [Feature] is in the commit message,
+    # if [feature] is in the commit message,
     # Run Daily tests
     $commitMessage = Get-CommitMessage
     Write-Verbose "commitMessage: $commitMessage" -verbose
@@ -156,7 +152,7 @@ Function Set-BuildVariable
     }
 }
 
-# Emulates running all of AppVeyor but locally
+# Emulates running all of CI but locally
 function Invoke-AppVeyorFull
 {
     param(
@@ -174,7 +170,7 @@ function Invoke-AppVeyorFull
     Invoke-AppveyorFinish
 }
 
-# Implements the AppVeyor 'build_script' step
+# Implements the CI 'build_script' step
 function Invoke-AppVeyorBuild
 {
     $releaseTag = Get-ReleaseTag
@@ -209,9 +205,9 @@ function Invoke-AppVeyorInstall
     if ($env:TF_BUILD)
     {
         #
-        # Generate new credential for appveyor (only) remoting tests.
+        # Generate new credential for CI (only) remoting tests.
         #
-        Write-Verbose "Creating account for remoting tests in AppVeyor."
+        Write-Verbose "Creating account for remoting tests in CI."
 
         # Password
         $randomObj = [System.Random]::new()
@@ -386,7 +382,7 @@ function Invoke-AppVeyorTest
     Set-BuildVariable -Name TestPassed -Value True
 }
 
-# Implement AppVeyor 'after_test' phase
+# Implement CI 'after_test' phase
 function Invoke-AppVeyorAfterTest
 {
     [CmdletBinding()]
@@ -476,7 +472,7 @@ function Get-ReleaseTag
     }
     elseif($env:BUILD_BUILID)
     {
-        #In VSTS
+        # In Azure DevOps Pipelines
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
         $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
@@ -484,7 +480,7 @@ function Get-ReleaseTag
     return $releaseTag
 }
 
-# Implements AppVeyor 'on_finish' step
+# Implements CI 'on_finish' step
 function Invoke-AppveyorFinish
 {
     param(
