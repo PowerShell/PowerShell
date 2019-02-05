@@ -462,7 +462,7 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
     $releaseTag = $metadata.PreviewReleaseTag
-    if($env:BUILD_BUILID)	
+    if($env:BUILD_BUILID)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
         $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
@@ -581,6 +581,7 @@ function Invoke-AppveyorFinish
 
 function Invoke-Bootstrap-Stage
 {
+    $createPackages = Test-DailyBuild
     Write-Host -Foreground Green "Executing ci.psm1 Bootstrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
