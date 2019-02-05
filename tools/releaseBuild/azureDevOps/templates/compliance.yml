@@ -8,8 +8,9 @@ jobs:
     ${{ parameters.parentJobs }}
   pool:
     name: Package ES CodeHub Lab E
-    # APIScan can take a long time
-    timeoutInMinutes: 90
+
+  # APIScan can take a long time
+  timeoutInMinutes: 180
 
   steps:
   - template: SetVersionVariables.yml
@@ -51,6 +52,17 @@ jobs:
     inputs:
       suppressionsFile: tools/credScan/suppress.json
       debugMode: false
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
+    displayName: 'Run BinSkim '
+    inputs:
+      InputType: Basic
+      AnalyzeTarget: '$(CompliancePath)\*.dll;$(CompliancePath)\*.exe'
+      AnalyzeSymPath: 'SRV*'
+      AnalyzeVerbose: true
+      AnalyzeHashes: true
+      AnalyzeStatistics: true
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
