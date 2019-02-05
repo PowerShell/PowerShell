@@ -50,6 +50,11 @@ jobs:
       Get-ChildItem -Path env:
     displayName: Capture environment
     condition: succeededOrFailed()
+  
+  - powershell: |
+      ls
+    displayName: Reece's cool get directory temp task plz ignore
+    condition: succeededOrFailed()
 
   - powershell: |
       # sometimes the file is locked and we must wait or things will fail
