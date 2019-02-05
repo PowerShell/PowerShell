@@ -10,7 +10,7 @@ jobs:
     name: Package ES CodeHub Lab E
 
   # APIScan can take a long time
-  timeoutInMinutes: 90
+  timeoutInMinutes: 180
 
   steps:
   - template: SetVersionVariables.yml
