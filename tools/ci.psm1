@@ -683,81 +683,81 @@ function Invoke-LinuxTests
         $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
         $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
         $sudoPesterParam['ExperimentalFeatureName'] = $featureName
-            if ($testFiles.Count -eq 0) {
-                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
-                # This allows us to prevent regressions to a critical engine experimental feature.
-                $sudoPesterParam.Remove('Path')
-            } else {
-                # If a non-empty string or array is specified for the feature name, we only run those test files.
-                $sudoPesterParam['Path'] = $testFiles
-            }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName"
-            $sudoResultsWithExpFeatures += $passThruResult
+        if ($testFiles.Count -eq 0) {
+            # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+            # This allows us to prevent regressions to a critical engine experimental feature.
+            $sudoPesterParam.Remove('Path')
+        } else {
+            # If a non-empty string or array is specified for the feature name, we only run those test files.
+            $sudoPesterParam['Path'] = $testFiles
         }
+        $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName"
+        $sudoResultsWithExpFeatures += $passThruResult
+    }
 
-        # Determine whether the build passed
-        try {
-            $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
-            $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
-            # this throws if there was an error
-            $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
-            $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
-            $result = "PASS"
-        }
-        catch {
+    # Determine whether the build passed
+    try {
+        $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
+        $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
+        # this throws if there was an error
+        $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
+        $result = "PASS"
+    }
+    catch {
+        # oh no it failed big sad
+        $resultError = $_
+        $result = "FAIL"
+    }
+
+    try {
+        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        # If there are failures, Test-XUnitTestResults throws
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+    }
+    catch {
+        $result = "FAIL"
+        if (!$resultError)
+        {
             $resultError = $_
-            $result = "FAIL"
         }
+    }
 
-        try {
-            $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
-            Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-            # If there are failures, Test-XUnitTestResults throws
-            Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
-        }
-        catch {
-            $result = "FAIL"
-            if (!$resultError)
+    if ($createPackages) {
+        $packageParams = @{}
+        $packageParams += @{ReleaseTag=$releaseTag}
+
+        # Only build packages for PowerShell/PowerShell repository
+        # branches, not pull requests
+        $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
+        foreach($package in $packages)
+        {
+            # Publish the packages to the nuget feed if:
+            # 1 - It's a Daily build (already checked, for not a PR)
+            # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
+            # 3 - it's a nupkg file
+            if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
-                $resultError = $_
+                Write-Log "pushing $package to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
-
-        if ($createPackages) {
-
-            $packageParams = @{}
-            $packageParams += @{ReleaseTag=$releaseTag}
-
-            # Only build packages for branches, not pull requests
-            $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
-            foreach($package in $packages)
-            {
-                # Publish the packages to the nuget feed if:
-                # 1 - It's a Daily build (already checked, for not a PR)
-                # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
-                # 3 - it's a nupkg file
-                if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
-                {
-                    Write-Log "pushing $package to $env:NUGET_URL"
-                    Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-                }
-            }
-            if ($IsLinux)
-            {
-                # Create and package Raspbian .tgz
-                Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
-                Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-            }
+        if ($IsLinux)
+        {
+            # Create and package Raspbian .tgz
+            Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
+            Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
+    }
 
-        # if the tests did not pass, throw the reason why
-        if ( $result -eq "FAIL" ) {
-            Write-Host "Tests failed. See the issue below."
-            Throw $resultError
-        }
-        else {
-            Write-Host "Tests did not fail! Nice job :)"
-        }
+    # if the tests did not pass, throw the reason why
+    if ( $result -eq "FAIL" ) {
+        Write-Host "Tests failed. See the issue below."
+        Throw $resultError
+    }
+    else {
+        Write-Host "Tests did not fail! Nice job :)"
     }
     else {
         $result = 'PASS'
@@ -766,4 +766,5 @@ function Invoke-LinuxTests
             $result = 'FAIL'
         }
     }
+    # close function:
 }
