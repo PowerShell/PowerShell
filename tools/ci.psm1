@@ -387,7 +387,7 @@ function Invoke-AppVeyorTest
     Set-BuildVariable -Name TestPassed -Value True
 }
 
-#Implement AppVeyor 'after_test' phase
+# Implement AppVeyor 'after_test' phase
 function Invoke-AppVeyorAfterTest
 {
     [CmdletBinding()]
@@ -593,26 +593,6 @@ function Invoke-AppveyorFinish
         Write-Host -Foreground Red $_.ScriptStackTrace
         throw $_
     }
-}
-
-function Get-ReleaseTag
-{
-    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-
-    $releaseTag = $metadata.PreviewReleaseTag
-    $previewVersion = $releaseTag.Split('-')
-    $previewPrefix = $previewVersion[0]
-    $previewLabel = $previewVersion[1].replace('.','')
-
-    if($isDailyBuild)
-    {
-        $previewLabel= "daily{0}" -f $previewLabel
-    }
-
-    $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-
-    return $preReleaseVersion
 }
 
 function Invoke-LinuxTests
