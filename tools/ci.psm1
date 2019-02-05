@@ -465,20 +465,9 @@ function Get-ReleaseTag
 {
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-
     $releaseTag = $metadata.PreviewReleaseTag
-    if($env:APPVEYOR_BUILD_NUMBER)
-    {
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag + '.' + $env:APPVEYOR_BUILD_NUMBER
-    }
-    elseif($env:BUILD_BUILID)
-    {
-        # In Azure DevOps
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
-    }
-
+    $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+    $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     return $releaseTag
 }
 
@@ -601,7 +590,8 @@ function Invoke-LinuxTests
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
     $releaseTag = Get-ReleaseTag
-    Write-Host -Foreground Green "Executing ci.psm1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
+    Write-Host -Foreground Green "Executing ci.psm1 on a Linux based operating system with params:"
+    Write-Host -Foreground Green "`$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
