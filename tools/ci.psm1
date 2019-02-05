@@ -234,7 +234,7 @@ function Invoke-AppVeyorInstall
         {
             $haveLocalAccountTokenFilterPolicy = ((Get-ItemPropertyValue -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy) -eq 1)
         }
-        catch { }
+        catch {}
         if (!$haveLocalAccountTokenFilterPolicy)
         {
             Write-Verbose "Setting the LocalAccountTokenFilterPolicy for remoting tests"
@@ -393,7 +393,7 @@ function Invoke-AppVeyorAfterTest
     if (Test-DailyBuild)
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
+        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in CIFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
@@ -552,7 +552,7 @@ function Invoke-AppveyorFinish
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
-            Write-Host "Pushing $_ as Appveyor artifact"
+            Write-Host "Pushing $_ as CI artifact"
             if(Test-Path $_)
             {
                 Push-Artifact -Path $_ -Name 'artifacts'
