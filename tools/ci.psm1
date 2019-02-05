@@ -594,12 +594,13 @@ function Invoke-Bootstrap-Stage
 
 function Invoke-LinuxTests
 {
+    Sync-PSTags -AddRemoteIfMissing
     $releaseTag = Get-ReleaseTag
     Write-Host -Foreground Green "Executing ci.psm1 build and test on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
-        ## We use CrossGen build to run tests only if it's the daily build.
+        # We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
     }
     finally {
