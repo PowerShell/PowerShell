@@ -38,7 +38,6 @@ function New-LocalUser
     [string] $password
 
   )
-
   $LocalComputer = [ADSI] "WinNT://$env:computername";
   $user = $LocalComputer.Create('user', $username);
   $user.SetPassword($password) | out-null;
