@@ -106,8 +106,10 @@ Function Test-DailyBuild
         Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
-
-    return $false
+    else
+    {
+        return $false
+    }
 }
 
 # Returns the commit message for the current build
@@ -143,7 +145,7 @@ Function Set-BuildVariable
         #In VSTS
         Write-Host "##vso[task.setvariable variable=$Name;]$Value"
         # The variable will not show up until the next task.
-        # Setting in the current session for the same behavior as AppVeyor
+        # Setting in the current session for the same behavior as the CI
         Set-Item env:/$name -Value $Value
     }
     else
@@ -472,7 +474,7 @@ function Get-ReleaseTag
     }
     elseif($env:BUILD_BUILID)
     {
-        # In Azure DevOps Pipelines
+        # In Azure DevOps
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
         $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
