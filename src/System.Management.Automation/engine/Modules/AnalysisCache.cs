@@ -70,11 +70,11 @@ namespace System.Management.Automation
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
                 }
-                else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeDllModule(modulePath, context, lastWriteTime);
                 }
-                else if (extension.Equals(".exe", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeDllModule(modulePath, context, lastWriteTime);
                 }

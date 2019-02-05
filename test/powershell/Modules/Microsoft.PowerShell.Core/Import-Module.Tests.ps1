@@ -160,23 +160,23 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
      ) {
          param ($extension)
 
-        $ENV:TestModulePath = Join-Path $TESTDRIVE "System.$extension"
+        $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
         $assemblyLocation, $cmdletOutput = pwsh {
-            $module = Import-Module $ENV:TestModulePath -Passthru
+            $module = Import-Module $TestModulePath -Passthru
             $module.ImplementingAssembly.Location
             Test-BinaryModuleCmdlet1
         }
-        $assemblyLocation | Should -BeExactly $ENV:TestModulePath
+        $assemblyLocation | Should -BeExactly $TestModulePath
         $cmdletOutput | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
 
     It 'PS should be able to load the executable as a root module' {
-        $ENV:psdFile = Join-Path $TESTDRIVE test.psd1
+        $psdFile = Join-Path $TESTDRIVE test.psd1
         $exe = Join-Path $TESTDRIVE System.exe
-        New-ModuleManifest -Path $ENV:psdFile -RootModule $exe
+        New-ModuleManifest -Path $psdFile -RootModule $exe
         try
         {
-            $module = pwsh { Import-Module $ENV:psdFile -PassThru }
+            $module = pwsh { Import-Module $psdFile -PassThru }
             $module | Should -Not -BeNullOrEmpty
             $module.ModuleType.ToString() | Should -Be 'Binary'
             $module.RootModule | Should -Be $exe
@@ -184,18 +184,18 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         }
         finally
         {
-            Remove-Item $ENV:psdFile
+            Remove-Item $psdFile
         }
     }
 
     It 'PS should be able to load the executable as a nested module' {
-        $ENV:psdFile = Join-Path $TESTDRIVE test.psd1
+        $psdFile = Join-Path $TESTDRIVE test.psd1
         $exe = Join-Path $TESTDRIVE System.exe
-        New-ModuleManifest -Path $ENV:psdFile -NestedModules $exe
+        New-ModuleManifest -Path $psdFile -NestedModules $exe
         try
         {
             $module, $location = pwsh {
-                $module = Import-Module $ENV:psdFile -PassThru
+                $module = Import-Module $psdFile -PassThru
                 # return the module and the nested module assembly location
                 $module
                 $module.NestedModules[0].ImplementingAssembly.Location
@@ -208,18 +208,18 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         }
         finally
         {
-            Remove-Item $ENV:psdFile
+            Remove-Item $psdFile
         }
     }
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
-        $ENV:psdFile = Join-Path $TESTDRIVE test.psd1
+        $psdFile = Join-Path $TESTDRIVE test.psd1
         $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
-        New-ModuleManifest -Path $ENV:psdFile -NestedModules $nestedModule
+        New-ModuleManifest -Path $psdFile -NestedModules $nestedModule
         try
         {
             $module, $location = pwsh {
-                $module = Import-Module $ENV:psdFile -PassThru
+                $module = Import-Module $psdFile -PassThru
                 # return the module and the assembly location
                 $module
                 $module.NestedModules[0].ImplementingAssembly.Location
@@ -231,7 +231,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         finally
         {
             Remove-Module $module -ErrorAction SilentlyContinue
-            Remove-Item $ENV:psdFile
+            Remove-Item $psdFile
         }
     }
 
