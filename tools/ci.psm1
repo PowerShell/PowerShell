@@ -603,92 +603,86 @@ function Invoke-LinuxTests
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
-    if($Stage -eq 'Build')
-    {
-        $releaseTag = Get-ReleaseTag
-        Write-Host -Foreground Green "Executing ci.psm1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
+    $releaseTag = Get-ReleaseTag
+    Write-Host -Foreground Green "Executing ci.psm1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
+    $originalProgressPreference = $ProgressPreference
+    $ProgressPreference = 'SilentlyContinue'
+    try {
+        ## We use CrossGen build to run tests only if it's the daily build.
+        Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
+    }
+    finally {
+        $ProgressPreference = $originalProgressPreference
+    }
 
-        $originalProgressPreference = $ProgressPreference
-        $ProgressPreference = 'SilentlyContinue'
-        try {
-            ## We use CrossGen build to run tests only if it's the daily build.
-            Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
-        }
-        finally {
-            $ProgressPreference = $originalProgressPreference
-        }
+    $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+    $excludeTag = @('RequireSudoOnUnix')
 
-        $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+    $noSudoPesterParam = @{
+        'BinDir'     = $output
+        'PassThru'   = $true
+        'Terse'      = $true
+        'Tag'        = @()
+        'ExcludeTag' = $excludeTag
+        'OutputFile' = $testResultsNoSudo
+    }
 
-        $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
-        $testResultsSudo = "$pwd/TestResultsSudo.xml"
+    if ($isFullBuild) {
+        $noSudoPesterParam['Tag'] = @('CI','Feature','Scenario')
+    } else {
+        $noSudoPesterParam['Tag'] = @('CI')
+        $noSudoPesterParam['ThrowOnFailure'] = $true
+    }
 
-        $excludeTag = @('RequireSudoOnUnix')
+    if ($hasRunFailingTestTag) {
+        $noSudoPesterParam['IncludeFailingTest'] = $true
+    }
 
-        $noSudoPesterParam = @{
-            'BinDir'     = $output
-            'PassThru'   = $true
-            'Terse'      = $true
-            'Tag'        = @()
-            'ExcludeTag' = $excludeTag
-            'OutputFile' = $testResultsNoSudo
-        }
+    # Get the experimental feature names and the tests associated with them
+    $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
 
-        if ($isFullBuild) {
-            $noSudoPesterParam['Tag'] = @('CI','Feature','Scenario')
+    # Running tests which do not require sudo.
+    $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title 'Pester No Sudo'
+
+    # Running tests that do not require sudo, with specified experimental features enabled
+    $noSudoResultsWithExpFeatures = @()
+    foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        $featureName = $entry.Key
+        $testFiles = $entry.Value
+
+        $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
+        $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
+        $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
+        if ($testFiles.Count -eq 0) {
+            # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+            # This allows us to prevent regressions to a critical engine experimental feature.
+            $noSudoPesterParam.Remove('Path')
         } else {
-            $noSudoPesterParam['Tag'] = @('CI')
-            $noSudoPesterParam['ThrowOnFailure'] = $true
+            # If a non-empty string or array is specified for the feature name, we only run those test files.
+            $noSudoPesterParam['Path'] = $testFiles
         }
+        $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName"
+        $noSudoResultsWithExpFeatures += $passThruResult
+    }
+    # Running tests, which require sudo.
+    $sudoPesterParam = $noSudoPesterParam.Clone()
+    $sudoPesterParam.Remove('Path')
+    $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
+    $sudoPesterParam['ExcludeTag'] = @()
+    $sudoPesterParam['Sudo'] = $true
+    $sudoPesterParam['OutputFile'] = $testResultsSudo
+    $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title 'Pester Sudo'
+    # Running tests that require sudo, with specified experimental features enabled
+    $sudoResultsWithExpFeatures = @()
+    foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        $featureName = $entry.Key
+        $testFiles = $entry.Value
 
-        if ($hasRunFailingTestTag) {
-            $noSudoPesterParam['IncludeFailingTest'] = $true
-        }
-
-        # Get the experimental feature names and the tests associated with them
-        $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
-
-        # Running tests which do not require sudo.
-        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title 'Pester No Sudo'
-
-        # Running tests that do not require sudo, with specified experimental features enabled
-        $noSudoResultsWithExpFeatures = @()
-        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
-            $featureName = $entry.Key
-            $testFiles = $entry.Value
-
-            $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
-            $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
-            $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
-            if ($testFiles.Count -eq 0) {
-                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
-                # This allows us to prevent regressions to a critical engine experimental feature.
-                $noSudoPesterParam.Remove('Path')
-            } else {
-                # If a non-empty string or array is specified for the feature name, we only run those test files.
-                $noSudoPesterParam['Path'] = $testFiles
-            }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName"
-            $noSudoResultsWithExpFeatures += $passThruResult
-        }
-
-        # Running tests, which require sudo.
-        $sudoPesterParam = $noSudoPesterParam.Clone()
-        $sudoPesterParam.Remove('Path')
-        $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
-        $sudoPesterParam['ExcludeTag'] = @()
-        $sudoPesterParam['Sudo'] = $true
-        $sudoPesterParam['OutputFile'] = $testResultsSudo
-        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title 'Pester Sudo'
-        # Running tests that require sudo, with specified experimental features enabled
-        $sudoResultsWithExpFeatures = @()
-        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
-            $featureName = $entry.Key
-            $testFiles = $entry.Value
-
-            $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
-            $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
-            $sudoPesterParam['ExperimentalFeatureName'] = $featureName
+        $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
+        $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
+        $sudoPesterParam['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0) {
                 # If an empty array is specified for the feature name, we run all tests with the feature enabled.
                 # This allows us to prevent regressions to a critical engine experimental feature.
