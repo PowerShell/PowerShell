@@ -80,12 +80,6 @@ jobs:
   - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
-      Import-Module .\tools\ci.psm1
-      Invoke-LinuxTests
-    displayName: Bootstrap
-    condition: succeeded()
-
-  - powershell: |
       $ErrorActionPreference = 'continue'
       Import-Module tools/ci.psm1
       $env:NugetKey = $(NUGET_KEY)
