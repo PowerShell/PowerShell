@@ -63,7 +63,7 @@ jobs:
   - powershell: |
       $ErrorActionPreference = 'continue'
       Import-Module ./tools/ci.psm1
-      $env:NugetKey = $(NUGET_KEY)
+      $env:NugetKey = '$(NUGET_KEY)'
       Invoke-LinuxTests
     displayName: Build and Test
     condition: succeeded()
