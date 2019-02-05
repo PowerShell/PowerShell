@@ -1884,10 +1884,28 @@ namespace Microsoft.PowerShell.Commands
             string ToModeString(FileSystemInfo fileSystemInfo)
             {
                 FileAttributes fileAttributes = fileSystemInfo.Attributes;
-                bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
-                bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
-                bool isHardLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
 
+                bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
+                bool isHardLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
+                if (!isHardLink)
+                {
+                    // special casing for the common cases - no allocations
+                    switch (fileAttributes)
+                    {
+                        case FileAttributes.Archive:
+                            return "-a---";
+                        case FileAttributes.Directory:
+                            return "d----";
+                        case FileAttributes.Normal:
+                            return "-----";
+                        case FileAttributes.Directory | FileAttributes.ReadOnly:
+                            return "d-r--";
+                        case FileAttributes.Archive | FileAttributes.ReadOnly:
+                            return "-ar--";
+                    }
+                }
+
+                bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
                 ReadOnlySpan<char> mode = stackalloc char[]
                 {
                     isReparsePoint || isHardLink ? 'l' : isDirectory ? 'd' : '-',
