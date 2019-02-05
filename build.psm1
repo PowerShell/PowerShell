@@ -427,7 +427,7 @@ Fix steps:
         ## need RCEdit to modify the binaries embedded resources
         $rcedit = "~/.rcedit/rcedit-x64.exe"
         if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | ForEach-Object Name
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction Ignore | Select-Object -First 1 | ForEach-Object Name
         }
         if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
@@ -1685,7 +1685,7 @@ function Start-PSBootstrap {
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
         if ($Environment.IsWindows) {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
-            if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction SilentlyContinue))
+            if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
                 Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
@@ -1952,7 +1952,7 @@ function script:Use-MSBuild {
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
     $frameworkMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
 
-    $msbuild = get-command msbuild -ErrorAction SilentlyContinue
+    $msbuild = get-command msbuild -ErrorAction Ignore
     if ($msbuild) {
         # all good, nothing to do
         return
@@ -1987,7 +1987,7 @@ function script:Write-Log
     [console]::ResetColor()
 }
 function script:precheck([string]$command, [string]$missedMessage) {
-    $c = Get-Command $command -ErrorAction SilentlyContinue
+    $c = Get-Command $command -ErrorAction Ignore
     if (-not $c) {
         if (-not [string]::IsNullOrEmpty($missedMessage))
         {
