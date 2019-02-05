@@ -587,7 +587,7 @@ function Invoke-AppveyorFinish
 
 function Invoke-LinuxTests
 {
-    $createPackages = $false
+    $createPackages = $isFullBuild
     $isFullBuild = Test-DailyBuild
     Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
