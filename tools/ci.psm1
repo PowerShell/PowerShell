@@ -702,8 +702,7 @@ function Invoke-LinuxTests
         $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
         $result = "PASS"
-    }
-    catch {
+    } catch {
         # oh no it failed big sad
         $resultError = $_
         $result = "FAIL"
@@ -714,8 +713,7 @@ function Invoke-LinuxTests
         Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
         Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
-    }
-    catch {
+    } catch {
         $result = "FAIL"
         if (!$resultError)
         {
@@ -762,16 +760,8 @@ function Invoke-LinuxTests
     if ( $result -eq "FAIL" ) {
         Write-Host "Tests failed. See the issue below."
         Throw $resultError
-    }
-    else {
+    } else {
         Write-Host "Tests did not fail! Nice job :)"
-    }
-    else {
-        $result = 'PASS'
-        if($Stage -eq 'Failure')
-        {
-            $result = 'FAIL'
-        }
     }
     # close function:
 }
