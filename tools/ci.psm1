@@ -585,14 +585,18 @@ function Invoke-AppveyorFinish
     }
 }
 
-function Invoke-LinuxTests
+function Invoke-Bootstrap-Stage
 {
     Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
+}
+
+function Invoke-LinuxTests
+{
     $releaseTag = Get-ReleaseTag
-    Write-Host -Foreground Green "Executing ci.psm1 on a Linux based operating system."
+    Write-Host -Foreground Green "Executing ci.psm1 build and test on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
