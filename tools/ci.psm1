@@ -206,9 +206,7 @@ function Invoke-AppVeyorInstall
 
     if ($env:TF_BUILD)
     {
-        #
         # Generate new credential for CI (only) remoting tests.
-        #
         Write-Verbose "Creating account for remoting tests in CI."
 
         # Password
@@ -268,7 +266,6 @@ function Invoke-AppVeyorTest
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
         [string] $Purpose
     )
-    #
     # CoreCLR
 
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -431,7 +428,7 @@ function Push-Artifact
     }
 
     if ($env:TF_BUILD) {
-        # In VSTS
+        # In Azure DevOps
         Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
@@ -466,8 +463,7 @@ function Get-ReleaseTag
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
     $releaseTag = $metadata.PreviewReleaseTag
     if($env:BUILD_BUILID)	
-    {	
-        # In Azure DevOps
+    {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
         $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
@@ -480,7 +476,6 @@ function Invoke-AppveyorFinish
     param(
         [string] $NuGetKey
     )
-
     try {
         $releaseTag = Get-ReleaseTag
 
@@ -586,7 +581,7 @@ function Invoke-AppveyorFinish
 
 function Invoke-Bootstrap-Stage
 {
-    Write-Host -Foreground Green "Executing ci.psm1 -BootStrap `$isPR='$isPr' - $commitMessage"
+    Write-Host -Foreground Green "Executing ci.psm1 Bootstrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
@@ -620,15 +615,15 @@ function Invoke-LinuxTests
         'ExcludeTag' = $excludeTag
         'OutputFile' = $testResultsNoSudo
     }
-
+    # create packages if it is a full build
+    $isFullBuild = Test-DailyBuild
+    $createPackages = $isFullBuild
     if ($isFullBuild) {
         $noSudoPesterParam['Tag'] = @('CI','Feature','Scenario')
     } else {
         $noSudoPesterParam['Tag'] = @('CI')
         $noSudoPesterParam['ThrowOnFailure'] = $true
     }
-    $createPackages = $isFullBuild
-    $isFullBuild = Test-DailyBuild
     if ($hasRunFailingTestTag) {
         $noSudoPesterParam['IncludeFailingTest'] = $true
     }
