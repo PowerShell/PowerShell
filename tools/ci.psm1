@@ -442,7 +442,6 @@ function Compress-CoverageArtifacts
 
     # Create archive for test content, OpenCover module and CodeCoverage build
     $artifacts = New-Object System.Collections.ArrayList
-
     $zipTestContentPath = Join-Path $pwd 'tests.zip'
     Compress-TestContent -Destination $zipTestContentPath
     $null = $artifacts.Add($zipTestContentPath)
@@ -752,10 +751,9 @@ function Invoke-LinuxTests
 
     # if the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" ) {
-        Write-Host "Tests failed. See the issue below."
+        Write-Warning "Tests failed. See the issue below."
         Throw $resultError
     } else {
         Write-Host "Tests did not fail! Nice job :)"
     }
-    # close function:
 }
