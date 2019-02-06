@@ -31,13 +31,14 @@ namespace PSTests.Parallel
         }
 
         [Theory]
-        [InlineData("-a---", "-a---", "File", "archiveFile", FileAttributes.Archive)]
         [InlineData("d----", "d----", "Directory", "directory", FileAttributes.Directory)]
         [InlineData("l----", "l----", "Junction", "junctionDir", FileAttributes.Directory | FileAttributes.ReparsePoint, "targetDir1")]
         [InlineData("l----", "l----", "SymbolicLink", "symDir", FileAttributes.Directory | FileAttributes.ReparsePoint, "targetDir2")]
+#if !UNIX
+        [InlineData("-a---", "-a---", "File", "archiveFile", FileAttributes.Archive)]
         [InlineData("la---", "la---", "SymbolicLink", "symFile", FileAttributes.Archive | FileAttributes.ReparsePoint, "targetFile1")]
         [InlineData("la---", "-a---", "HardLink", "hardlink", FileAttributes.Archive, "targetFile2")]
-
+#endif
         public void TestFileSystemInfoModeString(string expectedMode, string expectedModeWithoutHardLink, string itemType, string itemName,
             FileAttributes fileAttributes, string target = null)
         {
