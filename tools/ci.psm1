@@ -6,6 +6,7 @@ $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
 $script:usersGroupSID = "S-1-5-32-545"
 
+# set .NET path
 $dotNetPath = "$env:USERPROFILE\Appdata\Local\Microsoft\dotnet"
 if(Test-Path $dotNetPath)
 {
@@ -225,7 +226,7 @@ function Invoke-AppVeyorInstall
         # Provide credentials globally for remote tests.
         $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
         $ciRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-	    $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+	$ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
