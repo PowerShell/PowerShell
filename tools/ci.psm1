@@ -178,7 +178,8 @@ function Invoke-AppVeyorBuild
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
-    if ( $result.Result -ne "Pass" ) {
+    if ( $result.Result -ne "Pass" )
+    {
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
     }
@@ -198,8 +199,10 @@ function Invoke-AppVeyorInstall
     Sync-PSTags -AddRemoteIfMissing
     $releaseTag = Get-ReleaseTag
 
-    if(Test-DailyBuild){
-        if ($env:BUILD_REASON -eq 'Schedule') {
+    if(Test-DailyBuild)
+    {
+        if ($env:BUILD_REASON -eq 'Schedule')
+        {
             Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
         }
     }
@@ -232,6 +235,7 @@ function Invoke-AppVeyorInstall
         {
             $haveLocalAccountTokenFilterPolicy = ((Get-ItemPropertyValue -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy) -eq 1)
         }
+        # ignore if anything is caught:
         catch {}
         if (!$haveLocalAccountTokenFilterPolicy)
         {
@@ -281,11 +285,13 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    if (Test-DailyBuild) {
+    if (Test-DailyBuild) 
+    {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-    else {
+    else 
+    {
         $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
@@ -309,7 +315,8 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
         # Run tests with specified experimental features enabled
-        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) 
+        {
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
@@ -354,18 +361,22 @@ function Invoke-AppVeyorTest
         Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
-        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
+        {
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
             $expFeatureTestResultFile = "$pwd\TestsResultsAdmin.$featureName.xml"
             $arguments['OutputFile'] = $expFeatureTestResultFile
             $arguments['ExperimentalFeatureName'] = $featureName
-            if ($testFiles.Count -eq 0) {
+            if ($testFiles.Count -eq 0)
+            {
                 # If an empty array is specified for the feature name, we run all tests with the feature enabled.
                 # This allows us to prevent regressions to a critical engine experimental feature.
                 $arguments.Remove('Path')
-            } else {
+            }
+            else 
+            {
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
@@ -581,13 +592,15 @@ function Invoke-AppveyorFinish
             throw "Some artifacts did not exist!"
         }
     }
-    catch {
+    catch 
+    {
         Write-Host -Foreground Red $_
         Write-Host -Foreground Red $_.ScriptStackTrace
         throw $_
     }
 }
 
+# Bootstrap script for Linux and macOS
 function Invoke-Bootstrap-Stage
 {
     $createPackages = Test-DailyBuild
@@ -597,6 +610,7 @@ function Invoke-Bootstrap-Stage
     Start-PSBootstrap -Package:$createPackages
 }
 
+# Build and test script for Linux and macOS:
 function Invoke-LinuxTests
 {
     $releaseTag = Get-ReleaseTag
@@ -607,7 +621,8 @@ function Invoke-LinuxTests
         # We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
     }
-    finally {
+    finally 
+    {
         $ProgressPreference = $originalProgressPreference
     }
 
@@ -656,7 +671,9 @@ function Invoke-LinuxTests
             # If an empty array is specified for the feature name, we run all tests with the feature enabled.
             # This allows us to prevent regressions to a critical engine experimental feature.
             $noSudoPesterParam.Remove('Path')
-        } else {
+        }
+        else 
+        {
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $noSudoPesterParam['Path'] = $testFiles
         }
@@ -680,11 +697,14 @@ function Invoke-LinuxTests
         $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
         $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
         $sudoPesterParam['ExperimentalFeatureName'] = $featureName
-        if ($testFiles.Count -eq 0) {
+        if ($testFiles.Count -eq 0) 
+        {
             # If an empty array is specified for the feature name, we run all tests with the feature enabled.
             # This allows us to prevent regressions to a critical engine experimental feature.
             $sudoPesterParam.Remove('Path')
-        } else {
+        } 
+        else 
+        {
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $sudoPesterParam['Path'] = $testFiles
         }
@@ -748,18 +768,18 @@ function Invoke-LinuxTests
             }
 
             if($isDailyBuild)
+	    {
+	        if ($package -isnot [System.IO.FileInfo]
+                {
+                    $packageObj = Get-Item $package
+                    Write-Error -Message "The PACKAGE is not a FileInfo object"
+                }
+	        else
 	        {
-	            if ($package -isnot [System.IO.FileInfo])
-	            {
-                        $packageObj = Get-Item $package
-                        Write-Error -Message "The PACKAGE is not a FileInfo object"
-	            }
-	            else
-	            {
-	               $packageObj = $package
-	            }
-	            Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-	            Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+	           $packageObj = $package
+	        }
+	        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+	        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
 	        }
         }
         if ($IsLinux)
@@ -776,7 +796,7 @@ function Invoke-LinuxTests
         }
     }
 
-    # if the tests did not pass, throw the reason why
+    # If the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" ) {
         Write-Warning "Tests failed. See the issue below."
         Throw $resultError
