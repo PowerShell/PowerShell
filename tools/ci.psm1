@@ -504,7 +504,7 @@ function Invoke-AppveyorFinish
 	        }
 	        else
             {
-                Write-Error -Message "Package NOT found: $package"
+                Write-Warning -Message "Package NOT found: $package"
             }
 
             if($package -is [string])
