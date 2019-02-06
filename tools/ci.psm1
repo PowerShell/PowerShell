@@ -247,7 +247,7 @@ function Invoke-AppVeyorInstall
 # A wrapper to ensure that we upload test results
 # and that if we are not able to that it does not fail
 # the CI build
-function Update-AppVeyorTestResults
+function Update-TestResults
 {
     param(
         [string] $resultsFile
@@ -304,7 +304,7 @@ function Invoke-AppVeyorTest
         }
         Start-PSPester @arguments -Title 'Pester Unelevated'
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
-        Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+        Update-TestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -327,7 +327,7 @@ function Invoke-AppVeyorTest
             Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
-            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
@@ -343,11 +343,11 @@ function Invoke-AppVeyorTest
         }
         Start-PSPester @arguments -Title 'Pester Elevated'
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
-        Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
+        Update-TestResults -resultsFile $testResultsAdminFile
 
         Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
+        Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
@@ -372,7 +372,7 @@ function Invoke-AppVeyorTest
             Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
-            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
