@@ -751,8 +751,8 @@ function Invoke-LinuxTests
 	        {
 	            if ($package -isnot [System.IO.FileInfo])
 	            {
-                    $packageObj = Get-Item $package
-                    Write-Error -Message "The PACKAGE is not a FileInfo object"
+                        $packageObj = Get-Item $package
+                        Write-Error -Message "The PACKAGE is not a FileInfo object"
 	            }
 	            else
 	            {
@@ -767,7 +767,7 @@ function Invoke-LinuxTests
             # Create and package Raspbian .tgz
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-	        Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+	    Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
     }
 
