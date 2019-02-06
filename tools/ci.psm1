@@ -769,7 +769,7 @@ function Invoke-LinuxTests
 
             if($isDailyBuild)
 	    {
-	        if ($package -isnot [System.IO.FileInfo]
+	        if ($package -isnot [System.IO.FileInfo])
                 {
                     $packageObj = Get-Item $package
                     Write-Error -Message "The PACKAGE is not a FileInfo object"
