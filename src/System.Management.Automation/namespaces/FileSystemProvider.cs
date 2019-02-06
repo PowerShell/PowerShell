@@ -7079,6 +7079,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
             /// <returns>1 on successful creation.</returns>
             [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
 
             /// <summary>
