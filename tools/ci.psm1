@@ -591,7 +591,7 @@ function Invoke-AppveyorFinish
 function Invoke-Bootstrap-Stage
 {
     $createPackages = Test-DailyBuild
-    Write-Host -Foreground Green "Executing ci.psm1 Bootstrap `$isPR='$isPr' - $commitMessage"
+    Write-Host -Foreground Green "Executing ci.psm1 Bootstrap Stage
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
