@@ -143,7 +143,7 @@ namespace System.Management.Automation
         internal void SetModule(PSModuleInfo module)
         {
             Module = module;
-            _fullName = null; // clear the cached FullName
+            _fullName = null;
         }
 
         /// <summary>
