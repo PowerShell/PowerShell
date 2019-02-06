@@ -14,6 +14,8 @@ using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using System.Reflection.Metadata;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Xunit;
@@ -125,13 +127,8 @@ namespace PSTests.Parallel
             fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "IsReadOnly" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
-            foreach (PSPropertyInfo property in psobject1.Properties)
-            {
-                if (property.Name == "IsReadOnly")
-                {
-                    Assert.False((bool)property.Value);
-                }
-            }
+            PSPropertyInfo property = psobject1.Properties["IsReadOnly"];
+            Assert.False((bool)property.Value);
         }
 
         [Fact]
@@ -144,13 +141,9 @@ namespace PSTests.Parallel
             fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "Name" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
-            foreach (PSPropertyInfo property in psobject1.Properties)
-            {
-                if (property.Name == "FullName")
-                {
-                    Assert.Equal(testPath, property.Value);
-                }
-            }
+            PSPropertyInfo property = psobject1.Properties["FullName"];
+
+            Assert.Equal(testPath, property.Value);
         }
 
         [Fact]
