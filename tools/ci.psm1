@@ -696,12 +696,12 @@ function Invoke-LinuxTests
     try {
         $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
         $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
-        # this throws if there was an error
+        # This throws if there was an error:
         $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
         $result = "PASS"
     } catch {
-        # oh no it failed big sad
+        # The build failed, set the result:
         $resultError = $_
         $result = "FAIL"
     }
