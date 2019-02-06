@@ -769,6 +769,11 @@ function Invoke-LinuxTests
             $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
 	    Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
+        
+        if ($isDailyBuild)
+        {
+            New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
+        }
     }
 
     # if the tests did not pass, throw the reason why
