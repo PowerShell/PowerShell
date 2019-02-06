@@ -160,12 +160,18 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
      ) {
          param ($extension)
 
-        $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
-        $assemblyLocation, $cmdletOutput = Start-Job -ScriptBlock {
-            $module = Import-Module $using:TestModulePath -Passthru;
-            $module.ImplementingAssembly.Location;
-            Test-BinaryModuleCmdlet1
-        } | Wait-Job -Timeout 30 | Receive-Job
+        try {
+            $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:TestModulePath -Passthru;
+                $module.ImplementingAssembly.Location;
+                Test-BinaryModuleCmdlet1
+            }
+            $assemblyLocation, $cmdletOutput = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
 
         $assemblyLocation | Should -BeExactly $TestModulePath
         $cmdletOutput | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
@@ -176,7 +182,14 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $exe = Join-Path $TESTDRIVE System.exe
         New-ModuleManifest -Path $psdFile -RootModule $exe
 
-        $module = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru } | Wait-Job -Timeout 30 | Receive-Job
+        try {
+            $job = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru }
+            $module = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
+
         $module | Should -Not -BeNullOrEmpty
         $module.ModuleType.ToString() | Should -Be 'Binary'
         $module.RootModule | Should -Be $exe
@@ -187,12 +200,19 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $exe = Join-Path $TESTDRIVE System.exe
         New-ModuleManifest -Path $psdFile -NestedModules $exe
-        $module, $location = Start-Job -ScriptBlock {
-            $module = Import-Module $using:psdFile -PassThru
-            # return the module and the nested module assembly location
-            $module
-            $module.NestedModules[0].ImplementingAssembly.Location
-        } | Wait-Job -Timeout 30 | Receive-Job
+
+        try {
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:psdFile -PassThru
+                # return the module and the nested module assembly location
+                $module
+                $module.NestedModules[0].ImplementingAssembly.Location
+            }
+            $module, $location = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
 
         $module | Should -Not -BeNullOrEmpty
         $module.ModuleType.ToString() | Should -Be 'Manifest'
@@ -205,12 +225,20 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
         New-ModuleManifest -Path $psdFile -NestedModules $nestedModule
-        $module, $location = Start-Job -ScriptBlock {
-            $module = Import-Module $using:psdFile -PassThru
-            # return the module and the assembly location
-            $module
-            $module.NestedModules[0].ImplementingAssembly.Location
-        } | Wait-Job -Timeout 30 | Receive-Job
+
+        try {
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:psdFile -PassThru
+                # return the module and the assembly location
+                $module
+                $module.NestedModules[0].ImplementingAssembly.Location
+            }
+            $module, $location = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
+
         $module.NestedModules | Should -Not -BeNullOrEmpty
         $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
         $location | Should -Be $assemblyLocation
