@@ -506,6 +506,7 @@ function Invoke-AppveyorFinish
             {
                 Write-Error -Message "Package NOT found: $package"
             }
+
             if($package -is [string])
             {
                 $null = $artifacts.Add($package)
@@ -718,7 +719,8 @@ function Invoke-LinuxTests
         }
     }
 
-    if ($createPackages) {
+    if ($createPackages)
+    {
         $packageParams = @{}
         $packageParams += @{ReleaseTag=$releaseTag}
 
