@@ -2547,8 +2547,8 @@ namespace Microsoft.PowerShell.Commands
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
 
-            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
-            return (created == 1) ? true : false;
+            var created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
+            return created;
         }
 
         private static bool WinCreateHardLink(string path, string strTargetPath)
@@ -7079,7 +7079,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
             /// <returns>1 on successful creation.</returns>
             [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
+            internal static extern bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
 
             /// <summary>
             /// Flags used when creating a symbolic link.
@@ -7100,7 +7100,7 @@ namespace Microsoft.PowerShell.Commands
                 /// <summary>
                 /// Allow creation of symbolic link without elevation.  Requires Developer mode.
                 /// </summary>
-                AllowUnprivilegedCreate = 2
+                AllowUnprivilegedCreate = 2,
             }
 
             /// <summary>
