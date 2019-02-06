@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                 moSource = source as PSObject;
             }
 
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // check if source is of type secure string
                 secureString = moSource.ImmediateBaseObject as SecureString;
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation
             IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.immediateBaseObjectIsEmpty)
+            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation
                 // So on roundtrip it will show up as List.
                 // We serialize properties of enumerable and on deserialization mark the object as Deserialized.
                 // So if object is marked deserialized, we should write properties.
-                if (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized))
+                if (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized))
                 {
                     PSObject sourceAsPSObject = PSObject.AsPSObject(source);
                     PSMemberInfoInternalCollection<PSPropertyInfo> specificPropertiesToSerialize = SerializationUtilities.GetSpecificPropertiesToSerialize(sourceAsPSObject, AllPropertiesCollection, _typeTable);
@@ -1465,7 +1465,7 @@ namespace System.Management.Automation
             bool isPSObject = false;
             bool isCimInstance = false;
 
-            if (!mshSource.immediateBaseObjectIsEmpty)
+            if (!mshSource.ImmediateBaseObjectIsEmpty)
             {
                 do // false loop
                 {
@@ -1500,7 +1500,7 @@ namespace System.Management.Automation
             bool writeToString = true;
             if (mshSource.ToStringFromDeserialization == null) // continue to write ToString from deserialized objects, but...
             {
-                if (mshSource.immediateBaseObjectIsEmpty) // ... don't write ToString for property bags
+                if (mshSource.ImmediateBaseObjectIsEmpty) // ... don't write ToString for property bags
                 {
                     writeToString = false;
                 }
@@ -2332,7 +2332,7 @@ namespace System.Management.Automation
 
             if (0 != (_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal))
             {
-                if ((pso.isDeserialized) && (depth <= 0))
+                if ((pso.IsDeserialized) && (depth <= 0))
                 {
                     return 1;
                 }
@@ -3827,7 +3827,7 @@ namespace System.Management.Automation
 
             // Since we are adding baseobject properties as propertybag,
             // mark the object as deserialized.
-            dso.isDeserialized = true;
+            dso.IsDeserialized = true;
             dso.adaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             // Add the GetType method to the instance members, so that it works on deserialized psobjects

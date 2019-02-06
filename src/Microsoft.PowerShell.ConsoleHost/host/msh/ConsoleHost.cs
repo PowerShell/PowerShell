@@ -1975,9 +1975,10 @@ namespace Microsoft.PowerShell
                 error = (object)new ErrorRecord(e, "ConsoleHost.ReportException", ErrorCategory.NotSpecified, null);
             }
 
-            PSObject wrappedError = new PSObject(error);
-            PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
-            wrappedError.Properties.Add(note);
+            PSObject wrappedError = new PSObject(error)
+            {
+                WriteStream = WriteStreamType.Error
+            };
 
             Exception e1 = null;
 

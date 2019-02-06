@@ -150,51 +150,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public bool outOfBand = false;
         public WriteStreamType writeStream = WriteStreamType.None;
         internal bool isHelpObject = false;
-
-        /// <summary>
-        /// Helper method to set the <see cref="writeStream"/> field
-        /// based on note properties of a PSObject object.
-        /// </summary>
-        /// <param name="so">PSObject.</param>
-        internal void SetStreamTypeFromPSObject(PSObject so)
-        {
-            WriteStreamType GetStreamType(string propertyName)
-            {
-                switch (propertyName)
-                {
-                    case MshCommandRuntime.WriteErrorStreamPropertyName:
-                        return WriteStreamType.Error;
-                    case MshCommandRuntime.WriteWarningStreamPropertyName:
-                        return WriteStreamType.Warning;
-                    case MshCommandRuntime.WriteVerboseStreamPropertyName:
-                        return WriteStreamType.Verbose;
-                    case MshCommandRuntime.WriteDebugStreamPropertyName:
-                        return WriteStreamType.Debug;
-                    case MshCommandRuntime.WriteInformationStreamPropertyName:
-                        return WriteStreamType.Information;
-                    default:
-                        return WriteStreamType.None;
-                }
-            }
-
-            bool IsStreamName(string name)
-            {
-                switch (name)
-                {
-                    case MshCommandRuntime.WriteErrorStreamPropertyName:
-                    case MshCommandRuntime.WriteWarningStreamPropertyName:
-                    case MshCommandRuntime.WriteVerboseStreamPropertyName:
-                    case MshCommandRuntime.WriteDebugStreamPropertyName:
-                    case MshCommandRuntime.WriteInformationStreamPropertyName:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            var member = so.GetFirstPropertyOrDefault(IsStreamName);
-            writeStream = member != null ? GetStreamType(member.Name) : WriteStreamType.None;
-        }
     }
     #endregion
 

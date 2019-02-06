@@ -28,12 +28,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class MshCommandRuntime : ICommandRuntime2
     {
-        internal const string WriteErrorStreamPropertyName = "WriteErrorStream";
-        internal const string WriteWarningStreamPropertyName = "WriteWarningStream";
-        internal const string WriteVerboseStreamPropertyName = "WriteVerboseStream";
-        internal const string WriteDebugStreamPropertyName = "WriteDebugStream";
-        internal const string WriteInformationStreamPropertyName = "WriteInformationStream";
-
         #region private_members
 
         /// <summary>
@@ -492,12 +486,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteDebugInfoBuffers(record);
                     }
 
-                    // Add note property so that the debug output is formatted correctly.
+                    // Set WriteStream so that the debug output is formatted correctly.
                     PSObject debugWrap = PSObject.AsPSObject(record);
-                    if (debugWrap.Members[WriteDebugStreamPropertyName] == null)
-                    {
-                        debugWrap.Properties.Add(new PSNoteProperty(WriteDebugStreamPropertyName, true));
-                    }
+                    debugWrap.WriteStream = WriteStreamType.Debug;
 
                     DebugOutputPipe.Add(debugWrap);
                 }
@@ -583,12 +574,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteVerboseInfoBuffers(record);
                     }
 
-                    // Add note property so that the verbose output is formatted correctly.
+                    // Add WriteStream so that the verbose output is formatted correctly.
                     PSObject verboseWrap = PSObject.AsPSObject(record);
-                    if (verboseWrap.Members[WriteVerboseStreamPropertyName] == null)
-                    {
-                        verboseWrap.Properties.Add(new PSNoteProperty(WriteVerboseStreamPropertyName, true));
-                    }
+                    verboseWrap.WriteStream = WriteStreamType.Verbose;
 
                     VerboseOutputPipe.Add(verboseWrap);
                 }
@@ -674,12 +662,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteWarningInfoBuffers(record);
                     }
 
-                    // Add note property so that the warning output is formatted correctly.
+                    // Add WriteStream so that the warning output is formatted correctly.
                     PSObject warningWrap = PSObject.AsPSObject(record);
-                    if (warningWrap.Members[WriteWarningStreamPropertyName] == null)
-                    {
-                        warningWrap.Properties.Add(new PSNoteProperty(WriteWarningStreamPropertyName, true));
-                    }
+                    warningWrap.WriteStream = WriteStreamType.Warning;
 
                     WarningOutputPipe.AddWithoutAppendingOutVarList(warningWrap);
                 }
@@ -739,12 +724,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteInformationInfoBuffers(record);
                     }
 
-                    // Add note property so that the information output is formatted correctly.
+                    // Add WriteStream so that the information output is formatted correctly.
                     PSObject informationWrap = PSObject.AsPSObject(record);
-                    if (informationWrap.Members[WriteInformationStreamPropertyName] == null)
-                    {
-                        informationWrap.Properties.Add(new PSNoteProperty(WriteInformationStreamPropertyName, true));
-                    }
+                    informationWrap.WriteStream = WriteStreamType.Information;
 
                     InformationOutputPipe.Add(informationWrap);
                 }
@@ -2851,10 +2833,9 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError && errorWrap.Members[WriteErrorStreamPropertyName] == null)
+            if (!isNativeError)
             {
-                PSNoteProperty note = new PSNoteProperty(WriteErrorStreamPropertyName, true);
-                errorWrap.Properties.Add(note);
+                errorWrap.WriteStream = WriteStreamType.Error;
             }
 
             // 2003/11/19-JonN Previously, PSObject instances in ErrorOutputPipe

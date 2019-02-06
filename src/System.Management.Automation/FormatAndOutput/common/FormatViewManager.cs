@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
             fed.outOfBand = true;
-            fed.SetStreamTypeFromPSObject(so);
+            fed.writeStream = so.WriteStream;
 
             errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList();
 
