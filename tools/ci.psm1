@@ -410,7 +410,6 @@ function Invoke-AppVeyorAfterTest
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
         $codeCoverageArtifacts | ForEach-Object {
             Push-Artifact -Path $_ -Name 'CodeCoverage'
-            Push-Artifact $testPackageFullName -Name 'artifacts'
         }
 
         New-TestPackage -Destination (Get-Location).Path
