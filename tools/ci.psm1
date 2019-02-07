@@ -761,6 +761,7 @@ function Invoke-LinuxTests
             {
                 Write-Error -Message "Package NOT found: $package"
             }
+            
             # Publish the packages to the nuget feed if:
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
@@ -775,6 +776,7 @@ function Invoke-LinuxTests
                 {
                     Write-Error -Message "Package NOT found: $package"
                 }
+                
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
                 if($isDailyBuild)
