@@ -10,7 +10,7 @@ namespace PSTests.Parallel
 {
     public class FileSystemProviderFormatting : IDisposable
     {
-        private string modeTestDir;
+        private readonly string modeTestDir;
 
         public FileSystemProviderFormatting()
         {
@@ -39,8 +39,13 @@ namespace PSTests.Parallel
         [InlineData("la---", "la---", "SymbolicLink", "symFile", FileAttributes.Archive | FileAttributes.ReparsePoint, "targetFile1")]
         [InlineData("la---", "-a---", "HardLink", "hardlink", FileAttributes.Archive, "targetFile2")]
 #endif
-        public void TestFileSystemInfoModeString(string expectedMode, string expectedModeWithoutHardLink, string itemType, string itemName,
-            FileAttributes fileAttributes, string target = null)
+        public void TestFileSystemInfoModeString(
+            string expectedMode,
+            string expectedModeWithoutHardLink,
+            string itemType,
+            string itemName,
+            FileAttributes fileAttributes,
+            string target = null)
         {
             var targetFullName = target != null ? Path.Combine(modeTestDir, target) : null;
             if (target != null)
@@ -82,7 +87,6 @@ namespace PSTests.Parallel
                 var fsi = (FileSystemInfo)item.BaseObject;
                 Assert.Equal(fileAttributes, fsi.Attributes);
             }
-
         }
     }
 }
