@@ -144,7 +144,8 @@ namespace Microsoft.PowerShell.Cim
             CimInstance cimInstance = baseObject as CimInstance;
             if (cimInstance == null)
             {
-                string msg = string.Format(CultureInfo.InvariantCulture,
+                string msg = string.Format(
+                    CultureInfo.InvariantCulture,
                     CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
                     "baseObject",
                     typeof(CimInstance).ToString());

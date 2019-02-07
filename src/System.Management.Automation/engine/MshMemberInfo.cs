@@ -4293,8 +4293,13 @@ namespace System.Management.Automation
 
         internal delegate PSMemberInfo GetFirstOrDefaultDelegate(PSObject obj, MemberNamePredicate predicate);
 
-        internal CollectionEntry(GetMembersDelegate getMembers, GetMemberDelegate getMember, GetFirstOrDefaultDelegate getGetFirstOrDefault,
-            bool shouldReplicateWhenReturning, bool shouldCloneWhenReturning, string collectionNameForTracing)
+        internal CollectionEntry(
+            GetMembersDelegate getMembers,
+            GetMemberDelegate getMember,
+            GetFirstOrDefaultDelegate getGetFirstOrDefault,
+            bool shouldReplicateWhenReturning,
+            bool shouldCloneWhenReturning,
+            string collectionNameForTracing)
         {
             GetMembers = getMembers;
             GetMember = getMember;
