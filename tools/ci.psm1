@@ -807,6 +807,6 @@ function Invoke-LinuxTests
         Write-Warning "Tests failed. See the issue below."
         Throw $resultError
     } else {
-        Write-Host "Tests did not fail! Nice job :)"
+        Write-Host "Tests did not fail! Nice job!"
     }
 }
