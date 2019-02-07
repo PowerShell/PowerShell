@@ -798,6 +798,11 @@ function Invoke-LinuxTests
             {
                 New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
             }
+            
+            if ($isDailyBuild)
+            {
+                New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
+            }
 
             if($isDailyBuild)
 	    {
