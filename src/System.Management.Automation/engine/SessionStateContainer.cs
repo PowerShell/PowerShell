@@ -3537,7 +3537,7 @@ namespace System.Management.Automation
 
                         // If the original target was a relative path, we want to leave it as relative if it did not require
                         // globbing to resolve.
-                        if (WildcardPattern.ContainsWildcardCharacters(content.ToString()))
+                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
                         {
                             content = globbedTarget[0];
                         }
