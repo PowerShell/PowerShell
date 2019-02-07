@@ -774,7 +774,24 @@ function Invoke-LinuxTests
                 }
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                if($isDailyBuild)
+                {
+                    if ($package -isnot [System.IO.FileInfo])
+                    {
+                        $packageObj = Get-Item $package
+                        Write-Error -Message "The PACKAGE is not a FileInfo object"
+                    }
+                    else
+                    {
+                        $packageObj = $package
+                    }
+
+                    Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+
+                    Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+                }
             }
+            
             
             if ($isDailyBuild)
             {
