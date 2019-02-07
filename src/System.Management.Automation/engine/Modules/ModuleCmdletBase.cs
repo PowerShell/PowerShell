@@ -2175,7 +2175,6 @@ namespace Microsoft.PowerShell.Commands
             // Set up to load any required assemblies that have been specified...
             List<string> tmpAssemblyList;
             List<string> assemblyList = new List<string>();
-            List<string> fixedUpAssemblyPathList = new List<string>();
 
             if (
                 !GetListOfStringsFromData(data, moduleManifestPath, "RequiredAssemblies", manifestProcessingFlags,
@@ -2217,7 +2216,6 @@ namespace Microsoft.PowerShell.Commands
                             string loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
                             WriteVerbose(loadMessage);
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
-                            fixedUpAssemblyPathList.Add(fileName);
                             doBind = true;
                         }
                     }
