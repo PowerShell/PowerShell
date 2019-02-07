@@ -43,8 +43,9 @@ $Script:community_login_map = @{
     "info@powercode-consulting.se" = "powercode"
 }
 
+# ignore dependency bumping bot (dependabot)
 $Script:attribution_ignore_list = @(
-    'dependabot[bot]@users.noreply.github.com' # dependency bumping bot
+    'dependabot[bot]@users.noreply.github.com'
 )
 
 ##############################
