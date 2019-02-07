@@ -7359,8 +7359,8 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string manifestFilename = Path.GetFileName(cmdlet.Context.PreviousModuleProcessed);
-                string moduleFileName = Path.GetFileName(sourceModule.Path);
-                message = StringUtil.Format(Modules.NotImportingFunction, func.Name, moduleFileName, manifestFilename);
+                string moduleFilename = Path.GetFileName(sourceModule.Path);
+                message = StringUtil.Format(Modules.NotImportingFunction, func.Name, moduleFilename, manifestFilename);
                 cmdlet.WriteVerbose(message);
             }
         }
