@@ -1220,8 +1220,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (var element in items)
                 {
-                    var typeEntry = element as SessionStateTypeEntry;
-                    if (typeEntry.TypeData != null)
+                    if (element is SessionStateTypeEntry typeEntry && typeEntry.TypeData != null)
                     {
                         // Skip type file entries.
                         _internalCollection.Add(element);
