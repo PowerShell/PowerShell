@@ -80,17 +80,19 @@
     </InstallExecuteSequence>
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
-        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)">
+        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="yes" Text="!(loc.ExitDialogBitmap)" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" TabSkip="yes" />
+        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" TabSkip="yes" />
+        <!-- divider between check boxes and button row -->
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"  />
+        <!-- Button row -->
+        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)" >
           <Condition Action="show">NOT Installed</Condition>
         </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
         <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
-        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.ExitDialogBitmap)" />
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
-        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
-        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
       </Dialog>
       <InstallUISequence>
           <Show Dialog="MyExitDialog" OnExit="success" />
@@ -246,22 +248,23 @@
     <Property Id="REGISTER_MANIFEST" Value="1" />
     <Property Id="ADD_PATH" Value="1" />
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization" TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>    
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
-
-      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions"/>
-      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization"/>
-      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)"/>
-      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0"/>
-      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0"/>        
     </Dialog>
   </UI>
 </Fragment>
