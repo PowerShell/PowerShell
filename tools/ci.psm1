@@ -792,7 +792,7 @@ function Invoke-LinuxTests
                     }
 
                     Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-
+                    $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
                     Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
                 }
             }
