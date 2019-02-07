@@ -109,7 +109,7 @@ Some general guidelines:
   When calling such APIs, reuse a static array when possible (e.g. `Utils.Separators.Colon`).
 
 * Avoid using string interpolations and overloads with implicit parameters like `Culture` and `StringComparison`.
-  Instead, use overloads with explicit parameters such as `String.Format(IFormatProvider, String, Object[])` and `Equals(String, String, StringComparison)`.
+  Instead, use overloads with more explicit parameters such as `String.Format(IFormatProvider, String, Object[])` and `Equals(String, String, StringComparison)`.
 
 * Avoid creating empty arrays.
   Instead, reuse the static ones via `Utils.EmptyArray<T>`.
