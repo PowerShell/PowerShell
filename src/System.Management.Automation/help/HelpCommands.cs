@@ -337,6 +337,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 helpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
                 HelpSystem_OnComplete();
+
                 // finally clear the ScriptBlockAst -> Token[] cache
                 helpSystem.ClearScriptBlockTokenCache();
             }
