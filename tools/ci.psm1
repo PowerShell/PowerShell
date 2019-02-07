@@ -773,14 +773,6 @@ function Invoke-LinuxTests
                 {
                     Write-Error -Message "Package NOT found: $package"
                 }
-                if (Test-Path $package)
-                {
-                    Write-Log "Package found: $package"
-                }
-                else
-                {
-                    Write-Error -Message "Package NOT found: $package"
-                }
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
                 if($isDailyBuild)
@@ -801,12 +793,6 @@ function Invoke-LinuxTests
                 }
             }
             
-            
-            if ($isDailyBuild)
-            {
-                New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
-            }
-            
             if ($isDailyBuild)
             {
                 New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
@@ -825,7 +811,7 @@ function Invoke-LinuxTests
 	        }
 	        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
 	        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
-	        }
+	    }
         }
         if ($IsLinux)
         {
