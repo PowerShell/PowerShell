@@ -513,10 +513,10 @@ function Invoke-AppveyorFinish
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
             if (Test-Path $package)
-	        {
-	            Write-Log "Package found: $package"
-	        }
-	        else
+	    {
+	        Write-Log "Package found: $package
+            }
+	    else
             {
                 Write-Warning -Message "Package NOT found: $package"
             }
