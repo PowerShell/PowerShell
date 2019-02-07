@@ -767,6 +767,11 @@ function Invoke-LinuxTests
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
+            
+            if ($isDailyBuild)
+            {
+                New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
+            }
 
             if($isDailyBuild)
 	    {
