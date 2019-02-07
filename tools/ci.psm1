@@ -767,56 +767,28 @@ function Invoke-LinuxTests
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
             if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            {               
+                Write-Log "pushing $package to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }
+            
+            if($isDailyBuild)
             {
-                if (Test-Path $package)
+                if ($package -isnot [System.IO.FileInfo])
                 {
-                    Write-Log "Package found: $package"
+                     $packageObj = Get-Item $package
+                     Write-Error -Message "The PACKAGE is not a FileInfo object"
                 }
                 else
                 {
-                    Write-Error -Message "Package NOT found: $package"
-                }
-                
-                Write-Log "pushing $package to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-                if($isDailyBuild)
-                {
-                    if ($package -isnot [System.IO.FileInfo])
-                    {
-                        $packageObj = Get-Item $package
-                        Write-Error -Message "The PACKAGE is not a FileInfo object"
-                    }
-                    else
-                    {
                         $packageObj = $package
-                    }
-
-                    Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-                    $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-                    Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
                 }
-            }
-            
-            if ($isDailyBuild)
-            {
-                New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
-            }
 
-            if($isDailyBuild)
-	    {
-	        if ($package -isnot [System.IO.FileInfo])
-                {
-                    $packageObj = Get-Item $package
-                    Write-Error -Message "The PACKAGE is not a FileInfo object"
-                }
-	        else
-	        {
-	           $packageObj = $package
-	        }
-	        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-	        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
-	    }
+                Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+                Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+            }
         }
+
         if ($IsLinux)
         {
             # Create and package Raspbian .tgz
