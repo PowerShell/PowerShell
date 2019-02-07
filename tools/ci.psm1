@@ -569,7 +569,6 @@ function Invoke-AppveyorFinish
             $artifacts.Add($arm64Package)
         }
 
-        Push-Artifact -Path $_ -Name 'artifacts'
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
             Write-Host "Pushing $_ as CI artifact"
