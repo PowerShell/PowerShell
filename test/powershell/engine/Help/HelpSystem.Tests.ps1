@@ -98,7 +98,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
     }
 }
 
-Describe "Testing Get-Help Progress" -Tags @('CI') {
+Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         $j = Start-Job { Get-Help DoesNotExist }
         $j | Wait-Job
