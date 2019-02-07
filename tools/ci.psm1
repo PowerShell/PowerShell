@@ -773,6 +773,14 @@ function Invoke-LinuxTests
                 {
                     Write-Error -Message "Package NOT found: $package"
                 }
+                if (Test-Path $package)
+                {
+                    Write-Log "Package found: $package"
+                }
+                else
+                {
+                    Write-Error -Message "Package NOT found: $package"
+                }
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
                 if($isDailyBuild)
