@@ -392,7 +392,6 @@ namespace System.Management.Automation
         /// <remarks>helpInfos is not null or empty.</remarks>
         private IEnumerable<HelpInfo> ForwardHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            Collection<HelpInfo> result = new Collection<HelpInfo>();
             // findout if this helpInfo needs to be processed further..
             if (helpInfo.ForwardHelpCategory == HelpCategory.None && string.IsNullOrEmpty(helpInfo.ForwardTarget))
             {
