@@ -286,12 +286,12 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    if (Test-DailyBuild) 
+    if (Test-DailyBuild)
     {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-    else 
+    else
     {
         $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
@@ -316,7 +316,7 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
         # Run tests with specified experimental features enabled
-        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) 
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
         {
             $featureName = $entry.Key
             $testFiles = $entry.Value
@@ -376,7 +376,7 @@ function Invoke-AppVeyorTest
                 # This allows us to prevent regressions to a critical engine experimental feature.
                 $arguments.Remove('Path')
             }
-            else 
+            else
             {
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
@@ -511,9 +511,12 @@ function Invoke-AppveyorFinish
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            if (Test-Path $package) {
+            if (Test-Path $package)
+	    {
 	        Write-Log "Package found: $package"
-            } else {
+            }
+	    else
+            {
                 Write-Warning -Message "Package NOT found: $package"
             }
 
@@ -592,7 +595,7 @@ function Invoke-AppveyorFinish
             throw "Some artifacts did not exist!"
         }
     }
-    catch 
+    catch
     {
         Write-Host -Foreground Red $_
         Write-Host -Foreground Red $_.ScriptStackTrace
@@ -621,7 +624,7 @@ function Invoke-LinuxTests
         # We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
     }
-    finally 
+    finally
     {
         $ProgressPreference = $originalProgressPreference
     }
@@ -672,7 +675,7 @@ function Invoke-LinuxTests
             # This allows us to prevent regressions to a critical engine experimental feature.
             $noSudoPesterParam.Remove('Path')
         }
-        else 
+        else
         {
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $noSudoPesterParam['Path'] = $testFiles
@@ -697,13 +700,13 @@ function Invoke-LinuxTests
         $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
         $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
         $sudoPesterParam['ExperimentalFeatureName'] = $featureName
-        if ($testFiles.Count -eq 0) 
+        if ($testFiles.Count -eq 0)
         {
             # If an empty array is specified for the feature name, we run all tests with the feature enabled.
             # This allows us to prevent regressions to a critical engine experimental feature.
             $sudoPesterParam.Remove('Path')
-        } 
-        else 
+        }
+        else
         {
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $sudoPesterParam['Path'] = $testFiles
@@ -757,17 +760,17 @@ function Invoke-LinuxTests
             {
                 Write-Error -Message "Package NOT found: $package"
             }
-            
+
             # Publish the packages to the nuget feed if:
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
             if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
-            {               
+            {
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
-            
+
             if($isDailyBuild)
             {
                 if ($package -isnot [System.IO.FileInfo])
@@ -790,9 +793,9 @@ function Invoke-LinuxTests
             # Create and package Raspbian .tgz
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-	    Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+	        Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
-        
+
         if ($isDailyBuild)
         {
             New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
