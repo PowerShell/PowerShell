@@ -402,13 +402,13 @@ function Invoke-AppVeyorAfterTest
     if (Test-DailyBuild)
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in CIFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
         $codeCoverageArtifacts | ForEach-Object {
             Push-Artifact -Path $_ -Name 'CodeCoverage'
+            Push-Artifact $testPackageFullName -Name 'artifacts'
         }
 
         New-TestPackage -Destination (Get-Location).Path
@@ -569,6 +569,7 @@ function Invoke-AppveyorFinish
             $artifacts.Add($arm64Package)
         }
 
+        Push-Artifact -Path $_ -Name 'artifacts'
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
             Write-Host "Pushing $_ as CI artifact"
