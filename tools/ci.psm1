@@ -792,7 +792,7 @@ function Invoke-LinuxTests
             # Create and package Raspbian .tgz
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-	        Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+	    Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
 
         if ($isDailyBuild)
