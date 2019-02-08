@@ -211,7 +211,7 @@ function Invoke-AppVeyorInstall
     if ($env:TF_BUILD)
     {
         # Generate new credential for CI (only) remoting tests.
-        Write-Verbose "Creating account for remoting tests in CI."
+        Write-Log -Message "Creating account for remoting tests in CI."
 
         # Password
         $randomObj = [System.Random]::new()
