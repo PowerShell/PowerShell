@@ -606,7 +606,7 @@ function Invoke-AppveyorFinish
 function Invoke-Bootstrap-Stage
 {
     $createPackages = Test-DailyBuild
-    Write-Verbose "Executing ci.psm1 Bootstrap Stage"
+    Write-Log -Message "Executing ci.psm1 Bootstrap Stage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
