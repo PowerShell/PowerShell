@@ -34,27 +34,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
         private const string LibraryLoadDllName = "api-ms-win-core-libraryloader-l1-2-0.dll";
         private const string LocalizationDllName = "api-ms-win-core-localization-l1-2-1.dll";
-        private const string SysInfoDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct OSVERSIONINFOEX
-        {
-            public int OSVersionInfoSize;
-            public int MajorVersion;
-            public int MinorVersion;
-            public int BuildNumber;
-            public int PlatformId;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string CSDVersion;
-            public ushort ServicePackMajor;
-            public ushort ServicePackMinor;
-            public short SuiteMask;
-            public byte ProductType;
-            public byte Reserved;
-        }
-
-        [DllImport(SysInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
 
         private const uint FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
         private const uint FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
