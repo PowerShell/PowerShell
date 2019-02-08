@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrWhiteSpace(assemblyName))
             {
                 // Remove the '.dll' if it's there...
-                var fixedName = assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                var fixedName = assemblyName.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase)
                                 ? Path.GetFileNameWithoutExtension(assemblyName)
                                 : assemblyName;
 

@@ -3535,7 +3535,12 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
                         }
 
-                        content = globbedTarget[0];
+                        // If the original target was a relative path, we want to leave it as relative if it did not require
+                        // globbing to resolve.
+                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
+                        {
+                            content = globbedTarget[0];
+                        }
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, content, context);

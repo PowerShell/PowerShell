@@ -80,6 +80,143 @@ namespace System.Management.Automation.Internal
     {
         #region Functions
 
+#if UNIX
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///Algid: ALG_ID->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptGenKey(
+            PSSafeCryptProvHandle hProv,
+            uint Algid,
+            uint dwFlags,
+            ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        public static bool CryptDestroyKey(IntPtr hKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///phProv: HCRYPTPROV*
+        ///szContainer: LPCWSTR->WCHAR*
+        ///szProvider: LPCWSTR->WCHAR*
+        ///dwProvType: DWORD->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        public static bool CryptAcquireContext(ref PSSafeCryptProvHandle phProv,
+            [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string szContainer,
+            [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string szProvider,
+            uint dwProvType,
+            uint dwFlags)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        public static bool CryptReleaseContext(IntPtr hProv, uint dwFlags)
+        {
+            throw new PSCryptoException();
+        }
+
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hHash: HCRYPTHASH->ULONG_PTR->unsigned int
+        ///Final: BOOL->int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        ///dwBufLen: DWORD->unsigned int
+        public static bool CryptEncrypt(PSSafeCryptKey hKey,
+            IntPtr hHash,
+            [MarshalAsAttribute(UnmanagedType.Bool)] bool Final,
+            uint dwFlags,
+            byte[] pbData,
+            ref int pdwDataLen,
+            int dwBufLen)
+        {
+            throw new PSCryptoException();
+        }
+
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hHash: HCRYPTHASH->ULONG_PTR->unsigned int
+        ///Final: BOOL->int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        public static bool CryptDecrypt(PSSafeCryptKey hKey,
+            IntPtr hHash,
+            [MarshalAsAttribute(UnmanagedType.Bool)] bool Final,
+            uint dwFlags,
+            byte[] pbData,
+            ref int pdwDataLen)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hExpKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///dwBlobType: DWORD->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        public static bool CryptExportKey(PSSafeCryptKey hKey,
+            PSSafeCryptKey hExpKey,
+            uint dwBlobType,
+            uint dwFlags,
+            byte[] pbData,
+            ref uint pdwDataLen)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///pbData: BYTE*
+        ///dwDataLen: DWORD->unsigned int
+        ///hPubKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptImportKey(PSSafeCryptProvHandle hProv,
+            byte[] pbData,
+            int dwDataLen,
+            PSSafeCryptKey hPubKey,
+            uint dwFlags,
+            ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///pdwReserved: DWORD*
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptDuplicateKey(PSSafeCryptKey hKey,
+                                                    ref uint pdwReserved,
+                                                    uint dwFlags,
+                                                    ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: DWORD->unsigned int
+        public static uint GetLastError()
+        {
+            throw new PSCryptoException();
+        }
+#else
+
         /// Return Type: BOOL->int
         ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
         ///Algid: ALG_ID->unsigned int
@@ -200,6 +337,7 @@ namespace System.Management.Automation.Internal
         /// Return Type: DWORD->unsigned int
         [DllImportAttribute(PinvokeDllNames.GetLastErrorDllName, EntryPoint = "GetLastError")]
         public static extern uint GetLastError();
+#endif
 
         #endregion Functions
 
@@ -1022,7 +1160,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                Dbg.Assert(false, "Session key not available to encrypt secure string");
+                throw new PSCryptoException(SecuritySupportStrings.CannotEncryptSecureString);
             }
 
             return encryptedDataAsString;
