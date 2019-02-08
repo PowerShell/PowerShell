@@ -7,5 +7,5 @@ steps:
       {
           throw "nuget.config is not created"
       }
-  displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))

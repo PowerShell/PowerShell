@@ -1,7 +1,7 @@
 #requires -Version 6.0
-
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 class CommitNode {
     [string] $Hash
     [string[]] $Parents
@@ -43,6 +43,7 @@ $Script:community_login_map = @{
     "info@powercode-consulting.se" = "powercode"
 }
 
+# ignore dependency bumping bot (dependabot):
 $Script:attribution_ignore_list = @(
     'dependabot[bot]@users.noreply.github.com'
 )
