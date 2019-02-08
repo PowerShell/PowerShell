@@ -100,7 +100,7 @@ Function Test-DailyBuild
     # if [feature] is in the commit message,
     # Run Daily tests
     $commitMessage = Get-CommitMessage
-    Write-Verbose "commitMessage: $commitMessage" -verbose
+    Write-log -message "commitMessage: $commitMessage"
 
     if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
     {
