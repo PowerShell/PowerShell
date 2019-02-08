@@ -764,13 +764,13 @@ function Invoke-LinuxTests
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
-            if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            if($isFullBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
                 Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
 
-            if($isDailyBuild)
+            if($isFullBuild)
             {
                 if ($package -isnot [System.IO.FileInfo])
                 {
@@ -795,7 +795,7 @@ function Invoke-LinuxTests
             Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
         }
 
-        if ($isDailyBuild)
+        if ($isFullBuild)
         {
             New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
         }
