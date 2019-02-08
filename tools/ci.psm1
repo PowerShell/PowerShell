@@ -143,8 +143,8 @@ Function Set-BuildVariable
 
     if($env:TF_BUILD)
     {
-        #In VSTS
-        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        # In VSTS
+        Write-Verbose "##vso[task.setvariable variable=$Name;]$Value"
         # The variable will not show up until the next task.
         # Setting in the current session for the same behavior as the CI
         Set-Item env:/$name -Value $Value
@@ -204,7 +204,7 @@ function Invoke-AppVeyorInstall
     {
         if ($env:BUILD_REASON -eq 'Schedule')
         {
-            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+            Write-Verbose "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
         }
     }
 
@@ -442,7 +442,7 @@ function Push-Artifact
 
     if ($env:TF_BUILD) {
         # In Azure DevOps
-        Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
+        Write-Verbose "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
 
@@ -572,7 +572,7 @@ function Invoke-AppveyorFinish
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
-            Write-Host "Pushing $_ as CI artifact"
+            Write-Verbose "Pushing $_ as CI artifact"
             if(Test-Path $_)
             {
                 Push-Artifact -Path $_ -Name 'artifacts'
@@ -606,7 +606,7 @@ function Invoke-AppveyorFinish
 function Invoke-Bootstrap-Stage
 {
     $createPackages = Test-DailyBuild
-    Write-Host -Foreground Green "Executing ci.psm1 Bootstrap Stage"
+    Write-Verbose "Executing ci.psm1 Bootstrap Stage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:$createPackages
@@ -616,7 +616,7 @@ function Invoke-Bootstrap-Stage
 function Invoke-LinuxTests
 {
     $releaseTag = Get-ReleaseTag
-    Write-Host -Foreground Green "Executing ci.psm1 build and test on a Linux based operating system."
+    Write-Verbose "Executing ci.psm1 build and test on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
@@ -802,10 +802,13 @@ function Invoke-LinuxTests
     }
 
     # If the tests did not pass, throw the reason why
-    if ( $result -eq "FAIL" ) {
+    if ( $result -eq "FAIL" )
+    {
         Write-Warning "Tests failed. See the issue below."
         Throw $resultError
-    } else {
-        Write-Host "Tests did not fail! Nice job!"
+    }
+    else
+    {
+        Write-Verbose "Tests did not fail! Nice job!"
     }
 }
