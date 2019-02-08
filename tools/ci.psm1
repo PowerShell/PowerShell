@@ -204,7 +204,7 @@ function Invoke-AppVeyorInstall
     {
         if ($env:BUILD_REASON -eq 'Schedule')
         {
-            Write-Verbose "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
         }
     }
 
