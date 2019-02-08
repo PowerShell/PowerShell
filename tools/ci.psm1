@@ -144,7 +144,7 @@ Function Set-BuildVariable
     if($env:TF_BUILD)
     {
         # In VSTS
-        Write-Verbose "##vso[task.setvariable variable=$Name;]$Value"
+        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
         # The variable will not show up until the next task.
         # Setting in the current session for the same behavior as the CI
         Set-Item env:/$name -Value $Value
