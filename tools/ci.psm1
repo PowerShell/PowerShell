@@ -230,7 +230,7 @@ function Invoke-AppVeyorInstall
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
-        Write-Verbose "Checking for LocalAccountTokenFilterPolicy in the CI."
+        Write-Log -Message "Checking for LocalAccountTokenFilterPolicy in the CI."
         $haveLocalAccountTokenFilterPolicy = $false
         try
         {
