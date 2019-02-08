@@ -154,13 +154,10 @@ namespace Microsoft.PowerShell.Cim
 
             foreach (CimProperty cimProperty in cimInstance.CimInstanceProperties)
             {
-                if (cimProperty != null)
+                if (cimProperty != null && predicate(cimProperty.Name))
                 {
-                    if (predicate(cimProperty.Name))
-                    {
-                        PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
-                        return prop;
-                    }
+                    PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
+                    return prop;
                 }
 
                 if (predicate(RemotingConstants.ComputerNameNoteProperty))

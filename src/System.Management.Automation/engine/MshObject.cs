@@ -119,13 +119,7 @@ namespace System.Management.Automation
 
         internal static T TypeTableGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, TypeTable typeTableToUse, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            if (typeTableToUse == null)
-            {
-                return default;
-            }
-            var member = typeTableToUse.GetFirstOrDefaultMember<T>(msjObj.InternalTypeNames, predicate);
-
-            return member;
+            return typeTableToUse?.GetFirstOrDefaultMember<T>(msjObj.InternalTypeNames, predicate);
         }
 
         private static T AdapterGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
@@ -236,13 +230,7 @@ namespace System.Management.Automation
         private static PSMemberInfo DotNetGetFirstOrDefaultMemberDelegate(PSObject msjObj, MemberNamePredicate predicate)
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (msjObj.InternalBaseDotNetAdapter != null)
-            {
-                PSMemberInfo retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<PSMemberInfo>(msjObj._immediateBaseObject, predicate);
-                return retValue;
-            }
-
-            return null;
+            return msjObj.InternalBaseDotNetAdapter?.BaseGetMember<PSMemberInfo>(msjObj._immediateBaseObject, predicate);
         }
 
 
@@ -2451,13 +2439,10 @@ namespace System.Management.Automation
             {
                 foreach (var instanceMember in _instanceMembers)
                 {
-                    if (instanceMember is PSPropertyInfo propInfo)
+                    if (instanceMember is PSPropertyInfo propInfo
+                        && predicate.Invoke(propInfo.Name))
                     {
-                        var found = predicate.Invoke(propInfo.Name);
-                        if (found)
-                        {
-                            return propInfo;
-                        }
+                        return propInfo;
                     }
                 }
             }

@@ -5297,12 +5297,7 @@ namespace System.Management.Automation
         private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             XmlNode node = FindFirstNodeOrDefault(obj, predicate);
-            if (node == null)
-            {
-                return null;
-            }
-
-            return new PSProperty(node.LocalName, this, obj, node);
+            return node == null ? null : new PSProperty(node.LocalName, this, obj, node);
         }
 
         /// <summary>

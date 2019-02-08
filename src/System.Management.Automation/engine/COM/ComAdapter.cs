@@ -92,19 +92,16 @@ namespace System.Management.Automation
             {
                 foreach (ComProperty prop in _comTypeInfo.Properties.Values)
                 {
-                    if (prop.IsParameterized)
-                    {
-                        if (lookingForParameterizedProperties)
-                        {
-                            if (predicate.Invoke(prop.Name))
-                            {
-                                return new PSParameterizedProperty(prop.Name, this, obj, prop) as T;
-                            }
-                        }
-                    }
-                    else if (lookingForProperties)
+                    if (prop.IsParameterized
+                        && lookingForParameterizedProperties
+                        && predicate.Invoke(prop.Name))
                     {
                         return new PSParameterizedProperty(prop.Name, this, obj, prop) as T;
+                    }
+
+                    if (lookingForProperties && predicate.Invoke(prop.Name))
+                    {
+                        return new PSProperty(prop.Name, this, obj, prop) as T;
                     }
                 }
             }
