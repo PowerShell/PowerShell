@@ -226,7 +226,7 @@ function Invoke-AppVeyorInstall
         # Provide credentials globally for remote tests.
         $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
         $ciRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-	$ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
