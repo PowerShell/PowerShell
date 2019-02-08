@@ -5699,7 +5699,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.dotNetInstanceAdapter)
+            if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.DotNetInstanceAdapter)
             {
                 List<MethodBase> candidateMethods = null;
                 foreach (var member in _classScope.GetMembers(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
@@ -5715,7 +5715,7 @@ namespace System.Management.Automation.Language
                             if ((getMethod == null || getMethod.IsFamily || getMethod.IsPublic) &&
                                 (setMethod == null || setMethod.IsFamily || setMethod.IsPublic))
                             {
-                                memberInfo = new PSProperty(this.Name, PSObject.dotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
+                                memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
                             }
                         }
                         else
@@ -5725,7 +5725,7 @@ namespace System.Management.Automation.Language
                             {
                                 if (fieldInfo.IsFamily)
                                 {
-                                    memberInfo = new PSProperty(this.Name, PSObject.dotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
+                                    memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
                                 }
                             }
                             else
@@ -5763,7 +5763,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
-                        memberInfo = PSMethod.Create(this.Name, PSObject.dotNetInstanceAdapter, null, method);
+                        memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
                     }
                 }
             }
@@ -6972,7 +6972,7 @@ namespace System.Management.Automation.Language
         {
             MethodInfo result = null;
 
-            var psMethod = PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMethod>(PSObject.Base(target.Value), methodName);
+            var psMethod = PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMethod>(PSObject.Base(target.Value), methodName);
             if (psMethod != null)
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;

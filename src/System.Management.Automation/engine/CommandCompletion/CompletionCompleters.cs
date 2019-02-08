@@ -6563,7 +6563,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    members = PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type);
+                    members = PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type);
                 }
                 else
                 {

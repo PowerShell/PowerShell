@@ -78,17 +78,17 @@ namespace System.Management.Automation
             PSMemberInfo member = allMembers[name];
             if (member == null)
             {
-                PSObject.memberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
+                PSObject.MemberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
                 return null;
             }
 
             if (member is T memberAsT)
             {
-                PSObject.memberResolution.WriteLine("\"{0}\" present in type table.", name);
+                PSObject.MemberResolution.WriteLine("\"{0}\" present in type table.", name);
                 return memberAsT;
             }
 
-            PSObject.memberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
+            PSObject.MemberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
                 name, member.GetType(), typeof(T));
             return null;
         }
@@ -107,7 +107,7 @@ namespace System.Management.Automation
             }
 
             PSMemberInfoInternalCollection<T> members = typeTableToUse.GetMembers<T>(msjObj.InternalTypeNames);
-            PSObject.memberResolution.WriteLine("Type table members: {0}.", members.Count);
+            PSObject.MemberResolution.WriteLine("Type table members: {0}.", members.Count);
             return members;
         }
 
@@ -132,18 +132,18 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized)
             {
-                if (msjObj.adaptedMembers == null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return null;
                 }
 
-                T adaptedMember = msjObj.adaptedMembers[name] as T;
-                PSObject.memberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
+                T adaptedMember = msjObj.AdaptedMembers[name] as T;
+                PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
 
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj.ImmediateBaseObject, name);
-            PSObject.memberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
+            PSObject.MemberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
             return retValue;
         }
 
@@ -151,12 +151,12 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized && typeof(PSPropertyInfo).IsAssignableFrom(typeof(T)))
             {
-                if (msjObj.adaptedMembers == null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return null;
                 }
 
-                foreach (var adaptedMember in msjObj.adaptedMembers)
+                foreach (var adaptedMember in msjObj.AdaptedMembers)
                 {
                     if (predicate(adaptedMember.Name))
                     {
@@ -193,17 +193,17 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized)
             {
-                if (msjObj.adaptedMembers == null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return new PSMemberInfoInternalCollection<T>();
                 }
 
-                PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.adaptedMembers.Count);
-                return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.adaptedMembers);
+                PSObject.MemberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.AdaptedMembers.Count);
+                return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.AdaptedMembers);
             }
 
             PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-            PSObject.memberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
+            PSObject.MemberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
             return retValue;
         }
 
@@ -213,7 +213,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-                PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
+                PSObject.MemberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
                 return retValue;
             }
 
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
-                PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
+                PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
 
@@ -522,7 +522,7 @@ namespace System.Management.Automation
 
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
                         return info != null
-                                   ? new AdapterSet(new ComAdapter(info), dotNetInstanceAdapter)
+                                   ? new AdapterSet(new ComAdapter(info), DotNetInstanceAdapter)
                                    : PSObject.s_dotNetInstanceAdapterSet;
                     }
                     else
@@ -624,10 +624,7 @@ namespace System.Management.Automation
 
         #region instance fields
 
-        private readonly object _lockObject = new Object();
-
-        // This is toString value set on deserialization
-        private string _toStringFromDeserialization;
+        private readonly object _lockObject = new object();
 
         private ConsolidatedString _typeNames;
 
@@ -644,29 +641,32 @@ namespace System.Management.Automation
         private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
+        private PSObjectFlags _flags;
+        /// <summary>
+        /// This field contains a stream th
+        /// </summary>
+        private WriteStreamType _writeStream;
+
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        private PSMemberInfoInternalCollection<PSPropertyInfo> _adaptedMembers;
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        private PSMemberInfoInternalCollection<PSPropertyInfo> _clrMembers;
+        // This is toString value set on deserialization
+        private string _toStringFromDeserialization;
         /// <summary>
         /// If this is non-null return this string as the ToString() for this wrapped object.
         /// </summary>
-        internal string TokenText;
-
-        /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> adaptedMembers;
-
-        /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> clrMembers;
-
-        private PSObjectFlags _flags;
-        private WriteStreamType _writeStream;
+        private string _tokenText;
 
         #endregion instance fields
 
-        internal static PSTraceSource memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
+        private static readonly PSTraceSource s_memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
 
         private static readonly ConditionalWeakTable<object, ConsolidatedString> s_typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
 
@@ -674,21 +674,21 @@ namespace System.Management.Automation
         private static readonly Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
 
-        internal static readonly DotNetAdapter dotNetInstanceAdapter = new DotNetAdapter();
+        private static readonly DotNetAdapter s_dotNetInstanceAdapter = new DotNetAdapter();
         private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
-        internal static readonly DotNetAdapter dotNetStaticAdapter = new DotNetAdapter(true);
+        private static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
 
-        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(dotNetInstanceAdapter, null);
+        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
         private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
-                                    PSObject.dotNetInstanceAdapter);
+                                    PSObject.DotNetInstanceAdapter);
 #if !UNIX
-        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
-        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
 #endif
         private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
         private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
@@ -725,11 +725,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is the adapter that will depend on the type of baseObject.
         /// </summary>
-        internal Adapter InternalAdapter
-        {
-            get => InternalAdapterSet.OriginalAdapter;
-            set => InternalAdapterSet.OriginalAdapter = value;
-        }
+        internal Adapter InternalAdapter => InternalAdapterSet.OriginalAdapter;
 
         /// <summary>
         /// This is the adapter that is used to resolve the base dotnet members for an
@@ -1059,7 +1055,7 @@ namespace System.Management.Automation
             }
 
             var objType = obj as Type ?? obj.GetType();
-            return dotNetStaticAdapter.BaseGetMember<PSMemberInfo>(objType, methodName);
+            return DotNetStaticAdapter.BaseGetMember<PSMemberInfo>(objType, methodName);
         }
 
         /// <summary>
@@ -2032,7 +2028,7 @@ namespace System.Management.Automation
         {
             if (this.IsDeserialized)
             {
-                return this.adaptedMembers != null;
+                return this.AdaptedMembers != null;
             }
 
             return !this.ImmediateBaseObjectIsEmpty;
@@ -2040,7 +2036,7 @@ namespace System.Management.Automation
 
         internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties()
         {
-            return GetProperties(this.adaptedMembers, this.InternalAdapter);
+            return GetProperties(this.AdaptedMembers, this.InternalAdapter);
         }
 
         private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
@@ -2065,15 +2061,21 @@ namespace System.Management.Automation
             if (!target.IsDeserialized)
             {
                 target.IsDeserialized = source.IsDeserialized;
-                target.adaptedMembers = source.adaptedMembers;
-                target.clrMembers = source.clrMembers;
+                target._adaptedMembers = source.AdaptedMembers;
+                target._clrMembers = source.ClrMembers;
             }
 
             if (target._toStringFromDeserialization == null)
             {
                 target._toStringFromDeserialization = source._toStringFromDeserialization;
-                target.TokenText = source.TokenText;
+                target._tokenText = source.TokenText;
             }
+        }
+
+        internal string TokenText
+        {
+            get => _tokenText;
+            set => _tokenText = value;
         }
 
         /// <summary>
@@ -2413,6 +2415,32 @@ namespace System.Management.Automation
             get => _writeStream;
             set => _writeStream = value;
         }
+
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers
+        {
+            get => _adaptedMembers;
+            set => _adaptedMembers = value;
+        }
+
+        internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
+
+        internal static PSTraceSource MemberResolution => s_memberResolution;
+
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> ClrMembers
+        {
+            get => _clrMembers;
+            set => _clrMembers = value;
+        }
+
+        internal static DotNetAdapter DotNetInstanceAdapter => s_dotNetInstanceAdapter;
 
         /// <summary>
         /// Gets an instance member if it's name matches the predicate. Otherwise null.

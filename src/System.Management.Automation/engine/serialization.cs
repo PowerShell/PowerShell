@@ -3468,9 +3468,9 @@ namespace System.Management.Automation
             }
 
             // process properties that were originally "adapted" properties
-            if (deserializedObject.adaptedMembers != null)
+            if (deserializedObject.AdaptedMembers != null)
             {
-                foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.adaptedMembers)
+                foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
                     PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
                     if (deserializedProperty == null)
@@ -3500,7 +3500,7 @@ namespace System.Management.Automation
                 }
 
                 // skip adapted properties
-                if ((deserializedObject.adaptedMembers != null) && (deserializedObject.adaptedMembers[deserializedProperty.Name] != null))
+                if ((deserializedObject.AdaptedMembers != null) && (deserializedObject.AdaptedMembers[deserializedProperty.Name] != null))
                 {
                     continue;
                 }
@@ -3648,7 +3648,7 @@ namespace System.Management.Automation
                 else if (IsNextElement(SerializationStrings.ToStringElementTag))
                 {
                     dso.ToStringFromDeserialization = ReadDecodedElementString(SerializationStrings.ToStringElementTag);
-                    dso.InstanceMembers.Add(PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "ToString"));
+                    dso.InstanceMembers.Add(PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "ToString"));
                     PSGetMemberBinder.SetHasInstanceMember("ToString");
                     // Fix for Win8:75437
                     // The TokenText property is used in type conversion and it is not being populated during deserialization
@@ -3828,14 +3828,14 @@ namespace System.Management.Automation
             // Since we are adding baseobject properties as propertybag,
             // mark the object as deserialized.
             dso.IsDeserialized = true;
-            dso.adaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+            dso.AdaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             // Add the GetType method to the instance members, so that it works on deserialized psobjects
-            dso.InstanceMembers.Add(PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "GetType"));
+            dso.InstanceMembers.Add(PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "GetType"));
             PSGetMemberBinder.SetHasInstanceMember("GetType");
 
             // Set Clr members to a collection which is empty
-            dso.clrMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+            dso.ClrMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             if (ReadStartElementAndHandleEmpty(SerializationStrings.AdapterProperties))
             {
@@ -3845,7 +3845,7 @@ namespace System.Management.Automation
                     string property = ReadNameAttribute();
                     object value = ReadOneObject();
                     PSProperty prop = new PSProperty(property, value);
-                    dso.adaptedMembers.Add(prop);
+                    dso.AdaptedMembers.Add(prop);
                 }
 
                 ReadEndElement();
