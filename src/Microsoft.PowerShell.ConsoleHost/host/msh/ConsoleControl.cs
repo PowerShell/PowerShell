@@ -758,7 +758,7 @@ namespace Microsoft.PowerShell
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
-                    buffer,
+                    out buffer,
                     (DWORD)charactersToRead,
                     out charsReadUnused,
                     ref control);
