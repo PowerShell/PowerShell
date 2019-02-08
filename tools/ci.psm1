@@ -616,7 +616,7 @@ function Invoke-Bootstrap-Stage
 function Invoke-LinuxTests
 {
     $releaseTag = Get-ReleaseTag
-    Write-Verbose "Executing ci.psm1 build and test on a Linux based operating system."
+    Write-Log -Message "Executing ci.psm1 build and test on a Linux based operating system."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
