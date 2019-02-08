@@ -44,7 +44,7 @@
     <WixVariable Id="WixUIBannerBmp" Value="assets\WixUIBannerBmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.bmp" />
     <WixVariable Id="WixUIExclamationIco" Value="assets\WixUIInfoIco.bmp" />
-    <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
+    <WixVariable Id="WixUIInfoIco" Value="assets\ps_black_32x32.ico" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
@@ -281,7 +281,6 @@
       <!--
       First-time install dialog sequence:
       - WixUI_WelcomeDlg
-      - WixUI_LicenseAgreementDlg
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
       - WixUI_VerifyReadyDlg
@@ -319,16 +318,13 @@
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
-      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">NOT Installed</Publish>
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
-      <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">LicenseAccepted = "1"</Publish>
-
-      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
 
-      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
