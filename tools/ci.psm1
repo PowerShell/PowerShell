@@ -442,7 +442,7 @@ function Push-Artifact
 
     if ($env:TF_BUILD) {
         # In Azure DevOps
-        Write-Verbose "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
+        Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
 
