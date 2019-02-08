@@ -68,7 +68,7 @@ namespace System.Management.Automation
                 return null;
             PSSnapinQualifiedName result = null;
             string[] splitName = name.Split(Utils.Separators.Backslash);
-            if (splitName.Length < 0 || splitName.Length > 2)
+            if (splitName.Length == 0 || splitName.Length > 2)
                 return null;
             result = new PSSnapinQualifiedName(splitName);
             // If the shortname is empty, then return null...
