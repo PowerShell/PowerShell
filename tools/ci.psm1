@@ -572,7 +572,7 @@ function Invoke-AppveyorFinish
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
-            Write-Verbose "Pushing $_ as CI artifact"
+            Write-Log -Message "Pushing $_ as CI artifact"
             if(Test-Path $_)
             {
                 Push-Artifact -Path $_ -Name 'artifacts'
