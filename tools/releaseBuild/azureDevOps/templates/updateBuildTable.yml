@@ -4,7 +4,7 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: Package ES CodeHub Lab E
+    name: Hosted Mac Internal
 
   steps:
   - template: SetVersionVariables.yml
