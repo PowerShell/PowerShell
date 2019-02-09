@@ -35,11 +35,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 -------------------------------------------------------------------
 
-<<<<<<< HEAD
-https://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
-=======
 Microsoft.NETCore.Platforms 2.1.0 - MIT
->>>>>>> upstream/master
 
 The MIT License (MIT)
 
