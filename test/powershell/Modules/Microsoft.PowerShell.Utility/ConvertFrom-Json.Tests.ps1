@@ -2,7 +2,11 @@
 # Licensed under the MIT License.
 
 function New-NestedJson {
-    Param([int] $Depth)
+    Param(
+        [ValidateRange(1, 2048)]
+        [int]
+        $Depth
+    )
 
     $nestedJson = "true"
 
@@ -16,7 +20,7 @@ function New-NestedJson {
 function Count-ObjectDepth {
     Param([PSCustomObject] $InputObject)
 
-    for ($i=1; $i -le 100000; $i++)
+    for ($i=1; $i -le 2048; $i++)
     {
         $InputObject = Select-Object -InputObject $InputObject -ExpandProperty $i
         if ($InputObject -eq $true)

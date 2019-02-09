@@ -17,12 +17,14 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
 
         function New-NestedJson {
             Param(
-                [int] $Depth
+                [ValidateRange(1, 2048)]
+                [int]
+                $Depth
             )
 
             $nestedJson = "true"
 
-            1..$Depth | ForEach-Object {
+            $Depth..1 | ForEach-Object {
                 $nestedJson = '{"' + $_ + '":' + $nestedJson + '}'
             }
 
