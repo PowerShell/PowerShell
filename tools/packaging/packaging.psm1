@@ -3158,11 +3158,17 @@ function New-DotnetSdkContainerFxdPackage {
                 # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
                 # win10-x64 (Nano Server)
                 # win-arm (Nano Server)
+                # win-x64 to get PowerShell.Native components
                 # linux-musl-x64 (Alpine 3.8)
                 # linux-x64 (bionic / stretch)
                 # unix, linux, win for dependencies
-                # win-x64 to get PowerShell.Native components
-                $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+                # linux-arm and linux-arm64 for arm containers
+
+                $runtimesToKeep = if ($Environment.IsWindows) {
+                    'win10-x64', 'win-arm', 'win-x64', 'win'
+                } else {
+                    'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64'
+                }
 
                 $runtimeFolder | ForEach-Object {
                     Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
@@ -3192,5 +3198,67 @@ function New-DotnetSdkContainerFxdPackage {
         Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
     } else {
         Write-Log "Package not found: $destinationPackageFullName"
+    }
+}
+
+function New-GlobalToolNupkg
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $LinuxBinPath,
+        [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter(Mandatory)] [string] $DestinationPath,
+        [switch] $UnifiedPackage,
+        [string] $ShimDllPath,
+        [string] $ShimConfigPath
+    )
+
+    $packageInfo = @()
+
+    if ($UnifiedPackage)
+    {
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool"; Type = "Unified"}
+    }
+    else
+    {
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool.Linux"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool.Windows"; Type = "Windows"}
+    }
+
+    $packageInfo | ForEach-Object {
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
+
+        switch ($_.Type)
+        {
+            "Unified"
+            {
+                $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
+                $linuxFolder = New-Item (Join-Path $ridFolder "linux") -ItemType Directory
+
+                Copy-Item "$WindowsBinPath/*" -Destination $winFolder -Recurse
+                Copy-Item "$LinuxBinPath/*" -Destination $linuxFolder -Recurse
+                Copy-Item $ShimDllPath -Destination $ridFolder
+                Copy-Item $ShimConfigPath -Destination $ridFolder
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
+            }
+
+            "Linux"
+            {
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "Windows"
+            {
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+        }
+
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f "$_.PackageName", $PackageVersion
+        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$($_.PackageName).nuspec")
+        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml")
+        New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
     }
 }
