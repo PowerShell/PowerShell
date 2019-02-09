@@ -3,6 +3,8 @@ jobs:
   displayName: Update Build Information Tbale
   dependsOn:
     ${{ parameters.parentJobs }}
+  
+  # the package EZ pools don't have the latest module needed to run this job
   pool:
     name: Hosted Mac Internal
 
