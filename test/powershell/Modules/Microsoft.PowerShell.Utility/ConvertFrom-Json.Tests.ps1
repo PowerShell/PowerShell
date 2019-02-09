@@ -87,7 +87,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         Param($AsHashtable)
         $nestedJson = New-NestedJson -Depth 1024
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable
 
         if ($AsHashtable)
         {
@@ -103,7 +103,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         Param($AsHashtable)
         $nestedJson = New-NestedJson -Depth 1025
 
-        { $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable } |
+        { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
 }
@@ -125,7 +125,7 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
         Param($AsHashtable, $Depth)
         $nestedJson = New-NestedJson -Depth ($Depth - 1)
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth:$Depth
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth $Depth
 
         if ($AsHashtable)
         {
@@ -143,7 +143,7 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
         Param($AsHashtable, $Depth)
         $nestedJson = New-NestedJson -Depth:$Depth
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth $Depth
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth $Depth
 
         if ($AsHashtable)
         {
@@ -161,7 +161,7 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
         Param($AsHashtable, $Depth)
         $nestedJson = New-NestedJson -Depth ($Depth + 1)
 
-        { $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth $Depth } |
+        { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth $Depth } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
 }
