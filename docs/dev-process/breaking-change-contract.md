@@ -5,7 +5,7 @@ We have a serious commitment to backwards compatibility with all earlier version
 Below is a summary of our approach to handing breaking changes including what kinds of things constitute breaking changes, how we categorize them, and how we decide what we're willing to take.
 
 Note that these rules only apply to existing stable features that have shipped in a supported release. New features marked as “in preview” that are still under development may be modified from one preview release to the next.
-These are *not* considered breaking changes.
+These are **not** considered breaking changes.
 
 To help triage breaking changes, we classify them in to four buckets:
 
