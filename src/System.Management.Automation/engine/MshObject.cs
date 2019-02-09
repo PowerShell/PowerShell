@@ -630,8 +630,9 @@ namespace System.Management.Automation
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
         private PSObjectFlags _flags;
+
         /// <summary>
-        /// This field contains a stream th
+        /// This field contains a stream type used by the formatting system.
         /// </summary>
         private WriteStreamType _writeStream;
 
