@@ -34,7 +34,12 @@ jobs:
               buildid = '$(Build.BuildId)'
       
             }
-      
+      While(!$result.IsCompleted)
+      {
+        Write-Verbose -message "waiting for result" -verbose
+        Start-Sleep -Seconds 1
+      }
+
       if(!$result.IsCompletedSuccessfully)
       {
           $result
