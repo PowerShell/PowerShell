@@ -1,0 +1,41 @@
+jobs:
+- job: updateBuildTable
+  displayName: Update Build Information Tbale
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: Package ES CodeHub Lab E
+
+  steps:
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      install-module azstoragetable.travisez13 -Scope CurrentUser -Force -SkipPublisherCheck
+    displayName: 'Install Azure Table Module'
+
+  - powershell: |
+      $az_key = ConvertTo-SecureString -Force -String '$(az_key)' -AsPlainText
+      $az_key_cred = [PSCredential]::new('$(az_appid)',$az_key)
+
+      Write-Verbose "Connecting to Azure ..." -verbose
+      Connect-AzAccount -ServicePrincipal -Credential $az_key_cred -TenantId '$(az_tenantid)'   -force -scope process
+
+      $table = Get-AzStorageTableTable -resourceGroup pscoredata -storageAccountName pscorebuilddata -tableName buildData
+      
+      Write-Verbose "Removing existing row, if it exists ..." -verbose
+      $row = Remove-AzStorageTableRow -table $table -partitionkey '$(System.DefinitionId)' -rowKey '$(ReleaseTagVar)'
+
+      Write-Verbose "Adding new row ..." -verbose
+      $result = Add-AzStorageTableRow -table $table -partitionkey '$(System.DefinitionId)' -rowKey '$(ReleaseTagVar)' -property @{
+              buildid = '$(Build.BuildId)'
+      
+            }
+      
+      if(!$result.IsCompletedSuccessfully)
+      {
+          $result
+          throw "adding row failed"
+      }   
+    displayName: 'Add Row to Build Information Table'
