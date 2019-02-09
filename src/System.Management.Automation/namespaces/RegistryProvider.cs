@@ -4017,9 +4017,6 @@ namespace Microsoft.PowerShell.Commands
             // Escape any wildcard characters in the path
             path = EscapeSpecialChars(path);
 
-            // Wrap the key in an PSObject
-            PSObject outputObject = PSObject.AsPSObject(key.RegistryKey);
-
             // Add the registry values to the PSObject
             string[] valueNames = key.GetValueNames();
 
@@ -4033,7 +4030,14 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            outputObject.AddOrSetProperty("Property", valueNames);
+
+            // Wrap the key in an PSObject
+            PSObject outputObject = new RegistryPSObject(
+                (RegistryKey) key.RegistryKey,
+                PSDriveInfo,
+                this,
+                valueNames);
+
 
             WriteItemObject(outputObject, path, true);
         }
@@ -4145,6 +4149,79 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion Private members
+
+        private protected override bool TryGetProviderPSObject(object item, PSDriveInfo driveInfo, out PSObject result)
+        {
+            if (item is RegistryPSObject obj)
+            {
+                result = obj;
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        class RegistryPSObject : PSObject, IPSObjectExtendedMemberInfo
+        {
+            private readonly RegistryKey _key;
+            private readonly PSDriveInfo _driveInfo;
+            private readonly RegistryProvider _provider;
+            private  string _parentPath;
+            private string _path;
+            private string _name;
+            private readonly string[] _properties;
+
+            public RegistryPSObject(RegistryKey key, PSDriveInfo driveInfo, RegistryProvider provider, string[] properties) : base(key)
+            {
+                _key = key;
+                _driveInfo = driveInfo;
+                _provider = provider;
+                _properties = properties;
+            }
+
+            [PSExtensionMember]
+            public string PSParentPath => _parentPath ?? (_parentPath = _provider.GetParentPath(_key.Name, _driveInfo.Root));
+
+            [PSExtensionMember]
+            public string PSPath => _path ?? (_path = LocationGlobber.GetProviderQualifiedPath(_key.Name, _provider.ProviderInfo));
+
+            [PSExtensionMember]
+            public string PSChildName => _name ?? (_name =_provider.GetChildName(_key.Name));
+
+            [PSExtensionMember]
+            public bool PSIsContainer => true;
+
+            [PSExtensionMember]
+            public ProviderInfo PSProvider => _driveInfo.Provider;
+
+            [PSExtensionMember]
+            public string[] Property => _properties;
+
+            T IPSObjectExtendedMemberInfo.GetFirstOrDefault<T>(MemberNamePredicate predicate)
+            {
+                string GetMatchedPropertyName(MemberNamePredicate pred)
+                {
+                    if (pred(nameof(PSParentPath)))
+                        return nameof(PSParentPath);
+                    if (pred(nameof(PSPath)))
+                        return nameof(PSPath);
+                    if (pred(nameof(PSChildName)))
+                        return nameof(PSChildName);
+                    if (pred(nameof(PSIsContainer)))
+                        return nameof(PSIsContainer);
+                    if (pred(nameof(PSProvider)))
+                        return nameof(PSProvider);
+                    return null;
+                }
+
+                var propertyName = GetMatchedPropertyName(predicate);
+                return propertyName == null ? null : DotNetInstanceAdapter.GetDotNetProperty<T>(this, propertyName);
+            }
+
+            T IPSObjectExtendedMemberInfo.GetMember<T>(string name) => DotNetInstanceAdapter.GetDotNetProperty<T>(this, name);
+            void IPSObjectExtendedMemberInfo.AddExtensionMembers<T>(PSMemberInfoInternalCollection<T> returnValue) => DotNetInstanceAdapter.AddExtensionProperties(this, returnValue);
+        }
     }
 
     /// <summary>

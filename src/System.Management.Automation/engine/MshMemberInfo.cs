@@ -1042,6 +1042,7 @@ namespace System.Management.Automation
 
         internal object serializedValue;
         internal bool isDeserialized;
+        internal bool isExtensionProperty;
 
         /// <summary>
         /// This will be either instance.adapter or instance.clrAdapter.
@@ -1103,7 +1104,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type.
         /// </summary>
-        public override PSMemberTypes MemberType => PSMemberTypes.Property;
+        public override PSMemberTypes MemberType => isExtensionProperty ? PSMemberTypes.CodeProperty : PSMemberTypes.Property;
 
         private object GetAdaptedValue()
         {
@@ -4825,7 +4826,9 @@ namespace System.Management.Automation
                         }
                     }
 
-                    return null;
+                    return _mshOwner is IPSObjectExtendedMemberInfo memberInfo
+                        ? memberInfo.GetMember<T>(name)
+                        : null;
                 }
             }
         }
@@ -4892,6 +4895,11 @@ namespace System.Management.Automation
                         T memberToAdd = collection.CloneOrReplicateObject(delegateOwner, member);
                         returnValue.Add(memberToAdd);
                     }
+                }
+
+                if (_mshOwner is IPSObjectExtendedMemberInfo memberInfo)
+                {
+                    memberInfo.AddExtensionMembers<T>(returnValue);
                 }
 
                 return returnValue;
@@ -5015,7 +5023,9 @@ namespace System.Management.Automation
                 }
             }
 
-            return null;
+            return _mshOwner is IPSObjectExtendedMemberInfo psMemberInfo
+                ? psMemberInfo.GetFirstOrDefault<PSMemberInfo>(predicate)
+                : null;
         }
 
         #endregion overrides

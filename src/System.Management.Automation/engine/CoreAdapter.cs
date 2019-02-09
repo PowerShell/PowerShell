@@ -3457,7 +3457,8 @@ namespace System.Management.Automation
         /// of type.
         /// </summary>
         /// <param name="type">Type with properties to load in typeTable.</param>
-        private static CacheTable GetInstancePropertyReflectionTable(Type type)
+        /// <param name="declaredOnly">true if one properties declared on the type should be returned.</param>
+        private static CacheTable GetInstancePropertyReflectionTable(Type type, bool declaredOnly = false)
         {
             lock (s_instancePropertyCacheTable)
             {
@@ -3468,7 +3469,8 @@ namespace System.Management.Automation
                 }
 
                 typeTable = new CacheTable();
-                PopulatePropertyReflectionTable(type, typeTable, instanceBindingFlags);
+                var flags = declaredOnly ? instanceBindingFlags | BindingFlags.DeclaredOnly : instanceBindingFlags;
+                PopulatePropertyReflectionTable(type, typeTable, flags);
                 s_instancePropertyCacheTable[type] = typeTable;
                 return typeTable;
             }
@@ -3729,6 +3731,41 @@ namespace System.Management.Automation
                         // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
                         members.Add(new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
                             this, obj, parameterizedPropertyEntry) as T);
+                    }
+                }
+            }
+        }
+
+        public void AddExtensionProperties<T>(object obj, PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo
+        {
+            bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
+
+            if (!lookingForProperties)
+            {
+                return;
+            }
+
+            CacheTable table = GetInstancePropertyReflectionTable(obj.GetType(), declaredOnly: true);
+
+            for (int i = 0; i < table.memberCollection.Count; i++)
+            {
+                if (table.memberCollection[i] is PropertyCacheEntry propertyEntry)
+                {
+                    MemberInfo propertyEntryMember = propertyEntry.member;
+                    if (!propertyEntryMember.GetCustomAttributes(typeof(PSExtensionMemberAttribute), false).Any())
+                    {
+                        continue;
+                    }
+                    if (members[propertyEntryMember.Name] == null)
+                    {
+                        var isHidden = propertyEntryMember.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+
+                        members.Add(new PSProperty(propertyEntryMember.Name, this,
+                            obj, propertyEntry)
+                        {
+                            IsHidden = isHidden,
+                            isExtensionProperty = true,
+                        } as T);
                     }
                 }
             }

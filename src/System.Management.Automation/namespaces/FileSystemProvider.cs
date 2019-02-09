@@ -1732,8 +1732,8 @@ namespace Microsoft.PowerShell.Commands
                 // Write out the items
                 foreach (IEnumerable<FileSystemInfo> childList in target)
                 {
-                    // On some systems, this is already sorted.  For consistency, always sort again.
-                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
+                    // On some systems, this is already sorted.
+                    IEnumerable<FileSystemInfo> sortedChildList = Platform.IsWindows ? childList : childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
 
                     foreach (FileSystemInfo filesystemInfo in sortedChildList)
                     {
@@ -7294,6 +7294,80 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        /// <inheritdoc/>
+        private protected override bool TryGetProviderPSObject(object item, PSDriveInfo driveInfo, out PSObject result)
+        {
+            if (item is FileSystemInfo fileSystemInfo)
+            {
+                result = new FileSystemPSObject(fileSystemInfo, driveInfo, this);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        internal class FileSystemPSObject : PSObject, IPSObjectExtendedMemberInfo
+        {
+            private readonly PSDriveInfo _driveInfo;
+            private readonly FileSystemProvider _provider;
+            private string _parentPath;
+            private string _path;
+
+            public FileSystemPSObject(FileSystemInfo fileSystemInfo, PSDriveInfo driveInfo, FileSystemProvider provider) : base(fileSystemInfo)
+            {
+                _driveInfo = driveInfo;
+                _provider = provider;
+            }
+
+            private string GetParentPath() =>
+                LocationGlobber.GetProviderQualifiedPath(
+                    _provider.GetParentPath(ObjAsFileSystemInfo.FullName, _driveInfo.Root),
+                    _provider.ProviderInfo);
+
+            private FileSystemInfo ObjAsFileSystemInfo => (FileSystemInfo) ImmediateBaseObject;
+
+            [PSExtensionMember]
+            public string PSParentPath => _parentPath ?? (_parentPath = GetParentPath());
+
+            [PSExtensionMember]
+            public string PSPath => _path ?? (_path = LocationGlobber.GetProviderQualifiedPath(ObjAsFileSystemInfo.FullName, _provider.ProviderInfo));
+
+            [PSExtensionMember]
+            public string PSChildName => ObjAsFileSystemInfo.Name;
+
+            [PSExtensionMember]
+            public bool PSIsContainer => ObjAsFileSystemInfo is DirectoryInfo;
+
+            [PSExtensionMember]
+            public ProviderInfo PSProvider => _provider.ProviderInfo;
+
+            T IPSObjectExtendedMemberInfo.GetFirstOrDefault<T>(MemberNamePredicate predicate)
+            {
+                string GetMatchedPropertyName(MemberNamePredicate pred)
+                {
+                    if (pred(nameof(PSParentPath)))
+                        return nameof(PSParentPath);
+                    if (pred(nameof(PSPath)))
+                        return nameof(PSPath);
+                    if (pred(nameof(PSChildName)))
+                        return nameof(PSChildName);
+                    if (pred(nameof(PSIsContainer)))
+                        return nameof(PSIsContainer);
+                    if (pred(nameof(PSProvider)))
+                        return nameof(PSProvider);
+                    return null;
+                }
+
+                var propertyName = GetMatchedPropertyName(predicate);
+                return propertyName == null ? null : DotNetInstanceAdapter.GetDotNetProperty<T>(this, propertyName);
+            }
+
+            T IPSObjectExtendedMemberInfo.GetMember<T>(string name) => DotNetInstanceAdapter.GetDotNetProperty<T>(this, name);
+
+            void IPSObjectExtendedMemberInfo.AddExtensionMembers<T>(PSMemberInfoInternalCollection<T> returnValue) => DotNetInstanceAdapter.AddExtensionProperties(this, returnValue);
+        }
     }
 
     internal static class SafeInvokeCommand

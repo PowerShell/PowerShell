@@ -5263,7 +5263,7 @@ namespace System.Management.Automation.Language
                         {
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
-                            var targetExpr = _static ? null : GetTargetExpr(target, adapterData.member.DeclaringType);
+                            var targetExpr = _static ? null : GetTargetExpr(target, adapterData.member.DeclaringType, property.baseObject is IPSObjectExtendedMemberInfo);
                             var propertyAccessor = adapterData.member as PropertyInfo;
                             if (propertyAccessor != null)
                             {
@@ -5388,14 +5388,14 @@ namespace System.Management.Automation.Language
         /// Get the actual value, as an expression, of the object represented by target.  This
         /// will get the base object if it's a psobject, plus correctly handle Nullable.
         /// </summary>
-        internal static Expression GetTargetExpr(DynamicMetaObject target, Type castToType = null)
+        internal static Expression GetTargetExpr(DynamicMetaObject target, Type castToType = null, bool useOriginalTargetExpression = false)
         {
             var expr = target.Expression;
             var value = target.Value;
 
             // If the target value is actually a deserialized PSObject, we should use the original value
             var psobj = value as PSObject;
-            if (psobj != null && psobj != AutomationNull.Value && !psobj.IsDeserialized)
+            if (psobj != null && psobj != AutomationNull.Value && !psobj.IsDeserialized && !useOriginalTargetExpression)
             {
                 expr = Expression.Call(CachedReflectionInfo.PSObject_Base, expr);
                 value = PSObject.Base(value);
@@ -5676,6 +5676,12 @@ namespace System.Management.Automation.Language
             if (memberInfo == null && canOptimize && adapterSet.DotNetAdapter != null)
             {
                 memberInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(value, Name);
+            }
+
+            if (memberInfo == null && target.Value is IPSObjectExtendedMemberInfo psMemberInfo)
+            {
+                memberInfo = psMemberInfo.GetMember<PSMemberInfo>(Name);
+                canOptimize = true;
             }
 
             // The member came from the type table or an adapter and isn't instance based, so the restriction will start

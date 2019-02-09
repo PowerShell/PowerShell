@@ -2373,7 +2373,6 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
         /// If 'this' is non-null, return this string as the ToString() for this wrapped object.
         /// </summary>
         internal string TokenText { get; set; }
@@ -2451,6 +2450,18 @@ namespace System.Management.Automation
         Verbose,
         Debug,
         Information
+    }
+
+    internal interface IPSObjectExtendedMemberInfo
+    {
+        T GetFirstOrDefault<T>(MemberNamePredicate predicate) where T : PSMemberInfo;
+        T GetMember<T>(string name) where T : PSMemberInfo;
+        void AddExtensionMembers<T>(PSMemberInfoInternalCollection<T> returnValue) where T : PSMemberInfo;
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    internal class PSExtensionMemberAttribute : Attribute
+    {
     }
 
     /// <summary>
