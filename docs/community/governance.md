@@ -64,7 +64,8 @@ If any Committee Members feels like this behavior is large enough to warrant an 
 
 As a PowerShell Committee Member:
 
-1. **DO** reply to issues and pull requests with design opinions (this could include offering support for good work or exciting new features)
+1. **DO** reply to issues and pull requests with design opinions
+   (this could include offering support for good work or exciting new features)
 1. **DO** encourage healthy discussion about the direction of PowerShell
 1. **DO** raise "red flags" on PRs that haven't followed the proper RFC process when applicable
 1. **DO** contribute to documentation and best practices
