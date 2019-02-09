@@ -60,7 +60,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     It 'Can Convert json with depth less than -Depth:<Depth> with -ReturnHashTable:<ReturnHashTable>' -TestCases $testCasesJsonDepthWithAndWithoutReturnHashTable {
         param ($Depth, $ReturnHashTable)
         $errRecord = $null
-        $json = New-NestedJson -Depth:($Depth - 1)
+        $json = New-NestedJson -Depth ($Depth - 1)
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($json, $ReturnHashTable, $Depth, [ref]$errRecord)
         $errRecord | Should -BeNullOrEmpty
     }
@@ -68,7 +68,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     It 'Can Convert json with depth equal to -Depth:<Depth> with -ReturnHashTable:<ReturnHashTable>' -TestCases $testCasesJsonDepthWithAndWithoutReturnHashTable {
         param ($Depth, $ReturnHashTable)
         $errRecord = $null
-        $json = New-NestedJson -Depth:$Depth
+        $json = New-NestedJson -Depth $Depth
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($json, $ReturnHashTable, $Depth, [ref]$errRecord)
         $errRecord | Should -BeNullOrEmpty
     }
@@ -76,7 +76,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     It 'Throws ArgumentException for json with greater depth than -Depth:<Depth> with -ReturnHashTable:<ReturnHashTable>' -TestCases $testCasesJsonDepthWithAndWithoutReturnHashTable {
         param ($Depth, $ReturnHashTable)
         $errRecord = $null
-        $json = New-NestedJson -Depth:($Depth + 1)
+        $json = New-NestedJson -Depth ($Depth + 1)
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($json, $ReturnHashTable, $Depth, [ref]$errRecord) } |
             Should -Throw -ErrorId "ArgumentException"
     }

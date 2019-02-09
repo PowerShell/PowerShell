@@ -18,8 +18,8 @@ function Count-ObjectDepth {
 
     for ($i=1; $i -le 100000; $i++)
     {
-        $InputObject = Select-Object -InputObject:$InputObject -ExpandProperty:$i
-        if ($InputObject -Eq $true)
+        $InputObject = Select-Object -InputObject $InputObject -ExpandProperty $i
+        if ($InputObject -eq $true)
         {
             return $i
         }
@@ -81,9 +81,9 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
     It 'Can convert an object of depth 1024 by default with AsHashtable switch set to <AsHashtable>' -TestCases $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
-        $nestedJson = New-NestedJson -Depth:1024
+        $nestedJson = New-NestedJson -Depth 1024
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable
 
         if ($AsHashtable)
         {
@@ -97,9 +97,9 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
     It 'Fails to convert an object of depth higher than 1024 by default with AsHashtable switch set to <AsHashtable>' -TestCases $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
-        $nestedJson = New-NestedJson -Depth:1025
+        $nestedJson = New-NestedJson -Depth 1025
 
-        { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable } |
+        { $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
 }
@@ -119,9 +119,9 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
 
     It 'Can convert an object with depth less than Depth param set to <Depth> and AsHashtable switch set to <AsHashtable>' -TestCases $testCasesJsonDepthWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable, $Depth)
-        $nestedJson = New-NestedJson -Depth:($Depth - 1)
+        $nestedJson = New-NestedJson -Depth ($Depth - 1)
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth:$Depth
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth:$Depth
 
         if ($AsHashtable)
         {
@@ -132,14 +132,14 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
             $json | Should -BeOfType PSCustomObject
         }
 
-        (Count-ObjectDepth -InputObject:$json) | Should -Be ($Depth - 1)
+        (Count-ObjectDepth -InputObject $json) | Should -Be ($Depth - 1)
     }
 
     It 'Can convert an object with depth equal to Depth param set to <Depth> and AsHashtable switch set to <AsHashtable>' -TestCases $testCasesJsonDepthWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable, $Depth)
         $nestedJson = New-NestedJson -Depth:$Depth
 
-        $json = $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth:$Depth
+        $json = $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth $Depth
 
         if ($AsHashtable)
         {
@@ -150,14 +150,14 @@ Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {
             $json | Should -BeOfType PSCustomObject
         }
 
-        (Count-ObjectDepth -InputObject:$json) | Should -Be $Depth
+        (Count-ObjectDepth -InputObject $json) | Should -Be $Depth
     }
 
     It 'Fails to convert an object with greater depth than Depth param set to <Depth> and AsHashtable switch set to <AsHashtable>' -TestCases $testCasesJsonDepthWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable, $Depth)
-        $nestedJson = New-NestedJson -Depth:($Depth + 1)
+        $nestedJson = New-NestedJson -Depth ($Depth + 1)
 
-        { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable -Depth:$Depth } |
+        { $nestedJson | ConvertFrom-Json -AsHashtable $AsHashtable -Depth $Depth } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
 }
