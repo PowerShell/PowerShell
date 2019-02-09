@@ -111,8 +111,7 @@ Some general guidelines:
 * Avoid creating empty arrays.
   Instead, reuse the static ones via `Utils.EmptyArray<T>`.
 
-* Avoid unnecessary memory allocation in a loop.
-  Move the memory allocation outside the loop if possible.
+* Avoid unnecessary memory allocation in a loop. Move the memory allocation outside the loop if possible.
 
 * Avoid gratuitous exceptions as much as possible.
   Exception handling can be expensive due to cache misses and page faults when accessing the handling code and data.
@@ -152,7 +151,7 @@ such as `password`, `crypto`, `encryption`, `decryption`, `certificate`, `authen
 
 When facing a PR with such changes,
 the reviewers should request a designated security Subject Matter Expert (SME) to review the PR.
-Currently, @PaulHigin and @TravisEz13 are our security SMEs.
+Currently, [@PaulHigin](https://github.com/PaulHigin) and [@TravisEz13](https://github.com/TravisEz13) are our security SMEs.
 See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area experts.
 
 ## Best Practices
@@ -162,7 +161,7 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
 * Avoid a method that is too long and complex.
   In such case, separate it to multiple methods or even a nested class as you see fit.
 
-* Use `using` statement instead of `try/finally` if the only code in the `finally` block is to call the `Dispose` method.
+* Use the `using` statement instead of `try/finally` if the only code in the `finally` block is to call the `Dispose` method.
 
 * Use of object initializers (e.g. `new Example { Name = "Name", ID = 1 }`) is encouraged for better readability,
   but not required.
