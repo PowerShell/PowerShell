@@ -1,6 +1,8 @@
 ---
 name: Windows PowerShell
 about: Windows PowerShell issues/suggestions need to be reported to [UserVoice](https://windowsserver.uservoice.com/forums/301869-powershell)
+labels: Issue-Question
+assignees: ''
 
 ---
 

@@ -46,7 +46,7 @@ careful not to commit such a change.)
 [core-debug]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
-[vscclrdebugger]: http://aka.ms/vscclrdebugger
+[vscclrdebugger]: https://aka.ms/vscclrdebugger
 
 PowerShell
 ==========

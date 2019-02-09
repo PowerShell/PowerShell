@@ -1,8 +1,12 @@
 ---
 name: Release Process
 about: Maintainers Only - Release Process
+title: "Release Process for v6.x.x"
+labels: Issue-Meta
+assignees: ''
 
 ---
+
 <!--
 
 This template is for maintainers to create an issues to track the release process.

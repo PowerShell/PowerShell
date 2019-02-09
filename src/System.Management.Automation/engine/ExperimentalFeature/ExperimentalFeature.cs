@@ -46,14 +46,29 @@ namespace System.Management.Automation
         public bool Enabled { get; private set; }
 
         /// <summary>
-        /// Constructor for ExperimentalFeature.
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
         /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
+        /// <param name="source">The source where the experimental feature is defined.</param>
+        /// <param name="isEnabled">Indicate whether the experimental feature is enabled.</param>
         internal ExperimentalFeature(string name, string description, string source, bool isEnabled)
         {
             Name = name;
             Description = description;
             Source = source;
             Enabled = isEnabled;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExperimentalFeature"/> class.
+        /// This is a private constructor only for declaring new experimental features within this type.
+        /// </summary>
+        /// <param name="name">The name of the experimental feature.</param>
+        /// <param name="description">A description of the experimental feature.</param>
+        private ExperimentalFeature(string name, string description)
+            : this(name, description, source: EngineSource, isEnabled: false)
+        {
         }
 
         #endregion
@@ -85,25 +100,20 @@ namespace System.Management.Automation
                 /* Register engine experimental features here. Follow the same pattern as the example:
                 new ExperimentalFeature(
                     name: "PSFileSystemProviderV2",
-                    description: "Replace the old FileSystemProvider with cleaner design and faster code",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
                     name: "PSImplicitRemotingBatching",
-                    description: "Batch implicit remoting proxy commands to improve performance",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Batch implicit remoting proxy commands to improve performance"),
                 new ExperimentalFeature(
                     name: "PSUseAbbreviationExpansion",
-                    description: "Allow tab completion of cmdlets and functions by abbreviation",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Allow tab completion of cmdlets and functions by abbreviation"),
                 new ExperimentalFeature(
                     name: "PSTempDrive",
-                    description: "Create TEMP: PS Drive mapped to user's temporary directory path",
-                    source: EngineSource,
-                    isEnabled: false),
+                    description: "Create TEMP: PS Drive mapped to user's temporary directory path"),
+                new ExperimentalFeature(
+                    name: "PSCommandNotFoundSuggestion",
+                    description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

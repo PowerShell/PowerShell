@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -263,14 +264,34 @@ namespace PSTests.Sequential
 
         public void CleanupConfigFiles()
         {
-            if (File.Exists(systemWideConfigFile))
-            {
-                File.Delete(systemWideConfigFile);
-            }
+            var maxPause = 10;
 
-            if (File.Exists(currentUserConfigFile))
+            while (maxPause-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
             {
-                File.Delete(currentUserConfigFile);
+                var pause = false;
+
+                try
+                {
+                    File.Delete(systemWideConfigFile);
+                }
+                catch (IOException)
+                {
+                    pause = true;
+                }
+
+                try
+                {
+                    File.Delete(currentUserConfigFile);
+                }
+                catch (IOException)
+                {
+                    pause = true;
+                }
+
+                if (pause)
+                {
+                    Thread.Sleep(5);
+                }
             }
         }
 

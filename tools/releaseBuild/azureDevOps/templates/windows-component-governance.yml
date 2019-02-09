@@ -9,16 +9,9 @@ jobs:
 
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Set ReleaseTag Variable'
-
-  - powershell: |
-       $version = '$(ReleaseTagVar)'.Substring(1)
-       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-    displayName: 'Set Version Variable'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
        docker container prune --force
@@ -55,6 +48,8 @@ jobs:
     displayName: 'Capture Docker Info'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
+
+  - template: insert-nuget-config-azfeed.yml
 
   - powershell: |
        ./tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-x64-component-registration

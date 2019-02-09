@@ -503,6 +503,45 @@ Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags
     }
 }
 
+Describe "Get-Help for function parameter should be consistent" -Tags 'CI' {
+    BeforeAll {
+        $test1 = @'
+            function test1 {
+                param (
+                    $First
+                )
+            }
+'@
+        $test2 = @'
+            function test2 {
+                param (
+                    $First,
+                    $Second
+                )
+            }
+'@
+        $test1Path = Join-Path $TestDrive "test1.ps1"
+        Set-Content -Path $test1Path -Value $test1
+
+        $test2Path = Join-Path $TestDrive "test2.ps1"
+        Set-Content -Path $test2Path -Value $test2
+
+        Import-Module $test1Path
+        Import-Module $test2Path
+    }
+
+    AfterAll {
+        Remove-Module -Name "test1"
+        Remove-Module -Name "test2"
+    }
+
+    It "Get-Help for function parameter should be consistent" {
+        $test1HelpPSType = (Get-Help test1 -Parameter First).PSTypeNames
+        $test2HelpPSType = (Get-Help test2 -Parameter First).PSTypeNames
+        $test1HelpPSType | Should -BeExactly $test2HelpPSType
+    }
+}
+
 Describe "Help failure cases" -Tags Feature {
     It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
         @{ command = "help" },

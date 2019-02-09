@@ -21,7 +21,11 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             start-nativeExecution { npm install 'gulp@4.0.0' --silent }
             if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
             {
-                start-nativeExecution { sudo npm install -g 'gulp@4.0.0' --silent }
+                start-nativeExecution {
+                    sudo npm install -g 'gulp@4.0.0' --silent
+                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+                    sudo rm -rf ~/.npm/_cacache
+                }
             }
             if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
             {

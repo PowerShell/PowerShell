@@ -324,7 +324,7 @@ Using semantic line feeds (breaks that separate ideas)
 is also appropriate, as is using Markdown syntax.
 ```
 
-* These are based on Tim Pope's [guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
+* These are based on Tim Pope's [guidelines](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
   Git SCM [submitting patches](https://git.kernel.org/cgit/git/git.git/tree/Documentation/SubmittingPatches),
   Brandon Rhodes' [semantic linefeeds][],
   and John Gruber's [Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
@@ -341,16 +341,16 @@ is also appropriate, as is using Markdown syntax.
 ## Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
-you could [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
-If you've already contributed to PowerShell repositories in the past, congratulations!
+you should to [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
+If you've already contributed to PowerShell or Microsoft repositories in the past, congratulations!
 You've already completed this step.
 This a one-time requirement for the PowerShell project.
 Signing the CLA process is simple and can be done in less than a minute.
 You don't have to do this up-front.
 You can simply clone, fork, and submit your pull request as usual.
-When your pull request is created, it is classified by a CLA bot.
-If the change is trivial, it's classified as `cla-required`.
-Once you sign a CLA, all your existing and future pull requests will be labeled as `cla-signed`.
+When your pull request is created, it is checked by the CLA bot.
+If you have signed the CLA, the status check will be set to `passing`.  Otherwise, it will stay at `pending`.
+Once you sign a CLA, all your existing and future pull requests will have the status check automatically set at `passing`.
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
@@ -366,7 +366,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [contribute-issues]: #contributing-to-issues
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
-[semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
+[semantic linefeeds]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers

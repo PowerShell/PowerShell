@@ -135,49 +135,113 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'Feature' {
 
 Describe "Import-Module for Binary Modules" -Tags 'CI' {
 
-    It "PS should try to load the assembly from file path first" {
- $src = @"
-using System.Management.Automation;           // Windows PowerShell namespace.
-
-namespace ModuleCmdlets
-{
-  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
-  public class TestBinaryModuleCmdlet1Command : Cmdlet
-  {
-    protected override void BeginProcessing()
-    {
-      WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
-    }
-  }
-}
+    BeforeAll {
+        $src = @"
+            using System.Management.Automation;
+            namespace ModuleCmdlets
+            {
+                [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
+                public class TestBinaryModuleCmdlet1Command : Cmdlet
+                {
+                    protected override void BeginProcessing()
+                    {
+                        WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
+                    }
+                }
+            }
 "@
+        Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
+        Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.exe
+    }
 
-    Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
-    $results = pwsh -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+    It "PS should try to load the binary module from a file path with extension: <extension>" -TestCases (
+        @{extension = "dll"},
+        @{extension = "exe"}
+     ) {
+         param ($extension)
 
-    #Ignore slash format difference under windows/Unix
-    $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
-    $results[0] | Should -BeExactly $path
-    $results[1] | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+        try {
+            $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:TestModulePath -Passthru;
+                $module.ImplementingAssembly.Location;
+                Test-BinaryModuleCmdlet1
+            }
+            $assemblyLocation, $cmdletOutput = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
+
+        $assemblyLocation | Should -BeExactly $TestModulePath
+        $cmdletOutput | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+    }
+
+    It 'PS should be able to load the executable as a root module' {
+        $psdFile = Join-Path $TESTDRIVE test.psd1
+        $exe = Join-Path $TESTDRIVE System.exe
+        New-ModuleManifest -Path $psdFile -RootModule $exe
+
+        try {
+            $job = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru }
+            $module = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
+
+        $module | Should -Not -BeNullOrEmpty
+        $module.ModuleType.ToString() | Should -Be 'Binary'
+        $module.RootModule | Should -Be $exe
+        $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'] | Should -Be 'Test-BinaryModuleCmdlet1'
+    }
+
+    It 'PS should be able to load the executable as a nested module' {
+        $psdFile = Join-Path $TESTDRIVE test.psd1
+        $exe = Join-Path $TESTDRIVE System.exe
+        New-ModuleManifest -Path $psdFile -NestedModules $exe
+
+        try {
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:psdFile -PassThru
+                # return the module and the nested module assembly location
+                $module
+                $module.NestedModules[0].ImplementingAssembly.Location
+            }
+            $module, $location = $job | Wait-Job -Timeout 30 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
+        }
+
+        $module | Should -Not -BeNullOrEmpty
+        $module.ModuleType.ToString() | Should -Be 'Manifest'
+        $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'] | Should -Be 'Test-BinaryModuleCmdlet1'
+        $module.NestedModules | Should -Not -BeNullOrEmpty
+        $location | Should -Be $exe
     }
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
-
         $psdFile = Join-Path $TESTDRIVE test.psd1
         $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
         New-ModuleManifest -Path $psdFile -NestedModules $nestedModule
-        try
-        {
-            $module = Import-Module $psdFile -PassThru
-            $module.NestedModules | Should -Not -BeNullOrEmpty
-            $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
-            $module.NestedModules.ImplementingAssembly.Location | Should -Be $assemblyLocation
+
+        try {
+            $job = Start-Job -ScriptBlock {
+                $module = Import-Module $using:psdFile -PassThru
+                # return the module and the assembly location
+                $module
+                $module.NestedModules[0].ImplementingAssembly.Location
+            }
+            $module, $location = $job | Wait-Job -Timeout 30 | Receive-Job
         }
-        finally
-        {
-            Remove-Module $module -ErrorAction SilentlyContinue
+        finally {
+            $job | Remove-Job -ErrorAction Ignore
         }
 
+        $module.NestedModules | Should -Not -BeNullOrEmpty
+        $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
+        $location | Should -Be $assemblyLocation
     }
 
     It 'Should load from ModuleBase path before looking up in GAC' -Skip:(-not $IsWindows) {
@@ -259,7 +323,7 @@ Describe "Workflow .Xaml module is not supported in PSCore" -tags "Feature" {
         { Import-Module $xamlFile -ErrorAction Stop } | Should -Throw -ErrorId "Modules_WorkflowModuleNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
     }
 
-    It "Import a module with XAML root module should raise a 'NotSupportd' error" {
+    It "Import a module with XAML root module should raise a 'NotSupported' error" {
         { Import-Module $xamlRootModule -ErrorAction Stop } | Should -Throw -ErrorId "Modules_WorkflowModuleNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
     }
 
@@ -281,7 +345,6 @@ Describe "Circular nested module test" -tags "CI" {
 
     AfterAll {
         Remove-Module -Name CircularNestedModuleTest -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $moduleFolder -Force -Recurse
     }
 
     It "Loading the module should succeed and return a module with circular nested module" {

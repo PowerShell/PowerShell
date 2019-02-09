@@ -11,7 +11,7 @@ $DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
-        # PowerShell packages use Semantic Versioning http://semver.org/
+        # PowerShell packages use Semantic Versioning https://semver.org/
         [Parameter(ParameterSetName = "Version")]
         [string]$Version,
 
@@ -93,6 +93,7 @@ function Start-PSPackage {
         }
 
         $Script:Options = Get-PSOptions
+        $actualParams = @()
 
         $crossGenCorrect = $false
         if ($Runtime -match "arm") {
@@ -100,6 +101,7 @@ function Start-PSPackage {
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
+            $actualParams += '-CrossGen'
             $crossGenCorrect = $true
         }
 
@@ -108,10 +110,14 @@ function Start-PSPackage {
         # Require PSModuleRestore for packaging without symbols
         # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $actualParams += '-PSModuleRestore'
             $PSModuleRestoreCorrect = $true
         }
         elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
             $PSModuleRestoreCorrect = $true
+        }
+        else {
+            $actualParams += '-PSModuleRestore'
         }
 
         $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
@@ -141,6 +147,8 @@ function Start-PSPackage {
             # This check serves as a simple gate to ensure that the user knows what he is doing, and
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
+
+
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
@@ -152,6 +160,8 @@ function Start-PSPackage {
                 $params += '-PSModuleRestore'
             }
 
+            $actualParams += '-Runtime ' + $Script:Options.Runtime
+
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
             } else {
@@ -159,7 +169,9 @@ function Start-PSPackage {
             }
 
             $params += '-Configuration', $Configuration
+            $actualParams += '-Configuration ' + $Script:Options.Configuration
 
+            Write-Warning "Build started with unexpected parameters 'Start-PSBuild $actualParams"
             throw "Please ensure you have run 'Start-PSBuild $params'!"
         }
 
@@ -231,16 +243,16 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb", "nupkg"
+                    "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg", "nupkg"
+                "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg"
             }
@@ -509,7 +521,7 @@ function New-TarballPackage {
 
             if (Test-Path -Path $packagePath) {
                 Write-Log "You can find the tarball package at $packagePath"
-                return $packagePath
+                return (Get-Item $packagePath)
             } else {
                 throw "Failed to create $packageName"
             }
@@ -940,7 +952,7 @@ function New-MacOsDistributionPackage
     try
     {
         # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
     }
     finally
     {
@@ -948,7 +960,7 @@ function New-MacOsDistributionPackage
         Remove-item -Path $tempDir -Recurse -Force
     }
 
-    return $newPackagePath
+    return (Get-Item $newPackagePath)
 }
 function Get-FpmArguments
 {
@@ -1432,7 +1444,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp2.1")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1563,7 +1575,7 @@ function New-UnifiedNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp2.1') -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1694,7 +1706,7 @@ function New-UnifiedNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/netstandard2.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
   This is a helper function used by 'New-UnifiedNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -1897,6 +1909,7 @@ function New-ReferenceAssembly
 
     foreach ($assemblyName in $assemblyNames) {
 
+        Write-Log "Building reference assembly for '$assemblyName'"
         $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
         $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
         $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
@@ -1918,15 +1931,19 @@ function New-ReferenceAssembly
         {
             Push-Location $projectFolder
 
-            $csProj = GenerateCSProjectContent -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
-            $csProj | Out-File -FilePath "$projectFolder/$assemblyName.csproj" -Force
+            $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
+            $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
+            Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
 
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
 
-            Start-NativeExecution { dotnet build -c Release }
+            $arguments = GenerateBuildArguments -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netstandard2.0/$assemblyName.dll"
+            Write-Log "Running: dotnet $arguments"
+            Start-NativeExecution -sb {dotnet $arguments}
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp2.1/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -1950,6 +1967,10 @@ function New-ReferenceAssembly
     }
 }
 
+<#
+  Helper function for New-ReferenceAssembly to further clean up the
+  C# source code generated from GenApi.exe.
+#>
 function CleanupGeneratedSourceCode
 {
     param(
@@ -2033,7 +2054,11 @@ function CleanupGeneratedSourceCode
     Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
 }
 
-function GenerateCSProjectContent
+<#
+  Helper function for New-ReferenceAssembly to get the arguments
+  for building reference assemblies.
+#>
+function GenerateBuildArguments
 {
     param(
         [string] $AssemblyName,
@@ -2042,21 +2067,18 @@ function GenerateCSProjectContent
         [string] $SMAReferencePath
     )
 
-    switch ($assemblyName) {
-        "System.Management.Automation" {
-            $csProj = $packagingStrings.'System.Management.Automation' -f $RefAssemblyVersion, $SnkFilePath
-        }
+    $arguments = @('build')
+    $arguments += @('-c','Release')
+    $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
+    $arguments += "/p:SnkFile=$SnkFilePath"
 
+    switch ($AssemblyName) {
         "Microsoft.PowerShell.Commands.Utility" {
-            $csProj = $packagingStrings.'Microsoft.PowerShell.Commands.Utility' -f $RefAssemblyVersion, $SnkFilePath, $SMAReferencePath
-        }
-
-        default {
-            throw "It's not yet supported to generate reference assembly for '$assemblyName'"
+            $arguments += "/p:SmaRefFile=$SMAReferencePath"
         }
     }
 
-    return $csProj
+    return $arguments
 }
 
 <#
@@ -2205,7 +2227,7 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder
     }
 
-    $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
+    $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)
@@ -2224,7 +2246,7 @@ function New-NugetContentPackage
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
     {
-        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+        Get-Item $nupkgFile
     }
     else
     {
@@ -2889,7 +2911,7 @@ function Test-FileWxs
                 Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
-        elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
+        elseif ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
         }
@@ -3080,7 +3102,12 @@ function New-DotnetSdkContainerFxdPackage {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory)] $FxdPackagePath,
-        [Parameter(Mandatory)] $ReleaseTag
+
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory)] $ReleaseTag,
+
+        [Parameter(Mandatory)] $DestinationPath
     )
 
     $Version = $ReleaseTag -Replace '^v'
@@ -3099,9 +3126,10 @@ function New-DotnetSdkContainerFxdPackage {
     Write-Log "fxdPackagePath: $FxdPackagePath"
 
     $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
+    $destinationPackageFullName = Join-Path $DestinationPath $packageName
 
     ## Get fxdependent package path
-    $fxdPackage = (Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern).FullName
+    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern | Select-Object -First 1 -ExpandProperty FullName
 
     Write-Log "Fxd Package Path: $fxdPackage"
 
@@ -3142,10 +3170,14 @@ function New-DotnetSdkContainerFxdPackage {
 
                 Write-Verbose -Verbose "Compressing"
 
+                if (-not (Test-Path $DestinationPath)) {
+                    $null = New-Item -ItemType Directory -Path $DestinationPath
+                }
+
                 if ($Environment.IsWindows) {
-                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $FxdPackagePath/$packageName
+                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $destinationPackageFullName -Force
                 } else {
-                    Start-NativeExecution { tar -czf "$FxdPackagePath/$packageName" . }
+                    Start-NativeExecution { tar -czf "$destinationPackageFullName" . }
                 }
 
                 Write-Log "Compressing complete"
@@ -3156,19 +3188,9 @@ function New-DotnetSdkContainerFxdPackage {
         }
     }
 
-    if (Test-Path "$FxdPackagePath/$packageName") {
-        $containerName = if ($Environment.IsWindows)
-        {
-            "signedResults"
-        }
-        else
-        {
-            "release"
-        }
-
-        Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$FxdPackagePath/$packageName"
-
+    if (Test-Path $destinationPackageFullName) {
+        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
     } else {
-        Write-Log "Package not found: $FxdPackagePath/$packageName"
+        Write-Log "Package not found: $destinationPackageFullName"
     }
 }

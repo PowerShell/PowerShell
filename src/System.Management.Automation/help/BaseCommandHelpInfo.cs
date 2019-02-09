@@ -393,8 +393,19 @@ namespace System.Management.Automation
                 return base.GetParameter(pattern);
             }
 
+            // The Maml format simplifies array fields containing only one object
+            // by transforming them into the objects themselves. To ensure the consistency
+            // of the help command result we change it back into an array.
+            var param = prmts.Properties["parameter"].Value;
+            PSObject[] paramAsPSObjArray = new PSObject[1];
+
+            if (param is PSObject paramPSObj)
+            {
+                paramAsPSObjArray[0] = paramPSObj;
+            }
+
             PSObject[] prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
-                prmts.Properties["parameter"].Value,
+                paramAsPSObjArray[0] != null ? paramAsPSObjArray : param,
                 typeof(PSObject[]),
                 CultureInfo.InvariantCulture);
 

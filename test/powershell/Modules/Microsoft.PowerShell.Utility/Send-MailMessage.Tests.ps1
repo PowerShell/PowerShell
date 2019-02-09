@@ -57,6 +57,15 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
 
                             $rv.To += $line.Substring(4)
                         }
+                        elseif ($line.StartsWith("Reply-To: "))
+                        {
+                            if ($null -eq $rv.ReplyTo)
+                            {
+                                $rv.ReplyTo = @()
+                            }
+
+                            $rv.ReplyTo += $line.Substring(10)
+                        }
                         elseif ($line.StartsWith("Subject: "))
                         {
                             $rv.Subject = $line.Substring(9);
@@ -140,12 +149,14 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
     It @ItArgs {
         $body = "Greetings from me."
         $subject = "Test message"
-        Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
+        Send-MailMessage -To $address -From $address -ReplyTo $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should -BeExactly $address
         $mail.To.Count | Should -BeExactly 1
         $mail.To[0] | Should -BeExactly $address
+        $mail.ReplyTo.Count | Should -BeExactly 1
+        $mail.ReplyTo[0] | Should -BeExactly $address
         $mail.Subject | Should -BeExactly $subject
         $mail.Body.Count | Should -BeExactly 1
         $mail.Body[0] | Should -BeExactly $body
@@ -157,13 +168,15 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
     It @ItArgs {
         $body = "Greetings from me again."
         $subject = "Second test message"
-        $object = [PSCustomObject]@{To = $address; From = $address; Subject = $subject; Body = $body; SmtpServer = '127.0.0.1'}
+        $object = [PSCustomObject]@{To = $address; From = $address; ReplyTo = $address; Subject = $subject; Body = $body; SmtpServer = '127.0.0.1'}
         $object | Send-MailMessage
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should -BeExactly $address
         $mail.To.Count | Should -BeExactly 1
         $mail.To[0] | Should -BeExactly $address
+        $mail.ReplyTo.Count | Should -BeExactly 1
+        $mail.ReplyTo[0] | Should -BeExactly $address
         $mail.Subject | Should -BeExactly $subject
         $mail.Body.Count | Should -BeExactly 1
         $mail.Body[0] | Should -BeExactly $body
