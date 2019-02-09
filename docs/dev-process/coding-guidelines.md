@@ -111,7 +111,8 @@ Some general guidelines:
 * Avoid creating empty arrays.
   Instead, reuse the static ones via `Utils.EmptyArray<T>`.
 
-* Avoid unnecessary memory allocation in a loop. Move the memory allocation outside the loop if possible.
+* Avoid unnecessary memory allocation in a loop.
+  Move the memory allocation outside the loop if possible.
 
 * Avoid gratuitous exceptions as much as possible.
   Exception handling can be expensive due to cache misses and page faults when accessing the handling code and data.
