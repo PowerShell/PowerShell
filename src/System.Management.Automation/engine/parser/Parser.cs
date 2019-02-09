@@ -225,7 +225,7 @@ namespace System.Management.Automation.Language
         }
 
         // This helper routine is used from the runtime to convert a string to a number.
-        internal static object ScanNumber(string str, Type toType)
+        internal static object ScanNumber(string str, Type toType, bool shouldTryCoercion = true)
         {
             str = str.Trim();
             if (str.Length == 0)
@@ -249,11 +249,17 @@ namespace System.Management.Automation.Language
 
             if (token == null || !tokenizer.IsAtEndOfScript(token.Extent))
             {
-                // We call ConvertTo, primarily because we expect it will throw an exception,
-                // but it's possible it could succeed, e.g. if the string had commas, our lexer
-                // will fail, but Convert.ChangeType could succeed.
-
-                return LanguagePrimitives.ConvertTo(str, toType, CultureInfo.InvariantCulture);
+                if (shouldTryCoercion)
+                {
+                    // We call ConvertTo, primarily because we expect it will throw an exception,
+                    // but it's possible it could succeed, e.g. if the string had commas, our lexer
+                    // will fail, but Convert.ChangeType could succeed.
+                    return LanguagePrimitives.ConvertTo(str, toType, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    throw new ParseException();
+                }
             }
 
             return token.Value;

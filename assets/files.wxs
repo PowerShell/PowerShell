@@ -1863,6 +1863,9 @@
         <Component Id="cmp9B83A74D65192F635590641BFEF9F840" Guid="{BCE9433B-3470-4EFE-B735-081B17B5C82B}">
           <File Id="fil0D65BAB239F3AF9916D653C31460B0A6" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_av_colors.ico" />
         </Component>
+        <Component Id="cmpA5AD020C2A054BD299EA1D2439947B22" Guid="{35a82a3b-0b5b-472a-adba-77c68d978d16}">
+          <File Id="filFB936E0529C9496EA8132112A5C60E63" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\ps_black_32x32.ico" />
+        </Component>
       </Directory>
       <Directory Id="dirC93D10F1DE914404E3248A7E28901CDC" Name="cs">
         <Component Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" Guid="{29FD7D9F-CB72-4DF5-B1BC-5DDD110E35BB}">
@@ -2824,6 +2827,7 @@
       <ComponentRef Id="cmp51F4B23B87C6428B81ABAA8E8C913B99" />
       <ComponentRef Id="cmpE4A3A9C6EBE34E9AAF4EB02937545542" />
       <ComponentRef Id="cmp5297F3A0CC784D5FB179A2C5128882BA" />
+      <ComponentRef Id="cmpA5AD020C2A054BD299EA1D2439947B22" />
     </ComponentGroup>
   </Fragment>
 </Wix>

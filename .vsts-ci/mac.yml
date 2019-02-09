@@ -55,31 +55,23 @@ jobs:
   - template: ../tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - powershell: |
-      tools/travis.ps1 -Stage Bootstrap
+      Import-Module ./tools/ci.psm1
+      Invoke-Bootstrap-Stage
     displayName: Bootstrap
     condition: succeeded()
 
   - powershell: |
-      $ErrorActionPreference = 'continue'
-      tools/travis.ps1 -NugetKey $(NUGET_KEY)
-    displayName: Build and test
-    condition: succeeded()
-
-  - powershell: |
-      tools/travis.ps1 -Stage Failure
-    displayName: After Failure
-    condition: failed()
-
-  - powershell: |
-      tools/travis.ps1 -Stage Success
-    displayName: After Success
+      Import-Module ./tools/ci.psm1
+      $env:NugetKey = '$(NUGET_KEY)'
+      Invoke-LinuxTests
+    displayName: Build and Test
     condition: succeeded()
 
   # Uploads any packages as an artifact
   - powershell: |
-      Get-ChildItem -Path *.pkg, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
+      Get-ChildItem -Path ${env:BUILD_ARTIFACTSTAGINGDIRECTORY} -Include *.nupkg, *.pkg, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: succeededOrFailed()
     continueOnError: true

@@ -1,7 +1,7 @@
 #requires -Version 6.0
-
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 class CommitNode {
     [string] $Hash
     [string[]] $Parents
@@ -43,6 +43,7 @@ $Script:community_login_map = @{
     "info@powercode-consulting.se" = "powercode"
 }
 
+# ignore dependency bumping bot (dependabot):
 $Script:attribution_ignore_list = @(
     'dependabot[bot]@users.noreply.github.com'
 )
@@ -226,6 +227,9 @@ function Get-ChangeLog
     # Array of PRs tagged with 'CL-Untagged' label.
     $clUntagged = @()
 
+    # Array of PRs tagged with 'CL-Experimental' label.
+    $clExperimental = @()
+
     foreach ($commit in $new_commits) {
         if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
             $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
@@ -263,10 +267,10 @@ function Get-ChangeLog
         $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
 
         if ($clLabel.count -gt 1 -and $clLabel.Name -notcontains 'CL-BreakingChange') {
-            $multipleLabelsPRs = $pr
+            $multipleLabelsPRs += $pr
         }
         elseif ($clLabel.count -eq 0) {
-            $unlabeledPRs = $pr
+            $unlabeledPRs += $pr
         }
         else {
             switch ($clLabel.Name) {
@@ -275,6 +279,7 @@ function Get-ChangeLog
                 "CL-CodeCleanup" { $clCodeCleanup += $commit }
                 "CL-Docs" { $clDocs += $commit }
                 "CL-Engine" { $clEngine += $commit }
+                "CL-Experimental" { $clExperimental += $commit }
                 "CL-General" { $clGeneral += $commit }
                 "CL-Test" { $clTest += $commit }
                 "CL-Tools" { $clTools += $commit }
@@ -302,6 +307,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
+    PrintChangeLog -clSection $clExperimental -sectionTitle 'Experimental Features'
     PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
     PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
     PrintChangeLog -clSection $clTools -sectionTitle 'Tools'

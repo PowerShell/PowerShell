@@ -93,6 +93,7 @@ function Start-PSPackage {
         }
 
         $Script:Options = Get-PSOptions
+        $actualParams = @()
 
         $crossGenCorrect = $false
         if ($Runtime -match "arm") {
@@ -100,6 +101,7 @@ function Start-PSPackage {
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
+            $actualParams += '-CrossGen'
             $crossGenCorrect = $true
         }
 
@@ -108,10 +110,14 @@ function Start-PSPackage {
         # Require PSModuleRestore for packaging without symbols
         # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $actualParams += '-PSModuleRestore'
             $PSModuleRestoreCorrect = $true
         }
         elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
             $PSModuleRestoreCorrect = $true
+        }
+        else {
+            $actualParams += '-PSModuleRestore'
         }
 
         $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
@@ -141,6 +147,8 @@ function Start-PSPackage {
             # This check serves as a simple gate to ensure that the user knows what he is doing, and
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
+
+
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
@@ -152,6 +160,8 @@ function Start-PSPackage {
                 $params += '-PSModuleRestore'
             }
 
+            $actualParams += '-Runtime ' + $Script:Options.Runtime
+
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
             } else {
@@ -159,7 +169,9 @@ function Start-PSPackage {
             }
 
             $params += '-Configuration', $Configuration
+            $actualParams += '-Configuration ' + $Script:Options.Configuration
 
+            Write-Warning "Build started with unexpected parameters 'Start-PSBuild $actualParams"
             throw "Please ensure you have run 'Start-PSBuild $params'!"
         }
 
@@ -231,16 +243,16 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb", "nupkg"
+                    "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg", "nupkg"
+                "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg"
             }
@@ -509,7 +521,7 @@ function New-TarballPackage {
 
             if (Test-Path -Path $packagePath) {
                 Write-Log "You can find the tarball package at $packagePath"
-                return $packagePath
+                return (Get-Item $packagePath)
             } else {
                 throw "Failed to create $packageName"
             }
@@ -940,7 +952,7 @@ function New-MacOsDistributionPackage
     try
     {
         # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
     }
     finally
     {
@@ -948,7 +960,7 @@ function New-MacOsDistributionPackage
         Remove-item -Path $tempDir -Recurse -Force
     }
 
-    return $newPackagePath
+    return (Get-Item $newPackagePath)
 }
 function Get-FpmArguments
 {
@@ -2234,7 +2246,7 @@ function New-NugetContentPackage
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
     {
-        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+        Get-Item $nupkgFile
     }
     else
     {
