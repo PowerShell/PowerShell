@@ -62,6 +62,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './docker/*.md'
                 './docs/*.md'
                 './docs/building/*.md'
+                './docs/debugging/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
                 './docs/testing-guidelines/testing-guidelines.md'
