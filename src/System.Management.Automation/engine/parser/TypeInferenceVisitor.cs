@@ -2024,6 +2024,11 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets the most specific array type possible from a group of inferred types.
+        /// </summary>
+        /// <param name="inferredTypes">The inferred types all the items in the array.</param>
+        /// <returns>The inferred strongly typed array type.</returns>
         private PSTypeName GetArrayType(IEnumerable<PSTypeName> inferredTypes)
         {
             PSTypeName foundType = null;
@@ -2075,6 +2080,11 @@ namespace System.Management.Automation
             return new PSTypeName(foundType.Type.MakeArrayType());
         }
 
+        /// <summary>
+        /// Gets the most specific type item type from a type that is potentially enumerable.
+        /// </summary>
+        /// <param name="enumerableType">The type to infer enumerated item type from.</param>
+        /// <returns>The inferred enumerated item type.</returns>
         private Type GetMostSpecificEnumeratedItemType(Type enumerableType)
         {
             if (enumerableType.IsArray)
@@ -2133,6 +2143,24 @@ namespace System.Management.Automation
             return null;
         }
 
+        /// <summary>
+        /// Determines if the interface can be used to infer a specific enumerated type.
+        /// </summary>
+        /// <param name="interfaceType">The interface to test.</param>
+        /// <param name="hasSeenNonGeneric">
+        /// A reference to a value indicating whether a non-generic enumerable type has been
+        /// seen. If <see paramref="interfaceType" /> is a non-generic enumerable type this
+        /// value will be set to <see langword="true" />.
+        /// </param>
+        /// <param name="hasSeenDictionaryEnumerator">
+        /// A reference to a value indicating whether <see cref="IDictionaryEnumerator" /> has been
+        /// seen. If <paramref name="interfaceType" /> is a <see cref="IDictionaryEnumerator" /> this
+        /// value will be set to <see langword="true" />.
+        /// </param>
+        /// <returns>
+        /// The value of <paramref name="interfaceType" /> if it can be used to infer a specific
+        /// enumerated type, otherwise <see langword="null" />.
+        /// </returns>
         private Type GetGenericCollectionLikeInterface(
             Type interfaceType,
             ref bool hasSeenNonGeneric,
@@ -2229,6 +2257,14 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Infers the types as if they were enumerated. For example, a <see cref="List{T}" />
+        /// of type <see cref="string" /> would be returned as <see cref="string" />.
+        /// </summary>
+        /// <param name="enumerableTypes">
+        /// The potentially enumerable types to infer enumerated type from.
+        /// </param>
+        /// <returns>The enumerated item types.</returns>
         private IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
