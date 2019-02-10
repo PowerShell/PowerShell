@@ -8,8 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation;
+using System.Reflection;
 using System.Text;
+using System.Management.Automation.Language;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -356,8 +360,7 @@ namespace Microsoft.PowerShell.Commands
 
                 using (StreamReader streamReader = PathUtils.OpenStreamReader(this, this.Path, Encoding, _isLiteralPath))
                 {
-                    ImportCsvHelper readingHelper = new ImportCsvHelper(
-                        this, this.Delimiter, null /* header */, null /* typeName */, streamReader);
+                    ImportCsvHelper readingHelper = new ImportCsvHelper(this, this.Delimiter, null /* header */, null /* typeName */, streamReader);
                     readingHelper.ReadHeader();
                     _preexistingPropertyNames = readingHelper.Header;
 
@@ -524,6 +527,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
+
+        /// <summary>
+        /// Property that sets the type that the output is converted to.
+        /// </summary>
+        [Parameter]
+        public Type ResultType { get; set; }
+
+
         /// <summary>
         /// Mandatory file name to read from.
         /// </summary>
@@ -532,11 +543,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Path
         {
-            get
-            {
-                return _paths;
-            }
-
+            get => _paths;
             set
             {
                 _paths = value;
@@ -557,10 +564,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            }
+            get => _paths;
 
             set
             {
@@ -569,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Property that sets UseCulture parameter.
@@ -579,18 +583,11 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public SwitchParameter UseCulture
         {
-            get
-            {
-                return _useculture;
-            }
-
-            set
-            {
-                _useculture = value;
-            }
+            get => _useCulture;
+            set => _useCulture = value;
         }
 
-        private bool _useculture;
+        private bool _useCulture;
 
         ///<summary>
         /// Header property to customize the names.
@@ -604,15 +601,15 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are one or more unspecified names.
         /// </summary>
-        private bool _alreadyWarnedUnspecifiedNames = false;
+        private bool _alreadyWarnedUnspecifiedNames;
 
         #endregion Command Line Parameters
 
@@ -622,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, _useculture);
+            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, _useCulture);
         }
         /// <summary>
         /// ProcessRecord overload.
@@ -643,11 +640,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     using (StreamReader streamReader = PathUtils.OpenStreamReader(this, path, this.Encoding, _isLiteralPath))
                     {
-                        ImportCsvHelper helper = new ImportCsvHelper(this, Delimiter, Header, null /* typeName */, streamReader);
+                        ImportCsvHelper helper = new ImportCsvHelper(this, Delimiter, Header, null /* typeName */, streamReader, ResultType);
 
                         try
                         {
-                            helper.Import(ref _alreadyWarnedUnspecifiedNames);
+                            helper.Import(ref _alreadyWarnedUnspecifiedNames, _useCulture);
                         }
                         catch (ExtendedTypeSystemException exception)
                         {
@@ -836,7 +833,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        helper.Import(ref _alreadyWarnedUnspecifiedNames);
+                        helper.Import(ref _alreadyWarnedUnspecifiedNames, UseCulture);
                     }
                     catch (ExtendedTypeSystemException exception)
                     {
@@ -1167,29 +1164,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private readonly StreamReader _sr;
 
+        private readonly Type _resultType;
+
         // Initial sizes of the value list and the line stringbuilder.
         // Set to reasonable initial sizes. They may grow beyond these,
         // but this will prevent a few reallocations.
         private const int ValueCountGuestimate = 16;
         private const int LineLengthGuestimate = 256;
 
-        internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
+        internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader, Type resultType = null)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException("cmdlet");
-            }
-
-            if (streamReader == null)
-            {
-                throw new ArgumentNullException("streamReader");
-            }
-
-            _cmdlet = cmdlet;
+            _cmdlet = cmdlet ?? throw new ArgumentNullException(nameof(cmdlet));
+            _sr = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
             _delimiter = delimiter;
             Header = header;
             TypeName = typeName;
-            _sr = streamReader;
+            _resultType = resultType;
         }
 
         #endregion constructor
@@ -1299,15 +1289,15 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal
-        void
-        Import(ref bool alreadyWriteOutWarning)
+        internal void Import(ref bool alreadyWriteOutWarning, bool useCulture)
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
-            var prevalidated = false;
+            var preValidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+            var typeBuilder = _resultType == null ? null : ClassPropertySetter.GetCreatorDelegate(_resultType, Header, useCurrentCultureInTypeConversion: useCulture);
+
             while (true)
             {
                 ParseNextRecord(values, builder);
@@ -1319,10 +1309,17 @@ namespace Microsoft.PowerShell.Commands
                     // skip the blank lines
                     continue;
                 }
-
-                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
-                prevalidated = true;
-                _cmdlet.WriteObject(result);
+                if(_resultType == null)
+                {
+                    PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, preValidated);
+                    preValidated = true;
+                    _cmdlet.WriteObject(result);
+                }
+                else
+                {
+                    var obj = typeBuilder(values);
+                    _cmdlet.WriteObject(obj);
+                }
             }
 
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
@@ -1640,9 +1637,13 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private
-        PSObject
-        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
+        private object BuildTypedObject(List<string> values)
+        {
+            return null;
+        }
+
+
+        private PSObject BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
         {
             // string[] namesarray = null;
             PSObject result = new PSObject(names.Count);
@@ -1742,4 +1743,255 @@ namespace Microsoft.PowerShell.Commands
     #endregion ExportImport Helper
 
     #endregion CSV conversion
+
+    /// <summary>
+    /// Helper class
+    /// </summary>
+    public static class ClassPropertySetter
+    {
+        private static readonly MethodInfo s_convertToMethod = typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ConvertTo), new[] { typeof(object), typeof(Type), typeof(CultureInfo) });
+        private static readonly PropertyInfo s_listIndexer = typeof(IList<string>).GetProperty("Item");
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyNames"></param>
+        /// <param name="useCurrentCultureInTypeConversion"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static Func<IList<string>, object> GetCreatorDelegate(Type type, IList<string> propertyNames, bool useCurrentCultureInTypeConversion)
+        {
+            var cultureInfo = useCurrentCultureInTypeConversion ? CultureInfo.CurrentCulture : CultureInfo.InvariantCulture;
+            return GetCreatorDelegate(type, propertyNames, cultureInfo);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyNames"></param>
+        /// <param name="formatProvider"></param>
+        /// <returns></returns>
+        public static Func<IList<string>, object> GetCreatorDelegate(Type type, IList<string> propertyNames, IFormatProvider formatProvider)
+        {
+            var matchingConstructor = GetMatchingConstructor(type, propertyNames);
+            var lambda = matchingConstructor != null
+                ? GetCtorExpression(type, propertyNames, matchingConstructor, formatProvider)
+                : GetPropertySetterExpression(type, propertyNames, formatProvider);
+
+            return lambda.Compile();
+        }
+
+        private static Expression<Func<IList<string>, object>> GetCtorExpression(
+            Type type,
+            IList<string> parameterNames,
+            ConstructorInfo constructor,
+            IFormatProvider formatProvider)
+        {
+            /*
+             *  Generate code similar to
+             *  ((string[] values) => {
+             *     new CsvType(
+             *            LanguagePrimitives.ConvertTo(values[0], typeof(Int32), (CultureInfo.CurrentCultureIgnoreCase)),
+             *            values[1]);
+             *  })
+             *
+             *  The order of the values are parameter depend on the order of the fields in the csv header.
+             *
+             *  Example expression tree:
+             *
+             *  .Lambda #Lambda1<Func[IList[String],Object]>(IList`1[String] $inputValues)
+             *  {
+             *      .Block() {
+             *          (System.Object).New CsvType(
+             *              (System.Int32).Call LanguagePrimitives.ConvertTo(
+             *                  $inputValues.Item[0],
+             *                  .Constant<RuntimeType>(Int32),
+             *                  .Constant<CultureInfo>(sv-SE)),
+             *              $inputValues.Item[1])
+             *      }
+             *  }
+             */
+            var parameters = constructor.GetParameters();
+            var inputIndices = GetInputIndexInParameterOrder(parameterNames, parameters);
+
+            var inputValues = Expression.Parameter(typeof(IList<string>), "inputValues");
+            var paramExpressions = new Expression[parameters.Length];
+            for (int i = 0; i < paramExpressions.Length; i++)
+            {
+                var parameterInfo = parameters[i];
+                Type parameterType = parameterInfo.ParameterType;
+                var inputIndex = inputIndices[i];
+                var arrayIndex = Expression.MakeIndex(inputValues, s_listIndexer, new[] { Expression.Constant(inputIndex) });
+                var convertedValue = GetConvertedValueExpression(typeof(string), parameterType, arrayIndex, formatProvider);
+                paramExpressions[i] = convertedValue;
+            }
+
+            var block = Expression.Block(Expression.Convert(Expression.New(constructor, paramExpressions),typeof(object)));
+            var lambda = Expression.Lambda<Func<IList<string>, object>>(block, inputValues);
+            return lambda;
+        }
+
+        private static Expression<Func<IList<string>, object>> GetPropertySetterExpression(Type type, IList<string> propertyNames,
+            IFormatProvider formatProvider)
+        {
+            /*
+             *  Generate code similar to
+             *  ((string[] values) => {
+             *     var instance = new CsvType();
+             *     instance.Integer = LanguagePrimitives.ConvertTo(values[0], typeof(Int32), CultureInfo.InvariantCultureIgnoreCase);
+             *     instance.Text= values[1];
+             *     instance.Date= LanguagePrimitives.ConvertTo(values[2], typeof(DateTime), CultureInfo.InvariantCultureIgnoreCase);
+             *  })
+             *
+             *  The order of the values are determined by the order of the headers if the csv.
+             *  Example expression tree
+             *  .Lambda #Lambda1<Func[IList[String],Object]>(IList[String] $inputValues)
+             *  {
+             *      .Block(CsvType $instance) {
+             *          $instance = .New CsvType();
+             *          $instance.Integer = (System.Int32).Call System.Management.Automation.LanguagePrimitives.ConvertTo(
+             *              $inputValues.Item[0],
+             *              .Constant<System.RuntimeType>(System.Int32),
+             *              .Constant<System.Globalization.CultureInfo>());
+             *          $instance.Text = $inputValues.Item[1];
+             *          $instance.Date = (System.DateTime).Call System.Management.Automation.LanguagePrimitives.ConvertTo(
+             *              $inputValues.Item[2],
+             *              .Constant<System.RuntimeType>(System.DateTime),
+             *              .Constant<System.Globalization.CultureInfo>());
+             *          (System.Object)$instance
+             *      }
+             *  }
+             */
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty;
+
+            var ctor = type.GetConstructor(Type.EmptyTypes);
+            var propertyInfos = type.GetProperties(bindingFlags);
+            var propIndex = GetPropertiesIndexInInputOrder(type, propertyInfos, propertyNames);
+
+            var values = Expression.Parameter(typeof(IList<string>), "inputValues");
+            var instVar = Expression.Variable(type, "instance");
+            var blockExpressions = new Expression[propertyNames.Count + 2];
+            //var blockExpressions = new Expression[2];
+            var exprIndex = 0;
+            blockExpressions[exprIndex++] = Expression.Assign(instVar, Expression.New(ctor));
+            for (int i = 0; i < propertyNames.Count; i++, exprIndex++)
+            {
+                var propertyIndex = propIndex[i];
+                var propertyInfo = propertyInfos[propertyIndex];
+                Type propertyType = propertyInfo.PropertyType;
+
+                var arrayIndex = Expression.MakeIndex(values, s_listIndexer, new[] { Expression.Constant(i) });
+                var convertedValue = GetConvertedValueExpression(typeof(string), propertyType, arrayIndex, formatProvider);
+
+                blockExpressions[exprIndex] = Expression.Assign(
+                    Expression.Property(instVar, propertyInfo.SetMethod),
+                    convertedValue);
+            }
+
+            blockExpressions[exprIndex] = Expression.Convert(instVar, typeof(object));
+            var block = Expression.Block(new[] { instVar }, blockExpressions);
+            var lambda = Expression.Lambda<Func<IList<string>, object>>(block, values);
+            return lambda;
+        }
+
+
+        private static ConstructorInfo GetMatchingConstructor(Type type, IList<string> propertyNames)
+        {
+            var constructors = type.GetConstructors(BindingFlags.Public|BindingFlags.Instance);
+            for (int i = 0; i < constructors.Length; i++)
+            {
+                var constructorInfo = constructors[i];
+                var parameterInfos = constructorInfo.GetParameters();
+                if (parameterInfos.Length != propertyNames.Count)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < parameterInfos.Length; j++)
+                {
+                    var parameterInfo = parameterInfos[j];
+                    var rank = LanguagePrimitives.GetConversionRank(typeof(string), parameterInfo.ParameterType);
+                    if (rank == ConversionRank.None)
+                    {
+                        goto nextCtor;
+                    }
+                }
+
+                // a constructor with all parameter convertible
+                return constructorInfo;
+                nextCtor: ;
+            }
+
+            return null;
+        }
+
+        private static Expression GetConvertedValueExpression(Type from, Type to, Expression value, IFormatProvider cultureInfo)
+        {
+            var conversionRank = LanguagePrimitives.GetConversionRank(from, to);
+            Expression convertedValue;
+            switch (conversionRank)
+            {
+                case ConversionRank.None:
+                    throw new ArgumentException("There is no conversion from string to {propertyType}, needed for property {propertyInfo}");
+                case ConversionRank.Identity:
+                {
+                    convertedValue = value;
+                    break;
+                }
+                default:
+                {
+                    convertedValue = Expression.Convert(
+                        Expression.Call(null, s_convertToMethod,
+                            new [] { value, Expression.Constant(to), Expression.Constant(cultureInfo)  }),
+                        to);
+                    break;
+                }
+            }
+
+            return convertedValue;
+        }
+
+        private static int[] GetPropertiesIndexInInputOrder(Type type, PropertyInfo[] propertyInfo, IList<string> propertyNames)
+        {
+            var propertyInfoMap = propertyInfo.Select((p, i) => (index: i, prop: p)).ToDictionary(p => p.prop.Name, StringComparer.InvariantCultureIgnoreCase);
+
+            var propIndex = new int[propertyInfo.Length];
+
+            for (int index = 0; index < propertyNames.Count; index++)
+            {
+                var propertyName = propertyNames[index];
+                if (propertyInfoMap.TryGetValue(propertyName, out var propertyData))
+                {
+                    propIndex[index] = propertyData.index;
+                }
+                else
+                {
+                    throw new ArgumentException($"Property names doesn't exist on type {type.Name}: '{propertyName}'");
+                }
+            }
+
+            return propIndex;
+        }
+
+        private static int[] GetInputIndexInParameterOrder(IList<string> names, ParameterInfo[] items)
+        {
+            var result = new int[items.Length];
+            var map = items.Select((item, index) => (index: index, item: item)).ToDictionary(t => t.item.Name, StringComparer.InvariantCultureIgnoreCase);
+            for (var index = 0; index < names.Count; index++)
+            {
+                var name = names[index];
+                if (map.TryGetValue(name, out var itemIndex))
+                {
+                    result[index] = itemIndex.index;
+                    continue;
+                }
+
+                throw new ArgumentException($"Mismatched name: '{name}'");
+            }
+
+            return result;
+        }
+    }
 }
