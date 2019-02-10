@@ -32,10 +32,10 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 throw "node not found"
             }
         }
-        elseif( -not $env:AppVeyor)
+        else
         {
             <#
-                On Windows, but not an AppVeyor and pre-requisites are missing
+                On Windows, pre-requisites are missing
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
