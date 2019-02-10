@@ -7,7 +7,11 @@ Describe "Verify Markdown Links" {
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
-            start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
+            start-nativeExecution {
+                    sudo npm install -g markdown-link-check@3.7.2
+                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+                    sudo rm -rf ~/.npm/_cacache
+                }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))

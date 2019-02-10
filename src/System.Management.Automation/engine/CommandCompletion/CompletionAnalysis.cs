@@ -1446,6 +1446,7 @@ namespace System.Management.Automation
                                     StringLiterals.PowerShellDataFileExtension,
                                     StringLiterals.PowerShellNgenAssemblyExtension,
                                     StringLiterals.PowerShellILAssemblyExtension,
+                                    StringLiterals.PowerShellILExecutableExtension,
                                     StringLiterals.PowerShellCmdletizationFileExtension
                                 };
                                 result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();

@@ -109,6 +109,12 @@ namespace Microsoft.PowerShell.Commands
         public MailPriority Priority { get; set; }
 
         /// <summary>
+        /// Gets or sets the Reply-To field for this e-mail message.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public string[] ReplyTo { get; set; }
+
+        /// <summary>
         /// Gets or sets the subject of the email message.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
@@ -187,6 +193,11 @@ namespace Microsoft.PowerShell.Commands
                                 _mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
+                        case "replyTo":
+                            {
+                                _mMailMessage.ReplyToList.Add(new MailAddress(strEmailAddress));
+                                break;
+                            }
                     }
                 }
                 catch (FormatException e)
@@ -231,6 +242,12 @@ namespace Microsoft.PowerShell.Commands
             if (Cc != null)
             {
                 AddAddressesToMailMessage(Cc, "cc");
+            }
+
+            // Set the Reply-To address of the mail message
+            if (ReplyTo != null)
+            {
+                AddAddressesToMailMessage(ReplyTo, "replyTo");
             }
 
             // Set the delivery notification
