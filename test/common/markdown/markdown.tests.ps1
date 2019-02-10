@@ -69,7 +69,8 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './docs/dev-process/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
-                './docs/testing-guidelines/testing-guidelines.md'
+                './docs/learning-powershell/*.md'
+                './docs/testing-guidelines/*.md'
                 './test/powershell/README.md'
                 './tools/*.md'
             )
