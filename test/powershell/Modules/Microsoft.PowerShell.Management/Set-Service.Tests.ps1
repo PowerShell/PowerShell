@@ -9,14 +9,15 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         if ($IsWindows) {
             $userName = "testuserservices"
             $testPass = "Secret123!"
+            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(D;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)'
             net user $userName $testPass /add > $null
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new(".\$userName", $password)
 
+            $svcbinaryname = New-Item -Path TestDrive:\TestExecutable.exe -ItemType File
             $testservicename1 = "testservice1"
             $testservicename2 = "testservice2"
-            $svcbinaryname = "TestService"
-            $svccmd = Get-Command $svcbinaryname
+            $svccmd = Get-Command $svcbinaryname.FullName
             $svccmd | Should -Not -BeNullOrEmpty
             $svcfullpath = $svccmd.Path
             $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
@@ -72,6 +73,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         @{
             script  = {Set-Service foo -StartupType bar -ErrorAction Stop};
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
+        },
+        @{
+            script  = {Set-Service -Name $testservicename1 -SecurityDescriptorSddl 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA' };
+            errorid = "System.ArgumentException,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
         param($script, $errorid)
