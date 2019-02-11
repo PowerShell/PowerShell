@@ -5024,7 +5024,7 @@ namespace System.Management.Automation
             }
 
             return _mshOwner is IPSObjectExtendedMemberInfo psMemberInfo
-                ? psMemberInfo.GetFirstOrDefault<PSMemberInfo>(predicate)
+                ? psMemberInfo.GetFirstOrDefault<PSMemberInfo>(predicate) as T
                 : null;
         }
 

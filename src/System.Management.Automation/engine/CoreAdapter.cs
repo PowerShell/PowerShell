@@ -3760,12 +3760,12 @@ namespace System.Management.Automation
                     {
                         var isHidden = propertyEntryMember.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
 
-                        members.Add(new PSProperty(propertyEntryMember.Name, this,
-                            obj, propertyEntry)
+                        var member = new PSProperty(propertyEntryMember.Name, this, obj, propertyEntry)
                         {
                             IsHidden = isHidden,
                             isExtensionProperty = true,
-                        } as T);
+                        } as T;
+                        members.Add(member);
                     }
                 }
             }
