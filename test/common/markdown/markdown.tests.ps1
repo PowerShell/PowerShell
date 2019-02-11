@@ -32,14 +32,17 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 throw "node not found"
             }
         }
-        <#
-            On Windows, pre-requisites are missing
-            For now we will skip, and write a warning.  Work to resolve this is tracked in:
-            https://github.com/PowerShell/PowerShell/issues/3429
-        #>
-        Write-Warning "Node and npm are required to run this test"
-        $skip = $true
-
+        if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
+        {
+            <#
+                On Windows, pre-requisites are missing
+                For now we will skip, and write a warning.  Work to resolve this is tracked in:
+                https://github.com/PowerShell/PowerShell/issues/3429
+            #>
+            Write-Warning "Node and npm are required to run this test"
+            $skip = $true
+        }
+        
         $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
     }
