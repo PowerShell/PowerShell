@@ -194,7 +194,7 @@ function Invoke-AppVeyorBuild
 }
 
 # Implements the CI 'install' step
-function Invoke-AppVeyorInstall
+function Invoke-CIInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
