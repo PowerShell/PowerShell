@@ -11,22 +11,9 @@ jobs:
 
   steps:
 
-  - powershell: |
-      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
-    displayName: 'Set ReleaseTag Variable'
-
-  - powershell: |
-       $version = '$(ReleaseTagVar)'.Substring(1)
-       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-
-       $azureVersion = '$(ReleaseTagVar)'.ToLowerInvariant() -replace '\.', '-'
-       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-
-    displayName: 'Set Version Variable'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
@@ -65,19 +52,10 @@ jobs:
       signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
       outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
 
-  - powershell: |
-      dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | foreach-object {
-         $fullname = $_.fullname
-         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$fullname"
-      }
-    displayName: 'Upload tar.gz'
-
-  - powershell: |
-      dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | foreach-object {
-          $fullname = $_.fullname
-          Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$fullname"
-      }
-    displayName: 'Upload macOS signed package'
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)
+      artifactFilter: "*.tar.gz"
 
   - powershell: |
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"
@@ -86,7 +64,12 @@ jobs:
       Expand-Archive -Path $zipPath -DestinationPath $destination
       $targzPath = dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | select-object -expandproperty fullname
       Copy-Item -Path $targzPath -Destination $destination
-    displayName: 'Extract and copy macOS artifacts for upload to azure'
+    displayName: 'Extract and copy macOS artifacts for upload'
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\azureMacOs
+      artifactFilter: "*.pkg"
 
   - task: AzureFileCopy@1
     displayName: 'AzureBlob File Copy'
@@ -98,4 +81,4 @@ jobs:
       ContainerName: '$(AzureVersion)'
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run MpCmdRun.exe'
+    displayName: 'Run Defender Scan'

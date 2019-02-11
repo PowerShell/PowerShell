@@ -364,12 +364,14 @@ namespace System.Management.Automation.Remoting
 
                     SessionDataStructureHandler.StateMachine.RaiseEvent(eventArgs);
                 }
+                else
+                {
+                    // send using data structure handler
+                    eventArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeySent);
+                    SessionDataStructureHandler.StateMachine.RaiseEvent(eventArgs);
 
-                // send using data structure handler
-                eventArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeySent);
-                SessionDataStructureHandler.StateMachine.RaiseEvent(eventArgs);
-
-                SessionDataStructureHandler.SendPublicKeyAsync(localPublicKey);
+                    SessionDataStructureHandler.SendPublicKeyAsync(localPublicKey);
+                }
             }
         }
 

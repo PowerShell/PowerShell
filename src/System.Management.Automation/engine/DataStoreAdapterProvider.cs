@@ -35,6 +35,8 @@ namespace System.Management.Automation
         /// </summary>
         private SessionState _sessionState;
 
+        private string _fullName;
+
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
@@ -47,29 +49,34 @@ namespace System.Management.Automation
         {
             get
             {
-                string result = this.Name;
-                if (!string.IsNullOrEmpty(this.PSSnapInName))
+                string GetFullName(string name, string psSnapInName, string moduleName)
                 {
-                    result =
-                        string.Format(
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            "{0}\\{1}",
-                            this.PSSnapInName,
-                            this.Name);
+                    string result = name;
+                    if (!string.IsNullOrEmpty(psSnapInName))
+                    {
+                        result =
+                            string.Format(
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                "{0}\\{1}",
+                                psSnapInName,
+                                name);
+                    }
+
+                    // After converting core snapins to load as modules, the providers will have Module property populated
+                    else if (!string.IsNullOrEmpty(moduleName))
+                    {
+                        result =
+                            string.Format(
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                "{0}\\{1}",
+                                moduleName,
+                                name);
+                    }
+
+                    return result;
                 }
 
-                // After converting core snapins to load as modules, the providers will have Module property populated
-                else if (!string.IsNullOrEmpty(this.ModuleName))
-                {
-                    result =
-                        string.Format(
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            "{0}\\{1}",
-                            this.ModuleName,
-                            this.Name);
-                }
-
-                return result;
+                return _fullName ?? (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
             }
         }
 
@@ -136,6 +143,7 @@ namespace System.Management.Automation
         internal void SetModule(PSModuleInfo module)
         {
             Module = module;
+            _fullName = null;
         }
 
         /// <summary>

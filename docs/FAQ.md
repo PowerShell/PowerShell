@@ -37,7 +37,7 @@ Setting `$ErrorActionPreference = 'Stop'` will likely do what you want;
 that is, cause non-terminating errors instead to terminate.
 Read [An Introduction To Error Handling in PowerShell][error] for more information.
 
-[error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
+[error]: https://gist.github.com/TravisEz13/9bb811c63b88501f3beec803040a9996
 
 ## Where do I get the PowerShell Core SDK package?
 

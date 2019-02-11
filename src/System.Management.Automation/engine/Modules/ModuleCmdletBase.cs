@@ -1218,7 +1218,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (moduleInfo.RootModuleForManifest != null)
                     {
-                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                            moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             moduleInfo.SetModuleType(ModuleType.Binary);
                         }
@@ -1243,7 +1244,9 @@ namespace Microsoft.PowerShell.Commands
                         moduleInfo.RootModule = moduleInfo.Path;
                     }
                 }
-                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                         extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                         extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleInfo.SetModuleType(ModuleType.Binary);
                     moduleInfo.RootModule = moduleInfo.Path;
@@ -2218,6 +2221,13 @@ namespace Microsoft.PowerShell.Commands
                             WriteVerbose(loadMessage);
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
                             fixedUpAssemblyPathList.Add(fileName);
+
+                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILExecutableExtension, importingModule);
+                            loadMessage = StringUtil.Format(Modules.LoadingFile, "Executable", fileName);
+                            WriteVerbose(loadMessage);
+                            iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
+                            fixedUpAssemblyPathList.Add(fileName);
+
                             doBind = true;
                         }
                     }
@@ -4627,9 +4637,12 @@ namespace Microsoft.PowerShell.Commands
             // Path resolution failed, use the combined path as default.
             string result = combinedPath;
 
-            // For the given assembly name, the intention could be to use the assembly from TPAs or GAC (on Windows).
-            // So try loading the assembly using the passed-in name only, and use the assembly location if that succeeds.
-            if (!string.IsNullOrEmpty(originalExt) && originalExt.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+            // For dlls, we cannot get the path from the provider.
+            // We need to load the assembly and then get the path.
+            // If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
+            if (!string.IsNullOrEmpty(extension) &&
+                (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase)))
             {
                 Assembly assembly = ExecutionContext.LoadAssembly(name: originalName, filename: null, error: out _);
                 if (assembly != null)
@@ -5804,7 +5817,9 @@ namespace Microsoft.PowerShell.Commands
                         found = false;
                     }
                 }
-                else if (ext.Equals(".dll", StringComparison.OrdinalIgnoreCase) || ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension))
+                else if (ext.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                         ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                         ext.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
                         moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);

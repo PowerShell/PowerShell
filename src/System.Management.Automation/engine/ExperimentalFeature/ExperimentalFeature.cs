@@ -111,6 +111,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSTempDrive",
                     description: "Create TEMP: PS Drive mapped to user's temporary directory path"),
+                new ExperimentalFeature(
+                    name: "PSCommandNotFoundSuggestion",
+                    description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
