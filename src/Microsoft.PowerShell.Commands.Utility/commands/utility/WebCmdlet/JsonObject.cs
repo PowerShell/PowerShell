@@ -135,10 +135,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
         /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
-        /// <param name="input">The json text to convert.</param>
+        /// <param name="input">The JSON text to convert.</param>
         /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
         /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
         /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
