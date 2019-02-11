@@ -156,10 +156,9 @@ Function Set-BuildVariable
 }
 
 # Emulates running all of CI but locally
-function Invoke-AppVeyorFull
+function Invoke-CIFull
 {
     param(
-        [switch] $APPVEYOR_SCHEDULED_BUILD,
         [switch] $CleanRepo
     )
     if($CleanRepo)
@@ -167,14 +166,14 @@ function Invoke-AppVeyorFull
         Clear-PSRepo
     }
 
-    Invoke-AppVeyorInstall
-    Invoke-AppVeyorBuild
-    Invoke-AppVeyorTest -ErrorAction Continue
-    Invoke-AppveyorFinish
+    Invoke-CIInstall
+    Invoke-CIBuild
+    Invoke-CITest -ErrorAction Continue
+    Invoke-CIFinish
 }
 
 # Implements the CI 'build_script' step
-function Invoke-AppVeyorBuild
+function Invoke-CIBuild
 {
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
@@ -226,7 +225,7 @@ function Invoke-CIInstall
         # Provide credentials globally for remote tests.
         $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
         $ciRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\CIRemoteCred.xml" -Force
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
@@ -264,7 +263,7 @@ function Update-TestResults
 }
 
 # Implement CI 'Test_script'
-function Invoke-AppVeyorTest
+function Invoke-CITest
 {
     [CmdletBinding()]
     param(
@@ -394,7 +393,7 @@ function Invoke-AppVeyorTest
 }
 
 # Implement CI 'after_test' phase
-function Invoke-AppVeyorAfterTest
+function Invoke-CIAfterTest
 {
     [CmdletBinding()]
     param()
@@ -484,7 +483,7 @@ function Get-ReleaseTag
 }
 
 # Implements CI 'on_finish' step
-function Invoke-AppveyorFinish
+function Invoke-CIFinish
 {
     param(
         [string] $NuGetKey

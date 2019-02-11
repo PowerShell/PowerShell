@@ -59,13 +59,13 @@ steps:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
-      Invoke-AppveyorInstall
+      Invoke-CIInstall
     displayName: Bootstrap
     condition: succeededOrFailed()
 
   - powershell: |
       Import-Module .\tools\ci.psm1
-      Invoke-AppveyorBuild
+      Invoke-CIBuild
       Save-PSOptions
     displayName: Build
     condition: succeeded()
@@ -73,20 +73,20 @@ steps:
   - powershell: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions
-      Invoke-AppveyorTest -Purpose '$(Purpose)'
+      Invoke-CITest -Purpose '$(Purpose)'
     displayName: Test
     condition: succeeded()
 
   - powershell: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions
-      Invoke-AppveyorAfterTest
+      Invoke-CIAfterTest
     displayName: AfterTest
     condition: succeededOrFailed()
 
   - powershell: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions
-      Invoke-AppveyorFinish -NuGetKey $(NUGET_KEY)
+      Invoke-CIFinish -NuGetKey $(NUGET_KEY)
     displayName: Finish
     condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')
