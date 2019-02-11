@@ -2452,7 +2452,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        enum PSObjectFlags : byte
+        private enum PSObjectFlags : byte
         {
             None = 0,
             /// <summary>
