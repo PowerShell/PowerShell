@@ -1,13 +1,15 @@
 jobs:
 - job: updateBuildTable
-  displayName: Update Build Information Tbale
+  displayName: Update Build Information Table
   dependsOn:
     ${{ parameters.parentJobs }}
   
   # the package ES pools don't have the latest module needed to run this job
   pool:
     name: Hosted Mac Internal
-
+  
+  timeoutInMinutes: 15
+  
   steps:
   - template: SetVersionVariables.yml
     parameters:
@@ -32,7 +34,6 @@ jobs:
       Write-Verbose "Adding new row ..." -verbose
       $result = Add-AzStorageTableRow -table $table -partitionkey '$(System.DefinitionId)' -rowKey '$(ReleaseTagVar)' -property @{
               buildid = '$(Build.BuildId)'
-      
             }
       While(!$result.IsCompleted)
       {
