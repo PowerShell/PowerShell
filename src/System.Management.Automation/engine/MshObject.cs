@@ -641,13 +641,16 @@ namespace System.Management.Automation
         /// Null for live objects but not null for deserialized objects.
         /// </summary>
         private PSMemberInfoInternalCollection<PSPropertyInfo> _adaptedMembers;
+
         /// <summary>
         /// Members from the adapter of the object before it was serialized
         /// Null for live objects but not null for deserialized objects.
         /// </summary>
         private PSMemberInfoInternalCollection<PSPropertyInfo> _clrMembers;
+
         // This is toString value set on deserialization
         private string _toStringFromDeserialization;
+
         /// <summary>
         /// If this is non-null return this string as the ToString() for this wrapped object.
         /// </summary>
@@ -2455,16 +2458,19 @@ namespace System.Management.Automation
         private enum PSObjectFlags : byte
         {
             None = 0,
+
             /// <summary>
             /// This flag is set in deserialized shellobject.
             /// </summary>
             IsDeserialized = 0b00000001,
+
             /// <summary>
             /// Set to true when the BaseObject is PSCustomObject.
             /// </summary>
             HasGeneratedReservedMembers = 0b00000010,
             ImmediateBaseObjectIsEmpty = 0b00000100,
             IsHelpObject = 0b00001000,
+
             /// <summary>
             /// Indicate whether we store the instance members and type names locally
             /// for this PSObject instance.
