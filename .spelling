@@ -47,6 +47,7 @@ arm32
 arm64
 asp.net
 assemblyloadcontext
+appveyor
 authenticodesignature
 azdevops
 azurerm.netcore.preview
