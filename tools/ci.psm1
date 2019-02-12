@@ -263,12 +263,38 @@ function Update-TestResults
     }
 }
 
+function Invoke-CIxUnit
+{
+    param(
+        [switch]
+        $SkipFailing
+    )
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+    if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
+    {
+        throw "CoreCLR pwsh.exe was not built"
+    }
+
+    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
+
+    Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+    Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
+    Push-Artifact -Path $ParallelXUnitTestResultsFile -name xunit
+
+    if(!$SkipFailing.IsPresent)
+    {
+        # Fail the build, if tests failed
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+    }
+}
+
 # Implement CI 'Test_script'
 function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit')]
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
         [string] $TagSet
@@ -279,7 +305,6 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -346,7 +371,7 @@ function Invoke-AppVeyorTest
         }
     }
 
-    if ($Purpose -eq 'ElevatedPesterTests_xUnit') {
+    if ($Purpose -eq 'ElevatedPesterTests') {
         $arguments = @{
             Terse = $true
             Bindir = $env:CoreOutput
@@ -358,13 +383,9 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-TestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-        Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
