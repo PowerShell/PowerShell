@@ -121,16 +121,14 @@ Write-LogPassThru -Message "***** New Run *****"
 Write-LogPassThru -Message "Forcing winrm quickconfig as it is required for remoting tests."
 winrm quickconfig -force
 
-# todo: make this actually work with some
-# new API (this is a placeholder):
-$CIUri = "https://microsoft.com"
-$project = Invoke-RestMethod -Method Get -Uri "${CIUri}/projects/PowerShell/powershell-f975h"
+$appVeyorUri = "https://ci.appveyor.com/api"
+$project = Invoke-RestMethod -Method Get -Uri "${appVeyorUri}/projects/PowerShell/powershell-f975h"
 $jobId = $project.build.jobs[0].jobId
 
-$CIBaseUri = "${CIUri}/buildjobs/${jobId}/artifacts"
-$codeCoverageZip = "${CIBaseUri}/CodeCoverage.zip"
-$testContentZip =  "${CIBaseUri}/tests.zip"
-$openCoverZip =    "${CIBaseUri}/OpenCover.zip"
+$appVeyorBaseUri = "${appVeyorUri}/buildjobs/${jobId}/artifacts"
+$codeCoverageZip = "${appVeyorBaseUri}/CodeCoverage.zip"
+$testContentZip =  "${appVeyorBaseUri}/tests.zip"
+$openCoverZip =    "${appVeyorBaseUri}/OpenCover.zip"
 
 Write-LogPassThru -Message "codeCoverageZip: $codeCoverageZip"
 Write-LogPassThru -Message "testcontentZip: $testContentZip"
