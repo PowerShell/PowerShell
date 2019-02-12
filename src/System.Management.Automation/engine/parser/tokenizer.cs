@@ -3714,7 +3714,8 @@ namespace System.Management.Automation.Language
                                     result = dmValue;
                                     return true;
                                 }
-                                else if (Utils.TryCast(bigValue, out double d))
+
+                                if (Utils.TryCast(bigValue, out double d))
                                 {
                                     result = d;
                                     return true;
