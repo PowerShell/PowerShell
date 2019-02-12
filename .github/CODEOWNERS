@@ -21,7 +21,7 @@
 # Area: Cmdlets Core
 # @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
 
-# Now, Aaeas that should have paths or filters, although we might not have them defined
+# Now, areas that should have paths or filters, although we might not have them defined
 # According to the docs, order here must be by precedence of the filter, with later rules overwritting
 # but the feature seems to make taking a union of all the matching rules.
 
@@ -40,14 +40,14 @@ demos/                                             @joeyaiello @SteveL-MSFT @Hem
 # Area: DSC
 src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
 
-# Area: engine
+# Area: Engine
 src/System.Management.Automation/engine            @daxian-dbw @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
 src/System.Management.Automation/engine/debugger/  @BrucePay @PaulHigin
 
-# Area: help
+# Area: Help
 src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
 
 # Area: Intellisense
