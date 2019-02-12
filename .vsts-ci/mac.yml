@@ -54,5 +54,4 @@ phases:
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts
-    condition: ne(variables['Build.Reason'], 'PullRequest')
     continueOnError: true
