@@ -323,13 +323,17 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        // Return true if the character is a decimal digit.
+        // Returns true if the character is a decimal digit.
         internal static bool IsDecimalDigit(this char c) => (uint)(c - '0') <= 9;
 
-        // Return true if the character is a binary digit.
+        // These decimal/binary checking methods are more performant than the alternatives due to requiring
+        // less overall operations than a more readable check such as {(this char c) => c == 0 | c == 1},
+        // especially in the case of IsDecimalDigit().
+
+        // Returns true if the character is a binary digit.
         internal static bool IsBinaryDigit(this char c) => (uint)(c - '0') <= 1;
 
-        // Return true if the character is a type suffix character.
+        // Returns true if the character is a type suffix character.
         internal static bool IsTypeSuffix(this char c)
         {
             if (c < 128)
