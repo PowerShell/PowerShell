@@ -5,7 +5,7 @@
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'INTGallery'
-$SourceLocation = 'https://dtlgalleryint.cloudapp.net'
+$SourceLocation = 'https://www.poshtestgallery.com'
 $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'
 $FabrikamServerScript = 'Fabrikam-ServerScript'
