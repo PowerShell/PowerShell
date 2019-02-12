@@ -191,6 +191,20 @@ function Invoke-AppVeyorBuild
     }
 
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+
+    Save-PSOptions
+
+    $options = (Get-PSOptions)
+
+    $path = split-path -path $options.Output
+
+    $psOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath '../psoptions.json')
+    $buildZipPath = (Join-Path -Path $PSScriptRoot -ChildPath '../build.zip')
+
+    Compress-Archive -Path $path -DestinationPath $buildZipPath
+
+    Push-Artifact -Path $psOptionsPath -Name 'build'
+    Push-Artifact -Path $buildZipPath -Name 'build'
 }
 
 # Implements the CI 'install' step
