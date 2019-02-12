@@ -1119,7 +1119,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // Indicate to the system that we are in nested prompt mode, since we are emulating running the command at the prompt.
-                    // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
+                    // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor() 
                     // always forces CommandOrigin to Internal for nested running commands, and Command.CreateCommandProcessor() forces Internal
                     // commands to always run in FullLanguage mode unless in a nested prompt.
                     if (localRunspace != null)
