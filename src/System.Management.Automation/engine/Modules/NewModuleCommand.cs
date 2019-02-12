@@ -157,6 +157,19 @@ namespace Microsoft.PowerShell.Commands
             // Create a module from a scriptblock...
             if (_scriptBlock != null)
             {
+                // Check ScriptBlock language mode.  If it is different than the context language mode
+                // then throw error since private trusted script functions may be exposed.
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                    _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
+                {
+                    this.ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
+                            "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
+                            ErrorCategory.SecurityError,
+                            null));
+                }
+
                 string gs = System.Guid.NewGuid().ToString();
                 if (string.IsNullOrEmpty(_name))
                 {
