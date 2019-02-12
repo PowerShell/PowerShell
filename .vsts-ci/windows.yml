@@ -70,7 +70,7 @@ jobs:
 
 - job: verify_xunit
   displayName: Verify xUnit Results
-  pool: 
+  pool:
     name: 'Hosted VS2017'
   dependsOn:
     - win_build

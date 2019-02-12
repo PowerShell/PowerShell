@@ -44,7 +44,7 @@ jobs:
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
       $path = split-path -path $options.Output
-      $rootPath = split-Path -path $path 
+      $rootPath = split-Path -path $path
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-AppveyorTest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
