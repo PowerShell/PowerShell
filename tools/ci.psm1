@@ -268,8 +268,10 @@ function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
-        [string] $Purpose
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit')]
+        [string] $Purpose,
+        [ValidateSet('CI', 'Others')]
+        [string] $TagSet
     )
     # CoreCLR
 
@@ -286,15 +288,18 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    if (Test-DailyBuild)
-    {
-        $ExcludeTag = @()
-        Write-Host -Foreground Green 'Running all CoreCLR tests..'
-    }
-    else
-    {
-        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
-        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+    switch ($TagSet) {
+        'CI' {
+            Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+            $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+        }
+        'Others' {
+            Write-Host -Foreground Green 'Running non-CI CoreCLR tests..'
+            $ExcludeTag = @('CI')
+        }
+        Default {
+            throw "Unknow TagSet: '$TagSet'"
+        }
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -309,7 +314,7 @@ function Invoke-AppVeyorTest
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
-        Start-PSPester @arguments -Title 'Pester Unelevated'
+        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-TestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
@@ -341,7 +346,7 @@ function Invoke-AppVeyorTest
         }
     }
 
-    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
+    if ($Purpose -eq 'ElevatedPesterTests_xUnit') {
         $arguments = @{
             Terse = $true
             Bindir = $env:CoreOutput
@@ -349,7 +354,7 @@ function Invoke-AppVeyorTest
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
         }
-        Start-PSPester @arguments -Title 'Pester Elevated'
+        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-TestResults -resultsFile $testResultsAdminFile
 
