@@ -379,7 +379,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void VerifyPipeName(string debugPipeName)
         {
-            var pipePath = Platform.IsWindows ? $@"\.\pipe\${debugPipeName}" : Path.Combine(Path.GetTempPath(), $"CoreFxPipe_{debugPipeName}");
+            // Named Pipes are represented differently on Windows vs macOS & Linux
+            var pipePath = Platform.IsWindows ? $@"\.\pipe\{debugPipeName}" : Path.Combine(Path.GetTempPath(), $"CoreFxPipe_{debugPipeName}");
 
             if (!File.Exists(pipePath))
             {

@@ -444,7 +444,7 @@ namespace System.Management.Automation.Remoting
             }
 
             return new RemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
-                    System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
+                System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
         }
 
         /// <summary>
