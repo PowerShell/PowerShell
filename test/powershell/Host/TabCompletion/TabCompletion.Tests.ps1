@@ -545,7 +545,7 @@ Describe "TabCompletion" -Tags CI {
             if ($null -ne $setup) { . $setup }
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+            $res.CompletionMatches.CompletionText | Should -Contain $expected
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
