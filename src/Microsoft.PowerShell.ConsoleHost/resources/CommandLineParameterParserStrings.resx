@@ -186,6 +186,9 @@
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
     <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
   </data>
+  <data name="MissingDebugPipeNameArgument" xml:space="preserve">
+    <value>Cannot process the command because -DebugPipeName requires an argument that is a name the pipe you want to use. Specify this argument and try again.</value>
+  </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
     <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
   </data>

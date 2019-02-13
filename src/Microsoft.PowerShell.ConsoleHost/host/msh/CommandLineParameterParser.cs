@@ -189,7 +189,8 @@ namespace Microsoft.PowerShell
             "settingsfile",
             "help",
             "workingdirectory",
-            "removeworkingdirectorytrailingcharacter"
+            "removeworkingdirectorytrailingcharacter",
+            "debugpipename"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -338,6 +339,14 @@ namespace Microsoft.PowerShell
             get
             {
                 return _showVersion;
+            }
+        }
+
+        internal string DebugPipeName
+        {
+            get
+            {
+                return _debugPipeName;
             }
         }
 
@@ -772,6 +781,18 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
+                }
+                else if (MatchSwitch(switchKey, "debugpipename", "deb"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingDebugPipeNameArgument);
+                        break;
+                    }
+
+                    _debugPipeName = args[i];
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
                 {
@@ -1375,6 +1396,7 @@ namespace Microsoft.PowerShell
         private string _helpText;
         private bool _abortStartup;
         private bool _skipUserInit;
+        private string _debugPipeName;
 #if STAMODE
         // Win8: 182409 PowerShell 3.0 should run in STA mode by default
         // -sta and -mta are mutually exclusive..so tracking them using nullable boolean

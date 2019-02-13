@@ -1722,6 +1722,15 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// The PipeName to connect to
+        /// </summary>
+        public string DebugPipeName
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1767,6 +1776,28 @@ namespace System.Management.Automation.Runspaces
         {
             ProcessId = processId;
             AppDomainName = appDomainName;
+            OpenTimeout = openTimeout;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="debugPipeName">Pipe name to connect to.</param>
+        public NamedPipeConnectionInfo(
+            string debugPipeName) :
+            this(debugPipeName, _defaultOpenTimeout)
+        { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="debugPipeName">Pipe name to connect to.</param>
+        /// <param name="openTimeout">Open time out in Milliseconds.</param>
+        public NamedPipeConnectionInfo(
+            string debugPipeName,
+            int openTimeout)
+        {
+            DebugPipeName = debugPipeName;
             OpenTimeout = openTimeout;
         }
 
@@ -1842,6 +1873,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.ProcessId = this.ProcessId;
             newCopy._appDomainName = _appDomainName;
             newCopy.OpenTimeout = this.OpenTimeout;
+            newCopy.DebugPipeName = this.DebugPipeName;
 
             return newCopy;
         }

@@ -1884,7 +1884,9 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal override void CreateAsync()
         {
-            _clientPipe = new RemoteSessionNamedPipeClient(_connectionInfo.ProcessId, _connectionInfo.AppDomainName);
+            _clientPipe = !string.IsNullOrEmpty(_connectionInfo.DebugPipeName) ?
+                new RemoteSessionNamedPipeClient(_connectionInfo.DebugPipeName) :
+                new RemoteSessionNamedPipeClient(_connectionInfo.ProcessId, _connectionInfo.AppDomainName);
 
             // Wait for named pipe to connect.
             _clientPipe.Connect(_connectionInfo.OpenTimeout);

@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Server;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
@@ -357,6 +358,9 @@ namespace System.Management.Automation.Remoting
         private static object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
+        
+        // Used when the Pipe name is specified via the -DebugPipeName parameter on start up
+        internal static bool ReusePipeName;
 
         // Access mask constant taken from PipeSecurity access rights and is equivalent to
         // PipeAccessRights.FullControl.
@@ -429,12 +433,18 @@ namespace System.Management.Automation.Remoting
         /// Creates a RemoteSessionNamedPipeServer with the current process and AppDomain information.
         /// </summary>
         /// <returns>RemoteSessionNamedPipeServer.</returns>
-        public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer()
+        public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer(string debugPipeName)
         {
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
+            if (!string.IsNullOrEmpty(debugPipeName))
+            {
+                ReusePipeName = true;
+                return new RemoteSessionNamedPipeServer(debugPipeName);
+            }
+
             return new RemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
-                System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
+                    System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
         }
 
         /// <summary>
@@ -551,7 +561,6 @@ namespace System.Management.Automation.Remoting
             // and listener created and running.
             IPCNamedPipeServerEnabled = true;
 
-            CreateIPCNamedPipeServerSingleton();
 #if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
             CreateAppDomainUnloadHandler();
 #endif
@@ -858,7 +867,7 @@ namespace System.Management.Automation.Remoting
         /// Creates the process named pipe server object singleton and
         /// starts the client listening thread.
         /// </summary>
-        internal static void CreateIPCNamedPipeServerSingleton()
+        internal static void CreateIPCNamedPipeServerSingleton(string debugPipeName = null)
         {
             lock (s_syncObject)
             {
@@ -870,7 +879,7 @@ namespace System.Management.Automation.Remoting
                     {
                         try
                         {
-                            IPCNamedPipeServer = CreateRemoteSessionNamedPipeServer();
+                            IPCNamedPipeServer = CreateRemoteSessionNamedPipeServer(debugPipeName);
                         }
                         catch (IOException)
                         {
@@ -921,7 +930,14 @@ namespace System.Management.Automation.Remoting
         {
             if (args.RestartListener)
             {
-                CreateIPCNamedPipeServerSingleton();
+                if (RemoteSessionNamedPipeServer.ReusePipeName && sender is RemoteSessionNamedPipeServer server)
+                {
+                    CreateIPCNamedPipeServerSingleton(server.PipeName);
+                }
+                else
+                {
+                    CreateIPCNamedPipeServerSingleton();
+                }
             }
         }
 
