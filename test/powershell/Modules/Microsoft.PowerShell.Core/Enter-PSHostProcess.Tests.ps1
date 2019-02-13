@@ -52,4 +52,21 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
         $rs.Dispose()
     }
+
+    It "Can enter using DebugPipeName" {
+
+        $pipeName = [System.IO.Path]::GetRandomFileName()
+        $pwsh_started = New-TemporaryFile
+        $si = [System.Diagnostics.ProcessStartInfo]::new()
+        $si.FileName = "pwsh"
+        $si.Arguments = "-debugpipename $pipeName -noexit -command 'pwsh -debugpipename $pipeName' > '$pwsh_started'"
+        $si.RedirectStandardInput = $true
+        $si.RedirectStandardOutput = $true
+        $si.RedirectStandardError = $true
+        $pwsh = [System.Diagnostics.Process]::Start($si)
+
+        Wait-UntilTrue { Test-Path $pwsh_started }
+
+        "enter-pshostprocess -debugpipename $pipeName`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
+    }
 }

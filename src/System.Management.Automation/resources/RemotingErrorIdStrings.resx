@@ -1422,6 +1422,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
     <value>No process was found with Name: {0}.</value>
   </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>No named pipe was found with DebugPipeName: {0}.</value>
+  </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
     <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
   </data>
