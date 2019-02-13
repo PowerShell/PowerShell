@@ -63,9 +63,8 @@ namespace System.Management.Automation.Help
             obj.TypeNames.Add("CmdletHelpInfo");
             obj.TypeNames.Add("HelpInfo");
 
-            if (commandInfo is CmdletInfo)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
-                CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
                 bool common = false;
                 if (cmdletInfo.Parameters != null)
                 {
@@ -101,9 +100,8 @@ namespace System.Management.Automation.Help
 
                 obj.Properties.Add(new PSNoteProperty("PSSnapIn", cmdletInfo.PSSnapIn));
             }
-            else if (commandInfo is FunctionInfo)
+            else if (commandInfo is FunctionInfo funcInfo)
             {
-                FunctionInfo funcInfo = commandInfo as FunctionInfo;
                 bool common = HasCommonParameters(funcInfo.Parameters);
 
                 obj.Properties.Add(new PSNoteProperty("CommonParameters", common));

@@ -32,17 +32,17 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 throw "node not found"
             }
         }
-        elseif( -not $env:AppVeyor)
+        if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
         {
             <#
-                On Windows, but not an AppVeyor and pre-requisites are missing
+                On Windows, pre-requisites are missing
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
             Write-Warning "Node and npm are required to run this test"
             $skip = $true
         }
-
+        
         $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
     }
@@ -58,19 +58,25 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         try
         {
             $docsToTest = @(
-                './.github/SUPPORT.md'
-                './.github/CONTRIBUTING.md'
-                './*.md'
+                './.github/*.md'
+                './README.md'
+                './CODE_OF_CONDUCT'
                 './demos/python/*.md'
                 './docker/*.md'
                 './docs/*.md'
                 './docs/building/*.md'
+                './docs/debugging/*.md'
+                './docs/git/*.md'
+                './docs/community/*.md'
+                './docs/host-powershell/*.md'
+                './docs/dev-process/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
-                './docs/testing-guidelines/testing-guidelines.md'
+                './docs/learning-powershell/*.md'
+                './docs/testing-guidelines/*.md'
                 './test/powershell/README.md'
                 './tools/*.md'
-                './github/CONTRIBUTING.md'
+                './.github/ISSUE_TEMPLATE/*.md'
             )
             $filter = ($docsToTest -join ',')
 

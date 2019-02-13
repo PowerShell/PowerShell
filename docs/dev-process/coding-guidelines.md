@@ -108,6 +108,9 @@ Some general guidelines:
 * Be aware of APIs such as `String.Split(params char[])` that do not provide overloads to avoid array allocation.
   When calling such APIs, reuse a static array when possible (e.g. `Utils.Separators.Colon`).
 
+* Avoid using string interpolations and overloads with implicit parameters such as `Culture` and `StringComparison`.
+  Instead, use overloads with more explicit parameters such as `String.Format(IFormatProvider, String, Object[])` and `Equals(String, String, StringComparison)`.
+
 * Avoid creating empty arrays.
   Instead, reuse the static ones via `Utils.EmptyArray<T>`.
 

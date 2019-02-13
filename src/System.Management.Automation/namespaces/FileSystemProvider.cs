@@ -2136,7 +2136,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldProcess(resource, action))
                 {
                     bool isDirectory = false;
-                    string strTargetPath = value.ToString();
+                    string strTargetPath = value?.ToString();
 
                     if (string.IsNullOrEmpty(strTargetPath))
                     {
@@ -2310,7 +2310,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldProcess(resource, action))
                 {
                     bool isDirectory = false;
-                    string strTargetPath = value.ToString();
+                    string strTargetPath = value?.ToString();
 
                     bool exists = false;
 
@@ -4383,7 +4383,7 @@ namespace Microsoft.PowerShell.Commands
                     fStream = AlternateDataStreamUtilities.CreateFileStream(file.FullName, streamName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 }
 #endif
-                long remainingFileSize = fStream.Length;
+                long remainingFileSize = fStream != null ? fStream.Length : 0;
                 do
                 {
                     if (Stopping)
@@ -8071,8 +8071,10 @@ namespace Microsoft.PowerShell.Commands
                     targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
                 }
 
-                if (targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
+                if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
+                {
                     targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length);
+                }
 
                 return targetDir;
             }
