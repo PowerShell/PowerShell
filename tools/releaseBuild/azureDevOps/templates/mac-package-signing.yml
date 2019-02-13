@@ -51,6 +51,7 @@ jobs:
     inputs:
       signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
       outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
   - template: upload-final-results.yml
     parameters:
