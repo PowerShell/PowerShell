@@ -692,21 +692,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int cellCount; // scratch variable
             foreach (PacketInfoData o in objects)
             {
-                FormatEntryData fed = o as FormatEntryData;
-
-                if (fed == null)
-                    continue;
-
-                TableRowEntry tre = fed.formatEntryInfo as TableRowEntry;
-                int kk = 0;
-
-                foreach (FormatPropertyField fpf in tre.formatPropertyFieldList)
+                if (o is FormatEntryData fed)
                 {
-                    cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
-                    if (widths[kk] < cellCount)
-                        widths[kk] = cellCount;
+                    TableRowEntry tre = fed.formatEntryInfo as TableRowEntry;
+                    int kk = 0;
 
-                    kk++;
+                    foreach (FormatPropertyField fpf in tre.formatPropertyFieldList)
+                    {
+                        cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
+                        if (widths[kk] < cellCount)
+                            widths[kk] = cellCount;
+
+                        kk++;
+                    }
                 }
             }
 
@@ -729,19 +727,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (PacketInfoData o in objects)
             {
-                FormatEntryData fed = o as FormatEntryData;
-
-                if (fed == null)
-                    continue;
-
-                WideViewEntry wve = fed.formatEntryInfo as WideViewEntry;
-                FormatPropertyField fpf = wve.formatPropertyField as FormatPropertyField;
-
-                if (!string.IsNullOrEmpty(fpf.propertyValue))
+                if (o is FormatEntryData fed)
                 {
-                    cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
-                    if (cellCount > maxLen)
-                        maxLen = cellCount;
+                    WideViewEntry wve = fed.formatEntryInfo as WideViewEntry;
+                    FormatPropertyField fpf = wve.formatPropertyField as FormatPropertyField;
+
+                    if (!string.IsNullOrEmpty(fpf.propertyValue))
+                    {
+                        cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
+                        if (cellCount > maxLen)
+                            maxLen = cellCount;
+                    }
                 }
             }
 
