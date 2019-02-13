@@ -1533,6 +1533,12 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
+        /// <param name="initialCommand"></param>
+        /// <param name="skipProfiles"></param>
+        /// <param name="staMode"></param>
+        /// <param name="configurationName"></param>
+        /// <param name="debugPipeName">The name of the pipe to connect to if it was specified.</param>
+        /// <param name="initialCommandArgs"></param>
 
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, string debugPipeName, Collection<CommandParameter> initialCommandArgs)
         {
@@ -2892,12 +2898,13 @@ namespace Microsoft.PowerShell
         /// <param name="configurationName"></param>
         /// <param name="debugPipeName"></param>
         /// <param name="initialCommandArgs"></param>
-        internal RunspaceCreationEventArgs(string initialCommand,
-                                           bool skipProfiles,
-                                           bool staMode,
-                                           string configurationName,
-                                           string debugPipeName,
-                                           Collection<CommandParameter> initialCommandArgs)
+        internal RunspaceCreationEventArgs(
+            string initialCommand,
+            bool skipProfiles,
+            bool staMode,
+            string configurationName,
+            string debugPipeName,
+            Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;

@@ -360,7 +360,7 @@ namespace System.Management.Automation.Remoting
         internal static bool IPCNamedPipeServerEnabled;
         
         // Used when the Pipe name is specified via the -DebugPipeName parameter on start up
-        internal static bool ReusePipeName;
+        private static bool ReusePipeName;
 
         // Access mask constant taken from PipeSecurity access rights and is equivalent to
         // PipeAccessRights.FullControl.
@@ -432,6 +432,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a RemoteSessionNamedPipeServer with the current process and AppDomain information.
         /// </summary>
+        /// <param name="debugPipeName">The name of the pipe to connect to.</param>
         /// <returns>RemoteSessionNamedPipeServer.</returns>
         public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer(string debugPipeName)
         {
@@ -867,6 +868,7 @@ namespace System.Management.Automation.Remoting
         /// Creates the process named pipe server object singleton and
         /// starts the client listening thread.
         /// </summary>
+        /// <param name="debugPipeName">Name of the pipe name to use. Defaults to null.</param>
         internal static void CreateIPCNamedPipeServerSingleton(string debugPipeName = null)
         {
             lock (s_syncObject)
