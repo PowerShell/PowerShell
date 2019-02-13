@@ -72,7 +72,7 @@ jobs:
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\azureMacOs
       artifactFilter: "*.pkg"
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+      condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
 
   - task: AzureFileCopy@1
