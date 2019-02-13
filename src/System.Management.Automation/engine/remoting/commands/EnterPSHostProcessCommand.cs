@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The Named Pipe name to connect to
+        /// Gets and sets the Named Pipe name to connect to.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
         [ValidateNotNull()]
@@ -243,8 +243,11 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new RuntimeException(
-                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
-                                              msgAppDomainName, connectionInfo.ProcessId, errorMessage),
+                            StringUtil.Format(
+                                RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
+                                msgAppDomainName,
+                                connectionInfo.ProcessId,
+                                errorMessage),
                             e.InnerException),
                         "EnterPSHostProcessCannotConnectToProcess",
                         ErrorCategory.OperationTimeout,
@@ -389,8 +392,7 @@ namespace Microsoft.PowerShell.Commands
                         new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoNamedPipeFound, debugPipeName)),
                         "EnterPSHostProcessNoNamedPipeFound",
                         ErrorCategory.InvalidArgument,
-                        this)
-                    );
+                        this));
             }
         }
 

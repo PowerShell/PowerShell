@@ -1723,7 +1723,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// The PipeName to connect to
+        /// Gets or sets the PipeName to connect to.
         /// </summary>
         public string DebugPipeName
         {
@@ -1736,7 +1736,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         public NamedPipeConnectionInfo()
         {
@@ -1744,7 +1744,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         public NamedPipeConnectionInfo(
@@ -1753,7 +1753,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Application domain name to connect to, or default AppDomain if blank.</param>
@@ -1764,7 +1764,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Name of application domain to connect to.  Connection is to default application domain if blank.</param>
@@ -1780,7 +1780,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="debugPipeName">Pipe name to connect to.</param>
         public NamedPipeConnectionInfo(
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="debugPipeName">Pipe name to connect to.</param>
         /// <param name="openTimeout">Open time out in Milliseconds.</param>
