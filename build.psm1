@@ -15,7 +15,7 @@ $tagsUpToDate = $false
 # When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
 # Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
 # This function can ensure that tags have been fetched.
-# This function is used during the setup phase in tools/ci.psm1 and tools/travis.ps1
+# This function is used during the setup phase in tools/ci.psm1
 function Sync-PSTags
 {
     param(
@@ -23,7 +23,7 @@ function Sync-PSTags
         $AddRemoteIfMissing
     )
 
-    $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
+    $PowerShellRemoteUrl = "https://github.com/PowerShell/PowerShell.git"
     $upstreamRemoteDefaultName = 'upstream'
     $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
     $upstreamRemote = $null
@@ -158,7 +158,8 @@ function Get-EnvironmentInformation
             $environment.IsRedHatFamily -or
             $environment.IsSUSEFamily -or
             $environment.IsAlpine)
-        ) {
+        )
+        {
             throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
     }
@@ -192,7 +193,8 @@ function Test-IsPreview
     return $Version -like '*-*'
 }
 
-function Start-PSBuild {
+function Start-PSBuild
+{
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
         # When specified this switch will stops running dev powershell
@@ -318,25 +320,29 @@ Fix steps:
     }
     $script:Options = New-PSOptions @OptionsArguments
 
-    if ($StopDevPowerShell) {
+    if ($StopDevPowerShell)
+    {
         Stop-DevPowerShell
     }
 
     # setup arguments
     $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
-    if ($Output -or $SMAOnly) {
+    if ($Output -or $SMAOnly)
+    {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
-    if (-not $SMAOnly -and $Options.Runtime -ne 'fxdependent') {
+    if (-not $SMAOnly -and $Options.Runtime -ne 'fxdependent')
+    {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
     }
 
-    if ($ReleaseTag) {
+    if ($ReleaseTag)
+    {
         $ReleaseTagToUse = $ReleaseTag -Replace '^v'
         $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
@@ -434,33 +440,42 @@ Fix steps:
         }
 
         $ReleaseVersion = ""
-        if ($ReleaseTagToUse) {
+        if ($ReleaseTagToUse)
+        {
             $ReleaseVersion = $ReleaseTagToUse
-        } else {
+        }
+        else
+        {
             $ReleaseVersion = (Get-PSCommitId -WarningAction SilentlyContinue) -replace '^v'
         }
         # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value
-        if (!$ReleaseVersion) {
+        if (!$ReleaseVersion)
+        {
             $ReleaseVersion = "6.0.0"
             $fileVersion = "6.0.0"
-        } else {
+        }
+        else
+        {
             $fileVersion = $ReleaseVersion.Split("-")[0]
         }
 
         # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
         $pwshPath = $Options.Output
-        if (!$pwshPath.EndsWith("pwsh.exe")) {
+        if (!$pwshPath.EndsWith("pwsh.exe"))
+        {
             $pwshPath = Join-Path $Options.Output "pwsh.exe"
         }
 
-        if (Test-IsPreview $ReleaseVersion) {
+        if (Test-IsPreview $ReleaseVersion)
+        {
             $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
         } else {
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
         # fxdependent package does not have an executable to set iconPath etc.
-        if ($Options.Runtime -ne 'fxdependent') {
+        if ($Options.Runtime -ne 'fxdependent')
+        {
             Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
                     --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
                     --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
@@ -470,12 +485,14 @@ Fix steps:
 
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if ($PSModuleRestore) {
+    if ($PSModuleRestore)
+    {
         Restore-PSModuleToBuild -PublishPath $publishPath
     }
 
     # Restore the Pester module
-    if ($CI) {
+    if ($CI)
+    {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
     }
 }
@@ -499,8 +516,8 @@ function Restore-PSPackage
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
     }
 
-    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
-
+    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json")))
+    {
         if($Options.Runtime -ne 'fxdependent') {
             $RestoreArguments = @("--runtime",$Options.Runtime, "--verbosity")
         } else {
@@ -667,9 +684,12 @@ function New-PSOptions {
             $Runtime = $RID -replace "win\d+", "win7"
         }
 
-        if (-not $Runtime) {
+        if (-not $Runtime)
+        {
             Throw "Could not determine Runtime Identifier, please update dotnet"
-        } else {
+        }
+        else
+        {
             Write-Verbose "Using runtime '$Runtime'"
         }
     }
@@ -689,7 +709,9 @@ function New-PSOptions {
         } else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
-    } else {
+    }
+    else
+    {
         $Output = [IO.Path]::Combine($Output, $Executable)
     }
 
@@ -725,7 +747,8 @@ function New-PSOptions {
 }
 
 # Get the Options of the last build
-function Get-PSOptions {
+function Get-PSOptions
+{
     param(
         [Parameter(HelpMessage='Defaults to New-PSOption if a build has not occurred.')]
         [switch]
@@ -740,7 +763,8 @@ function Get-PSOptions {
     return $script:Options
 }
 
-function Set-PSOptions {
+function Set-PSOptions
+{
     param(
         [PSObject]
         $Options
@@ -749,7 +773,8 @@ function Set-PSOptions {
     $script:Options = $Options
 }
 
-function Get-PSOutput {
+function Get-PSOutput
+{
     [CmdletBinding()]param(
         [hashtable]$Options
     )
@@ -762,7 +787,8 @@ function Get-PSOutput {
     }
 }
 
-function Get-PesterTag {
+function Get-PesterTag
+{
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
     $warnings = @()
@@ -818,7 +844,8 @@ function Get-PesterTag {
     $o
 }
 
-function Publish-PSTestTools {
+function Publish-PSTestTools
+{
     [CmdletBinding()]
     param()
 
@@ -852,7 +879,8 @@ function Publish-PSTestTools {
     Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
 }
 
-function Get-ExperimentalFeatureTests {
+function Get-ExperimentalFeatureTests
+{
     $testMetadataFile = Join-Path $PSScriptRoot "test/tools/TestMetadata.json"
     $metadata = Get-Content -Path $testMetadataFile -Raw | ConvertFrom-Json | ForEach-Object -MemberName ExperimentalFeatures
     $features = $metadata | Get-Member -MemberType NoteProperty | ForEach-Object -MemberName Name
@@ -864,7 +892,8 @@ function Get-ExperimentalFeatureTests {
     $featureTests
 }
 
-function Start-PSPester {
+function Start-PSPester
+{
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [Parameter(Position=0)]
@@ -964,7 +993,8 @@ function Start-PSPester {
     $command += '$env:PSModulePath = '+"'$newPathFragment'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
-    if ($Environment.IsWindows) {
+    if ($Environment.IsWindows)
+    {
         $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
 
@@ -986,10 +1016,12 @@ function Start-PSPester {
     }
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
-    if ( $Quiet ) {
+    if ( $Quiet )
+    {
         $command += "-Quiet "
     }
-    if ( $PassThru ) {
+    if ( $PassThru )
+    {
         $command += "-PassThru "
     }
 
@@ -1084,7 +1116,8 @@ function Start-PSPester {
     }
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
-    try {
+    try
+    {
         $originalModulePath = $env:PSModulePath
         $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
@@ -1197,7 +1230,7 @@ function Publish-TestResults
         $Type='NUnit'
     )
 
-    # In VSTS publish Test Results
+    # In Azure DevOps, publish Test Results
     if($env:TF_BUILD)
     {
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
@@ -1372,7 +1405,8 @@ function Test-PSPesterResults
     }
 }
 
-function Start-PSxUnit {
+function Start-PSxUnit
+{
     [CmdletBinding()]param(
         [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
@@ -1385,7 +1419,8 @@ function Start-PSxUnit {
         throw "PowerShell must be built before running tests!"
     }
 
-    try {
+    try
+    {
         Push-Location $PSScriptRoot/test/xUnit
 
         # Path manipulation to obtain test project output directory
@@ -1443,7 +1478,8 @@ function Start-PSxUnit {
     }
 }
 
-function Install-Dotnet {
+function Install-Dotnet
+{
     [CmdletBinding()]
     param(
         [string]$Channel = $dotnetCLIChannel,
@@ -1458,7 +1494,8 @@ function Install-Dotnet {
     $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($Environment.IsLinux -or $Environment.IsMacOS) {
+    if ($Environment.IsLinux -or $Environment.IsMacOS)
+    {
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($Environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
@@ -1497,7 +1534,8 @@ function Install-Dotnet {
     }
 }
 
-function Get-RedHatPackageManager {
+function Get-RedHatPackageManager
+{
     if ($Environment.IsCentOS) {
         "yum install -y -q"
     } elseif ($Environment.IsFedora) {
@@ -1507,7 +1545,8 @@ function Get-RedHatPackageManager {
     }
 }
 
-function Start-PSBootstrap {
+function Start-PSBootstrap
+{
     [CmdletBinding(
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
@@ -1867,9 +1906,12 @@ function Start-TypeGen
     }
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-    try {
+    try
+    {
         dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName
-    } finally {
+    }
+    finally
+    {
         Pop-Location
     }
 }
@@ -1890,7 +1932,8 @@ function Start-ResGen
     }
 }
 
-function Find-Dotnet() {
+function Find-Dotnet()
+{
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
@@ -1947,7 +1990,8 @@ function Convert-TxtResourceToXml
     }
 }
 
-function script:Use-MSBuild {
+function script:Use-MSBuild
+{
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
     $frameworkMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
@@ -2041,12 +2085,15 @@ function script:Start-NativeExecution
             }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
-    } finally {
+    }
+    finally
+    {
         $script:ErrorActionPreference = $backupEAP
     }
 }
 
-function Start-CrossGen {
+function Start-CrossGen
+{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory= $true)]
@@ -2085,7 +2132,8 @@ function Start-CrossGen {
         $crossgenFolder = Split-Path $CrossgenPath
         $niAssemblyName = Split-Path $outputAssembly -Leaf
 
-        try {
+        try
+        {
             Push-Location $crossgenFolder
 
             # Generate the ngen assembly
@@ -2101,7 +2149,9 @@ function Start-CrossGen {
                 & $CrossgenPath /Platform_Assemblies_Paths $platformAssembliesPath  /CreatePDB $platformAssembliesPath /lines $platformAssembliesPath $niAssemblyName
             } | Write-Verbose
             #>
-        } finally {
+        }
+        finally
+        {
             Pop-Location
         }
     }
@@ -2746,7 +2796,8 @@ function Save-PSOptions {
 
 # Restore PSOptions
 # Optionally remove the PSOptions file
-function Restore-PSOptions {
+function Restore-PSOptions
+{
     param(
         [ValidateScript({Test-Path $_})]
         [string]
@@ -2768,7 +2819,8 @@ function Restore-PSOptions {
 }
 
 # Save PSOptions to be restored by Restore-PSOptions
-function Save-PSOptions {
+function Save-PSOptions
+{
     param(
         [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
         [ValidateNotNullOrEmpty()]
@@ -2785,7 +2837,8 @@ function Save-PSOptions {
 
 # Restore PSOptions
 # Optionally remove the PSOptions file
-function Restore-PSOptions {
+function Restore-PSOptions
+{
     param(
         [ValidateScript({Test-Path $_})]
         [string]
@@ -2987,7 +3040,8 @@ $script:RESX_TEMPLATE = @'
 </root>
 '@
 
-function Get-UniquePackageFolderName {
+function Get-UniquePackageFolderName
+{
     param(
         [Parameter(Mandatory)] $Root
     )
