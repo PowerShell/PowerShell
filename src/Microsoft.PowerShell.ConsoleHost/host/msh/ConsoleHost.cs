@@ -213,7 +213,8 @@ namespace Microsoft.PowerShell
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
-                        s_cpp.ConfigurationName);
+                        s_cpp.ConfigurationName,
+                        s_cpp.DebugPipeName);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)

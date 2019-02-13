@@ -839,10 +839,11 @@ namespace System.Management.Automation.Remoting
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
         /// <param name="configurationName">Name of the configuration to use.</param>
-        internal static void RunServerMode(string configurationName)
+        /// <param name="debugPipeName">Name of the pipe to use if it was specified at startup.</param>
+        internal static void RunServerMode(string configurationName, string debugPipeName)
         {
             IPCNamedPipeServerEnabled = true;
-            CreateIPCNamedPipeServerSingleton();
+            CreateIPCNamedPipeServerSingleton(debugPipeName);
 
             if (IPCNamedPipeServer == null)
             {
@@ -868,8 +869,8 @@ namespace System.Management.Automation.Remoting
         /// Creates the process named pipe server object singleton and
         /// starts the client listening thread.
         /// </summary>
-        /// <param name="debugPipeName">Name of the pipe name to use. Defaults to null.</param>
-        internal static void CreateIPCNamedPipeServerSingleton(string debugPipeName = null)
+        /// <param name="debugPipeName">Name of the pipe name to use.</param>
+        internal static void CreateIPCNamedPipeServerSingleton(string debugPipeName)
         {
             lock (s_syncObject)
             {
@@ -938,7 +939,7 @@ namespace System.Management.Automation.Remoting
                 }
                 else
                 {
-                    CreateIPCNamedPipeServerSingleton();
+                    CreateIPCNamedPipeServerSingleton(debugPipeName: null);
                 }
             }
         }
