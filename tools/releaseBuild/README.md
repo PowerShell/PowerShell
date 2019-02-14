@@ -21,7 +21,7 @@ Windows Build Names:
 * `win7-arm64-symbols`
     * Builds the Windows ARM64 Zip with symbols
 * `win7-fxdependent-symbols`
-    * Builds the Windows FxDependent Zip with symbols
+    * Builds the Windows `FxDependent` Zip with symbols
 * `win7-x64-package`
     * Builds the Windows x64 packages
 * `win7-x86-package`
@@ -31,7 +31,7 @@ Windows Build Names:
 * `win7-arm64-package`
     * Builds the Windows ARM64 packages
 * `win7-fxdependent-package`
-    * Builds the Windows FxDependent packages
+    * Builds the Windows `FxDependent` packages
 
 ## Running Linux Release Builds Locally
 

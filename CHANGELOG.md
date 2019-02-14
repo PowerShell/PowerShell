@@ -1,5 +1,38 @@
 # Changelog
 
+## 6.1.3 - 2019-02-14
+
+### Engine Updates and Fixes
+
+- Add security mitigation for 6.1.3 release (Internal 6561)
+
+### Tools
+
+- Change the feed URL to feed name due to changes in Azure DevOps (#8664)
+
+### Tests
+
+- Updating test gallery URL in PackageManagement tests (#7879)
+
+### Build and Packaging Improvements
+
+- Get PowerShellGet tests working (#7831)
+- Start tracking release build information in an azure storage table (#8850)
+- Remove `PDBs` from `fxdependent` package (#8006)
+- Make every `csproj` files have its own folder (#8750)
+- Update packaging script to build reference assembly targeting `netcoreapp2.1` and use actual `.csproj` files (#8729)
+- Move Final artifacts from coordinated build to `finalResults` folder (#8806)
+- Refactor Unified Release Build (#8804)
+- Add compliance to Coordinated build (#8798)
+- Switch to 1.11 of FPM to fix FPM install issue (#8797)
+- Update the coordinated build with framework dependent package for dotnet SDK (#8773)
+- Add Windows build to coordinated release build YAML (#8695)
+- Build package build using Ubuntu 18.04 image (#8666)
+- Adding `yml` for Windows Release builds (#8374)
+- Update `SignType` in `signing.xml` (#8223)
+- Update DotNet SDK and Runtime version (Internal 7004)
+- Add `binskim` to coordinated build and increase timeout (#8834)
+
 ## v6.1.2 - 2019-01-15
 
 ### Tests
