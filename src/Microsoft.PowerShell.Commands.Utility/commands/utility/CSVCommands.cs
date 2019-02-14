@@ -43,11 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// Derived as Different Attributes.In ConvertTo-CSV, This is a positional parameter. Export-CSV not a Positional behaviour.
         /// </summary>
 
-        public abstract PSObject InputObject
-        {
-            get;
-            set;
-        }
+        public abstract PSObject InputObject { get; set; }
 
         /// <summary>
         /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
@@ -162,40 +158,14 @@ namespace Microsoft.PowerShell.Commands
         /// Property that sets force parameter.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-
-            set
-            {
-                _force = value;
-            }
-        }
-
-        private bool _force;
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Property that prevents file overwrite.
         /// </summary>
         [Parameter]
         [Alias("NoOverwrite")]
-        public SwitchParameter NoClobber
-        {
-            get
-            {
-                return _noclobber;
-            }
-
-            set
-            {
-                _noclobber = value;
-            }
-        }
-
-        private bool _noclobber;
+        public SwitchParameter NoClobber { get; set; }
 
         /// <summary>
         /// Encoding optional flag.
@@ -238,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _shouldProcess = ShouldProcess(Path);
-            if (!_shouldProcess) return;
+            if (!_shouldProcess)
+            {
+                return;
+            }
 
             CreateFileStream();
 
@@ -255,7 +228,11 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!_shouldProcess) return;
+            if (!_shouldProcess)
+            {
+                return;
+            }
+
             // Process first object
             if (_propertyNames == null)
             {
@@ -365,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                     this,
                     this.Path,
                     Encoding,
-                    false, // defaultEncoding
+                    defaultEncoding: false,
                     Append,
                     Force,
                     NoClobber,
@@ -552,20 +529,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
         [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNull]
-        public SwitchParameter UseCulture
-        {
-            get
-            {
-                return _useculture;
-            }
-
-            set
-            {
-                _useculture = value;
-            }
-        }
-
-        private bool _useculture;
+        public SwitchParameter UseCulture { get; set; }
 
         ///<summary>
         /// Header property to customize the names.
@@ -597,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, _useculture);
+            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
         /// <summary>
         /// ProcessRecord overload.
@@ -1025,7 +989,6 @@ namespace Microsoft.PowerShell.Commands
         /// Escapes the " in string if necessary.
         /// Encloses the string in double quotes if necessary.
         /// </summary>
-        /// <returns></returns>
         internal static void EscapeAndAppendString(StringBuilder dest, string source)
         {
             if (source == null)
@@ -1150,13 +1113,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This is set to true when end of file is reached.
         /// </summary>
-        private bool EOF
-        {
-            get
-            {
-                return _sr.EndOfStream;
-            }
-        }
+        private bool EOF => _sr.EndOfStream;
 
         private char ReadChar()
         {
@@ -1190,10 +1147,7 @@ namespace Microsoft.PowerShell.Commands
         /// Only use it when end of line chars are not important.
         /// </summary>
         /// <returns></returns>
-        private string ReadLine()
-        {
-            return _sr.ReadLine();
-        }
+        private string ReadLine() => _sr.ReadLine();
 
         #endregion reading helpers
 
@@ -1311,6 +1265,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         /// <summary>
         /// Read the type information, if present.
         /// </summary>
