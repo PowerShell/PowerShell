@@ -33,17 +33,17 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter and exit another PSHost" {
-            Wait-UntilTrue { Test-Path $pwsh_started }
+            Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
-            "enter-pshostprocess -id $($pwsh.Id)
+            "enter-pshostprocess -id $($pwsh.Id) -erroraction stop
             `$pid
             exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            Wait-UntilTrue { Test-Path $powershell_started }
+            Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
 
-            "enter-pshostprocess -id $($powershell.Id)
+            "enter-pshostprocess -id $($powershell.Id) -erroraction stop
             `$pid
             exit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
         }
@@ -62,6 +62,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By DebugPipeName" {
         BeforeAll {
             $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = if($IsWindows) { "\\.\pipe\$pipeName" } else { Join-Path ([System.IO.Path]::GetTempPath()) "CoreFxPipe_$pipeName" };
             $pwsh_started = New-TemporaryFile
             $si = [System.Diagnostics.ProcessStartInfo]::new()
             $si.FileName = "pwsh"
@@ -78,27 +79,27 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter using DebugPipeName" {
-            Wait-UntilTrue { Test-Path $pwsh_started }
+            Wait-UntilTrue { Test-Path $pipePath }
 
-            "enter-pshostprocess -debugpipename $pipeName
+            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
             `$pid
             exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Can enter, exit, and re-enter using DebugPipeName" {
-            Wait-UntilTrue { Test-Path $pwsh_started }
+            Wait-UntilTrue { Test-Path $pipePath }
 
-            "enter-pshostprocess -debugpipename $pipeName
+            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
             `$pid
             exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
 
-            "enter-pshostprocess -debugpipename $pipeName
+            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
             `$pid
             exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Should throw if DebugPipeName does not exist" {
-            Wait-UntilTrue { Test-Path $pwsh_started }
+            Wait-UntilTrue { Test-Path $pipePath }
 
             { Enter-PSHostProcess -DebugPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with DebugPipeName: badpipename."
         }
