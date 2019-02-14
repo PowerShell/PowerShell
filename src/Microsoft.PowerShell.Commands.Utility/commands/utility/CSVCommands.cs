@@ -248,9 +248,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Convert the current input object to Csv and write to file/WriteObject.
         /// </summary>
-        protected override
-        void
-        ProcessRecord()
+        protected override void ProcessRecord()
         {
             if (InputObject == null || _sw == null)
             {
@@ -494,9 +492,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements Import-Csv command.
     /// </summary>
     [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
-    public sealed
-    class
-    ImportCsvCommand : PSCmdlet
+    public sealed class ImportCsvCommand : PSCmdlet
     {
         #region Command Line Parameters
 
