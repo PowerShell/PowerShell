@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The literal path of the mandatory file name to write to.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that prevents file overwrite.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {
@@ -200,8 +200,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag.
         /// </summary>
-        [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
@@ -587,8 +587,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag.
         /// </summary>
-        [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
@@ -895,8 +895,9 @@ namespace Microsoft.PowerShell.Commands
 
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
-                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(source,
-                PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
+                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                    source,
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
 
             propertyNames = new Collection<string>();
             foreach (PSPropertyInfo prop in srcPropertiesToSearch)
@@ -1005,9 +1006,9 @@ namespace Microsoft.PowerShell.Commands
                     value = temp.ToString();
                 }
             }
-            // If we cannot read some value, treat it as null.
             catch (Exception)
             {
+                // If we cannot read some value, treat it as null.
             }
 
             return value;
@@ -1070,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 char c = source[i];
                 // Double quote in the string is escaped with double quote
-                if ((c == '"'))
+                if (c == '"')
                 {
                     dest.Append('"');
                 }
@@ -1220,7 +1221,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            return (c == (char)i);
+            return c == (char)i;
         }
 
         /// <summary>
@@ -1339,9 +1340,10 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =
-                                    string.Format(CultureInfo.InvariantCulture,
-                                    ExtendedTypeSystem.MemberAlreadyPresent,
-                                    currentHeader);
+                                    string.Format(
+                                        CultureInfo.InvariantCulture,
+                                        ExtendedTypeSystem.MemberAlreadyPresent,
+                                        currentHeader);
 
                                 ExtendedTypeSystemException exception = new ExtendedTypeSystemException(memberAlreadyPresentMsg);
                                 throw exception;
@@ -1396,7 +1398,7 @@ namespace Microsoft.PowerShell.Commands
                 // Read the next character
                 char ch = ReadChar();
 
-                if ((ch == _delimiter))
+                if (ch == _delimiter)
                 {
                     if (seenBeginQuote)
                     {
