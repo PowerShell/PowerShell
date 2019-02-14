@@ -155,20 +155,20 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Property that sets force parameter.
+        /// Gets or sets property that sets force parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// Property that prevents file overwrite.
+        /// Gets or sets property that prevents file overwrite.
         /// </summary>
         [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber { get; set; }
 
         /// <summary>
-        /// Encoding optional flag.
+        /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
         [ArgumentToEncodingTransformationAttribute]
@@ -177,11 +177,13 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// Property that sets append parameter.
+        /// Gets or sets property that sets append parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
-        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
+
+        // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
+        private bool _isActuallyAppending;
 
         #endregion
 
@@ -470,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Parameters
 
         /// <summary>
-        /// Property that sets delimiter.
+        /// Gets or sets property that sets delimiter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
         [Parameter(Position = 1, ParameterSetName = "DelimiterLiteralPath")]
@@ -478,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
         public char Delimiter { get; set; }
 
         /// <summary>
-        /// Mandatory file name to read from.
+        /// Gets or sets mandatory file name to read from.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "DelimiterPath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = "CulturePath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -501,7 +503,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _specifiedPath = false;
 
         /// <summary>
-        /// The literal path of the mandatory file name to read from.
+        /// Gets or sets the literal path of the mandatory file name to read from.
         /// </summary>
         [Parameter(ParameterSetName = "DelimiterLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
@@ -525,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Property that sets UseCulture parameter.
+        /// Gets or sets property that sets UseCulture parameter.
         /// </summary>
         [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
         [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
@@ -533,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseCulture { get; set; }
 
         ///<summary>
-        /// Header property to customize the names.
+        /// Gets or sets header property to customize the names.
         ///</summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
@@ -541,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Header { get; set; }
 
         /// <summary>
-        /// Encoding optional flag.
+        /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
         [ArgumentToEncodingTransformationAttribute]
@@ -723,7 +725,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
-        /// Input Object which is written in Csv format.
+        /// Gets or sets input object which is written in Csv format.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 0)]
         [ValidateNotNull]
@@ -732,7 +734,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject[] InputObject { get; set; }
 
         ///<summary>
-        /// Header property to customize the names.
+        /// Gets or sets header property to customize the names.
         ///</summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNull]
@@ -762,9 +764,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (PSObject pObject in InputObject)
+            foreach (PSObject inputObject in InputObject)
             {
-                using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(pObject.ToString())))
+                using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(inputObject.ToString())))
                 using (StreamReader streamReader = new StreamReader(memoryStream, System.Text.Encoding.Unicode))
                 {
                     ImportCsvHelper helper = new ImportCsvHelper(this, Delimiter, Header, _typeName, streamReader);
@@ -1076,12 +1078,12 @@ namespace Microsoft.PowerShell.Commands
         private bool _alreadyWarnedUnspecifiedName = false;
 
         /// <summary>
-        /// Reference to header values.
+        /// Gets reference to header values.
         /// </summary>
         internal IList<string> Header { get; private set; }
 
         /// <summary>
-        /// ETS type name from the first line / comment in the CSV.
+        /// Gets ETS type name from the first line / comment in the CSV.
         /// </summary>
         internal string TypeName { get; private set; }
 
