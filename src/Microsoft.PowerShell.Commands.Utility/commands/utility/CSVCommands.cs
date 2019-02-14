@@ -30,23 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Delimiter")]
         [ValidateNotNull]
-        public char Delimiter
-        {
-            get
-            {
-                return _delimiter;
-            }
-
-            set
-            {
-                _delimiter = value;
-            }
-        }
-
-        /// <summary>
-        /// Delimiter to be used.
-        /// </summary>
-        private char _delimiter;
+        public char Delimiter { get; set; }
 
         ///<summary>
         ///Culture switch for csv conversion
@@ -105,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                 NoTypeInformation = !IncludeTypeInformation;
             }
 
-            _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
+            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
     }
     #endregion
