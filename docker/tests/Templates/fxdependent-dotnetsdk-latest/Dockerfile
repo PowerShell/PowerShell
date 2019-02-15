@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM microsoft/dotnet:3.0.100-preview-sdk
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION
@@ -11,7 +11,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-utils \
         ca-certificates \
-        curl \
         apt-transport-https \
         locales \
         git
@@ -21,8 +20,11 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN locale-gen $LANG && update-locale
 
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
-RUN dpkg -i $PACKAGENAME || :
-RUN apt-get install -y -f
+# Install PowerShell package
+ADD $PACKAGELOCATION/$PACKAGENAME .
+RUN mkdir -p /opt/microsoft/powershell
+RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
+
+# Download and run tests
 RUN $TESTDOWNLOADCOMMAND
-RUN pwsh$PREVIEWSUFFIX -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';\$null=New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"
+RUN dotnet /opt/microsoft/powershell/pwsh.dll -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';\$null=New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"

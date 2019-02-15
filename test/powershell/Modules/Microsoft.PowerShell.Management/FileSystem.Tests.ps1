@@ -500,7 +500,6 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
     Context "Get-ChildItem and symbolic links" {
         BeforeAll {
-            $TestDrive = "TestDrive:"
             $alphaDir = Join-Path $TestDrive "sub-alpha"
             $alphaLink = Join-Path $TestDrive "link-alpha"
             $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
@@ -671,7 +670,6 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         # attempt is made to copy an item onto itself.
         $selfCopyKey = "SelfCopy"
 
-        $TestDrive = "TestDrive:"
         $subDir = "$TestDrive/sub"
         $otherSubDir = "$TestDrive/other-sub"
         $fileName = "file.txt"

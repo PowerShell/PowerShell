@@ -46,3 +46,5 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         Write-Host -Object "##$vstsCommandString"
     }
 }
+
+Write-Output $releaseTag

@@ -15,7 +15,7 @@ steps:
 
   - powershell: |
       Import-Module -Force "$(Build.SourcesDirectory)/tools/releaseBuild/azureDevOps/AzArtifactFeed/SyncGalleryToAzArtifacts.psm1"
-      SyncGalleryToAzArtifacts -AzDevOpsPAT $(AzDevOpsPAT) -Destination $(Build.ArtifactStagingDirectory)
+      SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT) -Destination $(Build.ArtifactStagingDirectory)
     displayName: Download packages from PSGallery that need to be updated
     condition: succeededOrFailed()
 
@@ -29,5 +29,5 @@ steps:
     displayName: 'NuGet push'
     inputs:
       command: push
-      publishVstsFeed: 'https://mscodehub.pkgs.visualstudio.com/_packaging/pscore-release/nuget/v3/index.json'
+      publishVstsFeed: 'pscore-release'
       publishFeedCredentials: 'AzArtifactsFeed'

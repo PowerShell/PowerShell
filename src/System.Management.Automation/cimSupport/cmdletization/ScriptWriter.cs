@@ -237,9 +237,6 @@ function __cmdletization_BindCommonParameters
             return verb + "-" + noun;
         }
 
-        private readonly List<string> _aliasesToExport = new List<string>();
-        private readonly List<string> _functionsToExport = new List<string>();
-
         private string GetCmdletAttributes(CommonCmdletMetadata cmdletMetadata)
         {
             // Generate the script for the Alias and Obsolete Attribute if any is declared in CDXML
@@ -247,7 +244,6 @@ function __cmdletization_BindCommonParameters
             if (cmdletMetadata.Aliases != null)
             {
                 attributes.Append("[Alias('" + string.Join("','", cmdletMetadata.Aliases.Select(alias => CodeGeneration.EscapeSingleQuotedStringContent(alias))) + "')]");
-                _aliasesToExport.AddRange(cmdletMetadata.Aliases);
             }
 
             if (cmdletMetadata.Obsolete != null)
@@ -1924,8 +1920,6 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 CmdletEndBlockTemplate,
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
-
-            _functionsToExport.Add(commandMetadata.Name);
         }
 
         private static void AddPassThruParameter(IDictionary<string, ParameterMetadata> commonParameters, InstanceCmdletMetadata instanceCmdletMetadata)
@@ -2022,8 +2016,6 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 CmdletEndBlockTemplate,
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
-
-            _functionsToExport.Add(commandMetadata.Name);
         }
 
         private string GetOutputAttributeForGetCmdlet()
@@ -2109,8 +2101,6 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 CmdletEndBlockTemplate,
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
-
-            _functionsToExport.Add(commandMetadata.Name);
         }
 
         private static object s_enumCompilationLock = new object();

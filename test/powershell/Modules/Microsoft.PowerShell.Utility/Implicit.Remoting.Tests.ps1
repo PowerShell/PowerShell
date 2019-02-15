@@ -1947,7 +1947,7 @@ try
             Disconnect-PSSession $session
             Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
 
-            Start-Sleep 3
+            Start-Sleep -Seconds 3
 
             ## This time a new session is created because the old one is unavailable.
             $dSessionPid = Get-RemoteVariable pid

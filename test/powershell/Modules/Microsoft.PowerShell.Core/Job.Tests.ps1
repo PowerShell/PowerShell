@@ -44,7 +44,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = Start-Job -ScriptBlock { Start-Sleep 15 }
+            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 15 }
         }
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -93,7 +93,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
                         throw "Receive-Job behaves suspiciously: Cannot receive $n results in 5 minutes."
                     }
 
-                    # sleep for 300 ms to allow data to be produced
+                    # Wait to allow data to be produced
                     Start-Sleep -Milliseconds 300
 
                     if ($keep)

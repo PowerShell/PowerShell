@@ -226,10 +226,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(currentObject, ex, out expressionResult);
-            if (expressionResult != null && expressionResult.Exception != null)
-            {
-                _failedResultsList.Add(expressionResult);
-            }
 
             return retVal;
         }
@@ -238,8 +234,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TypeInfoDataBase _db;
         private Collection<string> _typeNameHierarchy;
         private bool _useInheritance;
-
-        private List<PSPropertyExpressionResult> _failedResultsList = new List<PSPropertyExpressionResult>();
 
         private int _bestMatchIndex = BestMatchIndexUndefined;
         private TypeMatchItem _bestMatchItem;

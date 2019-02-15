@@ -2,7 +2,7 @@
 
 ## Where can I learn PowerShell's syntax?
 
-[SS64.com](http://ss64.com/ps/syntax.html) is a good resource.
+[SS64.com](https://ss64.com/ps/syntax.html) is a good resource.
 [Microsoft Docs](https://docs.microsoft.com/powershell/scripting/overview?view=powershell-6) is another excellent resource.
 
 ## What are the best practices and style?
@@ -21,14 +21,14 @@ The [PoshCode][] unofficial guide is our reference.
 
 ### Things that create a scope
 
-- [functions](http://ss64.com/ps/syntax-functions.html)
-- [call operator](http://ss64.com/ps/call.html) (`& { }`)
-- [script invocations](http://ss64.com/ps/syntax-run.html)
+- [functions](https://ss64.com/ps/syntax-functions.html)
+- [call operator](https://ss64.com/ps/call.html) (`& { }`)
+- [script invocations](https://ss64.com/ps/syntax-run.html)
 
 ### Things that operate in the current scope
 
-- [source operator](http://ss64.com/ps/source.html) (`. { }`)
-- [statements](http://ss64.com/ps/statements.html) (`if .. else`, `for`, `switch`, etc.)
+- [source operator](https://ss64.com/ps/source.html) (`. { }`)
+- [statements](https://ss64.com/ps/statements.html) (`if .. else`, `for`, `switch`, etc.)
 
 ## Why didn't an error throw an exception?
 
@@ -37,7 +37,7 @@ Setting `$ErrorActionPreference = 'Stop'` will likely do what you want;
 that is, cause non-terminating errors instead to terminate.
 Read [An Introduction To Error Handling in PowerShell][error] for more information.
 
-[error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
+[error]: https://gist.github.com/TravisEz13/9bb811c63b88501f3beec803040a9996
 
 ## Where do I get the PowerShell Core SDK package?
 

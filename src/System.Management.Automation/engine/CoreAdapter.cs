@@ -3793,7 +3793,7 @@ namespace System.Management.Automation
             FieldInfo field = adapterData.member as FieldInfo;
             if (adapterData.useReflection)
             {
-                return field.GetValue(property.baseObject);
+                return field?.GetValue(property.baseObject);
             }
             else
             {

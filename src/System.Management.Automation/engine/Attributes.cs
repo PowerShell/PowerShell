@@ -381,13 +381,19 @@ namespace System.Management.Automation
 
         private bool _supportsTransactions = false;
 
+        private ConfirmImpact _confirmImpact = ConfirmImpact.Medium;
+
         /// <summary>
         /// Gets and sets a ConfirmImpact value that indicates
         /// the "destructiveness" of the operation and when it
         /// should be confirmed.  This should only be used when
         /// SupportsShouldProcess is specified.
         /// </summary>
-        public ConfirmImpact ConfirmImpact { get; set; } = ConfirmImpact.Medium;
+        public ConfirmImpact ConfirmImpact
+        {
+            get => SupportsShouldProcess ? _confirmImpact : ConfirmImpact.None;
+            set => _confirmImpact = value;
+        }
 
         /// <summary>
         /// Gets and sets a HelpUri value that indicates
@@ -1134,12 +1140,12 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
-            Type commonType = GetCommonType(typeof(int),element.GetType());
+            Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
-                    throw new ValidationMetadataException(
+                throw new ValidationMetadataException(
                     "ValidationRangeElementType",
-                    null,
+                    innerException: null,
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name,
                     typeof(int).Name);
@@ -1213,7 +1219,7 @@ namespace System.Management.Automation
                     }
 
                     break;
-                }
+            }
         }
 
         private void ValidateRange(object element)
@@ -2100,7 +2106,8 @@ namespace System.Management.Automation
                 // because a value-type value cannot be null.
                 if (!isEmpty && !isElementValueType)
                 {
-                    do {
+                    do
+                    {
                         object element = ienum.Current;
                         if (element == null || element == AutomationNull.Value)
                         {

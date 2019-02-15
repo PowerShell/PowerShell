@@ -49,6 +49,7 @@ arm64
 asp.net
 assemblyloadcontext
 authenticodesignature
+azdevops
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -152,6 +153,7 @@ dchristian3188
 ddwr
 debughandler
 dee-see
+deps
 deserialization
 deserialize
 dest
@@ -276,6 +278,7 @@ gitcommitid
 github
 githug
 gitter
+glachancecmaisonneuve
 globbing
 GoogleTest
 gzip
@@ -337,6 +340,7 @@ json
 jsonconfigfileaccessor
 judgement
 jumplist
+jwmoss
 kanjibates
 kasper3
 katacoda
@@ -360,6 +364,7 @@ lee303
 libpsl
 libpsl-native
 libunwind8
+linux
 locationglobber
 loopback
 lossless
@@ -371,6 +376,7 @@ macos
 maertendmsft
 mahawar
 markekraus
+marktiedemann
 mcbobke
 md
 meir017
@@ -447,6 +453,7 @@ non-r2
 noresume
 notcontains
 nuget
+nugetfeed
 nuget.exe
 numberbytes
 nupkg
@@ -480,6 +487,7 @@ plaintext
 pluggable
 pluralsight
 poshcode
+pougetat
 powerbi
 powercode
 powershell
@@ -511,10 +519,12 @@ preview.4
 preview1-24530-04
 productversion
 program.cs
+prototyyppi
 providername
 proxycommand
 ps1
 ps1xml
+pscore
 pscredential
 psd1
 psdrive
@@ -604,6 +614,7 @@ savehelp
 sazonov
 schvartzman
 schwartzmeyer
+scriptblock
 securestring
 seemethere
 select-xml
@@ -656,6 +667,7 @@ sudo
 superproject
 swarfegagit
 sxs
+sydneyhsmith
 symlink
 symlinks
 syscall
@@ -698,6 +710,8 @@ typecataloggen
 typeconversion
 typegen
 typematch
+ubuntu
+unicode
 unregister-event
 unregister-packagesource
 unregister-psrepository
@@ -708,6 +722,7 @@ update-modulemanifest
 update-scriptfileinfo
 update-typedata
 uri
+urls
 userdata
 uservoice
 utf8
@@ -772,7 +787,9 @@ www.github.com
 x64
 x86
 xpath
+xtqqczze
 xunit
+yaml
 youtube
 zackjknight
 vexx32
@@ -790,6 +807,10 @@ lockdown
 lukexjeremy
 deserializing
 kiazhi
+v6.1.2
+Menagarishvili
+anmenaga
+fxdependent
  - CHANGELOG.md
 aavdberg
 azkarmoulana

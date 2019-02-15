@@ -58,4 +58,4 @@ else {
 # Remove loopback address from output regardless of platform
 $IP | Where-Object {$_ -ne '127.0.0.1'}
 ```
-[run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
+[run-ps]:https://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3

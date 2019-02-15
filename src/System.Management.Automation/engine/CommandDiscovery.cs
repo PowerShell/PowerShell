@@ -486,32 +486,6 @@ namespace System.Management.Automation
             }
         }
 
-        #region comment out RequiresNetFrameworkVersion feature 8/10/2010
-        /*
-         * The "#requires -NetFrameworkVersion" feature is CUT OFF.
-         * This method will be reenabled will be CUT OFF too
-        /*
-        internal static void VerifyNetFrameworkVersion(ExternalScriptInfo scriptInfo)
-        {
-            Version requiresNetFrameworkVersion = scriptInfo.RequiresNetFrameworkVersion;
-
-            if (requiresNetFrameworkVersion != null)
-            {
-                if (!Utils.IsNetFrameworkVersionSupported(requiresNetFrameworkVersion))
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            scriptInfo.NetFrameworkVersionLineNumber,
-                            requiresNetFrameworkVersion,
-                            "ScriptRequiresUnmatchedNetFrameworkVersion");
-                    throw scriptRequiresException;
-                }
-            }
-        }
-        */
-        #endregion
-
         /// <summary>
         /// Used to determine compatibility between the versions in the requires statement and
         /// the installed version. The version can be PSSnapin or msh.

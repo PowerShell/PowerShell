@@ -1220,8 +1220,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (var element in items)
                 {
-                    var typeEntry = element as SessionStateTypeEntry;
-                    if (typeEntry.TypeData != null)
+                    if (element is SessionStateTypeEntry typeEntry && typeEntry.TypeData != null)
                     {
                         // Skip type file entries.
                         _internalCollection.Add(element);
@@ -4135,7 +4134,7 @@ param(
     ${Examples},
 
     [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
-    [string]
+    [string[]]
     ${Parameter},
 
     [string[]]
@@ -4177,10 +4176,36 @@ param(
     }
     elseif ($help -ne $null)
     {
+        $customPagerCommand = """"
+        $customPagerCommandArgs = """"
+        $customPagerCommandLine = """"
+
+        if ($env:PAGER)
+        {
+            $customPagerCommandLine = $env:PAGER
+
+            # Split the command line into tokens, respecting quoting.
+            $customPagerCommand, $customPagerCommandArgs = & { Write-Output -- $customPagerCommandLine }
+
+            # See if the first token refers to a known command (executable),
+            # and if not, see if the command line as a whole is an executable path.
+            $cmds = Get-Command $customPagerCommand, $customPagerCommandLine -ErrorAction Ignore
+            if (-not $cmds) {
+                # Custom command is invalid; ignore it, but issue a warning.
+                Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $customPagerCommandLine""
+                $customPagerCommand = $null # use default command
+            }
+            elseif ($cmds.Count -eq 1 -and $cmds[0].Source -eq $customPagerCommandLine) {
+                # The full command line is an unquoted path to an existing executable
+                # with embedded spaces.
+                $customPagerCommand = $customPagerCommandLine
+                $customPagerCommandArgs = $null
+            }
+        }
+
         # Respect PAGER, use more on Windows, and use less on Linux
-        $moreCommand,$moreArgs = $env:PAGER -split '\s+'
-        if ($moreCommand) {
-            $help | & $moreCommand $moreArgs
+        if ($customPagerCommand) {
+            $help | & $customPagerCommand $customPagerCommandArgs
         } elseif ($IsWindows) {
             $help | more.com
         } else {

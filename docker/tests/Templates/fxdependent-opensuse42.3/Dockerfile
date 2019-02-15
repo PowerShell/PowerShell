@@ -18,7 +18,8 @@ RUN zypper --non-interactive update --skip-interactive \
         git
 
 # Install dotnet-runtime
-RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc
+ADD https://packages.microsoft.com/keys/microsoft.asc .
+RUN rpmkeys --import microsoft.asc
 ADD https://packages.microsoft.com/config/opensuse/42.2/prod.repo .
 RUN mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
 RUN zypper --non-interactive update --skip-interactive \
