@@ -213,8 +213,7 @@ namespace Microsoft.PowerShell
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
-                        s_cpp.ConfigurationName,
-                        s_cpp.DebugPipeName);
+                        s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)
@@ -1370,12 +1369,18 @@ namespace Microsoft.PowerShell
                 }
 #endif
 
+                // If the debug pipe name was specified, create the custom IPC channel.
+                if (!string.IsNullOrEmpty(cpp.DebugPipeName))
+                {
+                    RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(cpp.DebugPipeName);
+                }
+
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
 #if STAMODE
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName, cpp.DebugPipeName);
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
 #else
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName, cpp.DebugPipeName);
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName);
 #endif
             }
             while (false);
@@ -1406,13 +1411,13 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName, string debugPipeName)
+        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
         {
             ExitCode = ExitCodeSuccess;
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, debugPipeName, initialCommandArgs);
+                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
                 CreateRunspace(args);
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
@@ -1496,9 +1501,9 @@ namespace Microsoft.PowerShell
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
                 Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
 #if STAMODE
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.DebugPipeName, args.InitialCommandArgs);
+                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
 #else
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.DebugPipeName, args.InitialCommandArgs);
+                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.InitialCommandArgs);
 #endif
             }
             catch (ConsoleHostStartupException startupException)
@@ -1514,7 +1519,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void InitializeRunspace(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs)
         {
-            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, configurationName: null, debugPipeName: null, initialCommandArgs: initialCommandArgs);
+            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, configurationName: null, initialCommandArgs: initialCommandArgs);
         }
 
         private bool LoadPSReadline()
@@ -1534,14 +1539,8 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-        /// <param name="initialCommand"></param>
-        /// <param name="skipProfiles"></param>
-        /// <param name="staMode"></param>
-        /// <param name="configurationName"></param>
-        /// <param name="debugPipeName">The name of the pipe to connect to if it was specified.</param>
-        /// <param name="initialCommandArgs"></param>
 
-        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, string debugPipeName, Collection<CommandParameter> initialCommandArgs)
+        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef == null, "runspace should be null");
             Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
@@ -1551,8 +1550,6 @@ namespace Microsoft.PowerShell
             {
                 Runspace consoleRunspace = null;
                 bool psReadlineFailed = false;
-
-                DefaultInitialSessionState.DebugPipeName = debugPipeName;
 
                 // Load PSReadline by default unless there is no use:
                 //    - we're running a command/file and just exiting
@@ -2893,18 +2890,11 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Constructs RunspaceCreationEventArgs.
         /// </summary>
-        /// <param name="initialCommand"></param>
-        /// <param name="skipProfiles"></param>
-        /// <param name="staMode"></param>
-        /// <param name="configurationName"></param>
-        /// <param name="debugPipeName"></param>
-        /// <param name="initialCommandArgs"></param>
         internal RunspaceCreationEventArgs(
             string initialCommand,
             bool skipProfiles,
             bool staMode,
             string configurationName,
-            string debugPipeName,
             Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
@@ -2913,7 +2903,6 @@ namespace Microsoft.PowerShell
             StaMode = staMode;
 #endif
             ConfigurationName = configurationName;
-            DebugPipeName = debugPipeName;
             InitialCommandArgs = initialCommandArgs;
         }
 
@@ -2923,7 +2912,6 @@ namespace Microsoft.PowerShell
         internal bool StaMode { get; set; }
 #endif
         internal string ConfigurationName { get; set; }
-        internal string DebugPipeName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
