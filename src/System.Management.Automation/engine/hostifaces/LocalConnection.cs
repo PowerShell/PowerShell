@@ -47,10 +47,6 @@ namespace System.Management.Automation.Runspaces
         internal LocalRunspace(PSHost host, InitialSessionState initialSessionState, bool suppressClone)
             : base(host, initialSessionState, suppressClone)
         {
-            if (RemoteSessionNamedPipeServer.IPCNamedPipeServer == null)
-            {
-                RemoteSessionNamedPipeServer.CreateIPCNamedPipeServerSingleton(initialSessionState.DebugPipeName);
-            }
         }
 
         /// <summary>
@@ -67,10 +63,6 @@ namespace System.Management.Automation.Runspaces
         internal LocalRunspace(PSHost host, InitialSessionState initialSessionState)
             : base(host, initialSessionState)
         {
-            if (RemoteSessionNamedPipeServer.IPCNamedPipeServer == null)
-            {
-                RemoteSessionNamedPipeServer.CreateIPCNamedPipeServerSingleton(initialSessionState.DebugPipeName);
-            }
         }
         #endregion constructors
 

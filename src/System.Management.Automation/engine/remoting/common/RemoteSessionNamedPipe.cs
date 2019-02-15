@@ -7,7 +7,6 @@ using System.IO;
 using System.IO.Pipes;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Server;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
@@ -344,7 +343,7 @@ namespace System.Management.Automation.Remoting
     /// having correct access restrictions, and provides a listener
     /// thread loop.
     /// </summary>
-    internal sealed class RemoteSessionNamedPipeServer : IDisposable
+    public sealed class RemoteSessionNamedPipeServer : IDisposable
     {
         #region Members
 
@@ -357,10 +356,8 @@ namespace System.Management.Automation.Remoting
         // Singleton server.
         private static object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
+        internal static RemoteSessionNamedPipeServer CustomNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
-        
-        // Used when the Pipe name is specified via the -DebugPipeName parameter on start up
-        private static bool ReusePipeName;
 
         // Access mask constant taken from PipeSecurity access rights and is equivalent to
         // PipeAccessRights.FullControl.
@@ -375,37 +372,37 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns the Named Pipe stream object.
         /// </summary>
-        public NamedPipeServerStream Stream { get; }
+        internal NamedPipeServerStream Stream { get; }
 
         /// <summary>
         /// Returns the Named Pipe name.
         /// </summary>
-        public string PipeName { get; }
+        internal string PipeName { get; }
 
         /// <summary>
         /// Returns true if listener is currently running.
         /// </summary>
-        public bool IsListenerRunning { get; private set; }
+        internal bool IsListenerRunning { get; private set; }
 
         /// <summary>
         /// Name of session configuration.
         /// </summary>
-        public string ConfigurationName { get; set; }
+        internal string ConfigurationName { get; set; }
 
         /// <summary>
         /// Accessor for the named pipe reader.
         /// </summary>
-        public StreamReader TextReader { get; private set; }
+        internal StreamReader TextReader { get; private set; }
 
         /// <summary>
         /// Accessor for the named pipe writer.
         /// </summary>
-        public StreamWriter TextWriter { get; private set; }
+        internal StreamWriter TextWriter { get; private set; }
 
         /// <summary>
         /// Returns true if object is currently disposed.
         /// </summary>
-        public bool IsDisposed { get; private set; }
+        internal bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Buffer size for PSRP fragmentor.
@@ -423,7 +420,7 @@ namespace System.Management.Automation.Remoting
         /// Event raised when the named pipe server listening thread
         /// ends.
         /// </summary>
-        public event EventHandler<ListenerEndedEventArgs> ListenerEnded;
+        internal event EventHandler<ListenerEndedEventArgs> ListenerEnded;
 
         #endregion
 
@@ -432,20 +429,18 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a RemoteSessionNamedPipeServer with the current process and AppDomain information.
         /// </summary>
-        /// <param name="debugPipeName">The name of the pipe to connect to.</param>
         /// <returns>RemoteSessionNamedPipeServer.</returns>
-        public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer(string debugPipeName)
+        internal static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer()
         {
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
-            if (!string.IsNullOrEmpty(debugPipeName))
-            {
-                ReusePipeName = true;
-                return new RemoteSessionNamedPipeServer(debugPipeName);
-            }
-
-            return new RemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
+            return CreateRemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
                 System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
+        }
+
+        internal static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer(string pipeName)
+        {
+            return new RemoteSessionNamedPipeServer(pipeName);
         }
 
         /// <summary>
@@ -562,6 +557,8 @@ namespace System.Management.Automation.Remoting
             // and listener created and running.
             IPCNamedPipeServerEnabled = true;
 
+            CreateIPCNamedPipeServerSingleton();
+
 #if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
             CreateAppDomainUnloadHandler();
 #endif
@@ -611,13 +608,57 @@ namespace System.Management.Automation.Remoting
         #region Public Methods
 
         /// <summary>
+        /// Creates the custom named pipe server with the given pipename.
+        /// </summary>
+        /// <param name="pipeName">The name of the pipe to create.</param>
+        public static void CreateCustomNamedPipeServer(string pipeName)
+        {
+            lock (s_syncObject)
+            {
+                if (CustomNamedPipeServer != null && !CustomNamedPipeServer.IsDisposed)
+                {
+                    // throw that a pipeserver already exists or overwrite it
+                    return;
+                }
+
+                try
+                {
+                    try
+                    {
+                        CustomNamedPipeServer = CreateRemoteSessionNamedPipeServer(pipeName);
+                    }
+                    catch (IOException)
+                    {
+                        // Expected when named pipe server for this process already exists.
+                        // This can happen if process has multiple AppDomains hosting PowerShell (SMA.dll).
+                        return;
+                    }
+
+                    // Listener ended callback, used to create listening new pipe server.
+                    CustomNamedPipeServer.ListenerEnded += OnCustomNamedPipeServerEnded;
+
+                    // Start the pipe server listening thread, and provide client connection callback.
+                    CustomNamedPipeServer.StartListening(ClientConnectionCallback);
+                }
+                catch (Exception)
+                {
+                    CustomNamedPipeServer = null;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
         /// Starts named pipe server listening thread.  When a client connects this thread
         /// makes a callback to implement the client communication.  When the thread ends
         /// this object is disposed and a new RemoteSessionNamedPipeServer must be created
         /// and a new listening thread started to handle subsequent client connections.
         /// </summary>
         /// <param name="clientConnectCallback">Connection callback.</param>
-        public void StartListening(
+        internal void StartListening(
             Action<RemoteSessionNamedPipeServer> clientConnectCallback)
         {
             if (clientConnectCallback == null)
@@ -641,10 +682,6 @@ namespace System.Management.Automation.Remoting
                 listenerThread.Start(clientConnectCallback);
             }
         }
-
-        #endregion
-
-        #region Private Methods
 
         internal static CommonSecurityDescriptor GetServerPipeSecurity()
         {
@@ -839,11 +876,10 @@ namespace System.Management.Automation.Remoting
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
         /// <param name="configurationName">Name of the configuration to use.</param>
-        /// <param name="debugPipeName">Name of the pipe to use if it was specified at startup.</param>
-        internal static void RunServerMode(string configurationName, string debugPipeName)
+        internal static void RunServerMode(string configurationName)
         {
             IPCNamedPipeServerEnabled = true;
-            CreateIPCNamedPipeServerSingleton(debugPipeName);
+            CreateIPCNamedPipeServerSingleton();
 
             if (IPCNamedPipeServer == null)
             {
@@ -869,8 +905,7 @@ namespace System.Management.Automation.Remoting
         /// Creates the process named pipe server object singleton and
         /// starts the client listening thread.
         /// </summary>
-        /// <param name="debugPipeName">Name of the pipe name to use.</param>
-        internal static void CreateIPCNamedPipeServerSingleton(string debugPipeName)
+        internal static void CreateIPCNamedPipeServerSingleton()
         {
             lock (s_syncObject)
             {
@@ -882,7 +917,7 @@ namespace System.Management.Automation.Remoting
                     {
                         try
                         {
-                            IPCNamedPipeServer = CreateRemoteSessionNamedPipeServer(debugPipeName);
+                            IPCNamedPipeServer = CreateRemoteSessionNamedPipeServer();
                         }
                         catch (IOException)
                         {
@@ -933,14 +968,15 @@ namespace System.Management.Automation.Remoting
         {
             if (args.RestartListener)
             {
-                if (RemoteSessionNamedPipeServer.ReusePipeName && sender is RemoteSessionNamedPipeServer server)
-                {
-                    CreateIPCNamedPipeServerSingleton(server.PipeName);
-                }
-                else
-                {
-                    CreateIPCNamedPipeServerSingleton(debugPipeName: null);
-                }
+                CreateIPCNamedPipeServerSingleton();
+            }
+        }
+
+        private static void OnCustomNamedPipeServerEnded(object sender, ListenerEndedEventArgs args)
+        {
+            if (args.RestartListener && sender is RemoteSessionNamedPipeServer server)
+            {
+                CreateCustomNamedPipeServer(server.PipeName);
             }
         }
 

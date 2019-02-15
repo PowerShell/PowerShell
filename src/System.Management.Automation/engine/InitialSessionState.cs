@@ -1743,11 +1743,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets and sets the debug pipe name that will override the default debug pipe name if this is not null.
-        /// </summary>
-        public string DebugPipeName { get; set; }
-
-        /// <summary>
         /// Specifies the language mode to be used for this session state instance.
         /// </summary>
         public PSLanguageMode LanguageMode { get; set; } = PSLanguageMode.NoLanguage;

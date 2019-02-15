@@ -792,6 +792,18 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
+                    if (!Platform.IsWindows)
+                    {
+                        string pipePath = Path.Combine(Path.GetTempPath(), args[i]);
+                        if (Platform.IsLinux && pipePath.Length >= 108 ||
+                            Platform.IsMacOS && pipePath.Length >= 104)
+                        {
+                            WriteCommandLineError(
+                                CommandLineParameterParserStrings.DebugPipeNameTooLong);
+                            break;
+                        }
+                    }
+
                     _debugPipeName = args[i];
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
