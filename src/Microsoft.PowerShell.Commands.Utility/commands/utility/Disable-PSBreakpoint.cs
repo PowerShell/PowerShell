@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113294")]
     [OutputType(typeof(Breakpoint))]
-    public class DisablePSBreakpointCommand : PSBreakpointCommandBase
+    public class DisablePSBreakpointCommand : PSBreakpointStatusBase
     {
         /// <summary>
         /// Gets or sets the parameter -passThru which states whether the
