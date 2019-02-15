@@ -10,7 +10,7 @@ namespace PSTests.Parallel
     public class PowerShellTests
     {
         [Fact]
-        public async System.Threading.Tasks.Task TestPowerShellInvokeAsync()
+        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsync()
         {
             using (PowerShell ps = PowerShell.Create())
             {
@@ -26,13 +26,13 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInput()
+        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInput()
         {
             using (PowerShell ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
-                PSDataCollection<PSObject> results = await ps.InvokeAsync(new PSDataCollection<string>(new string[] { "Get-Command" }));
+                PSDataCollection<PSObject> results = await ps.InvokeAsync(new PSDataCollection<string>(new [] { "Get-Command" }));
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]?.BaseObject);
@@ -41,14 +41,14 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInputAndOutput()
+        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInputAndOutput()
         {
             using (PowerShell ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
                 PSDataCollection<CmdletInfo> results = new PSDataCollection<CmdletInfo>();
-                await ps.InvokeAsync(new PSDataCollection<string>(new string[] { "Get-Command" }), results);
+                await ps.InvokeAsync(new PSDataCollection<string>(new [] { "Get-Command" }), results);
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]);
