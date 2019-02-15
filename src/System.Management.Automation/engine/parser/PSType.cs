@@ -543,6 +543,13 @@ namespace System.Management.Automation.Language
             private void DefineProperty(PropertyMemberAst propertyMemberAst)
             {
                 // Report an error if the property name collides with an existing property or a non-constructor method definition
+                // Property naming collisions with constructors are fine though, "$this.C" unambiguously refers to the property in this example:
+                //
+                //     class C {
+                //       C() {}
+                //       $C
+                //     }
+                //
                 if (_definedProperties.ContainsKey(propertyMemberAst.Name) || (_definedMethods.ContainsKey(propertyMemberAst.Name) && !_definedMethods[propertyMemberAst.Name][0].Item1.IsConstructor))
                 {
                     _parser.ReportError(propertyMemberAst.Extent,
