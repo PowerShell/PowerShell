@@ -35,17 +35,17 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter and exit another PSHost" {
             Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
-            "enter-pshostprocess -id $($pwsh.Id) -erroraction stop
+            "Enter-PSHostProcess -Id $($pwsh.Id) -ErrorAction Stop
             `$pid
-            exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
             Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
 
-            "enter-pshostprocess -id $($powershell.Id) -erroraction stop
+            "Enter-PSHostProcess -Id $($powershell.Id) -ErrorAction Stop
             `$pid
-            exit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $powershell.Id
         }
 
         It "Can enter using NamedPipeConnectionInfo" {
@@ -81,21 +81,21 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter using DebugPipeName" {
             Wait-UntilTrue { Test-Path $pipePath }
 
-            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
+            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
             `$pid
-            exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Can enter, exit, and re-enter using DebugPipeName" {
             Wait-UntilTrue { Test-Path $pipePath }
 
-            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
+            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
             `$pid
-            exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
 
-            "enter-pshostprocess -debugpipename $pipeName -erroraction stop
+            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
             `$pid
-            exit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
         It "Should throw if DebugPipeName does not exist" {
