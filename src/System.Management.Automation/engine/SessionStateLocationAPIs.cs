@@ -579,6 +579,14 @@ namespace System.Management.Automation
             // Set the $PWD variable to the new location
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
 
+#if UNIX
+            // Set the $env:PWD variable to the new location on Unix
+            if (CurrentDrive.Provider.NameEquals("FileSystem"))
+            {
+                Environment.SetEnvironmentVariable("PWD", this.CurrentLocation.ProviderPath);
+            }
+#endif
+
             // If an action has been defined for location changes, invoke it now.
             if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
             {
