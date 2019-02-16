@@ -329,4 +329,10 @@
   <data name="shrOperatorDescription" xml:space="preserve">
     <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
   </data>
+  <data name="allOperatorDescription" xml:space="preserve">
+    <value>All operator. Returns TRUE when all of the left hand values are TRUE for the right hand predicate</value>
+  </data>
+  <data name="anyOperatorDescription" xml:space="preserve">
+    <value>Any operator. Returns TRUE when any of the left hand values are TRUE for the right hand predicate</value>
+  </data>
 </root>
