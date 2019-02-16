@@ -633,15 +633,28 @@ namespace System.Management.Automation
                                          object left,
                                          object right)
         {
+            IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
+
             ScriptBlock predicate = right as ScriptBlock;
             if (predicate == null)
             {
-                return ContainsOperatorCompiled(context, getEnumeratorSite, comparerSite, left, right);
-                throw InterpreterError.NewInterpreterException(right, typeof(RuntimeException), new ScriptExtent(new ScriptPosition("", 0, 0, ""), new ScriptPosition("", 0, 0, "")),
-                    "BadOperatorArgument", ParserStrings.BadOperatorArgument, "-all", right);
+                if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
+                {
+                    return (bool)comparerSite.Target.Invoke(comparerSite, left, right);
+                }
+
+                while (EnumerableOps.MoveNext(context, list))
+                {
+                    object val = EnumerableOps.Current(list);
+                    if (!_toBoolSite.Target.Invoke(_toBoolSite, comparerSite.Target.Invoke(comparerSite, val, right)))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
-            IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
             if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
             {
                 object result = predicate.DoInvokeReturnAsIs(true, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, left, null, null, null);
