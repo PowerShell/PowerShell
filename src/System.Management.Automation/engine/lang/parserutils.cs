@@ -350,6 +350,8 @@ namespace System.Management.Automation
         internal static readonly object _TrueObject = (object)true;
         internal static readonly object _FalseObject = (object)false;
 
+        private static readonly CallSite<Func<CallSite, object, bool>> _toBoolSite = CallSite<Func<CallSite, object, bool>>.Create(PSConvertBinder.Get(typeof(bool)));
+
         internal static string CharToString(char ch)
         {
             if (ch < 255) return s_chars[ch];
@@ -589,6 +591,74 @@ namespace System.Management.Automation
             {
                 list.Add(item);
             }
+        }
+
+        internal static bool AnyOperator(ExecutionContext context,
+                                         CallSite<Func<CallSite, object, IEnumerator>> getEnumeratorSite,
+                                         CallSite<Func<CallSite, object, object, object>> comparerSite,
+                                         object left,
+                                         object right)
+        {
+            ScriptBlock predicate = right as ScriptBlock;
+            if (predicate == null)
+            {
+                return ContainsOperatorCompiled(context, getEnumeratorSite, comparerSite, left, right);
+                throw InterpreterError.NewInterpreterException(right, typeof(RuntimeException), new ScriptExtent(new ScriptPosition("", 0, 0, ""), new ScriptPosition("", 0, 0, "")),
+                    "BadOperatorArgument", ParserStrings.BadOperatorArgument, "-any", right);
+            }
+
+            IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
+            if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
+            {
+                object result = predicate.DoInvokeReturnAsIs(true, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, left, null, null, null);
+                return _toBoolSite.Target.Invoke(_toBoolSite, result);
+            }
+
+            while (EnumerableOps.MoveNext(context, list))
+            {
+                object val = EnumerableOps.Current(list);
+                object result = predicate.DoInvokeReturnAsIs(true, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, val, null, null, null);
+                if (_toBoolSite.Target.Invoke(_toBoolSite, result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool AllOperator(ExecutionContext context,
+                                         CallSite<Func<CallSite, object, IEnumerator>> getEnumeratorSite,
+                                         CallSite<Func<CallSite, object, object, object>> comparerSite,
+                                         object left,
+                                         object right)
+        {
+            ScriptBlock predicate = right as ScriptBlock;
+            if (predicate == null)
+            {
+                return ContainsOperatorCompiled(context, getEnumeratorSite, comparerSite, left, right);
+                throw InterpreterError.NewInterpreterException(right, typeof(RuntimeException), new ScriptExtent(new ScriptPosition("", 0, 0, ""), new ScriptPosition("", 0, 0, "")),
+                    "BadOperatorArgument", ParserStrings.BadOperatorArgument, "-all", right);
+            }
+
+            IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
+            if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
+            {
+                object result = predicate.DoInvokeReturnAsIs(true, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, left, null, null, null);
+                return _toBoolSite.Target.Invoke(_toBoolSite, result);
+            }
+
+            while (EnumerableOps.MoveNext(context, list))
+            {
+                object val = EnumerableOps.Current(list);
+                object result = predicate.DoInvokeReturnAsIs(true, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, val, null, null, null);
+                if (!_toBoolSite.Target.Invoke(_toBoolSite, result))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static object SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)

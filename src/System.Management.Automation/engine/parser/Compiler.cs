@@ -297,6 +297,10 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.UnaryJoinOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_UnarySplitOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_AnyOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.AnyOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_AllOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.AllOperator), staticFlags);
 
         internal static readonly ConstructorInfo Pipe_ctor =
             typeof(Pipe).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(List<object>) }, null);
@@ -5008,6 +5012,28 @@ namespace System.Management.Automation.Language
                 rhs.Cast(typeof(object)));
         }
 
+        public Expression GenerateCallAny(Expression lhs, Expression rhs, bool ignoreCase)
+        {
+            return Expression.Call(
+                CachedReflectionInfo.ParserOps_AnyOperator,
+                _executionContextParameter,
+                Expression.Constant(CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get())),
+                Expression.Constant(CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(ExpressionType.Equal, ignoreCase, true))),
+                lhs.Cast(typeof(object)), 
+                rhs.Cast(typeof(object)));
+        }
+
+        public Expression GenerateCallAll(Expression lhs, Expression rhs, bool ignoreCase)
+        {
+            return Expression.Call(
+                CachedReflectionInfo.ParserOps_AllOperator,
+                _executionContextParameter,
+                Expression.Constant(CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get())),
+                Expression.Constant(CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(ExpressionType.Equal, ignoreCase, true))),
+                lhs.Cast(typeof(object)),
+                rhs.Cast(typeof(object)));
+        }
+
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
             object constantValue;
@@ -5179,6 +5205,10 @@ namespace System.Management.Automation.Language
                     return GenerateCallContains(lhs, rhs, true);
                 case TokenKind.Inotcontains:
                     return Expression.Not(GenerateCallContains(lhs, rhs, true));
+                case TokenKind.Any:
+                    return GenerateCallAny(lhs, rhs, true);
+                case TokenKind.All:
+                    return GenerateCallAll(lhs, rhs, true);
                 case TokenKind.Iin:
                     return GenerateCallContains(rhs, lhs, true);
                 case TokenKind.Inotin:

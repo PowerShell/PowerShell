@@ -413,6 +413,11 @@ namespace System.Management.Automation.Language
         /// <summary>The PS class base class and implemented interfaces operator ':'. Also used in base class ctor calls.</summary>
         Colon = 99,
 
+        /// <summary>Any operator '-any'</summary>
+        Any = 100,
+
+        /// <summary>All operator '-all'</summary>
+        All = 101,
         #endregion Operators
 
         #region Keywords
@@ -598,7 +603,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
-        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
+        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as', '-any', '-all', 
         /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
         BinaryPrecedenceComparison = 3,
@@ -847,8 +852,8 @@ namespace System.Management.Automation.Language
             /*                  Shl */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 2  */ TokenFlags.None,
-            /*     Reserved slot 3  */ TokenFlags.None,
+            /*                  Any */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison,
+            /*                  All */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,
             /*     Reserved slot 6  */ TokenFlags.None,
@@ -1045,8 +1050,8 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ string.Empty,
-            /*    Reserved slot 3   */ string.Empty,
+            /*                  Any */ "-any",
+            /*                  All */ "-all",
             /*    Reserved slot 4   */ string.Empty,
             /*    Reserved slot 5   */ string.Empty,
             /*    Reserved slot 6   */ string.Empty,
