@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the name of properties from source PSObject and add them to _propertyNames.
         /// </summary>
-        internal IList<string> BuildPropertyNames(PSObject source, IList<string> propertyNames)
+        internal static IList<string> BuildPropertyNames(PSObject source, IList<string> propertyNames)
         {
             if (propertyNames != null)
             {
@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="property"> Property to convert.</param>
         /// <returns>ToString() value.</returns>
-        internal string GetToStringValueForProperty(PSPropertyInfo property)
+        internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
             if (property == null)
             {
@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="source">PSObject whose type to determine.</param>
         /// <returns>String with type information.</returns>
-        internal string GetTypeString(PSObject source)
+        internal static string GetTypeString(PSObject source)
         {
             string type = null;
 
@@ -1610,8 +1610,9 @@ namespace Microsoft.PowerShell.Commands
         internal const char CSVDelimiter = ',';
         internal const string CSVTypePrefix = "CSV:";
 
-        internal static char SetDelimiter(PSCmdlet cmdlet, string parameterSetName, char delimiter, bool useCulture)
+        internal static char SetDelimiter(PSCmdlet cmdlet, string parameterSetName, char explicitDelimiter, bool useCulture)
         {
+            char delimiter = explicitDelimiter;
             switch (parameterSetName)
             {
                 case "Delimiter":
@@ -1619,7 +1620,7 @@ namespace Microsoft.PowerShell.Commands
                 case "DelimiterLiteralPath":
 
                     // if delimiter is not given, it should take , as value
-                    if (delimiter == '\0')
+                    if (explicitDelimiter == '\0')
                     {
                         delimiter = ImportExportCSVHelper.CSVDelimiter;
                     }
