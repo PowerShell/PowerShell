@@ -617,8 +617,14 @@ namespace System.Management.Automation.Remoting
             {
                 if (CustomNamedPipeServer != null && !CustomNamedPipeServer.IsDisposed)
                 {
-                    // throw that a pipeserver already exists or overwrite it
-                    return;
+                    if (pipeName == CustomNamedPipeServer.PipeName)
+                    {
+                        // we shouldn't recreate the server object if we're using the same pipeName
+                        return;
+                    }
+
+                    // Dispose of the current pipe server so we can create a new one with the new pipeName
+                    CustomNamedPipeServer.Dispose();
                 }
 
                 try
