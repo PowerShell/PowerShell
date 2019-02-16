@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
             if (_propertyNames == null)
             {
                 // figure out the column names (and lock-in their order)
-                _propertyNames = _helper.BuildPropertyNames(InputObject, _propertyNames);
+                _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
                 if (_isActuallyAppending && _preexistingPropertyNames != null)
                 {
                     this.ReconcilePreexistingPropertyNames();
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (NoTypeInformation == false)
                     {
-                        WriteCsvLine(_helper.GetTypeString(InputObject));
+                        WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                     }
 
                     WriteCsvLine(_helper.ConvertPropertyNamesCSV(_propertyNames));
@@ -660,10 +660,10 @@ namespace Microsoft.PowerShell.Commands
             // Process first object
             if (_propertyNames == null)
             {
-                _propertyNames = _helper.BuildPropertyNames(InputObject, _propertyNames);
+                _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
                 if (NoTypeInformation == false)
                 {
-                    WriteCsvLine(_helper.GetTypeString(InputObject));
+                    WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                 }
 
                 // Write property information
