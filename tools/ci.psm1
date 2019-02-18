@@ -190,6 +190,20 @@ function Invoke-CIBuild
     }
 
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+
+    Save-PSOptions
+
+    $options = (Get-PSOptions)
+
+    $path = split-path -path $options.Output
+
+    $psOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath '../psoptions.json')
+    $buildZipPath = (Join-Path -Path $PSScriptRoot -ChildPath '../build.zip')
+
+    Compress-Archive -Path $path -DestinationPath $buildZipPath
+
+    Push-Artifact -Path $psOptionsPath -Name 'build'
+    Push-Artifact -Path $buildZipPath -Name 'build'
 }
 
 # Implements the CI 'install' step
@@ -262,13 +276,41 @@ function Update-TestResults
     }
 }
 
+function Invoke-CIxUnit
+{
+    param(
+        [switch]
+        $SkipFailing
+    )
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+    if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
+    {
+        throw "CoreCLR pwsh.exe was not built"
+    }
+
+    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
+
+    Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+    Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
+    Push-Artifact -Path $ParallelXUnitTestResultsFile -name xunit
+
+    if(!$SkipFailing.IsPresent)
+    {
+        # Fail the build, if tests failed
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+    }
+}
+
 # Implement CI 'Test_script'
 function Invoke-CITest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
-        [string] $Purpose
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
+        [string] $Purpose,
+        [ValidateSet('CI', 'Others')]
+        [string] $TagSet
     )
     # CoreCLR
 
@@ -276,7 +318,6 @@ function Invoke-CITest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -285,15 +326,18 @@ function Invoke-CITest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    if (Test-DailyBuild)
-    {
-        $ExcludeTag = @()
-        Write-Host -Foreground Green 'Running all CoreCLR tests..'
-    }
-    else
-    {
-        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
-        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+    switch ($TagSet) {
+        'CI' {
+            Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+            $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+        }
+        'Others' {
+            Write-Host -Foreground Green 'Running non-CI CoreCLR tests..'
+            $ExcludeTag = @('CI')
+        }
+        Default {
+            throw "Unknow TagSet: '$TagSet'"
+        }
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -308,7 +352,7 @@ function Invoke-CITest
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
-        Start-PSPester @arguments -Title 'Pester Unelevated'
+        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-TestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
@@ -340,7 +384,7 @@ function Invoke-CITest
         }
     }
 
-    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
+    if ($Purpose -eq 'ElevatedPesterTests') {
         $arguments = @{
             Terse = $true
             Bindir = $env:CoreOutput
@@ -348,17 +392,13 @@ function Invoke-CITest
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
         }
-        Start-PSPester @arguments -Title 'Pester Elevated'
+        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-TestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-        Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
