@@ -218,12 +218,12 @@ Describe "Set-Location" -Tags "CI" {
         It 'Should set the PWD environment variable to the new filesystem location' -Skip:$IsWindows {
             # Use $env:TMPDIR or /tmp to ensure that we're testing a FileSystem path
             if ($env:TMPDIR) {
-                $tempDirectory = $env:TMPDIR
+                $TempDirectory = $env:TMPDIR
             } else {
-                $tempDirectory = '/tmp'
+                $TempDirectory = '/tmp'
             }
             $path = 'Directory1'
-            $location = Join-Path $tempDirectory $path
+            $location = Join-Path $TempDirectory $path
             # Create a directory that we know the path of
             New-Item -ItemType Directory -Path $location
             # Move into the known path
@@ -238,11 +238,11 @@ Describe "Set-Location" -Tags "CI" {
         It 'Should unwrap a FileSystem Provider PSDrive path when updating the PWD environment variable' -Skip:$IsWindows {
             # Use $env:TMPDIR or /tmp to ensure that we're testing a FileSystem path
             if ($env:TMPDIR) {
-                $tempDirectory = $env:TMPDIR
+                $TempDirectory = $env:TMPDIR
             } else {
-                $tempDirectory = '/tmp'
+                $TempDirectory = '/tmp'
             }
-            New-PSDrive -Name 'TempDirectory' -PSProvider 'FileSystem' -Root $tempDirectory
+            New-PSDrive -Name 'TempDirectory' -PSProvider 'FileSystem' -Root $TempDirectory
             $path = 'Directory1'
             $location = Join-Path 'TempDirectory:' $path
             # Create a directory that we know the path of
