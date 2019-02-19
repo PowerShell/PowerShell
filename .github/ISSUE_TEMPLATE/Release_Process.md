@@ -29,7 +29,8 @@ Please **only** use this template if you are a maintainer.
 - [ ] Run tests on all supported Linux distributions and publish results
 - [ ]  Update documentation, and scripts.
     - [ ] Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
-    - [ ] Update other documents and scripts to use the new package names, links, and `metadata.json`.
+    - [ ] Stage a PR to master to update other documents and
+          scripts to use the new package names, links, and `metadata.json`.
 - [ ] Create NuGet packages and publish them to `powershell-core` feed.
 - [ ] Run release build to publish Linux packages to Microsoft YUM/APT repositories.
 - [ ] Create the release tag and push the tag to `PowerShell/PowerShell` repository.
