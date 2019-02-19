@@ -4184,7 +4184,7 @@ param(
         {
             $customPagerCommandLine = $env:PAGER
 
-            # Split the command line into tokes, respecting quoting.
+            # Split the command line into tokens, respecting quoting.
             $errs = $null
             $tokens = [System.Management.Automation.PSParser]::Tokenize($customPagerCommandLine, [ref]$errs)
             $customPagerCommand = $tokens[0].Content
