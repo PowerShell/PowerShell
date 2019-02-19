@@ -223,16 +223,16 @@ Describe "Set-Location" -Tags "CI" {
                 $TempDirectory = '/tmp'
             }
             $path = 'Directory1'
-            $location = Join-Path $TempDirectory $path
+            $location = Join-Path -Path $TempDirectory -ChildPath $path
             # Create a directory that we know the path of
             New-Item -ItemType Directory -Path $location
             # Move into the known path
-            Set-Location $location
+            Set-Location -Path $location
             # Check that the $env:PWD variable correctly points to the known path
             $env:PWD | Should -Be $PWD.ProviderPath
             # Clean up after ourselves
-            Set-Location $TestDrive
-            Remove-Item $location
+            Set-Location -Path $TestDrive
+            Remove-Item -Path $location
         }
 
         It 'Should unwrap a FileSystem Provider PSDrive path when updating the PWD environment variable' -Skip:$IsWindows {
@@ -244,23 +244,23 @@ Describe "Set-Location" -Tags "CI" {
             }
             New-PSDrive -Name 'TempDirectory' -PSProvider 'FileSystem' -Root $TempDirectory
             $path = 'Directory1'
-            $location = Join-Path 'TempDirectory:' $path
+            $location = Join-Path -Path 'TempDirectory:' -ChildPath $path
             # Create a directory that we know the path of
             New-Item -ItemType Directory -Path $location
             # Move into the known path
-            Set-Location $location
+            Set-Location -Path $location
             # Check that the $env:PWD variable correctly points to the known path
             $env:PWD | Should -Be $PWD.ProviderPath
             # Clean up after ourselves
-            Set-Location $TestDrive
-            Remove-Item $location
+            Set-Location -Path $TestDrive
+            Remove-Item -Path $location
             Remove-PSDrive -Name 'TempDirectory'
         }
 
         It 'Should not update the PWD environment variable for non-FileSystem PSDrive providers' -Skip:$IsWindows {
             # Initial Set-Location to ensure that $env:PWD is reset to a known value
-            Set-Location $env:HOME
-            Set-Location 'Variable:'
+            Set-Location -Path $env:HOME
+            Set-Location -Path 'Variable:'
             # Verify that $env:PWD did not update when changing to the Variable: PSDrive
             $env:PWD | Should -Be $env:HOME
         }
