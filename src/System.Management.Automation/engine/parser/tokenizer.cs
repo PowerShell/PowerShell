@@ -559,6 +559,29 @@ namespace System.Management.Automation.Language
         internal List<Token> TokenList;
     }
 
+    /// <summary>
+    /// Defines the option to use when skipping newlines.
+    /// </summary>
+    internal enum NewlineSkipOption
+    {
+        /// <summary>
+        /// Simply skip newlines.
+        /// </summary>
+        None,
+        /// <summary>
+        /// Skip newlines and semi-colons.
+        /// </summary>
+        SkipSemis,
+        /// <summary>
+        /// Skip newlines using the old v3 method.
+        /// </summary>
+        V3,
+        /// <summary>
+        /// Skip newlines that are before a pipe.
+        /// </summary>
+        BeforePipe
+    }
+
     [DebuggerDisplay("Mode = {Mode}; Script = {_script}")]
     internal class Tokenizer
     {
@@ -848,10 +871,13 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        internal void SkipNewlines(bool skipSemis, bool v3)
+        internal void SkipNewlines(NewlineSkipOption skipOption = NewlineSkipOption.None)
         {
-        // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
-        // so we create them when asked to create them.
+            // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
+            // so we create them when asked to create them.
+
+            int startIndex = _currentIndex;
+            var tokenQueue = new Queue<Token>();
 
         again:
             char c = GetChar();
@@ -868,23 +894,23 @@ namespace System.Management.Automation.Language
 
                 case '\r':
                 case '\n':
-                    if (v3) _parser.NoteV3FeatureUsed();
+                    if (skipOption == NewlineSkipOption.V3) _parser.NoteV3FeatureUsed();
                     if (TokenList != null)
                     {
                         _tokenStart = _currentIndex - 1;
                         ScanNewline(c);
-                        NewToken(TokenKind.NewLine);
+                        tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.NewLine, TokenFlags.None));
                     }
 
                     goto again;
 
                 case ';':
-                    if (skipSemis)
+                    if (skipOption == NewlineSkipOption.SkipSemis)
                     {
                         if (TokenList != null)
                         {
                             _tokenStart = _currentIndex - 1;
-                            NewToken(TokenKind.Semi);
+                            tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.Semi, TokenFlags.None));
                         }
 
                         goto again;
@@ -914,7 +940,7 @@ namespace System.Management.Automation.Language
                     {
                         _tokenStart = _currentIndex - 2;
                         ScanNewline(c1);
-                        NewToken(TokenKind.LineContinuation);
+                        tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.LineContinuation, TokenFlags.None));
                         goto again;
                     }
 
@@ -934,7 +960,22 @@ namespace System.Management.Automation.Language
                         goto again;
                     }
 
+                    if (skipOption == NewlineSkipOption.BeforePipe && c != '|')
+                    {
+                        tokenQueue.Clear();
+
+                        while (_currentIndex > startIndex)
+                        {
+                            UngetChar();
+                        }
+                    }
+
                     break;
+            }
+
+            while (tokenQueue.Count > 0)
+            {
+                SaveToken(tokenQueue.Dequeue());
             }
 
             UngetChar();

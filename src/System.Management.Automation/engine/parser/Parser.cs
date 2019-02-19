@@ -351,7 +351,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(false, false);
+                _tokenizer.SkipNewlines();
             }
         }
 
@@ -362,7 +362,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(false, true);
+                _tokenizer.SkipNewlines(NewlineSkipOption.V3);
             }
         }
 
@@ -371,7 +371,16 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine || _ungotToken.Kind == TokenKind.Semi)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(true, false);
+                _tokenizer.SkipNewlines(NewlineSkipOption.SkipSemis);
+            }
+        }
+
+        private void SkipNewlinesBeforePipe()
+        {
+            if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
+            {
+                _ungotToken = null;
+                _tokenizer.SkipNewlines(NewlineSkipOption.BeforePipe);
             }
         }
 
@@ -5700,6 +5709,8 @@ namespace System.Management.Automation.Language
             // G  pipeline-tail:
             // G      '|'   new-lines:opt   command
             // G      '|'   new-lines:opt   command   pipeline-tail
+            // G      new-lines:opt   '|'   command
+            // G      new-lines:opt   '|'   command   pipeline-tail
 
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
@@ -5817,6 +5828,12 @@ namespace System.Management.Automation.Language
                 }
 
                 pipeToken = PeekToken();
+                // Skip newlines before pipe tokens to support pipe tokens at the start of the next line of script
+                if (pipeToken.Kind == TokenKind.NewLine)
+                {
+                    SkipNewlinesBeforePipe();
+                    pipeToken = PeekToken();
+                }
 
                 switch (pipeToken.Kind)
                 {
