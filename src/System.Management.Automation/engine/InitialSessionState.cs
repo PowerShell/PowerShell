@@ -4184,8 +4184,11 @@ param(
         {
             $customPagerCommandLine = $env:PAGER
 
-            # Split the command line into tokens, respecting quoting.
-            $customPagerCommand, $customPagerCommandArgs = & { Write-Output -- $customPagerCommandLine }
+            # Split the command line into tokes, respecting quoting.
+            $errs = $null
+            $tokens = [System.Management.Automation.PSParser]::Tokenize($customPagerCommandLine, [ref]$errs)
+            $customPagerCommand = $tokens[0].Content
+            $customPagerCommandArgs = $tokens[1].Content
 
             # See if the first token refers to a known command (executable),
             # and if not, see if the command line as a whole is an executable path.
