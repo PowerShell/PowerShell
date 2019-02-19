@@ -16,7 +16,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
             if (-not (Test-Path $AssemblyPath)) {
-                ## When using $SourcePath directly, 'Add-Type' fails in AppVeyor CI runs with an 'access denied' error.
+                ## When using $SourcePath directly, 'Add-Type' fails in Windows CI runs with an 'access denied' error.
                 ## It turns out Pester doesn't handle an exception like this from 'BeforeAll'. It causes the Pester to
                 ## be somehow corrupted, and results in random failures in other tests.
                 ## To work around this issue, we copy the source file to 'TestDrive' before calling 'Add-Type'.

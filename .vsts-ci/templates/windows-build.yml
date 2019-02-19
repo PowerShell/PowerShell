@@ -24,13 +24,13 @@ jobs:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
-      Invoke-AppveyorInstall
+      Invoke-CIInstall
     displayName: Bootstrap
     condition: succeededOrFailed()
 
   - powershell: |
       Import-Module .\tools\ci.psm1
-      Invoke-AppveyorBuild
+      Invoke-CIBuild
     displayName: Build
     condition: succeeded()
 
@@ -40,4 +40,3 @@ jobs:
       Invoke-CIxUnit -SkipFailing
     displayName: xUnit Tests
     condition: succeeded()
-
