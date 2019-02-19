@@ -3209,21 +3209,22 @@ function New-GlobalToolNupkg
         [Parameter(Mandatory)] [string] $WindowsBinPath,
         [Parameter(Mandatory)] [string] $PackageVersion,
         [Parameter(Mandatory)] [string] $DestinationPath,
-        [switch] $UnifiedPackage,
-        [string] $ShimDllPath,
-        [string] $ShimConfigPath
+        [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
     )
 
     $packageInfo = @()
 
     if ($UnifiedPackage)
     {
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool"; Type = "Unified"}
+        Write-Log "Creating a unified package"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell"; Type = "Unified"}
+        $ShimDllPath = Join-Path $WindowsBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
     }
     else
     {
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool.Linux"; Type = "Linux"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.GlobalTool.Windows"; Type = "Windows"}
+        Write-Log "Creating a Linux and Windows packages"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows"; Type = "Windows"}
     }
 
     $packageInfo | ForEach-Object {
@@ -3234,31 +3235,40 @@ function New-GlobalToolNupkg
             "Unified"
             {
                 $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
-                $linuxFolder = New-Item (Join-Path $ridFolder "linux") -ItemType Directory
+                $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
 
+                Write-Log "Copying runtime assemblies from $WindowsBinPath"
                 Copy-Item "$WindowsBinPath/*" -Destination $winFolder -Recurse
-                Copy-Item "$LinuxBinPath/*" -Destination $linuxFolder -Recurse
+
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Copy-Item "$LinuxBinPath/*" -Destination $unixFolder -Recurse
+
+                Write-Log "Copying shim dll from $ShimDllPath"
                 Copy-Item $ShimDllPath -Destination $ridFolder
-                Copy-Item $ShimConfigPath -Destination $ridFolder
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
             }
 
             "Linux"
             {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
                 Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
 
             "Windows"
             {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
                 Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
         }
 
-        $nuSpec = $packagingStrings.GlobalToolNuSpec -f "$_.PackageName", $PackageVersion
-        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$($_.PackageName).nuspec")
+        $packageName = $_.PackageName
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
+        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec")
         $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml")
+
+        Write-Log "Creating a package: $packageName"
         New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
     }
 }
