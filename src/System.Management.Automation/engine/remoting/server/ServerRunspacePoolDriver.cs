@@ -1922,6 +1922,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Sets up debugger to debug provided Runspace in a nested debug session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug.</param>
+        /// <param name="disableBreakAll"></param>
+        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
+        {
+            _wrappedDebugger.Value.DebugRunspace(runspace, disableBreakAll);
+        }
+
+        /// <summary>
         /// Removes the provided Runspace from the nested "active" debugger state.
         /// </summary>
         /// <param name="runspace">Runspace.</param>

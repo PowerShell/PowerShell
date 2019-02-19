@@ -100,6 +100,20 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// The optional breakpoint objects to use for debugging.
+        /// </summary>
+        [Parameter(Position = 1,
+                   ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.RunspaceParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.IdParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.NameParameterSet)]
+        public Breakpoint[] Breakpoint
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Overrides
@@ -260,7 +274,14 @@ namespace Microsoft.PowerShell.Commands
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
 
                 // Set up host script debugger to debug the runspace.
-                _debugger.DebugRunspace(_runspace);
+                if (Breakpoint.Length > 0)
+                {
+                    _debugger.DebugRunspace(_runspace, disableBreakAll: true);
+                }
+                else
+                {
+                    _debugger.DebugRunspace(_runspace);
+                }
 
                 while (_debugging)
                 {
@@ -517,6 +538,10 @@ namespace Microsoft.PowerShell.Commands
         {
             SetLocalMode(runspace.Debugger, true);
             EnableHostDebugger(runspace, false);
+            if (Breakpoint.Length > 0)
+            {
+                AddBreakpoints(runspace.Debugger);
+            }
         }
 
         private void RestoreRunspace(Runspace runspace)
@@ -549,6 +574,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 remoteDebugger.LocalDebugMode = localMode;
             }
+        }
+
+        private void AddBreakpoints(System.Management.Automation.Debugger debugger)
+        {
+            debugger?.SetBreakpoints(Breakpoint);
         }
 
         #endregion

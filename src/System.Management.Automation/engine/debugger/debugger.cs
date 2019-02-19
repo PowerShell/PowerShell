@@ -743,6 +743,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Sets up debugger to debug provided Runspace in a nested debug session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug.</param>
+        /// <param name="disableBreakAll"></param>
+        internal virtual void DebugRunspace(Runspace runspace, bool disableBreakAll)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Removes the provided Runspace from the nested "active" debugger state.
         /// </summary>
         /// <param name="runspace">Runspace.</param>
@@ -2657,11 +2667,17 @@ namespace System.Management.Automation
 
         #region Runspace Debugging
 
+        internal override void DebugRunspace(Runspace runspace)
+        {
+            DebugRunspace(runspace, disableBreakAll:false);
+        }
+
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
         /// <param name="runspace">Runspace to debug.</param>
-        internal override void DebugRunspace(Runspace runspace)
+        /// <param name="disableBreakAll">When specified, it will not turn on BreakAll.</param>
+        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
         {
             if (runspace == null)
             {
@@ -2696,7 +2712,7 @@ namespace System.Management.Automation
 
             AddToRunningRunspaceList(new PSStandaloneMonitorRunspaceInfo(runspace));
 
-            if (!runspace.Debugger.InBreakpoint)
+            if (!runspace.Debugger.InBreakpoint && !disableBreakAll)
             {
                 EnableDebuggerStepping(EnableNestedType.NestedRunspace);
             }
