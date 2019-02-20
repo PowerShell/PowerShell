@@ -1443,6 +1443,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
     <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
   </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
+  </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
     <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
   </data>
