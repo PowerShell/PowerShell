@@ -624,15 +624,18 @@ namespace System.Management.Automation.Remoting
                     CustomNamedPipeServer.Dispose();
                 }
 
-                int maxNameLength = (Platform.IsLinux ? _maxPipePathLengthLinux : _maxPipePathLengthMacOS) - Path.GetTempPath().Length;
-                if (pipeName.Length > maxNameLength)
+                if (!Platform.IsWindows)
                 {
-                    throw new InvalidOperationException(
-                        string.Format(
-                            RemotingErrorIdStrings.DebugPipeNameTooLong,
-                            maxNameLength,
-                            pipeName,
-                            pipeName.Length));
+                    int maxNameLength = (Platform.IsLinux ? _maxPipePathLengthLinux : _maxPipePathLengthMacOS) - Path.GetTempPath().Length;
+                    if (pipeName.Length > maxNameLength)
+                    {
+                        throw new InvalidOperationException(
+                            string.Format(
+                                RemotingErrorIdStrings.DebugPipeNameTooLong,
+                                maxNameLength,
+                                pipeName,
+                                pipeName.Length));
+                    }
                 }
 
                 try
