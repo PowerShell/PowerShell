@@ -222,17 +222,17 @@ Describe "Set-Location" -Tags "CI" {
             } else {
                 $TempDirectory = '/tmp'
             }
-            $path = 'Directory1'
-            $location = Join-Path -Path $TempDirectory -ChildPath $path
+            $Path = 'Directory1'
+            $Location = Join-Path -Path $TempDirectory -ChildPath $Path
             # Create a directory that we know the path of
-            New-Item -ItemType Directory -Path $location
+            New-Item -ItemType Directory -Path $Location
             # Move into the known path
-            Set-Location -Path $location
+            Set-Location -Path $Location
             # Check that the $env:PWD variable correctly points to the known path
             $env:PWD | Should -Be $PWD.ProviderPath
             # Clean up after ourselves
             Set-Location -Path $TestDrive
-            Remove-Item -Path $location
+            Remove-Item -Path $Location
         }
 
         It 'Should unwrap a FileSystem Provider PSDrive path when updating the PWD environment variable' -Skip:$IsWindows {
@@ -243,17 +243,17 @@ Describe "Set-Location" -Tags "CI" {
                 $TempDirectory = '/tmp'
             }
             New-PSDrive -Name 'TempDirectory' -PSProvider 'FileSystem' -Root $TempDirectory
-            $path = 'Directory1'
-            $location = Join-Path -Path 'TempDirectory:' -ChildPath $path
+            $Path = 'Directory1'
+            $Location = Join-Path -Path 'TempDirectory:' -ChildPath $Path
             # Create a directory that we know the path of
-            New-Item -ItemType Directory -Path $location
+            New-Item -ItemType Directory -Path $Location
             # Move into the known path
-            Set-Location -Path $location
+            Set-Location -Path $Location
             # Check that the $env:PWD variable correctly points to the known path
             $env:PWD | Should -Be $PWD.ProviderPath
             # Clean up after ourselves
             Set-Location -Path $TestDrive
-            Remove-Item -Path $location
+            Remove-Item -Path $Location
             Remove-PSDrive -Name 'TempDirectory'
         }
 
