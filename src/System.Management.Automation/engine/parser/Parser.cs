@@ -5707,10 +5707,7 @@ namespace System.Management.Automation.Language
             // G      expression   assignment-operator   statement
             // G
             // G  pipeline-tail:
-            // G      '|'   new-lines:opt   command
-            // G      '|'   new-lines:opt   command   pipeline-tail
-            // G      new-lines:opt   '|'   command
-            // G      new-lines:opt   '|'   command   pipeline-tail
+            // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
 
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
@@ -5828,7 +5825,9 @@ namespace System.Management.Automation.Language
                 }
 
                 pipeToken = PeekToken();
-                // Skip newlines before pipe tokens to support pipe tokens at the start of the next line of script
+
+                // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
+                // tokens start the next line of script
                 if (pipeToken.Kind == TokenKind.NewLine)
                 {
                     SkipNewlinesBeforePipe();
