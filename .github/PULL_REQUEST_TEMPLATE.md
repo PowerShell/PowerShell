@@ -16,7 +16,7 @@
 - [ ] [Change is not breaking](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)
 - [ ] [Make sure all `.h`, `.cpp`, `.cs`, `.ps1` and `.psm1` files have the correct copyright header](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
 - [ ] This PR is ready to merge and is not [Work in Progress](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---work-in-progress).
-    - If the PR is work in progress, please create the pull request as a [draft](https://github.blog/2019-02-14-introducing-draft-pull-requests/) and publish it when the PR is ready.  
+    - If the PR is work in progress, please create the pull request as a [draft](https://help.github.com/articles/about-pull-requests/#draft-pull-requests) and publish it when the PR is ready.  
 - **User-facing changes**
     - [ ] Not Applicable
     - **OR**  
