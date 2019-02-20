@@ -95,8 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets and sets the Named Pipe name to connect to.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
-        [ValidateNotNull()]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
         public string DebugPipeName
         {
             get;
@@ -240,18 +239,34 @@ namespace Microsoft.PowerShell.Commands
                 // Unwrap inner exception for original error message, if any.
                 string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new RuntimeException(
-                            StringUtil.Format(
-                                RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
-                                msgAppDomainName,
-                                connectionInfo.ProcessId,
-                                errorMessage),
-                            e.InnerException),
-                        "EnterPSHostProcessCannotConnectToProcess",
-                        ErrorCategory.OperationTimeout,
-                        this));
+                if (connectionInfo.DebugPipeName != null)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToPipe,
+                                    connectionInfo.DebugPipeName,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToPipe",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
+                else
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
+                                    connectionInfo.ProcessId,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToProcess",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
             }
             finally
             {

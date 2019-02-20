@@ -61,7 +61,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
     Context "By DebugPipeName" {
         BeforeAll {
-            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipeName = New-TemporaryFile
             $pipePath = if($IsWindows) { "\\.\pipe\$pipeName" } else { Join-Path ([System.IO.Path]::GetTempPath()) "CoreFxPipe_$pipeName" };
             $pwsh_started = New-TemporaryFile
             $si = [System.Diagnostics.ProcessStartInfo]::new()

@@ -1797,6 +1797,11 @@ namespace System.Management.Automation.Runspaces
             string debugPipeName,
             int openTimeout)
         {
+            if (debugPipeName == null)
+            {
+                throw new PSArgumentNullException(nameof(debugPipeName));
+            }
+
             DebugPipeName = debugPipeName;
             OpenTimeout = openTimeout;
         }

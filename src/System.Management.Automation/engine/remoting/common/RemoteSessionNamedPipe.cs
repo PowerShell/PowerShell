@@ -434,13 +434,8 @@ namespace System.Management.Automation.Remoting
         {
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
-            return CreateRemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
+            return new RemoteSessionNamedPipeServer(NamedPipeUtils.CreateProcessPipeName(
                 System.Diagnostics.Process.GetCurrentProcess(), appDomainName));
-        }
-
-        internal static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer(string pipeName)
-        {
-            return new RemoteSessionNamedPipeServer(pipeName);
         }
 
         /// <summary>
@@ -631,7 +626,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        CustomNamedPipeServer = CreateRemoteSessionNamedPipeServer(pipeName);
+                        CustomNamedPipeServer = new RemoteSessionNamedPipeServer(pipeName);
                     }
                     catch (IOException)
                     {
