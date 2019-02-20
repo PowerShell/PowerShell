@@ -794,19 +794,15 @@ namespace Microsoft.PowerShell
 
                     if (!Platform.IsWindows)
                     {
-                        string pipePath = Path.Combine(Path.GetTempPath(), args[i]);
-                        
-                        if (Platform.IsLinux && pipePath.Length >= 108)
+                        int maxNameLength = (Platform.IsLinux ? 108 : 104) - Path.GetTempPath().Length;
+                        if (args[i].Length > maxNameLength)
                         {
                             WriteCommandLineError(
-                                string.Format(CommandLineParameterParserStrings.DebugPipeNameTooLongOnLinux, pipePath));
-                            break;
-                        }
-
-                        if (Platform.IsMacOS && pipePath.Length >= 104)
-                        {
-                            WriteCommandLineError(
-                                string.Format(CommandLineParameterParserStrings.DebugPipeNameTooLongOnMacOS, pipePath));
+                                string.Format(
+                                    CommandLineParameterParserStrings.DebugPipeNameTooLong,
+                                    maxNameLength,
+                                    args[i],
+                                    args[i].Length));
                             break;
                         }
                     }
