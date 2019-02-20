@@ -379,6 +379,20 @@ Fix steps:
             Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             Write-Log "PowerShell output: $($Options.Output)"
+
+            if ($Options.Runtime -eq 'fxdependent') {
+                $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
+
+                try {
+                    Push-Location $globalToolSrcFolder
+                    $Arguments += "--output", $publishPath
+                    Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                    Start-NativeExecution { dotnet $Arguments }
+                }
+                finally {
+                    Pop-Location
+                }
+            }
         }
     } finally {
         Pop-Location
@@ -497,6 +511,10 @@ function Restore-PSPackage
     if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+
+        if ($Options.Runtime -eq 'fxdependent') {
+            $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
+        }
     }
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {

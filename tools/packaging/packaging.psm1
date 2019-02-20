@@ -3238,13 +3238,18 @@ function New-GlobalToolNupkg
                 $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
 
                 Write-Log "Copying runtime assemblies from $WindowsBinPath"
-                Copy-Item "$WindowsBinPath/*" -Destination $winFolder -Recurse
+                Copy-Item "$WindowsBinPath/*" -Destination $winFolder -Recurse -ErrorAction Stop
 
                 Write-Log "Copying runtime assemblies from $LinuxBinPath"
-                Copy-Item "$LinuxBinPath/*" -Destination $unixFolder -Recurse
+                Copy-Item "$LinuxBinPath/*" -Destination $unixFolder -Recurse -ErrorAction Stop
 
                 Write-Log "Copying shim dll from $ShimDllPath"
-                Copy-Item $ShimDllPath -Destination $ridFolder
+                Copy-Item $ShimDllPath -Destination $ridFolder -ErrorAction Stop
+
+                $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
+                Write-Log "Copying shim config file from $shimConfigFile"
+                Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
+
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
             }
 
