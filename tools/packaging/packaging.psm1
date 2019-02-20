@@ -3163,11 +3163,11 @@ function New-DotnetSdkContainerFxdPackage {
                 # linux-x64 (bionic / stretch)
                 # unix, linux, win for dependencies
                 # linux-arm and linux-arm64 for arm containers
-
+                # osx to run global tool on macOS
                 $runtimesToKeep = if ($Environment.IsWindows) {
                     'win10-x64', 'win-arm', 'win-x64', 'win'
                 } else {
-                    'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64'
+                    'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
                 }
 
                 $runtimeFolder | ForEach-Object {
