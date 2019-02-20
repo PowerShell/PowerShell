@@ -190,10 +190,10 @@
     <value>Cannot process the command because -DebugPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
   </data>
   <data name="DebugPipeNameTooLongOnLinux" xml:space="preserve">
-    <value>Cannot process the command because -DebugPipeName specified is too long. Pipe paths on Linux can be up to 108 characters long. Your pipe path: {2}</value>
+    <value>Cannot process the command because -DebugPipeName specified is too long. Pipe paths on Linux can be up to 108 characters long. Your pipe path: {0}</value>
   </data>
   <data name="DebugPipeNameTooLongOnMacOS" xml:space="preserve">
-    <value>Cannot process the command because -DebugPipeName specified is too long. Pipe paths on macOS can be up to 104 characters long. Your pipe path: {2}</value>
+    <value>Cannot process the command because -DebugPipeName specified is too long. Pipe paths on macOS can be up to 104 characters long. Your pipe path: {0}</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
     <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>

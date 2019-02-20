@@ -61,8 +61,19 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
     Context "By DebugPipeName" {
         BeforeAll {
-            $pipeName = New-TemporaryFile
-            $pipePath = if($IsWindows) { "\\.\pipe\$pipeName" } else { Join-Path ([System.IO.Path]::GetTempPath()) "CoreFxPipe_$pipeName" };
+            # Helper function to get the correct path for the named pipe.
+            function Get-PipePath {
+                param (
+                    $PipeName
+                )
+                if ($IsWindows) {
+                    return "\\.\pipe\$PipeName"
+                }
+                "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
+            }
+
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = Get-PipePath -PipeName $pipeName
             $pwsh_started = New-TemporaryFile
             $si = [System.Diagnostics.ProcessStartInfo]::new()
             $si.FileName = "pwsh"
@@ -102,6 +113,23 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             Wait-UntilTrue { Test-Path $pipePath }
 
             { Enter-PSHostProcess -DebugPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with DebugPipeName: badpipename."
+        }
+
+        It "Should be able to change the pipename via the API" {
+            Wait-UntilTrue { Test-Path $pipePath }
+
+            $pipeName1 = "myTestPipe1"
+            $pipeName2 = "myTestPipe2"
+
+            [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($pipeName1)
+            Get-PipePath -PipeName $pipeName1 | Test-Path | Should -BeTrue
+
+            # The second call to this method would override the first named pipe.
+            [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($pipeName2)
+            Get-PipePath -PipeName $pipeName2 | Test-Path | Should -BeTrue
+
+            # Previous pipe should have been cleaned up.
+            Get-PipePath -PipeName $pipeName1 | Test-Path | Should -BeFalse
         }
     }
 }
