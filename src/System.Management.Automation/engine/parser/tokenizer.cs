@@ -877,7 +877,7 @@ namespace System.Management.Automation.Language
             // so we create them when asked to create them.
 
             int startIndex = _currentIndex;
-            var tokenQueue = new Queue<Token>();
+            var tokenCount = TokenList != null ? TokenList.Count : 0;
 
         again:
             char c = GetChar();
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Language
                     {
                         _tokenStart = _currentIndex - 1;
                         ScanNewline(c);
-                        tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.NewLine, TokenFlags.None));
+                        NewToken(TokenKind.NewLine);
                     }
 
                     goto again;
@@ -910,7 +910,7 @@ namespace System.Management.Automation.Language
                         if (TokenList != null)
                         {
                             _tokenStart = _currentIndex - 1;
-                            tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.Semi, TokenFlags.None));
+                            NewToken(TokenKind.Semi);
                         }
 
                         goto again;
@@ -940,7 +940,7 @@ namespace System.Management.Automation.Language
                     {
                         _tokenStart = _currentIndex - 2;
                         ScanNewline(c1);
-                        tokenQueue.Enqueue(new Token(CurrentExtent(), TokenKind.LineContinuation, TokenFlags.None));
+                        NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
 
@@ -960,9 +960,25 @@ namespace System.Management.Automation.Language
                         goto again;
                     }
 
+                    // If the first non-newline, non-whitespace, non-comment, non-backtick, non-semi-colon character
+                    // following the newline is not a pipe, remove the tokens that were added while tokenizing and unget
+                    // the characters that were retrieved. This allows us to "lookahead" to see if there is a pipe and
+                    // only apply line continuance automatically when one is found.
                     if (skipOption == NewlineSkipOption.BeforePipe && c != '|')
                     {
-                        tokenQueue.Clear();
+                        var newTokenCount = TokenList != null ? TokenList.Count : 0;
+                        if (newTokenCount > tokenCount)
+                        {
+                            if (tokenCount == 0)
+                            {
+                                TokenList.Clear();
+                                TokenList = null;
+                            }
+                            else
+                            {
+                                TokenList.RemoveRange(tokenCount - 1, newTokenCount - tokenCount + 1);
+                            }
+                        }
 
                         while (_currentIndex > startIndex)
                         {
@@ -971,11 +987,6 @@ namespace System.Management.Automation.Language
                     }
 
                     break;
-            }
-
-            while (tokenQueue.Count > 0)
-            {
-                SaveToken(tokenQueue.Dequeue());
             }
 
             UngetChar();
