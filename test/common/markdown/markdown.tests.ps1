@@ -42,7 +42,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             Write-Warning "Node and npm are required to run this test"
             $skip = $true
         }
-        
+
         $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
     }
@@ -60,20 +60,13 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $docsToTest = @(
                 './.github/*.md'
                 './README.md'
-                './CODE_OF_CONDUCT.md'
                 './demos/python/*.md'
                 './docker/*.md'
-                './docs/*.md'
                 './docs/building/*.md'
-                './docs/debugging/*.md'
-                './docs/git/*.md'
                 './docs/community/*.md'
                 './docs/host-powershell/*.md'
-                './docs/dev-process/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
-                './docs/learning-powershell/*.md'
-                './docs/testing-guidelines/*.md'
                 './test/powershell/README.md'
                 './tools/*.md'
                 './.github/ISSUE_TEMPLATE/*.md'
