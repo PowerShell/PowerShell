@@ -557,6 +557,7 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
     BeforeAll {
         $fakePager = @'
         param(
+            [Parameter()]
             [string]
             $customCommandArgs,
 
@@ -574,7 +575,7 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
         $SavedEnvPager = $env:PAGER
         $fakePagerCustomArgs = "here is a fake argument"
-        $env:PAGER = "`"$fakePagerPath`" `"$fakePagerCustomArgs`""
+        $env:PAGER = '"{0}" "{1}"' -f $fakePagerPath, $fakePagerCustomArgs
     }
     AfterAll {
         $env:PAGER = $SavedEnvPager
