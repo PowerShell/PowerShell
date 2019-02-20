@@ -352,6 +352,8 @@ namespace System.Management.Automation.Remoting
 
         private const string _threadName = "IPC Listener Thread";
         private const int _namedPipeBufferSizeForRemoting = 32768;
+        private const int _maxPipePathLengthLinux = 108;
+        private const int _maxPipePathLengthMacOS = 104;
 
         // Singleton server.
         private static object s_syncObject;
@@ -620,6 +622,17 @@ namespace System.Management.Automation.Remoting
 
                     // Dispose of the current pipe server so we can create a new one with the new pipeName
                     CustomNamedPipeServer.Dispose();
+                }
+
+                int maxNameLength = (Platform.IsLinux ? _maxPipePathLengthLinux : _maxPipePathLengthMacOS) - Path.GetTempPath().Length;
+                if (pipeName.Length > maxNameLength)
+                {
+                    throw new InvalidOperationException(
+                        string.Format(
+                            RemotingErrorIdStrings.DebugPipeNameTooLong,
+                            maxNameLength,
+                            pipeName,
+                            pipeName.Length));
                 }
 
                 try
