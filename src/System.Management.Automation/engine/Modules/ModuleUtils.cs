@@ -92,6 +92,7 @@ namespace System.Management.Automation.Internal
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }
 
+                firstSubDirs = false;
                 string[] files = Directory.GetFiles(directoryToCheck, "*", options);
                 foreach (string moduleFile in files)
                 {
@@ -105,8 +106,6 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
-
-            firstSubDirs = false;
         }
 
         /// <summary>
