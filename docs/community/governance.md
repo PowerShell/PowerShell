@@ -2,17 +2,20 @@
 
 ## Terms
 
-* [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members
+* [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions,
+  approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
-Repository Maintainers are the only people with write permissions for the `master` branch.
+  Repository Maintainers are the only people with write permissions for the `master` branch.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance).
-Area experts are responsible for code reviews, issue triage, and providing their expertise to others.
-* **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
-The Corporation for PowerShell is Microsoft.
-* **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons, with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
-This veto power will be used with restraint since it is intended that the community drive the project.
-The Corporate Maintainer is determined by the Corporation both initially and in continuation.
-The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
+  Area experts are responsible for code reviews, issue triage, and providing their expertise to others.
+* **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances,
+  reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
+  The Corporation for PowerShell is Microsoft.
+* **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons,
+  with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
+  This veto power will be used with restraint since it is intended that the community drive the project.
+  The Corporate Maintainer is determined by the Corporation both initially and in continuation.
+  The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
 * [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made.
 
 ## PowerShell Committee
@@ -57,7 +60,7 @@ If any Committee Members feels like this behavior is large enough to warrant an 
 As a PowerShell Committee Member:
 
 1. **DO** reply to issues and pull requests with design opinions
-(this could include offering support for good work or exciting new features)
+  (this could include offering support for good work or exciting new features)
 1. **DO** encourage healthy discussion about the direction of PowerShell
 1. **DO** raise "red flags" on PRs that haven't followed the proper RFC process when applicable
 1. **DO** contribute to documentation and best practices
@@ -68,7 +71,7 @@ As a PowerShell Committee Member:
 
 1. **DON'T** constantly raise "red flags" for unimportant or minor problems to the point that the progress of the project is being slowed
 1. **DON'T** offer up your opinions as the absolute opinion of the PowerShell Committee.
-Members are encouraged to share their opinions, but they should be presented as such.
+  Members are encouraged to share their opinions, but they should be presented as such.
 
 ### PowerShell Committee Membership
 
