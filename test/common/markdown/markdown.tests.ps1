@@ -60,7 +60,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $docsToTest = @(
                 './.github/*.md'
                 './README.md'
-                './CODE_OF_CONDUCT'
+                './CODE_OF_CONDUCT.md'
                 './demos/python/*.md'
                 './docker/*.md'
                 './docs/*.md'
