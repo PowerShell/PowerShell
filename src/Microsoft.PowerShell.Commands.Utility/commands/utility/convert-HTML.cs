@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                
+
                 // Accept the width both as a string and as an int.
                 string width;
                 int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
@@ -542,7 +542,6 @@ namespace Microsoft.PowerShell.Commands
 
             WriteObject("<table>");
             _isTHWritten = false;
-            _propertyCollector = new StringCollection();
         }
 
         /// <summary>
@@ -760,7 +759,6 @@ namespace Microsoft.PowerShell.Commands
         /// List of incoming objects to compare.
         /// </summary>
         private bool _isTHWritten;
-        private StringCollection _propertyCollector;
         private List<MshParameter> _propertyMshParameterList;
         private List<MshParameter> _resolvedNameMshParameters;
         // private string ResourcesBaseName = "ConvertHTMLStrings";

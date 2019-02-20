@@ -1193,29 +1193,24 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                if (content is FormObject)
+                if (content is FormObject form)
                 {
-                    FormObject form = content as FormObject;
                     SetRequestContent(request, form.Fields);
                 }
-                else if (content is IDictionary && request.Method != HttpMethod.Get)
+                else if (content is IDictionary dictionary && request.Method != HttpMethod.Get)
                 {
-                    IDictionary dictionary = content as IDictionary;
                     SetRequestContent(request, dictionary);
                 }
-                else if (content is XmlNode)
+                else if (content is XmlNode xmlNode)
                 {
-                    XmlNode xmlNode = content as XmlNode;
                     SetRequestContent(request, xmlNode);
                 }
-                else if (content is Stream)
+                else if (content is Stream stream)
                 {
-                    Stream stream = content as Stream;
                     SetRequestContent(request, stream);
                 }
-                else if (content is byte[])
+                else if (content is byte[] bytes)
                 {
-                    byte[] bytes = content as byte[];
                     SetRequestContent(request, bytes);
                 }
                 else if (content is MultipartFormDataContent multipartFormDataContent)
@@ -1225,7 +1220,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    SetRequestContent(request,
+                    SetRequestContent(
+                        request,
                         (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
                 }
             }

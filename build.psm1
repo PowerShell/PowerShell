@@ -15,7 +15,7 @@ $tagsUpToDate = $false
 # When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
 # Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
 # This function can ensure that tags have been fetched.
-# This function is used during the setup phase in tools/ci.psm1 and tools/travis.ps1
+# This function is used during the setup phase in tools/ci.psm1
 function Sync-PSTags
 {
     param(
@@ -23,7 +23,7 @@ function Sync-PSTags
         $AddRemoteIfMissing
     )
 
-    $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
+    $PowerShellRemoteUrl = "https://github.com/PowerShell/PowerShell.git"
     $upstreamRemoteDefaultName = 'upstream'
     $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
     $upstreamRemote = $null
@@ -2685,45 +2685,6 @@ assembly
             $combinedLog
         }
     }
-}
-
-# Save PSOptions to be restored by Restore-PSOptions
-function Save-PSOptions {
-    param(
-        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
-
-        [ValidateNotNullOrEmpty()]
-        [object]
-        $Options = (Get-PSOptions -DefaultToNew)
-    )
-
-    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
-}
-
-# Restore PSOptions
-# Optionally remove the PSOptions file
-function Restore-PSOptions {
-    param(
-        [ValidateScript({Test-Path $_})]
-        [string]
-        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
-        [switch]
-        $Remove
-    )
-
-    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
-
-    if($Remove)
-    {
-        # Remove PSOptions.
-        # The file is only used to set the PSOptions.
-        Remove-Item -Path $psOptionsPath
-    }
-
-    Set-PSOptions -Options $options
 }
 
 # Save PSOptions to be restored by Restore-PSOptions
