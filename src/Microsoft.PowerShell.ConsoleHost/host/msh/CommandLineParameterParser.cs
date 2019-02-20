@@ -168,6 +168,9 @@ namespace Microsoft.PowerShell
 
     internal class CommandLineParameterParser
     {
+        private const int _maxPipePathLengthLinux = 108;
+        private const int _maxPipePathLengthMacOS = 104;
+
         internal static string[] validParameters = {
             "version",
             "nologo",
@@ -794,7 +797,7 @@ namespace Microsoft.PowerShell
 
                     if (!Platform.IsWindows)
                     {
-                        int maxNameLength = (Platform.IsLinux ? 108 : 104) - Path.GetTempPath().Length;
+                        int maxNameLength = (Platform.IsLinux ? _maxPipePathLengthLinux : _maxPipePathLengthMacOS) - Path.GetTempPath().Length;
                         if (args[i].Length > maxNameLength)
                         {
                             WriteCommandLineError(

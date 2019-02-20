@@ -1425,6 +1425,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
     <value>No named pipe was found with DebugPipeName: {0}.</value>
   </data>
+  <data name="DebugPipeNameTooLong" xml:space="preserve">
+    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+  </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
     <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
   </data>

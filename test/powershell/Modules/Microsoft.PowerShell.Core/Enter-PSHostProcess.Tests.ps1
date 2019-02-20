@@ -115,6 +115,17 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             { Enter-PSHostProcess -DebugPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with DebugPipeName: badpipename."
         }
 
+        It "Should throw if a pipe name is too long on Linux or macOS" {
+            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
+
+            if (!$IsWindows) {
+                pwsh -debugpipename $longPipeName | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
+            } else {
+                pwsh -debugpipename $longPipeName
+                $LASTEXITCODE | Should -Be 0
+            }
+        }
+
         It "Should be able to change the pipename via the API" {
             Wait-UntilTrue { Test-Path $pipePath }
 
@@ -130,6 +141,21 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
             # Previous pipe should have been cleaned up.
             Get-PipePath -PipeName $pipeName1 | Test-Path | Should -BeFalse
+        }
+
+        It "Should throw if a pipe name is too long on Linux or macOS" {
+            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
+
+            if (!$IsWindows) {
+                try {
+                    [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($longPipeName)
+                } catch {
+                    $_.Exception.InnerException | Should -BeOfType ([System.InvalidOperationException])
+                }
+            } else {
+                { [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($longPipeName) } |
+                    Should -Not -Throw
+            }
         }
     }
 }
