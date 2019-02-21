@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
 
                 // Set up host script debugger to debug the runspace.
-                if (Breakpoint.Length > 0)
+                if (Breakpoint?.Length > 0)
                 {
                     _debugger.DebugRunspace(_runspace, disableBreakAll: true);
                 }
