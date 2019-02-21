@@ -40,3 +40,4 @@ jobs:
       Invoke-CIxUnit -SkipFailing
     displayName: xUnit Tests
     condition: succeeded()
+    continueOnError: true

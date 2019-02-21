@@ -263,8 +263,19 @@ namespace System.Management.Automation.Runspaces
                     return false;
                 }
 
-                return context.InternalHost.HostInNestedPrompt();
+                return context.InternalHost.HostInNestedPrompt() || InInternalNestedPrompt;
             }
+        }
+
+        /// <summary>
+        /// Allows internal nested commands to be run as "HostInNestedPrompt" so that CreatePipelineProcessor() does
+        /// not set CommandOrigin to Internal as it normally does by default.  This then allows cmdlets like Invoke-History
+        /// to replay history command lines in the current runspace with the same language mode context as the host.
+        /// </summary>
+        internal bool InInternalNestedPrompt
+        {
+            get;
+            set;
         }
 
         #endregion protected_properties
