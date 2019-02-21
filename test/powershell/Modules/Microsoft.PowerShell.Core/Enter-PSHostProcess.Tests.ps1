@@ -119,9 +119,9 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
 
             if (!$IsWindows) {
-                pwsh -debugpipename $longPipeName -c `"$longPipeName`" | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
+                pwsh -debugpipename $longPipeName -c 0 | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
             } else {
-                pwsh -debugpipename $longPipeName -c `"$longPipeName`"
+                pwsh -debugpipename $longPipeName -c 0
                 $LASTEXITCODE | Should -Be 0
             }
         }
