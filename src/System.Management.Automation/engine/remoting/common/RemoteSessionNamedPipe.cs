@@ -633,7 +633,7 @@ namespace System.Management.Automation.Remoting
                     {
                         throw new InvalidOperationException(
                             string.Format(
-                                RemotingErrorIdStrings.DebugPipeNameTooLong,
+                                RemotingErrorIdStrings.CustomPipeNameTooLong,
                                 maxNameLength,
                                 pipeName,
                                 pipeName.Length));

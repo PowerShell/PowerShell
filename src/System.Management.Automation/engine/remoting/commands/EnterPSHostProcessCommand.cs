@@ -93,10 +93,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the Named Pipe name to connect to.
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with pwsh -CustomPipeName
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
-        public string DebugPipeName
+        [Parameter(Mandatory = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
+        public string CustomPipeName
         {
             get;
             set;
@@ -164,8 +164,8 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case PipeNameParameterSet:
-                    VerifyPipeName(DebugPipeName);
-                    namedPipeRunspace = CreateNamedPipeRunspace(DebugPipeName);
+                    VerifyPipeName(CustomPipeName);
+                    namedPipeRunspace = CreateNamedPipeRunspace(CustomPipeName);
                     break;
             }
 
@@ -207,9 +207,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
-        private Runspace CreateNamedPipeRunspace(string debugPipeName)
+        private Runspace CreateNamedPipeRunspace(string customPipeName)
         {
-            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(debugPipeName);
+            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(customPipeName);
             return CreateNamedPipeRunspace(connectionInfo);
         }
 
@@ -237,14 +237,14 @@ namespace Microsoft.PowerShell.Commands
                 // Unwrap inner exception for original error message, if any.
                 string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
-                if (connectionInfo.DebugPipeName != null)
+                if (connectionInfo.CustomPipeName != null)
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(
                             new RuntimeException(
                                 StringUtil.Format(
                                     RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToPipe,
-                                    connectionInfo.DebugPipeName,
+                                    connectionInfo.CustomPipeName,
                                     errorMessage),
                                 e.InnerException),
                             "EnterPSHostProcessCannotConnectToPipe",
@@ -396,16 +396,16 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void VerifyPipeName(string debugPipeName)
+        private void VerifyPipeName(string customPipeName)
         {
             // Named Pipes are represented differently on Windows vs macOS & Linux
-            var pipePath = Platform.IsWindows ? $@"\\.\pipe\{debugPipeName}" : Path.Combine(Path.GetTempPath(), $"CoreFxPipe_{debugPipeName}");
+            var pipePath = Platform.IsWindows ? $@"\\.\pipe\{customPipeName}" : Path.Combine(Path.GetTempPath(), $"CoreFxPipe_{customPipeName}");
 
             if (!File.Exists(pipePath))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
-                        new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoNamedPipeFound, debugPipeName)),
+                        new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoNamedPipeFound, customPipeName)),
                         "EnterPSHostProcessNoNamedPipeFound",
                         ErrorCategory.InvalidArgument,
                         this));

@@ -49,17 +49,20 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter using NamedPipeConnectionInfo" {
-            $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
-            $rs = [runspacefactory]::CreateRunspace($npInfo)
-            $rs.Open()
-            $ps = [powershell]::Create()
-            $ps.Runspace = $rs
-            $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
-            $rs.Dispose()
+            try {
+                $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
+                $rs = [runspacefactory]::CreateRunspace($npInfo)
+                $rs.Open()
+                $ps = [powershell]::Create()
+                $ps.Runspace = $rs
+                $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
+            } finally {
+                $rs.Dispose()
+            }
         }
     }
 
-    Context "By DebugPipeName" {
+    Context "By CustomPipeName" {
         BeforeAll {
             # Helper function to get the correct path for the named pipe.
             function Get-PipePath {
@@ -77,7 +80,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $pwsh_started = New-TemporaryFile
             $si = [System.Diagnostics.ProcessStartInfo]::new()
             $si.FileName = "pwsh"
-            $si.Arguments = "-debugpipename $pipeName -noexit -command 'pwsh -debugpipename $pipeName' > '$pwsh_started'"
+            $si.Arguments = "-CustomPipeName $pipeName -noexit -command 'pwsh -CustomPipeName $pipeName' > '$pwsh_started'"
             $si.RedirectStandardInput = $true
             $si.RedirectStandardOutput = $true
             $si.RedirectStandardError = $true
@@ -89,41 +92,41 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             Remove-Item $pwsh_started -Force -ErrorAction SilentlyContinue
         }
 
-        It "Can enter using DebugPipeName" {
+        It "Can enter using CustomPipeName" {
             Wait-UntilTrue { Test-Path $pipePath }
 
-            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
             `$pid
             Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
-        It "Can enter, exit, and re-enter using DebugPipeName" {
+        It "Can enter, exit, and re-enter using CustomPipeName" {
             Wait-UntilTrue { Test-Path $pipePath }
 
-            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
             `$pid
             Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
 
-            "Enter-PSHostProcess -DebugPipeName $pipeName -ErrorAction Stop
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
             `$pid
             Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
-        It "Should throw if DebugPipeName does not exist" {
+        It "Should throw if CustomPipeName does not exist" {
             Wait-UntilTrue { Test-Path $pipePath }
 
-            { Enter-PSHostProcess -DebugPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with DebugPipeName: badpipename."
+            { Enter-PSHostProcess -CustomPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with CustomPipeName: badpipename."
         }
 
-        It "Should throw if DebugPipeName is too long on Linux or macOS" {
+        It "Should throw if CustomPipeName is too long on Linux or macOS" {
             $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
 
             if (!$IsWindows) {
-                "`$pid" | pwsh -debugpipename $longPipeName -c -
+                "`$pid" | pwsh -CustomPipeName $longPipeName -c -
                 # 64 is the ExitCode for BadCommandLineParameter
                 $LASTEXITCODE | Should -Be 64
             } else {
-                "`$pid" | pwsh -debugpipename $longPipeName -c -
+                "`$pid" | pwsh -CustomPipeName $longPipeName -c -
                 $LASTEXITCODE | Should -Be 0
             }
         }

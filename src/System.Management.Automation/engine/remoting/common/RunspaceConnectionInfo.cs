@@ -1723,9 +1723,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets or sets the PipeName to connect to.
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with pwsh -CustomPipeName
         /// </summary>
-        public string DebugPipeName
+        public string CustomPipeName
         {
             get;
             set;
@@ -1782,27 +1782,27 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
-        /// <param name="debugPipeName">Pipe name to connect to.</param>
+        /// <param name="customPipeName">Pipe name to connect to.</param>
         public NamedPipeConnectionInfo(
-            string debugPipeName) :
-            this(debugPipeName, _defaultOpenTimeout)
+            string customPipeName) :
+            this(customPipeName, _defaultOpenTimeout)
         { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
-        /// <param name="debugPipeName">Pipe name to connect to.</param>
+        /// <param name="customPipeName">Pipe name to connect to.</param>
         /// <param name="openTimeout">Open time out in Milliseconds.</param>
         public NamedPipeConnectionInfo(
-            string debugPipeName,
+            string customPipeName,
             int openTimeout)
         {
-            if (debugPipeName == null)
+            if (customPipeName == null)
             {
-                throw new PSArgumentNullException(nameof(debugPipeName));
+                throw new PSArgumentNullException(nameof(customPipeName));
             }
 
-            DebugPipeName = debugPipeName;
+            CustomPipeName = customPipeName;
             OpenTimeout = openTimeout;
         }
 
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.ProcessId = this.ProcessId;
             newCopy._appDomainName = _appDomainName;
             newCopy.OpenTimeout = this.OpenTimeout;
-            newCopy.DebugPipeName = this.DebugPipeName;
+            newCopy.CustomPipeName = this.CustomPipeName;
 
             return newCopy;
         }

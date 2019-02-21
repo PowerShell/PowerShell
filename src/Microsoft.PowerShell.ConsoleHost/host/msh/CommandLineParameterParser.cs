@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell
             "help",
             "workingdirectory",
             "removeworkingdirectorytrailingcharacter",
-            "debugpipename"
+            "custompipename"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -345,11 +345,11 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string DebugPipeName
+        internal string CustomPipeName
         {
             get
             {
-                return _debugPipeName;
+                return _customPipeName;
             }
         }
 
@@ -785,13 +785,13 @@ namespace Microsoft.PowerShell
 
                     _configurationName = args[i];
                 }
-                else if (MatchSwitch(switchKey, "debugpipename", "deb"))
+                else if (MatchSwitch(switchKey, "custompipename", "cus"))
                 {
                     ++i;
                     if (i >= args.Length)
                     {
                         WriteCommandLineError(
-                            CommandLineParameterParserStrings.MissingDebugPipeNameArgument);
+                            CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
                         break;
                     }
 
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell
                         {
                             WriteCommandLineError(
                                 string.Format(
-                                    CommandLineParameterParserStrings.DebugPipeNameTooLong,
+                                    CommandLineParameterParserStrings.CustomPipeNameTooLong,
                                     maxNameLength,
                                     args[i],
                                     args[i].Length));
@@ -810,7 +810,7 @@ namespace Microsoft.PowerShell
                         }
                     }
 
-                    _debugPipeName = args[i];
+                    _customPipeName = args[i];
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
                 {
@@ -1414,7 +1414,7 @@ namespace Microsoft.PowerShell
         private string _helpText;
         private bool _abortStartup;
         private bool _skipUserInit;
-        private string _debugPipeName;
+        private string _customPipeName;
 #if STAMODE
         // Win8: 182409 PowerShell 3.0 should run in STA mode by default
         // -sta and -mta are mutually exclusive..so tracking them using nullable boolean

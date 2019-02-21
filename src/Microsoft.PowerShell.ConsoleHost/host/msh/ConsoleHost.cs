@@ -1370,9 +1370,9 @@ namespace Microsoft.PowerShell
 #endif
 
                 // If the debug pipe name was specified, create the custom IPC channel.
-                if (!string.IsNullOrEmpty(cpp.DebugPipeName))
+                if (!string.IsNullOrEmpty(cpp.CustomPipeName))
                 {
-                    RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(cpp.DebugPipeName);
+                    RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(cpp.CustomPipeName);
                 }
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
