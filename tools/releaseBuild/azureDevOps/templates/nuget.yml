@@ -110,22 +110,22 @@ jobs:
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-      New-UnifiedNugetPackage -PackagePath $(PackagePath) -PackageVersion $(PackageVersion) -winx86BinPath $(winX86Path) -winx64BinPath $(winX64Path) -winArm32BinPath $(winArm32Path) -winArm64BinPath $(winArm64Path) -linuxArm32BinPath $(linuxArm32Path) -linuxBinPath $(linuxX64Path) -osxBinPath $(macOSPath) -GenAPIToolPath $(GenAPIToolPath)
+      New-UnifiedNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(PackageVersion)" -winx86BinPath "$(winX86Path)" -winx64BinPath "$(winX64Path)" -winArm32BinPath "$(winArm32Path)" -winArm64BinPath "$(winArm64Path)" -linuxArm32BinPath "$(linuxArm32Path)" -linuxBinPath "$(linuxX64Path)" -osxBinPath "$(macOSPath)" -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
   - powershell: |
-      Get-ChildItem $(PackagePath) -Recurse
+      Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
   - powershell: |
-      $packages = Get-ChildItem $(PackagePath)\*.nupkg | Select-Object -ExpandProperty FullName
+      $packages = Get-ChildItem "$(PackagePath)\*.nupkg" | Select-Object -ExpandProperty FullName
 
       if($files.Count -lt 1)
       {
           throw "No packages created"
       }
 
-      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml -NuPkgFiles $files
+      "$(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1" -Path "$(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml" -NuPkgFiles $files
     displayName: Create signing file
 
   - task: PkgESCodeSign@10
@@ -134,6 +134,11 @@ jobs:
       signConfigXml: '$(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml'
       inPathRoot: '$(PackagePath)'
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
+
+  - powershell: |
+      Import-Module "$(BUILD_SOURCESDIRECTORY)\build.psm1 -Force
+      Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
+    displayName: Verify all packages are signed
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run MpCmdRun.exe'
