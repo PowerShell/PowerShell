@@ -349,6 +349,5 @@ namespace System.Management.Automation
         public abstract string GetPropertyTypeName(PSAdaptedProperty adaptedProperty);
 
         internal abstract PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate propertyName);
-
     }
 }

@@ -4533,6 +4533,5 @@ namespace System.Management.Automation.Runspaces
 
         #endregion internal methods
 
-
     }
 }

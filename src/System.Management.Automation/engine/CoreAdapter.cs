@@ -89,7 +89,6 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected abstract T GetMember<T>(object obj, string memberName) where T : PSMemberInfo;
 
-
         private protected abstract T GetMember<T>(object o, MemberNamePredicate predicate) where T : PSMemberInfo;
 
         /// <summary>
@@ -386,7 +385,6 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.ExceptionGettingMember, memberName);
             }
         }
-
 
         public T BaseGetMember<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
@@ -4617,10 +4615,10 @@ namespace System.Management.Automation
 
         #endregion virtual
 
-
     }
 
     #region DotNetAdapterWithOnlyPropertyLookup
+
     /// <summary>
     /// This is used by PSObject to support dotnet member lookup for the adapted
     /// objects.
@@ -5292,7 +5290,6 @@ namespace System.Management.Automation
 
             return new PSProperty(nodes[0].LocalName, this, obj, nodes);
         }
-
 
         private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {

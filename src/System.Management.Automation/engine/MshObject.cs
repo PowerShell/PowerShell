@@ -337,7 +337,6 @@ namespace System.Management.Automation
             return returnValue;
         }
 
-
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the
         /// <paramref name="viewType"/>
@@ -965,7 +964,6 @@ namespace System.Management.Automation
 
         private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> s_instanceMembersResurrectionTable =
             new ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>>();
-
 
         /// <summary>
         /// </summary>
