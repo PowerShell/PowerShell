@@ -13,6 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements New-PSBreakpoint command.
     /// </summary>
+    [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.New, "PSBreakpoint", DefaultParameterSetName = "Line", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
     [OutputType(typeof(VariableBreakpoint), typeof(CommandBreakpoint), typeof(LineBreakpoint))]
     public class NewPSBreakpointCommand : PSBreakpointCreationBase
