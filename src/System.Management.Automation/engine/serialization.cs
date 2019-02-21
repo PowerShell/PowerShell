@@ -6714,6 +6714,7 @@ namespace Microsoft.PowerShell
                 null,
                 ExtendedTypeSystem.InvalidCastException,
                 sourceValue,
+                typeof(PSObject),
                 destinationType);
         }
 
