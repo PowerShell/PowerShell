@@ -35,7 +35,7 @@ jobs:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
-      Invoke-AppveyorInstall
+      Invoke-CIInstall
     displayName: Bootstrap
     condition: succeededOrFailed()
 
@@ -46,6 +46,6 @@ jobs:
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
-      Invoke-AppveyorTest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
+      Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
     condition: succeeded()

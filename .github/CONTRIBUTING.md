@@ -60,13 +60,13 @@ To run the spellchecker, follow these steps:
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
 * run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
-* if the `.spelling` file is updated, commit and push it  
+* if the `.spelling` file is updated, commit and push it
 
-#### Checking links in documentation  
+#### Checking links in documentation
 
 Documentation is link-checked. We make use of the
 markdown-link-check command line tool,
-which can be run to see if any links are dead.  
+which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
 
@@ -190,7 +190,8 @@ Additional references:
   Company = "Microsoft Corporation"
   Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
   ```
-  is at the top.  
+
+  is at the top.
 
 ### Pull Request - Work in Progress
 
