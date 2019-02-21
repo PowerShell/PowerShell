@@ -18,7 +18,6 @@ namespace PSTests.Parallel
             string pipeName2 = Path.GetRandomFileName();
 
             RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(pipeName1);
-            Console.WriteLine(GetPipePath(pipeName1));
             Assert.True(File.Exists(GetPipePath(pipeName1)));
 
             // The second call to this method would override the first named pipe.
