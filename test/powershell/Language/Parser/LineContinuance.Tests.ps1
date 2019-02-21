@@ -20,8 +20,10 @@ Describe 'Line Continuance' -Tags 'CI' {
 
         It 'Lines ending with a single backtick followed by whitespace' {
             $script = @'
-# The next line ends with trailing whitespace
-'Hello' + `    
+# The first line of this command ends with trailing whitespace
+'Hello' + `
+'@ + '    ' + @'
+
     ' world'
 '@
             ExecuteCommand $script | Should -Be 'Hello world'
@@ -111,13 +113,14 @@ Describe 'Line Continuance' -Tags 'CI' {
             $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
         }
 
-        It 'Lines ending with two pipes' {
+        It 'Lines ending with a single pipe followed by a line that starts with a pipe' {
             $script = @'
-'Hello' ||
+'Hello' |
+    |
 
 '@
             $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
-            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'ExpectedValueExpression'
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
         }
     }
 
