@@ -568,14 +568,17 @@ namespace System.Management.Automation.Language
         /// Simply skip newlines.
         /// </summary>
         None,
+
         /// <summary>
         /// Skip newlines and semi-colons.
         /// </summary>
         SkipSemis,
+
         /// <summary>
         /// Skip newlines using the old v3 method.
         /// </summary>
         V3,
+
         /// <summary>
         /// Skip newlines that are before a pipe.
         /// </summary>
@@ -875,7 +878,6 @@ namespace System.Management.Automation.Language
         {
             // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
             // so we create them when asked to create them.
-
             int startIndex = _currentIndex;
             var tokenCount = TokenList != null ? TokenList.Count : 0;
 
@@ -894,7 +896,7 @@ namespace System.Management.Automation.Language
 
                 case '\r':
                 case '\n':
-                    if (skipOption == NewlineSkipOption.V3) _parser.NoteV3FeatureUsed();
+                    if (skipOption == NewlineSkipOption.V3) { _parser.NoteV3FeatureUsed(); }
                     if (TokenList != null)
                     {
                         _tokenStart = _currentIndex - 1;
