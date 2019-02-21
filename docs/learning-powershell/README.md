@@ -85,7 +85,7 @@ Note that all bash commands should continue working on PowerShell session.
 | Bash                | PowerShell                  | Description
 |:--------------------|:----------------------------|:---------------------
 | ls                  |dir, Get-ChildItem           |List files and folders
-| tree                |dir/Get-ChildItem -Recurse   |List all files and folders
+| tree                |dir -Recurse, Get-ChildItem -Recurse   |List all files and folders
 | cd                  |cd, Set-Location             |Change directory
 | pwd                 |pwd, $pwd, Get-Location      |Show working directory
 | clear, Ctrl+L, reset| cls, clear                  |Clear screen
