@@ -119,7 +119,9 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
 
             if (!$IsWindows) {
-                "`$pid" | pwsh -debugpipename $longPipeName -c - | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
+                "`$pid" | pwsh -debugpipename $longPipeName -c -
+                # 64 is the ExitCode for BadCommandLineParameter
+                $LASTEXITCODE | Should -Be 64
             } else {
                 "`$pid" | pwsh -debugpipename $longPipeName -c -
                 $LASTEXITCODE | Should -Be 0
