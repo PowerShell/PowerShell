@@ -130,33 +130,5 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $LASTEXITCODE | Should -Be 0
             }
         }
-
-        It "Should be able to change the pipename via the API" {
-
-            $pipeName1 = "myTestPipe1"
-            $pipeName2 = "myTestPipe2"
-
-            [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($pipeName1)
-            Get-PipePath -PipeName $pipeName1 | Test-Path | Should -BeTrue
-
-            # The second call to this method would override the first named pipe.
-            [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($pipeName2)
-            Get-PipePath -PipeName $pipeName2 | Test-Path | Should -BeTrue
-
-            # Previous pipe should have been cleaned up.
-            Get-PipePath -PipeName $pipeName1 | Test-Path | Should -BeFalse
-        }
-
-        It "Should throw if a pipe name is too long on Linux or macOS" {
-            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
-
-            if (!$IsWindows) {
-                { [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($longPipeName) } |
-                    Should -Throw -ErrorId InvalidOperationException
-            } else {
-                { [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($longPipeName) } |
-                    Should -Not -Throw
-            }
-        }
     }
 }
