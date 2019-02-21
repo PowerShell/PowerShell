@@ -4,6 +4,11 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
 
+  variables:
+    BuildDefinitionId: '$(System.DefinitionId)'
+    ReleaseVersion: '$(ReleaseTagVar)'
+    BuildInstanceId: '$(Build.BuildId)'
+
   # the package ES pools don't have the latest module needed to run this job
   pool:
     name: Hosted Mac Internal
@@ -29,11 +34,11 @@ jobs:
       $table = Get-AzStorageTableTable -resourceGroup pscoredata -storageAccountName pscorebuilddata -tableName buildData
 
       Write-Verbose "Removing existing row, if it exists ..." -verbose
-      $row = Remove-AzStorageTableRow -table $table -partitionkey '$(System.DefinitionId)' -rowKey '$(ReleaseTagVar)'
+      $row = Remove-AzStorageTableRow -table $table -partitionkey '$(BuildDefinitionId)' -rowKey '$(ReleaseVersion)'
 
       Write-Verbose "Adding new row ..." -verbose
-      $result = Add-AzStorageTableRow -table $table -partitionkey '$(System.DefinitionId)' -rowKey '$(ReleaseTagVar)' -property @{
-              buildid = '$(Build.BuildId)'
+      $result = Add-AzStorageTableRow -table $table -partitionkey '$(BuildDefinitionId)' -rowKey '$(ReleaseVersion)' -property @{
+              buildid = '$(BuildInstanceId)'
             }
       While(!$result.IsCompleted)
       {
