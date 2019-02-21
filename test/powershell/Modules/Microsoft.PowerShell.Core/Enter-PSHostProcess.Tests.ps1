@@ -119,15 +119,14 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
 
             if (!$IsWindows) {
-                pwsh -debugpipename $longPipeName -c 0 | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
+                "`$pid" | pwsh -debugpipename $longPipeName -c - | Should -BeLike "Cannot process the command because -DebugPipeName specified is too long.*"
             } else {
-                pwsh -debugpipename $longPipeName -c 0
+                "`$pid" | pwsh -debugpipename $longPipeName -c -
                 $LASTEXITCODE | Should -Be 0
             }
         }
 
         It "Should be able to change the pipename via the API" {
-            Wait-UntilTrue { Test-Path $pipePath }
 
             $pipeName1 = "myTestPipe1"
             $pipeName2 = "myTestPipe2"
