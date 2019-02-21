@@ -539,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
         {
             SetLocalMode(runspace.Debugger, true);
             EnableHostDebugger(runspace, false);
-            if (Breakpoint.Length > 0)
+            if (Breakpoint?.Length > 0)
             {
                 AddBreakpoints(runspace.Debugger);
             }
