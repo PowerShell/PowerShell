@@ -112,6 +112,7 @@ Recommended Training and Reading
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
+- [PowerShell Gallery](https://www.powershellgallery.com/)
 
 
 Commercial Resources
