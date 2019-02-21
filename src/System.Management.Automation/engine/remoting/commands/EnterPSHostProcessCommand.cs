@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets and sets the Named Pipe name to connect to.
+        /// Gets or sets the Named Pipe name to connect to.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
         public string DebugPipeName
@@ -234,8 +234,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (RuntimeException e)
             {
-                string msgAppDomainName = connectionInfo.AppDomainName ?? NamedPipeUtils.DefaultAppDomainName;
-
                 // Unwrap inner exception for original error message, if any.
                 string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
@@ -255,11 +253,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    string msgAppDomainName = connectionInfo.AppDomainName ?? NamedPipeUtils.DefaultAppDomainName;
+
                     ThrowTerminatingError(
                         new ErrorRecord(
                             new RuntimeException(
                                 StringUtil.Format(
                                     RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
+                                    msgAppDomainName,
                                     connectionInfo.ProcessId,
                                     errorMessage),
                                 e.InnerException),

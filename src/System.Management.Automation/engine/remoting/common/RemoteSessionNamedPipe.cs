@@ -358,8 +358,10 @@ namespace System.Management.Automation.Remoting
         // Singleton server.
         private static object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
-        internal static RemoteSessionNamedPipeServer CustomNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
+
+        // Optional custom server.
+        private static RemoteSessionNamedPipeServer _customNamedPipeServer;
 
         // Access mask constant taken from PipeSecurity access rights and is equivalent to
         // PipeAccessRights.FullControl.
@@ -612,16 +614,16 @@ namespace System.Management.Automation.Remoting
         {
             lock (s_syncObject)
             {
-                if (CustomNamedPipeServer != null && !CustomNamedPipeServer.IsDisposed)
+                if (_customNamedPipeServer != null && !_customNamedPipeServer.IsDisposed)
                 {
-                    if (pipeName == CustomNamedPipeServer.PipeName)
+                    if (pipeName == _customNamedPipeServer.PipeName)
                     {
                         // we shouldn't recreate the server object if we're using the same pipeName
                         return;
                     }
 
                     // Dispose of the current pipe server so we can create a new one with the new pipeName
-                    CustomNamedPipeServer.Dispose();
+                    _customNamedPipeServer.Dispose();
                 }
 
                 if (!Platform.IsWindows)
@@ -642,7 +644,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        CustomNamedPipeServer = new RemoteSessionNamedPipeServer(pipeName);
+                        _customNamedPipeServer = new RemoteSessionNamedPipeServer(pipeName);
                     }
                     catch (IOException)
                     {
@@ -652,14 +654,14 @@ namespace System.Management.Automation.Remoting
                     }
 
                     // Listener ended callback, used to create listening new pipe server.
-                    CustomNamedPipeServer.ListenerEnded += OnCustomNamedPipeServerEnded;
+                    _customNamedPipeServer.ListenerEnded += OnCustomNamedPipeServerEnded;
 
                     // Start the pipe server listening thread, and provide client connection callback.
-                    CustomNamedPipeServer.StartListening(ClientConnectionCallback);
+                    _customNamedPipeServer.StartListening(ClientConnectionCallback);
                 }
                 catch (Exception)
                 {
-                    CustomNamedPipeServer = null;
+                    _customNamedPipeServer = null;
                 }
             }
         }
