@@ -90,8 +90,8 @@ jobs:
 
   - powershell: |
       Import-Module .\tools\ci.psm1
-      $ParallelXUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\ParallelXUnitTestResults.xml"
+      $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
 
-      Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     displayName: Test
     condition: succeeded()
