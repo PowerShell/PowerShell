@@ -575,11 +575,6 @@ namespace System.Management.Automation.Language
         SkipSemis,
 
         /// <summary>
-        /// Skip newlines using the old v3 method.
-        /// </summary>
-        V3,
-
-        /// <summary>
         /// Skip newlines that are before a pipe.
         /// </summary>
         BeforePipe
@@ -896,7 +891,6 @@ namespace System.Management.Automation.Language
 
                 case '\r':
                 case '\n':
-                    if (skipOption == NewlineSkipOption.V3) { _parser.NoteV3FeatureUsed(); }
                     if (TokenList != null)
                     {
                         _tokenStart = _currentIndex - 1;

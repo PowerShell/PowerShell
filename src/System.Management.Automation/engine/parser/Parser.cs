@@ -42,7 +42,6 @@ namespace System.Management.Automation.Language
         private bool _inConfiguration;
         private ParseMode _parseMode;
 
-        // private bool _v3FeatureUsed;
         internal string _fileName;
         internal bool ProduceV2Tokens { get; set; }
 
@@ -340,8 +339,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-        // public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
-
         internal List<ParseError> ErrorList { get; }
 
         #region Utilities
@@ -352,17 +349,6 @@ namespace System.Management.Automation.Language
             {
                 _ungotToken = null;
                 _tokenizer.SkipNewlines();
-            }
-        }
-
-        // Same as SkipNewlines, but remembers is used when we skip lines differently in
-        // V3.
-        private void V3SkipNewlines()
-        {
-            if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
-            {
-                _ungotToken = null;
-                _tokenizer.SkipNewlines(NewlineSkipOption.V3);
             }
         }
 
@@ -574,11 +560,6 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(token.Kind == TokenKind.Parameter, "Token must be a ParameterToken");
             var paramToken = (ParameterToken)token;
             return parameter.StartsWith(paramToken.ParameterName, StringComparison.OrdinalIgnoreCase);
-        }
-
-        internal void NoteV3FeatureUsed()
-        {
-            // _v3FeatureUsed = true;
         }
 
         internal void RequireStatementTerminator()
@@ -1095,7 +1076,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            V3SkipNewlines();
+            SkipNewlines();
 
             Token firstTypeNameToken;
             ITypeName typeName = TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out firstTypeNameToken);
@@ -1238,7 +1219,6 @@ namespace System.Management.Automation.Language
                             // and record that it was defaulted for better error messages.
                             expr = new ConstantExpressionAst(name.Extent, true);
                             expressionOmitted = true;
-                            NoteV3FeatureUsed();
                         }
                     }
                     else
@@ -1370,7 +1350,7 @@ namespace System.Management.Automation.Language
 
                 // Array or generic
                 SkipToken();
-                V3SkipNewlines();
+                SkipNewlines();
                 token = NextToken();
                 switch (token.Kind)
                 {
@@ -1474,14 +1454,14 @@ namespace System.Management.Automation.Language
             Token token;
             while (true)
             {
-                V3SkipNewlines();
+                SkipNewlines();
                 commaOrRBracketToken = NextToken();
                 if (commaOrRBracketToken.Kind != TokenKind.Comma)
                 {
                     break;
                 }
 
-                V3SkipNewlines();
+                SkipNewlines();
 
                 token = PeekToken();
                 if (token.Kind == TokenKind.Identifier || token.Kind == TokenKind.LBracket)
@@ -6906,7 +6886,7 @@ namespace System.Management.Automation.Language
             while (token != null)
             {
                 // To support fluent style programming, allow newlines after the member access operator.
-                V3SkipNewlines();
+                SkipNewlines();
 
                 if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon)
                 {
