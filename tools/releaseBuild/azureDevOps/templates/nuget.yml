@@ -7,7 +7,7 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: PowerShell
+  pool: Package ES CodeHub Lab E
   variables:
     linuxArm32Path: '$(System.ArtifactsDirectory)/linuxArm32'
     winArm32Path: '$(System.ArtifactsDirectory)/winArm32'
