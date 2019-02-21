@@ -1420,15 +1420,13 @@ function Start-PSxUnit {
             }
         }
 
-        dotnet build --configuration $Options.configuration
-
         if (Test-Path $xUnitTestResultsFile) {
             Remove-Item $xUnitTestResultsFile -Force -ErrorAction SilentlyContinue
         }
 
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
-        dotnet test --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+        dotnet test --configuration $Options.configuration --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
 
         Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
