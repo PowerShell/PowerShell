@@ -1,0 +1,154 @@
+parameters:
+  parentJobs: []
+
+jobs:
+- job: build_nuget
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  displayName: Build NuGet packages
+  condition: succeeded()
+  pool: PowerShell
+  variables:
+    linuxArm32Path: '$(System.ArtifactsDirectory)/linuxArm32'
+    winArm32Path: '$(System.ArtifactsDirectory)/winArm32'
+    linuxX64Path: '$(System.ArtifactsDirectory)/linuxX64'
+    macOSPath: '$(System.ArtifactsDirectory)/macOS'
+    winArm64Path: '$(System.ArtifactsDirectory)/winArm64'
+    winX64Path: '$(System.ArtifactsDirectory)/winX64'
+    winX86Path: '$(System.ArtifactsDirectory)/winX86'
+    GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
+    PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
+
+  steps:
+
+  - powershell: |
+      $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
+      $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Find SDK version from global.json'
+
+  - task: DotNetCoreInstaller@0
+    displayName: 'Use .NET Core SDK from global.json'
+    inputs:
+      version: '$(SDKVersion)'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download PowerShell build artifacts'
+    inputs:
+      buildType: specific
+      project: '9d7f7aa4-6f41-480d-a367-82eb278461a1'
+      pipeline: 696
+      downloadType: specific
+      itemPattern: |
+        finalResults/PowerShell-*-win-*.zip
+        finalResults/powershell-*.tar.gz
+        results/powershell-*-osx-x64.tar.gz
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - powershell: 'Get-ChildItem $(System.ArtifactsDirectory) -recurse'
+    displayName: 'Capture downloaded artifacts'
+
+  - powershell: |
+      $packagePath = (Join-Path $(System.ArtifactsDirectory)  packages)
+      New-Item $packagePath -ItemType Directory -Force > $null
+      $packages  = Get-ChildItem $(System.ArtifactsDirectory) -Include *.zip, *.tar.gz -Recurse
+      $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
+      Get-ChildItem $packagePath -Recurse
+    displayName: 'Conflate packages to same folder'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files linuxArm32'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-arm32.tar.gz'
+      destinationFolder: '$(linuxArm32Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files linuxX64'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64.tar.gz'
+      destinationFolder: '$(linuxX64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files macOS files'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-osx*.tar.gz'
+      destinationFolder: '$(macOSPath)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-arm32'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm32.zip'
+      destinationFolder: '$(winArm32Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-arm64'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm64.zip   '
+      destinationFolder: '$(winArm64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-X64'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x64.zip   '
+      destinationFolder: '$(winX64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-X86'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x86.zip   '
+      destinationFolder: '$(winX86Path)'
+
+  - task: PkgESInstallNuGetToolsPackage@10
+    displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
+    inputs:
+      packageName: Microsoft.DotNet.BuildTools.GenAPI
+      packageVersion: '1.0.0-beta-00081'
+      packageSources: 'https://nuget.org/api/v2'
+      installRoot: '$(GenAPIToolPath)'
+
+  - powershell: |
+      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
+      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      New-UnifiedNugetPackage -PackagePath $(PackagePath) -PackageVersion $(PackageVersion) -winx86BinPath $(winX86Path) -winx64BinPath $(winX64Path) -winArm32BinPath $(winArm32Path) -winArm64BinPath $(winArm64Path) -linuxArm32BinPath $(linuxArm32Path) -linuxBinPath $(linuxX64Path) -osxBinPath $(macOSPath) -GenAPIToolPath $(GenAPIToolPath)
+    displayName: 'Create Nuget Package Folders'
+
+  - powershell: |
+      Get-ChildItem $(PackagePath) -Recurse
+    displayName: Capture generated packages
+
+  - powershell: |
+      $packages = Get-ChildItem $(PackagePath)\*.nupkg | Select-Object -ExpandProperty FullName
+
+      if($files.Count -lt 1)
+      {
+          throw "No packages created"
+      }
+
+      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml -NuPkgFiles $files
+    displayName: Create signing file
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign Nuget Packages'
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml'
+      inPathRoot: '$(PackagePath)'
+      outPathRoot: '$(System.ArtifactsDirectory)\signed'
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run MpCmdRun.exe'
+    inputs:
+      FileDirPath: '$(PackagePath)'
+      TreatStaleSignatureAs: Warning
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs'
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: '$(System.ArtifactsDirectory)\signed'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(PackagePath)'

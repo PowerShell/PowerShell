@@ -92,4 +92,11 @@ jobs:
       - build_windows_x86
       - build_windows_fxdependent
 
-- template: templates/updateBuildTable.yml
+- template: templates/nuget.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - build_deb
+      - build_rpm
+      - build_alpine
+      - build_macOS
