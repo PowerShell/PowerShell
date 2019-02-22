@@ -12,7 +12,7 @@ namespace PSTests.Parallel
     public class NamedPipeTests
     {        
         [Fact]
-        public static void TestCustomPipeNameCreation()
+        public void TestCustomPipeNameCreation()
         {
             string pipeName1 = Path.GetRandomFileName();
             string pipeName2 = Path.GetRandomFileName();
@@ -29,7 +29,7 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestCustomPipeNameCreationTooLongOnNonWindows()
+        public void TestCustomPipeNameCreationTooLongOnNonWindows()
         {
             var longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy";
 
@@ -51,6 +51,7 @@ namespace PSTests.Parallel
             {
                 return $@"\\.\pipe\{pipeName}";
             }
+
             return $@"{Path.GetTempPath()}CoreFxPipe_{pipeName}";
         }
     }

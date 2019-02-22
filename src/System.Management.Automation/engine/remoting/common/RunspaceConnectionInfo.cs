@@ -1723,7 +1723,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with pwsh -CustomPipeName
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with pwsh -CustomPipeName.
         /// </summary>
         public string CustomPipeName
         {
