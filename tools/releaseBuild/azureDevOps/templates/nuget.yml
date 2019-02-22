@@ -135,13 +135,13 @@ jobs:
           throw "No packages created"
       }
 
-      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml -NuPkgFiles $packages
+      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(PackagePath)\NugetSigning.xml -NuPkgFiles $packages
     displayName: Create signing file
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign Nuget Packages'
     inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml'
+      signConfigXml: '$(PackagePath)\NugetSigning.xml'
       inPathRoot: '$(PackagePath)'
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
 
