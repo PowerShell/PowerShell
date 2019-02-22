@@ -13,6 +13,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -399,8 +400,19 @@ namespace Microsoft.PowerShell.Commands
         private void VerifyPipeName(string customPipeName)
         {
             // Named Pipes are represented differently on Windows vs macOS & Linux
-            var pipePath = Platform.IsWindows ? $@"\\.\pipe\{customPipeName}" : Path.Combine(Path.GetTempPath(), $"CoreFxPipe_{customPipeName}");
+            var sb = new StringBuilder(customPipeName.Length);
+            if (Platform.IsWindows)
+            {
+                sb.Append(@"\\.\pipe\");
+            }
+            else
+            {
+                sb.Append(Path.GetTempPath()).Append("CoreFxPipe_");
+            }
 
+            sb.Append(customPipeName);
+
+            string pipePath = sb.ToString();
             if (!File.Exists(pipePath))
             {
                 ThrowTerminatingError(

@@ -14,18 +14,18 @@ namespace PSTests.Parallel
         [Fact]
         public void TestCustomPipeNameCreation()
         {
-            string pipeName1 = Path.GetRandomFileName();
-            string pipeName2 = Path.GetRandomFileName();
+            string pipeNameForFirstCall = Path.GetRandomFileName();
+            string pipeNameForSecondCall = Path.GetRandomFileName();
 
-            RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(pipeName1);
-            Assert.True(File.Exists(GetPipePath(pipeName1)));
+            RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(pipeNameForFirstCall);
+            Assert.True(File.Exists(GetPipePath(pipeNameForFirstCall)));
 
             // The second call to this method would override the first named pipe.
-            RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(pipeName2);
-            Assert.True(File.Exists(GetPipePath(pipeName2)));
+            RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(pipeNameForSecondCall);
+            Assert.True(File.Exists(GetPipePath(pipeNameForSecondCall)));
 
             // Previous pipe should have been cleaned up.
-            Assert.True(!File.Exists(GetPipePath(pipeName1)));
+            Assert.False(File.Exists(GetPipePath(pipeNameForFirstCall)));
         }
 
         [Fact]
