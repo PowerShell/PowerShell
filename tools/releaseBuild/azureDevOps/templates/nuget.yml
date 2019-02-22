@@ -146,7 +146,7 @@ jobs:
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      Import-Module $(Build.SourceDirectory)\build.psm1 -Force
+      Import-Module "$(Build.SourceDirectory)\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
 
