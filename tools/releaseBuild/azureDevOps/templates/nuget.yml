@@ -107,10 +107,14 @@ jobs:
       packageSources: 'https://nuget.org/api/v2'
       installRoot: '$(GenAPIToolPath)'
 
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-      New-UnifiedNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(PackageVersion)" -winx86BinPath "$(winX86Path)" -winx64BinPath "$(winX64Path)" -winArm32BinPath "$(winArm32Path)" -winArm64BinPath "$(winArm64Path)" -linuxArm32BinPath "$(linuxArm32Path)" -linuxBinPath "$(linuxX64Path)" -osxBinPath "$(macOSPath)" -GenAPIToolPath "$(GenAPIToolPath)"
+      New-UnifiedNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -winx86BinPath "$(winX86Path)" -winx64BinPath "$(winX64Path)" -winArm32BinPath "$(winArm32Path)" -winArm64BinPath "$(winArm64Path)" -linuxArm32BinPath "$(linuxArm32Path)" -linuxBinPath "$(linuxX64Path)" -osxBinPath "$(macOSPath)" -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
   - powershell: |
