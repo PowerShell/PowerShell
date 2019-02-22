@@ -130,12 +130,12 @@ jobs:
   - powershell: |
       $packages = Get-ChildItem "$(PackagePath)\*.nupkg" | Select-Object -ExpandProperty FullName
 
-      if($files.Count -lt 1)
+      if($packages.Count -lt 1)
       {
           throw "No packages created"
       }
 
-      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml -NuPkgFiles $files
+      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(System.ArtifactsDirectory)\NugetPackages\NugetSigning.xml -NuPkgFiles $packages
     displayName: Create signing file
 
   - task: PkgESCodeSign@10
@@ -146,7 +146,7 @@ jobs:
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      Import-Module "$(BUILD_SOURCESDIRECTORY)\build.psm1 -Force
+      Import-Module $(BUILD_SOURCESDIRECTORY)\build.psm1 -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
 
