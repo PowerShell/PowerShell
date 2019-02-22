@@ -4,31 +4,31 @@
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
         BeforeAll {
-            $pwsh_started = New-TemporaryFile
-            $si = [System.Diagnostics.ProcessStartInfo]::new()
-            $si.FileName = "pwsh"
-            $si.Arguments = "-noexit -command 'pwsh' > '$pwsh_started'"
-            $si.RedirectStandardInput = $true
-            $si.RedirectStandardOutput = $true
-            $si.RedirectStandardError = $true
-            $pwsh = [System.Diagnostics.Process]::Start($si)
+            $params = @{
+                FilePath = "pwsh"
+                PassThru = $true
+                RedirectStandardOutput = "TestDrive:\pwsh_out.log"
+                RedirectStandardError = "TestDrive:\pwsh_err.log"
+            }
+            $pwsh = Start-Process @params
 
             if ($IsWindows) {
-                $powershell_started = New-TemporaryFile
-                $si.FileName = "powershell"
-                $si.Arguments = "-noexit -command 'powershell' >'$powershell_started'"
-                $powershell = [System.Diagnostics.Process]::Start($si)
+                $params = @{
+                    FilePath = "powershell"
+                    PassThru = $true
+                    RedirectStandardOutput = "TestDrive:\powershell_out.log"
+                    RedirectStandardError = "TestDrive:\powershell_err.log"
+                }
+                $powershell = Start-Process @params
             }
 
         }
 
         AfterAll {
             $pwsh | Stop-Process
-            Remove-Item $pwsh_started -Force -ErrorAction SilentlyContinue
 
             if ($IsWindows) {
                 $powershell | Stop-Process
-                Remove-Item $powershell_started -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -76,20 +76,20 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             }
 
             $pipeName = [System.IO.Path]::GetRandomFileName()
+            $params = @{
+                FilePath = "pwsh"
+                ArgumentList = @("-CustomPipeName",$pipeName)
+                PassThru = $true
+                RedirectStandardOutput = "TestDrive:\pwsh_out.log"
+                RedirectStandardError = "TestDrive:\pwsh_err.log"
+            }
+            $pwsh = Start-Process @params
+
             $pipePath = Get-PipePath -PipeName $pipeName
-            $pwsh_started = New-TemporaryFile
-            $si = [System.Diagnostics.ProcessStartInfo]::new()
-            $si.FileName = "pwsh"
-            $si.Arguments = "-CustomPipeName $pipeName -noexit -command 'pwsh -CustomPipeName $pipeName' > '$pwsh_started'"
-            $si.RedirectStandardInput = $true
-            $si.RedirectStandardOutput = $true
-            $si.RedirectStandardError = $true
-            $pwsh = [System.Diagnostics.Process]::Start($si)
         }
 
         AfterAll {
             $pwsh | Stop-Process
-            Remove-Item $pwsh_started -Force -ErrorAction SilentlyContinue
         }
 
         It "Can enter using CustomPipeName" {
