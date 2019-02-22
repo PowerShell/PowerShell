@@ -1449,6 +1449,80 @@ try
             { New-Module -ScriptBlock $testScriptBlock -ErrorAction Stop } | Should -Not -Throw -Because "Scriptblock without execution context is allowed in Full Language"
         }
     }
+
+    Describe "New-Module should not create module from trusted scriptblock when running in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $script = @'
+            function ScriptFn { Write-Output $ExecutionContext.SessionState.LanguageMode }
+'@
+
+            $scriptFileNameT = "NewModuleTrustedScriptBlock_System32"
+            $scriptFilePathT = Join-Path $TestDrive ($scriptFileNameT + ".ps1")
+            $script | Out-File -FilePath $scriptFilePathT
+
+            $scriptFileNameU = "NewModuleUntrustedScriptBlock"
+            $scriptFilePathU = Join-Path $TestDrive ($scriptFileNameU + ".ps1")
+            $script | Out-File -FilePath $scriptFilePathU
+        }
+
+        It "New-Module throws error when creating module with trusted scriptblock in ConstrainedLanguage" {
+
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Get scriptblock from trusted script file
+                $sb = (Get-Command $scriptFilePathT).ScriptBlock
+
+                # Create new module from trusted scriptblock while in ConstrainedLanguage
+                try
+                {
+                    New-Module -Name TrustedScriptFoo -ScriptBlock $sb
+                    throw "No Exception!"
+                }
+                catch
+                {
+                    $expectedError = $_
+                }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_CannotCreateModuleWithFullLanguageScriptBlock,Microsoft.PowerShell.Commands.NewModuleCommand"
+        }
+
+        It "New-Module succeeds in creating module with untrusted scriptblock in ConstrainedLanguage" {
+
+            $result = $null
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Get scriptblock from untrusted script file
+                $sb = (Get-Command $scriptFilePathU).ScriptBlock
+
+                # Create and import module from scriptblock
+                $m = New-Module -Name UntrustedScriptFoo -ScriptBlock $sb
+                Import-Module -ModuleInfo $m -Force
+
+                $result = ScriptFn
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $result | Should -BeExactly "ConstrainedLanguage"
+        }
+    }
 }
 finally
 {

@@ -624,4 +624,7 @@
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
     <value>Cannot export module members from a module that has a different language mode from the running session.</value>
   </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>Cannot create new module while the session is in ConstrainedLanguage mode.</value>
+  </data>
 </root>

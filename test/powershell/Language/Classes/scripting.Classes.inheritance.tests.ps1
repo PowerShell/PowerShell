@@ -71,6 +71,15 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
+    It 'can implement inherited .NET interface properties' {
+        Add-Type -TypeDefinition 'public interface IParent { int ParentInteger { get; set; } }
+                                  public interface IChild : IParent { int ChildInteger { get; set; } }'
+        $C1 = Invoke-Expression 'class ClassWithInheritedInterfaces : IChild { [int]$ParentInteger; [int]$ChildInteger } [ClassWithInheritedInterfaces]'
+        $getter = $C1.GetMember('get_ParentInteger')
+        $getter.ReturnType.FullName | Should -Be System.Int32
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
