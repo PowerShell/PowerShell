@@ -1008,8 +1008,15 @@ namespace System.Management.Automation
             if ((this.LanguageMode.HasValue) &&
                 (this.LanguageMode != context.LanguageMode))
             {
-                oldLanguageMode = context.LanguageMode;
-                newLanguageMode = this.LanguageMode;
+                // Don't allow context: ConstrainedLanguage -> FullLanguage transition if
+                // this is dot sourcing into the current scope, unless it is within a trusted module scope.
+                if (this.LanguageMode != PSLanguageMode.FullLanguage ||
+                    createLocalScope ||
+                    (context.EngineSessionState.Module?.LanguageMode == PSLanguageMode.FullLanguage))
+                {
+                    oldLanguageMode = context.LanguageMode;
+                    newLanguageMode = this.LanguageMode;
+                }
             }
 
             Dictionary<string, PSVariable> backupWhenDotting = null;

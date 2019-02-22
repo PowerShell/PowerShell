@@ -156,10 +156,9 @@ Function Set-BuildVariable
 }
 
 # Emulates running all of CI but locally
-function Invoke-AppVeyorFull
+function Invoke-CIFull
 {
     param(
-        [switch] $APPVEYOR_SCHEDULED_BUILD,
         [switch] $CleanRepo
     )
     if($CleanRepo)
@@ -167,14 +166,14 @@ function Invoke-AppVeyorFull
         Clear-PSRepo
     }
 
-    Invoke-AppVeyorInstall
-    Invoke-AppVeyorBuild
-    Invoke-AppVeyorTest -ErrorAction Continue
-    Invoke-AppveyorFinish
+    Invoke-CIInstall
+    Invoke-CIBuild
+    Invoke-CITest -ErrorAction Continue
+    Invoke-CIFinish
 }
 
 # Implements the CI 'build_script' step
-function Invoke-AppVeyorBuild
+function Invoke-CIBuild
 {
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
@@ -208,7 +207,7 @@ function Invoke-AppVeyorBuild
 }
 
 # Implements the CI 'install' step
-function Invoke-AppVeyorInstall
+function Invoke-CIInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
@@ -240,7 +239,7 @@ function Invoke-AppVeyorInstall
         # Provide credentials globally for remote tests.
         $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
         $ciRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\CIRemoteCred.xml" -Force
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
@@ -289,22 +288,22 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
+    $xUnitTestResultsFile = "$pwd\xUnitTestResults.xml"
 
-    Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
-    Push-Artifact -Path $ParallelXUnitTestResultsFile -name xunit
+    Update-TestResults -resultsFile $xUnitTestResultsFile
+    Push-Artifact -Path $xUnitTestResultsFile -name xunit
 
     if(!$SkipFailing.IsPresent)
     {
         # Fail the build, if tests failed
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     }
 }
 
 # Implement CI 'Test_script'
-function Invoke-AppVeyorTest
+function Invoke-CITest
 {
     [CmdletBinding()]
     param(
@@ -434,7 +433,7 @@ function Invoke-AppVeyorTest
 }
 
 # Implement CI 'after_test' phase
-function Invoke-AppVeyorAfterTest
+function Invoke-CIAfterTest
 {
     [CmdletBinding()]
     param()
@@ -524,7 +523,7 @@ function Get-ReleaseTag
 }
 
 # Implements CI 'on_finish' step
-function Invoke-AppveyorFinish
+function Invoke-CIFinish
 {
     param(
         [string] $NuGetKey
@@ -769,10 +768,10 @@ function Invoke-LinuxTests
     }
 
     try {
-        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        $xUnitTestResultsFile = "$pwd/xUnitTestResults.xml"
+        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     } catch {
         $result = "FAIL"
         if (!$resultError)

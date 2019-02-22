@@ -1,7 +1,7 @@
 # https://help.github.com/articles/about-codeowners/
 
 # Areas are not limited to the filters defined in this file
-# First Lets start with areas with no filters or paths
+# First, let's start with areas with no filters or paths
 
 # Area: Performance
 # @adityapatwardhan
@@ -21,33 +21,33 @@
 # Area: Cmdlets Core
 # @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
 
-# Now Areas that should have paths or filters, although we might not have them defined
-# According to the docs, Order here must be by precedence of the filter, with later rules overwritting
+# Now, areas that should have paths or filters, although we might not have them defined
+# According to the docs, order here must be by precedence of the filter, with later rules overwritting
 # but the feature seems to make taking a union of all the matching rules.
 
-# Area: CmdLets Management
+# Area: Cmdlets Management
 src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
 
-# Area: CmdLets Utility
+# Area: Utility Cmdlets
 src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @PaulHigin
 
 # Area: Console
 src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
 
-# Area: Demo
+# Area: Demos
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
 
 # Area: DSC
 src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
 
-# Area: engine
+# Area: Engine
 src/System.Management.Automation/engine            @daxian-dbw @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
 src/System.Management.Automation/engine/debugger/  @BrucePay @PaulHigin
 
-# Area: help
+# Area: Help
 src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
 
 # Area: Intellisense
