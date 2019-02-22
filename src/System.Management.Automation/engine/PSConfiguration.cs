@@ -389,34 +389,32 @@ namespace System.Management.Automation.Configuration
             if (!File.Exists(fileName)) { return defaultValue; }
 
             // Open file for reading, but allow multiple readers
-            if (fileLock.TryEnterReadLock(millisecondsTimeout: 10))
+            fileLock.EnterReadLock();
+            try
             {
-                try
+                // The config file can be locked by another process
+                // so we wait some milliseconds in 'WaitForFile()' for recovery before stop current process.
+                using (var readerStream = WaitForFile(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var streamReader = new StreamReader(readerStream))
+                using (var jsonReader = new JsonTextReader(streamReader))
                 {
-                    // The config file can be locked by another process
-                    // so we wait some milliseconds in 'WaitForFile()' for recovery before stop current process.
-                    using (var readerStream = WaitForFile(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (var streamReader = new StreamReader(readerStream))
-                    using (var jsonReader = new JsonTextReader(streamReader))
-                    {
-                        var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 };
-                        var serializer = JsonSerializer.Create(settings);
+                    var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 };
+                    var serializer = JsonSerializer.Create(settings);
 
-                        var configData = serializer.Deserialize<JObject>(jsonReader);
-                        if (configData != null && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
-                        {
-                            return readImpl != null ? readImpl(jToken, serializer, defaultValue) : jToken.ToObject<T>(serializer);
-                        }
+                    var configData = serializer.Deserialize<JObject>(jsonReader);
+                    if (configData != null && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
+                    {
+                        return readImpl != null ? readImpl(jToken, serializer, defaultValue) : jToken.ToObject<T>(serializer);
                     }
                 }
-                catch (IOException)
-                {
-                    return defaultValue;
-                }
-                finally
-                {
-                    fileLock.ExitReadLock();
-                }
+            }
+            catch (IOException)
+            {
+                return defaultValue;
+            }
+            finally
+            {
+                fileLock.ExitReadLock();
             }
 
             return defaultValue;
