@@ -189,20 +189,18 @@ namespace Microsoft.PowerShell.Commands
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    int x=0;
-                    if(Int32.TryParse(pattern, out x) && x>0){
+                    if(int.TryParse(pattern, out int x) && x>0){
                         WriteNonTerminatingError(
-                        pattern,
-                        0,
-                        pattern,
-                        null,
-                        ProcessResources.RecommendIdTagForGivenName,
-                        "RecommendIdTagForGivenName",
-                        ErrorCategory.ObjectNotFound);
+                            pattern,
+                            0,
+                            pattern,
+                            null,
+                            ProcessResources.RecommendIdTagForGivenName,
+                            "RecommendIdTagForGivenName",
+                            ErrorCategory.ObjectNotFound);
                     }
                     else{
                     WriteNonTerminatingError(
-                        //printf("here");
                         pattern,
                         0,
                         pattern,
