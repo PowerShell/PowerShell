@@ -106,4 +106,23 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
     }
+
+    $ItArgs = $PesterArgs.Clone()
+    $ItArgs['Name'] = "Can send mail message from user to self without subject " + $ItArgs['Name']
+
+    It @ItArgs {
+        $body = "Greetings from me."
+        $subject = "Test message"
+        Send-MailMessage -To $address -From $address -ReplyTo $address -Body $body -SmtpServer 127.0.0.1
+        Test-Path -Path $mailBox | Should -BeTrue
+        $mail = read-mail $mailBox
+        $mail.From | Should -BeExactly $address
+        $mail.To.Count | Should -BeExactly 1
+        $mail.To[0] | Should -BeExactly $address
+        $mail.ReplyTo.Count | Should -BeExactly 1
+        $mail.ReplyTo[0] | Should -BeExactly $address
+        $mail.Subject | Should -BeNullorEmpty
+        $mail.Body.Count | Should -BeExactly 1
+        $mail.Body[0] | Should -BeExactly $body
+    }
 }
