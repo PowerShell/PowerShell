@@ -746,7 +746,8 @@ namespace System.Management.Automation
             RegexOptions regexOptions = parseRegexOptions(options);
 
             // if the limit is negative then set Regex to read from right to left
-            if (limit < 0) {
+            if (limit < 0) 
+            {
                 regexOptions |= RegexOptions.RightToLeft;
                 limit = -limit;
             }
