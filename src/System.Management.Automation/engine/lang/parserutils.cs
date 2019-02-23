@@ -744,11 +744,13 @@ namespace System.Management.Automation
             }
 
             RegexOptions regexOptions = parseRegexOptions(options);
+
             // if the limit is negative then set Regex to read from right to left
             if (limit < 0) {
                 regexOptions |= RegexOptions.RightToLeft;
                 limit = -limit;
             }
+
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
             List<string> results = new List<string>();
@@ -758,7 +760,7 @@ namespace System.Management.Automation
                 string[] split = regex.Split(item, limit, 0);
                 results.AddRange(split);
             }
-            
+
             return results.ToArray();
         }
 
