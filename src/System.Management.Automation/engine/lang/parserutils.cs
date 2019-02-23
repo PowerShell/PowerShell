@@ -743,23 +743,22 @@ namespace System.Management.Automation
                 separatorPattern = Regex.Escape(separatorPattern);
             }
 
-            if (limit < 0)
-            {
-                // Regex only allows 0 to signify "no limit", whereas
-                // we allow any integer <= 0.
-                limit = 0;
-            }
-
             RegexOptions regexOptions = parseRegexOptions(options);
+            // if the limit is negative then set Regex to read from right to left
+            if (limit < 0) {
+                regexOptions |= RegexOptions.RightToLeft;
+                limit = -limit;
+            }
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
             List<string> results = new List<string>();
+
             foreach (string item in content)
             {
                 string[] split = regex.Split(item, limit, 0);
                 results.AddRange(split);
             }
-
+            
             return results.ToArray();
         }
 

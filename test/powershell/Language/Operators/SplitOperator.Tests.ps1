@@ -33,7 +33,25 @@ Describe "Split Operator" -Tags CI {
             $res[2] | Should -Be "c"
             $res[3] | Should -Be "d"
 
+            $res = "a b c d" -split " ", -2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a b c"
+            $res[1] | Should -Be "d"
+
             $res = "a b c d" -split " ", -1
+            $res.count | Should -Be 1
+            $res[0] | Should -Be "a b c d"
+        }
+
+        It "Binary split operator can work with greater than max substring" {
+            $res = "a b c d" -split " ",8
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
+
+            $res = "a b c d" -split " ",-8
             $res.count | Should -Be 4
             $res[0] | Should -Be "a"
             $res[1] | Should -Be "b"
