@@ -749,7 +749,7 @@ namespace System.Management.Automation
             if (limit < 0) 
             {
                 regexOptions |= RegexOptions.RightToLeft;
-                limit = -limit;
+                limit *= -1;
             }
 
             Regex regex = NewRegex(separatorPattern, regexOptions);
