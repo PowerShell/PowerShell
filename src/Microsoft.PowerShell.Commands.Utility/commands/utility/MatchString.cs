@@ -73,6 +73,20 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class MatchInfo
     {
+        private bool isRaw; 
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public MatchInfo(){
+
+        }
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MatchInfo(bool isR, bool color, int matchIndex, int matchLength){
+            isRaw = isR;
+        }
         private static readonly string s_inputStream = "InputStream";
 
         /// <summary>
@@ -93,6 +107,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value>The text of the matching line.</value>
         public string Line { get; set; } = string.Empty;
 
+        
+        
+
+
         /// <summary>
         /// Gets the base name of the file containing the matching line.
         /// <remarks>
@@ -101,6 +119,9 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         /// </summary>
         /// <value>The file name.</value>
+
+        
+
         public string Filename
         {
             get
@@ -226,7 +247,12 @@ namespace Microsoft.PowerShell.Commands
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                if(isRaw){
+                    return Line;
+                }else{
+                    return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                }
+                
             }
 
             // Otherwise, render the full context.
@@ -235,14 +261,29 @@ namespace Microsoft.PowerShell.Commands
             int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
             {
-                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+                
+                if(!isRaw){
+                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+                }else{
+                    lines.Add(contextLine);
+                }
             }
 
-            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
-
+            if(!isRaw){
+                lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            }else{
+                lines.Add(Line);
+            }
+            
+ 
             foreach (string contextLine in Context.DisplayPostContext)
             {
-                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+                if(!isRaw){
+                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+                }else{
+                    lines.Add(contextLine);
+                }
+                
             }
 
             return string.Join(System.Environment.NewLine, lines.ToArray());
@@ -1027,6 +1068,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SimpleMatch { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating if an undecorated string should be outputted.
+        /// If not (default) output a decorated string.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Raw { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating if the search is case sensitive.If true, then do case-sensitive searches.
         /// </summary>
         [Parameter]
@@ -1614,12 +1662,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo
-                              {
-                                  IgnoreCase = !CaseSensitive,
-                                  Line = operandString,
-                                  Pattern = Pattern[patternIndex]
-                              };
+                matchResult = new MatchInfo(Raw, true, 0, 0);
+                              
+                matchResult.IgnoreCase = !CaseSensitive;
+                matchResult.Line = operandString;
+                matchResult.Pattern = Pattern[patternIndex];
+
+                              
 
                 if (_preContext > 0 || _postContext > 0)
                 {

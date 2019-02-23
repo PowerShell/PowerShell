@@ -128,6 +128,23 @@ Describe "Select-String" -Tags "CI" {
 	    (Select-String in $testInputFile)[4].Line | Should -BeNullOrEmpty
 	}
 
+	It "Should return an undecorated strings where 'text' is found in testfile1 when raw is used " {
+	    $expected1 = "This is a text string, and another string"
+
+	    Select-String text $testInputFile -Raw| Should -Be $expected1
+
+	}
+
+	It "Should return the third line in testfile1 and the lines above and below it undecorated when raw is used " {
+	    $expectedLine       = "This is the second line"
+	    $expectedLineBefore = "This is the third line"
+	    $expectedLineAfter  = "This is the fourth line"
+
+	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLine
+	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLineBefore
+	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLineAfter
+	}
+
 	It "Should return empty because 'for' is not found in testfile1 " {
 	    Select-String for $testInputFile | Should -BeNullOrEmpty
 	}
