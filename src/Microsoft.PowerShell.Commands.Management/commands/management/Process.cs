@@ -199,15 +199,16 @@ namespace Microsoft.PowerShell.Commands
                             "RecommendIdTagForGivenName",
                             ErrorCategory.ObjectNotFound);
                     }
-                    else{
-                    WriteNonTerminatingError(
-                        pattern,
-                        0,
-                        pattern,
-                        null,
-                        ProcessResources.NoProcessFoundForGivenName,
-                        "NoProcessFoundForGivenName",
-                        ErrorCategory.ObjectNotFound);
+                    else
+                    {
+                        WriteNonTerminatingError(
+                            pattern,
+                            0,
+                            pattern,
+                            null,
+                            ProcessResources.NoProcessFoundForGivenName,
+                            "NoProcessFoundForGivenName",
+                            ErrorCategory.ObjectNotFound);
                     }
                 }
             }
