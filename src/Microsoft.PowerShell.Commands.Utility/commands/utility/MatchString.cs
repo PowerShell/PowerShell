@@ -89,6 +89,30 @@ namespace Microsoft.PowerShell.Commands
         public string Line { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets whether the matched portion of the string is highlighted.
+        /// </summary>
+        /// <value>Whether the matched portion of the string is highlighted with asterisks.</value>
+        public bool Color { get; set; }
+
+        private readonly List<int> MatchIndexes;
+        private readonly List<int> MatchLengths;
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public MatchInfo(){
+
+        }
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MatchInfo(bool isR, List<int> matchIndexes, List<int> matchLengths, bool color){
+            this.Color = color;
+            this.MatchIndexes = matchIndexes;
+            this.MatchLengths = matchLengths;
+        }
+
+        /// <summary>
         /// Gets the base name of the file containing the matching line.
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
@@ -142,6 +166,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets context for the match, or null if -context was not specified.
         /// </summary>
         public MatchInfoContext Context { get; set; }
+
+        
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
@@ -216,12 +242,28 @@ namespace Microsoft.PowerShell.Commands
         public string ToString(string directory)
         {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
+            string modifiedLine;
+            if (Color)
+            {
+                StringBuilder sb = new StringBuilder(Line);
+                for (int i = 0; i < MatchIndexes.Count; i++)
+                {
+                    int offset = 2 * i;
+                    sb.Insert(MatchIndexes[i]+offset, "*");
+                    sb.Insert(MatchIndexes[i]+MatchLengths[i]+offset+1, "*");
+                }
+                modifiedLine = sb.ToString();
+            }
+            else
+            {
+                modifiedLine = Line;
+            }
 
             // Just return a single line if the user didn't
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                return FormatLine(modifiedLine, this.LineNumber, displayPath, EmptyPrefix);
             }
 
             // Otherwise, render the full context.
@@ -233,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
             }
 
-            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            lines.Add(FormatLine(modifiedLine, displayLineNumber++, displayPath, MatchPrefix));
 
             foreach (string contextLine in Context.DisplayPostContext)
             {
@@ -1063,6 +1105,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating if the matching portion of the string should be highlighted by 
+        /// surrounding it with asterisks.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Color { get; set; }
+
+        /// <summary>
         /// Gets or sets files to include. Files matching
         /// one of these (if specified) are included.
         /// </summary>
@@ -1541,6 +1590,9 @@ namespace Microsoft.PowerShell.Commands
             int patternIndex = 0;
             matchResult = null;
 
+            List<int> indexes = new List<int>();
+            List<int> lengths = new List<int>();
+
             if (!SimpleMatch)
             {
                 while (patternIndex < Pattern.Length)
@@ -1557,6 +1609,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
+                            foreach (Match match in matches) {
+                                indexes.Add(match.Index);
+                                lengths.Add(match.Length);
+                            }
                             gotMatch = true;
                         }
                     }
@@ -1567,6 +1623,8 @@ namespace Microsoft.PowerShell.Commands
 
                         if (match.Success)
                         {
+                            indexes.Add(match.Index);
+                            lengths.Add(match.Length);
                             matches = new Match[] { match };
                         }
                     }
@@ -1587,8 +1645,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string pat = Pattern[patternIndex];
 
-                    if (operandString.IndexOf(pat, compareOption) >= 0)
+                    int index = operandString.IndexOf(pat, compareOption);
+                    if (index >= 0)
                     {
+                        indexes.Add(index);
+                        lengths.Add(pat.Length);
                         gotMatch = true;
                         break;
                     }
@@ -1637,7 +1698,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo
+                matchResult = new MatchInfo(false, indexes, lengths, Color)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,
