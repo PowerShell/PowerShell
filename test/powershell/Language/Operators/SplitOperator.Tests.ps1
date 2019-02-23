@@ -43,7 +43,7 @@ Describe "Split Operator" -Tags CI {
             $res[0] | Should -Be "a b c d"
         }
 
-        It "Binary split operator can work with greater than max substring" {
+        It "Binary split operator can work with different delimeter than split string" {
             $res = "a b c d" -split " ",8
             $res.count | Should -Be 4
             $res[0] | Should -Be "a"
@@ -57,6 +57,23 @@ Describe "Split Operator" -Tags CI {
             $res[1] | Should -Be "b"
             $res[2] | Should -Be "c"
             $res[3] | Should -Be "d"
+
+            $res = " " -split " ",-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be ""
+            $res[1] | Should -Be ""
+        }
+
+        It "Binary split operator can work with regex expression" {
+            $res = "a2b3c4d" -split '\d+',2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b3c4d"
+
+            $res = "a2b3c4d" -split '\d+',-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a2b3c"
+            $res[1] | Should -Be "d"
         }
 
         It "Binary split operator can works with freeform delimiter" {
