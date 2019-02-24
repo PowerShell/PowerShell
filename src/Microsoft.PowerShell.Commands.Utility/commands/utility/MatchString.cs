@@ -1049,7 +1049,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating if the search contains the specified characters.
+        /// Gets or sets a value that when true, causes only the matching part of the string to be returned.
         /// </summary>
         [Parameter]
         public SwitchParameter OnlyMatching { get; set; }
