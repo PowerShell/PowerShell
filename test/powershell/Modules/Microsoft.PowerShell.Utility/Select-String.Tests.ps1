@@ -83,17 +83,17 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an array of matching strings with all matches highlighted when Emphasize and AllMatch is used" {
-		If ($IsWindows) {
+		if ($IsWindows) {
 			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l**l*o", "he*l**l*o"
-		} Else {
+		} else {
 			$testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Should -Be "he[31ml[0m[31ml[0mo", "he[31ml[0m[31ml[0mo"
 		}
 	}
 
 	it "Should return an array of matching strings with the first match highlighted when Emphasize and SimpleMatch is used" {
-		If ($IsWindows) {
+		if ($IsWindows) {
 			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
-		} Else {
+		} else {
 			$testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
 		}
 	}

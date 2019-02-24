@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stores a values indicating whether or not the terminal supports VT.
         /// </summary>
-        private readonly bool? _supportsVirtualTerminal;
+        private readonly bool _supportsVirtualTerminal;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchInfo"/> class.
@@ -124,12 +124,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="matchLengths">Sets the matchLengths.</param>
         /// <param name="emphasize">Used for implementing -Emphasize.</param>
         /// <param name="vt">Sets a value indicating whether or not virtual terminal is supported.</param>
-        public MatchInfo(bool isRaw, List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool? vt)
+        public MatchInfo(bool isRaw, List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool vt)
         {
             this.Emphasize = emphasize;
-            this.matchIndexes = matchIndexes;
-            this.matchLengths = matchLengths;
-            this.supportsVirtualTerminal = vt;
+            this._matchIndexes = matchIndexes;
+            this._matchLengths = matchLengths;
+            this._supportsVirtualTerminal = vt;
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
                 string open;
                 string close;
 
-                if (supportsVirtualTerminal ?? false)
+                if (_supportsVirtualTerminal)
                 {
                     open = "\u001b[31m";
                     close = "\u001b[0m";
@@ -278,11 +278,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 StringBuilder sb = new StringBuilder(Line);
-                for (int i = 0; i < matchIndexes.Count; i++)
+                for (int i = 0; i < _matchIndexes.Count; i++)
                 {
                     int offset = open.Length + close.Length;
-                    sb.Insert(matchIndexes[i] + (i * offset), open);
-                    sb.Insert(matchIndexes[i] + matchLengths[i] + (i * offset + open.Length), close);
+                    sb.Insert(_matchIndexes[i] + (i * offset), open);
+                    sb.Insert(_matchIndexes[i] + _matchLengths[i] + ((i * offset) + open.Length), close);
                 }
 
                 modifiedLine = sb.ToString();
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(false, indexes, lengths, Emphasize.IsPresent, Host?.UI.SupportsVirtualTerminal)
+                matchResult = new MatchInfo(false, indexes, lengths, Emphasize.IsPresent, Host.UI.SupportsVirtualTerminal)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,
