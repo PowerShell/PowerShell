@@ -1314,7 +1314,7 @@ namespace Microsoft.PowerShell.Commands
                     Match match = regexValue.Match(line);
                     if (match.Success) 
                     {
-                        WriteObject(match.Value);
+                        WriteObject(match.Value, true);
                         break;
                     } 
                 }
