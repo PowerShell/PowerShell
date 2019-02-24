@@ -644,14 +644,20 @@ namespace System.Management.Automation
             }
         }
 
+        private static string ReverseStringUtility(string str) {
+            var revStr = str.ToCharArray();
+            Array.Reverse(revStr);
+            return new string(revStr);
+        }
+
         private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
-            List<string> results = new List<string>();
+            var results = new List<string>();
             foreach (string item in content)
             {
-                List<string> split = new List<string>();
+                var split = new List<string>();
 
-                if (limit == 1)
+                if (limit == 1 || limit == -1)
                 {
                     // Don't bother with looking for any delimiters,
                     // just return the original string.
@@ -659,53 +665,114 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                StringBuilder buf = new StringBuilder();
-                for (int strIndex = 0; strIndex < item.Length; strIndex++)
-                {
-                    object isDelimChar = predicate.DoInvokeReturnAsIs(
-                        useLocalScope: true,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                        dollarUnder: CharToString(item[strIndex]),
-                        input: AutomationNull.Value,
-                        scriptThis: AutomationNull.Value,
-                        args: new object[] { item, strIndex });
-                    if (LanguagePrimitives.IsTrue(isDelimChar))
-                    {
-                        split.Add(buf.ToString());
-                        buf = new StringBuilder();
+                var buf = new StringBuilder();
 
-                        if (limit > 0 && split.Count >= (limit - 1))
+                if (limit >= 0) 
+                {
+                    for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                    {
+                        object predicateResult = predicate.DoInvokeReturnAsIs(
+                            useLocalScope: true,
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                            dollarUnder: CharToString(item[strIndex]),
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: new object[] { item, strIndex });
+                        if (LanguagePrimitives.IsTrue(predicateResult))
                         {
-                            // We're one item below the limit. If
-                            // we have any string left, go ahead
-                            // and add it as the last item, otherwise
-                            // add an empty string if there was
-                            // a delimiter at the end.
-                            if ((strIndex + 1) < item.Length)
-                            {
-                                split.Add(item.Substring(strIndex + 1));
+                            if (buf.Length != 0) {
+                                split.Add(buf.ToString());
                             }
-                            else
+                            
+                            buf.Clear();
+
+                            if (limit > 0 && split.Count >= (limit - 1))
+                            {
+                                // We're one item below the limit. If
+                                // we have any string left, go ahead
+                                // and add it as the last item, otherwise
+                                // add an empty string if there was
+                                // a delimiter at the end.
+                                if ((strIndex + 1) < item.Length)
+                                {
+                                    split.Add(item.Substring(strIndex + 1));
+                                }
+                                else
+                                {
+                                    split.Add(string.Empty);
+                                }
+
+                                break;
+                            }
+
+                            // If this delimiter is at the end of the string,
+                            // add an empty string to denote the item "after"
+                            // it.
+                            if (strIndex == (item.Length - 1))
                             {
                                 split.Add(string.Empty);
                             }
-
-                            break;
                         }
-
-                        // If this delimiter is at the end of the string,
-                        // add an empty string to denote the item "after"
-                        // it.
-                        if (strIndex == (item.Length - 1))
+                        else
                         {
-                            split.Add(string.Empty);
+                            buf.Append(item[strIndex]);
                         }
-                    }
-                    else
-                    {
-                        buf.Append(item[strIndex]);
                     }
                 }
+                else 
+                {
+                    for (int strIndex = item.Length - 1; strIndex >= 0; strIndex--)
+                    {
+                        object predicateResult = predicate.DoInvokeReturnAsIs(
+                            useLocalScope: true,
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                            dollarUnder: CharToString(item[strIndex]),
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: new object[] { item, strIndex });
+                        if (LanguagePrimitives.IsTrue(predicateResult))
+                        {
+                            if (buf.Length != 0) 
+                            {
+                                split.Add(ReverseStringUtility(buf.ToString()));
+                            }
+
+                            buf.Clear();
+
+                            if ((limit * -1) > 0 && split.Count >= ((limit * -1) - 1))
+                            {
+                                // We're one item below the limit. If
+                                // we have any string left, go ahead
+                                // and add it as the last item, otherwise
+                                // add an empty string if there was
+                                // a delimiter at the end.
+                                if ((strIndex + 1) < item.Length)
+                                {
+                                    split.Add(item.Substring(0, strIndex));
+                                }
+                                else
+                                {
+                                    split.Add(string.Empty);
+                                }
+
+                                break;
+                            }
+
+                            // If this delimiter is at the end of the string,
+                            // add an empty string to denote the item "after"
+                            // it.
+                            if (strIndex == (item.Length - 1))
+                            {
+                                split.Add(string.Empty);
+                            }
+                        }
+                        else
+                        {
+                            buf.Append(item[strIndex]);
+                        }
+                    }
+                }
+                
 
                 // Add any remainder, if we're under the limit.
                 if (buf.Length > 0 &&
@@ -756,7 +823,7 @@ namespace System.Management.Automation
 
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
-            List<string> results = new List<string>();
+            var results = new List<string>();
 
             foreach (string item in content)
             {

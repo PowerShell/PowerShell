@@ -64,6 +64,31 @@ Describe "Split Operator" -Tags CI {
             $res[1] | Should -Be ""
         }
 
+        It "Binary split operator with predicate can work with negative numbers" {
+            $res = "a b c d" -split {$_ -like ' '},-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "d"
+            $res[1] | Should -Be "a b c"
+
+            $res = "a b c d" -split {$_ -like ' '},-4
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "d"
+            $res[1] | Should -Be "c"
+            $res[2] | Should -Be "b"
+            $res[3] | Should -Be "a"
+
+            $res = "a b c d" -split {$_ -like ' '},-8
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "d"
+            $res[1] | Should -Be "c"
+            $res[2] | Should -Be "b"
+            $res[3] | Should -Be "a"
+
+            $res = " " -split {$_ -like ' '},-4
+            $res.count | Should -Be 1
+            $res[0] | Should -Be ""
+        }
+
         It "Binary split operator can work with regex expression" {
             $res = "a2b3c4d" -split '\d+',2
             $res.count | Should -Be 2
