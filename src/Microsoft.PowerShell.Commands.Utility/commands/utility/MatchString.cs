@@ -1306,7 +1306,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (Match matchObject in mc)
                         {
-                            WriteObject(matchObject.Value);
+                            WriteObject(matchObject.Value, true);
                         }
                         break;
                     }
