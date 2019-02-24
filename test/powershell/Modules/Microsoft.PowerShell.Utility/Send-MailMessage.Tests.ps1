@@ -112,12 +112,12 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
 
     It @ItArgs {
         $body = "Greetings from me."
-        $subject = "Test message"
         Send-MailMessage -To $address -From $address -ReplyTo $address -Body $body -SmtpServer 127.0.0.1
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
+        $mail.To.Count | Should -BeExactly 1It
+        $body = "Greetings from me."
         $mail.To[0] | Should -BeExactly $address
         $mail.ReplyTo.Count | Should -BeExactly 1
         $mail.ReplyTo[0] | Should -BeExactly $address
