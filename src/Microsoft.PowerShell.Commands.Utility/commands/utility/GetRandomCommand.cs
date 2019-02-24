@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
                 // (all permutations with the same probability)
                 // O(n) time
                 int n = _chosenListItems.Count;
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < n - 1; i++)
                 {
                     // randomly choose an item to go into the i-th position
                     int j = this.Generator.Next(i, n);
@@ -530,12 +530,9 @@ namespace Microsoft.PowerShell.Commands
                         _chosenListItems[i] = _chosenListItems[j];
                         _chosenListItems[j] = tmp;
                     }
-                }
 
-                // output all items
-                foreach (object chosenItem in _chosenListItems)
-                {
-                    this.WriteObject(chosenItem);
+                    // output item. From this point, _chosenListItems[0...i] will not be shuffled any further
+                    this.WriteObject(_chosenListItems[i]);
                 }
             }
         }
