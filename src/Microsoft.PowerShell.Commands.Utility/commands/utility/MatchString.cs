@@ -1049,6 +1049,12 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating if the search contains the specified characters.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter OnlyMatching { get; set; }
+
+        /// <summary>
         /// Gets or sets files to include. Files matching
         /// one of these (if specified) are included.
         /// </summary>
@@ -1274,6 +1280,43 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var res = List ? null : Boxed.False;
                     WriteObject(res);
+                }
+            }
+            else if (OnlyMatching)
+            {
+                string line;
+                if (_inputObject.BaseObject is MatchInfo matchInfo)
+                {
+                    line = matchInfo.Line;
+                }
+                else 
+                {
+                    line = LanguagePrimitives.ConvertTo<string>(_inputObject.BaseObject);
+                }
+                
+                foreach (Regex regexValue in _regexPattern)
+                {
+                    if (AllMatches)
+                    {
+                        MatchCollection mc = regexValue.Matches(line);
+                        if (mc.Count <= 0)
+                        {
+                            continue;
+                        }
+
+                        foreach (Match matchObject in mc)
+                        {
+                            WriteObject(matchObject.Value);
+                        }
+                        break;
+                    }
+
+                    Match match = regexValue.Match(line);
+                    if (match.Success) 
+                    {
+                        WriteObject(match.Value);
+                        break;
+                    } 
                 }
             }
             else
