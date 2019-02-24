@@ -124,38 +124,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// BeginProcessing override.
         /// </summary>
-        protected override
-        void
-        BeginProcessing()
+        protected override void BeginProcessing()
         {
             CreateFileStream();
         }
 
         /// <summary>
         /// </summary>
-        protected override
-        void
-        ProcessRecord()
+        protected override void ProcessRecord()
         {
-            if (_serializer != null)
-            {
-                _serializer.Serialize(InputObject);
-                _xw.Flush();
-            }
+            SerializeObject();
         }
 
         /// <summary>
         /// </summary>
-        protected override
-        void
-        EndProcessing()
+        protected override void EndProcessing()
         {
-            if (_serializer != null)
-            {
-                _serializer.Done();
-                _serializer = null;
-            }
-
             CleanUp();
         }
 
@@ -163,7 +147,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            base.StopProcessing();
             _serializer.Stop();
         }
 
@@ -229,10 +212,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private
-        void
-        CleanUp()
+        private void CleanUp()
         {
+            if (_serializer != null)
+            {
+                _serializer.Done();
+                _serializer = null;
+            }
+
             if (_fs != null)
             {
                 if (_xw != null)
@@ -243,6 +230,14 @@ namespace Microsoft.PowerShell.Commands
 
                 _fs.Dispose();
                 _fs = null;
+            }
+        }
+
+        private void SerializeObject() {
+            if (_serializer != null)
+            {
+                _serializer.Serialize(InputObject);
+                _xw.Flush();
             }
         }
 
@@ -258,9 +253,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Public dispose method.
         /// </summary>
-        public
-        void
-        Dispose()
+        public void Dispose()
         {
             if (_disposed == false)
             {
@@ -372,6 +365,13 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Parameters
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Parameter()]
+        [ValidateSet("CliXml")]
+        public string Format { get; set; }
+
+        /// <summary>
         /// Depth of serialization.
         /// </summary>
         [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
@@ -427,8 +427,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
-                WriteObject("<Objects>");
+                if (string.IsNullOrEmpty(Format))
+                {
+                    WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
+                    WriteObject("<Objects>");
+                }
             }
         }
 
@@ -437,31 +440,40 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            switch(Format)
             {
-                CreateMemoryStream();
+                case "CliXml":
+                    SerializeObject();
+                    break;
 
-                if (_serializer != null)
-                    _serializer.SerializeAsStream(InputObject);
+                default:
+                    if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+                    {
+                        CreateMemoryStream();
 
-                if (_serializer != null)
-                {
-                    _serializer.DoneAsStream();
-                    _serializer = null;
-                }
-                // Loading to the XML Document
-                _ms.Position = 0;
-                StreamReader read = new StreamReader(_ms);
-                string data = read.ReadToEnd();
-                WriteObject(data);
+                        if (_serializer != null)
+                            _serializer.SerializeAsStream(InputObject);
 
-                // Cleanup
-                CleanUp();
-            }
-            else
-            {
-                if (_serializer != null)
-                    _serializer.Serialize(InputObject);
+                        if (_serializer != null)
+                        {
+                            _serializer.DoneAsStream();
+                            _serializer = null;
+                        }
+                        // Loading to the XML Document
+                        _ms.Position = 0;
+                        StreamReader read = new StreamReader(_ms);
+                        string data = read.ReadToEnd();
+                        WriteObject(data);
+
+                        // Cleanup
+                        CleanUp();
+                    }
+                    else
+                    {
+                        if (_serializer != null)
+                            _serializer.Serialize(InputObject);
+                    }
+                    break;
             }
         }
 
@@ -475,6 +487,12 @@ namespace Microsoft.PowerShell.Commands
                 _serializer = null;
             }
 
+            if (_cli_serializer != null)
+            {
+                _cli_serializer.Done();
+                _cli_serializer = null;
+            }
+
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 WriteObject("</Objects>");
@@ -482,8 +500,9 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Loading to the XML Document
-                _ms.Position = 0;
-                if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
+                if (_ms != null)
+                    _ms.Position = 0;
+                if (As.Equals("Document", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(Format)) 
                 {
                     // this is a trusted xml doc - the cmdlet generated the doc into a private memory stream
                     XmlDocument xmldoc = new XmlDocument();
@@ -496,6 +515,11 @@ namespace Microsoft.PowerShell.Commands
                     string data = read.ReadToEnd();
                     WriteObject(data);
                 }
+                else if (Format == "CliXml")
+                {
+                    // needed this for some reason
+                    WriteObject("</Objs>");
+                }
             }
 
             // Cleaning up
@@ -507,7 +531,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            _serializer.Stop();
+            if (string.IsNullOrEmpty(Format) && _serializer != null)
+                _serializer.Stop();
+            else if (Format == "CliXml" && _cli_serializer != null)
+                _cli_serializer.Stop();
         }
 
         #endregion Overrides
@@ -529,48 +556,85 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private MemoryStream _ms;
 
+        private StringWriter _sw;
+
+        private Serializer _cli_serializer;
+
         private void CreateMemoryStream()
         {
-            // Memory Stream
-            _ms = new MemoryStream();
-
-            // We use XmlTextWriter originally:
-            //     _xw = new XmlTextWriter(_ms, null);
-            //     _xw.Formatting = Formatting.Indented;
-            // This implies the following settings:
-            //  - Encoding is null -> use the default encoding 'UTF-8' when creating the writer from the stream;
-            //  - XmlTextWriter closes the underlying stream / writer when 'Close/Dispose' is called on it;
-            //  - Use the default indentation setting -- two space characters.
-            //
-            // We configure the same settings in XmlWriterSettings when refactoring this code to use XmlWriter:
-            //  - The default encoding used by XmlWriterSettings is 'UTF-8', but we call it out explicitly anyway;
-            //  - Set CloseOutput to true;
-            //  - Set Indent to true, and by default, IndentChars is two space characters.
-            //
-            // We use XmlWriterSettings.OmitXmlDeclaration instead of XmlWriter.WriteStartDocument because the
-            // xml writer created by calling XmlWriter.Create(Stream, XmlWriterSettings) will write out the xml
-            // declaration even without calling WriteStartDocument().
-
-            var xmlSettings = new XmlWriterSettings();
-            xmlSettings.Encoding = Encoding.UTF8;
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Indent = true;
-
-            if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(Format))
             {
-                // Omit xml declaration in this case because we will write out the declaration string in BeginProcess.
-                xmlSettings.OmitXmlDeclaration = true;
-            }
+                // Memory Stream
+                _ms = new MemoryStream();
 
-            _xw = XmlWriter.Create(_ms, xmlSettings);
+                // We use XmlTextWriter originally:
+                //     _xw = new XmlTextWriter(_ms, null);
+                //     _xw.Formatting = Formatting.Indented;
+                // This implies the following settings:
+                //  - Encoding is null -> use the default encoding 'UTF-8' when creating the writer from the stream;
+                //  - XmlTextWriter closes the underlying stream / writer when 'Close/Dispose' is called on it;
+                //  - Use the default indentation setting -- two space characters.
+                //
+                // We configure the same settings in XmlWriterSettings when refactoring this code to use XmlWriter:
+                //  - The default encoding used by XmlWriterSettings is 'UTF-8', but we call it out explicitly anyway;
+                //  - Set CloseOutput to true;
+                //  - Set Indent to true, and by default, IndentChars is two space characters.
+                //
+                // We use XmlWriterSettings.OmitXmlDeclaration instead of XmlWriter.WriteStartDocument because the
+                // xml writer created by calling XmlWriter.Create(Stream, XmlWriterSettings) will write out the xml
+                // declaration even without calling WriteStartDocument().
 
-            if (Depth == 0)
-            {
-                _serializer = new CustomSerialization(_xw, NoTypeInformation);
+                var xmlSettings = new XmlWriterSettings();
+                xmlSettings.Encoding = Encoding.UTF8;
+                xmlSettings.CloseOutput = true;
+                xmlSettings.Indent = true;
+
+                if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Omit xml declaration in this case because we will write out the declaration string in BeginProcess.
+                    xmlSettings.OmitXmlDeclaration = true;
+                }
+
+                _xw = XmlWriter.Create(_ms, xmlSettings);
+
+                if (Depth == 0)
+                {
+                    _serializer = new CustomSerialization(_xw, NoTypeInformation);
+                }
+                else
+                {
+                    _serializer = new CustomSerialization(_xw, NoTypeInformation, Depth);
+                }
             }
             else
             {
-                _serializer = new CustomSerialization(_xw, NoTypeInformation, Depth);
+                // // create xml writer
+                _sw = new StringWriter();
+                XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                xmlSettings.CloseOutput = true;
+                xmlSettings.Encoding = _sw.Encoding;
+                xmlSettings.Indent = true;
+                xmlSettings.OmitXmlDeclaration = true;
+                _xw = XmlWriter.Create(_sw, xmlSettings);
+                if (Depth == 0)
+                {
+                    _cli_serializer = new Serializer(_xw);
+                }
+                else
+                {
+                    _cli_serializer = new Serializer(_xw, Depth, true);
+                }
+            }
+        }
+
+        private void SerializeObject() {
+            if (_cli_serializer != null)
+            {
+                _cli_serializer.Serialize(InputObject);
+                _xw.Flush();
+                var data = _sw.ToString();
+                WriteObject(data);
+                CleanUp();
             }
         }
 
@@ -589,6 +653,11 @@ namespace Microsoft.PowerShell.Commands
 
                 _ms.Dispose();
                 _ms = null;
+            }
+            if (_cli_serializer == null && _xw != null)
+            {
+                _xw.Dispose();
+                _xw = null;
             }
         }
 
