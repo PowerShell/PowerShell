@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                     string errorText = ProcessResources.NoProcessFoundForGivenName;
                     string errorName = "NoProcessFoundForGivenName";
 
-                    if(int.TryParse(pattern, out int x) && x > 0)
+                    if (int.TryParse(pattern, out int x) && x > 0)
                     {
                         errorText = ProcessResources.RecommendIdTagForGivenName;
                         errorName = "RecommendIdTagForGivenName";
