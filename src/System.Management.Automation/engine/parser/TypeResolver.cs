@@ -379,7 +379,18 @@ namespace System.Management.Automation.Language
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
             var isAssembliesExplicitlyPassedIn = assemblies != null;
 
-            result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            if (typeResolutionState.aliases.TryGetValue(typeName.FullName, out ITypeName typeNameAlias))
+            {
+                result = CallResolveTypeNameWorkerHelper((TypeName)typeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+                if (result != null)
+                {
+                    TypeCache.Add(typeNameAlias, typeResolutionState, result);
+                }
+            }
+            else
+            {
+                result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            }
 
             if (result != null)
             {
@@ -393,7 +404,7 @@ namespace System.Management.Automation.Language
                 {
                     var newTypeNameToSearch = ns + "." + typeName.Name;
                     newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ??
-                                          newTypeNameToSearch;
+                                            newTypeNameToSearch;
                     var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
 #if CORECLR
                     if (!isAssembliesExplicitlyPassedIn)
@@ -519,16 +530,18 @@ namespace System.Management.Automation.Language
     {
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Utils.EmptyArray<Assembly>();
+        internal static readonly Dictionary<string, ITypeName> emptyAliases = new Dictionary<string, ITypeName>() { };
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
         internal readonly Assembly[] assemblies;
+        internal readonly Dictionary<string, ITypeName> aliases;
         private readonly HashSet<string> _typesDefined;
         internal readonly int genericArgumentCount;
         internal readonly bool attribute;
 
         private TypeResolutionState()
-            : this(systemNamespace, emptyAssemblies)
+            : this(systemNamespace, emptyAssemblies, emptyAliases)
         {
         }
 
@@ -555,9 +568,16 @@ namespace System.Management.Automation.Language
         }
 
         internal TypeResolutionState(string[] namespaces, Assembly[] assemblies)
+            : this(namespaces, assemblies, null)
+        {
+        }
+
+
+        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies, Dictionary<string, ITypeName> aliases)
         {
             this.namespaces = namespaces ?? systemNamespace;
             this.assemblies = assemblies ?? emptyAssemblies;
+            this.aliases = aliases ?? emptyAliases;
             _typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -565,6 +585,7 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.aliases = other.aliases;
             _typesDefined = other._typesDefined;
             this.genericArgumentCount = genericArgumentCount;
             this.attribute = attribute;
@@ -574,6 +595,7 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.aliases = other.aliases;
             _typesDefined = typesDefined;
             this.genericArgumentCount = other.genericArgumentCount;
             this.attribute = other.attribute;
@@ -631,6 +653,9 @@ namespace System.Management.Automation.Language
             if (this.assemblies.Length != other.assemblies.Length)
                 return false;
 
+            if (this.aliases.Count != other.aliases.Count)
+                return false;
+
             for (int i = 0; i < namespaces.Length; i++)
             {
                 if (!this.namespaces[i].Equals(other.namespaces[i], StringComparison.OrdinalIgnoreCase))
@@ -640,6 +665,15 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < assemblies.Length; i++)
             {
                 if (!this.assemblies[i].Equals(other.assemblies[i]))
+                    return false;
+            }
+
+            foreach (string key in aliases.Keys)
+            {
+                if (!other.aliases.ContainsKey(key))
+                    return false;
+
+                if (!this.aliases[key].Equals(other.aliases[key]))
                     return false;
             }
 
@@ -661,6 +695,11 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < assemblies.Length; i++)
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
+            }
+
+            foreach(KeyValuePair<string, ITypeName> kvp in aliases)
+            {
+                result = Utils.CombineHashCodes(result, kvp.GetHashCode());
             }
 
             foreach (var t in _typesDefined)

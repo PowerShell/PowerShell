@@ -1278,13 +1278,17 @@ namespace System.Management.Automation.Language
         {
             bool usingKindSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace ||
                                       usingStatementAst.UsingStatementKind == UsingStatementKind.Assembly ||
-                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module;
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module ||
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Type;
             if (!usingKindSupported ||
                 usingStatementAst.Alias != null)
             {
-                _parser.ReportError(usingStatementAst.Extent,
-                    nameof(ParserStrings.UsingStatementNotSupported),
-                    ParserStrings.UsingStatementNotSupported);
+                if (usingStatementAst.UsingStatementKind != UsingStatementKind.Type)
+                {
+                    _parser.ReportError(usingStatementAst.Extent,
+                        nameof(ParserStrings.UsingStatementNotSupported),
+                        ParserStrings.UsingStatementNotSupported);
+                }
             }
 
             return AstVisitAction.Continue;
