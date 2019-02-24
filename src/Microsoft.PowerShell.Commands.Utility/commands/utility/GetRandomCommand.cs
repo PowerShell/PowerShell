@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
                 // (all permutations with the same probability)
                 // O(n) time
                 int n = _chosenListItems.Count;
-                for (int i = 0; i < n - 1; i++)
+                for (int i = 0; i < n; i++)
                 {
                     // randomly choose an item to go into the i-th position
                     int j = this.Generator.Next(i, n);
