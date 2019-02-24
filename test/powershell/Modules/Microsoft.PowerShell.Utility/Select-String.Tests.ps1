@@ -72,9 +72,12 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an array of matching strings with the first match highlighted when Emphasize is used" {
-		If ($IsWindows) {
+		if ($IsWindows)
+		{
 			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
-		} Else {
+		}
+		else
+		{
 			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
 		}
 	}

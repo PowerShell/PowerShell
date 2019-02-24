@@ -97,17 +97,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stores the starting index of each match within the line.
         /// </summary>
-        private readonly List<int> matchIndexes;
+        private readonly List<int> _matchIndexes;
 
         /// <summary>
         /// Stores the length of each match within the line.
         /// </summary>
-        private readonly List<int> matchLengths;
+        private readonly List<int> _matchLengths;
 
         /// <summary>
         /// Stores a values indicating whether or not the terminal supports VT.
         /// </summary>
-        private readonly bool? supportsVirtualTerminal;
+        private readonly bool? _supportsVirtualTerminal;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchInfo"/> class.
@@ -1623,8 +1623,8 @@ namespace Microsoft.PowerShell.Commands
             int patternIndex = 0;
             matchResult = null;
 
-            List<int> indexes = new List<int>();
-            List<int> lengths = new List<int>();
+            var indexes = new List<int>();
+            var lengths = new List<int>();
 
             if (!SimpleMatch)
             {
