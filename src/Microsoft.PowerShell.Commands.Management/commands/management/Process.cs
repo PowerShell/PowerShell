@@ -189,27 +189,21 @@ namespace Microsoft.PowerShell.Commands
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    if(int.TryParse(pattern, out int x) && x>0){
-                        WriteNonTerminatingError(
-                            pattern,
-                            0,
-                            pattern,
-                            null,
-                            ProcessResources.RecommendIdTagForGivenName,
-                            "RecommendIdTagForGivenName",
-                            ErrorCategory.ObjectNotFound);
-                    }
-                    else
+                    string val = "NoProcessFoundForGivenName";
+                    string errorText = ProcessResources.NoProcessFoundForGivenName;
+                    if(int.TryParse(pattern, out int x) && x>0)
                     {
-                        WriteNonTerminatingError(
-                            pattern,
-                            0,
-                            pattern,
-                            null,
-                            ProcessResources.NoProcessFoundForGivenName,
-                            "NoProcessFoundForGivenName",
-                            ErrorCategory.ObjectNotFound);
+                        errorText = ProcessResources.RecommendIdTagForGivenName;
+                        val = "RecommendIdTagForGivenName";
                     }
+                    WriteNonTerminatingError(
+                        pattern,
+                        0,
+                        pattern,
+                        null,
+                        errorText,
+                        val,
+                        ErrorCategory.ObjectNotFound);
                 }
             }
         }
