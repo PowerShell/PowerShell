@@ -114,18 +114,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
             }
-//**
 
             string action = StringUtil.Format(Modules.CreatingModuleManifestFile, catalogFilePath);
 
-            if (ShouldProcess(catalogFilePath, action)) //if whatif is not specified
+            if (ShouldProcess(catalogFilePath, action))
             {
-                //do somthing here???
                 PerformAction(paths, catalogFilePath);
             }
-            //else{
-                //call message
-            //}
+
         }
 
         /// <summary>
