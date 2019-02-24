@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         public string Line { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets whether the matched portion of the string is highlighted.
+        /// Gets or sets a value indicating whether the matched portion of the string is highlighted.
         /// </summary>
         /// <value>Whether the matched portion of the string is highlighted with asterisks.</value>
         public bool Emphasize { get; set; }
@@ -97,25 +97,39 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stores the starting index of each match within the line.
         /// </summary>
-        private readonly List<int> MatchIndexes;
+        private readonly List<int> matchIndexes;
+
         /// <summary>
         /// Stores the length of each match within the line.
         /// </summary>
-        private readonly List<int> MatchLengths;
+        private readonly List<int> matchLengths;
 
         /// <summary>
-        /// Default constructor.
+        /// Stores a values indicating whether or not the terminal supports VT.
         /// </summary>
-        public MatchInfo(){
+        private readonly bool? supportsVirtualTerminal;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class.
+        /// </summary>
+        public MatchInfo()
+        {
         }
+
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class.
         /// </summary>
-        public MatchInfo(bool isR, List<int> matchIndexes, List<int> matchLengths, bool emphasize){
+        /// <param name="isRaw">Used for implementing -Raw.</param>
+        /// <param name="matchIndexes">Sets the matchIndexes.</param>
+        /// <param name="matchLengths">Sets the matchLengths.</param>
+        /// <param name="emphasize">Used for implementing -Emphasize.</param>
+        /// <param name="vt">Sets a value indicating whether or not virtual terminal is supported.</param>
+        public MatchInfo(bool isRaw, List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool? vt)
+        {
             this.Emphasize = emphasize;
-            this.MatchIndexes = matchIndexes;
-            this.MatchLengths = matchLengths;
+            this.matchIndexes = matchIndexes;
+            this.matchLengths = matchLengths;
+            this.supportsVirtualTerminal = vt;
         }
 
         /// <summary>
@@ -172,8 +186,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets context for the match, or null if -context was not specified.
         /// </summary>
         public MatchInfoContext Context { get; set; }
-
-        
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
@@ -251,13 +263,28 @@ namespace Microsoft.PowerShell.Commands
             string modifiedLine;
             if (Emphasize)
             {
-                StringBuilder sb = new StringBuilder(Line);
-                for (int i = 0; i < MatchIndexes.Count; i++)
+                string open;
+                string close;
+
+                if (supportsVirtualTerminal ?? false)
                 {
-                    int offset = 2 * i;
-                    sb.Insert(MatchIndexes[i]+offset, "*");
-                    sb.Insert(MatchIndexes[i]+MatchLengths[i]+offset+1, "*");
+                    open = "\u001b[31m";
+                    close = "\u001b[0m";
                 }
+                else
+                {
+                    open = "*";
+                    close = "*";
+                }
+
+                StringBuilder sb = new StringBuilder(Line);
+                for (int i = 0; i < matchIndexes.Count; i++)
+                {
+                    int offset = open.Length + close.Length;
+                    sb.Insert(matchIndexes[i] + (i * offset), open);
+                    sb.Insert(matchIndexes[i] + matchLengths[i] + (i * offset + open.Length), close);
+                }
+
                 modifiedLine = sb.ToString();
             }
             else
@@ -1615,10 +1642,12 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
-                            foreach (Match match in matches) {
+                            foreach (Match match in matches)
+                            {
                                 indexes.Add(match.Index);
                                 lengths.Add(match.Length);
                             }
+
                             gotMatch = true;
                         }
                     }
@@ -1704,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(false, indexes, lengths, Emphasize)
+                matchResult = new MatchInfo(false, indexes, lengths, Emphasize, Host?.UI.SupportsVirtualTerminal)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,
