@@ -1063,7 +1063,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SimpleMatch { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating if an undecorated string should be outputted.
+        /// Gets or sets a value indicating whether Select-String should emit strings with matches as plain strings rather than MatchInfo objects.
         /// If not (default) output a decorated string.
         /// </summary>
         [Parameter]
