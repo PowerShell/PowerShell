@@ -242,9 +242,12 @@ namespace Microsoft.PowerShell.Commands
             // enable context-tracking.
             if (Context == null)
             {
-                if(isRaw){
+                if(isRaw)
+                {
                     return Line;
-                }else{
+                }
+                else
+                {
                     return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
                 }
                 
@@ -257,26 +260,34 @@ namespace Microsoft.PowerShell.Commands
             foreach (string contextLine in Context.DisplayPreContext)
             {
                 
-                if(!isRaw){
-                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
-                }else{
+                if(isRaw)
+                {
                     lines.Add(contextLine);
+                }
+                else
+                {
+                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
                 }
             }
 
-            if(!isRaw){
-                lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
-            }else{
+            if(isRaw)
+            {
                 lines.Add(Line);
             }
+            else
+            {
+                lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            }
             
- 
             foreach (string contextLine in Context.DisplayPostContext)
             {
-                if(!isRaw){
-                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
-                }else{
+                if(isRaw)
+                {
                     lines.Add(contextLine);
+                }
+                else
+                {
+                    lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
                 }
                 
             }
@@ -1063,8 +1074,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SimpleMatch { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating if an undecorated string should be outputted.
-        /// If not (default) output a decorated string.
+        /// If true, emits plain strings. If false, emits MatchInfo objects.
         /// </summary>
         [Parameter]
         public SwitchParameter Raw { get; set; }
@@ -1657,7 +1667,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(Raw, true, 0, 0)
+                matchResult = new MatchInfo(Raw, useColor:true, matchIndex:0, matchLength:0)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,
