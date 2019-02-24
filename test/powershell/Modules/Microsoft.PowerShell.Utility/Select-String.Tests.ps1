@@ -131,7 +131,7 @@ Describe "Select-String" -Tags "CI" {
 	It "Should return an undecorated strings where 'text' is found in testfile1 when raw is used " {
 	    $expected1 = "This is a text string, and another string"
 
-	    Select-String text $testInputFile -Raw| Should -Be $expected1
+	    Select-String text $testInputFile -Raw | Should -Be $expected1
 
 	}
 
@@ -140,9 +140,9 @@ Describe "Select-String" -Tags "CI" {
 	    $expectedLineBefore = "This is the third line"
 	    $expectedLineAfter  = "This is the fourth line"
 
-	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLine
-	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLineBefore
-	    Select-String third $testInputFile -Context 1 -Raw| Should -Match $expectedLineAfter
+	    Select-String third $testInputFile -Context 1 -Raw | Should -Match $expectedLine
+	    Select-String third $testInputFile -Context 1 -Raw | Should -Match $expectedLineBefore
+	    Select-String third $testInputFile -Context 1 -Raw | Should -Match $expectedLineAfter
 	}
 
 	It "Should return empty because 'for' is not found in testfile1 " {

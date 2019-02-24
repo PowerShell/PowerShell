@@ -78,14 +78,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public MatchInfo(){
-
+        public MatchInfo()
+        {
         }
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MatchInfo(bool isR, bool color, int matchIndex, int matchLength){
-            isRaw = isR;
+        internal MatchInfo(bool useRaw, bool useColor, int matchIndex, int matchLength)
+        {
+            isRaw = useRaw;
         }
         private static readonly string s_inputStream = "InputStream";
 
@@ -107,10 +108,6 @@ namespace Microsoft.PowerShell.Commands
         /// <value>The text of the matching line.</value>
         public string Line { get; set; } = string.Empty;
 
-        
-        
-
-
         /// <summary>
         /// Gets the base name of the file containing the matching line.
         /// <remarks>
@@ -119,8 +116,6 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         /// </summary>
         /// <value>The file name.</value>
-
-        
 
         public string Filename
         {
@@ -1662,11 +1657,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(Raw, true, 0, 0);
-                              
-                matchResult.IgnoreCase = !CaseSensitive;
-                matchResult.Line = operandString;
-                matchResult.Pattern = Pattern[patternIndex];
+                matchResult = new MatchInfo(Raw, true, 0, 0)
+                {
+                    IgnoreCase = !CaseSensitive,
+                    Line = operandString,
+                    Pattern = Pattern[patternIndex]
+                };
+                
 
                               
 
