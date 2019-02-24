@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether the matched portion of the string is highlighted.
         /// </summary>
         /// <value>Whether the matched portion of the string is highlighted with asterisks.</value>
-        public bool Color { get; set; }
+        public bool Emphasize { get; set; }
 
         /// <summary>
         /// Stores the starting index of each match within the line.
@@ -112,8 +112,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MatchInfo(bool isR, List<int> matchIndexes, List<int> matchLengths, bool color){
-            this.Color = color;
+        public MatchInfo(bool isR, List<int> matchIndexes, List<int> matchLengths, bool emphasize){
+            this.Emphasize = emphasize;
             this.MatchIndexes = matchIndexes;
             this.MatchLengths = matchLengths;
         }
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
             string modifiedLine;
-            if (Color)
+            if (Emphasize)
             {
                 StringBuilder sb = new StringBuilder(Line);
                 for (int i = 0; i < MatchIndexes.Count; i++)
@@ -1115,7 +1115,7 @@ namespace Microsoft.PowerShell.Commands
         /// surrounding it with asterisks.
         /// </summary>
         [Parameter]
-        public SwitchParameter Color { get; set; }
+        public SwitchParameter Emphasize { get; set; }
 
         /// <summary>
         /// Gets or sets files to include. Files matching
@@ -1704,7 +1704,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(false, indexes, lengths, Color)
+                matchResult = new MatchInfo(false, indexes, lengths, Emphasize)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,

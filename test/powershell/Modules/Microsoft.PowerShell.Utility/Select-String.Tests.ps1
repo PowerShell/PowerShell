@@ -71,16 +71,16 @@ Describe "Select-String" -Tags "CI" {
 	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -BeExactly "hello", "Hello"
 	}
 
-	it "Should return an array of matching strings with the first match highlighted when Color is used" {
-		$testinputone | Select-String -Pattern "l" -Color | Should -Be "he*l*lo", "he*l*lo"
+	it "Should return an array of matching strings with the first match highlighted when Emphasize is used" {
+		$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
 	}
 
-	it "Should return an array of matching strings with all matches highlighted when Color and AllMatch is used" {
-		$testinputone | Select-String -Pattern "l" -Color -AllMatch | Should -Be "he*l**l*o", "he*l**l*o"
+	it "Should return an array of matching strings with all matches highlighted when Emphasize and AllMatch is used" {
+		$testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Should -Be "he*l**l*o", "he*l**l*o"
 	}
 
-	it "Should return an array of matching strings with the first match highlighted when Color and SimpleMatch is used" {
-		$testinputone | Select-String -Pattern "l" -Color -SimpleMatch | Should -Be "he*l*lo", "he*l*lo"
+	it "Should return an array of matching strings with the first match highlighted when Emphasize and SimpleMatch is used" {
+		$testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Should -Be "he*l*lo", "he*l*lo"
 	}
 
 	it "Should return the same as NotMatch" {
