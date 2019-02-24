@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class MatchInfo
     {
-        private bool isRaw; 
+        private readonly bool _isRaw; 
 
         /// <summary>
         /// Default constructor.
