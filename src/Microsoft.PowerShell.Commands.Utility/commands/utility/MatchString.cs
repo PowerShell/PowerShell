@@ -94,7 +94,13 @@ namespace Microsoft.PowerShell.Commands
         /// <value>Whether the matched portion of the string is highlighted with asterisks.</value>
         public bool Color { get; set; }
 
+        /// <summary>
+        /// Stores the starting index of each match within the line.
+        /// </summary>
         private readonly List<int> MatchIndexes;
+        /// <summary>
+        /// Stores the length of each match within the line.
+        /// </summary>
         private readonly List<int> MatchLengths;
 
         /// <summary>
