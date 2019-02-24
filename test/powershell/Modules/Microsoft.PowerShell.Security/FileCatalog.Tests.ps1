@@ -409,6 +409,13 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "*.psd1","UserConfigProviderModVersion2.psm1","*ModVersion1.schema.mof"
             $result | Should -Be "Valid"
         }
+
+        It "TestCatalogWhatIfForNewFileCatalog"{
+            $script:catalogPath = "$env:TEMP\TestCatalogWhatIfForNewFileCatalog.cat"
+            New-FileCatalog -CatalogFilePath $script:catalogPath -WhatIf
+            $script:catalogPath | Should -Not -Exist
+        }
+
     }
 }
 
