@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(false, indexes, lengths, Emphasize, Host?.UI.SupportsVirtualTerminal)
+                matchResult = new MatchInfo(false, indexes, lengths, Emphasize.IsPresent, Host?.UI.SupportsVirtualTerminal)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,

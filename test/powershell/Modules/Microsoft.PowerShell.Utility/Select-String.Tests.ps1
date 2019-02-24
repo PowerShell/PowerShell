@@ -72,15 +72,27 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an array of matching strings with the first match highlighted when Emphasize is used" {
-		$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
+		If ($IsWindows) {
+			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
+		} Else {
+			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
+		}
 	}
 
 	it "Should return an array of matching strings with all matches highlighted when Emphasize and AllMatch is used" {
-		$testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Should -Be "he*l**l*o", "he*l**l*o"
+		If ($IsWindows) {
+			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l**l*o", "he*l**l*o"
+		} Else {
+			$testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Should -Be "he[31ml[0m[31ml[0mo", "he[31ml[0m[31ml[0mo"
+		}
 	}
 
 	it "Should return an array of matching strings with the first match highlighted when Emphasize and SimpleMatch is used" {
-		$testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Should -Be "he*l*lo", "he*l*lo"
+		If ($IsWindows) {
+			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
+		} Else {
+			$testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
+		}
 	}
 
 	it "Should return the same as NotMatch" {
