@@ -381,10 +381,14 @@ namespace System.Management.Automation.Language
 
             if (typeResolutionState.aliases.TryGetValue(typeName.FullName, out ITypeName typeNameAlias))
             {
-                result = CallResolveTypeNameWorkerHelper((TypeName)typeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
-                if (result != null)
+                var newTypeNameAlias = typeNameAlias as TypeName;
+                if (newTypeNameAlias != null)
                 {
-                    TypeCache.Add(typeNameAlias, typeResolutionState, result);
+                    result = CallResolveTypeNameWorkerHelper(newTypeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+                    if (result != null)
+                    {
+                        TypeCache.Add(newTypeNameAlias, typeResolutionState, result);
+                    }
                 }
             }
             else
@@ -530,7 +534,7 @@ namespace System.Management.Automation.Language
     {
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Utils.EmptyArray<Assembly>();
-        internal static readonly Dictionary<string, ITypeName> emptyAliases = new Dictionary<string, ITypeName>() { };
+        internal static readonly Dictionary<string, ITypeName> emptyAliases = new Dictionary<string, ITypeName> { };
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
@@ -654,7 +658,9 @@ namespace System.Management.Automation.Language
                 return false;
 
             if (this.aliases.Count != other.aliases.Count)
+            {
                 return false;
+            }
 
             for (int i = 0; i < namespaces.Length; i++)
             {
@@ -671,10 +677,14 @@ namespace System.Management.Automation.Language
             foreach (string key in aliases.Keys)
             {
                 if (!other.aliases.ContainsKey(key))
+                {
                     return false;
+                }
 
                 if (!this.aliases[key].Equals(other.aliases[key]))
+                {
                     return false;
+                }
             }
 
             if (_typesDefined.Count != other._typesDefined.Count)
