@@ -158,8 +158,7 @@ Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledModules
     }
 
-    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Azure DevOps Linux build
-    It "Should install a module correctly to the required location with AllUsers scope" -Pending:$false {
+    It "Should install a module correctly to the required location with AllUsers scope" {
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -228,8 +227,7 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledScripts
     }
 
-    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Azure DevOps Linux build
-    It "Should install a script correctly to the required location with AllUsers scope" -Pending:$false {
+    It "Should install a script correctly to the required location with AllUsers scope" {
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
