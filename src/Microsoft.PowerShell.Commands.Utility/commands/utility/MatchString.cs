@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class MatchInfo
     {
-        private bool isRaw; 
+        private readonly bool _isRaw; 
 
         /// <summary>
         /// Default constructor.
@@ -81,13 +81,15 @@ namespace Microsoft.PowerShell.Commands
         public MatchInfo()
         {
         }
+
         /// <summary>
         /// Constructor.
         /// </summary>
         internal MatchInfo(bool useRaw, bool useColor, int matchIndex, int matchLength)
         {
-            isRaw = useRaw;
+            this._isRaw = useRaw;
         }
+
         private static readonly string s_inputStream = "InputStream";
 
         /// <summary>
@@ -242,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
             // enable context-tracking.
             if (Context == null)
             {
-                if(isRaw)
+                if(_isRaw)
                 {
                     return Line;
                 }
@@ -260,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string contextLine in Context.DisplayPreContext)
             {
                 
-                if(isRaw)
+                if(_isRaw)
                 {
                     lines.Add(contextLine);
                 }
@@ -270,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if(isRaw)
+            if(_isRaw)
             {
                 lines.Add(Line);
             }
@@ -281,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
             
             foreach (string contextLine in Context.DisplayPostContext)
             {
-                if(isRaw)
+                if(_isRaw)
                 {
                     lines.Add(contextLine);
                 }
