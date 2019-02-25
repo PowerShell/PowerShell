@@ -144,6 +144,8 @@ jobs:
       signConfigXml: '$(PackagePath)\NugetSigning.xml'
       inPathRoot: '$(PackagePath)'
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
 
   - powershell: |
       Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
