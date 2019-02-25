@@ -288,17 +288,17 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
+    $xUnitTestResultsFile = "$pwd\xUnitTestResults.xml"
 
-    Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
-    Push-Artifact -Path $ParallelXUnitTestResultsFile -name xunit
+    Update-TestResults -resultsFile $xUnitTestResultsFile
+    Push-Artifact -Path $xUnitTestResultsFile -name xunit
 
     if(!$SkipFailing.IsPresent)
     {
         # Fail the build, if tests failed
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     }
 }
 
@@ -768,10 +768,10 @@ function Invoke-LinuxTests
     }
 
     try {
-        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        $xUnitTestResultsFile = "$pwd/xUnitTestResults.xml"
+        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     } catch {
         $result = "FAIL"
         if (!$resultError)

@@ -13,6 +13,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
+        private const string PipeNameParameterSet = "PipePipeNameParameterSet";
         private const string PSHostProcessInfoParameterSet = "PSHostProcessInfoParameterSet";
 
         private const string NamedPipeRunspaceName = "PSAttachRunspace";
@@ -92,6 +94,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with `pwsh -CustomPipeName`.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = EnterPSHostProcessCommand.PipeNameParameterSet)]
+        public string CustomPipeName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Optional name of AppDomain in process to enter.  If not specified then the default AppDomain is used.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = EnterPSHostProcessCommand.ProcessParameterSet)]
@@ -129,25 +141,34 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check selected process for existence, and whether it hosts PowerShell.
+            Runspace namedPipeRunspace = null;
             switch (ParameterSetName)
             {
                 case ProcessIdParameterSet:
                     Process = GetProcessById(Id);
+                    VerifyProcess(Process);
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
                     break;
 
                 case ProcessNameParameterSet:
                     Process = GetProcessByName(Name);
+                    VerifyProcess(Process);
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
                     break;
 
                 case PSHostProcessInfoParameterSet:
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
+                    VerifyProcess(Process);
+
+                    // Create named pipe runspace for selected process and open.
+                    namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
+                    break;
+
+                case PipeNameParameterSet:
+                    VerifyPipeName(CustomPipeName);
+                    namedPipeRunspace = CreateNamedPipeRunspace(CustomPipeName);
                     break;
             }
-
-            VerifyProcess(Process);
-
-            // Create named pipe runspace for selected process and open.
-            Runspace namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
 
             // Set runspace prompt.  The runspace is closed on pop so we don't
             // have to reverse this change.
@@ -187,9 +208,20 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
+        private Runspace CreateNamedPipeRunspace(string customPipeName)
+        {
+            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(customPipeName);
+            return CreateNamedPipeRunspace(connectionInfo);
+        }
+
         private Runspace CreateNamedPipeRunspace(int procId, string appDomainName)
         {
             NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(procId, appDomainName);
+            return CreateNamedPipeRunspace(connectionInfo);
+        }
+
+        private Runspace CreateNamedPipeRunspace(NamedPipeConnectionInfo connectionInfo)
+        {
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
             RemoteRunspace remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable) as RemoteRunspace;
             remoteRunspace.Name = NamedPipeRunspaceName;
@@ -203,20 +235,40 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (RuntimeException e)
             {
-                string msgAppDomainName = (!string.IsNullOrEmpty(appDomainName)) ? appDomainName : NamedPipeUtils.DefaultAppDomainName;
-
                 // Unwrap inner exception for original error message, if any.
                 string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new RuntimeException(
-                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
-                                              msgAppDomainName, procId, errorMessage),
-                            e.InnerException),
-                        "EnterPSHostProcessCannotConnectToProcess",
-                        ErrorCategory.OperationTimeout,
-                        this));
+                if (connectionInfo.CustomPipeName != null)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToPipe,
+                                    connectionInfo.CustomPipeName,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToPipe",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
+                else
+                {
+                    string msgAppDomainName = connectionInfo.AppDomainName ?? NamedPipeUtils.DefaultAppDomainName;
+
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new RuntimeException(
+                                StringUtil.Format(
+                                    RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
+                                    msgAppDomainName,
+                                    connectionInfo.ProcessId,
+                                    errorMessage),
+                                e.InnerException),
+                            "EnterPSHostProcessCannotConnectToProcess",
+                            ErrorCategory.OperationTimeout,
+                            this));
+                }
             }
             finally
             {
@@ -342,6 +394,33 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidOperation,
                             this)
                         );
+            }
+        }
+
+        private void VerifyPipeName(string customPipeName)
+        {
+            // Named Pipes are represented differently on Windows vs macOS & Linux
+            var sb = new StringBuilder(customPipeName.Length);
+            if (Platform.IsWindows)
+            {
+                sb.Append(@"\\.\pipe\");
+            }
+            else
+            {
+                sb.Append(Path.GetTempPath()).Append("CoreFxPipe_");
+            }
+
+            sb.Append(customPipeName);
+
+            string pipePath = sb.ToString();
+            if (!File.Exists(pipePath))
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoNamedPipeFound, customPipeName)),
+                        "EnterPSHostProcessNoNamedPipeFound",
+                        ErrorCategory.InvalidArgument,
+                        this));
             }
         }
 
