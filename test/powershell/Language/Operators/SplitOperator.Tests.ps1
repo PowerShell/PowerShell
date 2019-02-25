@@ -67,26 +67,31 @@ Describe "Split Operator" -Tags CI {
         It "Binary split operator with predicate can work with negative numbers" {
             $res = "a b c d" -split {$_ -like ' '},-2
             $res.count | Should -Be 2
-            $res[0] | Should -Be "d"
-            $res[1] | Should -Be "a b c"
+            $res[0] | Should -Be "a b c"
+            $res[1] | Should -Be "d"
 
             $res = "a b c d" -split {$_ -like ' '},-4
             $res.count | Should -Be 4
-            $res[0] | Should -Be "d"
-            $res[1] | Should -Be "c"
-            $res[2] | Should -Be "b"
-            $res[3] | Should -Be "a"
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
 
             $res = "a b c d" -split {$_ -like ' '},-8
             $res.count | Should -Be 4
-            $res[0] | Should -Be "d"
-            $res[1] | Should -Be "c"
-            $res[2] | Should -Be "b"
-            $res[3] | Should -Be "a"
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
 
             $res = " " -split {$_ -like ' '},-4
             $res.count | Should -Be 1
             $res[0] | Should -Be ""
+
+            $res = "folder/path/to/file" -split {$_ -like '/'}, -2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "folder/path/to"
+            $res[1] | Should -Be "file"
         }
 
         It "Binary split operator can work with regex expression" {

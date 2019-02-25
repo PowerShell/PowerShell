@@ -781,9 +781,18 @@ namespace System.Management.Automation
                 {
                     split.Add(buf.ToString());
                 }
+<<<<<<< HEAD
 
                 results.AddRange(split);
+=======
+                if (limit < 0)
+                {
+                    split.Reverse();
+                }
+                ExtendList(results, split);
+>>>>>>> e17cee10f... [feature] changed the predicate case to return strings in correct order
             }
+            
 
             return results.ToArray();
         }
