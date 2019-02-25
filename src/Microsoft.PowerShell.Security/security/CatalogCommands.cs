@@ -12,7 +12,6 @@ using System.Management.Automation.Provider;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -115,13 +114,10 @@ namespace Microsoft.PowerShell.Commands
                 catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
             }
 
-            string action = StringUtil.Format(Modules.CreatingModuleManifestFile, catalogFilePath);
-
-            if (ShouldProcess(catalogFilePath, action))
+            if (ShouldProcess(catalogFilePath))
             {
                 PerformAction(paths, catalogFilePath);
             }
-
         }
 
         /// <summary>
