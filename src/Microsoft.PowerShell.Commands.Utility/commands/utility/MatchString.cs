@@ -283,6 +283,7 @@ namespace Microsoft.PowerShell.Commands
             
             foreach (string contextLine in Context.DisplayPostContext)
             {
+                
                 if(_isRaw)
                 {
                     lines.Add(contextLine);
