@@ -682,44 +682,44 @@ namespace System.Management.Automation
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                        dollarUnder: CharToString(item[strIndex]),
+                        dollarUnder: CharToString(item[cursor]),
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
-                        args: new object[] { item, strIndex });
+                        args: new object[] { item, cursor });
 
                     if (!LanguagePrimitives.IsTrue(predicateResult))
                     {
                         // if the current character is not a delimiter 
                         // then add it to the buffer
-                        buf.Append(item[strIndex]);
+                        buf.Append(item[cursor]);
                         continue;
                     }
                     
                     if (buf.Length != 0)
                     {
-                        split.Add(buf.ToString());
+                        split.Add((limit < 0)? ReverseStringUtility(buf.ToString()): buf.ToString());
                     }
 
                     buf.Clear();
 
-                    if (limit > 0 && split.Count >= (limit - 1))
+                    if (System.Math.Abs(limit) > 0 && split.Count >= (System.Math.Abs(limit) - 1))
                     {
-                        if ((strIndex + 1) < item.Length)
+                        if ((cursor + 1) < item.Length && limit > 0)
                         {
                             // We're one item below the limit. 
                             // If we have any string left add it
                             // else add an empty string
-                            split.Add(item.Substring(strIndex + 1));
+                            split.Add(item.Substring(cursor + 1));
                         }
-                        else
+                        else if((cursor + 1) < item.Length && limit < 0)
                         {
-                            split.Add(string.Empty);
+                            split.Add(item.Substring(0, cursor));
                         }
 
                         break;
                     }
                     
-                    if (strIndex == (item.Length - 1))
+                    if (cursor == (item.Length - 1) || cursor == 0)
                     {
                         // If this delimiter is at the end of the string,
                         // add an empty string to denote the item "after"
@@ -728,18 +728,23 @@ namespace System.Management.Automation
                     }
                     
                     // Add any remainder, if we're under the limit.
-                    if (buf.Length > 0 &&
-                        (limit <= 0 || split.Count < limit))
+                    if (buf.Length > 0 && split.Count <= System.Math.Abs(limit))
                     {
                         split.Add(buf.ToString());
                     }
-
-                    if (limit < 0)
-                    {
-                        split.Reverse();
-                    }
-                    results.AddRange(split);
                 }
+
+                if (buf.Length > 0)
+                {
+                    split.Add((limit < 0)? ReverseStringUtility(buf.ToString()): buf.ToString());
+                }
+
+                if (limit < 0)
+                {
+                    split.Reverse();
+                }
+
+                ExtendList(results, split);
             }
 
             return results.ToArray();
