@@ -3092,115 +3092,70 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 .SYNOPSIS
 Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
 
-.PARAMETER FxdPackagePath
+.PARAMETER Path
 Path to the folder containing the fxdependent package.
-
-.PARAMETER ReleaseTag
-Release tag to construct the package name.
 #>
-function New-DotnetSdkContainerFxdPackage {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+function ReduceFxDependentPackage
+{
+    [CmdletBinding()]
     param(
-        [Parameter(Mandatory)] $FxdPackagePath,
-
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [Parameter(Mandatory)] $ReleaseTag,
-
-        [Parameter(Mandatory)] $DestinationPath
+        [Parameter(Mandatory)] [string] $Path
     )
 
-    $Version = $ReleaseTag -Replace '^v'
-
-    if ($Environment.IsWindows) {
-        $basePackagePattern = "*$Version-win-fxdependent.zip"
-        $packageNamePlatform = 'win'
-        $packageNameExtension = '.zip'
-    } else {
-        $basePackagePattern = "*$Version-linux-x64-fxdependent.tar.gz"
-        $packageNamePlatform = 'linux-x64'
-        $packageNameExtension = '.tar.gz'
+    if (-not (Test-Path $path))
+    {
+        throw "Path not found: $Path"
     }
 
-    Write-Log "basePackagePattern: $basePackagePattern"
-    Write-Log "fxdPackagePath: $FxdPackagePath"
+    ## Remove unnecessary files
+    $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+    Get-ChildItem $Path -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
 
-    $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
-    $destinationPackageFullName = Join-Path $DestinationPath $packageName
+    $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
 
-    ## Get fxdependent package path
-    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern | Select-Object -First 1 -ExpandProperty FullName
-
-    Write-Log "Fxd Package Path: $fxdPackage"
-
-    if ($fxdPackage) {
-        if ($PSCmdlet.ShouldProcess("Create the reduced framework dependent package based of $fxPackage")) {
-
-            ## Extract fxd package
-            $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
-            Push-Location $tempExtractFolder
-
-            Write-Log "Pushed location: $tempExtractFolder"
-
-            try {
-                if ($Environment.IsWindows) {
-                    Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
-                } else {
-                    Start-NativeExecution { tar -xf $fxdPackage }
-                }
-
-                ## Remove unnecessary files
-                $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
-                Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
-
-                $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
-
-                # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
-                # win10-x64 (Nano Server)
-                # win-arm (Nano Server)
-                # win-x64 to get PowerShell.Native components
-                # linux-musl-x64 (Alpine 3.8)
-                # linux-x64 (bionic / stretch)
-                # unix, linux, win for dependencies
-                # linux-arm and linux-arm64 for arm containers
-                # osx to run global tool on macOS
-                $runtimesToKeep = if ($Environment.IsWindows) {
-                    'win10-x64', 'win-arm', 'win-x64', 'win'
-                } else {
-                    'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
-                }
-
-                $runtimeFolder | ForEach-Object {
-                    Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
-                }
-
-                Write-Verbose -Verbose "Compressing"
-
-                if (-not (Test-Path $DestinationPath)) {
-                    $null = New-Item -ItemType Directory -Path $DestinationPath
-                }
-
-                if ($Environment.IsWindows) {
-                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $destinationPackageFullName -Force
-                } else {
-                    Start-NativeExecution { tar -czf "$destinationPackageFullName" . }
-                }
-
-                Write-Log "Compressing complete"
-
-            } finally {
-                Pop-Location
-            }
-        }
+    # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+    # win10-x64 (Nano Server)
+    # win-arm (Nano Server)
+    # win-x64 to get PowerShell.Native components
+    # linux-musl-x64 (Alpine 3.8)
+    # linux-x64 (bionic / stretch)
+    # unix, linux, win for dependencies
+    # linux-arm and linux-arm64 for arm containers
+    # osx to run global tool on macOS
+    $runtimesToKeep = if ($Environment.IsWindows) {
+        'win10-x64', 'win-arm', 'win-x64', 'win'
+    } else {
+        'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
     }
 
-    if (Test-Path $destinationPackageFullName) {
-        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
-    } else {
-        Write-Log "Package not found: $destinationPackageFullName"
+    $runtimeFolder | ForEach-Object {
+        Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
     }
 }
 
+<#
+.SYNOPSIS
+Create a Global tool nuget package for PowerShell.
+
+.DESCRIPTION
+If the UnifiedPackage switch is present, then create a packag with both Windows and Unix runtimes.
+Else create two packages, one for Windows and other for Linux.
+
+.PARAMETER LinuxBinPath
+Path to the folder containing the fxdependent package for Linux.
+
+.PARAMETER WindowsBinPath
+Path to the folder containing the fxdependent package for Windows.
+
+.PARAMETER PackageVersion
+Version for the NuGet package that will be generated.
+
+.PARAMETER DestinationPath
+Path to the folder where the generated packages will be copied to.
+
+.PARAMETER UnifiedPackage
+Create package with both Windows and Unix runtimes.
+#>
 function New-GlobalToolNupkg
 {
     [CmdletBinding()]
@@ -3211,6 +3166,9 @@ function New-GlobalToolNupkg
         [Parameter(Mandatory)] [string] $DestinationPath,
         [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
     )
+
+    ReduceFxDependentPackage -Path $LinuxBinPath
+    ReduceFxDependentPackage -Path $WindowsBinPath
 
     $packageInfo = @()
 

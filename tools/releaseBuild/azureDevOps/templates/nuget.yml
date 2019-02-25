@@ -124,6 +124,11 @@ jobs:
     displayName: 'Create Nuget Package Folders'
 
   - powershell: |
+      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
+      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+
+
+  - powershell: |
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
