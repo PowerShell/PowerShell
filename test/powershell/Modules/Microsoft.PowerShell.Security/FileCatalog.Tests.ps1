@@ -410,12 +410,11 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result | Should -Be "Valid"
         }
 
-        It "TestCatalogWhatIfForNewFileCatalog"{
+        It "New-FileCatalog -WhatIf does not create file" {
             $script:catalogPath = "$env:TEMP\TestCatalogWhatIfForNewFileCatalog.cat"
             New-FileCatalog -CatalogFilePath $script:catalogPath -WhatIf
             $script:catalogPath | Should -Not -Exist
         }
-
     }
 }
 
