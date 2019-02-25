@@ -198,7 +198,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
         {
             // obj should never be null
             Diagnostics.Assert(obj != null, "Input object is null");
@@ -206,7 +206,6 @@ namespace System.Management.Automation
             ManagementBaseObject wmiObject = (ManagementBaseObject)obj;
             return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
                 ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
-
         }
 
         /// <summary>

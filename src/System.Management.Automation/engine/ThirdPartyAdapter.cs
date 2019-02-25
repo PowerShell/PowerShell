@@ -128,7 +128,7 @@ namespace System.Management.Automation
             return property;
         }
 
-        private protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        protected override PSProperty DoGetProperty(object obj, MemberNamePredicate predicate)
         {
             PSAdaptedProperty property = null;
 

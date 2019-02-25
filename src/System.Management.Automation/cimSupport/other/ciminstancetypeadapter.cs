@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Cim
         {
             if (predicate == null)
             {
-                throw new PSArgumentNullException("predicate");
+                throw new PSArgumentNullException(nameof(predicate));
             }
 
             // baseObject should never be null

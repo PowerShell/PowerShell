@@ -84,7 +84,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
         {
             bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
             bool lookingForParameterizedProperties = typeof(T).IsAssignableFrom(typeof(PSParameterizedProperty));
