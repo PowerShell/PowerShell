@@ -654,138 +654,91 @@ namespace System.Management.Automation
         private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
             var results = new List<string>();
+
+            if (limit == 1 || limit == -1) 
+            {
+                // if the user just wants 1 string 
+                // then just return the content
+                return new List<string>(content);
+            }
+
             foreach (string item in content)
             {
                 var split = new List<string>();
 
-                if (limit == 1 || limit == -1)
-                {
-                    // Don't bother with looking for any delimiters,
-                    // just return the original string.
-                    results.Add(item);
-                    continue;
-                }
-
                 var buf = new StringBuilder();
 
-                if (limit >= 0) 
+                for (int strIndex = 0; strIndex < item.Length; strIndex++)
                 {
-                    for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                    int cursor = strIndex;
+
+                    if (limit < 0)
                     {
-                        object predicateResult = predicate.DoInvokeReturnAsIs(
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                            dollarUnder: CharToString(item[strIndex]),
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { item, strIndex });
-                        if (LanguagePrimitives.IsTrue(predicateResult))
+                        // switch the cursor to start at the back of the string
+                        cursor = item.Length - 1 - strIndex;
+                    }
+
+                    // evaluate the predicate
+                    object predicateResult = predicate.DoInvokeReturnAsIs(
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                        dollarUnder: CharToString(item[strIndex]),
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { item, strIndex });
+
+                    if (!LanguagePrimitives.IsTrue(predicateResult))
+                    {
+                        // if the current character is not a delimiter 
+                        // then add it to the buffer
+                        buf.Append(item[strIndex]);
+                        continue;
+                    }
+                    
+                    if (buf.Length != 0)
+                    {
+                        split.Add(buf.ToString());
+                    }
+
+                    buf.Clear();
+
+                    if (limit > 0 && split.Count >= (limit - 1))
+                    {
+                        if ((strIndex + 1) < item.Length)
                         {
-                            if (buf.Length != 0)
-                            {
-                                split.Add(buf.ToString());
-                            }
-                            
-                            buf.Clear();
-
-                            if (limit > 0 && split.Count >= (limit - 1))
-                            {
-                                // We're one item below the limit. If
-                                // we have any string left, go ahead
-                                // and add it as the last item, otherwise
-                                // add an empty string if there was
-                                // a delimiter at the end.
-                                if ((strIndex + 1) < item.Length)
-                                {
-                                    split.Add(item.Substring(strIndex + 1));
-                                }
-                                else
-                                {
-                                    split.Add(string.Empty);
-                                }
-
-                                break;
-                            }
-
-                            // If this delimiter is at the end of the string,
-                            // add an empty string to denote the item "after"
-                            // it.
-                            if (strIndex == (item.Length - 1))
-                            {
-                                split.Add(string.Empty);
-                            }
+                            // We're one item below the limit. 
+                            // If we have any string left add it
+                            // else add an empty string
+                            split.Add(item.Substring(strIndex + 1));
                         }
                         else
                         {
-                            buf.Append(item[strIndex]);
+                            split.Add(string.Empty);
                         }
+
+                        break;
                     }
-                }
-                else 
-                {
-                    for (int strIndex = item.Length - 1; strIndex >= 0; strIndex--)
+                    
+                    if (strIndex == (item.Length - 1))
                     {
-                        object predicateResult = predicate.DoInvokeReturnAsIs(
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                            dollarUnder: CharToString(item[strIndex]),
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { item, strIndex });
-                        if (LanguagePrimitives.IsTrue(predicateResult))
-                        {
-                            if (buf.Length != 0) 
-                            {
-                                split.Add(ReverseStringUtility(buf.ToString()));
-                            }
-
-                            buf.Clear();
-
-                            if ((limit * -1) > 0 && split.Count >= ((limit * -1) - 1))
-                            {
-                                // We're one item below the limit. If
-                                // we have any string left, go ahead
-                                // and add it as the last item, otherwise
-                                // add an empty string if there was
-                                // a delimiter at the end.
-                                if ((strIndex + 1) < item.Length)
-                                {
-                                    split.Add(item.Substring(0, strIndex));
-                                }
-                                else
-                                {
-                                    split.Add(string.Empty);
-                                }
-
-                                break;
-                            }
-
-                            // If this delimiter is at the end of the string,
-                            // add an empty string to denote the item "after"
-                            // it.
-                            if (strIndex == (item.Length - 1))
-                            {
-                                split.Add(string.Empty);
-                            }
-                        }
-                        else
-                        {
-                            buf.Append(item[strIndex]);
-                        }
+                        // If this delimiter is at the end of the string,
+                        // add an empty string to denote the item "after"
+                        // it.
+                        split.Add(string.Empty);
                     }
+                    // Add any remainder, if we're under the limit.
+                    if (buf.Length > 0 &&
+                        (limit <= 0 || split.Count < limit))
+                    {
+                        split.Add(buf.ToString());
+                    }
+                    if (limit < 0)
+                    {
+                        split.Reverse();
+                    }
+                    results.AddRange(split);
                 }
-
-                // Add any remainder, if we're under the limit.
-                if (buf.Length > 0 &&
-                    (limit <= 0 || split.Count < limit))
-                {
-                    split.Add(buf.ToString());
-                }
-
-                results.AddRange(split);
             }
-            
-
             return results.ToArray();
         }
 
