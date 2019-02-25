@@ -440,10 +440,9 @@ function Invoke-CIAfterTest
 
     if (Test-DailyBuild)
     {
-        ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        Push-Artifact -Path $_ -Name 'CodeCoverage'
-        Push-Artifact $testPackageFullName -Name 'artifacts'
-        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
+        Start-PSBuild -Configuration 'CodeCoverage' -Clean
+
+        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
