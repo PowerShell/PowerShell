@@ -1711,7 +1711,8 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 else
                                 {
-                                    if (filesystemInfo is FileInfo) {
+                                    if (filesystemInfo is FileInfo)
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
                                     }
                                     else
