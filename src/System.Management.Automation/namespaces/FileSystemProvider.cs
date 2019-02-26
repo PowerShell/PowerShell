@@ -1869,12 +1869,14 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         public static string Mode(PSObject instance)
         {
-            if (instance == null) {
+            if (instance == null)
+            {
                 return string.Empty;
             }
 
             FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
-            if (fileInfo == null) {
+            if (fileInfo == null)
+            {
                 return string.Empty;
             }
 
@@ -1925,7 +1927,6 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             if (string.IsNullOrEmpty(newName))
-
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }
