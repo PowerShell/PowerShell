@@ -27,11 +27,11 @@ Please **only** use this template if you are a maintainer.
     - [ ] Install and verify the packages.
     - [ ] Trigger the docker staging builds (signing must be done.)
 - [ ] Run tests on all supported Linux distributions and publish results
-- [ ]  Update documentation, and scripts.
+- [ ] Update documentation, and scripts.
     - [ ] Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
     - [ ] Stage a PR to master to update other documents and
           scripts to use the new package names, links, and `metadata.json`.
-- [ ] Kick of Release pipeline
+- [ ] Kick off Release pipeline
 - [ ] Create the release tag and push the tag to `PowerShell/PowerShell` repository.
 - [ ] For preview releases,
   merge the release branch to Github `master` with a merge commit.
