@@ -966,7 +966,8 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (skipDuplicate) {
+                        if (skipDuplicate)
+                        {
                             continue;
                         }
 
