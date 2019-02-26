@@ -3234,8 +3234,8 @@ function New-GlobalToolNupkg
 
         $packageName = $_.PackageName
         $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
-        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec")
-        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml")
+        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
+        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
 
         Write-Log "Creating a package: $packageName"
         New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
