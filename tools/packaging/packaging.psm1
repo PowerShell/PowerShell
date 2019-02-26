@@ -3167,9 +3167,6 @@ function New-GlobalToolNupkg
         [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
     )
 
-    ReduceFxDependentPackage -Path $LinuxBinPath
-    ReduceFxDependentPackage -Path $WindowsBinPath
-
     $packageInfo = @()
 
     if ($UnifiedPackage)
@@ -3180,6 +3177,12 @@ function New-GlobalToolNupkg
     }
     else
     {
+        Write-Log "Reducing size of Linux package"
+        ReduceFxDependentPackage -Path $LinuxBinPath
+
+        Write-Log "Reducing size of Windows package"
+        ReduceFxDependentPackage -Path $WindowsBinPath
+
         Write-Log "Creating a Linux and Windows packages"
         $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
         $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows"; Type = "Windows"}
