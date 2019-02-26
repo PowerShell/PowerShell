@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell.GlobalTool.Shim
 {
@@ -24,7 +25,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
         public static void Main(string[] args)
         {
             var currentPath = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
-            var isWindows = Environment.OSVersion.Platform == System.PlatformID.Win32NT;
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
             string platformFolder = isWindows ? WinFolderName : UnixFolderName;
 
