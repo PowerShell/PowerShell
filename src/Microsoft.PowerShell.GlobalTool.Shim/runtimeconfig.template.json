@@ -1,0 +1,4 @@
+// This is required to roll forward to runtime 3.x when 2.x is not installed
+{
+  "rollForwardOnNoCandidateFx": 2
+}
