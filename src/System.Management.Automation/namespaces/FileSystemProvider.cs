@@ -1104,7 +1104,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return false;
                 }
-                else {
+                else
+                {
                     throw;
                 }
             }
@@ -1569,7 +1570,8 @@ namespace Microsoft.PowerShell.Commands
                                 fsinfo.FullName,
                                 false);
                         }
-                        else {
+                        else
+                        {
                             WriteItemObject(fsinfo, path, false);
                         }
                     }
@@ -1712,7 +1714,8 @@ namespace Microsoft.PowerShell.Commands
                                     if (filesystemInfo is FileInfo) {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
                                     }
-                                    else {
+                                    else
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
                                     }
                                 }
@@ -2234,7 +2237,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
-                            else {
+                            else
+                            {
                                 throw;
                             }
                         }
@@ -2399,7 +2403,8 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                                 }
-                                else {
+                                else
+                                {
                                     throw;
                                 }
                             }
@@ -2448,7 +2453,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(exception, "NewItemCreateIOError", ErrorCategory.WriteError, path));
                         }
-                        else {
+                        else
+                        {
                             throw;
                         }
                     }
@@ -3787,7 +3793,8 @@ namespace Microsoft.PowerShell.Commands
                                     // Write out the original error since we failed to force the copy
                                     WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                                 }
-                                else {
+                                else
+                                {
                                     throw;
                                 }
                             }
