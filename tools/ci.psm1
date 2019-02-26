@@ -429,7 +429,7 @@ function Invoke-CIAfterTest
         $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
-        Push-Artifact $testPackageFullName -Name 'artifacts'
+        Push-Artifact $testPackageFullName -Name 'CodeCoverage'
     }
 }
 
@@ -465,9 +465,6 @@ function Compress-CoverageArtifacts
 
     # Create archive for test content, OpenCover module and CodeCoverage build
     $artifacts = New-Object System.Collections.ArrayList
-    $zipTestContentPath = Join-Path $pwd 'tests.zip'
-    Compress-TestContent -Destination $zipTestContentPath
-    $null = $artifacts.Add($zipTestContentPath)
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
