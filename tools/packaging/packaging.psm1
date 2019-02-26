@@ -3131,6 +3131,12 @@ function ReduceFxDependentPackage
     $runtimeFolder | ForEach-Object {
         Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
     }
+
+    # Remove symbolic links
+    if(-not $Environment.IsWindows) {
+        Remove-Item -Path (Join-Path $Path 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
+        Remove-Item -Path (Join-Path $Path 'libssl.so.1.0.0') -Verbose -Force -Recurse
+    }
 }
 
 <#
@@ -3199,10 +3205,10 @@ function New-GlobalToolNupkg
                 $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
 
                 Write-Log "Copying runtime assemblies from $WindowsBinPath"
-                Copy-Item "$WindowsBinPath/*" -Destination $winFolder -Recurse
+                Copy-Item "$WindowsBinPath\*" -Destination $winFolder -Recurse
 
                 Write-Log "Copying runtime assemblies from $LinuxBinPath"
-                Copy-Item "$LinuxBinPath/*" -Destination $unixFolder -Recurse
+                Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
 
                 Write-Log "Copying shim dll from $ShimDllPath"
                 Copy-Item $ShimDllPath -Destination $ridFolder
