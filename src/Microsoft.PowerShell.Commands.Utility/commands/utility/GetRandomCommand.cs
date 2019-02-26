@@ -520,19 +520,17 @@ namespace Microsoft.PowerShell.Commands
                 int n = _chosenListItems.Count;
                 for (int i = 0; i < n; i++)
                 {
-                    // randomly choose an item to go into the i-th position
+                    // randomly choose j from [i...n)
                     int j = this.Generator.Next(i, n);
 
-                    // swap j-th item into i-th position
+                    // output the object at j
+                    this.WriteObject(_chosenListItems[j]);
+
+                    // move the i'th item to position j, except when i = j.
                     if (i != j)
                     {
-                        object tmp = _chosenListItems[i];
-                        _chosenListItems[i] = _chosenListItems[j];
-                        _chosenListItems[j] = tmp;
+                        _chosenListItems[j] = _chosenListItems[i];
                     }
-
-                    // output item. From this point, _chosenListItems[0...i] will not be shuffled any further
-                    this.WriteObject(_chosenListItems[i]);
                 }
             }
         }
