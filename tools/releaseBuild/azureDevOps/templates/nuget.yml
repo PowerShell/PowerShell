@@ -141,10 +141,10 @@ jobs:
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
 
       # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestionationPath "$(PackagePath)"
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)"
 
       # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestionationPath "$(PackagePath)"
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath  "$(PackagePath)"
     displayName: 'Create Global tool packages'
 
   - powershell: |
