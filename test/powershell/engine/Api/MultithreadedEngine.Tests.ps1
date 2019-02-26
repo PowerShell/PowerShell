@@ -73,8 +73,8 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
             $r1.IsCompletedSuccessfully | Should -Be $true
             $r2.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
             $r2.IsCompletedSuccessfully | Should -Be $true
-            $groupedResults = @($r1.Result) + @($r2.Result) | Group-Object -Property ThreadId
-            Compare-Object -ReferenceObject @(1..20) -DifferenceObject $groupedResults.Group.Value -SyncWindow 20 | Should -Be $null
+            $sortedResults = @($r1.Result) + @($r2.Result) | Sort-Object -Property Time
+            Compare-Object -ReferenceObject @(1..20) -DifferenceObject $sortedResults.Value -SyncWindow 20 | Should -Be $null
         }
 
         <#
