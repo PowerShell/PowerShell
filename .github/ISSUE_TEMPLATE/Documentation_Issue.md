@@ -2,7 +2,7 @@
 name: Documentation Issue 📚
 about: File issues regarding documentation within the [PowerShell-Docs](https://github.com/MicrosoftDocs/PowerShell-Docs) repository
 title: "Documentation Issue"
-labels: CL-Docs
+labels: Issue-Question,Area-Documentation
 assignees: ''
 
 ---
