@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 using System.IO;
 
 namespace Microsoft.PowerShell.GlobalTool.Shim
@@ -15,7 +18,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
         private const string UnixFolderName = "unix";
 
         /// <summary>
-        /// Entry point for the global tool
+        /// Entry point for the global tool.
         /// </summary>
         /// <param name="args">Arguments passed to the global tool.</param>
         public static void Main(string[] args)
