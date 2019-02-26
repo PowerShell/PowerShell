@@ -47,13 +47,15 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
         }
 
         It 'can invoke multiple scripts asynchronously with input' {
-            $d1 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[PSObject]'
-            $d2 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[PSObject]'
+            $d1 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[int]'
+            $d2 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[int]'
             foreach ($i in 1..20) {
                 $d1.Add($foreach.Current)
                 $foreach.MoveNext() > $null
                 $d2.Add($foreach.Current)
             }
+            $d1.Complete()
+            $d2.Complete()
             $script = @'
 @($input).foreach{
     [pscustomobject]@{
