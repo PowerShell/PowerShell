@@ -45,8 +45,10 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
             $results = @($r1.Result.foreach('Value')) + @($r2.Result.foreach('Value'))
             Compare-Object -ReferenceObject @(1..20) -DifferenceObject $results -SyncWindow 20 | Should -Be $null
         }
+    }
 
-        It 'can invoke multiple scripts asynchronously with input' {
+    Context 'PowerShell::InvokeAsync with input and output' {
+        BeforeAll {
             $d1 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[int]'
             $d2 = New-Object -TypeName 'System.Management.Automation.PSDataCollection[int]'
             foreach ($i in 1..20) {
@@ -57,7 +59,7 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
             $d1.Complete()
             $d2.Complete()
             $script = @'
-@($input).foreach{
+$input.foreach{
     [pscustomobject]@{
         Time = [DateTime]::Now.ToString('yyyyMMddTHHmmss.fffffff')
         Value = $_
@@ -66,6 +68,9 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
     Start-Sleep -Milliseconds 500
 }
 '@
+        }
+
+        It 'can invoke multiple scripts asynchronously with input' {
             $r1 = [powershell]::Create().AddScript($script).InvokeAsync($d1)
             $r2 = [powershell]::Create().AddScript($script).InvokeAsync($d2)
             [System.Threading.Tasks.Task]::WaitAll(@($r1, $r2))
@@ -77,49 +82,18 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
             Compare-Object -ReferenceObject @(1..20) -DifferenceObject $sortedResults.Value -SyncWindow 20 | Should -Be $null
         }
 
-        <#
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), pResult => EndInvoke(pResult)).ConfigureAwait(false);
-
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), pResult => EndInvoke(pResult)).ConfigureAwait(false);
-
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), pResult => EndInvoke(pResult)).ConfigureAwait(false);
-
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), pResult => EndInvoke(pResult)).ConfigureAwait(false);
-        #>
-
-        <#
-        It 'can create instance with runspace' {
-            $rs = [runspacefactory]::CreateRunspace()
-            $ps = [powershell]::Create($rs)
-            $ps | Should -Not -BeNullOrEmpty
-            $ps.Runspace | Should -Be $rs
-            $ps.Dispose()
-            $rs.Dispose()
+        It 'can invoke multiple scripts asynchronously with input and capture output' {
+            $o = New-Object -TypeName 'System.Management.Automation.PSDataCollection[PSObject]'
+            $r1 = [powershell]::Create().AddScript($script).InvokeAsync($d1, $o)
+            $r2 = [powershell]::Create().AddScript($script).InvokeAsync($d2, $o)
+            [System.Threading.Tasks.Task]::WaitAll(@($r1, $r2))
+            $o.Complete()
+            $r1.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
+            $r1.IsCompletedSuccessfully | Should -Be $true
+            $r2.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
+            $r2.IsCompletedSuccessfully | Should -Be $true
+            $sortedResults = $o | Sort-Object -Property Time
+            Compare-Object -ReferenceObject @(1..20) -DifferenceObject $sortedResults.Value -SyncWindow 20 | Should -Be $null
         }
-
-        It 'cannot create instance with null runspace' {
-            { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
-        }
-
-        It 'can load the default snapin "Microsoft.WSMan.Management"' -skip:(-not $IsWindows) {
-            $ps = [powershell]::Create()
-            $ps.AddScript('Get-Command -Name Test-WSMan') > $null
-
-            $result = $ps.Invoke()
-            $result.Count | Should -Be 1
-            $result[0].Source | Should -BeExactly 'Microsoft.WSMan.Management'
-        }
-    }
-
-    Context 'executioncontext' {
-        It 'args are passed correctly' {
-            $result = $ExecutionContext.SessionState.InvokeCommand.InvokeScript('"`$args:($args); `$input:($input)"', 1, 2, 3)
-            $result | Should -BeExactly '$args:(1 2 3); $input:()'
-        }
-        #>
     }
 }
