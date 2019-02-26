@@ -158,7 +158,7 @@ open {0}
         <owners>Microsoft,PowerShell</owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
-        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell Core global tool</description>
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>

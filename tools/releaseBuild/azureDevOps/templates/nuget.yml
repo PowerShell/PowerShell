@@ -39,8 +39,6 @@ jobs:
     displayName: 'Download PowerShell build artifacts'
     inputs:
       buildType: current
-      #project: '9d7f7aa4-6f41-480d-a367-82eb278461a1'
-      #pipeline: 696
       downloadType: specific
       itemPattern: |
         finalResults/PowerShell-*-win-*.zip
