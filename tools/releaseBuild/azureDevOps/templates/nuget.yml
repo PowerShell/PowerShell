@@ -187,6 +187,16 @@ jobs:
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
+  - task: AzureFileCopy@1
+    displayName: 'Upload NuGet packages to Azure'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-nuget'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
