@@ -18,6 +18,8 @@ jobs:
     winX86Path: '$(System.ArtifactsDirectory)/winX86'
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
+    winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
+    linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
 
@@ -84,20 +86,32 @@ jobs:
   - task: ExtractFiles@1
     displayName: 'Extract files win-arm64'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm64.zip   '
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm64.zip'
       destinationFolder: '$(winArm64Path)'
 
   - task: ExtractFiles@1
     displayName: 'Extract files win-X64'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x64.zip   '
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x64.zip'
       destinationFolder: '$(winX64Path)'
 
   - task: ExtractFiles@1
     displayName: 'Extract files win-X86'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x86.zip   '
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x86.zip'
       destinationFolder: '$(winX86Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependent.zip'
+      destinationFolder: '$(winFxdPath)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files linux-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
+      destinationFolder: '$(linuxFxdPath)'
 
   - task: PkgESInstallNuGetToolsPackage@10
     displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
@@ -116,7 +130,6 @@ jobs:
     inputs:
       versionSpec: 4.9.3
 
-
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
@@ -127,6 +140,12 @@ jobs:
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
 
+      # Create unified package first
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestionationPath "$(PackagePath)"
+
+      # Create packages for dotnet sdk
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestionationPath "$(PackagePath)"
+    displayName: 'Create Global tool packages'
 
   - powershell: |
       Get-ChildItem "$(PackagePath)" -Recurse
