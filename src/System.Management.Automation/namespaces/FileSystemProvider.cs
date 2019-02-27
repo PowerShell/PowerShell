@@ -3955,7 +3955,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) {
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
                 return;
             }
 
