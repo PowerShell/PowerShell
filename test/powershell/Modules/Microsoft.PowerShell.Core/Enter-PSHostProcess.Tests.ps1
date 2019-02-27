@@ -100,7 +100,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
         }
 
-        It "Can enter, exit, and re-enter using CustomPipeName" {
+        It "Can enter, exit, and re-enter using CustomPipeName" -Pending:$true {
             Wait-UntilTrue { Test-Path $pipePath }
 
             "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
