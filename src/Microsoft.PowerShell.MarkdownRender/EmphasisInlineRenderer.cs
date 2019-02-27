@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, EmphasisInline obj)
         {
-            renderer.Write(renderer.EscapeSequences.FormatEmphasis(obj.FirstChild.ToString(), isBold : obj.IsDouble ? true : false));
+            renderer.Write(renderer.EscapeSequences.FormatEmphasis(obj.FirstChild.ToString(), isBold : obj.DelimiterCount == 2 ? true : false));
         }
     }
 }
