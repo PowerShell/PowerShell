@@ -97,12 +97,12 @@ Function Test-DailyBuild
         return $true
     }
 
-    # if [feature] is in the commit message,
+    # If [feature] or [Feature] is in the commit message,
     # Run Daily tests
     $commitMessage = Get-CommitMessage
     Write-log -message "commitMessage: $commitMessage"
 
-    if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
+    if($commitMessage -match '\[feature\]' -or $commitMessage -match '\[Feature\] -or $env:FORCE_FEATURE -eq 'True')
     {
         Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
