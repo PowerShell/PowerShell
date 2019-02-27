@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
                     // output the object at j
                     this.WriteObject(_chosenListItems[j]);
 
-                    // move the i'th item to position j, except when i = j.
+                    // remove the output object from consideration in the next iteration.
                     if (i != j)
                     {
                         _chosenListItems[j] = _chosenListItems[i];
