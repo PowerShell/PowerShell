@@ -52,8 +52,9 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Resolve { get; set; }
 
         /// <summary>
-        /// When used with -Resolve, specifies that the cmdlet skip the check for an
-        /// existing object at the resolved location.
+        /// Gets or sets whether the cmdlet should skip the check for an
+        /// existing object at the resolved location. Only usable in conjunction
+        /// with -Resolve.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "Resolve")]
