@@ -32,7 +32,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             }
         }
 
-        It "Can enter and exit another PSHost" {
+        It "Can enter and exit another PSHost" -Pending:$true {
             Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
             "Enter-PSHostProcess -Id $($pwsh.Id) -ErrorAction Stop
