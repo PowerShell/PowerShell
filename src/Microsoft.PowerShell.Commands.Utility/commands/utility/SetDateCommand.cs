@@ -128,6 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetLocalTime(ref SystemTime systime);
         }
         #endregion
