@@ -2141,10 +2141,12 @@ namespace Microsoft.PowerShell.Commands
             else if (itemType == ItemType.SymbolicLink || itemType == ItemType.HardLink)
             {
                 string action = null;
-                if (itemType == ItemType.SymbolicLink) {
+                if (itemType == ItemType.SymbolicLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionSymbolicLink;
                 }
-                else if (itemType == ItemType.HardLink) {
+                else if (itemType == ItemType.HardLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionHardLink;
                 }
 
@@ -3953,7 +3955,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyFromRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -3961,7 +3965,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionsPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) {
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
                 return;
             }
 
