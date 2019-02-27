@@ -48,7 +48,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             Exit-PSHostProcess" | pwsh -c - | Should -Be $powershell.Id
         }
 
-        It "Can enter using NamedPipeConnectionInfo" {
+        It "Can enter using NamedPipeConnectionInfo" -Pending:$true {
             try {
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
@@ -92,7 +92,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $pwsh | Stop-Process
         }
 
-        It "Can enter using CustomPipeName" {
+        It "Can enter using CustomPipeName" -Pending:$true {
             Wait-UntilTrue { Test-Path $pipePath }
 
             "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
