@@ -105,6 +105,7 @@ Function Test-DailyBuild
     if($commitMessage -match '\[feature\]' -or $commitMessage -match '\[Feature\] -or $env:FORCE_FEATURE -eq 'True')
     {
         Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
+        Write-Host "Running feature tests"
         return $true
     }
     else
@@ -528,7 +529,7 @@ function Invoke-CIFinish
             {
 	            Write-Log "Package found: $package"
             }
-	        else
+	    else
             {
                 Write-Warning -Message "Package NOT found: $package"
             }
@@ -629,7 +630,7 @@ function Invoke-Bootstrap-Stage
 function Invoke-LinuxTests
 {
     $releaseTag = Get-ReleaseTag
-    Write-Log -Message "Executing ci.psm1 build and test on a Linux based operating system."
+    Write-Log -Message "Executing ci.psm1 build and test."
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
@@ -682,7 +683,8 @@ function Invoke-LinuxTests
         $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
         $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
         $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
-        if ($testFiles.Count -eq 0) {
+        if ($testFiles.Count -eq 0)
+        {
             # If an empty array is specified for the feature name, we run all tests with the feature enabled.
             # This allows us to prevent regressions to a critical engine experimental feature.
             $noSudoPesterParam.Remove('Path')
