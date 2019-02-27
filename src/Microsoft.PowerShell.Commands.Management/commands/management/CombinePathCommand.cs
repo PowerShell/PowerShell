@@ -131,25 +131,47 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Resolve.IsPresent)
                 {
-                    // Resolve the paths. The default API (GetResolvedPSPathFromPSPath)
-                    // does not allow non-existing paths.
-                    Collection<string> resolvedPaths = null;
+
+                    if (SkipValidation.IsPresent)
+                    {
+                        try
+                        {
+                            WriteObject(
+                                SessionState.Path.GetUnresolvedProviderPathFromPSPath(
+                                    joinedPath, CmdletProviderContext, out _, out _));
+                            return;
+                        }
+                        catch (PSNotSupportedException notSupported)
+                        {
+                            WriteError(
+                                new ErrorRecord(
+                                    notSupported.ErrorRecord,
+                                    notSupported));
+                            return;
+                        }
+                        catch (DriveNotFoundException driveNotFound)
+                        {
+                            WriteError(
+                                new ErrorRecord(
+                                    driveNotFound.ErrorRecord,
+                                    driveNotFound));
+                            return;
+                        }
+                        catch (ProviderNotFoundException providerNotFound)
+                        {
+                            WriteError(
+                                new ErrorRecord(
+                                    providerNotFound.ErrorRecord,
+                                    providerNotFound));
+                            return;
+                        }
+                    }
+
+                    // Resolve the paths.
+                    Collection<PathInfo> resolvedPaths = null;
                     try
                     {
-                        if (SkipValidation.IsPresent)
-                        {
-                            resolvedPaths = new Collection<string>(
-                                new[] { SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                                    joinedPath, CmdletProviderContext, out ProviderInfo p, out PSDriveInfo d) });
-                        }
-                        else
-                        {
-                            resolvedPaths = new Collection<string>();
-                            foreach (var resolved in SessionState.Path.GetResolvedPSPathFromPSPath(joinedPath, CmdletProviderContext))
-                            {
-                                resolvedPaths.Add(resolved.Path);
-                            }
-                        }
+                        resolvedPaths = SessionState.Path.GetResolvedPSPathFromPSPath(joinedPath, CmdletProviderContext);
                     }
                     catch (PSNotSupportedException notSupported)
                     {
@@ -190,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (result != null)
                             {
-                                WriteObject(result);
+                                WriteObject(result.Path);
                             }
                         }
                         catch (PSNotSupportedException notSupported)
