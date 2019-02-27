@@ -3980,7 +3980,10 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ValidRemoteSessionForScripting(Runspace runspace)
         {
-            if (!(runspace is RemoteRunspace)) { return false; }
+            if (!(runspace is RemoteRunspace))
+            {
+                return false;
+            }
 
             PSLanguageMode languageMode = runspace.SessionStateProxy.LanguageMode;
             if (languageMode == PSLanguageMode.ConstrainedLanguage || languageMode == PSLanguageMode.NoLanguage)
