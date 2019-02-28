@@ -262,20 +262,6 @@ function Invoke-CIInstall
     Start-PSBootstrap -Confirm:$false
 }
 
-# A wrapper to ensure that we upload test results
-# and that if we are not able to that it does not fail
-# the CI build
-function Update-TestResults
-{
-    param(
-        [string] $resultsFile
-    )
-    if(!$pushedResults)
-    {
-            Write-Warning "Failed to push all artifacts for $resultsFile"
-    }
-}
-
 function Invoke-CIxUnit
 {
     param(
@@ -291,8 +277,6 @@ function Invoke-CIxUnit
     $xUnitTestResultsFile = "$pwd\xUnitTestResults.xml"
 
     Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
-    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-TestResults -resultsFile $xUnitTestResultsFile
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
 
     if(!$SkipFailing.IsPresent)
@@ -316,8 +300,8 @@ function Invoke-CITest
 
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     Write-Host -Foreground Green 'Run CoreCLR tests'
-    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
-    $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
+    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin-$TagSet.xml"
+    $testResultsAdminFile = "$pwd\TestsResultsAdmin-$TagSet.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -353,8 +337,6 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
         Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
-        Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
-        Update-TestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -377,8 +359,6 @@ function Invoke-CITest
             }
             Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
 
-            Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
-            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
@@ -393,9 +373,6 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag
         }
         Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
-        Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
-        Update-TestResults -resultsFile $testResultsAdminFile
-
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
@@ -422,8 +399,6 @@ function Invoke-CITest
             }
             Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
 
-            Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
-            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
@@ -440,10 +415,9 @@ function Invoke-CIAfterTest
 
     if (Test-DailyBuild)
     {
-        ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        Push-Artifact -Path $_ -Name 'CodeCoverage'
-        Push-Artifact $testPackageFullName -Name 'artifacts'
-        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
+        Start-PSBuild -Configuration 'CodeCoverage' -Clean
+
+        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
