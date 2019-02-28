@@ -36,13 +36,6 @@ jobs:
   parameters:
     buildName: alpine
 
-- template: templates/dotnetsdk-fxdependent.yml
-  parameters:
-    parentJobs:
-      - build_fxdependent
-    poolName: Hosted Ubuntu 1604
-    buildName: Linux
-
 - template: templates/mac.yml
 
 - template: templates/windows-build.yml
@@ -64,13 +57,6 @@ jobs:
 - template: templates/windows-build.yml
   parameters:
     Architecture: fxdependent
-
-- template: templates/dotnetsdk-fxdependent.yml
-  parameters:
-    parentJobs:
-      - WinPackageSigningJob
-    poolName: Package ES CodeHub Lab E
-    buildName: Windows
 
 - template: templates/windows-component-governance.yml
 

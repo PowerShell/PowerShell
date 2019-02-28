@@ -7045,14 +7045,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="SecurityAttributes"></param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
-
-            [Flags]
-            internal enum FileAttributes
-            {
-                Hidden = 0x0002,
-                Directory = 0x0010
-            }
 
             // OneDrive placeholder support
 #if !UNIX
@@ -7695,6 +7689,7 @@ namespace Microsoft.PowerShell.Commands
             out int pBytesReturned, IntPtr lpOverlapped);
 
         [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
