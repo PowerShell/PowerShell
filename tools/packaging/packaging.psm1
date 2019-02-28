@@ -2729,6 +2729,11 @@ function New-MSIPackage
         # and two releases shouldn't have the same identifiers,
         # so we use the generated one for preview
         $FilesWxsPath = $wixFragmentPath
+
+        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+
+        # cleanup any garbage on the system
+        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
     }
 
     Write-Log "running candle..."
