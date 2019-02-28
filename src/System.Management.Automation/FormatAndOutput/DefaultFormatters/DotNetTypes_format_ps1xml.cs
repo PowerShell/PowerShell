@@ -1716,39 +1716,45 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Threading_Tasks_Task()
         {
-            yield return new FormatViewDefinition("System.Threading.Tasks.Task",
-                TableControl.Create()
-                    .AddHeader(label: "Id")
-                    .AddHeader(label: "IsCompleted")
-                    .AddHeader(label: "Status")
-                    .StartRowDefinition()
-                        .AddPropertyColumn("Id")
-                        .AddPropertyColumn("IsCompleted")
-                        .AddPropertyColumn("Status")
-                    .EndRowDefinition()
-                .EndTable());
+            yield return new FormatViewDefinition(
+                "System.Threading.Tasks.Task",
+                TableControl
+                    .Create()
+                        .AddHeader(label: "Id")
+                        .AddHeader(label: "IsCompleted")
+                        .AddHeader(label: "Status")
+                        .StartRowDefinition()
+                            .AddPropertyColumn("Id")
+                            .AddPropertyColumn("IsCompleted")
+                            .AddPropertyColumn("Status")
+                        .EndRowDefinition()
+                    .EndTable());
 
-            yield return new FormatViewDefinition("System.Threading.Tasks.Task",
-                ListControl.Create()
-                    .StartEntry()
-                        .AddItemProperty(@"AsyncState")
-                        .AddItemProperty(@"AsyncWaitHandle")
-                        .AddItemProperty(@"CompletedSynchronously")
-                        .AddItemProperty(@"CreationOptions")
-                        .AddItemProperty(@"Exception")
-                        .AddItemProperty(@"Id")
-                        .AddItemProperty(@"IsCanceled")
-                        .AddItemProperty(@"IsCompleted")
-                        .AddItemProperty(@"IsCompletedSuccessfully")
-                        .AddItemProperty(@"IsFaulted")
-                        .AddItemScriptBlock(@"
-          if ($_.IsCompleted) {
-              $_.Result
-          }
-            ", label: "Result")
-                        .AddItemProperty(@"Status")
-                    .EndEntry()
-                .EndList());
+            yield return new FormatViewDefinition(
+                "System.Threading.Tasks.Task",
+                ListControl
+                    .Create()
+                        .StartEntry()
+                            .AddItemProperty(@"AsyncState")
+                            .AddItemProperty(@"AsyncWaitHandle")
+                            .AddItemProperty(@"CompletedSynchronously")
+                            .AddItemProperty(@"CreationOptions")
+                            .AddItemProperty(@"Exception")
+                            .AddItemProperty(@"Id")
+                            .AddItemProperty(@"IsCanceled")
+                            .AddItemProperty(@"IsCompleted")
+                            .AddItemProperty(@"IsCompletedSuccessfully")
+                            .AddItemProperty(@"IsFaulted")
+                            .AddItemScriptBlock(
+                                @"
+                                    if ($_.IsCompleted) {
+                                        $_.Result
+                                    }
+                                ",
+                                label: "Result")
+                            .AddItemProperty(@"Status")
+                        .EndEntry()
+                    .EndList());
         }
     }
 }
