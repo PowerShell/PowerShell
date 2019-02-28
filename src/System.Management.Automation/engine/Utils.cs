@@ -973,69 +973,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal class NativeMethods
-        {
-            private static string EnsureLongPathPrefixIfNeeded(string path)
-            {
-                if (path.Length >= MAX_PATH && !path.StartsWith(@"\\?\", StringComparison.Ordinal))
-                    return @"\\?\" + path;
-
-                return path;
-            }
-
-            [DllImport(PinvokeDllNames.GetFileAttributesDllName, EntryPoint = "GetFileAttributesW", CharSet = CharSet.Unicode, SetLastError = true)]
-            private static extern int GetFileAttributesPrivate(string lpFileName);
-
-            internal static int GetFileAttributes(string fileName)
-            {
-                fileName = EnsureLongPathPrefixIfNeeded(fileName);
-                return GetFileAttributesPrivate(fileName);
-            }
-
-            [Flags]
-            internal enum FileAttributes
-            {
-                Hidden = 0x0002,
-                Directory = 0x0010
-            }
-
-            public const int MAX_PATH = 260;
-            public const int MAX_ALTERNATE = 14;
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct FILETIME
-            {
-                public uint dwLowDateTime;
-                public uint dwHighDateTime;
-            };
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            public struct WIN32_FIND_DATA
-            {
-                public FileAttributes dwFileAttributes;
-                public FILETIME ftCreationTime;
-                public FILETIME ftLastAccessTime;
-                public FILETIME ftLastWriteTime;
-                public uint nFileSizeHigh; // changed all to uint, otherwise you run into unexpected overflow
-                public uint nFileSizeLow;  // |
-                public uint dwReserved0;   // |
-                public uint dwReserved1;   // v
-                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-                public string cFileName;
-                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
-                public string cAlternate;
-            }
-
-            [DllImport(PinvokeDllNames.FindFirstFileDllName, CharSet = CharSet.Unicode)]
-            public static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-            [DllImport(PinvokeDllNames.FindNextFileDllName, CharSet = CharSet.Unicode)]
-            public static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-
-            [DllImport(PinvokeDllNames.FindCloseDllName, CharSet = CharSet.Unicode)]
-            public static extern bool FindClose(IntPtr hFindFile);
-        }
-
         internal static readonly string PowerShellAssemblyStrongNameFormat =
             "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 

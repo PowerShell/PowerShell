@@ -449,6 +449,7 @@ namespace Microsoft.PowerShell
         /// <param name="nCmdShow">The command to do.</param>
         /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
         internal static void SetConsoleMode(ProcessWindowStyle style)
@@ -757,7 +758,7 @@ namespace Microsoft.PowerShell
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
-                    buffer,
+                    out buffer,
                     (DWORD)charactersToRead,
                     out charsReadUnused,
                     ref control);
@@ -2962,9 +2963,11 @@ namespace Microsoft.PowerShell
             internal static extern int ReleaseDC(HWND hwnd, HDC hdc);
 
             [DllImport(PinvokeDllNames.FlushConsoleInputBufferDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool FlushConsoleInputBuffer(NakedWin32Handle consoleInput);
 
             [DllImport(PinvokeDllNames.FillConsoleOutputAttributeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool FillConsoleOutputAttribute
             (
                 NakedWin32Handle consoleOutput,
@@ -2975,6 +2978,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.FillConsoleOutputCharacterDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool FillConsoleOutputCharacter
             (
                 NakedWin32Handle consoleOutput,
@@ -2985,6 +2989,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.WriteConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsole
             (
                 NakedWin32Handle consoleOutput,
@@ -2998,37 +3003,33 @@ namespace Microsoft.PowerShell
             internal static extern DWORD GetConsoleTitle(StringBuilder consoleTitle, DWORD size);
 
             [DllImport(PinvokeDllNames.SetConsoleTitleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleTitle(string consoleTitle);
 
             [DllImport(PinvokeDllNames.GetConsoleModeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetConsoleMode(NakedWin32Handle consoleHandle, out UInt32 mode);
 
             [DllImport(PinvokeDllNames.GetConsoleScreenBufferInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetConsoleScreenBufferInfo(NakedWin32Handle consoleHandle, out CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
-
-            internal enum FileType
-            {
-                Unknown,
-                Disk,
-                Char,
-                Pipe
-            };
 
             [DllImport(PinvokeDllNames.GetLargestConsoleWindowSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern COORD GetLargestConsoleWindowSize(NakedWin32Handle consoleOutput);
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
-                StringBuilder buffer,
+                out StringBuilder buffer,
                 DWORD numberOfCharsToRead,
                 out DWORD numberOfCharsRead,
-                // This magical parameter is not documented, but is the secret to tab-completion.
                 ref CONSOLE_READCONSOLE_CONTROL controlData
             );
 
             [DllImport(PinvokeDllNames.PeekConsoleInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool PeekConsoleInput
             (
                 NakedWin32Handle consoleInput,
@@ -3038,27 +3039,35 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.GetNumberOfConsoleInputEventsDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetNumberOfConsoleInputEvents(NakedWin32Handle consoleInput, out DWORD numberOfEvents);
 
             [DllImport(PinvokeDllNames.SetConsoleCtrlHandlerDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleCtrlHandler(BreakHandler handlerRoutine, bool add);
 
             [DllImport(PinvokeDllNames.SetConsoleCursorPositionDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleCursorPosition(NakedWin32Handle consoleOutput, COORD cursorPosition);
 
             [DllImport(PinvokeDllNames.SetConsoleModeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleMode(NakedWin32Handle consoleHandle, DWORD mode);
 
             [DllImport(PinvokeDllNames.SetConsoleScreenBufferSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleScreenBufferSize(NakedWin32Handle consoleOutput, COORD size);
 
             [DllImport(PinvokeDllNames.SetConsoleTextAttributeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleTextAttribute(NakedWin32Handle consoleOutput, WORD attributes);
 
             [DllImport(PinvokeDllNames.SetConsoleWindowInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleWindowInfo(NakedWin32Handle consoleHandle, bool absolute, ref SMALL_RECT windowInfo);
 
             [DllImport(PinvokeDllNames.WriteConsoleOutputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsoleOutput
             (
                 NakedWin32Handle consoleOutput,
@@ -3069,6 +3078,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.ReadConsoleOutputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool ReadConsoleOutput
             (
                 NakedWin32Handle consoleOutput,
@@ -3079,6 +3089,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.ScrollConsoleScreenBufferDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool ScrollConsoleScreenBuffer
             (
                 NakedWin32Handle consoleOutput,
@@ -3093,15 +3104,19 @@ namespace Microsoft.PowerShell
 
             // There is no GetCurrentConsoleFontEx on Core
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetCurrentConsoleFontEx(NakedWin32Handle consoleOutput, bool bMaximumWindow, ref CONSOLE_FONT_INFO_EX consoleFontInfo);
 
             [DllImport(PinvokeDllNames.GetConsoleCursorInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetConsoleCursorInfo(NakedWin32Handle consoleOutput, out CONSOLE_CURSOR_INFO consoleCursorInfo);
 
             [DllImport(PinvokeDllNames.SetConsoleCursorInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleCursorInfo(NakedWin32Handle consoleOutput, ref CONSOLE_CURSOR_INFO consoleCursorInfo);
 
             [DllImport(PinvokeDllNames.ReadConsoleInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool ReadConsoleInput
             (
                 NakedWin32Handle consoleInput,
@@ -3117,38 +3132,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private const string StringsResourceBaseName = "ConsoleControlStrings";
-        /*private const string AddBreakHandlerTemplateResource = ConsoleControlStrings.AddBreakHandlerExceptionTemplate;
-        private const string RemoveBreakHandlerTemplateResource = ConsoleControlStrings.RemoveBreakHandlerExceptionTemplate;
-        private const string AttachToParentConsoleTemplateResource = ConsoleControlStrings.AttachToParentConsoleExceptionTemplate;
-        private const string DetachFromConsoleTemplateResource = ConsoleControlStrings.DetachFromConsoleExceptionTemplate;
-        private const string GetInputHandleTemplateResource = ConsoleControlStrings.GetInputModeExceptionTemplate;
-        private const string GetActiveScreenBufferHandleTemplateResource = ConsoleControlStrings.GetActiveScreenBufferHandleExceptionTemplate;
-        private const string GetModeTemplateResource = ConsoleControlStrings.GetModeExceptionTemplate;
-        private const string SetModeTemplateResource = ConsoleControlStrings.SetModeExceptionTemplate;
-        private const string ReadConsoleTemplateResource = ConsoleControlStrings.ReadConsoleExceptionTemplate;
-        private const string ReadConsoleInputTemplateResource = ConsoleControlStrings.ReadConsoleInputExceptionTemplate;
-        private const string PeekConsoleInputTemplateResource = ConsoleControlStrings.PeekConsoleInputExceptionTemplate;
-        private const string GetNumberOfConsoleInputEventsTemplateResource = ConsoleControlStrings.GetNumberOfConsoleInputEventsExceptionTemplate;
-        private const string FlushConsoleInputBufferTemplateResource = ConsoleControlStrings.FlushConsoleInputBufferExceptionTemplate;
-        private const string GetConsoleScreenBufferInfoTemplateResource = ConsoleControlStrings.GetConsoleScreenBufferInfoExceptionTemplate;
-        private const string SetConsoleScreenBufferSizeTemplateResource = ConsoleControlStrings.SetConsoleScreenBufferSizeExceptionTemplate;
-        private const string WriteConsoleOutputTemplateResource = ConsoleControlStrings.WriteConsoleOutputExceptionTemplate;
-        private const string ReadConsoleOutputTemplateResource = ConsoleControlStrings.ReadConsoleOutputExceptionTemplate;
-        private const string FillConsoleOutputCharacterTemplateResource = ConsoleControlStrings.FillConsoleOutputCharacterExceptionTemplate;
-        private const string FillConsoleOutputAttributeTemplateResource = ConsoleControlStrings.FillConsoleOutputAttributeExceptionTemplate;
-        private const string ScrollConsoleScreenBufferTemplateResource = ConsoleControlStrings.ScrollConsoleScreenBufferExceptionTemplate;
-        private const string SetConsoleWindowInfoTemplateResource = ConsoleControlStrings.SetConsoleWindowInfoExceptionTemplate;
-        private const string GetLargestConsoleWindowSizeTemplateResource = ConsoleControlStrings.GetLargestConsoleWindowSizeExceptionTemplate;
-        private const string SetConsoleWindowTitleTemplateResource = ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate;
-        private const string WriteConsoleTemplateResource = ConsoleControlStrings.WriteConsoleExceptionTemplate;
-        private const string SetConsoleTextAttributeTemplateResource = ConsoleControlStrings.SetConsoleTextAttributeExceptionTemplate;
-        private const string SetConsoleCursorPositionTemplateResource = ConsoleControlStrings.SetConsoleCursorPositionExceptionTemplate;
-        private const string GetConsoleCursorInfoTemplateResource = ConsoleControlStrings.GetConsoleCursorInfoExceptionTemplate;
-        private const string SetConsoleCursorInfoTemplateResource = ConsoleControlStrings.SetConsoleCursorInfoExceptionTemplate;*/
-
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
         private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
 #endif
     }
-}   // namespace
+}

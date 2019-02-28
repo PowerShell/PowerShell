@@ -583,14 +583,6 @@ namespace System.Management.Automation
             return SplitOperatorImpl(context, errorPosition, lval, rval, SplitImplOptions.None, ignoreCase);
         }
 
-        private static void ExtendList<T>(IList<T> list, IList<T> items)
-        {
-            foreach (T item in items)
-            {
-                list.Add(item);
-            }
-        }
-
         private static object SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)
         {
             IEnumerable<string> content = enumerateContent(context, errorPosition, implOptions, lval);
@@ -721,7 +713,7 @@ namespace System.Management.Automation
                     split.Add(buf.ToString());
                 }
 
-                ExtendList(results, split);
+                results.AddRange(split);
             }
 
             return results.ToArray();
@@ -764,7 +756,7 @@ namespace System.Management.Automation
             foreach (string item in content)
             {
                 string[] split = regex.Split(item, limit, 0);
-                ExtendList(results, split);
+                results.AddRange(split);
             }
 
             return results.ToArray();
