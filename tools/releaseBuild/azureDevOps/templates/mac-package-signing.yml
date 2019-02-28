@@ -51,6 +51,8 @@ jobs:
     inputs:
       signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
       outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
   - template: upload-final-results.yml

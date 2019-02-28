@@ -347,6 +347,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 
         #region Win32 Functions
         [DllImport(PInvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupAccountSid(string systemName,
                                                      byte[] accountSid,
                                                      StringBuilder accountName,
@@ -356,6 +357,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                      out SID_NAME_USE use);
 
         [DllImport(PInvokeDllNames.LookupAccountNameDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupAccountName(string systemName,
                                                       string accountName,
                                                       [MarshalAs(UnmanagedType.LPArray)]
