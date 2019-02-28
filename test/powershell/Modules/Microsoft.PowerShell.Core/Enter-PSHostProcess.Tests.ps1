@@ -42,13 +42,26 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             try {
                 Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
-                "Enter-PSHostProcess -Id $($pwsh.Id) -ErrorAction Stop
-                `$pid
-                Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+@'
+try {{
+    Enter-PSHostProcess -Id {0} -ErrorAction Stop
+    $pid
+}}
+finally {{
+    Exit-PSHostProcess
+}}
+'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
 
-                "Enter-PSHostProcess -Id $($pwsh.Id) -ErrorAction Stop
-                `$pid
-                Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+@'
+try {{
+    Enter-PSHostProcess -Id {0} -ErrorAction Stop
+    $pid
+}}
+finally {{
+    Exit-PSHostProcess
+}}
+'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
+
             } finally {
                 $pwsh | Stop-Process
             }
@@ -96,13 +109,26 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
 
-                "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
-                `$pid
-                Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+@'
+try {{
+    Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
+    $pid
+}}
+finally {{
+    Exit-PSHostProcess
+}}
+'@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
 
-                "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
-                `$pid
-                Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+@'
+try {{
+    Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
+    $pid
+}}
+finally {{
+    Exit-PSHostProcess
+}}
+'@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
+
             } finally {
                 $pwsh | Stop-Process
             }
