@@ -2718,10 +2718,16 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+
+    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
 
     if ($isPreview)
     {
+        # Now that we know that the two are functionally the same,
+        # We only need to use $FilesWxsPath for release we want to be able to Path
+        # and two releases shouldn't have the same identifiers,
+        # so we use the generated one for preview
         $FilesWxsPath = $wixFragmentPath
     }
 
