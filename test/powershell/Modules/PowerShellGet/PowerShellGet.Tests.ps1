@@ -25,11 +25,14 @@ if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
-elseif(IsCoreCLR){
-    if(IsWindows) {
+elseif(IsCoreCLR)
+{
+    if(IsWindows)
+    {
         $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
     }
-    else {
+    else
+    {
         $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
     }
 }
@@ -54,7 +57,8 @@ if(IsInbox)
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
                                 }
 }
-elseif(IsCoreCLR) {
+elseif(IsCoreCLR)
+{
     if(IsWindows)
     {
         $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
@@ -145,7 +149,8 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature','RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature','RequireAdminOnWindows', 'RequireSudoOnUnix')
+{
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -159,7 +164,7 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature','RequireAdminO
     }
 
     ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Azure DevOps Linux build
-    It "Should install a module correctly to the required location with AllUsers scope" -Pending:$IsLinux {
+    It "Should install a module correctly to the required location with AllUsers scope" {
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -215,7 +220,8 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix')
+{
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -229,7 +235,7 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
     }
 
     ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Azure DevOps Linux build
-    It "Should install a script correctly to the required location with AllUsers scope" -Pending:$IsLinux {
+    It "Should install a script correctly to the required location with AllUsers scope" {
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
