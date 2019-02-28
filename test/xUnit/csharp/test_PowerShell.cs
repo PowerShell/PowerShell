@@ -32,7 +32,7 @@ namespace PSTests.Parallel
             {
                 ps.AddCommand("Get-Command");
 
-                PSDataCollection<PSObject> results = await ps.InvokeAsync(new PSDataCollection<string>(new [] { "Get-Command" }));
+                PSDataCollection<PSObject> results = await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }));
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]?.BaseObject);
@@ -48,7 +48,7 @@ namespace PSTests.Parallel
                 ps.AddCommand("Get-Command");
 
                 PSDataCollection<CmdletInfo> results = new PSDataCollection<CmdletInfo>();
-                await ps.InvokeAsync(new PSDataCollection<string>(new [] { "Get-Command" }), results);
+                await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }), results);
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]);

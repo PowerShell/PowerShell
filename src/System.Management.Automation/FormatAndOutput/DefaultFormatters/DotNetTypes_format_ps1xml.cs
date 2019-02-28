@@ -1750,6 +1750,5 @@ namespace System.Management.Automation.Runspaces
                     .EndEntry()
                 .EndList());
         }
-
     }
 }
