@@ -48,7 +48,7 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
-    <!-- This changes the default setting from reinstall if the file is a newer version to reinstall if the file is a different version -->
+    <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
     <Property Id=”REINSTALLMODE” Value="dmus"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
