@@ -47,6 +47,9 @@ try {{
     Enter-PSHostProcess -Id {0} -ErrorAction Stop
     $pid
 }}
+catch {{
+    $_
+}}
 finally {{
     Exit-PSHostProcess
 }}
@@ -56,6 +59,9 @@ finally {{
 try {{
     Enter-PSHostProcess -Id {0} -ErrorAction Stop
     $pid
+}}
+catch {{
+    $_
 }}
 finally {{
     Exit-PSHostProcess
@@ -73,9 +79,19 @@ finally {{
             try {
                 Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
 
-                "Enter-PSHostProcess -Id $($powershell.Id) -ErrorAction Stop
-                `$pid
-                Exit-PSHostProcess" | pwsh -c - | Should -Be $powershell.Id
+@'
+try {{
+    Enter-PSHostProcess -Id {0} -ErrorAction Stop
+    $pid
+}}
+catch {{
+    $_
+}}
+finally {{
+    Exit-PSHostProcess
+}}
+'@ -f $powershell.Id | pwsh -c - | Should -Be $powershell.Id
+
             } finally {
                 $powershell | Stop-Process
             }
@@ -114,6 +130,9 @@ try {{
     Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
     $pid
 }}
+catch {{
+    $_
+}}
 finally {{
     Exit-PSHostProcess
 }}
@@ -123,6 +142,9 @@ finally {{
 try {{
     Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
     $pid
+}}
+catch {{
+    $_
 }}
 finally {{
     Exit-PSHostProcess
