@@ -37,10 +37,10 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
         It "Can enter, exit, and re-enter another PSHost" {
-            $pwsh = Start-PSProcess
+            # $pwsh = Start-PSProcess
 
             try {
-                Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
+                # Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
 @'
 try {{
@@ -53,7 +53,7 @@ catch {{
 finally {{
     Exit-PSHostProcess
 }}
-'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
+'@ -f $pid | pwsh -c - | Should -Be $pid
 
 @'
 try {{
@@ -66,7 +66,7 @@ catch {{
 finally {{
     Exit-PSHostProcess
 }}
-'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
+'@ -f $pid | pwsh -c - | Should -Be $pid
 
             } finally {
                 $pwsh | Stop-Process
