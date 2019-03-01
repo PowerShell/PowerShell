@@ -222,9 +222,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo IComparable_CompareTo =
             typeof(IComparable).GetMethod(nameof(IComparable.CompareTo));
 
-        internal static readonly MethodInfo IDictionary_set_Item =
-            typeof(IDictionary).GetMethod("set_Item");
-
         internal static readonly MethodInfo IDisposable_Dispose =
             typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose));
 
@@ -452,8 +449,6 @@ namespace System.Management.Automation.Language
             typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
-        internal static readonly MethodInfo String_get_Chars =
-            typeof(string).GetMethod("get_Chars");
         internal static readonly PropertyInfo String_Length =
             typeof(string).GetProperty(nameof(string.Length));
 
