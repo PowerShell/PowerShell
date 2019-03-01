@@ -626,13 +626,9 @@ foo
 
         It "Should create pipe file if CustomPipeName is specified" {
             $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = Get-PipePath $pipeName
 
-            $si = NewProcessStartInfo "-noprofile -File $testDrive\test.ps1 -CustomPipeName $pipeName" -RedirectStdIn
-            $process = RunPowerShell $si
-
-            Get-PipePath $pipeName | Should -Exist
-
-            EnsureChildHasExited $process
+            pwsh -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
         }
 
         It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
