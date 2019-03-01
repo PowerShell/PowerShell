@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     string errorText = ProcessResources.NoProcessFoundForGivenName;
-                    string errorName = "NoProcessFoundForGivenName";
+                    string errorName = nameof(ProcessResources.NoProcessFoundForGivenName);
 
                     if (int.TryParse(pattern, out int x) && x >= 0)
                     {
