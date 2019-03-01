@@ -11,6 +11,35 @@ function Get-PipePath {
     "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
 }
 
+function Test-SpecificCommandSuccess {
+    param (
+        [string] $ArgumentString,
+        [int] $Id,
+        [int] $Retry = 5 # Default retry of 5 times
+    )
+
+    $sb = {
+        $commandStr = @'
+Start-Sleep -Seconds {0}
+Enter-PSHostProcess {1} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
+'@ -f $Retry, $ArgumentString
+
+        ($commandStr | pwsh -c -) -eq $Id
+    }
+
+    $result = $false
+    foreach ($i in 0..$Retry) {
+        if ($sb.Invoke()) {
+            $result = $true
+            break
+        }
+    }
+
+    $result
+}
+
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
@@ -23,6 +52,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 }
             }
 
+            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
             do {
                 Start-Sleep -Seconds 1
                 $pwshId = Receive-Job $pwshJob
@@ -36,20 +66,11 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter, exit, and re-enter another PSHost" {
             Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
 
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -Id {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
+            Test-SpecificCommandSuccess -ArgumentString "-Id $pwshId" -Id $pwshId |
+                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -Id {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
-
+            Test-SpecificCommandSuccess -ArgumentString "-Id $pwshId" -Id $pwshId |
+                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
@@ -61,6 +82,7 @@ Exit-PSHostProcess
                 }
             }
 
+            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
             do {
                 Start-Sleep -Seconds 1
                 $powershellId = Receive-Job $powershellJob
@@ -69,12 +91,8 @@ Exit-PSHostProcess
             try {
                 Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) }
 
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -Id {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $powershellId | pwsh -c - | Should -Be $powershellId
+                Test-SpecificCommandSuccess -ArgumentString "-Id $powershellId" -Id $powershellId |
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
             } finally {
                 $powershellJob | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -111,6 +129,7 @@ Exit-PSHostProcess
                 while ($true) { Start-Sleep -Seconds 30 | Out-Null }
             }
 
+            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
             do {
                 Start-Sleep -Seconds 1
                 $pwshId = Receive-Job $pwshJob
@@ -119,19 +138,11 @@ Exit-PSHostProcess
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
 
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pipeName | pwsh -c - | Should -Be $pwshId
+                Test-SpecificCommandSuccess -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pipeName | pwsh -c - | Should -Be $pwshId
+                Test-SpecificCommandSuccess -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
             } finally {
                 $pwshJob | Stop-Job -PassThru | Remove-Job

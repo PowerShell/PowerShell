@@ -628,6 +628,7 @@ foo
             $pipeName = [System.IO.Path]::GetRandomFileName()
             $pipePath = Get-PipePath $pipeName
 
+            # The pipePath should be created by the time the -Command is executed.
             pwsh -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
         }
 
