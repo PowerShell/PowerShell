@@ -22,9 +22,13 @@ function Start-PSProcess {
     $params = @{
         FilePath = $pwsh
         PassThru = $true
-        # RedirectStandardOutput = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
-        # RedirectStandardError = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
-        # RedirectStandardInput = New-TemporaryFile
+    }
+
+    # On non-Windows, new processes are opened in the same terminal window cluttering the logs.
+    # This will redirect stdio on those platforms
+    if (!$IsWindows) {
+        $params.RedirectStandardOutput = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
+        $params.RedirectStandardError = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
     }
 
     if ($ArgumentList) {
