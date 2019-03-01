@@ -235,7 +235,12 @@ namespace System.Management.Automation
         /// <param name="args"></param>
         public ErrorSuggestionInfo(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, object[] args)
         {
-
+            Id = id;
+            Category = category;
+            MatchType = matchType;
+            Rule = rule;
+            Suggestion = suggestion;
+            SuggestionArgs = args;
         }
 
         /// <summary>
