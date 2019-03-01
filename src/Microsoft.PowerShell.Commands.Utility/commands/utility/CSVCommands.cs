@@ -1084,19 +1084,6 @@ namespace Microsoft.PowerShell.Commands
             dest.Append('"');
         }
 
-        /// <summary>
-        /// Never escape output.
-        /// </summary>
-        internal static void AppendStringWithEscapeNever(StringBuilder dest, string source)
-        {
-            if (source == null)
-            {
-                return;
-            }
-
-            dest.Append(source);
-        }
-
         #region IDisposable Members
 
         /// <summary>
