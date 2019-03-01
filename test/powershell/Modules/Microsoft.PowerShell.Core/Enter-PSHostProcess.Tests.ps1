@@ -11,41 +11,17 @@ function Get-PipePath {
     "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
 }
 
-function Start-PSProcess {
-    param (
-        [switch] $WindowsPowerShell,
-        [array] $ArgumentList
-    )
-
-    $pwsh = if ($WindowsPowerShell) { "powershell" } else { "pwsh" }
-
-    $params = @{
-        FilePath = $pwsh
-        PassThru = $true
-    }
-
-    # On non-Windows, new processes are opened in the same terminal window cluttering the logs.
-    # This will redirect stdio on those platforms
-    if (!$IsWindows) {
-        $params.RedirectStandardOutput = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
-        $params.RedirectStandardError = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
-    }
-
-    if ($ArgumentList) {
-        $params.ArgumentList = $ArgumentList
-    }
-
-    $pwsh = Start-Process @params
-    Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwsh.Id) }
-
-    $pwsh
-}
-
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
         BeforeEach {
-            $pwshJob = Start-Job { $pid; while ($true) { Start-Sleep -Seconds 30 | Out-Null } }
+            $pwshJob = Start-Job {
+                $pid
+                while ($true) {
+                    Start-Sleep -Seconds 30 | Out-Null
+                }
+            }
+
             do {
                 Start-Sleep -Seconds 1
                 $pwshId = Receive-Job $pwshJob
@@ -57,15 +33,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter, exit, and re-enter another PSHost" {
-            # $pwsh = Start-PSProcess
-
-            try {
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -Id {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
+            Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
 
 @'
 Start-Sleep -Seconds 1
@@ -74,20 +42,31 @@ $pid
 Exit-PSHostProcess
 '@ -f $pwshId | pwsh -c - | Should -Be $pwshId
 
-            } finally {
-                # $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
-            }
+@'
+Start-Sleep -Seconds 1
+Enter-PSHostProcess -Id {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
+'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
+
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            # $powershell = Start-PSProcess -WindowsPowerShell
-            $powershellJob = Start-Job { $pid; while ($true) { Start-Sleep -Seconds 30 | Out-Null } } -PSVersion 5.1
+            $powershellJob = Start-Job -PSVersion 5.1 {
+                $pid
+                while ($true) {
+                    Start-Sleep -Seconds 30 | Out-Null
+                }
+            }
+
             do {
                 Start-Sleep -Seconds 1
                 $powershellId = Receive-Job $powershellJob
             } while (!$powershellId)
 
             try {
+                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) }
+
 @'
 Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
@@ -101,9 +80,9 @@ Exit-PSHostProcess
         }
 
         It "Can enter using NamedPipeConnectionInfo" {
-            # $pwsh = Start-PSProcess
-
             try {
+                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
+
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
                 $rs.Open()
@@ -112,7 +91,6 @@ Exit-PSHostProcess
                 $ps.AddScript('$pid').Invoke() | Should -Be $pwshId
             } finally {
                 $rs.Dispose()
-                # $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
     }
@@ -122,26 +100,37 @@ Exit-PSHostProcess
         It "Can enter, exit, and re-enter using CustomPipeName" {
             $pipeName = [System.IO.Path]::GetRandomFileName()
             $pipePath = Get-PipePath -PipeName $pipeName
-            $pwsh = Start-PSProcess -ArgumentList @("-CustomPipeName",$pipeName)
+
+            $pwshJob = Start-Job -ArgumentList $pipeName {
+                [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($args[0])
+                $pid;
+                while ($true) { Start-Sleep -Seconds 30 | Out-Null }
+            }
+
+            do {
+                Start-Sleep -Seconds 1
+                $pwshId = Receive-Job $pwshJob
+            } while (!$pwshId)
 
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
-@'
-Start-Sleep -Seconds 1
-Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
-$pid
-Exit-PSHostProcess
-'@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
 
 @'
 Start-Sleep -Seconds 1
 Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
+'@ -f $pipeName | pwsh -c - | Should -Be $pwshId
+
+@'
+Start-Sleep -Seconds 1
+Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
+'@ -f $pipeName | pwsh -c - | Should -Be $pwshId
 
             } finally {
-                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
+                $pwshJob | Stop-Job -PassThru | Remove-Job
             }
         }
 
