@@ -3058,6 +3058,8 @@ namespace System.Management.Automation
             return CoreInvokeAsync<TInput, TOutput>(input, output, settings, callback, state, null);
         }
 
+        private Action<IAsyncResult> _pEndInvokeMethod = pResult => EndInvoke(pResult);
+
         /// <summary>
         /// Invoke the <see cref="Command"/> asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
@@ -3075,7 +3077,9 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync()
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), pResult => EndInvoke(pResult)).ConfigureAwait(false);
+        {
+            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _pEndInvokeMethod).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Invoke the <see cref="Command"/> asynchronously.
@@ -3116,7 +3120,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), pResult => EndInvoke(pResult)).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _pEndInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke the <see cref="Command"/> asynchronously.
@@ -3167,7 +3171,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), pResult => EndInvoke(pResult)).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _pEndInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke the <see cref="Command"/> asynchronously.
@@ -3214,7 +3218,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), pResult => EndInvoke(pResult)).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _pEndInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke the <see cref="Command"/> asynchronously and collect
@@ -3272,7 +3276,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), pResult => EndInvoke(pResult)).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _pEndInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Begins a batch execution.

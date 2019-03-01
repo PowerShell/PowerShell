@@ -12,12 +12,12 @@ namespace PSTests.Parallel
         [Fact]
         public static async System.Threading.Tasks.Task TestPowerShellInvokeAsync()
         {
-            using (PowerShell ps = PowerShell.Create())
+            using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Process")
                   .AddParameter("Id", Process.GetCurrentProcess().Id);
 
-                PSDataCollection<PSObject> results = await ps.InvokeAsync();
+                var results = await ps.InvokeAsync();
 
                 Assert.Single(results);
                 Assert.IsType<Process>(results[0]?.BaseObject);
@@ -28,11 +28,11 @@ namespace PSTests.Parallel
         [Fact]
         public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInput()
         {
-            using (PowerShell ps = PowerShell.Create())
+            using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
-                PSDataCollection<PSObject> results = await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }));
+                var results = await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }));
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]?.BaseObject);
@@ -43,16 +43,30 @@ namespace PSTests.Parallel
         [Fact]
         public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInputAndOutput()
         {
-            using (PowerShell ps = PowerShell.Create())
+            using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
-                PSDataCollection<CmdletInfo> results = new PSDataCollection<CmdletInfo>();
+                var results = new PSDataCollection<CmdletInfo>();
                 await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }), results);
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]);
                 Assert.Equal("Get-Command", results[0].Name);
+            }
+        }
+
+        [Fact]
+        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithErrorInScript()
+        {
+            using (var ps = PowerShell.Create())
+            {
+                ps.AddCommand("Get-Process")
+                  .AddParameter("InvalidParameterName", 42)
+                  .AddParameter("ErrorAction", ActionPreference.Stop);
+
+                var results = await ps.InvokeAsync();
+
             }
         }
     }
