@@ -599,6 +599,10 @@ namespace System.Management.Automation
         private bool _isBatching = false;
         private bool _stopBatchExecution = false;
 
+        // Lazy delegates for asynchronous invocation/termination of PowerShell commands
+        private Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>> _endInvokeMethod;
+        private Lazy<Action<IAsyncResult>> _endStopMethod;
+
         #endregion
 
         #region Internal Constructors
@@ -634,6 +638,7 @@ namespace System.Management.Automation
             ErrorBufferOwner = true;
             InformationalBuffers = new PSInformationalBuffers(InstanceId);
             Streams = new PSDataStreams(this);
+            InitializeDelegates();
         }
 
         /// <summary>
@@ -696,6 +701,8 @@ namespace System.Management.Automation
             {
                 RemotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
             }
+
+            InitializeDelegates();
         }
 
         /// <summary>
@@ -726,6 +733,28 @@ namespace System.Management.Automation
             InvocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Disconnected, null);
 
             RemotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
+        }
+
+        /// <summary>
+        /// Lazy initializers for the _endInvokeMethod and _endStopMethod delegates.
+        /// </summary>
+        private void InitializeDelegates()
+        {
+            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>
+                (
+                    () =>
+                    {
+                        return EndInvoke;
+                    }
+                );
+
+            _endStopMethod = new Lazy<Action<IAsyncResult>>
+            (
+                () =>
+                {
+                    return EndStop;
+                }
+            );
         }
 
         /// <summary>
@@ -3058,10 +3087,8 @@ namespace System.Management.Automation
             return CoreInvokeAsync<TInput, TOutput>(input, output, settings, callback, state, null);
         }
 
-        private Action<IAsyncResult> _pEndInvokeMethod = pResult => EndInvoke(pResult);
-
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously.
+        /// Invoke a PowerShell command asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <returns>
@@ -3078,11 +3105,11 @@ namespace System.Management.Automation
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync()
         {
-            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _pEndInvokeMethod).ConfigureAwait(false);
+            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod.Value).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously.
+        /// Invoke a PowerShell command asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
@@ -3120,10 +3147,10 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _pEndInvokeMethod).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod.Value).ConfigureAwait(false);
 
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously.
+        /// Invoke a PowerShell command asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
@@ -3171,10 +3198,10 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _pEndInvokeMethod).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod.Value).ConfigureAwait(false);
 
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously.
+        /// Invoke a PowerShell command asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
@@ -3206,7 +3233,8 @@ namespace System.Management.Automation
         /// A buffer supplied by the user where output is collected.
         /// </param>
         /// <returns>
-        /// The output buffer created to hold the results of the asynchronous invoke, or null if the caller provided their own buffer.
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
@@ -3218,10 +3246,10 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _pEndInvokeMethod).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod.Value).ConfigureAwait(false);
 
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously and collect
+        /// Invoke a PowerShell command asynchronously and collect
         /// output data into the buffer <paramref name="output"/>.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
@@ -3264,7 +3292,8 @@ namespace System.Management.Automation
         /// with.
         /// </param>
         /// <returns>
-        /// The output buffer created to hold the results of the asynchronous invoke, or null if the caller provided their own buffer.
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
@@ -3276,7 +3305,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _pEndInvokeMethod).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod.Value).ConfigureAwait(false);
 
         /// <summary>
         /// Begins a batch execution.
@@ -3773,6 +3802,35 @@ namespace System.Management.Automation
 
             // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
             ResetOutputBufferAsNeeded();
+        }
+
+        /// <summary>
+        /// Stop a PowerShell command asynchronously.
+        /// Use await to wait for the command to stop.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the command is not started, the state of the PowerShell instance
+        /// is changed to Stopped and corresponding events will be raised.
+        /// </para>
+        /// </remarks>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public async Task StopAsync(AsyncCallback callback, object state)
+        {
+            await Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod.Value).ConfigureAwait(false);
         }
 
         #endregion

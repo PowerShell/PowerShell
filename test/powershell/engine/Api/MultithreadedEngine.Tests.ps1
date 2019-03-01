@@ -10,20 +10,23 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
         ThreadId   = [System.Threading.Thread]::CurrentThread.ManagedThreadId
         RunspaceId = [runspace]::DefaultRunspace.Id
     }
-    Start-Sleep -Seconds 1
+    Start-Sleep -Milliseconds 500
 }
 '@
     }
 
     Context 'PowerShell::InvokeAsync - Single script tests' {
         BeforeAll {
-            function InvokeAsyncThenWait {
+            function InvokeAsyncHelper {
                 param(
-                    [powershell]$PowerShell
+                    [powershell]$PowerShell,
+                    [switch]$Wait = $false
                 )
                 $sb = [scriptblock]::Create("@(1,2,3,4,5)${sbStub}")
                 $r = $PowerShell.AddScript($sb).InvokeAsync()
-                [System.Threading.Tasks.Task]::WaitAll(@($r))
+                if ($Wait) {
+                    [System.Threading.Tasks.Task]::WaitAll(@($r))
+                }
                 $r
             }
 
@@ -43,7 +46,7 @@ Describe 'Multithreaded engine APIs' -Tags 'CI' {
 
         It 'can invoke a single script asynchronously, but only in a new runspace' {
             $ps = [powershell]::Create()
-            $r = InvokeAsyncThenWait -PowerShell $ps
+            $r = InvokeAsyncHelper -PowerShell $ps -Wait
             $r.Status | Should -Be ([System.Threading.Tasks.TaskStatus]::RanToCompletion)
             $r.IsCompletedSuccessfully | Should -Be $true
         }
@@ -71,7 +74,7 @@ try {
         It 'cannot invoke a single script asynchronously in a runspace that has not been opened' {
             $rs = [runspacefactory]::CreateRunspace()
             $ps = [powershell]::Create($rs)
-            $r = $ps.AddScript('@(1..10).foreach{Start-Sleep -Seconds 1}').InvokeAsync()
+            $r = $ps.AddScript('@(1..10).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync()
             # This test is designed to fail. You cannot invoke PowerShell asynchronously
             # in a runspace that has not been opened.
             $r.IsFaulted | Should -Be $true
@@ -84,11 +87,11 @@ try {
             $rs = [runspacefactory]::CreateRunspace()
             $rs.Open()
             $psBusy = [powershell]::Create($rs)
-            $r = $psBusy.AddScript('@(1..10).foreach{Start-Sleep -Seconds 1}').InvokeAsync()
+            $r = $psBusy.AddScript('@(1..5).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync()
             $rs.RunspaceAvailability | Should -Be 'Busy'
             $ps = [powershell]::Create($rs)
             $sb = {
-                InvokeAsyncThenWait -PowerShell $ps
+                InvokeAsyncHelper -PowerShell $ps -Wait
             }
             # This test is designed to fail. You cannot invoke PowerShell asynchronously
             # in a runspace that is busy, because pipelines cannot be run concurrently.
@@ -96,7 +99,7 @@ try {
             GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
             $count = 0
             while (-not $r.IsCompleted -and $count -lt 10) {
-                Start-Sleep -Seconds 1
+                Start-Sleep -Milliseconds 500
                 $count++
             }
         }
@@ -104,7 +107,7 @@ try {
         It 'cannot invoke a single script asynchronously in the current runspace' {
             $ps = [powershell]::Create('CurrentRunspace')
             $sb = {
-                InvokeAsyncThenWait -PowerShell $ps
+                InvokeAsyncHelper -PowerShell $ps -Wait
             }
             # This test is designed to fail. You cannot invoke PowerShell asynchronously
             # in the current runspace because nested PowerShell instances cannot be
@@ -168,6 +171,28 @@ try {
             $r2.IsCompletedSuccessfully | Should -Be $true
             $sortedResults = $o | Sort-Object -Property Time
             Compare-Object -ReferenceObject @(1..20) -DifferenceObject $sortedResults.Value -SyncWindow 20 | Should -Be $null
+        }
+    }
+
+    Context 'PowerShell::StopAsync' {
+        It 'can stop multiple scripts that are running asynchronously' {
+            $sb1 = [scriptblock]::Create("@(1,3,5,7,9,11,13,15,17,19)${sbStub}")
+            $sb2 = [scriptblock]::Create("@(2,4,6,8,10,12,14,16,18,20)${sbStub}")
+            $ps1 = [powershell]::Create().AddScript($sb1)
+            $ps2 = [powershell]::Create().AddScript($sb2)
+            $ps1.InvokeAsync() > $null
+            $ps2.InvokeAsync() > $null
+            while ($ps1.InvocationStateInfo.State -ne [System.Management.Automation.PSInvocationState]::Running -and
+                   $ps2.InvocationStateInfo.State -ne [System.Management.Automation.PSInvocationState]::Running) {
+                Start-Sleep -Milliseconds 100
+            }
+            $sr1 = $ps1.StopAsync({}, $null)
+            $sr2 = $ps2.StopAsync({}, $null)
+            [System.Threading.Tasks.Task]::WaitAll(@($sr1, $sr2))
+            $sr1.IsCompletedSuccessfully | Should -Be $true
+            $ps1.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
+            $sr2.IsCompletedSuccessfully | Should -Be $true
+            $ps2.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
         }
     }
 }
