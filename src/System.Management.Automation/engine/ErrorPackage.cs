@@ -185,6 +185,97 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// TODO
+    /// </summary>
+    public enum SuggestionMatchType
+    {
+        /// <summary>Match on a command.</summary>
+        Command = 0,
+        /// <summary>Match based on exception message.</summary>
+        Error = 1,
+        /// <summary>Match by running a script block.</summary>
+        Dynamic = 2,
+
+        /// <summary>Match by fully qualified ErrorId.</summary>
+        ErrorId = 3
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public class ErrorSuggestionInfo
+    {
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="suggestion"></param>
+        /// <param name="category"></param>
+        /// <param name="matchType"></param>
+        /// <param name="rule"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public ErrorSuggestionInfo Create(
+            int id,
+            ScriptBlock suggestion,
+            string category = "NotSpecified",
+            SuggestionMatchType matchType = SuggestionMatchType.Error,
+            ScriptBlock rule = null,
+            params object[] args)
+            => new ErrorSuggestionInfo(id, category, matchType, rule, suggestion, args);
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="category"></param>
+        /// <param name="matchType"></param>
+        /// <param name="rule"></param>
+        /// <param name="suggestion"></param>
+        /// <param name="args"></param>
+        public ErrorSuggestionInfo(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, object[] args)
+        {
+
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public int Id { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public string Category { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public SuggestionMatchType MatchType { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public ScriptBlock Rule { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public ScriptBlock Suggestion { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <value></value>
+        public object[] SuggestionArgs { get; }
+    }
+
+    /// <summary>
     /// Contains auxiliary information about an
     /// <see cref="System.Management.Automation.ErrorRecord"/>
     /// </summary>

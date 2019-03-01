@@ -20,19 +20,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
-    internal enum SuggestionMatchType
-    {
-        /// <summary>Match on a command.</summary>
-        Command = 0,
-        /// <summary>Match based on exception message.</summary>
-        Error = 1,
-        /// <summary>Match by running a script block.</summary>
-        Dynamic = 2,
-
-        /// <summary>Match by fully qualified ErrorId.</summary>
-        ErrorId = 3
-    }
-
     #region Public HostUtilities Class
 
     /// <summary>
