@@ -35,6 +35,8 @@ Exit-PSHostProcess
             $result = $true
             break
         }
+
+        Write-Warning "Enter-PSHostProcess attempt '$i' failed. $($Retry - $i) attempts left."
     }
 
     $result
