@@ -22,8 +22,9 @@ function Start-PSProcess {
     $params = @{
         FilePath = $pwsh
         PassThru = $true
-        RedirectStandardOutput = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
-        RedirectStandardError = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
+        # RedirectStandardOutput = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
+        # RedirectStandardError = "TestDrive:\$([System.IO.Path]::GetRandomFileName())"
+        # RedirectStandardInput = New-TemporaryFile
     }
 
     if ($ArgumentList) {
@@ -43,33 +44,19 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 # Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
 
 @'
-try {{
-    Enter-PSHostProcess -Id {0} -ErrorAction Stop
-    $pid
-}}
-catch {{
-    $_
-}}
-finally {{
-    Exit-PSHostProcess
-}}
+Enter-PSHostProcess -Id {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
 '@ -f $pid | pwsh -c - | Should -Be $pid
 
 @'
-try {{
-    Enter-PSHostProcess -Id {0} -ErrorAction Stop
-    $pid
-}}
-catch {{
-    $_
-}}
-finally {{
-    Exit-PSHostProcess
-}}
+Enter-PSHostProcess -Id {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
 '@ -f $pid | pwsh -c - | Should -Be $pid
 
             } finally {
-                $pwsh | Stop-Process
+                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -80,20 +67,13 @@ finally {{
                 Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
 
 @'
-try {{
-    Enter-PSHostProcess -Id {0} -ErrorAction Stop
-    $pid
-}}
-catch {{
-    $_
-}}
-finally {{
-    Exit-PSHostProcess
-}}
+Enter-PSHostProcess -Id {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
 '@ -f $powershell.Id | pwsh -c - | Should -Be $powershell.Id
 
             } finally {
-                $powershell | Stop-Process
+                $powershell | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -111,6 +91,7 @@ finally {{
                 $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
             } finally {
                 $rs.Dispose()
+                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
     }
@@ -126,33 +107,19 @@ finally {{
                 Wait-UntilTrue { Test-Path $pipePath }
 
 @'
-try {{
-    Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
-    $pid
-}}
-catch {{
-    $_
-}}
-finally {{
-    Exit-PSHostProcess
-}}
+Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
 '@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
 
 @'
-try {{
-    Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
-    $pid
-}}
-catch {{
-    $_
-}}
-finally {{
-    Exit-PSHostProcess
-}}
+Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
+$pid
+Exit-PSHostProcess
 '@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
 
             } finally {
-                $pwsh | Stop-Process
+                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
 
