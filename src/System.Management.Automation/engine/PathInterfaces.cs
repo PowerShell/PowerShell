@@ -458,6 +458,56 @@ namespace System.Management.Automation
             return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, context, out providerInstance);
         }
 
+
+        /// <summary>
+        /// Resolves a drive or provider qualified absolute or relative path that may contain
+        /// wildcard characters into one or more absolute drive or provider qualified paths.
+        /// </summary>
+        /// <param name="path">
+        /// The drive or provider qualified path to be resolved. This path may contain wildcard
+        /// characters which will get resolved.
+        /// </param>
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        /// <param name="allowNonexistingPaths">
+        /// Determines whether the method permits resolving non-existing paths.
+        /// </param>
+        /// <returns>
+        /// An array of Msh paths that resolved from the given path.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> or <paramref name="context"/> is null.
+        /// </exception>
+        /// <exception cref="ProviderNotFoundException">
+        /// If <paramref name="path"/> is a provider-qualified path
+        /// and the specified provider does not exist.
+        /// </exception>
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider throws an exception when its MakePath gets
+        /// called.
+        /// </exception>
+        /// <exception cref="NotSupportedException">
+        /// If the provider does not support multiple items.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// If the home location for the provider is not set and
+        /// <paramref name="path"/> starts with a "~".
+        /// </exception>
+        /// <exception cref="ItemNotFoundException">
+        /// If <paramref name="path"/> does not contain wildcard characters and
+        /// could not be found.
+        /// </exception>
+        internal Collection<PathInfo> GetResolvedPSPathFromPSPath(
+            string path,
+            CmdletProviderContext context,
+            bool allowNonexistingPaths)
+        {
+            // The parameters will be verified by the path resolver
+            Provider.CmdletProvider providerInstance = null;
+            return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, allowNonexistingPaths, context, out providerInstance);
+        }
+
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.

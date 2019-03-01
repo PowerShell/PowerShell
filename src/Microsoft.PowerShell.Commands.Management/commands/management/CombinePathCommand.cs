@@ -131,47 +131,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Resolve.IsPresent)
                 {
-
-                    if (SkipValidation.IsPresent)
-                    {
-                        try
-                        {
-                            WriteObject(
-                                SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                                    joinedPath, CmdletProviderContext, out _, out _));
-                            return;
-                        }
-                        catch (PSNotSupportedException notSupported)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    notSupported.ErrorRecord,
-                                    notSupported));
-                            return;
-                        }
-                        catch (DriveNotFoundException driveNotFound)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    driveNotFound.ErrorRecord,
-                                    driveNotFound));
-                            return;
-                        }
-                        catch (ProviderNotFoundException providerNotFound)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    providerNotFound.ErrorRecord,
-                                    providerNotFound));
-                            return;
-                        }
-                    }
-
                     // Resolve the paths.
                     Collection<PathInfo> resolvedPaths = null;
                     try
                     {
-                        resolvedPaths = SessionState.Path.GetResolvedPSPathFromPSPath(joinedPath, CmdletProviderContext);
+                        resolvedPaths = SessionState.Path.GetResolvedPSPathFromPSPath(
+                            joinedPath, CmdletProviderContext, SkipValidation.IsPresent);
                     }
                     catch (PSNotSupportedException notSupported)
                     {
