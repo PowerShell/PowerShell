@@ -35,29 +35,32 @@ function Start-PSProcess {
         $params.ArgumentList = $ArgumentList
     }
 
-    Start-Process @params
+    $pwsh = Start-Process @params
+    Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwsh.Id) }
+
+    $pwsh
 }
 
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
         It "Can enter, exit, and re-enter another PSHost" {
-            # $pwsh = Start-PSProcess
+            $pwsh = Start-PSProcess
 
             try {
-                # Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
-
 @'
+Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $pid | pwsh -c - | Should -Be $pid
+'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
 
 @'
+Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $pid | pwsh -c - | Should -Be $pid
+'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
 
             } finally {
                 $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -68,9 +71,8 @@ Exit-PSHostProcess
             $powershell = Start-PSProcess -WindowsPowerShell
 
             try {
-                Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
-
 @'
+Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
@@ -85,8 +87,6 @@ Exit-PSHostProcess
             $pwsh = Start-PSProcess
 
             try {
-                Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
-
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
                 $rs.Open()
@@ -109,14 +109,15 @@ Exit-PSHostProcess
 
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
-
 @'
+Start-Sleep -Seconds 1
 Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
 '@ -f $pipeName | pwsh -c - | Should -Be $pwsh.Id
 
 @'
+Start-Sleep -Seconds 1
 Enter-PSHostProcess -CustomPipeName {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
