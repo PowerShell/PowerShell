@@ -141,13 +141,5 @@ Exit-PSHostProcess
         It "Should throw if CustomPipeName does not exist" {
             { Enter-PSHostProcess -CustomPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with CustomPipeName: badpipename."
         }
-
-        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
-            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
-
-            "`$pid" | pwsh -CustomPipeName $longPipeName -c -
-            # 64 is the ExitCode for BadCommandLineParameter
-            $LASTEXITCODE | Should -Be 64
-        }
     }
 }

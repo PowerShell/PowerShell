@@ -85,6 +85,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $process.Kill()
             }
         }
+
+        function Get-PipePath {
+            param (
+                $PipeName
+            )
+            if ($IsWindows) {
+                return "\\.\pipe\$PipeName"
+            }
+            "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
+        }
     }
 
     AfterEach {
@@ -610,6 +620,29 @@ foo
                 }
             }
         }
+    }
+
+    Context "CustomPipeName startup tests" {
+
+        It "Should create pipe file if CustomPipeName is specified" {
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+
+            $si = NewProcessStartInfo "-noprofile -File $testDrive\test.ps1 -CustomPipeName $pipeName" -RedirectStdIn
+            $process = RunPowerShell $si
+
+            Get-PipePath $pipeName | Should -Exist
+
+            EnsureChildHasExited $process
+        }
+
+        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
+            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
+
+            "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
+            # 64 is the ExitCode for BadCommandLineParameter
+            $LASTEXITCODE | Should -Be 64
+        }
+
     }
 }
 
