@@ -128,7 +128,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             # After that, spin forever.
             $pwshJob = Start-Job -ArgumentList $pipeName {
                 [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($args[0])
-                $pid;
+                $pid
                 while ($true) { Start-Sleep -Seconds 30 | Out-Null }
             }
 
