@@ -999,8 +999,8 @@ namespace System.Management.Automation
             {
                 errorId = string.Empty;
             }
-            // targetObject may be null
 
+            // targetObject may be null
             _error = exception;
             _errorId = errorId;
             _category = errorCategory;
