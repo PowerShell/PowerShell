@@ -11,6 +11,7 @@ function Get-PipePath {
     "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
 }
 
+# Executes the Enter/Exit PSHostProcess script that returns the pid of the process that's started.
 function Test-SpecificCommandSuccess {
     param (
         [string] $ArgumentString,
