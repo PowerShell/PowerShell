@@ -523,7 +523,6 @@ namespace Microsoft.PowerShell.Commands
                     // randomly choose j from [i...n)
                     int j = this.Generator.Next(i, n);
 
-                    // output the object at j
                     this.WriteObject(_chosenListItems[j]);
 
                     // remove the output object from consideration in the next iteration.
