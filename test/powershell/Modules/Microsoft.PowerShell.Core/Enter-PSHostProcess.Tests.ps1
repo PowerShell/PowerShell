@@ -12,7 +12,7 @@ function Get-PipePath {
 }
 
 # Executes the Enter/Exit PSHostProcess script that returns the pid of the process that's started.
-function Test-SpecificCommandSuccess {
+function Invoke-PSHostProcessScript {
     param (
         [string] $ArgumentString,
         [int] $Id,
@@ -69,10 +69,10 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter, exit, and re-enter another PSHost" {
             Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
 
-            Test-SpecificCommandSuccess -ArgumentString "-Id $pwshId" -Id $pwshId |
+            Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
                 Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
-            Test-SpecificCommandSuccess -ArgumentString "-Id $pwshId" -Id $pwshId |
+            Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
                 Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
         }
 
@@ -94,7 +94,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             try {
                 Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) }
 
-                Test-SpecificCommandSuccess -ArgumentString "-Id $powershellId" -Id $powershellId |
+                Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
             } finally {
@@ -141,10 +141,10 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
 
-                Test-SpecificCommandSuccess -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
+                Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
-                Test-SpecificCommandSuccess -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
+                Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
             } finally {
