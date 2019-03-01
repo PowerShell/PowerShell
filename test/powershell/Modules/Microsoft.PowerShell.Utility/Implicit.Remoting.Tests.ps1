@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 #
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-#
+
 $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 $originalWarningPreference = $WarningPreference
 $WarningPreference = "SilentlyContinue"
@@ -383,7 +383,7 @@ try
         }
 
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
-        ## Implicit credential doesn't work in AppVeyor builder, so mark all tests here '-pending'.
+        ## Implicit credential doesn't work in the Azure DevOps builder, so mark all tests here '-pending'.
 
         Context "Proxy module should create a new session" {
             BeforeAll {
@@ -1945,7 +1945,7 @@ try
         }
 
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
-        ## Implicit credential doesn't work in AppVeyor builder, so mark this test '-pending'.
+        ## Implicit credential doesn't work in the Azure DevOps builder, so mark this test '-pending'.
         It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
             ## Disconnect session and make it un-connectable.
             Disconnect-PSSession $session
