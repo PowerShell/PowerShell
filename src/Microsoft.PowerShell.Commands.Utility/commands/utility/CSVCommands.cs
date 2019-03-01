@@ -839,8 +839,8 @@ namespace Microsoft.PowerShell.Commands
     internal class ExportCsvHelper : IDisposable
     {
         private char _delimiter;
-        private BaseCsvWritingCommand.QuoteKind _quoteKind;
-        private StringBuilder _outputString;
+        readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
+        readonly private StringBuilder _outputString;
 
         /// <summary>
         /// Create ExportCsvHelper instance.
@@ -981,6 +981,9 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         case BaseCsvWritingCommand.QuoteKind.Never:
                             _outputString.Append(value);
+                            break;
+                        default:
+                            Diagnostics.Assert(false, "BaseCsvWritingCommand.QuoteKind has new item.");
                             break;
                     }
                 }
