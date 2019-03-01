@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
                     if (int.TryParse(pattern, out int x) && x >= 0)
                     {
                         errorText = ProcessResources.RecommendIdTagForGivenName;
-                        errorName = "RecommendIdTagForGivenName";
+                        errorName = nameof(ProcessResources.RecommendIdTagForGivenName);
                     }
 
                     WriteNonTerminatingError(
