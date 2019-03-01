@@ -599,9 +599,9 @@ namespace System.Management.Automation
         private bool _isBatching = false;
         private bool _stopBatchExecution = false;
 
-        // Lazy delegates for asynchronous invocation/termination of PowerShell commands
-        private Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>> _endInvokeMethod;
-        private Lazy<Action<IAsyncResult>> _endStopMethod;
+        // Delegates for asynchronous invocation/termination of PowerShell commands
+        private Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
+        private Action<IAsyncResult> _endStopMethod;
 
         #endregion
 
@@ -638,16 +638,17 @@ namespace System.Management.Automation
             ErrorBufferOwner = true;
             InformationalBuffers = new PSInformationalBuffers(InstanceId);
             Streams = new PSDataStreams(this);
-            InitializeDelegates();
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
         }
 
-        /// <summary>
-        /// Constructs a PowerShell instance in the disconnected start state with
-        /// the provided remote command connect information and runspace(pool) objects.
-        /// </summary>
-        /// <param name="connectCmdInfo">Remote command connect information.</param>
-        /// <param name="rsConnection">Remote Runspace or RunspacePool object.</param>
-        internal PowerShell(ConnectCommandInfo connectCmdInfo, object rsConnection)
+    /// <summary>
+    /// Constructs a PowerShell instance in the disconnected start state with
+    /// the provided remote command connect information and runspace(pool) objects.
+    /// </summary>
+    /// <param name="connectCmdInfo">Remote command connect information.</param>
+    /// <param name="rsConnection">Remote Runspace or RunspacePool object.</param>
+    internal PowerShell(ConnectCommandInfo connectCmdInfo, object rsConnection)
             : this(new PSCommand(), null, rsConnection)
         {
             ExtraCommands = new Collection<PSCommand>();
@@ -702,7 +703,8 @@ namespace System.Management.Automation
                 RemotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
             }
 
-            InitializeDelegates();
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
         }
 
         /// <summary>
@@ -941,15 +943,6 @@ namespace System.Management.Automation
             PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
             powerShell.IsNested = isNested;
             return powerShell;
-        }
-
-        /// <summary>
-        /// Lazy initializers for the _endInvokeMethod and _endStopMethod delegates.
-        /// </summary>
-        private void InitializeDelegates()
-        {
-            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>(() => { return EndInvoke; });
-            _endStopMethod = new Lazy<Action<IAsyncResult>>(() => { return EndStop; });
         }
 
         #endregion
@@ -3092,7 +3085,7 @@ namespace System.Management.Automation
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync()
         {
-            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod.Value).ConfigureAwait(false);
+            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -3134,7 +3127,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod.Value).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously.
@@ -3185,7 +3178,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod.Value).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously.
@@ -3233,7 +3226,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod.Value).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously and collect
@@ -3292,7 +3285,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod.Value).ConfigureAwait(false);
+            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod).ConfigureAwait(false);
 
         /// <summary>
         /// Begins a batch execution.
@@ -3817,7 +3810,7 @@ namespace System.Management.Automation
         /// </exception>
         public async Task StopAsync(AsyncCallback callback, object state)
         {
-            await Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod.Value).ConfigureAwait(false);
+            await Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod).ConfigureAwait(false);
         }
 
         #endregion

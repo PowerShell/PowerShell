@@ -1,8 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace PSTests.Parallel
@@ -10,7 +14,7 @@ namespace PSTests.Parallel
     public class PowerShellTests
     {
         [Fact]
-        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsync()
+        public static async Task TestPowerShellInvokeAsync()
         {
             using (var ps = PowerShell.Create())
             {
@@ -26,47 +30,138 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInput()
+        public static async Task TestPowerShellInvokeAsyncWithInput()
         {
             using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
-                var results = await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }));
+                var results = await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Process" }));
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]?.BaseObject);
-                Assert.Equal("Get-Command", ((CmdletInfo)results[0].BaseObject).Name);
+                Assert.Equal("Get-Process", ((CmdletInfo)results[0].BaseObject).Name);
             }
         }
 
         [Fact]
-        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithInputAndOutput()
+        public static async Task TestPowerShellInvokeAsyncWithInputAndOutput()
         {
             using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Get-Command");
 
                 var results = new PSDataCollection<CmdletInfo>();
-                await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Command" }), results);
+                await ps.InvokeAsync(new PSDataCollection<string>(new[] { "Get-Process" }), results);
 
                 Assert.Single(results);
                 Assert.IsType<CmdletInfo>(results[0]);
-                Assert.Equal("Get-Command", results[0].Name);
+                Assert.Equal("Get-Process", results[0].Name);
             }
         }
 
         [Fact]
-        public static async System.Threading.Tasks.Task TestPowerShellInvokeAsyncWithErrorInScript()
+        public static async Task TestPowerShellInvokeAsyncWithErrorInScript()
         {
             using (var ps = PowerShell.Create())
             {
-                ps.AddCommand("Get-Process")
-                  .AddParameter("InvalidParameterName", 42)
-                  .AddParameter("ErrorAction", ActionPreference.Stop);
-
+                ps.AddScript(@"
+try {
+    Get-Process -Invalid 42 -ErrorAction Stop
+} catch {
+    throw
+}
+");
                 var results = await ps.InvokeAsync();
+
+                Assert.True(results.IsFaulted);
+                Assert.IsType<AggregateException>(results.Exception);
+                Assert.IsType<ParameterBindingException>(results.Exception.InnerException);
+                Assert.Equal(results.Exception.InnerException.CommandInvocation.InvocationName, "Get-Process");
+                Assert.Equal(results.Exception.InnerException.ParameterName, "Invalid");
+                Assert.Equal(results.Exception.InnerException.ErrorId, "NamedParameterNotFound");
             }
         }
+
+        [Fact]
+        public static async Task TestPowerShellInvokeAsyncInUnopenedRunspace()
+        {
+            using (var rs = RunspaceFactory.CreateRunspace())
+            using (var ps = PowerShell.Create(rs))
+            {
+                var results = await ps.AddScript(@"@(1..10).foreach{Start-Sleep -Milliseconds 500}")
+                                      .InvokeAsync();
+
+                Assert.True(results.IsFaulted);
+                Assert.IsType<AggregateException>(results.Exception);
+                Assert.IsType<InvalidRunspaceStateException>(results.Exception.InnerException);
+                Assert.Equal(results.Exception.InnerException.CurrentState, RunspaceState.BeforeOpen);
+                Assert.Equal(results.Exception.InnerException.ExpectedState, RunspaceState.Opened);
+            }
+        }
+
+        [Fact]
+        public static async Task TestPowerShellInvokeAsyncInBusyRunspace()
+        {
+            using (var rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Open();
+                using (var ps = PowerShell.Create(rs))
+                {
+                    await ps.AddScript(@"@(1..120).foreach{Start-Sleep -Milliseconds 500}")
+                            .InvokeAsync();
+
+                    int time = 0;
+                    while (rs.RunspaceAvailability != RunspaceAvailability.Busy)
+                    {
+                        if ((time += 100) >= 120000)
+                        {
+                            break
+                        }
+                        Thread.Sleep(100);
+                    }
+
+                    Assert.Equal(rs.RunspaceAvailability, RunspaceAvailability.Busy);
+
+                    using (var ps2 = PowerShell.Create(rs))
+                    {
+                        var results = await ps2.AddScript(@"@(6..10).foreach{Start-Sleep -Milliseconds 500}")
+                                               .InvokeAsync();
+
+                        Assert.True(results.IsFaulted);
+                        Assert.IsType<AggregateException>(results.Exception);
+                        Assert.IsType<PSInvalidOperationException>(results.Exception.InnerException);
+                    }
+
+                    ps.Stop(() => { }, null);
+                }
+            }
+        }
+
+        [Fact]
+        public static async Task TestPowerShellInvokeAsyncMultiple()
+        {
+            var tasks = new List<Task>();
+
+            using (var ps1 = PowerShell.Create())
+            using (var ps2 = PowerShell.Create())
+            {
+                tasks.Add(await ps1.AddScript(@"@(1,3,5,7,9,11,13,15,17,19).foreach{Start-Sleep -Milliseconds 500}")
+                                   .InvokeAsync());
+                tasks.Add(await ps2.AddScript(@"@(2,4,6,8,10,12,14,16,18,20).foreach{Start-Sleep -Milliseconds 500}")
+                                   .InvokeAsync());
+            }
+
+            foreach (var task in tasks)
+            {
+                Assert.Equal(task.Status, TaskStatus.RanToCompletion);
+                Assert.True(task.IsCompletedSuccessfully);
+            }
+
+            var results = tasks.Select(x => x.Result).ToList<PSObject>();
+            Assert.Equal(results.Count, 20);
+        }
+
+        // More testing with these tests, plus new tests in progress for next commit
     }
 }
