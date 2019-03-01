@@ -740,21 +740,8 @@ namespace System.Management.Automation
         /// </summary>
         private void InitializeDelegates()
         {
-            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>
-                (
-                    () =>
-                    {
-                        return EndInvoke;
-                    }
-                );
-
-            _endStopMethod = new Lazy<Action<IAsyncResult>>
-            (
-                () =>
-                {
-                    return EndStop;
-                }
-            );
+            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>(() => { return EndInvoke; });
+            _endStopMethod = new Lazy<Action<IAsyncResult>>(() => { return EndStop; });
         }
 
         /// <summary>
