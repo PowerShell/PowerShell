@@ -47,7 +47,6 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
         $result       | Should -BeExactly ("Alias:" + $SepChar + "foo")
     }
 
-
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 913084)]
     It "should be able to join-path special string 'Env:' with 'foo'" {
         $result = Join-Path "Env:" "foo"
@@ -59,5 +58,12 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
         $result = Join-Path one two three four five
         $result.Count | Should -Be 1
         $result       | Should -BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
+    }
+
+    It "should be able to resolve nonexistent paths with -Resolve -SkipValidation" {
+        Setup -Dir Subdir1
+        $Result = Join-Path -Path $TestDrive -ChildPath 'Subdir1' -AdditionalChildPath 'Nope' -Resolve -SkipValidation
+        $Result.Count | Should -Be 1
+        $Result | Should -BeExactly "$TestDrive${sepChar}Subdir1${sepChar}Nope"
     }
 }
