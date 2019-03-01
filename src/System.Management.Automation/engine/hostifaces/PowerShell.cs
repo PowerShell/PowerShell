@@ -736,15 +736,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Lazy initializers for the _endInvokeMethod and _endStopMethod delegates.
-        /// </summary>
-        private void InitializeDelegates()
-        {
-            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>(() => { return EndInvoke; });
-            _endStopMethod = new Lazy<Action<IAsyncResult>>(() => { return EndStop; });
-        }
-
-        /// <summary>
         /// Sets the command collection in this powershell.
         /// </summary>
         /// <remarks>This method will be called by RemotePipeline
@@ -950,6 +941,15 @@ namespace System.Management.Automation
             PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
             powerShell.IsNested = isNested;
             return powerShell;
+        }
+
+        /// <summary>
+        /// Lazy initializers for the _endInvokeMethod and _endStopMethod delegates.
+        /// </summary>
+        private void InitializeDelegates()
+        {
+            _endInvokeMethod = new Lazy<Func<IAsyncResult, PSDataCollection<PSObject>>>(() => { return EndInvoke; });
+            _endStopMethod = new Lazy<Action<IAsyncResult>>(() => { return EndStop; });
         }
 
         #endregion

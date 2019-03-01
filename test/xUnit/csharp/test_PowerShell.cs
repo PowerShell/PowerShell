@@ -66,7 +66,6 @@ namespace PSTests.Parallel
                   .AddParameter("ErrorAction", ActionPreference.Stop);
 
                 var results = await ps.InvokeAsync();
-
             }
         }
     }
