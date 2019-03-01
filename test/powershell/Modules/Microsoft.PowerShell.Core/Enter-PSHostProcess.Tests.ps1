@@ -15,6 +15,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
         BeforeEach {
+            # Start a normal job where the first thing it does is return $pid. After that, spin forever.
             $pwshJob = Start-Job {
                 $pid
                 while ($true) {
@@ -52,6 +53,7 @@ Exit-PSHostProcess
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
+            # Start a Windows PowerShell job where the first thing it does is return $pid. After that, spin forever.
             $powershellJob = Start-Job -PSVersion 5.1 {
                 $pid
                 while ($true) {
@@ -101,6 +103,8 @@ Exit-PSHostProcess
             $pipeName = [System.IO.Path]::GetRandomFileName()
             $pipePath = Get-PipePath -PipeName $pipeName
 
+            # Start a job where the first thing it does is set the custom pipe name, then return $pid.
+            # After that, spin forever.
             $pwshJob = Start-Job -ArgumentList $pipeName {
                 [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($args[0])
                 $pid;
