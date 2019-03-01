@@ -44,8 +44,20 @@ function Start-PSProcess {
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
+        BeforeEach {
+            $pwshJob = Start-Job { $pid; while ($true) { Start-Sleep -Seconds 30 | Out-Null } }
+            do {
+                Start-Sleep -Seconds 1
+                $pwshId = Receive-Job $pwshJob
+            } while (!$pwshId)
+        }
+
+        AfterEach {
+            $pwshJob | Stop-Job -PassThru | Remove-Job
+        }
+
         It "Can enter, exit, and re-enter another PSHost" {
-            $pwsh = Start-PSProcess
+            # $pwsh = Start-PSProcess
 
             try {
 @'
@@ -53,22 +65,27 @@ Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
+'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
 
 @'
 Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $pwsh.Id | pwsh -c - | Should -Be $pwsh.Id
+'@ -f $pwshId | pwsh -c - | Should -Be $pwshId
 
             } finally {
-                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
+                # $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
 
         It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            $powershell = Start-PSProcess -WindowsPowerShell
+            # $powershell = Start-PSProcess -WindowsPowerShell
+            $powershellJob = Start-Job { $pid; while ($true) { Start-Sleep -Seconds 30 | Out-Null } } -PSVersion 5.1
+            do {
+                Start-Sleep -Seconds 1
+                $powershellId = Receive-Job $powershellJob
+            } while (!$powershellId)
 
             try {
 @'
@@ -76,26 +93,26 @@ Start-Sleep -Seconds 1
 Enter-PSHostProcess -Id {0} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $powershell.Id | pwsh -c - | Should -Be $powershell.Id
+'@ -f $powershellId | pwsh -c - | Should -Be $powershellId
 
             } finally {
-                $powershell | Stop-Process -Force -ErrorAction SilentlyContinue
+                $powershellJob | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
 
         It "Can enter using NamedPipeConnectionInfo" {
-            $pwsh = Start-PSProcess
+            # $pwsh = Start-PSProcess
 
             try {
-                $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
+                $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
                 $rs.Open()
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
-                $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
+                $ps.AddScript('$pid').Invoke() | Should -Be $pwshId
             } finally {
                 $rs.Dispose()
-                $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
+                # $pwsh | Stop-Process -Force -ErrorAction SilentlyContinue
             }
         }
     }
