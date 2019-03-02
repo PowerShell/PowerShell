@@ -193,18 +193,18 @@ namespace System.Management.Automation.Language
             typeof(ICollection).GetProperty(nameof(ICollection.Count));
 
         internal static readonly MethodInfo IComparable_CompareTo =
-            typeof(IComparable).GetMethod(nameof(IComparable.CompareTo));
+            typeof(IComparable).GetMethod(nameof(IComparable.CompareTo), new Type[] { typeof(object) });
 
         internal static readonly MethodInfo IDisposable_Dispose =
-            typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose));
+            typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), Type.EmptyTypes);
 
         internal static readonly MethodInfo IEnumerable_GetEnumerator =
-            typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator));
+            typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator), Type.EmptyTypes);
 
         internal static readonly PropertyInfo IEnumerator_Current =
             typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current));
         internal static readonly MethodInfo IEnumerator_MoveNext =
-            typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext));
+            typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext), Type.EmptyTypes);
 
         internal static readonly MethodInfo IList_get_Item =
             typeof(IList).GetMethod("get_Item");
@@ -215,44 +215,42 @@ namespace System.Management.Automation.Language
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), staticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags, null, new Type[] { typeof(object), typeof(Type) }, null);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
-            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), staticFlags);
+            typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), staticFlags, null, new Type[] { typeof(object), typeof(Type) }, null);
 
         internal static readonly MethodInfo LocalPipeline_GetExecutionContextFromTLS =
-            typeof(LocalPipeline).GetMethod(nameof(LocalPipeline.GetExecutionContextFromTLS), staticFlags);
+            typeof(LocalPipeline).GetMethod(nameof(LocalPipeline.GetExecutionContextFromTLS), staticFlags, null, Type.EmptyTypes, null);
 
         internal static readonly MethodInfo LoopFlowException_MatchLabel =
-            typeof(LoopFlowException).GetMethod(nameof(LoopFlowException.MatchLabel), instanceFlags);
+            typeof(LoopFlowException).GetMethod(nameof(LoopFlowException.MatchLabel), instanceFlags, null, new Type[] { typeof(string) }, null);
 
         internal static readonly MethodInfo MergingRedirection_BindForExpression =
-            typeof(MergingRedirection).GetMethod(nameof(MergingRedirection.BindForExpression), instanceFlags);
+            typeof(MergingRedirection).GetMethod(nameof(MergingRedirection.BindForExpression), instanceFlags, null, new Type[] { typeof(ExecutionContext), typeof(FunctionContext) }, null);
 
         internal static readonly ConstructorInfo MethodException_ctor =
-            typeof(MethodException).GetConstructor(instanceFlags, null,
-                                                   new Type[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
+            typeof(MethodException).GetConstructor(instanceFlags, null, new Type[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
 
         internal static readonly MethodInfo MutableTuple_IsValueSet =
-            typeof(MutableTuple).GetMethod(nameof(MutableTuple.IsValueSet), instanceFlags);
+            typeof(MutableTuple).GetMethod(nameof(MutableTuple.IsValueSet), instanceFlags, null, new Type[] { typeof(int) }, null);
 
         internal static readonly MethodInfo Object_Equals =
             typeof(object).GetMethod(nameof(object.Equals), new Type[] { typeof(object) });
 
         internal static readonly ConstructorInfo OrderedDictionary_ctor =
-            typeof(OrderedDictionary).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
-                                                     CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
+            typeof(OrderedDictionary).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
 
         internal static readonly MethodInfo Parser_ScanNumber =
-            typeof(Parser).GetMethod(nameof(Parser.ScanNumber), staticFlags);
+            typeof(Parser).GetMethod(nameof(Parser.ScanNumber), staticFlags, null, new Type[] { typeof(string), typeof(Type), typeof(bool) }, null);
 
         internal static readonly MethodInfo ParserOps_ContainsOperatorCompiled =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ContainsOperatorCompiled), staticFlags);
         internal static readonly MethodInfo ParserOps_ImplicitOp =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.ImplicitOp), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.ImplicitOp), staticFlags, null, new Type[] { typeof(object), typeof(object), typeof(string), typeof(IScriptExtent), typeof(string) }, null);
         internal static readonly MethodInfo ParserOps_JoinOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.JoinOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.JoinOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object) }, null);
         internal static readonly MethodInfo ParserOps_LikeOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object), typeof(TokenKind) }, null);
         internal static readonly MethodInfo ParserOps_MatchOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_RangeOperator =
