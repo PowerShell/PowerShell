@@ -48,22 +48,21 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ArrayOps_Multiply =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), genericParameterCount: 1, staticFlags, null, new Type[] { Type.MakeGenericMethodParameter(0).MakeArrayType(), typeof(uint) }, null);
         internal static readonly MethodInfo ArrayOps_SetMDArrayValue =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), staticFlags, null, new Type[] { typeof(Array), typeof(int[]), typeof(object) }, null);
         internal static readonly MethodInfo ArrayOps_SlicingIndex =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SlicingIndex), staticFlags);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.SlicingIndex), staticFlags, null, new Type[] { typeof(object), typeof(object[]), typeof(Func<object, object, object>) }, null);
 
         internal static readonly ConstructorInfo BreakException_ctor =
-            typeof(BreakException).GetConstructor(instanceFlags, null, CallingConventions.Standard,
-                                                  new Type[] { typeof(string) }, null);
+            typeof(BreakException).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
 
         internal static readonly MethodInfo CharOps_CompareIeq =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareIeq), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareIeq), staticFlags, null, new Type[] { typeof(char), typeof(char) }, null);
         internal static readonly MethodInfo CharOps_CompareIne =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareIne), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareIne), staticFlags, null, new Type[] { typeof(char), typeof(char) }, null);
         internal static readonly MethodInfo CharOps_CompareStringIeq =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags, null, new Type[] { typeof(char), typeof(string) }, null);
         internal static readonly MethodInfo CharOps_CompareStringIne =
-            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
+            typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags, null, new Type[] { typeof(char), typeof(string) }, null);
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
@@ -75,25 +74,24 @@ namespace System.Management.Automation.Language
             typeof(CommandRedirection).GetMethod(nameof(CommandRedirection.UnbindForExpression), instanceFlags);
 
         internal static readonly ConstructorInfo ContinueException_ctor =
-            typeof(ContinueException).GetConstructor(instanceFlags, null, CallingConventions.Standard,
-                                                     new Type[] { typeof(string) }, null);
+            typeof(ContinueException).GetConstructor(instanceFlags, null, CallingConventions.Standard,  new Type[] { typeof(string) }, null);
 
         internal static readonly MethodInfo Convert_ChangeType =
             typeof(Convert).GetMethod(nameof(Convert.ChangeType), new Type[] { typeof(object), typeof(Type) });
 
         internal static readonly MethodInfo Debugger_EnterScriptFunction =
-            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.EnterScriptFunction), instanceFlags);
+            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.EnterScriptFunction), instanceFlags, null, new Type[] { typeof(FunctionContext) }, null);
         internal static readonly MethodInfo Debugger_ExitScriptFunction =
-            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.ExitScriptFunction), instanceFlags);
+            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.ExitScriptFunction), instanceFlags, null, Type.EmptyTypes, null);
         internal static readonly MethodInfo Debugger_OnSequencePointHit =
-            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.OnSequencePointHit), instanceFlags);
+            typeof(ScriptDebugger).GetMethod(nameof(ScriptDebugger.OnSequencePointHit), instanceFlags, null, new Type[] { typeof(FunctionContext) }, null);
 
         internal static readonly MethodInfo EnumerableOps_AddEnumerable =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddEnumerable), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddEnumerable), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IEnumerator), typeof(IEnumerator) }, null);
         internal static readonly MethodInfo EnumerableOps_AddObject =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddObject), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddObject), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IEnumerator), typeof(object) }, null);
         internal static readonly MethodInfo EnumerableOps_Compare =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(object), typeof(Func<object, object, bool>) }, null);
         internal static readonly MethodInfo EnumerableOps_GetEnumerator =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), staticFlags);
         internal static readonly MethodInfo EnumerableOps_GetCOMEnumerator =
