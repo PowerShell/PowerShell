@@ -93,33 +93,32 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo EnumerableOps_Compare =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(object), typeof(Func<object, object, bool>) }, null);
         internal static readonly MethodInfo EnumerableOps_GetEnumerator =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), staticFlags, null, new Type[] { typeof(IEnumerable) }, null);
         internal static readonly MethodInfo EnumerableOps_GetCOMEnumerator =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetCOMEnumerator), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetCOMEnumerator), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo EnumerableOps_GetGenericEnumerator =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetGenericEnumerator), staticFlags);
         internal static readonly MethodInfo EnumerableOps_GetSlice =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetSlice), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetSlice), staticFlags, null, new Type[] { typeof(IList), typeof(int) }, null);
         internal static readonly MethodInfo EnumerableOps_MethodInvoker =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MethodInvoker), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MethodInvoker), staticFlags, null, new Type[] { typeof(PSInvokeMemberBinder), typeof(Type), typeof(IEnumerator), typeof(object[]), typeof(Type) }, null);
         internal static readonly MethodInfo EnumerableOps_Where =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Where), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Where), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(ScriptBlock), typeof(WhereOperatorSelectionMode), typeof(int) }, null);
         internal static readonly MethodInfo EnumerableOps_ForEach =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ForEach), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ForEach), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(object), typeof(object[]) }, null);
         internal static readonly MethodInfo EnumerableOps_Multiply =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Multiply), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Multiply), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(uint) }, null);
         internal static readonly MethodInfo EnumerableOps_PropertyGetter =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.PropertyGetter), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.PropertyGetter), staticFlags, null, new Type[] { typeof(PSGetMemberBinder), typeof(IEnumerator) }, null);
         internal static readonly MethodInfo EnumerableOps_SlicingIndex =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), staticFlags, null, new Type[] { typeof(object), typeof(IEnumerator), typeof(Func<object, object, object>) }, null);
         internal static readonly MethodInfo EnumerableOps_ToArray =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags, null, new Type[] { typeof(IEnumerator) }, null);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags, null, new Type[] { typeof(IEnumerator), typeof(Pipe), typeof(ExecutionContext), typeof(bool) }, null);
 
         internal static readonly ConstructorInfo ErrorRecord__ctor =
-            typeof(ErrorRecord).GetConstructor(instanceFlags | BindingFlags.Public, null, CallingConventions.Standard,
-                                               new Type[] { typeof(ErrorRecord), typeof(RuntimeException) }, null);
+            typeof(ErrorRecord).GetConstructor(instanceFlags | BindingFlags.Public, null, CallingConventions.Standard, new Type[] { typeof(ErrorRecord), typeof(RuntimeException) }, null);
 
         internal static readonly PropertyInfo Exception_Message =
             typeof(Exception).GetProperty(nameof(Exception.Message));
