@@ -4965,6 +4965,12 @@ namespace System.Management.Automation.Language
 
                     if (htAst == null)
                     {
+                        if (kind == UsingStatementKind.Type)
+                        {
+                            itemToken.TokenFlags |= TokenFlags.TypeName;
+                            aliasToken.TokenFlags |= TokenFlags.TypeName;
+                        }
+
                         return new UsingStatementAst(
                             ExtentOf(usingToken, aliasToken),
                             kind,
