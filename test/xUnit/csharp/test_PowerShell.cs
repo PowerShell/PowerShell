@@ -11,7 +11,7 @@ using Xunit;
 
 namespace PSTests.Parallel
 {
-    public class PowerShellTests
+    public static class PowerShellTests
     {
         [Fact]
         public static async Task TestPowerShellInvokeAsync()

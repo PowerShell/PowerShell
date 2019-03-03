@@ -107,7 +107,8 @@ try {
                 $psBusy.AddScript('@(1..120).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync() > $null
                 $time = 0
                 while ($rs.RunspaceAvailability -ne 'Busy') {
-                    if (($time += 100) -ge 120000) {
+                    $time += 100
+                    if ($time -ge 120000) {
                         break
                     }
                     Start-Sleep -Milliseconds 100
