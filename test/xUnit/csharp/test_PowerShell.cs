@@ -108,8 +108,8 @@ try {
                 rs.Open();
                 using (var ps = PowerShell.Create(rs))
                 {
-                    await ps.AddScript(@"@(1..120).foreach{Start-Sleep -Milliseconds 500}")
-                            .InvokeAsync();
+                    ps.AddScript(@"@(1..120).foreach{Start-Sleep -Milliseconds 500}")
+                      .InvokeAsync();
 
                     int time = 0;
                     while (rs.RunspaceAvailability != RunspaceAvailability.Busy)
@@ -146,20 +146,21 @@ try {
             using (var ps1 = PowerShell.Create())
             using (var ps2 = PowerShell.Create())
             {
-                tasks.Add(await ps1.AddScript(@"@(1..5).foreach{Start-Sleep -Milliseconds 500; $_}")
-                                   .InvokeAsync());
-                tasks.Add(await ps2.AddScript(@"@(6..10).foreach{Start-Sleep -Milliseconds 500; $_}")
-                                   .InvokeAsync());
-            }
+                tasks.Add(ps1.AddScript(@"@(1..5).foreach{Start-Sleep -Milliseconds 500; $_}")
+                             .InvokeAsync());
+                tasks.Add(ps2.AddScript(@"@(6..10).foreach{Start-Sleep -Milliseconds 500; $_}")
+                             .InvokeAsync());
+                Task.WaitAll(tasks);
 
-            foreach (var task in tasks)
-            {
-                Assert.Equal(task.Status, TaskStatus.RanToCompletion);
-                Assert.True(task.IsCompletedSuccessfully);
-            }
+                foreach (var task in tasks)
+                {
+                    Assert.Equal(task.Status, TaskStatus.RanToCompletion);
+                    Assert.True(task.IsCompletedSuccessfully);
+                }
 
-            var results = tasks.Select(x => x.Result).ToList<PSObject>();
-            Assert.Equal(results.Count, 10);
+                var results = tasks.Select(x => x.Result).ToList<PSObject>();
+                Assert.Equal(results.Count, 10);
+            }
         }
 
         // More testing with these tests, plus new tests in progress for next commit
