@@ -4176,10 +4176,17 @@ param(
     }
     elseif ($help -ne $null)
     {
-        $customPagerCommand = """"
-        $customPagerCommandArgs = """"
-        $customPagerCommandLine = """"
+        # Use more on Windows, and use less on Linux by default
+        if ($IsWindows) {
+            $pagerCommand = 'more.com'
+            $pagerArgs = $null
+        }
+        else {
+            $pagerCommand = 'less'
+            $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+        }
 
+        # Respect PAGER environment variable which allows user to specify a custom pager
         if ($env:PAGER)
         {
             $customPagerCommandLine = $env:PAGER
@@ -4193,23 +4200,25 @@ param(
             if (-not $cmds) {
                 # Custom command is invalid; ignore it, but issue a warning.
                 Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $customPagerCommandLine""
-                $customPagerCommand = $null # use default command
             }
             elseif ($cmds.Count -eq 1 -and $cmds[0].Source -eq $customPagerCommandLine) {
-                # The full command line is an unquoted path to an existing executable
-                # with embedded spaces.
-                $customPagerCommand = $customPagerCommandLine
-                $customPagerCommandArgs = $null
+                # The full command line is an unquoted path to an existing executable with embedded spaces.
+                $pagerCommand = $customPagerCommandLine
+                $pagerArgs = $null
+            }
+            else {
+                $pagerCommand = $customPagerCommand
+                $pagerArgs = $customPagerCommandArgs
             }
         }
 
-        # Respect PAGER, use more on Windows, and use less on Linux
-        if ($customPagerCommand) {
-            $help | Out-String -Width ([System.Console]::WindowWidth - 1) | & $customPagerCommand $customPagerCommandArgs
-        } elseif ($IsWindows) {
-            $help | more.com
-        } else {
-            $help | Out-String -Width ([System.Console]::WindowWidth - 1) | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
+        if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
+            $help | Out-String -Stream -Width ([System.Console]::WindowWidth - 1) | & $pagerCommand $pagerArgs
+        }
+        else {
+            # If the pager is a PowerShell function or script, pipe directly into it.
+            $help | & $pagerCommand $pagerArgs
         }
     }
 ";
