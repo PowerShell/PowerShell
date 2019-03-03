@@ -781,16 +781,8 @@ namespace System.Management.Automation
                 {
                     split.Add(buf.ToString());
                 }
-<<<<<<< HEAD
 
                 results.AddRange(split);
-=======
-                if (limit < 0)
-                {
-                    split.Reverse();
-                }
-                ExtendList(results, split);
->>>>>>> e17cee10f... [feature] changed the predicate case to return strings in correct order
             }
             
 
@@ -837,13 +829,8 @@ namespace System.Management.Automation
 
             foreach (string item in content)
             {
-<<<<<<< HEAD
                 string[] split = regex.Split(item, limit, 0);
                 results.AddRange(split);
-=======
-                string[] split = regex.Split(item, calculatedLimit);
-                ExtendList(results, split);
->>>>>>> dbe4d631f... [feature] added a couple more tests and made code work with the linter
             }
 
             return results.ToArray();
