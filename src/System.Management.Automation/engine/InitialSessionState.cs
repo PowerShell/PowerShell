@@ -4205,11 +4205,11 @@ param(
 
         # Respect PAGER, use more on Windows, and use less on Linux
         if ($customPagerCommand) {
-            $help | & $customPagerCommand $customPagerCommandArgs
+            $help | Out-String -Width ([System.Console]::WindowWidth - 1) | & $customPagerCommand $customPagerCommandArgs
         } elseif ($IsWindows) {
             $help | more.com
         } else {
-            $help | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
+            $help | Out-String -Width ([System.Console]::WindowWidth - 1) | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
         }
     }
 ";
