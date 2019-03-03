@@ -85,16 +85,6 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $process.Kill()
             }
         }
-
-        function Get-PipePath {
-            param (
-                $PipeName
-            )
-            if ($IsWindows) {
-                return "\\.\pipe\$PipeName"
-            }
-            "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
-        }
     }
 
     AfterEach {
@@ -129,6 +119,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
+
     Context "CommandLine" {
         It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should -Be "hello world"
@@ -633,13 +624,13 @@ foo
         }
 
         It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
-            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
+            # Generate a string that is larger than the max pipe name length.
+            $longPipeName = [string]::new("A", 200)
 
             "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
             # 64 is the ExitCode for BadCommandLineParameter
             $LASTEXITCODE | Should -Be 64
         }
-
     }
 }
 

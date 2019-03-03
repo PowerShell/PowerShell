@@ -1,14 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-function Get-PipePath {
+function Wait-JobPid {
     param (
-        $PipeName
+        $Job
     )
-    if ($IsWindows) {
-        return "\\.\pipe\$PipeName"
-    }
-    "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
+
+    # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
+    do {
+        Start-Sleep -Seconds 1
+        $pwshId = Receive-Job $Job
+    } while (!$pwshId)
+
+    $pwshId
 }
 
 # Executes the Enter/Exit PSHostProcess script that returns the pid of the process that's started.
@@ -48,6 +52,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
         BeforeEach {
             # Start a normal job where the first thing it does is return $pid. After that, spin forever.
+            # We will use this job as the target process for Enter-PSHostProcess
             $pwshJob = Start-Job {
                 $pid
                 while ($true) {
@@ -55,11 +60,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 }
             }
 
-            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
-            do {
-                Start-Sleep -Seconds 1
-                $pwshId = Receive-Job $pwshJob
-            } while (!$pwshId)
+            $pwshId = Wait-JobPid $pwshJob
         }
 
         AfterEach {
@@ -69,15 +70,18 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter, exit, and re-enter another PSHost" {
             Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
 
+            # This will enter and exit another process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
                 Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
+            # Re-enter and exit the other process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
                 Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
         }
 
-        It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
+        It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
             # Start a Windows PowerShell job where the first thing it does is return $pid. After that, spin forever.
+            # We will use this job as the target process for Enter-PSHostProcess
             $powershellJob = Start-Job -PSVersion 5.1 {
                 $pid
                 while ($true) {
@@ -85,15 +89,16 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 }
             }
 
-            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
-            do {
-                Start-Sleep -Seconds 1
-                $powershellId = Receive-Job $powershellJob
-            } while (!$powershellId)
+            $powershellId = Wait-JobPid $powershellJob
 
             try {
                 Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) }
 
+                # This will enter and exit another process
+                Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
+
+                # Re-enter and exit the other process
                 Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
 
@@ -126,24 +131,23 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
             # Start a job where the first thing it does is set the custom pipe name, then return $pid.
             # After that, spin forever.
+            # We will use this job as the target process for Enter-PSHostProcess
             $pwshJob = Start-Job -ArgumentList $pipeName {
                 [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($args[0])
                 $pid
                 while ($true) { Start-Sleep -Seconds 30 | Out-Null }
             }
 
-            # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
-            do {
-                Start-Sleep -Seconds 1
-                $pwshId = Receive-Job $pwshJob
-            } while (!$pwshId)
+            $pwshId = Wait-JobPid $pwshJob
 
             try {
                 Wait-UntilTrue { Test-Path $pipePath }
 
+                # This will enter and exit another process
                 Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
+                # Re-enter and exit the other process
                 Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
                     Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
 
