@@ -295,33 +295,33 @@ namespace System.Management.Automation.Language
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.ClearPipe), staticFlags, null, new Type[] { typeof(List<object>) }, null);
 
         internal static readonly MethodInfo PSGetDynamicMemberBinder_GetIDictionaryMember =
-            typeof(PSGetDynamicMemberBinder).GetMethod(nameof(PSGetDynamicMemberBinder.GetIDictionaryMember), staticFlags);
+            typeof(PSGetDynamicMemberBinder).GetMethod(nameof(PSGetDynamicMemberBinder.GetIDictionaryMember), staticFlags, null, new Type[] { typeof(IDictionary), typeof(object) }, null);
 
         internal static readonly MethodInfo PSGetMemberBinder_CloneMemberInfo =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.CloneMemberInfo), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.CloneMemberInfo), staticFlags, null, new Type[] { typeof(PSMemberInfo), typeof(object) }, null);
         internal static readonly MethodInfo PSGetMemberBinder_GetAdaptedValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetAdaptedValue), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetAdaptedValue), staticFlags, null, new Type[] { typeof(object), typeof(string) }, null);
         internal static readonly MethodInfo PSGetMemberBinder_GetTypeTableFromTLS =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetTypeTableFromTLS), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.GetTypeTableFromTLS), staticFlags, null, Type.EmptyTypes, null);
         internal static readonly MethodInfo PSGetMemberBinder_IsTypeNameSame =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.IsTypeNameSame), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.IsTypeNameSame), staticFlags, null, new Type[] { typeof(object), typeof(string) }, null);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetGenericDictionaryValue =
             typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetGenericDictionaryValue), staticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetInstanceMember =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(MemberInfo) }, null);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetIDictionaryValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), staticFlags);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), staticFlags, null, new Type[] { typeof(IDictionary), typeof(string), typeof(object) }, null);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_InvokeAdaptedMember =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedMember), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedMember), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(object[]) }, null);
         internal static readonly MethodInfo PSInvokeMemberBinder_InvokeAdaptedSetMember =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedSetMember), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedSetMember), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(object[]), typeof(object) }, null);
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), staticFlags, null, new Type[] { typeof(object[]) }, null);
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), staticFlags, null, new Type[] { typeof(object[]) }, null);
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), staticFlags);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(PSMethodInfo) }, null);
 
         internal static readonly MethodInfo PSMethodInfo_Invoke =
             typeof(PSMethodInfo).GetMethod(nameof(PSMethodInfo.Invoke));
