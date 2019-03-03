@@ -89,7 +89,7 @@ try {
             using (var rs = RunspaceFactory.CreateRunspace())
             using (var ps = PowerShell.Create(rs))
             {
-                var results = await ps.AddScript(@"@(1..10).foreach{Start-Sleep -Milliseconds 500}")
+                var results = await ps.AddScript(@"'This will not run'")
                                       .InvokeAsync();
 
                 Assert.True(results.IsFaulted);
@@ -116,7 +116,7 @@ try {
                     {
                         if ((time += 100) >= 120000)
                         {
-                            break
+                            break;
                         }
                         Thread.Sleep(100);
                     }
@@ -125,7 +125,7 @@ try {
 
                     using (var ps2 = PowerShell.Create(rs))
                     {
-                        var results = await ps2.AddScript(@"@(6..10).foreach{Start-Sleep -Milliseconds 500}")
+                        var results = await ps2.AddScript(@"'This will not run'")
                                                .InvokeAsync();
 
                         Assert.True(results.IsFaulted);
@@ -146,9 +146,9 @@ try {
             using (var ps1 = PowerShell.Create())
             using (var ps2 = PowerShell.Create())
             {
-                tasks.Add(await ps1.AddScript(@"@(1,3,5,7,9,11,13,15,17,19).foreach{Start-Sleep -Milliseconds 500}")
+                tasks.Add(await ps1.AddScript(@"@(1..5).foreach{Start-Sleep -Milliseconds 500; $_}")
                                    .InvokeAsync());
-                tasks.Add(await ps2.AddScript(@"@(2,4,6,8,10,12,14,16,18,20).foreach{Start-Sleep -Milliseconds 500}")
+                tasks.Add(await ps2.AddScript(@"@(6..10).foreach{Start-Sleep -Milliseconds 500; $_}")
                                    .InvokeAsync());
             }
 
@@ -159,7 +159,7 @@ try {
             }
 
             var results = tasks.Select(x => x.Result).ToList<PSObject>();
-            Assert.Equal(results.Count, 20);
+            Assert.Equal(results.Count, 10);
         }
 
         // More testing with these tests, plus new tests in progress for next commit
