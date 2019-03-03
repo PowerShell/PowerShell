@@ -308,9 +308,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSGetMemberBinder_TryGetGenericDictionaryValue =
             typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetGenericDictionaryValue), staticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetInstanceMember =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(MemberInfo) }, null);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), staticFlags);
         internal static readonly MethodInfo PSGetMemberBinder_TryGetIDictionaryValue =
-            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), staticFlags, null, new Type[] { typeof(IDictionary), typeof(string), typeof(object) }, null);
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), staticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_InvokeAdaptedMember =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.InvokeAdaptedMember), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(object[]) }, null);
@@ -321,7 +321,7 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), staticFlags, null, new Type[] { typeof(object[]) }, null);
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(PSMethodInfo) }, null);
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), staticFlags);
 
         internal static readonly MethodInfo PSMethodInfo_Invoke =
             typeof(PSMethodInfo).GetMethod(nameof(PSMethodInfo.Invoke));
@@ -342,15 +342,15 @@ namespace System.Management.Automation.Language
             typeof(PSReference).GetProperty(nameof(PSReference.Value));
 
         internal static readonly MethodInfo PSScriptMethod_InvokeScript =
-            typeof(PSScriptMethod).GetMethod(nameof(PSScriptMethod.InvokeScript), staticFlags);
+            typeof(PSScriptMethod).GetMethod(nameof(PSScriptMethod.InvokeScript), staticFlags, null, new Type[] { typeof(string), typeof(ScriptBlock), typeof(object), typeof(object[]) }, null);
 
         internal static readonly MethodInfo PSScriptProperty_InvokeGetter =
-            typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeGetter), instanceFlags);
+            typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeGetter), instanceFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo PSScriptProperty_InvokeSetter =
-            typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeSetter), instanceFlags);
+            typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeSetter), instanceFlags, null, new Type[] { typeof(object), typeof(object) }, null);
 
         internal static readonly MethodInfo PSSetMemberBinder_SetAdaptedValue =
-            typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetAdaptedValue), staticFlags);
+            typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetAdaptedValue), staticFlags, null, new Type[] { typeof(object), typeof(string), typeof(object) }, null);
 
         internal static readonly MethodInfo PSVariableAssignmentBinder_CopyInstanceMembersOfValueType =
             typeof(PSVariableAssignmentBinder).GetMethod(nameof(PSVariableAssignmentBinder.CopyInstanceMembersOfValueType), staticFlags);
@@ -358,22 +358,22 @@ namespace System.Management.Automation.Language
             typeof(PSVariableAssignmentBinder).GetField(nameof(PSVariableAssignmentBinder.s_mutableValueWithInstanceMemberVersion), staticFlags);
 
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeNonPublic =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeByRefLike =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
-            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags, null, new Type[] { typeof(object) }, null);
 
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSBaseMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSBaseMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSBaseMemberSet), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSExtendedMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSExtendedMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSExtendedMemberSet), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSObjectMemberSet =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSObjectMemberSet), staticFlags);
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSObjectMemberSet), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo ReservedNameMembers_PSTypeNames =
-            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.PSTypeNames));
+            typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.PSTypeNames), new Type[] { typeof(PSObject) });
 
         internal static readonly MethodInfo RestrictedLanguageChecker_CheckDataStatementLanguageModeAtRuntime =
             typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementLanguageModeAtRuntime), staticFlags);
