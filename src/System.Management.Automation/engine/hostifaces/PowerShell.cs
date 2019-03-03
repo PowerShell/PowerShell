@@ -600,8 +600,8 @@ namespace System.Management.Automation
         private bool _stopBatchExecution = false;
 
         // Delegates for asynchronous invocation/termination of PowerShell commands
-        private Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
-        private Action<IAsyncResult> _endStopMethod;
+        private readonly Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
+        private readonly Action<IAsyncResult> _endStopMethod;
 
         #endregion
 

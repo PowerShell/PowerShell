@@ -116,14 +116,11 @@ try {
                 $rs.RunspaceAvailability | Should -Be 'Busy'
                 $ps = [powershell]::Create($rs)
                 try {
-                    $sb = {
-                        InvokeAsyncHelper -PowerShell $ps -Wait
-                    }
                     # This test is designed to fail. You cannot invoke PowerShell asynchronously
                     # in a runspace that is busy, because pipelines cannot be run concurrently.
-                    $err = { $sb.Invoke() } | Should -Throw -ErrorId 'AggregateException' -PassThru
+                    $err = { InvokeAsyncHelper -PowerShell $ps -Wait } | Should -Throw -ErrorId 'AggregateException' -PassThru
                     GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
-                    $psBusy.Stop({}, $null);
+                    $psBusy.Stop();
                 } finally {
                     $ps.Dispose()
                 }
@@ -137,13 +134,10 @@ try {
         It 'cannot invoke a single script asynchronously in the current runspace' {
             $ps = [powershell]::Create('CurrentRunspace')
             try {
-                $sb = {
-                    InvokeAsyncHelper -PowerShell $ps -Wait
-                }
                 # This test is designed to fail. You cannot invoke PowerShell asynchronously
                 # in the current runspace because nested PowerShell instances cannot be
                 # invoked asynchronously
-                $err = { $sb.Invoke() } | Should -Throw -ErrorId 'AggregateException' -PassThru
+                $err = { InvokeAsyncHelper -PowerShell $ps -Wait } | Should -Throw -ErrorId 'AggregateException' -PassThru
                 GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
             } finally {
                 $ps.Dispose()
@@ -227,25 +221,22 @@ try {
     }
 
     Context 'PowerShell::StopAsync' {
-        It 'can stop multiple scripts that are running asynchronously' {
-            $ps = @([powershell]::Create(),[powershell]::Create())
+        It 'can stop a script that is running asynchronously' {
+            $ps = [powershell]::Create()
             try {
-                $ir = @($ps[0].AddScript("@(1,3,5,7,9,11,13,15,17,19)${sbStub}").InvokeAsync(),
-                        $ps[1].AddScript("@(2,4,6,8,10,12,14,16,18,20)${sbStub}").InvokeAsync())
+                $ir = $ps.AddScript("@(1..240)${sbStub}").InvokeAsync()
                 while ($ps.InvocationStateInfo.State -ne [System.Management.Automation.PSInvocationState]::Running) {
                     Start-Sleep -Milliseconds 100
                 }
-                $sr = @($ps.foreach{$_.StopAsync({}, $null)})
-                [System.Threading.Tasks.Task]::WaitAll($sr)
-                @(0..1).foreach{
-                    $sr[$_].IsCompletedSuccessfully | Should -Be $true
-                    $ir[$_].IsFaulted | Should -Be $true
-                    $ir[$_].Exception -is [System.AggregateException] | Should -Be $true
-                    $ir[$_].Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -Be $true
-                    $ps[$_].InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
-                }
+                $sr = $ps.StopAsync({}, $null)
+                [System.Threading.Tasks.Task]::WaitAll(@($sr))
+                $sr.IsCompletedSuccessfully | Should -Be $true
+                $ir.IsFaulted | Should -Be $true
+                $ir.Exception -is [System.AggregateException] | Should -Be $true
+                $ir.Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -Be $true
+                $ps.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
             } finally {
-                $ps.foreach{$_.Dispose()}
+                $ps.Dispose()
             }
         }
     }
