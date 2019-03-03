@@ -4176,11 +4176,10 @@ param(
     }
     elseif ($help -ne $null)
     {
-        $pagerArgs = $null
-        
         # By default use more on Windows and less on Linux.
         if ($IsWindows) {
             $pagerCommand = 'more.com'
+            $pagerArgs = $null
         }
         else {
             $pagerCommand = 'less'
@@ -4193,6 +4192,7 @@ param(
             if (Get-Command $env:PAGER -ErrorAction Ignore) {
                 # Entire PAGER value corresponds to a single command.
                 $pagerCommand = $env:PAGER
+                $pagerArgs = $null
             }
             else {
                 # PAGER value is not a valid command, check if PAGER command and arguments have been specified.
@@ -4206,31 +4206,30 @@ param(
                     # Custom pager command is invalid, issue a warning.
                     Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $env:PAGER""
                 }
-                elseif ($tokens.Count -eq 1) {
-                    $pagerCommand = $customPagerCommand
-                }
                 else {
                     # This approach will preserve all the pagers args.
                     $pagerCommand = $customPagerCommand
-                    $pagerArgs = $env:PAGER.Substring($tokens[1].Start)
+                    $pagerArgs = if ($tokens.Count -gt 1) {$env:PAGER.Substring($tokens[1].Start)} else {$null}
                 }
             }
         }
 
+        # If the pager is an application, format the output width before sending to the app.
         if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
-            # If the pager is an application, format the output width before sending to the app.
+            $consoleWidth = [System.Console]::WindowWidth
+
             if ($pagerArgs) {
                 # Supply pager arguments to an application without any PowerShell parsing of the arguments.
-                $env:_PSPAGER_ARGS = $pagerArgs
-                $help | Out-String -Stream -Width ([System.Console]::WindowWidth - 1) | & $pagerCommand --% %_PSPAGER_ARGS%
-                Remove-Item Env:\_PSPAGER_ARGS -ErrorAction Ignore
+                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
+                $env:__PSPAGER_ARGS = $pagerArgs
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
             }
             else {
-                $help | Out-String -Stream -Width ([System.Console]::WindowWidth - 1) | & $pagerCommand
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
             }
         }
         else {
-            # If the pager is a PowerShell function or script, pipe directly into it.
+            # The pager command is a PowerShell function, script or alias, so pipe directly into it.
             $help | & $pagerCommand $pagerArgs
         }
     }
