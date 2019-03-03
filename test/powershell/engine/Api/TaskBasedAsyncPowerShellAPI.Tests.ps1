@@ -104,15 +104,8 @@ try {
             $rs.Open()
             $psBusy = [powershell]::Create($rs)
             try {
-                $psBusy.AddScript('@(1..120).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync() > $null
-                $time = 0
-                while ($rs.RunspaceAvailability -ne 'Busy') {
-                    $time += 100
-                    if ($time -ge 120000) {
-                        break
-                    }
-                    Start-Sleep -Milliseconds 100
-                }
+                $psBusy.AddScript('@(1..240).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync() > $null
+                Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Busy' } -Timeout 120000
                 $rs.RunspaceAvailability | Should -Be 'Busy'
                 $ps = [powershell]::Create($rs)
                 try {
