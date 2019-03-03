@@ -225,9 +225,7 @@ try {
             $ps = [powershell]::Create()
             try {
                 $ir = $ps.AddScript("@(1..240)${sbStub}").InvokeAsync()
-                while ($ps.InvocationStateInfo.State -ne [System.Management.Automation.PSInvocationState]::Running) {
-                    Start-Sleep -Milliseconds 100
-                }
+                Wait-UntilTrue { $ps.InvocationStateInfo.State -ne [System.Management.Automation.PSInvocationState]::Running }
                 $sr = $ps.StopAsync({}, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $sr.IsCompletedSuccessfully | Should -Be $true
