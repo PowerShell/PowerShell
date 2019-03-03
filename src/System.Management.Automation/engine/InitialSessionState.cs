@@ -4216,7 +4216,7 @@ param(
 
         # If the pager is an application, format the output width before sending to the app.
         if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
-            $consoleWidth = [System.Console]::WindowWidth
+            $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
                 # Supply pager arguments to an application without any PowerShell parsing of the arguments.
