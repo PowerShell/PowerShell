@@ -96,11 +96,11 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 # This will enter and exit another process
                 Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
-                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$powershellId'."
 
                 # Re-enter and exit the other process
                 Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
-                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
+                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$powershellId'."
 
             } finally {
                 $powershellJob | Stop-Process -Force -ErrorAction SilentlyContinue
