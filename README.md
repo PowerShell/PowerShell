@@ -7,7 +7,7 @@ It includes a command-line shell, an associated scripting language and a framewo
 
 [logo]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/ps_black_64.svg?sanitize=true
 
-## Windows PowerShell vs PowerShell Core
+## Windows PowerShell vs. PowerShell Core
 
 Although this repository started as a fork of the Windows PowerShell code base, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
 This also means that issues tracked here are only for PowerShell Core 6.
@@ -193,14 +193,14 @@ See [working with the PowerShell repository](https://github.com/PowerShell/Power
 Please see the [Contribution Guide][] for how to develop and contribute.
 If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
-Also make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
+Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
 [Contribution Guide]: https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md
 [check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 
 ## Support
 
-For support please see the [Support Section][].
+For support, please see the [Support Section][].
 
 [Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
 
