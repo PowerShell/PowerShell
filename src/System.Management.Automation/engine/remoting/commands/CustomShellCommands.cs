@@ -599,7 +599,7 @@ else
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                     dollarUnder: AutomationNull.Value,
-                    input: Utils.EmptyArray<object>(),
+                    input: Array.Empty<object>(),
                     scriptThis: AutomationNull.Value,
                     args: new object[] {
                                             file,
@@ -1216,7 +1216,7 @@ else
 
             if (sessionType == PSSessionType.Workflow)
             {
-                List<object> modifiedModulePath = new List<object>(modulesToImport ?? Utils.EmptyArray<string>());
+                List<object> modifiedModulePath = new List<object>(modulesToImport ?? Array.Empty<string>());
                 modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
                 modulesToImport = modifiedModulePath.ToArray();
             }
@@ -1339,7 +1339,7 @@ else
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.RestartWSManServiceMessageV));
 
                     ScriptBlock restartServiceScript = cmdlet.InvokeCommand.NewScriptBlock(restartWSManFormat);
-                    var emptyArray = Utils.EmptyArray<object>();
+                    var emptyArray = Array.Empty<object>();
                     restartServiceScript.InvokeUsingCmdlet(
                         contextCmdlet: cmdlet,
                         useLocalScope: true,
@@ -2697,7 +2697,7 @@ else
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: AutomationNull.Value,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                            Name,
@@ -2959,7 +2959,7 @@ $args[0] | ForEach-Object {{
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                     dollarUnder: AutomationNull.Value,
-                    input: Utils.EmptyArray<object>(),
+                    input: Array.Empty<object>(),
                     scriptThis: AutomationNull.Value,
                     args: new object[] {
                                                    arguments,
@@ -3533,7 +3533,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: AutomationNull.Value,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                                propertiesToUpdate,
@@ -3629,7 +3629,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                   useLocalScope: true,
                   errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                   dollarUnder: AutomationNull.Value,
-                  input: Utils.EmptyArray<object>(),
+                  input: Array.Empty<object>(),
                   scriptThis: AutomationNull.Value,
                   args: new object[] {
                             runAsCredential.UserName,
@@ -3700,7 +3700,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                         dollarUnder: AutomationNull.Value,
-                        input: Utils.EmptyArray<object>(),
+                        input: Array.Empty<object>(),
                         scriptThis: AutomationNull.Value,
                         args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
 
@@ -3715,7 +3715,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                     dollarUnder: AutomationNull.Value,
-                    input: Utils.EmptyArray<object>(),
+                    input: Array.Empty<object>(),
                     scriptThis: AutomationNull.Value,
                     args: new object[] { quotas, });
             }
@@ -3756,7 +3756,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: AutomationNull.Value,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                             optionsTable,
@@ -3862,7 +3862,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                             useLocalScope: true,
                             errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                             dollarUnder: AutomationNull.Value,
-                            input: Utils.EmptyArray<object>(),
+                            input: Array.Empty<object>(),
                             scriptThis: AutomationNull.Value,
                             args: new object[] {
                                                 encodedSessionConfigData,
@@ -4525,7 +4525,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: _shellsToEnable,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                                _force,
@@ -4546,7 +4546,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
             System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
 
             StringBuilder sb = new StringBuilder();
-            foreach (string endPointName in Name ?? Utils.EmptyArray<string>())
+            foreach (string endPointName in Name ?? Array.Empty<string>())
             {
                 sb.Append(endPointName);
                 sb.Append(", ");
@@ -4760,7 +4760,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: _shellsToDisable,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                                _force,
@@ -4774,7 +4774,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
             System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
 
             StringBuilder sb = new StringBuilder();
-            foreach (string endPointName in Name ?? Utils.EmptyArray<string>())
+            foreach (string endPointName in Name ?? Array.Empty<string>())
             {
                 sb.Append(endPointName);
                 sb.Append(", ");
@@ -5240,7 +5240,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: AutomationNull.Value,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                                _force,
@@ -5444,7 +5444,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: AutomationNull.Value,
-                input: Utils.EmptyArray<object>(),
+                input: Array.Empty<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
                                                _force,

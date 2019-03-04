@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = Utils.EmptyArray<string>();
+                    value = Array.Empty<string>();
                 }
 
                 _property = value;

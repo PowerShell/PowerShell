@@ -228,7 +228,7 @@ namespace System.Management.Automation
                         scriptThis: AutomationNull.Value,
                         outputPipe: outputPipe,
                         invocationInfo: invocationInfo,
-                        args: arguments ?? Utils.EmptyArray<object>());
+                        args: arguments ?? Array.Empty<object>());
                 }
                 catch (ExitException ee)
                 {
@@ -879,7 +879,7 @@ namespace System.Management.Automation
             }
             catch (PSInvalidOperationException) { }
 
-            return Utils.EmptyArray<ExperimentalFeature>();
+            return Array.Empty<ExperimentalFeature>();
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.

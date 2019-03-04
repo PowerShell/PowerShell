@@ -1856,7 +1856,7 @@ namespace System.Management.Automation
                     dollarUnder: AutomationNull.Value,
                     input: AutomationNull.Value,
                     scriptThis: scriptThis,
-                    args: Utils.EmptyArray<object>());
+                    args: Array.Empty<object>());
             }
             catch (RuntimeException e)
             {

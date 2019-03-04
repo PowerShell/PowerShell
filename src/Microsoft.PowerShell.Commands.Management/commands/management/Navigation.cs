@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         #endregion Command parameters
@@ -4137,7 +4137,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         #endregion Command parameters

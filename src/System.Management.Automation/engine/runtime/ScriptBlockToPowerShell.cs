@@ -228,7 +228,7 @@ namespace System.Management.Automation
 
             if (args == null)
             {
-                args = Utils.EmptyArray<object>();
+                args = Array.Empty<object>();
             }
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one

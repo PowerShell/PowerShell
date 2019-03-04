@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
@@ -62,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _property; }
 
-            set { _property = value ?? Utils.EmptyArray<string>(); }
+            set { _property = value ?? Array.Empty<string>(); }
         }
 
         /// <summary>

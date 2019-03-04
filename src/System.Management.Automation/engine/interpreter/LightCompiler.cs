@@ -288,7 +288,7 @@ namespace System.Management.Automation.Interpreter
 
         private readonly LightCompiler _parent;
 
-        private static LocalDefinition[] s_emptyLocals = Automation.Utils.EmptyArray<LocalDefinition>();
+        private static LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
 
         public LightCompiler(int compilationThreshold)
         {

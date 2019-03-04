@@ -1065,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure we always return a non-null collection.
-            return allModules ?? Utils.EmptyArray<PSModuleInfo>();
+            return allModules ?? Array.Empty<PSModuleInfo>();
         }
 
         /// <summary>
@@ -5732,7 +5732,7 @@ namespace Microsoft.PowerShell.Commands
                                     scriptThis: AutomationNull.Value,
                                     outputPipe: ((MshCommandRuntime)this.CommandRuntime).OutputPipe,
                                     invocationInfo: invocationInfo,
-                                    args: this.BaseArgumentList ?? Utils.EmptyArray<object>());
+                                    args: this.BaseArgumentList ?? Array.Empty<object>());
                             }
                             finally
                             {
