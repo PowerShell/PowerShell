@@ -1415,7 +1415,7 @@ namespace System.Diagnostics.Eventing.Reader
         {
             if (val.Reference == IntPtr.Zero)
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
             else
             {

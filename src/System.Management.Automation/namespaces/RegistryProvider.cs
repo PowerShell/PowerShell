@@ -3135,7 +3135,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case RegistryValueKind.MultiString:
                     {
-                        defaultValue = new string[0];
+                        defaultValue = Array.Empty<string>();
                     }
 
                     break;

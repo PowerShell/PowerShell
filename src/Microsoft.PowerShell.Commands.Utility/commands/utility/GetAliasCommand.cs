@@ -41,10 +41,10 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _excludes; }
 
-            set { _excludes = value ?? new string[0]; }
+            set { _excludes = value ?? Array.Empty<string>(); }
         }
 
-        private string[] _excludes = new string[0];
+        private string[] _excludes = Array.Empty<string>();
 
         /// <summary>
         /// The scope parameter for the command determines

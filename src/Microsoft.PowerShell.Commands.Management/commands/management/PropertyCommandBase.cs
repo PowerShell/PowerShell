@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The path to the item.
         /// </summary>
-        internal string[] paths = new string[0];
+        internal string[] paths = Array.Empty<string>();
 
         #endregion parameter data
     }

@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        internal string[] NameInternal { get; set; } = new string[0];
+        internal string[] NameInternal { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// The flags to be set on the TraceSource.
