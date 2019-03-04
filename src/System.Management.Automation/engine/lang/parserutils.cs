@@ -744,7 +744,7 @@ namespace System.Management.Automation
                     split.Reverse();
                 }
 
-                ExtendList(results, split);
+                results.AddRange(split);
             }
 
             return results.ToArray();
@@ -790,7 +790,7 @@ namespace System.Management.Automation
 
             foreach (string item in content)
             {
-                string[] split = regex.Split(item, limit, 0);
+                string[] split = regex.Split(item, calculatedLimit);
                 results.AddRange(split);
             }
 
