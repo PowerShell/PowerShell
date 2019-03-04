@@ -34,7 +34,7 @@ Please **only** use this template if you are a maintainer.
 - [ ] For preview releases,
   merge the release branch to GitHub `master` with a merge commit.
 - [ ] For non-preview releases,
-  make sure all changes are already in master.
+  make sure all changes are either already in master or have a PR open.
 - [ ] Delete the release branch.
 - [ ] Trigger the docker image release.
 - [ ] Retain builds.
