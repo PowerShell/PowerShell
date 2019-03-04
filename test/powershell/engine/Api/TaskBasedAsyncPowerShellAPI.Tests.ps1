@@ -100,27 +100,14 @@ try {
         }
 
         It 'cannot invoke a single script asynchronously in a runspace that is busy' {
-            $rs = [runspacefactory]::CreateRunspace()
-            $rs.Open()
-            $psBusy = [powershell]::Create($rs)
+            $ps = [powershell]::Create($Host.Runspace)
             try {
-                $psBusy.AddScript('@(1..240).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync() > $null
-                Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Busy' } -Timeout 120000
-                $rs.RunspaceAvailability | Should -Be 'Busy'
-                $ps = [powershell]::Create($rs)
-                try {
-                    # This test is designed to fail. You cannot invoke PowerShell asynchronously
-                    # in a runspace that is busy, because pipelines cannot be run concurrently.
-                    $err = { InvokeAsyncHelper -PowerShell $ps -Wait } | Should -Throw -ErrorId 'AggregateException' -PassThru
-                    GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
-                    $psBusy.Stop();
-                } finally {
-                    $ps.Dispose()
-                }
+                # This test is designed to fail. You cannot invoke PowerShell asynchronously
+                # in a runspace that is busy, because pipelines cannot be run concurrently.
+                $err = { InvokeAsyncHelper -PowerShell $ps -Wait } | Should -Throw -ErrorId 'AggregateException' -PassThru
+                GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
             } finally {
-                $psBusy.Dispose()
-                $rs.Close()
-                $rs.Dispose()
+                $ps.Dispose()
             }
         }
 
