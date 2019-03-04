@@ -1716,6 +1716,9 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Threading_Tasks_Task()
         {
+            // Avoid referencing the Result property in these views to avoid potential
+            // deadlocks that may occur. Result should only be referenced once the task
+            // is actually completed.
             yield return new FormatViewDefinition(
                 "System.Threading.Tasks.Task",
                 TableControl
