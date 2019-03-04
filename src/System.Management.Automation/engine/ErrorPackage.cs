@@ -246,37 +246,31 @@ namespace System.Management.Automation
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public int Id { get; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public string Category { get; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public SuggestionMatchType MatchType { get; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public ScriptBlock Rule { get; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public ScriptBlock Suggestion { get; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        /// <value></value>
         public object[] SuggestionArgs { get; }
     }
 
