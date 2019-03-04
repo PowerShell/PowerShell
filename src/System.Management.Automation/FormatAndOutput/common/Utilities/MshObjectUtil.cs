@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                MethodInfo toStringMethod = x.GetType().GetMethod("ToString", PSTypeExtensions.EmptyTypes);
+                MethodInfo toStringMethod = x.GetType().GetMethod("ToString", Type.EmptyTypes);
                 // TODO:CORECLR double check with CORE CLR that x.GetType() == toStringMethod.ReflectedType
                 // Check if the given object "x" implements "toString" method. Do that by comparing "DeclaringType" which 'Gets the class that declares this member' and the object type
                 if (toStringMethod.DeclaringType == x.GetType())

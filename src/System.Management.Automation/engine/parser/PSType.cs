@@ -765,7 +765,7 @@ namespace System.Management.Automation.Language
                 var parameters = ((IParameterMetadataProvider)functionMemberAst).Parameters;
                 if (parameters == null)
                 {
-                    return PSTypeExtensions.EmptyTypes;
+                    return Type.EmptyTypes;
                 }
 
                 bool anyErrors = false;

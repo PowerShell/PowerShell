@@ -2797,7 +2797,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             else if (!type.IsAbstract)
             {
                 // Must have default constructor, at least 1 public property/field, and no base classes
-                if (type.GetConstructor(PSTypeExtensions.EmptyTypes) == null)
+                if (type.GetConstructor(Type.EmptyTypes) == null)
                 {
                     missingDefaultConstructor = true;
                 }
