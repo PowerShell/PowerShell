@@ -1369,6 +1369,12 @@ namespace Microsoft.PowerShell
                 }
 #endif
 
+                // If the debug pipe name was specified, create the custom IPC channel.
+                if (!string.IsNullOrEmpty(cpp.CustomPipeName))
+                {
+                    RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(cpp.CustomPipeName);
+                }
+
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
 #if STAMODE
@@ -2884,16 +2890,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Constructs RunspaceCreationEventArgs.
         /// </summary>
-        /// <param name="initialCommand"></param>
-        /// <param name="skipProfiles"></param>
-        /// <param name="staMode"></param>
-        /// <param name="configurationName"></param>
-        /// <param name="initialCommandArgs"></param>
-        internal RunspaceCreationEventArgs(string initialCommand,
-                                           bool skipProfiles,
-                                           bool staMode,
-                                           string configurationName,
-                                           Collection<CommandParameter> initialCommandArgs)
+        internal RunspaceCreationEventArgs(
+            string initialCommand,
+            bool skipProfiles,
+            bool staMode,
+            string configurationName,
+            Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;

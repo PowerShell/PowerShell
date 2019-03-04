@@ -104,13 +104,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Exception used for cancellation.
-        /// </summary>
-        private class StoppingException : System.Exception
-        {
-        }
-
         #endregion HelperTypes
 
         #region ConvertFromJson
@@ -483,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
             }
-            catch (StoppingException)
+            catch (OperationCanceledException)
             {
                 return null;
             }
@@ -500,10 +493,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>An object suitable for serializing to JSON.</returns>
         private static object ProcessValue(object obj, int currentDepth, in ConvertToJsonContext context)
         {
-            if (context.CancellationToken.IsCancellationRequested)
-            {
-                throw new StoppingException();
-            }
+            context.CancellationToken.ThrowIfCancellationRequested();
 
             PSObject pso = obj as PSObject;
 

@@ -1722,12 +1722,21 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// Gets or sets the custom named pipe name to connect to. This is usually used in conjunction with pwsh -CustomPipeName.
+        /// </summary>
+        public string CustomPipeName
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         public NamedPipeConnectionInfo()
         {
@@ -1735,7 +1744,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         public NamedPipeConnectionInfo(
@@ -1744,7 +1753,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Application domain name to connect to, or default AppDomain if blank.</param>
@@ -1755,7 +1764,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Name of application domain to connect to.  Connection is to default application domain if blank.</param>
@@ -1767,6 +1776,33 @@ namespace System.Management.Automation.Runspaces
         {
             ProcessId = processId;
             AppDomainName = appDomainName;
+            OpenTimeout = openTimeout;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
+        /// </summary>
+        /// <param name="customPipeName">Pipe name to connect to.</param>
+        public NamedPipeConnectionInfo(
+            string customPipeName) :
+            this(customPipeName, _defaultOpenTimeout)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedPipeConnectionInfo"/> class.
+        /// </summary>
+        /// <param name="customPipeName">Pipe name to connect to.</param>
+        /// <param name="openTimeout">Open time out in Milliseconds.</param>
+        public NamedPipeConnectionInfo(
+            string customPipeName,
+            int openTimeout)
+        {
+            if (customPipeName == null)
+            {
+                throw new PSArgumentNullException(nameof(customPipeName));
+            }
+
+            CustomPipeName = customPipeName;
             OpenTimeout = openTimeout;
         }
 
@@ -1842,6 +1878,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.ProcessId = this.ProcessId;
             newCopy._appDomainName = _appDomainName;
             newCopy.OpenTimeout = this.OpenTimeout;
+            newCopy.CustomPipeName = this.CustomPipeName;
 
             return newCopy;
         }

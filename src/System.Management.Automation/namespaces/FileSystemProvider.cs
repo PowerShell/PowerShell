@@ -367,7 +367,9 @@ namespace Microsoft.PowerShell.Commands
                         providerInfo.Home = homeDirectory;
                     }
                     else
+                    {
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
+                    }
                 }
             }
 
@@ -965,7 +967,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         if (skipDuplicate)
+                        {
                             continue;
+                        }
 
                         // Create a new VirtualDrive for each logical drive
                         PSDriveInfo newPSDriveInfo =
@@ -1101,7 +1105,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
                 else
+                {
                     throw;
+                }
             }
 
             return true;
@@ -1565,7 +1571,9 @@ namespace Microsoft.PowerShell.Commands
                                 false);
                         }
                         else
+                        {
                             WriteItemObject(fsinfo, path, false);
+                        }
                     }
                 }
             }
@@ -1704,9 +1712,13 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     if (filesystemInfo is FileInfo)
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                    }
                                     else
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                    }
                                 }
                             }
                         }
@@ -1859,11 +1871,15 @@ namespace Microsoft.PowerShell.Commands
         public static string Mode(PSObject instance)
         {
             if (instance == null)
+            {
                 return string.Empty;
+            }
 
             FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
             if (fileInfo == null)
+            {
                 return string.Empty;
+            }
 
             char[] mode = new char[6];
             mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
@@ -1912,7 +1928,6 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             if (string.IsNullOrEmpty(newName))
-
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }
@@ -2127,9 +2142,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 string action = null;
                 if (itemType == ItemType.SymbolicLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionSymbolicLink;
+                }
                 else if (itemType == ItemType.HardLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionHardLink;
+                }
 
                 string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
 
@@ -2223,7 +2242,9 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
                             else
+                            {
                                 throw;
+                            }
                         }
                     }
                     else
@@ -2387,7 +2408,9 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                                 }
                                 else
+                                {
                                     throw;
+                                }
                             }
                         }
                     }
@@ -2435,7 +2458,9 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(exception, "NewItemCreateIOError", ErrorCategory.WriteError, path));
                         }
                         else
+                        {
                             throw;
+                        }
                     }
                 }
             }
@@ -3773,7 +3798,9 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                                 }
                                 else
+                                {
                                     throw;
+                                }
                             }
 
                             file.CopyTo(destinationPath, true);
@@ -3928,7 +3955,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyFromRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -3936,7 +3966,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionsPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyFromSessionHelper -ea SilentlyContinue -Force
@@ -3948,7 +3981,10 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ValidRemoteSessionForScripting(Runspace runspace)
         {
-            if (!(runspace is RemoteRunspace)) { return false; }
+            if (!(runspace is RemoteRunspace))
+            {
+                return false;
+            }
 
             PSLanguageMode languageMode = runspace.SessionStateProxy.LanguageMode;
             if (languageMode == PSLanguageMode.ConstrainedLanguage || languageMode == PSLanguageMode.NoLanguage)
@@ -7009,14 +7045,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="SecurityAttributes"></param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
-
-            [Flags]
-            internal enum FileAttributes
-            {
-                Hidden = 0x0002,
-                Directory = 0x0010
-            }
 
             // OneDrive placeholder support
 #if !UNIX
@@ -7659,6 +7689,7 @@ namespace Microsoft.PowerShell.Commands
             out int pBytesReturned, IntPtr lpOverlapped);
 
         [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);

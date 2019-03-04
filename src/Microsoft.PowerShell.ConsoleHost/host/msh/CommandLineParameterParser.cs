@@ -168,6 +168,9 @@ namespace Microsoft.PowerShell
 
     internal class CommandLineParameterParser
     {
+        private const int MaxPipePathLengthLinux = 108;
+        private const int MaxPipePathLengthMacOS = 104;
+
         internal static string[] validParameters = {
             "version",
             "nologo",
@@ -189,7 +192,8 @@ namespace Microsoft.PowerShell
             "settingsfile",
             "help",
             "workingdirectory",
-            "removeworkingdirectorytrailingcharacter"
+            "removeworkingdirectorytrailingcharacter",
+            "custompipename"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -338,6 +342,14 @@ namespace Microsoft.PowerShell
             get
             {
                 return _showVersion;
+            }
+        }
+
+        internal string CustomPipeName
+        {
+            get
+            {
+                return _customPipeName;
             }
         }
 
@@ -772,6 +784,33 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
+                }
+                else if (MatchSwitch(switchKey, "custompipename", "cus"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
+                        break;
+                    }
+
+                    if (!Platform.IsWindows)
+                    {
+                        int maxNameLength = (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
+                        if (args[i].Length > maxNameLength)
+                        {
+                            WriteCommandLineError(
+                                string.Format(
+                                    CommandLineParameterParserStrings.CustomPipeNameTooLong,
+                                    maxNameLength,
+                                    args[i],
+                                    args[i].Length));
+                            break;
+                        }
+                    }
+
+                    _customPipeName = args[i];
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
                 {
@@ -1375,6 +1414,7 @@ namespace Microsoft.PowerShell
         private string _helpText;
         private bool _abortStartup;
         private bool _skipUserInit;
+        private string _customPipeName;
 #if STAMODE
         // Win8: 182409 PowerShell 3.0 should run in STA mode by default
         // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
