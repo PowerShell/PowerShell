@@ -194,7 +194,7 @@ namespace System.Management.Automation
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
             if (errorRecord == null)
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             _errorRecord = errorRecord;
         }
         #endregion ctor
@@ -203,7 +203,6 @@ namespace System.Management.Automation
         /// <summary></summary>
         /// <see cref="System.Management.Automation.ErrorCategory"/>
         /// for this error
-        /// <value></value>
         public ErrorCategory Category
         {
             get { return _errorRecord._category; }
@@ -725,7 +724,6 @@ namespace System.Management.Automation
         /// <see cref="System.Exception.Message"/> in
         /// <see cref="System.Management.Automation.ErrorRecord.Exception"/>
         /// </summary>
-        /// <value></value>
         /// <remarks>
         /// When an instance of
         /// <see cref="System.Management.Automation.ErrorRecord"/>
@@ -752,7 +750,6 @@ namespace System.Management.Automation
         /// occurs.  This is empty unless the code which generates the error
         /// specifies it explicitly.
         /// </summary>
-        /// <value></value>
         /// <remarks>
         /// This should be a grammatically correct localized text string.
         /// This may be left empty.
@@ -800,13 +797,13 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (cmdlet == null)
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
 
             if (string.IsNullOrEmpty(baseName))
-                throw PSTraceSource.NewArgumentNullException("baseName");
+                throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
             if (string.IsNullOrEmpty(resourceId))
-                throw PSTraceSource.NewArgumentNullException("resourceId");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
             string template = string.Empty;
 
@@ -835,13 +832,13 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (resourceSupplier == null)
-                throw PSTraceSource.NewArgumentNullException("resourceSupplier");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceSupplier));
 
             if (string.IsNullOrEmpty(baseName))
-                throw PSTraceSource.NewArgumentNullException("baseName");
+                throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
             if (string.IsNullOrEmpty(resourceId))
-                throw PSTraceSource.NewArgumentNullException("resourceId");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
             string template = string.Empty;
 
@@ -870,13 +867,13 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (assembly == null)
-                throw PSTraceSource.NewArgumentNullException("assembly");
+                throw PSTraceSource.NewArgumentNullException(nameof(assembly));
 
             if (string.IsNullOrEmpty(baseName))
-                throw PSTraceSource.NewArgumentNullException("baseName");
+                throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
             if (string.IsNullOrEmpty(resourceId))
-                throw PSTraceSource.NewArgumentNullException("resourceId");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
             string template = string.Empty;
 
@@ -992,7 +989,7 @@ namespace System.Management.Automation
         {
             if (exception == null)
             {
-                throw PSTraceSource.NewArgumentNullException("exception");
+                throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
             if (errorId == null)
@@ -1073,7 +1070,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Is this instance serialized.
         /// </summary>
-        /// <value></value>
         internal bool IsSerialized { get => _isSerialized; }
 
         /// <summary>
@@ -1136,12 +1132,12 @@ namespace System.Management.Automation
         {
             if (exception == null)
             {
-                throw PSTraceSource.NewArgumentNullException("exception");
+                throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
             if (fullyQualifiedErrorId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fullyQualifiedErrorId");
+                throw PSTraceSource.NewArgumentNullException(nameof(fullyQualifiedErrorId));
             }
 
             // Mark this error record as serialized
@@ -1261,7 +1257,7 @@ namespace System.Management.Automation
         {
             if (serializedErrorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("serializedErrorRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(serializedErrorRecord));
             }
 
             // Get Exception
@@ -1368,7 +1364,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new PSArgumentNullException("errorRecord");
+                throw new PSArgumentNullException(nameof(errorRecord));
             }
 
             if (replaceParentContainsErrorRecordException != null
@@ -1758,7 +1754,6 @@ namespace System.Management.Automation
         /// <see cref="System.Exception.Message"/>
         /// as the root exception.
         /// </remarks>
-        /// <value></value>
         ErrorRecord ErrorRecord { get; }
     }
 
