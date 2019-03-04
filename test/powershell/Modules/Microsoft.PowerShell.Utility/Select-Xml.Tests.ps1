@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Select-XML DRT Unit Tests" -Tags "CI" {
+Describe "Select-Xml DRT Unit Tests" -Tags "CI" {
 
 	BeforeAll {
 		$testfile = "TestDrive:\testfile.xml"
@@ -22,14 +22,14 @@ Describe "Select-XML DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Can select text from an XML document"{
-		$results = Select-XML -Path $testfile -XPath "/bookstore/book/title"
+		$results = Select-Xml -Path $testfile -XPath "/bookstore/book/title"
 		$results | Should -HaveCount 2
 		$results[0].Node."#text" | Should -BeExactly "Harry Potter"
 		$results[1].Node."#text" | Should -BeExactly "Learning XML"
 	}
 }
 
-Describe "Select-XML Feature Tests" -Tags "Feature" {
+Describe "Select-Xml Feature Tests" -Tags "Feature" {
 
 	BeforeAll {
 		$fileName = New-Item -Path "TestDrive:\testSelectXml.xml"
@@ -94,7 +94,7 @@ Describe "Select-XML Feature Tests" -Tags "Feature" {
 			$file = 'env:xmltestfile'
 			$params = @{$parameter=$file}
 			$err = $null
-			Select-XML @params "Root" -ErrorVariable err -ErrorAction SilentlyContinue
+			Select-Xml @params "Root" -ErrorVariable err -ErrorAction SilentlyContinue
 			$err.FullyQualifiedErrorId | Should -Be $expectedError
 		}
 		finally
