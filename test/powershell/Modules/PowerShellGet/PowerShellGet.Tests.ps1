@@ -145,7 +145,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature','RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
