@@ -60,7 +60,7 @@ Describe 'Task-based PowerShell async APIs' -Tags 'CI' {
                 $sb = {
                     $r = $ps.AddScript(@'
 try {
-    Get-Process -Invalid 42 -ErrorAction Stop
+    Get-Process -Invalid 42
 } catch {
     throw
 }
@@ -217,7 +217,7 @@ try {
         It 'can stop a script that is running asynchronously' {
             $ps = [powershell]::Create()
             try {
-                $ir = $ps.AddScript("@(1..240)${sbStub}").InvokeAsync()
+                $ir = $ps.AddScript("Start-Sleep -Seconds 60").InvokeAsync()
                 Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running }
                 $sr = $ps.StopAsync({}, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))

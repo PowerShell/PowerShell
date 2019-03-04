@@ -642,13 +642,13 @@ namespace System.Management.Automation
             _endStopMethod = EndStop;
         }
 
-    /// <summary>
-    /// Constructs a PowerShell instance in the disconnected start state with
-    /// the provided remote command connect information and runspace(pool) objects.
-    /// </summary>
-    /// <param name="connectCmdInfo">Remote command connect information.</param>
-    /// <param name="rsConnection">Remote Runspace or RunspacePool object.</param>
-    internal PowerShell(ConnectCommandInfo connectCmdInfo, object rsConnection)
+        /// <summary>
+        /// Constructs a PowerShell instance in the disconnected start state with
+        /// the provided remote command connect information and runspace(pool) objects.
+        /// </summary>
+        /// <param name="connectCmdInfo">Remote command connect information.</param>
+        /// <param name="rsConnection">Remote Runspace or RunspacePool object.</param>
+        internal PowerShell(ConnectCommandInfo connectCmdInfo, object rsConnection)
             : this(new PSCommand(), null, rsConnection)
         {
             ExtraCommands = new Collection<PSCommand>();
