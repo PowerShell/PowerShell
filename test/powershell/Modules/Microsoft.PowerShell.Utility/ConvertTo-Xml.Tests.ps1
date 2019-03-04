@@ -6,10 +6,10 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
         class fruit {
             [string] $name;
         }
-    }
 
-    $customPSObject = [PSCustomObject]@{ "prop1" = "val1"; "prop2" = "val2" }
-    $newLine = [System.Environment]::NewLine
+        $customPSObject = [PSCustomObject]@{ "prop1" = "val1"; "prop2" = "val2" }
+        $newLine = [System.Environment]::NewLine
+    }
 
     It "Can convert to XML with parameter Depth" {
         $returnObject = $customPSObject | ConvertTo-Xml -Depth 1
