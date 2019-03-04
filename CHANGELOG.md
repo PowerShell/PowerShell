@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.2.0-rc.1 - 2019-02-28
+## v6.2.0-rc.1 - 2019-03-05
 
 ### Breaking Changes
 
@@ -16,6 +16,7 @@
 - Flatten interface hierarchy when generating properties that implement interface properties (#8382) (Thanks @IISResetMe!)
 - Don't use Win32 native APIs on non-Windows for cryptography of secure string over remoting (#8746)
 - Allow `.exe` files to be used as IL binary modules (#7281)
+- Remove unused cached types (#9015)
 
 ### Experimental Features
 
@@ -102,11 +103,13 @@
 - Add compliance to Coordinated build (#8798)
 - Switch to 1.11 of FPM to fix FPM install issue (#8797)
 - Update the coordinated build with framework dependent package for dotnet SDK (#8773)
+- Fix MSI upgrade failure for preview builds (#9013)
 - Build(deps): Bump `Microsoft.ApplicationInsights` from `2.8.1` to `2.9.1` (#8807,#8848)
 - Build(deps): Bump `Microsoft.PowerShell.Native` (#8712)
 - Build(deps): Bump `NJsonSchema` from `9.13.15` to `9.13.19` (#8732, #8747, #8881, #8952)
 - Build(deps): Bump `PackageManagement` from `1.2.4` to `1.3.1` (#8800)
 - Build(deps): Bump `XunitXml.TestLogger` from `2.0.0` to `2.1.26` (#8731)
+- Build(deps): Bump `Markdig.Signed` from `0.15.7` to `0.16.0` (#8981)
 
 ### Documentation and Help Content
 
