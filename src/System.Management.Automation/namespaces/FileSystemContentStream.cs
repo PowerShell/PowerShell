@@ -1505,6 +1505,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="lpCpInfo"></param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.GetCPInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetCPInfo(uint codePage, out CPINFO lpCpInfo);
         }
     }
