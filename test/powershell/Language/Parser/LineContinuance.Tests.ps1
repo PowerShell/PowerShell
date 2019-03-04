@@ -79,7 +79,9 @@ Describe 'Line Continuance' -Tags 'CI' {
         It 'Lines ending with a pipe followed by whitespace' {
             $script = @'
 # The next line ends with trailing whitespace
-'Hello' |     
+'Hello' |
+'@ + '    ' + @'
+
     ForEach-Object {"$_ world"}
 '@
             ExecuteCommand $script | Should -Be 'Hello world'
