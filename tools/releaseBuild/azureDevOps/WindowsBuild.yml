@@ -154,9 +154,11 @@ jobs:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
-       signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
-       inPathRoot: '$(Symbols)'
-       outPathRoot: '$(Symbols)\signed'
+      signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
+      inPathRoot: '$(Symbols)'
+      outPathRoot: '$(Symbols)\signed'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
 
   - powershell: |
@@ -315,6 +317,8 @@ jobs:
     inputs:
       signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
       outPathRoot: '$(Build.StagingDirectory)\signedPackages'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
     continueOnError: true
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 

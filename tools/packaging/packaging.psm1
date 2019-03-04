@@ -2646,7 +2646,6 @@ function New-MSIPackage
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
-        $FilesWxsPath = New-PreviewFileWxs -FilesWxsPath $FilesWxsPath
     }
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
@@ -2698,14 +2697,7 @@ function New-MSIPackage
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    if ($isPreview)
-    {
-        $wixObjFragmentPath = Join-Path $env:Temp "files-preview.wixobj"
-    }
-    else
-    {
-        $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
-    }
+    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
@@ -2726,7 +2718,23 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+
+    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+
+    if ($isPreview)
+    {
+        # Now that we know that the two are functionally the same,
+        # We only need to use $FilesWxsPath for release we want to be able to Path
+        # and two releases shouldn't have the same identifiers,
+        # so we use the generated one for preview
+        $FilesWxsPath = $wixFragmentPath
+
+        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+
+        # cleanup any garbage on the system
+        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    }
 
     Write-Log "running candle..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
@@ -2739,11 +2747,6 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-    if ($isPreview)
-    {
-        # remove the temporary generated files.wxs for preview builds
-        Remove-Item -ErrorAction SilentlyContinue $FilesWxsPath -Force
-    }
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -2763,36 +2766,6 @@ function New-MSIPackage
         }
         throw $errorMessage
     }
-}
-
-# generate a files.wxs for preview builds
-# so that the component ids are different than the stable builds
-# the file is created in the temp folder
-function New-PreviewFileWxs
-{
-    param
-    (
-        # File describing the MSI file components from the asset folder
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs"
-    )
-
-    Write-Verbose "Generating new component Ids for Files-Preview.wxs" -Verbose
-    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
-    foreach($component in $filesAssetXml.GetElementsByTagName('Component'))
-    {
-        $component.Id = $component.Id + "_Preview"
-    }
-
-    foreach($componentRef in $filesAssetXml.GetElementsByTagName('ComponentRef'))
-    {
-        $componentRef.Id = $componentRef.Id + "_Preview"
-    }
-
-    $previewFilesWxsPath = Join-Path ([System.IO.Path]::GetTempPath()) "Files-Preview.wxs"
-    $filesAssetXml.Save($previewFilesWxsPath)
-    $previewFilesWxsPath
 }
 
 # verify no files have been added or removed
@@ -3092,105 +3065,152 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 .SYNOPSIS
 Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
 
-.PARAMETER FxdPackagePath
+.PARAMETER Path
 Path to the folder containing the fxdependent package.
-
-.PARAMETER ReleaseTag
-Release tag to construct the package name.
 #>
-function New-DotnetSdkContainerFxdPackage {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+function ReduceFxDependentPackage
+{
+    [CmdletBinding()]
     param(
-        [Parameter(Mandatory)] $FxdPackagePath,
-
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [Parameter(Mandatory)] $ReleaseTag,
-
-        [Parameter(Mandatory)] $DestinationPath
+        [Parameter(Mandatory)] [string] $Path
     )
 
-    $Version = $ReleaseTag -Replace '^v'
-
-    if ($Environment.IsWindows) {
-        $basePackagePattern = "*$Version-win-fxdependent.zip"
-        $packageNamePlatform = 'win'
-        $packageNameExtension = '.zip'
-    } else {
-        $basePackagePattern = "*$Version-linux-x64-fxdependent.tar.gz"
-        $packageNamePlatform = 'linux-x64'
-        $packageNameExtension = '.tar.gz'
+    if (-not (Test-Path $path))
+    {
+        throw "Path not found: $Path"
     }
 
-    Write-Log "basePackagePattern: $basePackagePattern"
-    Write-Log "fxdPackagePath: $FxdPackagePath"
+    ## Remove unnecessary files
+    $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+    Get-ChildItem $Path -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
 
-    $packageName = "powershell-$Version-$packageNamePlatform-fxd-dotnetsdk$packageNameExtension"
-    $destinationPackageFullName = Join-Path $DestinationPath $packageName
+    $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
 
-    ## Get fxdependent package path
-    $fxdPackage = Get-ChildItem $FxdPackagePath -Recurse -Filter $basePackagePattern | Select-Object -First 1 -ExpandProperty FullName
+    # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+    # win10-x64 (Nano Server)
+    # win-arm (Nano Server)
+    # win-x64 to get PowerShell.Native components
+    # linux-musl-x64 (Alpine 3.8)
+    # linux-x64 (bionic / stretch)
+    # unix, linux, win for dependencies
+    # linux-arm and linux-arm64 for arm containers
+    # osx to run global tool on macOS
+    $runtimesToKeep = if ($Environment.IsWindows) {
+        'win10-x64', 'win-arm', 'win-x64', 'win'
+    } else {
+        'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
+    }
 
-    Write-Log "Fxd Package Path: $fxdPackage"
+    $runtimeFolder | ForEach-Object {
+        Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+    }
+}
 
-    if ($fxdPackage) {
-        if ($PSCmdlet.ShouldProcess("Create the reduced framework dependent package based of $fxPackage")) {
+<#
+.SYNOPSIS
+Create a Global tool nuget package for PowerShell.
 
-            ## Extract fxd package
-            $tempExtractFolder = New-Item -Type Directory -Path "$FxdPackagePath/fxdreduced" -Force
-            Push-Location $tempExtractFolder
+.DESCRIPTION
+If the UnifiedPackage switch is present, then create a packag with both Windows and Unix runtimes.
+Else create two packages, one for Windows and other for Linux.
 
-            Write-Log "Pushed location: $tempExtractFolder"
+.PARAMETER LinuxBinPath
+Path to the folder containing the fxdependent package for Linux.
 
-            try {
-                if ($Environment.IsWindows) {
-                    Expand-Archive -Path $fxdPackage -DestinationPath $tempExtractFolder
-                } else {
-                    Start-NativeExecution { tar -xf $fxdPackage }
-                }
+.PARAMETER WindowsBinPath
+Path to the folder containing the fxdependent package for Windows.
 
-                ## Remove unnecessary files
-                $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
-                Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+.PARAMETER PackageVersion
+Version for the NuGet package that will be generated.
 
-                $runtimeFolder = Get-ChildItem -Recurse -Directory -Filter 'runtimes'
+.PARAMETER DestinationPath
+Path to the folder where the generated packages will be copied to.
 
-                # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
-                # win10-x64 (Nano Server)
-                # win-arm (Nano Server)
-                # linux-musl-x64 (Alpine 3.8)
-                # linux-x64 (bionic / stretch)
-                # unix, linux, win for dependencies
-                # win-x64 to get PowerShell.Native components
-                $runtimesToKeep = 'win10-x64', 'win-arm', 'win-x64', 'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'win'
+.PARAMETER UnifiedPackage
+Create package with both Windows and Unix runtimes.
+#>
+function New-GlobalToolNupkg
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $LinuxBinPath,
+        [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter(Mandatory)] [string] $DestinationPath,
+        [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
+    )
 
-                $runtimeFolder | ForEach-Object {
-                    Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
-                }
+    $packageInfo = @()
 
-                Write-Verbose -Verbose "Compressing"
+    Remove-Item -Path (Join-Path $LinuxBinPath 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
+    Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
 
-                if (-not (Test-Path $DestinationPath)) {
-                    $null = New-Item -ItemType Directory -Path $DestinationPath
-                }
+    if ($UnifiedPackage)
+    {
+        Write-Log "Creating a unified package"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell"; Type = "Unified"}
+        $ShimDllPath = Join-Path $WindowsBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
+    }
+    else
+    {
+        Write-Log "Reducing size of Linux package"
+        ReduceFxDependentPackage -Path $LinuxBinPath
 
-                if ($Environment.IsWindows) {
-                    Compress-Archive -Path "$FxdPackagePath/fxdreduced/*" -Destination $destinationPackageFullName -Force
-                } else {
-                    Start-NativeExecution { tar -czf "$destinationPackageFullName" . }
-                }
+        Write-Log "Reducing size of Windows package"
+        ReduceFxDependentPackage -Path $WindowsBinPath
 
-                Write-Log "Compressing complete"
+        Write-Log "Creating a Linux and Windows packages"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows"; Type = "Windows"}
+    }
 
-            } finally {
-                Pop-Location
+    $packageInfo | ForEach-Object {
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
+
+        switch ($_.Type)
+        {
+            "Unified"
+            {
+                $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
+                $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
+
+                Write-Log "Copying runtime assemblies from $WindowsBinPath"
+                Copy-Item "$WindowsBinPath\*" -Destination $winFolder -Recurse
+
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
+
+                Write-Log "Copying shim dll from $ShimDllPath"
+                Copy-Item $ShimDllPath -Destination $ridFolder
+
+                $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
+                Write-Log "Copying shim config file from $shimConfigFile"
+                Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
+
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
+            }
+
+            "Linux"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "Windows"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
         }
-    }
 
-    if (Test-Path $destinationPackageFullName) {
-        Write-Host "##vso[artifact.upload containerfolder=release;artifactname=release]$destinationPackageFullName"
-    } else {
-        Write-Log "Package not found: $destinationPackageFullName"
+        $packageName = $_.PackageName
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
+        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
+        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
+
+        Write-Log "Creating a package: $packageName"
+        New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
     }
 }
