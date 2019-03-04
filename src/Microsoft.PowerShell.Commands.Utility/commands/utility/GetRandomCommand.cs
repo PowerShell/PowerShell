@@ -520,22 +520,16 @@ namespace Microsoft.PowerShell.Commands
                 int n = _chosenListItems.Count;
                 for (int i = 0; i < n; i++)
                 {
-                    // randomly choose an item to go into the i-th position
+                    // randomly choose j from [i...n)
                     int j = this.Generator.Next(i, n);
 
-                    // swap j-th item into i-th position
+                    this.WriteObject(_chosenListItems[j]);
+
+                    // remove the output object from consideration in the next iteration.
                     if (i != j)
                     {
-                        object tmp = _chosenListItems[i];
-                        _chosenListItems[i] = _chosenListItems[j];
-                        _chosenListItems[j] = tmp;
+                        _chosenListItems[j] = _chosenListItems[i];
                     }
-                }
-
-                // output all items
-                foreach (object chosenItem in _chosenListItems)
-                {
-                    this.WriteObject(chosenItem);
                 }
             }
         }
