@@ -1744,7 +1744,7 @@ namespace System.Management.Automation
             // Update the prompt to the debug prompt
             if (hadDefaultPrompt)
             {
-                int index = originalPromptString.IndexOf("\"", StringComparison.OrdinalIgnoreCase);
+                int index = originalPromptString.IndexOf('"', StringComparison.OrdinalIgnoreCase);
                 if (index > -1)
                 {
                     // Fix up prompt.

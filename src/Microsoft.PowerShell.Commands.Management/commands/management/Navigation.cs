@@ -1076,7 +1076,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Mounts a drive in the Monad namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113357")]
+    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113357")]
     public class NewPSDriveCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -1450,7 +1451,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (nameMatcher.IsMatch(drive.Name))
+                        if (nameMatcher != null && nameMatcher.IsMatch(drive.Name))
                             addDrive = true;
                     }
 

@@ -21,17 +21,21 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             start-nativeExecution { npm install 'gulp@4.0.0' --silent }
             if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
             {
-                start-nativeExecution { sudo npm install -g 'gulp@4.0.0' --silent }
+                start-nativeExecution {
+                    sudo npm install -g 'gulp@4.0.0' --silent
+                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+                    sudo rm -rf ~/.npm/_cacache
+                }
             }
             if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
             {
                 throw "node not found"
             }
         }
-        elseif( -not $env:AppVeyor)
+        if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
         {
             <#
-                On Windows, but not an AppVeyor and pre-requisites are missing
+                On Windows, pre-requisites are missing
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
@@ -54,19 +58,18 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         try
         {
             $docsToTest = @(
-                './.github/SUPPORT.md'
-                './.github/CONTRIBUTING.md'
-                './*.md'
+                './.github/*.md'
+                './README.md'
                 './demos/python/*.md'
                 './docker/*.md'
-                './docs/*.md'
                 './docs/building/*.md'
+                './docs/community/*.md'
+                './docs/host-powershell/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
-                './docs/testing-guidelines/testing-guidelines.md'
                 './test/powershell/README.md'
                 './tools/*.md'
-                './github/CONTRIBUTING.md'
+                './.github/ISSUE_TEMPLATE/*.md'
             )
             $filter = ($docsToTest -join ',')
 

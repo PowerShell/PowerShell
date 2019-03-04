@@ -19,10 +19,10 @@ $branchOnly = $branchOnly -replace '[_\-]'
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
     # Branch is named release-<semver>
-    if($Branch -match '^.*(release-)')
+    if($Branch -match '^.*(release[-/])')
     {
         Write-verbose "release branch:" -verbose
-        $releaseTag = $Branch -replace '^.*(release-)'
+        $releaseTag = $Branch -replace '^.*(release[-/])'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
@@ -46,3 +46,5 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         Write-Host -Object "##$vstsCommandString"
     }
 }
+
+Write-Output $releaseTag

@@ -14,6 +14,7 @@ Path to the folder where the packages should be stored for uploading to Azure De
 #>
 function SyncGalleryToAzArtifacts {
     param(
+        [Parameter(Mandatory = $true)] [string] $AzDevOpsFeedUserName,
         [Parameter(Mandatory = $true)] [string] $AzDevOpsPAT,
         [Parameter(Mandatory = $true)] [string] $Destination
     )
@@ -28,7 +29,7 @@ function SyncGalleryToAzArtifacts {
     $galleryUrl = 'https://www.powershellgallery.com/api/v2/'
     $azArtifactsUrl = 'https://mscodehub.pkgs.visualstudio.com/_packaging/pscore-release/nuget/v2'
 
-    $azDevOpsCreds = [pscredential]::new($env:AzDevOpsUserName, (ConvertTo-SecureString -String $AzDevOpsPAT -AsPlainText -Force))
+    $azDevOpsCreds = [pscredential]::new($AzDevOpsFeedUserName, (ConvertTo-SecureString -String $AzDevOpsPAT -AsPlainText -Force))
 
     foreach ($package in $packages) {
         try {

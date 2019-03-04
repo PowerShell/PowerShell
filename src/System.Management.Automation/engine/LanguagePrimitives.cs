@@ -2885,6 +2885,34 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Attempts to use Parser.ScanNumber to get the value of a numeric string.
+        /// </summary>
+        /// <param name="strToConvert">The string to convert to a number.</param>
+        /// <param name="resultType">The resulting value type to convert to.</param>
+        /// <param name="result">The resulting numeric value.</param>
+        /// <returns>
+        /// True if the parse succeeds, false if a parse exception arises.
+        /// In all other cases, an exception will be thrown.
+        /// </returns>
+        private static bool TryScanNumber(string strToConvert, Type resultType, out object result)
+        {
+            try
+            {
+                result = Convert.ChangeType(
+                    Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                    resultType,
+                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                return true;
+            }
+            catch (Exception)
+            {
+                // Parse or convert failed
+                result = null;
+                return false;
+            }
+        }
+
         private static object ConvertStringToInteger(object valueToConvert,
                                                      Type resultType,
                                                      bool recursion,
@@ -2907,7 +2935,14 @@ namespace System.Management.Automation
             TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
             try
             {
-                return integerConverter.ConvertFrom(strToConvert);
+                if (TryScanNumber(strToConvert, resultType, out object result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return integerConverter.ConvertFrom(strToConvert);
+                }
             }
             catch (Exception e)
             {
@@ -2946,8 +2981,9 @@ namespace System.Management.Automation
                                                      TypeTable backupTable)
         {
             Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
+            var strToConvert = valueToConvert as string;
 
-            if (((string)valueToConvert).Length == 0)
+            if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
                 // This is not wrapped in a try/catch because it can't fail.
@@ -2957,8 +2993,15 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Converting to decimal.");
             try
             {
-                return Convert.ChangeType(valueToConvert, resultType,
-                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
+                if (TryScanNumber(strToConvert, resultType, out object result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return Convert.ChangeType(strToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
+                }
             }
             catch (Exception e)
             {
@@ -2967,7 +3010,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        return ConvertNumericThroughDouble(valueToConvert, resultType);
+                        return ConvertNumericThroughDouble(strToConvert, resultType);
                     }
                     catch (Exception ex)
                     {
@@ -2977,7 +3020,7 @@ namespace System.Management.Automation
 
                 throw new PSInvalidCastException("InvalidCastFromStringToDecimal", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+                    strToConvert, resultType.ToString(), e.Message);
             }
         }
 
@@ -2989,8 +3032,9 @@ namespace System.Management.Automation
                                                   TypeTable backupTable)
         {
             Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
+            var strToConvert = valueToConvert as string;
 
-            if (((string)valueToConvert).Length == 0)
+            if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
                 // This is not wrapped in a try/catch because it can't fail.
@@ -3000,15 +3044,23 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Converting to double or single.");
             try
             {
-                return Convert.ChangeType(valueToConvert, resultType,
-                    System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                typeConversion.WriteLine("Parsing string value to account for multipliers and type suffixes");
+
+                if (TryScanNumber(strToConvert, resultType, out object result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return Convert.ChangeType(strToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
+                }
             }
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting to double or single: \"{0}\".", e.Message);
                 throw new PSInvalidCastException("InvalidCastFromStringToDoubleOrSingle", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+                    strToConvert, resultType.ToString(), e.Message);
             }
         }
 

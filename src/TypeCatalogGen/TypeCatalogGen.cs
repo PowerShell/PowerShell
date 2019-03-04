@@ -10,7 +10,7 @@
  *
  * Compilation Note:
  *    .NET Fx Version    - 4.5
- *    Special Dependency - System.Reflection.Metadata.dll, System.Collections.Immutable.dll (Available as nuget package: http://www.nuget.org/packages/System.Reflection.Metadata)
+ *    Special Dependency - System.Reflection.Metadata.dll, System.Collections.Immutable.dll (Available as nuget package: https://www.nuget.org/packages/System.Reflection.Metadata)
  * To compile the code, create a VS project and get the 'System.Reflection.Metadata' package from nuget. Then add this file to the VS
  * project and compile it.
 */

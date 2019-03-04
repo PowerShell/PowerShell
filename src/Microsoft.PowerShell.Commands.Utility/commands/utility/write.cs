@@ -165,6 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
+        [AllowNull]
         public object MessageData { get; set; }
 
         /// <summary>

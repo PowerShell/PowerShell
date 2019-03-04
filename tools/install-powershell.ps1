@@ -386,7 +386,7 @@ try {
                 if ($uid -ne "0") { $SUDO = "sudo" } else { $SUDO = "" }
 
                 Write-Verbose "Make symbolic link '$symlink' point to '$targetPath'..." -Verbose
-                Invoke-Expression -Command "$SUDO ln -fs $targetPath $symlink"
+                & $SUDO ln -fs $targetPath $symlink
 
                 if ($LASTEXITCODE -ne 0) {
                     Write-Error "Could not add to PATH: failed to make '$symlink' point to '$targetPath'."

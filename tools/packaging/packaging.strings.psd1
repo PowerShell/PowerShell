@@ -39,6 +39,7 @@ case "$1" in
     ;;
 esac
 '@
+
     UbuntuAfterRemoveScript = @'
 #!/bin/sh
 set -e
@@ -48,11 +49,13 @@ case "$1" in
         ;;
 esac
 '@
+
     MacOSLauncherScript = @'
 #!/usr/bin/env bash
 open {0}
 '@
-MacOSLauncherPlistTemplate = @'
+
+    MacOSLauncherPlistTemplate = @'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -82,8 +85,9 @@ MacOSLauncherPlistTemplate = @'
 </dict>
 </plist>
 '@
-# see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
-OsxDistributionTemplate = @'
+
+    # see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
+    OsxDistributionTemplate = @'
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <installer-gui-script minSpecVersion="1">
     <title>{0}</title>
@@ -107,7 +111,8 @@ OsxDistributionTemplate = @'
     <pkg-ref id="{4}" version="{1}" onConclusion="none">{2}</pkg-ref>
 </installer-gui-script>
 '@
-NuspecTemplate = @'
+
+    NuspecTemplate = @'
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
@@ -132,23 +137,8 @@ NuspecTemplate = @'
     </metadata>
 </package>
 '@
-RefAssemblyCsProj = @'
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>{0}</Version>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>{1}</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha08" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
-  </ItemGroup>
-</Project>
-'@
-NuGetConfigFile = @'
+
+    NuGetConfigFile = @'
 <configuration>
   <packageSources>
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
@@ -157,4 +147,37 @@ NuGetConfigFile = @'
   </packageSources>
 </configuration>
 '@
+
+    GlobalToolNuSpec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>{0}</id>
+        <version>{1}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell Core global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
+    GlobalToolSettingsFile = @'
+<?xml version="1.0" encoding="utf-8"?>
+<DotNetCliTool Version="1">
+    <Commands>
+        <Command Name="pwsh" EntryPoint="{0}" Runner="dotnet" />
+    </Commands>
+</DotNetCliTool>
+'@
+
 }

@@ -254,6 +254,18 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
     }
+
+    It "New-Item -ItemType SymbolicLink should be able to create a relative link" -Skip:(!$IsWindows) {
+        try {
+            Push-Location $TestDrive
+            $relativeFilePath = Join-Path -Path . -ChildPath "relativefile.txt"
+            $file = New-Item -ItemType File -Path $relativeFilePath
+            $link = New-Item -ItemType SymbolicLink -Path ./link -Target $relativeFilePath
+            $link.Target | Should -BeExactly $relativeFilePath
+        } finally {
+            Pop-Location
+        }
+    }
 }
 
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
@@ -262,7 +274,9 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
         $testlink             = "testlink"
         $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
         $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
-        $developerMode = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
+        $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
+        $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
+        $developerMode = $developerModeEnabled -and $minBuildRequired
     }
 
     AfterEach {

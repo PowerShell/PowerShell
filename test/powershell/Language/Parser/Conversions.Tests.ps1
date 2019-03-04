@@ -486,4 +486,35 @@ Describe 'method conversion' -Tags 'CI' {
         $n = [N]::new()
         { [System.Management.Automation.LanguagePrimitives]::ConvertTo($n.GetC, [Func[[int], [object]]]) } | Should -Throw -ErrorId "PSInvalidCastException"
     }
+
+    $TestCases = @(
+        @{ Number = "100y"; Value = "100"; Type = [int] }
+        @{ Number = "100uy"; Value = "100"; Type = [double] }
+        @{ Number = "1200u"; Value = "1200"; Type = [short] }
+        @{ Number = "1200L"; Value = "1200"; Type = [int] }
+        @{ Number = "127ul"; Value = "127"; Type = [ulong] }
+        @{ Number = "127d"; Value = "127"; Type = [byte] }
+        @{ Number = "127s"; Value = "127"; Type = [sbyte] }
+        @{ Number = "127y"; Value = "127"; Type = [uint] }
+    )
+    It "Correctly casts <Number> to value <Value> as type <Type>" -TestCases $TestCases {
+        param($Number, $Value, $Type)
+
+        $Result = $Number -as $Type
+        $Result | Should -Be $Value
+        $Result | Should -BeOfType $Type
+    }
+
+    $TestCases = @(
+        @{ Number = "200y" }
+        @{ Number = "300uy" }
+        @{ Number = "70000us" }
+        @{ Number = "40000s" }
+    )
+    It "Fails to cast invalid PowerShell-Style suffixed numeral <Number>" -TestCases $TestCases {
+        param($Number)
+
+        $Result = $Number -as [int]
+        $Result | Should -BeNullOrEmpty
+    }
 }

@@ -599,9 +599,11 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="lpTimeZoneInformation">A DYNAMIC_TIME_ZONE_INFORMATION structure representing the desired local time zone.</param>
             /// <returns></returns>
             [DllImport(SetDynamicTimeZoneApiDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetDynamicTimeZoneInformation([In] ref DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
 
             [DllImport(GetTimeZoneInformationForYearApiDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool GetTimeZoneInformationForYear([In] ushort wYear, [In] ref DYNAMIC_TIME_ZONE_INFORMATION pdtzi, ref TIME_ZONE_INFORMATION ptzi);
 
             #endregion Win32 SetDynamicTimeZoneInformation imports
@@ -626,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of SE_TIME_ZONE_NAME constant from Win32 API.
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; // http://msdn.microsoft.com/library/bb530716(VS.85).aspx
+            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; // https://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
             /// PInvoke GetCurrentProcess API.

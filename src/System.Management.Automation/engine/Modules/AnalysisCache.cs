@@ -70,7 +70,11 @@ namespace System.Management.Automation
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
                 }
-                else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = AnalyzeDllModule(modulePath, context, lastWriteTime);
+                }
+                else if (extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeDllModule(modulePath, context, lastWriteTime);
                 }
@@ -207,7 +211,15 @@ namespace System.Management.Automation
                 return !hadFunctions || !hadAliases;
             }
 
-            if (modulePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            if (modulePath.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                // A dll just exports cmdlets, so if the manifest doesn't explicitly export any cmdlets,
+                // more analysis is required. If the module exports aliases, we can't discover that analyzing
+                // the binary, so aliases are always required to be explicit (no wildcards) in the manifest.
+                return !hadCmdlets;
+            }
+
+            if (modulePath.EndsWith(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // A dll just exports cmdlets, so if the manifest doesn't explicitly export any cmdlets,
                 // more analysis is required. If the module exports aliases, we can't discover that analyzing

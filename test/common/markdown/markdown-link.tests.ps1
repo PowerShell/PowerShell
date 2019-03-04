@@ -7,7 +7,11 @@ Describe "Verify Markdown Links" {
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
-            start-nativeExecution { sudo npm install -g markdown-link-check@3.7.2 }
+            start-nativeExecution {
+                    sudo npm install -g markdown-link-check@3.7.2
+                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+                    sudo rm -rf ~/.npm/_cacache
+                }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
@@ -96,7 +100,7 @@ Describe "Verify Markdown Links" {
 
                         $prefix = $url.Substring(0,7)
 
-                        # Logging for diagnosability.  AzDevOps sometimes redacts the full url.
+                        # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
                         Write-Verbose "prefix: '$prefix'" -Verbose
                         if($url -match '^http(s)?:')
                         {
@@ -106,11 +110,11 @@ Describe "Verify Markdown Links" {
                             }
                             catch
                             {
-                                throw "retry of url failed with error: $($_.Message)"
+                                throw "retry of URL failed with error: $($_.Message)"
                             }
                         }
                         else {
-                            throw "Tool reported Url as unreachable."
+                            throw "Tool reported URL as unreachable."
                         }
                     }
                 }

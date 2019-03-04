@@ -200,7 +200,7 @@ GitHub will see the tag and present it as an option when creating a new [release
 Start the release, use the annotated tag's summary as the title,
 and save the release as a draft while you upload the binary packages.
 
-[semver]: http://semver.org/
+[semver]: https://semver.org/
 [tag]: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 [release]: https://help.github.com/articles/creating-releases/
 

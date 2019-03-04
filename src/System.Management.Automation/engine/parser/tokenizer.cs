@@ -1700,7 +1700,7 @@ namespace System.Management.Automation.Language
         }
 
         // Implementation of the Levenshtein Distance algorithm
-        // http://en.wikipedia.org/wiki/Levenshtein_distance
+        // https://en.wikipedia.org/wiki/Levenshtein_distance
         private static int GetStringSimilarity(string first, string second)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(first) && !string.IsNullOrEmpty(second), "Caller never calls us with empty strings");

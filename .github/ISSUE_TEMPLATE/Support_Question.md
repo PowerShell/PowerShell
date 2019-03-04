@@ -1,6 +1,9 @@
 ---
 name: Support Question ❓
-about: If you have a question, you can try asking in the PowerShell Slack channel first. If you need official support, refer to the [PowerShell Support Lifecycle](http://aka.ms/pslifecycle)
+about: If you have a question, you can try asking in the PowerShell Slack channel first. If you need official support, refer to the [PowerShell Support Lifecycle](https://aka.ms/pslifecycle)
+title: "Support Question"
+labels: Issue-Question
+assignees: ''
 
 ---
 
@@ -8,7 +11,7 @@ about: If you have a question, you can try asking in the PowerShell Slack channe
 
 ## Official support
 
-[PowerShell Support Lifecycle](http://aka.ms/pslifecycle)
+[PowerShell Support Lifecycle](https://aka.ms/pslifecycle)
 
 ## Community Resources
 

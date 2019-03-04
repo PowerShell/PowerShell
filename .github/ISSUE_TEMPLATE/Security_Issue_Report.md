@@ -1,6 +1,9 @@
 ---
 name: Security Issue
 about: Security Issue
+title: "!!! READ TEMPLATE COMPLETELY FIRST!!!"
+labels: Area-Security
+assignees: 'TravisEz13'
 
 ---
 
