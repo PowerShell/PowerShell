@@ -194,7 +194,10 @@ namespace System.Management.Automation
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
             if (errorRecord == null)
+            {
                 throw new ArgumentNullException(nameof(errorRecord));
+            }
+
             _errorRecord = errorRecord;
         }
         #endregion ctor
@@ -223,7 +226,9 @@ namespace System.Management.Automation
             get
             {
                 if (!string.IsNullOrEmpty(_errorRecord._activityOverride))
+                {
                     return _errorRecord._activityOverride;
+                }
 
                 if (_errorRecord.InvocationInfo != null
                     && (_errorRecord.InvocationInfo.MyCommand is CmdletInfo || _errorRecord.InvocationInfo.MyCommand is IScriptCommandInfo)
@@ -257,7 +262,10 @@ namespace System.Management.Automation
             {
                 _reasonIsExceptionType = false;
                 if (!string.IsNullOrEmpty(_errorRecord._reasonOverride))
+                {
                     return _errorRecord._reasonOverride;
+                }
+
                 if (_errorRecord.Exception != null)
                 {
                     _reasonIsExceptionType = true;
@@ -290,7 +298,10 @@ namespace System.Management.Automation
             get
             {
                 if (!string.IsNullOrEmpty(_errorRecord._targetNameOverride))
+                {
                     return _errorRecord._targetNameOverride;
+                }
+
                 if (_errorRecord.TargetObject != null)
                 {
                     string targetInString;
@@ -330,7 +341,10 @@ namespace System.Management.Automation
             get
             {
                 if (!string.IsNullOrEmpty(_errorRecord._targetTypeOverride))
+                {
                     return _errorRecord._targetTypeOverride;
+                }
+
                 if (_errorRecord.TargetObject != null)
                 {
                     return _errorRecord.TargetObject.GetType().Name;
@@ -797,13 +811,19 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (cmdlet == null)
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
+            }
 
             if (string.IsNullOrEmpty(baseName))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(baseName));
+            }
 
             if (string.IsNullOrEmpty(resourceId))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
+            }
 
             string template = string.Empty;
 
@@ -832,13 +852,19 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (resourceSupplier == null)
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceSupplier));
+            }
 
             if (string.IsNullOrEmpty(baseName))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(baseName));
+            }
 
             if (string.IsNullOrEmpty(resourceId))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
+            }
 
             string template = string.Empty;
 
@@ -867,13 +893,19 @@ namespace System.Management.Automation
             params object[] args)
         {
             if (assembly == null)
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(assembly));
+            }
 
             if (string.IsNullOrEmpty(baseName))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(baseName));
+            }
 
             if (string.IsNullOrEmpty(resourceId))
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
+            }
 
             string template = string.Empty;
 
@@ -1385,7 +1417,10 @@ namespace System.Management.Automation
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
             if (errorRecord.ErrorDetails != null)
+            {
                 ErrorDetails = new ErrorDetails(errorRecord.ErrorDetails);
+            }
+
             SetInvocationInfo(errorRecord._invocationInfo);
             _scriptStackTrace = errorRecord._scriptStackTrace;
             _serializedFullyQualifiedErrorId = errorRecord._serializedFullyQualifiedErrorId;
