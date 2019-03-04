@@ -35,7 +35,7 @@ Exit-PSHostProcess
     }
 
     $result = $false
-    foreach ($i in 0..$Retry) {
+    foreach ($i in 1..$Retry) {
         if ($sb.Invoke()) {
             $result = $true
             break
