@@ -88,40 +88,27 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 		@{parameter="Path";        expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'}
 	) {
 		param($parameter, $expectedError)
-		try
-		{
-			$env:xmltestfile = $xmlContent
-			$file = 'env:xmltestfile'
-			$params = @{$parameter=$file}
-			$err = $null
-			Select-Xml @params "Root" -ErrorVariable err -ErrorAction SilentlyContinue
-			$err.FullyQualifiedErrorId | Should -Be $expectedError
-		}
-		finally
-		{
-			Remove-Item -Path 'env:xmltestfile'
-		}
+
+		$env:xmltestfile = $xmlContent
+		$file = 'env:xmltestfile'
+		$params = @{$parameter=$file}
+		{ Select-Xml @params "Root" -ErrorAction Stop } | Should -Throw -ErrorId $expectedError
+		Remove-Item -Path 'env:xmltestfile'
 	}
 
 	It "Can throw for invalid XML file" {
 		$testfile = "TestDrive:\test.xml"
 		Set-Content -Path $testfile -Value "<a><b>"
-		$err = $null
-		Select-Xml -Path $testfile -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
-		$err.FullyQualifiedErrorId | Should -Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
+		{ Select-Xml -Path $testfile -XPath foo -ErrorAction Stop } | Should -Throw -ErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
 	}
 
 	It "Can throw for invalid XML namespace" {
 		[xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-		$err = $null
-		Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err -ErrorAction SilentlyContinue
-		$err.FullyQualifiedErrorId | Should -Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
+		{ Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorAction Stop } | Should -Throw -ErrorId 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
 	}
 
 	It "Can throw for invalid XML content" {
-		$err = $null
-		Select-Xml -Content "hello" -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
-		$err.FullyQualifiedErrorId | Should -Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
+		{ Select-Xml -Content "hello" -XPath foo -ErrorAction Stop } | Should -Throw -ErrorId 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
 	}
 
 	It "Can use ToString() on nested XML node" {
