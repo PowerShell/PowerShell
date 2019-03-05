@@ -2,7 +2,7 @@
 
 The docs folder in this repo contains a lot of documentation about the PowerShell source code and build environment.
 It also has contained documentation about installing and using PowerShell.
-That documentation really belongs in the [PowerShell/PowerShell-Docs](https://github.com/PowerShell/PowerShell-Docs) repo.
+That documentation belongs in the [PowerShell/PowerShell-Docs](https://github.com/PowerShell/PowerShell-Docs) repo.
 
 We are in the process of migrating the user-focused articles to the docs repo.
 This file records which files have been migrated.

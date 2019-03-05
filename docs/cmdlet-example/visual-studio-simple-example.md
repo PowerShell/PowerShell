@@ -30,7 +30,7 @@ Add another package source with name `powershell-core` and source `https://power
 ![Step4](./Images/Step4.png)
 
 1. Add the code of cmdlet:
-    ```CSharp
+    ```csharp
     using System.Management.Automation;  // PowerShell namespace.
 
     namespace SendGreeting
@@ -90,7 +90,7 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 ![StdImage3](./Images/Std3.png)
 
 1. Add the code of cmdlet:
-    ```CSharp
+    ```csharp
     using System.Management.Automation;  // PowerShell namespace.
 
     namespace SendGreeting
