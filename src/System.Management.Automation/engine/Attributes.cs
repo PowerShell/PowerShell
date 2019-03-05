@@ -1015,7 +1015,7 @@ namespace System.Management.Automation
         private Type _promotedType;
 
         /// <summary>
-        /// The name of the predefined range.
+        /// Gets the name of the predefined range.
         /// </summary>
         public ValidateRangeKind? RangeKind { get; }
 
