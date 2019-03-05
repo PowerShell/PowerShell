@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// non-windows platforms.
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
-        
+
         /// <summary>
         /// Gets the path separators characters for this provider.
         /// </summary>
@@ -686,20 +686,20 @@ namespace System.Management.Automation
             { 
                 StringLiterals.DefaultPathSeparatorString, 
                 StringLiterals.AlternatePathSeparatorString
-            });        
-        
-        public static readonly ReadOnlyCollection<string> Function = new ReadOnlyCollection<string>( 
-            new List<string> 
-            { 
-                StringLiterals.DefaultPathSeparatorString, 
-                StringLiterals.AlternatePathSeparatorString
-            });     
+            });
 
-        public static readonly ReadOnlyCollection<string> Registry = new ReadOnlyCollection<string>( 
-            new List<string> 
-            { 
-                StringLiterals.DefaultPathSeparatorString, 
-            });   
+        public static readonly ReadOnlyCollection<string> Function = new ReadOnlyCollection<string>(
+            new List<string>
+            {
+                StringLiterals.DefaultPathSeparatorString,
+                StringLiterals.AlternatePathSeparatorString
+            });
+
+        public static readonly ReadOnlyCollection<string> Registry = new ReadOnlyCollection<string>(
+            new List<string>
+            {
+                StringLiterals.DefaultPathSeparatorString,
+            });
     }
 }
 

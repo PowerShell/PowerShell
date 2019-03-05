@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
 
             return providerInfo;
         }
-        
+
         #endregion
 
         #region DriveCmdletProvider overrides
