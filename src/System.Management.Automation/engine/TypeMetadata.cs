@@ -900,9 +900,11 @@ namespace System.Management.Automation
             ValidateLengthAttribute validLengthAttrib = attrib as ValidateLengthAttribute;
             if (validLengthAttrib != null)
             {
-                result = string.Format(CultureInfo.InvariantCulture,
+                result = string.Format(
+                    CultureInfo.InvariantCulture,
                     ValidateLengthFormat, prefix,
-                    validLengthAttrib.MinLength, validLengthAttrib.MaxLength);
+                    validLengthAttrib.MinLength,
+                    validLengthAttrib.MaxLength);
                 return result;
             }
 
@@ -911,8 +913,10 @@ namespace System.Management.Automation
             {
                 if (validRangeAttrib.RangeKind.HasValue)
                 {
-                    result = string.Format(CultureInfo.InvariantCulture,
-                        ValidateRangeRangeKindFormat, prefix,
+                    result = string.Format(
+                        CultureInfo.InvariantCulture,
+                        ValidateRangeRangeKindFormat,
+                        prefix,
                         validRangeAttrib.RangeKind.ToString());
                     return result;
                 }
