@@ -1017,7 +1017,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the predefined range.
         /// </summary>
-        public ValidateRangeKind? RangeKind { get; }
+        internal ValidateRangeKind? RangeKind { get => _rangeKind; }
 
         ValidateRangeKind? _rangeKind;
 
@@ -1141,7 +1141,6 @@ namespace System.Management.Automation
         public ValidateRangeAttribute(ValidateRangeKind kind) : base()
         {
             _rangeKind = kind;
-            RangeKind = kind;
         }
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
