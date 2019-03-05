@@ -1014,6 +1014,11 @@ namespace System.Management.Automation
         /// </summary>
         private Type _promotedType;
 
+        /// <summary>
+        /// The name of the predefined range.
+        /// </summary>
+        public ValidateRangeKind? RangeKind { get; }
+
         ValidateRangeKind? _rangeKind;
 
         /// <summary>
@@ -1136,6 +1141,7 @@ namespace System.Management.Automation
         public ValidateRangeAttribute(ValidateRangeKind kind) : base()
         {
             _rangeKind = kind;
+            RangeKind = kind;
         }
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)

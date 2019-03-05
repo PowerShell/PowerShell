@@ -758,6 +758,7 @@ namespace System.Management.Automation
         private const string ParameterSetNameFormat = "ParameterSetName='{0}'";
         private const string AliasesFormat = @"{0}[Alias({1})]";
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
+        private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
@@ -908,22 +909,32 @@ namespace System.Management.Automation
             ValidateRangeAttribute validRangeAttrib = attrib as ValidateRangeAttribute;
             if (validRangeAttrib != null)
             {
-                Type rangeType = validRangeAttrib.MinRange.GetType();
-                string format;
-
-                if (rangeType == typeof(float) || rangeType == typeof(double))
+                if (validRangeAttrib.RangeKind.HasValue)
                 {
-                    format = ValidateRangeFloatFormat;
+                    result = string.Format(CultureInfo.InvariantCulture,
+                        ValidateRangeRangeKindFormat, prefix,
+                        validRangeAttrib.RangeKind.ToString());
+                    return result;
                 }
                 else
                 {
-                    format = ValidateRangeFormat;
-                }
+                    Type rangeType = validRangeAttrib.MinRange.GetType();
+                    string format;
 
-                result = string.Format(CultureInfo.InvariantCulture,
-                    format, prefix,
-                    validRangeAttrib.MinRange, validRangeAttrib.MaxRange);
-                return result;
+                    if (rangeType == typeof(float) || rangeType == typeof(double))
+                    {
+                        format = ValidateRangeFloatFormat;
+                    }
+                    else
+                    {
+                        format = ValidateRangeFormat;
+                    }
+
+                    result = string.Format(CultureInfo.InvariantCulture,
+                        format, prefix,
+                        validRangeAttrib.MinRange, validRangeAttrib.MaxRange);
+                    return result;
+                }
             }
 
             AllowNullAttribute allowNullAttrib = attrib as AllowNullAttribute;
