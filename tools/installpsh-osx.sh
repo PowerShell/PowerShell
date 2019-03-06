@@ -12,8 +12,9 @@
 #Completely automated install requires a root account or sudo with a password requirement
 
 #Switches
-#  -includeide - the script is being run headless, do not perform actions that require response from the console
-#  -interactivetests - requires a human user in front of the machine - loads a script into the ide to test with F5 to ensure the IDE can run scripts
+# -includeide         - installs vscode and vscode PowerShell extension (only relevant to machines with desktop environment)
+# -interactivetesting - do a quick launch test of vscode (only relevant when used with -includeide)
+# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
