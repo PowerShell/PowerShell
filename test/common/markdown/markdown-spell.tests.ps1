@@ -66,22 +66,22 @@ Describe "Verify Markdown Spelling" {
 
                 if($passes)
                 {
-                    it "<url> should work" -TestCases $passes {
+                    it "<mdfile> should have no spelling issues" -TestCases $passes {
                         noop
                     }
                 }
 
                 if($trueFailures)
                 {
-                    it "<url> should work" -TestCases $trueFailures  {
-                        param($url)
+                    it "<mdfile> should have no spelling issues" -TestCases $trueFailures  {
+                        param($mdfile)
                         throw "You have a spelling error! Did you recently modify any markdown files?"
                     }
                 }
 
                 if($verifyFailures)
                 {
-                    it "<url> should work" -TestCases $verifyFailures -Pending {}
+                    it "<mdfile> should have no spelling issues" -TestCases $verifyFailures -Pending {}
                 }
             }
         }
