@@ -25,10 +25,10 @@ Describe "Verify Markdown Spelling"
         get-job | remove-job -force
     }
 
-    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Where-Object {$_.DirectoryName -notlike '.git'} | Group-Object -Property directory
+    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
 
     $jobs = @{}
-    # start all link verification in parallel
+    # Start all spell checking in parallel to save time:
     Foreach($group in $groups)
     {
         $job = Start-ThreadJob {
@@ -59,7 +59,6 @@ Describe "Verify Markdown Spelling"
             {
                 $failures = $result -like '*spelling errors found*'
                 $passes = $result -like '*free of spelling errors*'
-                $didFail = $false
 
                 # must have some code in the test for it to pass
                 function noop {}
