@@ -5,7 +5,7 @@ Describe "Verify Markdown Spelling" {
     BeforeAll {
         if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
         {
-            Write-Host "installing markdown-spelling tool please wait ...!" -Verbose
+            Write-Verbose "installing markdown-spelling tool please wait ...!" -Verbose
             start-nativeExecution {
                 sudo npm install -g markdown-spellcheck@0.11.0
             }
@@ -62,8 +62,7 @@ Describe "Verify Markdown Spelling" {
                 $verifyFailures = @()
 
                 # must have some code in the test for it to pass
-                function noop {
-                }
+                function noop {}
 
                 if($passes)
                 {
