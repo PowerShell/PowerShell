@@ -3,12 +3,10 @@
 
 Describe "Verify Markdown Spelling" {
     BeforeAll {
-        # Try to run `mdspell`, if it doesn't work, install it:
-        if( !(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue) )
+        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
         {
-            Write-Verbose "installing markdown-spelling tool please wait ...!" -Verbose
             start-nativeExecution {
-                sudo npm install -g markdown-spellcheck@0.11.0
+                sudo npm install -g mdspell@latest
             }
         }
 
@@ -24,12 +22,15 @@ Describe "Verify Markdown Spelling" {
     $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
 
     $jobs = @{}
-    # Start all spell checking in parallel to save time:
-    Foreach($group in $groups) {
+    # start all link verification in parallel
+    Foreach($group in $groups)
+    {
+        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object] $group)
-            foreach($file in $group.Group) {
-                $results = mdspell $file 2>&1 --ignore-numbers --ignore-acronyms --report --en-us;
+            foreach($file in $group.Group)
+            {
+                $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
                 Write-Output ([PSCustomObject]@{
                     file = $file
                     results = $results
@@ -40,30 +41,48 @@ Describe "Verify Markdown Spelling" {
     }
 
     # Get the results and verify
-    foreach($key in $jobs.keys) {
+    foreach($key in $jobs.keys)
+    {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
         Remove-job -job $Job
-        foreach($jobResult in $results) {
+        foreach($jobResult in $results)
+        {
             $file = $jobResult.file
             $result = $jobResult.results
-            Context "Verify spellling in $file" {
-                $failures = $result -like '*spelling errors found*'
-                $passes = $result -like '*free of spelling errors*'
+            Context "Verify spelling in $file" {
+                $failures = $result -like 'spelling error in' | ForEach-Object { $_.Substring(4).Trim() }
+                $passes = $result -like '*free of spelling*' | ForEach-Object {
+                    @{spell=$_.Substring(4).Trim() }
+                }
+                $trueFailures = @()
+                $verifyFailures = @()
+                foreach ($failure in $failures) {
+                    $trueFailures += @{url = $failure}
+                }
 
                 # must have some code in the test for it to pass
-                function noop {}
+                function noop {
+                }
 
-                if( $passes ) {
-                    it "<mdfile> should have no spelling issues" -TestCases $passes {
+                if($passes)
+                {
+                    it "<url> should work" -TestCases $passes {
                         noop
                     }
                 }
 
-                if( !$passes ) {
-                    it "<mdfile> should have no spelling issues" {
-                        param($mdfile)
-                        throw "You have a spelling error! Did you recently modify any markdown files?"
+                if($trueFailures)
+                {
+                    it "<url> should work" -TestCases $trueFailures  {
+                        param($url)
+                        throw "Tool reported URL as unreachable."
+                    }
+                }
+
+                if($verifyFailures)
+                {
+                    it "<url> should work" -TestCases $verifyFailures -Pending {
                     }
                 }
             }
