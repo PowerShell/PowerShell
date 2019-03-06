@@ -40,6 +40,9 @@ $Script:community_login_map = @{
     "darpa@yandex.ru" = "iSazonov"
     "c.bergmeister@gmail.com" = "bergmeister"
     "github@markekraus.com" = "markekraus"
+    "dongbow@microsoft.com" = "daxian-dbw"
+    "slee@microsoft.com" = "SteveL-MSFT"
+    "github@ez13.net" = "TravisEz13"
     "info@powercode-consulting.se" = "powercode"
 }
 
