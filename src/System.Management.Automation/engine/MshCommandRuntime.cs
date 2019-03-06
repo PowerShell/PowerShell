@@ -249,7 +249,7 @@ namespace System.Management.Automation
 
 #if CORECLR
             // SecurityContext is not supported in CoreCLR
-            DoWriteObjects(sendToPipeline);
+            DoWriteEnumeratedObject(sendToPipeline);
 #else
             if (UseSecurityContextRun)
             {
@@ -278,11 +278,11 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
-        private void DoWriteObjects(object sendToPipeline)
+        private void DoWriteEnumeratedObject(object sendToPipeline)
         {
             // NOTICE-2004/06/08-JonN 959638
             ThrowIfWriteNotPermitted(true);
-            _WriteObjectsSkipAllowCheck(sendToPipeline);
+            _EnumerateAndWriteObjectSkipAllowCheck(sendToPipeline);
         }
         // Trust:  public void WriteObject(object sendToPipeline, DataTrustCategory trustCategory);     // enumerateCollection defaults to false
         // Trust:  public void WriteObject(object sendToPipeline, bool enumerateCollection, DataTrustCategory trustCategory);
@@ -2591,7 +2591,7 @@ namespace System.Management.Automation
         /// The Cmdlet should generally just allow PipelineStoppedException
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
-        internal void _WriteObjectsSkipAllowCheck(object sendToPipeline)
+        internal void _EnumerateAndWriteObjectSkipAllowCheck(object sendToPipeline)
         {
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(sendToPipeline);
             if (enumerable == null)
