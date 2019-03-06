@@ -50,9 +50,6 @@ lowercase(){
 }
 
 OS=$(lowercase "$(uname)")
-KERNEL=$(uname -r)
-MACH=$(uname -m)
-
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -63,54 +60,25 @@ else
     OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
-        ARCH=$(uname -p)
-        OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
         DistroBasedOn=sunos
     elif [ "${OS}" == "AIX" ] ; then
-        OSSTR="${OS} $(oslevel) ($(oslevel -r))"
         DistroBasedOn=aix
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
-            DIST=$(sed s/\ release.*// < /etc/redhat-release)
-            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/redhat-release )
-            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/redhat-release )
-        elif [ -f /etc/system-release ] ; then
-            DIST=$(sed s/\ release.*// < /etc/system-release)
-            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/system-release )
-            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/system-release )
-            if [[ $DIST == *"Amazon Linux"* ]] ; then
-                DistroBasedOn='amazonlinux'
-            else
-                DistroBasedOn='redhat'
-            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
-            PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
-            REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
-            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
-            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
         elif [ -f /etc/debian_version ] ; then
             DistroBasedOn='debian'
-            DIST=$( (grep '^DISTRIB_ID' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-            PSUEDONAME=$( (grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-            REV=$( (grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }') < /etc/lsb-release)
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
             DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
+            DistroBasedOn=unitedlinux
         fi
-        OS=$(lowercase $OS)
-        DistroBasedOn=$(lowercase $DistroBasedOn)
-        readonly OS
-        readonly DIST
-        readonly DistroBasedOn
-        readonly PSUEDONAME
-        readonly REV
-        readonly KERNEL
-        readonly MACH
-        readonly OSSTR
+        OS=$(lowercase "$OS")
+        DistroBasedOn=$(lowercase "$DistroBasedOn")
     fi
 fi
 

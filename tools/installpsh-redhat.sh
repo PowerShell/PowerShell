@@ -30,7 +30,6 @@ powershellpackageid=powershell
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
-echo "***    Current PowerShell Core Version: $currentpshversion"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $* "
@@ -45,10 +44,10 @@ trap '
 
 #Verify The Installer Choice (for direct runs of this script)
 lowercase(){
-    echo "$1" | tr "[A-Z]" "[a-z]"
+    echo "$1" | tr "[:upper:]" "[:lower:]"
 }
 
-OS=$(lowercase $(uname))
+OS=$(lowercase "$(uname)")
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -59,16 +58,11 @@ else
     OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
-        ARCH=$(uname -p)
-        OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
         DistroBasedOn=sunos
     elif [ "${OS}" == "AIX" ] ; then
-        OSSTR="${OS} $(oslevel) ($(oslevel -r))"
         DistroBasedOn=aix
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
-            DistroBasedOn='redhat'
-        elif [ -f /etc/system-release ] ; then
             DistroBasedOn='redhat'
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
@@ -78,16 +72,16 @@ else
             DistroBasedOn='debian'
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
+            DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             DistroBasedOn=unitedlinux
         fi
-        OS=$(lowercase $OS)
-        DistroBasedOn=$(lowercase $DistroBasedOn)
+        OS=$(lowercase "$OS")
+        DistroBasedOn=$(lowercase "$DistroBasedOn")
     fi
 fi
 
 if [ "$DistroBasedOn" != "$thisinstallerdistro" ]; then
-  echo "*** This installer is only for $thisinstallerdistro and you are running $DistroBasedOn, please run \"$gitreporoot\install-powershell.sh\" to see if your distro is supported AND to auto-select the appropriate installer if it is."
+  echo "*** This installer is only for $thisinstallerdistro and you are running $DistroBasedOn, please run \"$gitreposcriptroot\install-powershell.sh\" to see if your distro is supported AND to auto-select the appropriate installer if it is."
   exit 1
 fi
 
@@ -100,7 +94,7 @@ if [[ "${CI}" == "true" ]]; then
 fi
 
 SUDO=''
-if (( $EUID != 0 )); then
+if (( EUID != 0 )); then
     #Check that sudo is available
     if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
@@ -130,6 +124,7 @@ echo "*** Setting up PowerShell Core repo..."
 $SUDO curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
 $SUDO yum install -y ${powershellpackageid}
 
+# shellcheck disable=SC2016
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
 
