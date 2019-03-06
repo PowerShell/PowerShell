@@ -3,11 +3,11 @@
 
 Describe "Verify Markdown Spelling" {
     BeforeAll {
-        if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
+        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
         {
-            Write-Verbose "installing markdown-link-check ..." -Verbose
+            Write-Host "installing markdown-spelling tool please wait ...!" -Verbose
             start-nativeExecution {
-                    sudo npm install -g markdown-link-check@3.7.2
+                    sudo npm install -g markdown-spellcheck@0.11.0
                 }
         }
 
@@ -65,14 +65,12 @@ Describe "Verify Markdown Spelling" {
                 $trueFailures = @()
                 $verifyFailures = @()
                 foreach ($failure in $failures) {
-                    if($failure -like 'https://www.amazon.com*')
-                    {
+                    if($failure -like 'https://www.amazon.com*') {
                         # In testing amazon links often failed when they are valid
                         # Verify manually
                         $verifyFailures += @{url = $failure}
                     }
-                    else
-                    {
+                    else {
                         $trueFailures += @{url = $failure}
                     }
                 }
@@ -92,25 +90,7 @@ Describe "Verify Markdown Spelling" {
                 {
                     it "<url> should work" -TestCases $trueFailures  {
                         param($url)
-
-                        $prefix = $url.Substring(0,7)
-
-                        # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
-                        Write-Verbose "prefix: '$prefix'" -Verbose
-                        if($url -match '^http(s)?:')
-                        {
-                            # If invoke-WebRequest can handle the URL, re-verify, with 5 retries
-                            try{
-                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 3 -MaximumRetryCount 6
-                            }
-                            catch
-                            {
-                                throw "retry of URL failed with error: $($_.Message)"
-                            }
-                        }
-                        else {
-                            throw "Tool reported URL as unreachable."
-                        }
+                        throw "You have a spelling error! Did you recently modify any markdown files?"
                     }
                 }
 
