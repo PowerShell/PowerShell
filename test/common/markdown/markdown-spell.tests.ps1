@@ -73,12 +73,7 @@ Describe "Verify Markdown Spelling"
                 }
                 else
                 {
-                    $didFail = $true
-                }
-
-                if($didFail)
-                {
-                    it "<mdfile> should have no spelling issues" -TestCases $trueFailures
+                    it "<mdfile> should have no spelling issues"
                     {
                         param($mdfile)
                         Write-Verbose "File failing is $mdfile" -Verbose
