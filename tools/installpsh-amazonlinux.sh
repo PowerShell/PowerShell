@@ -14,8 +14,8 @@
 #Completely automated install requires a root account or sudo with a password requirement
 
 #Switches
-# -includeide         - ignored, as amazonlinux does not have a desktop environment
-# -interactivetesting - ignored, as amazonlinux does not have a desktop environment
+# -includeide         - ignored, as Amazon Linux does not have a desktop environment
+# -interactivetesting - ignored, as Amazon Linux does not have a desktop environment
 # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
 # -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
 

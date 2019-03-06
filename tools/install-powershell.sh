@@ -18,8 +18,8 @@ install(){
     #Completely automated install requires a root account or sudo with a password requirement
 
     #Switches
-    # -includeide         - installs vscode and vscode PowerShell extension (only relevant to machines with desktop environment)
-    # -interactivetesting - do a quick launch test of vscode (only relevant when used with -includeide)
+    # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
+    # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
     # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
     # -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
     # -appimage           - perform an AppImage install instead of a native install
