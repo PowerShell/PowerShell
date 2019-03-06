@@ -482,6 +482,30 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-WebRequest supports sending request as UTF-8." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        # Body must contain non-ASCII characters
+        $command = "Invoke-WebRequest -Uri '$uri' -Body 'проверка' -ContentType 'application/json; charset=utf-8' -Method 'POST'"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $Result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
+        $object = $Result.Output.Content | ConvertFrom-Json
+        $object.Data | Should -BeExactly 'проверка'
+    }
+
+    It "Invoke-WebRequest supports request that returns page containing CodPage 936 data." {
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'CP936'
+        $command = "Invoke-WebRequest -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $Result.Output.Encoding.CodePage | Should -Be 936
+        $Result.Output.Content | Should -Match '测试123'
+    }
+
     It "Invoke-WebRequest validate timeout option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
@@ -1169,6 +1193,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should -BeTrue
         $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue01'))
         $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue02'))
+    }
+
+    It "Verifies Invoke-WebRequest does not sent expect 100-continue headers by default" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $response = Invoke-WebRequest -Uri $uri
+        $result = $response.Content | ConvertFrom-Json
+
+        $result.headers.Expect | Should -BeNullOrEmpty
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
+    }
+
+    It "Verifies Invoke-WebRequest sends expect 100-continue header when defined in -Headers" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $response = Invoke-WebRequest -Uri $uri -Headers @{Expect = '100-continue'}
+        $result = $response.Content | ConvertFrom-Json
+
+        $result.headers.Expect | Should -BeExactly '100-continue'
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
     }
 
     #endregion Content Header Inclusion
@@ -1869,6 +1915,23 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-RestMethod supports sending requests as UTF8" {
+        $uri = Get-WebListenerUrl -Test POST
+        # Body must contain non-ASCII characters
+        $command = "Invoke-RestMethod -Uri '$uri' -body 'проверка' -ContentType 'application/json; charset=utf-8' -method 'POST'"
+
+        $result = ExecuteWebCommand -command $command
+        $Result.Output.Data | Should -BeExactly 'проверка'
+    }
+
+    It "Invoke-RestMethod supports request that returns page containing Code Page 936 data." {
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'CP936'
+        $command = "Invoke-RestMethod -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $Result.Output | Should -Match '测试123'
+    }
+
     It "Invoke-RestMethod validate timeout option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2"
@@ -2507,6 +2570,26 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             {Invoke-RestMethod -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
                 Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
+    }
+
+    It "Verifies Invoke-RestMethod does not sent expect 100-continue headers by default" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $result = Invoke-RestMethod -Uri $uri
+
+        $result.headers.Expect | Should -BeNullOrEmpty
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
+    }
+
+    It "Verifies Invoke-RestMethod sends expect 100-continue header when defined in -Headers" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+
+        $result = Invoke-RestMethod -Uri $uri -Headers @{Expect = '100-continue'}
+
+        $result.headers.Expect | Should -BeExactly '100-continue'
+        $result.method | Should -BeExactly "GET"
+        $result.url | Should -BeExactly $uri.ToString()
     }
 
     #region charset encoding tests

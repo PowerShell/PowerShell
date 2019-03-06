@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -74,8 +75,8 @@ namespace PSTests.Sequential
                 ScriptBlockLogging = new ScriptBlockLogging() { EnableScriptBlockInvocationLogging = true, EnableScriptBlockLogging = false },
                 ModuleLogging = new ModuleLogging() { EnableModuleLogging = false, ModuleNames = new string[] { "PSReadline", "PowerShellGet" } },
                 ProtectedEventLogging = new ProtectedEventLogging() { EnableProtectedEventLogging = false, EncryptionCertificate = new string[] { "Joe" } },
-                Transcription = new Transcription() { EnableInvocationHeader = true, EnableTranscripting = true, OutputDirectory = "c:\tmp" },
-                UpdatableHelp = new UpdatableHelp() { DefaultSourcePath = "f:\temp" },
+                Transcription = new Transcription() { EnableInvocationHeader = true, EnableTranscripting = true, OutputDirectory = @"c:\tmp" },
+                UpdatableHelp = new UpdatableHelp() { DefaultSourcePath = @"f:\temp" },
                 ConsoleSessionConfiguration = new ConsoleSessionConfiguration() { EnableConsoleSessionConfiguration = true, ConsoleSessionConfigurationName = "name" }
             };
 
@@ -263,14 +264,34 @@ namespace PSTests.Sequential
 
         public void CleanupConfigFiles()
         {
-            if (File.Exists(systemWideConfigFile))
-            {
-                File.Delete(systemWideConfigFile);
-            }
+            var maxPause = 10;
 
-            if (File.Exists(currentUserConfigFile))
+            while (maxPause-- != 0 && (File.Exists(systemWideConfigFile) || File.Exists(currentUserConfigFile)))
             {
-                File.Delete(currentUserConfigFile);
+                var pause = false;
+
+                try
+                {
+                    File.Delete(systemWideConfigFile);
+                }
+                catch (IOException)
+                {
+                    pause = true;
+                }
+
+                try
+                {
+                    File.Delete(currentUserConfigFile);
+                }
+                catch (IOException)
+                {
+                    pause = true;
+                }
+
+                if (pause)
+                {
+                    Thread.Sleep(5);
+                }
             }
         }
 

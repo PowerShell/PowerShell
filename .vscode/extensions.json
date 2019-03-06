@@ -7,6 +7,7 @@
     "ms-vscode.csharp",
     "ms-vscode.PowerShell",
     "twxs.cmake",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "vitaliymaz.vscode-svg-previewer"
   ]
 }

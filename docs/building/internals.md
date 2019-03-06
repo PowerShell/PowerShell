@@ -143,7 +143,7 @@ Be sure to build and test for all supported architectures: `x86`, `x64`, `x64_ar
 The `x64_arm` and `x64_arm64` architectures mean that the host system needs to be x64 to cross-compile to ARM.
 When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architectures.
 
-After that, the binary `pwrshplugin.dll`, its PDB file, and `powershell.core.instrumentation.dll` will be placed under 'src\powershell-win-core'.
+After that, the binary `pwrshplugin.dll`, its PDB file, and `powershell.core.instrumentation.dll` will be placed under `src\powershell-win-core`.
 
 To create a new NuGet package for `pwrshplugin.dll`, first you need to get the `psrp.windows.nuspec` from an existing `psrp.windows` package.
 You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if you have recently built PowerShell on it.

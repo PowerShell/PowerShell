@@ -1136,6 +1136,7 @@ namespace Microsoft.WSMan.Management
              [In, MarshalAs(UnmanagedType.Bool)] bool bMachine);
 
         [DllImport("Userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LeaveCriticalPolicySection(
              [In] System.IntPtr hSection);
     }

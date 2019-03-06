@@ -1,5 +1,4 @@
-Learning PowerShell
-====
+# Learning PowerShell
 
 Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
 In this document we'll cover the following:
@@ -10,18 +9,16 @@ You won't be a PowerShell guru at the end of reading this material but you will 
 
 If you have 30 minutes now, let’s try it.
 
-
-Installing PowerShell
-----
+## Installing PowerShell
 
 First you need to set up your computer working environment if you have not done so.
 Choose the platform below and follow the instructions.
 At the end of this exercise, you should be able to launch the PowerShell session.
 
 - Get PowerShell by installing package
- * [PowerShell on Linux][inst-linux]
- * [PowerShell on macOS][inst-macos]
- * [PowerShell on Windows][inst-win]
+    * [PowerShell on Linux][inst-linux]
+    * [PowerShell on macOS][inst-macos]
+    * [PowerShell on Windows][inst-win]
 
   For this tutorial, you do not need to install PowerShell if you are running on Windows.
   You can launch PowerShell console by pressing Windows key, typing PowerShell, and clicking on Windows PowerShell.
@@ -33,8 +30,8 @@ At the end of this exercise, you should be able to launch the PowerShell session
 [inst-win]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
 [inst-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 
-Getting Started with PowerShell
-----
+## Getting Started with PowerShell
+
 PowerShell commands follow a Verb-Noun semantic with a set of parameters.
 It's easy to learn and use PowerShell.
 For example, `Get-Process` will display all the running processes on your system.
@@ -43,8 +40,7 @@ Let's walk through with a few examples from the [PowerShell Beginner's Guide](po
 Now you have learned the basics of PowerShell.
 Please continue reading if you want to do some development work in PowerShell.
 
-PowerShell Editor
-----
+### PowerShell Editor
 
 In this section, you will create a PowerShell script using a text editor.
 You can use your favorite editor to write scripts.
@@ -53,8 +49,7 @@ Click on the following link to create your first PowerShell script.
 
 - [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode?view=powershell-6)
 
-PowerShell Debugger
-----
+### PowerShell Debugger
 
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
@@ -67,42 +62,37 @@ Click on the link below to learn more about debugging:
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
 
-
-PowerShell Testing
-----
+### PowerShell Testing
 
 We recommend using Pester testing tool which is initiated by the PowerShell Community for writing test cases.
-To use the tool please read [ Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
+To use the tool please read [Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
 
-
-Map Book for Experienced Bash users
-----
+### Map Book for Experienced Bash users
 
 The table below lists the usage of some basic commands to help you get started on PowerShell faster.
 Note that all bash commands should continue working on PowerShell session.
 
-
-| Bash                | PowerShell                  | Description
-|:--------------------|:----------------------------|:---------------------
-| ls                  |dir, Get-ChildItem           |List files and folders
-| tree                |dir -Recurse                 |List all files and folders
-| cd                  |cd, Set-Location             |Change directory
-| pwd                 |pwd, $pwd, Get-Location      |Show working directory
-| clear, Ctrl+L, reset| cls, clear                  |Clear screen
-| mkdir               |New-Item -ItemType Directory |Create a new folder
-| touch test.txt      |New-Item -Path test.txt      |Create a new empty file
-| cat test1.txt test2.txt         |Get-Content test1.txt, test2.txt       |Display files contents
-| cp ./source.txt ./dest/dest.txt |Copy-Item source.txt dest/dest.txt     |Copy a file
-| cp -r ./source ./dest           |Copy-Item ./source ./dest -Recurse     |Recursively copy from one folder to another
-| mv ./source.txt ./dest/dest.txt |Move-Item ./source.txt ./dest/dest.txt |Move a file to other folder
-| rm test.txt                     |Remove-Item test.txt                   |Delete a file
-| rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
-| find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
+| Bash                            | PowerShell                              | Description
+|:--------------------------------|:----------------------------------------|:---------------------
+| ls                              | dir, Get-ChildItem                      | List files and folders
+| tree                            | dir -Recurse, Get-ChildItem -Recurse    | List all files and folders
+| cd                              | cd, Set-Location                        | Change directory
+| pwd                             | pwd, $pwd, Get-Location                 | Show working directory
+| clear, Ctrl+L, reset            | cls, clear                              | Clear screen
+| mkdir                           | New-Item -ItemType Directory            | Create a new folder
+| touch test.txt                  | New-Item -Path test.txt                 | Create a new empty file
+| cat test1.txt test2.txt         | Get-Content test1.txt, test2.txt        | Display files contents
+| cp ./source.txt ./dest/dest.txt | Copy-Item source.txt dest/dest.txt      | Copy a file
+| cp -r ./source ./dest           | Copy-Item ./source ./dest -Recurse      | Recursively copy from one folder to another
+| mv ./source.txt ./dest/dest.txt | Move-Item ./source.txt ./dest/dest.txt  | Move a file to other folder
+| rm test.txt                     | Remove-Item test.txt                    | Delete a file
+| rm -r &lt;folderName>           | Remove-Item &lt;folderName> -Recurse    | Delete a folder
+| find -name build*               | Get-ChildItem build* -Recurse           | Find a file or folder starting with 'build'
 | grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> \| Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
-| curl https://github.com | Invoke-RestMethod https://github.com | Transfer data to or from the web
+| curl https://github.com         | Invoke-RestMethod https://github.com    | Transfer data to or from the web
 
-Recommended Training and Reading
-----
+### Recommended Training and Reading
+
 - Microsoft Virtual Academy: [Getting Started with PowerShell][getstarted-with-powershell]
 - [Why Learn PowerShell][why-learn-powershell] by Ed Wilson
 - PowerShell Web Docs: [Basic cookbooks][basic-cookbooks]
@@ -113,10 +103,9 @@ Recommended Training and Reading
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
 
+### Commercial Resources
 
-Commercial Resources
-----
-- [Windows PowerShell in Action][in-action] by Bruce Payette
+- [Windows PowerShell in Action][in-action] by [Bruce Payette](https://github.com/brucepay)
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
 - [Learn Windows PowerShell in a Month of Lunches][learn-powershell] by Don Jones and Jeffrey Hicks
@@ -133,6 +122,6 @@ Commercial Resources
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
-[quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
+[quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6

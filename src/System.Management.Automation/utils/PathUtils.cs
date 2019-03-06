@@ -429,5 +429,23 @@ namespace System.Management.Automation
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
         }
+
+        internal static bool TryDeleteFile(string filepath)
+        {
+            if (IO.File.Exists(filepath))
+            {
+                try
+                {
+                    IO.File.Delete(filepath);
+                    return true;
+                }
+                catch (IOException)
+                {
+                    // file is in use on Windows
+                }
+            }
+
+            return false;
+        }
     }
 }

@@ -1,0 +1,11 @@
+steps:
+- powershell: |
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
+
+      if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
+  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))

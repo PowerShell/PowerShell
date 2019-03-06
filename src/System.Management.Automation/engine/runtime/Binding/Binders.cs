@@ -477,7 +477,7 @@ namespace System.Management.Automation.Language
 
                 return BindingRestrictions.GetExpressionRestriction(
                     Expression.Block(
-                        new[] {tmp},
+                        new[] { tmp },
                         Expression.Assign(tmp, ExpressionCache.GetExecutionContextFromTLS),
                         test));
             }
@@ -2587,7 +2587,11 @@ namespace System.Management.Automation.Language
                 toType = typeof(int);
             }
 
-            return Expression.Call(CachedReflectionInfo.Parser_ScanNumber, expr.Cast(typeof(string)), Expression.Constant(toType, typeof(Type)));
+            return Expression.Call(
+                CachedReflectionInfo.Parser_ScanNumber,
+                expr.Cast(typeof(string)),
+                Expression.Constant(toType, typeof(Type)),
+                Expression.Constant(true));
         }
 
         private static DynamicMetaObject GetArgAsNumericOrPrimitive(DynamicMetaObject arg, Type targetType)
@@ -7414,7 +7418,7 @@ namespace System.Management.Automation.Language
             //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
             if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
             {
-                var enumerator = (new object[] {obj}).GetEnumerator();
+                var enumerator = (new object[] { obj }).GetEnumerator();
                 switch (args.Length)
                 {
                     case 1:
@@ -7430,7 +7434,7 @@ namespace System.Management.Automation.Language
 
             if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
             {
-                var enumerator = (new object[] {obj}).GetEnumerator();
+                var enumerator = (new object[] { obj }).GetEnumerator();
                 return EnumerableOps.ForEach(enumerator, args[0], Utils.EmptyArray<object>());
             }
 

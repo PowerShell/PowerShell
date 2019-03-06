@@ -1422,6 +1422,12 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
     <value>No process was found with Name: {0}.</value>
   </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>No named pipe was found with CustomPipeName: {0}.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+  </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
     <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
   </data>
@@ -1439,6 +1445,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
     <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
     <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>

@@ -44,7 +44,6 @@ Running code coverage more often on full PowerShell is something that we should 
 We currently run only those tests which are tagged `CI` excluding the tag `SLOW` as part of our continuous integration systems.
 This means roughly 1/3rd of our github tests are not being run on any regular schedule.
 In order to provide us with higher confidence in our code, we should be running *ALL* of our tests on a regular basis.
-We have recently added to `AppVeyor` running all of our tests on a daily basis, but are not yet running these tests on Linux/Mac via `Travis`, which should be done.
 However, running the tests is only the first step, we need an easy way to be notified of test failures, and to track progress of those runs over time.
 Tracking this over time affords us the ability to see how our test count increases, implying an improvement in coverage.
 It also provides us mechanism whereby we can see trends in instability.

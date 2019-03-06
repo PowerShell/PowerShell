@@ -17,7 +17,7 @@ function Wait-UntilTrue
         if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
-        # Sleep for the specified interval
+        # Wait
         Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
@@ -233,11 +233,8 @@ function Send-VstsLogFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    if($env:BUILD_REASON -ne 'PullRequest')
-    {
-        Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-        Write-Verbose "Log file captured as $name" -Verbose
-    }
+    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
+    Write-Verbose "Log file captured as $name" -Verbose
 }
 
 # Tests if the Linux or macOS user is root

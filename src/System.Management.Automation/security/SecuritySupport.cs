@@ -1653,9 +1653,10 @@ namespace System.Management.Automation
 
         internal static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-#if !UNIX
-            VerifyAmsiUninitializeCalled();
-#endif
+            if (AmsiInitialized && !AmsiUninitializeCalled)
+            {
+                Uninitialize();
+            }
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
@@ -1728,11 +1729,6 @@ namespace System.Management.Automation
         public static bool AmsiUninitializeCalled = false;
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;
-
-        private static void VerifyAmsiUninitializeCalled()
-        {
-            Debug.Assert((!AmsiInitialized) || AmsiUninitializeCalled, "AMSI should have been uninitialized.");
-        }
 
         internal class AmsiNativeMethods
         {

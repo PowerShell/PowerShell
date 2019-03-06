@@ -512,7 +512,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Bracket expressions of <see cref="WildcardPattern"/> are
         /// a greatly simplified version of bracket expressions of POSIX wildcards
-        /// (http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html).
+        /// (https://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html).
         /// Only literal characters and character ranges are supported.
         /// Negation (with either '!' or '^' characters),
         /// character classes ([:alpha:])
@@ -609,7 +609,7 @@ namespace System.Management.Automation
                         // An unescaped closing square bracket closes the character set.  In other
                         // words, there are no nested square bracket expressions
                         // This is different than the POSIX spec
-                        // (at http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
+                        // (at https://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
                         // but we are keeping this behavior for back-compatibility.
 
                         insideCharacterRange = false;
@@ -906,7 +906,7 @@ namespace System.Management.Automation
             //      therefore requiring only O(lengthOfPattern) memory for remembering
             //      which states have been already visited
             //  - Wikipedia calls this algorithm the "NFA" algorithm at
-            //    http://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
+            //    https://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
 
             var patternPositionsForCurrentStringPosition =
                     new PatternPositionsVisitor(_patternElements.Length);

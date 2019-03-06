@@ -2,53 +2,133 @@
 # Licensed under the MIT License.
 
 Describe "Enter-PSHostProcess tests" -Tag Feature {
-    BeforeAll {
-        $si = [System.Diagnostics.ProcessStartInfo]::new()
-        $si.FileName = "pwsh"
-        $si.Arguments = "-noexit"
-        $si.RedirectStandardInput = $true
-        $si.RedirectStandardOutput = $true
-        $si.RedirectStandardError = $true
-        $pwsh = [System.Diagnostics.Process]::Start($si)
+    Context "By Process Id" {
+        BeforeAll {
+            $params = @{
+                FilePath = "pwsh"
+                PassThru = $true
+                RedirectStandardOutput = "TestDrive:\pwsh_out.log"
+                RedirectStandardError = "TestDrive:\pwsh_err.log"
+            }
+            $pwsh = Start-Process @params
 
-        if ($IsWindows) {
-            $si.FileName = "powershell"
-            $powershell = [System.Diagnostics.Process]::Start($si)
+            if ($IsWindows) {
+                $params = @{
+                    FilePath = "powershell"
+                    PassThru = $true
+                    RedirectStandardOutput = "TestDrive:\powershell_out.log"
+                    RedirectStandardError = "TestDrive:\powershell_err.log"
+                }
+                $powershell = Start-Process @params
+            }
+
         }
 
-        if ($env:AppVeyor) {
-            $IsAppveyor = $true
+        AfterAll {
+            $pwsh | Stop-Process
+
+            if ($IsWindows) {
+                $powershell | Stop-Process
+            }
         }
-        else {
-            $IsAppveyor = $false
+
+        It "Can enter and exit another PSHost" -Pending:$true {
+            Wait-UntilTrue { (Get-PSHostProcessInfo -Id $pwsh.Id) -ne $null }
+
+            "Enter-PSHostProcess -Id $($pwsh.Id) -ErrorAction Stop
+            `$pid
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+        }
+
+        It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
+            Wait-UntilTrue { (Get-PSHostProcessInfo -Id $powershell.Id) -ne $null }
+
+            "Enter-PSHostProcess -Id $($powershell.Id) -ErrorAction Stop
+            `$pid
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $powershell.Id
+        }
+
+        It "Can enter using NamedPipeConnectionInfo" -Pending:$true {
+            try {
+                $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
+                $rs = [runspacefactory]::CreateRunspace($npInfo)
+                $rs.Open()
+                $ps = [powershell]::Create()
+                $ps.Runspace = $rs
+                $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
+            } finally {
+                $rs.Dispose()
+            }
         }
     }
 
-    AfterAll {
-        $pwsh | Stop-Process
+    Context "By CustomPipeName" {
+        BeforeAll {
+            # Helper function to get the correct path for the named pipe.
+            function Get-PipePath {
+                param (
+                    $PipeName
+                )
+                if ($IsWindows) {
+                    return "\\.\pipe\$PipeName"
+                }
+                "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
+            }
 
-        if ($IsWindows) {
-            $powershell | Stop-Process
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $params = @{
+                FilePath = "pwsh"
+                ArgumentList = @("-CustomPipeName",$pipeName)
+                PassThru = $true
+                RedirectStandardOutput = "TestDrive:\pwsh_out.log"
+                RedirectStandardError = "TestDrive:\pwsh_err.log"
+            }
+            $pwsh = Start-Process @params
+
+            $pipePath = Get-PipePath -PipeName $pipeName
         }
-    }
 
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another PSHost" -Skip:$IsAppVeyor {
-        "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
-    }
+        AfterAll {
+            $pwsh | Stop-Process
+        }
 
-    # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows -or $IsAppVeyor) {
-        "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
-    }
+        It "Can enter using CustomPipeName" -Pending:$true {
+            Wait-UntilTrue { Test-Path $pipePath }
 
-    It "Can enter using NamedPipeConnectionInfo" {
-        $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
-        $rs = [runspacefactory]::CreateRunspace($npInfo)
-        $rs.Open()
-        $ps = [powershell]::Create()
-        $ps.Runspace = $rs
-        $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
-        $rs.Dispose()
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
+            `$pid
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+        }
+
+        It "Can enter, exit, and re-enter using CustomPipeName" -Pending:$true {
+            Wait-UntilTrue { Test-Path $pipePath }
+
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
+            `$pid
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+
+            "Enter-PSHostProcess -CustomPipeName $pipeName -ErrorAction Stop
+            `$pid
+            Exit-PSHostProcess" | pwsh -c - | Should -Be $pwsh.Id
+        }
+
+        It "Should throw if CustomPipeName does not exist" {
+            Wait-UntilTrue { Test-Path $pipePath }
+
+            { Enter-PSHostProcess -CustomPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with CustomPipeName: badpipename."
+        }
+
+        It "Should throw if CustomPipeName is too long on Linux or macOS" {
+            $longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy"
+
+            if (!$IsWindows) {
+                "`$pid" | pwsh -CustomPipeName $longPipeName -c -
+                # 64 is the ExitCode for BadCommandLineParameter
+                $LASTEXITCODE | Should -Be 64
+            } else {
+                "`$pid" | pwsh -CustomPipeName $longPipeName -c -
+                $LASTEXITCODE | Should -Be 0
+            }
+        }
     }
 }

@@ -25,12 +25,12 @@
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- The ProductCode is Product Id and needs to be unique for every PowerShell version to allow SxS install: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
-  <Product 
-    Id="$(var.ProductCode)" 
-    Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)" 
-    Language="1033" 
-    Version="$(var.ProductVersion)" 
-    Manufacturer="Microsoft Corporation" 
+  <Product
+    Id="$(var.ProductCode)"
+    Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
+    Language="1033"
+    Version="$(var.ProductVersion)"
+    Manufacturer="Microsoft Corporation"
     UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
@@ -44,10 +44,12 @@
     <WixVariable Id="WixUIBannerBmp" Value="assets\WixUIBannerBmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.bmp" />
     <WixVariable Id="WixUIExclamationIco" Value="assets\WixUIInfoIco.bmp" />
-    <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
+    <WixVariable Id="WixUIInfoIco" Value="assets\ps_black_32x32.ico" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
+    <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
+    <Property Id="REINSTALLMODE" Value="dmus"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
     <SetProperty Id="RegisterManifest"
@@ -80,17 +82,19 @@
     </InstallExecuteSequence>
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
-        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)">
+        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="yes" Text="!(loc.ExitDialogBitmap)" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" TabSkip="yes" />
+        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" TabSkip="yes" />
+        <!-- divider between check boxes and button row -->
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"  />
+        <!-- Button row -->
+        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)" >
           <Condition Action="show">NOT Installed</Condition>
         </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
         <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
-        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.ExitDialogBitmap)" />
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
-        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
-        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
       </Dialog>
       <InstallUISequence>
           <Show Dialog="MyExitDialog" OnExit="success" />
@@ -152,7 +156,7 @@
               <CreateFolder/>
             </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
-                <!-- create key for easy detection of a particular version of a powershell core package 
+                <!-- create key for easy detection of a particular version of a powershell core package
                      The upgrade code is used in the key because it will change when we allow SxS       -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                     <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion"/>
@@ -225,9 +229,9 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="*">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
-                      Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
-                      Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut"
+                      Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
+                      Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
                       Target="[$(var.ProductDirectoryName)]pwsh.exe"
                       Arguments="-WorkingDirectory ~"
                       Icon = "PowerShellExe.ico" />
@@ -246,33 +250,39 @@
     <Property Id="REGISTER_MANIFEST" Value="1" />
     <Property Id="ADD_PATH" Value="1" />
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization" TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
+        <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
+      </Control>
+      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
+        <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/ThirdPartyNotices.txt">Please review the ThirdPartyNotices.txt</a>]]></Text>
+      </Control>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
-
-      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions"/>
-      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization"/>
-      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)"/>
-      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0"/>
-      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0"/>        
     </Dialog>
   </UI>
 </Fragment>
 
 <!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
 <Fragment>
-  <UI Id="CustomWixUI_InstallDir">        
+  <UI Id="CustomWixUI_InstallDir">
       <!--
       First-time install dialog sequence:
       - WixUI_WelcomeDlg
-      - WixUI_LicenseAgreementDlg
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
       - WixUI_VerifyReadyDlg
@@ -305,21 +315,18 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
       <DialogRef Id="ExplorerContextMenuDialog" />
-      
-      
+
+
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
-      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">NOT Installed</Publish>
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
-      <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">LicenseAccepted = "1"</Publish>
-
-      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
 
-      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
@@ -327,7 +334,7 @@
       <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="5">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-      
+
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>

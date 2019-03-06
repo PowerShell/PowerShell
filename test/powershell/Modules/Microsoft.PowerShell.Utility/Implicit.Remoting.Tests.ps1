@@ -1564,13 +1564,17 @@ try
                 ($module.Name -notlike "${env:TMP}*") | Should -BeTrue
             }
 
-            It "Get-Command returns only 1 public command from implicit remoting module (1)" {
+            # Test temporarily disabled because of conflict with DG UMCI tests.
+            # Re-enable after DG UMCI tests moved to a separate test process.
+            It "Get-Command returns only 1 public command from implicit remoting module (1)" -Pending {
                 $c = @(Get-Command -Module $module)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
             }
 
-            It "Get-Command returns only 1 public command from implicit remoting module (2)" {
+            # Test temporarily disabled because of conflict with DG UMCI tests.
+            # Re-enable after DG UMCI tests moved to a separate test process.
+            It "Get-Command returns only 1 public command from implicit remoting module (2)" -Pending {
                 $c = @(Get-Command -Module $module.Name)
                 $c.Count | Should -Be 1
                 $c[0].Name | Should -BeExactly "Get-MyVariable"
@@ -1947,7 +1951,7 @@ try
             Disconnect-PSSession $session
             Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
 
-            Start-Sleep 3
+            Start-Sleep -Seconds 3
 
             ## This time a new session is created because the old one is unavailable.
             $dSessionPid = Get-RemoteVariable pid
