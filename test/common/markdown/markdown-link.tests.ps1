@@ -8,10 +8,8 @@ Describe "Verify Markdown Links" {
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                    sudo npm install -g markdown-link-check@3.7.2
-                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
-                    sudo rm -rf ~/.npm/_cacache
-                }
+                sudo npm install -g markdown-link-check@3.7.2
+            }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
@@ -72,7 +70,7 @@ Describe "Verify Markdown Links" {
                 foreach ($failure in $failures) {
                     if($failure -like 'https://www.amazon.com*')
                     {
-                        # In testing amazon links often failed when they are valid
+                        # In testing Amazon links often failed when they are valid
                         # Verify manually
                         $verifyFailures += @{url = $failure}
                     }
@@ -110,7 +108,7 @@ Describe "Verify Markdown Links" {
                             }
                             catch
                             {
-                                throw "retry of URL failed with error: $($_.Message)"
+                                throw "Retry of URL failed with error: $($_.Message)"
                             }
                         }
                         else {
@@ -121,7 +119,7 @@ Describe "Verify Markdown Links" {
 
                 if($verifyFailures)
                 {
-                    it "<url> should work" -TestCases $verifyFailures -Pending  {
+                    it "<url> should work" -TestCases $verifyFailures -Pending {
                     }
                 }
 
