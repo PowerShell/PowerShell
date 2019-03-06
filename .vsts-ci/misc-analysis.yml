@@ -37,15 +37,15 @@ phases:
     displayName: Install Pester
     condition: succeededOrFailed()
 
-  - bash: |
-      # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
-      sudo rm -rf ~/.npm/_cacache
-    displayName: Remove Old NPM Cache
-    condition: succeededOrFailed()
-
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  # Sometimes this folder is left behind with root permissions and causes many problems
+  - bash: |
+      sudo rm -rf ~/.npm/_cacache
+    displayName: Remove Old NPM Cache
+    condition: succeededOrFailed()
 
   - powershell: |
       Import-module ./build.psm1
@@ -56,5 +56,5 @@ phases:
       {
         throw "markdown tests failed"
       }
-    displayName: Run Common Tests
+    displayName: Run Static Analysis Tests
     condition: succeededOrFailed()
