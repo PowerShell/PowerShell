@@ -54,15 +54,15 @@ Describe "Verify Markdown Spelling" {
                 # must have some code in the test for it to pass
                 function noop {}
 
-                if($passes) {
+                if( $passes ) {
                     it "<mdfile> should have no spelling issues" -TestCases $passes {
                         noop
                     }
                 }
-                else {
+
+                if( !$passes ) {
                     it "<mdfile> should have no spelling issues" {
                         param($mdfile)
-                        Write-Verbose "File failing is $mdfile" -Verbose
                         throw "You have a spelling error! Did you recently modify any markdown files?"
                     }
                 }
