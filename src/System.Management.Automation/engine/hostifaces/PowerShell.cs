@@ -3083,10 +3083,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task<PSDataCollection<PSObject>> InvokeAsync()
-        {
-            return await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod).ConfigureAwait(false);
-        }
+        public Task<PSDataCollection<PSObject>> InvokeAsync()
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously.
@@ -3126,8 +3124,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod).ConfigureAwait(false);
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously.
@@ -3177,8 +3175,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod).ConfigureAwait(false);
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously.
@@ -3225,8 +3223,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod).ConfigureAwait(false);
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod);
 
         /// <summary>
         /// Invoke a PowerShell command asynchronously and collect
@@ -3284,8 +3282,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
-            => await Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod).ConfigureAwait(false);
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod);
 
         /// <summary>
         /// Begins a batch execution.
@@ -3808,10 +3806,8 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public async Task StopAsync(AsyncCallback callback, object state)
-        {
-            await Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod).ConfigureAwait(false);
-        }
+        public Task StopAsync(AsyncCallback callback, object state)
+            => Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod);
 
         #endregion
 
