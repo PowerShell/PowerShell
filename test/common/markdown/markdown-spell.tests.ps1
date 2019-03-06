@@ -56,8 +56,8 @@ Describe "Verify Markdown Spelling" {
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify spellling in $file" {
-                $failures = $result -like '*spelling errors found in*'
-                $passes = $result -like '*are free of spelling errors*'
+                $failures = $result -like '*spelling errors found*'
+                $passes = $result -like '*free of spelling errors*'
                 $trueFailures = @()
                 $verifyFailures = @()
 
@@ -77,11 +77,6 @@ Describe "Verify Markdown Spelling" {
                         param($mdfile)
                         throw "You have a spelling error! Did you recently modify any markdown files?"
                     }
-                }
-
-                if($verifyFailures)
-                {
-                    it "<mdfile> should have no spelling issues" -TestCases $verifyFailures -Pending {}
                 }
             }
         }
