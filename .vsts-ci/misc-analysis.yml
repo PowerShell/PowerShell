@@ -30,11 +30,15 @@ phases:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
-  - powershell:  Install-module pester -Scope CurrentUser -Force -SkipPublisherCheck
+  - powershell:  Install-Module -Name pester -Scope CurrentUser -Force
     displayName: Install Pester
+    condition: succeededOrFailed()
+ 
+  - powershell: Install-Module -Name ThreadJob -Scope CurrentUser -Force
+    displayName: Install ThreadJob
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
@@ -54,7 +58,7 @@ phases:
       Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Common Tests;publishRunAttachments=true;resultFiles=$path;]"
       if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
       {
-        throw "markdown tests failed"
+        throw "Markdown tests failed"
       }
-    displayName: Run Static Analysis Tests
+    displayName: Run Common Tests
     condition: succeededOrFailed()
