@@ -31,7 +31,7 @@ Describe "Verify Markdown Spelling" {
     # start all link verification in parallel
     Foreach($group in $groups)
     {
-        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
+        Write-Verbose -verbose "starting spelling jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
@@ -46,7 +46,6 @@ Describe "Verify Markdown Spelling" {
         $jobs.add($group.name,$job)
     }
 
-    Write-Verbose -verbose "Getting and printing results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
@@ -58,16 +57,15 @@ Describe "Verify Markdown Spelling" {
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify links in $file" {
-                $failures = $result -like '*[✖]*' | ForEach-Object { $_.Substring(4).Trim() }
-                $passes = $result -like '*[✓]*' | ForEach-Object {
+                $failures = $result -like '*fail*' | ForEach-Object { $_.Substring(4).Trim() }
+                $passes = $result -like '*are free of spelling errors*' | ForEach-Object {
                     @{url=$_.Substring(4).Trim() }
                 }
                 $trueFailures = @()
                 $verifyFailures = @()
 
                 # must have some code in the test for it to pass
-                function noop {
-                }
+                function noop {}
 
                 if($passes)
                 {
@@ -86,8 +84,7 @@ Describe "Verify Markdown Spelling" {
 
                 if($verifyFailures)
                 {
-                    it "<url> should work" -TestCases $verifyFailures -Pending  {
-                    }
+                    it "<url> should work" -TestCases $verifyFailures -Pending {}
                 }
             }
         }
