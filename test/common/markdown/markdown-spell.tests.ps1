@@ -22,7 +22,7 @@ Describe "Verify Markdown Spelling" {
     $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
 
     $jobs = @{}
-    # start all link verification in parallel
+    # Start all spelling verification in parallel
     Foreach($group in $groups)
     {
         Write-Verbose -verbose "starting jobs for $($group.Name) ..."
@@ -51,38 +51,30 @@ Describe "Verify Markdown Spelling" {
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify spelling in $file" {
-                $failures = $result -like 'spelling error in' | ForEach-Object { $_.Substring(4).Trim() }
+                $failures = $result -like 'spelling errors found in'
                 $passes = $result -like '*free of spelling*' | ForEach-Object {
                     @{spell=$_.Substring(4).Trim() }
                 }
                 $trueFailures = @()
-                $verifyFailures = @()
                 foreach ($failure in $failures) {
-                    $trueFailures += @{url = $failure}
+                    $trueFailures += @{spell = $failure}
                 }
 
                 # must have some code in the test for it to pass
-                function noop {
-                }
+                function noop {}
 
                 if($passes)
                 {
-                    it "<url> should work" -TestCases $passes {
+                    it "<spell> should work" -TestCases $passes {
                         noop
                     }
                 }
 
                 if($trueFailures)
                 {
-                    it "<url> should work" -TestCases $trueFailures  {
-                        param($url)
-                        throw "Tool reported URL as unreachable."
-                    }
-                }
-
-                if($verifyFailures)
-                {
-                    it "<url> should work" -TestCases $verifyFailures -Pending {
+                    it "<spell> should work" -TestCases $trueFailures  {
+                        param($spell)
+                        throw "Tool reported spelling as wrong."
                     }
                 }
             }
