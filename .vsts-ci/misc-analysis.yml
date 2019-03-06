@@ -44,7 +44,7 @@ phases:
   # Sometimes this folder is left behind with root permissions and causes many problems
   - bash: |
       sudo rm -rf ~/.npm/_cacache
-    displayName: Remove Old NPM Cache
+    displayName: Remove Old NPM Caches
     condition: succeededOrFailed()
 
   - powershell: |
