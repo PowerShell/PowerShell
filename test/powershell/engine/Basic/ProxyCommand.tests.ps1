@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-#
 Describe 'ProxyCommand Tests' -Tag 'CI' {
     BeforeAll {
         $testCases = @(
@@ -25,54 +24,39 @@ Describe 'ProxyCommand Tests' -Tag 'CI' {
         }
 
         AfterAll {
-            if (Test-Path function:testProxyCommandFunction) {
-                Remove-Item function:testProxyCommandFunction
-            }
+            Remove-Item function:testProxyCommandFunction
         }
 
         It 'Generates a param block when <Name> is used' -TestCases $testCases {
             param (
                 $Name,
-
                 $ParamBlock
             )
 
             $functionDefinition = 'param ( {0} )' -f $ParamBlock
             Set-Item -Path function:testProxyCommandFunction -Value $functionDefinition
 
-            try {
-                $generatedParamBlock = [System.Management.Automation.ProxyCommand]::GetParamBlock(
-                    (Get-Command testProxyCommandFunction)
-                )
-                $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
-            } catch {
-                $errorRecord = $_
-            }
+            $generatedParamBlock = [System.Management.Automation.ProxyCommand]::GetParamBlock(
+                (Get-Command testProxyCommandFunction)
+            )
+            $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
 
-            $errorRecord | Should -BeNullOrEmpty
             $generatedParamBlock | Should -Be $ParamBlock
         }
 
         It 'Generates a param block when ValidateScriptAttribute is used' {
             param (
                 $Name,
-
                 $ParamBlock
             )
 
             $functionDefinition = 'param ( [ValidateScript({ $true })][int]${Parameter} )'
             Set-Item -Path function:testProxyCommandFunction -Value $functionDefinition
+            $generatedParamBlock = [System.Management.Automation.ProxyCommand]::GetParamBlock(
+                (Get-Command testProxyCommandFunction)
+            )
+            $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
 
-            try {
-                $generatedParamBlock = [System.Management.Automation.ProxyCommand]::GetParamBlock(
-                    (Get-Command testProxyCommandFunction)
-                )
-                $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
-            } catch {
-                $errorRecord = $_
-            }
-
-            $errorRecord | Should -BeNullOrEmpty
             $generatedParamBlock | Should -Be '[ValidateScript({  $true  })][int]${Parameter}'
         }
     }
