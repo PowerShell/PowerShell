@@ -46,7 +46,7 @@ trap '
 
 #Verify The Installer Choice (for direct runs of this script)
 lowercase(){
-    echo "$1" | tr [A-Z] [a-z]
+    echo "$1" | tr "[A-Z]" "[a-z]"
 }
 
 OS=$(lowercase $(uname))
