@@ -1,17 +1,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Verify Markdown Spelling" {
-    BeforeAll {
-        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
+Describe "Verify Markdown Spelling"
+{
+    BeforeAll
+    {
+        # Try to run `mdspell`, if it doesn't work, install it:
+        if( !(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue) )
         {
             Write-Verbose "installing markdown-spelling tool please wait ...!" -Verbose
-            start-nativeExecution {
+            start-nativeExecution
+            {
                 sudo npm install -g markdown-spellcheck@0.11.0
             }
         }
-
-        if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
+        # Check if ThreadJob module is installed, if not, install it:
+        if( !(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue) )
         {
             Install-Module -Name ThreadJob -Scope CurrentUser
         }
@@ -20,18 +24,20 @@ Describe "Verify Markdown Spelling" {
         get-job | remove-job -force
     }
 
-    AfterAll {
+    AfterAll
+    {
         # Cleanup jobs to leave the process the same
         get-job | remove-job -force
     }
 
-    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
+    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Where-Object {$_.DirectoryName -notlike '.git'} | Group-Object -Property directory
 
     $jobs = @{}
     # start all link verification in parallel
     Foreach($group in $groups)
     {
-        $job = Start-ThreadJob {
+        $job = Start-ThreadJob
+        {
             param([object] $group)
             foreach($file in $group.Group)
             {
@@ -55,11 +61,11 @@ Describe "Verify Markdown Spelling" {
         {
             $file = $jobResult.file
             $result = $jobResult.results
-            Context "Verify spellling in $file" {
+            Context "Verify spellling in $file"
+            {
                 $failures = $result -like '*spelling errors found*'
                 $passes = $result -like '*free of spelling errors*'
                 $trueFailures = @()
-                $verifyFailures = @()
 
                 # must have some code in the test for it to pass
                 function noop {}
@@ -73,7 +79,7 @@ Describe "Verify Markdown Spelling" {
                 }
                 else
                 {
-                    $verifyFailures += "fail"
+                    $trueFailures += "fail"
                 }
 
                 if($trueFailures)
