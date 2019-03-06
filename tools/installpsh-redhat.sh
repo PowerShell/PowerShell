@@ -48,6 +48,8 @@ lowercase(){
     #echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
     echo "$1" | tr [A-Z] [a-z]
 }
+
+OS=`lowercase \`uname\``
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -87,7 +89,7 @@ fi
 
 if [ "$DistroBasedOn" != "$thisinstallerdistro" ]; then
   echo "*** This installer is only for $thisinstallerdistro and you are running $DistroBasedOn, please run \"$gitreporoot\install-powershell.sh\" to see if your distro is supported AND to auto-select the appropriate installer if it is."
-  exit 0
+  exit 1
 fi
 
 ## Check requirements and prerequisites
