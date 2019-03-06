@@ -16,20 +16,18 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
         {
             $NpmInstalled = "Installed"
-            Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
-            start-nativeExecution { npm install --silent }
-            start-nativeExecution { npm install 'gulp@4.0.0' --silent }
+            Write-Verbose -Message "npm is checking Gulp is installed. This may take a few moments." -Verbose
+            start-nativeExecution { sudo npm install --silent }
+            start-nativeExecution { sudo npm install 'gulp@4.0.0' --silent }
             if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
             {
                 start-nativeExecution {
                     sudo npm install -g 'gulp@4.0.0' --silent
-                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
-                    sudo rm -rf ~/.npm/_cacache
                 }
             }
             if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
             {
-                throw "node not found"
+                throw "Node.js not found"
             }
         }
         if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
@@ -39,7 +37,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
-            Write-Warning "Node and npm are required to run this test"
+            Write-Warning "Node.js and npm are required to run this test"
             $skip = $true
         }
 
