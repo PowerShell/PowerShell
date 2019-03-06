@@ -32,7 +32,6 @@ pwshlink=/usr/bin/pwsh
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
-echo "***    Current PowerShell Core Version: $currentpshversion"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $*"
@@ -47,24 +46,20 @@ trap '
 
 #Verify The Installer Choice (for direct runs of this script)
 lowercase(){
-    echo "$1" | tr "[A-Z]" "[a-z]"
+    echo "$1" | tr "[:upper:]" "[:lower:]"
 }
 
-OS=$(lowercase $(uname))
+OS=$(lowercase "$(uname)")
 KERNEL=$(uname -r)
 MACH=$(uname -m)
 
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
-    SCRIPTFOLDER=$(dirname $(readlink -f $0))
 elif [ "${OS}" == "darwin" ]; then
     OS=osx
     DistroBasedOn=osx
-    # readlink doesn't work the same on macOS
-    SCRIPTFOLDER=$(dirname $0)
 else
-    SCRIPTFOLDER=$(dirname $(readlink -f $0))
     OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
@@ -77,13 +72,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
-            DIST=$(cat /etc/redhat-release |sed s/\ release.*//)
-            PSUEDONAME=$(cat /etc/redhat-release | sed s/.*\(// | sed s/\)//)
-            REV=$(cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//)
+            DIST=$(sed s/\ release.*// < /etc/redhat-release)
+            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/redhat-release )
+            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/redhat-release )
         elif [ -f /etc/system-release ] ; then
-            DIST=$(cat /etc/system-release |sed s/\ release.*//)
-            PSUEDONAME=$(cat /etc/system-release | sed s/.*\(// | sed s/\)//)
-            REV=$(cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//)
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/system-release )
+            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/system-release )
             if [[ $DIST == *"Amazon Linux"* ]] ; then
                 DistroBasedOn='amazonlinux'
             else
@@ -91,20 +86,20 @@ else
             fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
-            PSUEDONAME=$(cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//)
-            REV=$(cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //)
+            PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
+            REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
-            PSUEDONAME=$(cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//)
-            REV=$(cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//)
+            PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
+            REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
         elif [ -f /etc/debian_version ] ; then
             DistroBasedOn='debian'
-            DIST=$(cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }')
-            PSUEDONAME=$(cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }')
-            REV=$(cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }')
+            DIST=$( (grep '^DISTRIB_ID' | awk -F=  '{ print $2 }') < /etc/lsb-release )
+            PSUEDONAME=$( (grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }') < /etc/lsb-release )
+            REV=$( (grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }') < /etc/lsb-release)
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
+            DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
         fi
         OS=$(lowercase $OS)
         DistroBasedOn=$(lowercase $DistroBasedOn)
@@ -115,12 +110,12 @@ else
         readonly REV
         readonly KERNEL
         readonly MACH
+        readonly OSSTR
     fi
-
 fi
 
 if [ "$DistroBasedOn" != "$thisinstallerdistro" ]; then
-  echo "*** This installer is only for $thisinstallerdistro and you are running $DistroBasedOn, please run \"$gitreporoot\install-powershell.sh\" to see if your distro is supported AND to auto-select the appropriate installer if it is."
+  echo "*** This installer is only for $thisinstallerdistro and you are running $DistroBasedOn, please run \"$gitreposcriptroot\install-powershell.sh\" to see if your distro is supported AND to auto-select the appropriate installer if it is."
   exit 1
 fi
 
@@ -133,7 +128,7 @@ if [[ "${CI}" == "true" ]]; then
 fi
 
 SUDO=''
-if (( $EUID != 0 )); then
+if (( EUID != 0 )); then
     #Check that sudo is available
     if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
@@ -193,14 +188,14 @@ fi
 
 echo "Installing PowerShell to /opt/microsoft/powershell/$release in overwrite mode"
 ## Create the target folder where powershell will be placed
-$SUDO mkdir -p /opt/microsoft/powershell/$release
+$SUDO mkdir -p "/opt/microsoft/powershell/$release"
 ## Expand powershell to the target folder
-$SUDO tar zxf $package -C /opt/microsoft/powershell/$release
+$SUDO tar zxf "$package" -C "/opt/microsoft/powershell/$release"
 
 ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
-$SUDO chmod 755 /opt/microsoft/powershell/$release/pwsh
+$SUDO chmod 755 "/opt/microsoft/powershell/$release/pwsh"
 ## Create the symbolic link that points to powershell
-$SUDO ln -sfn /opt/microsoft/powershell/$release/pwsh $pwshlink
+$SUDO ln -sfn "/opt/microsoft/powershell/$release/pwsh" $pwshlink
 
 ## Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
@@ -210,8 +205,9 @@ else
 fi
 
 ## Remove the downloaded package file
-rm -f $package
+rm -f "$package"
 
+# shellcheck disable=SC2016
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
 
