@@ -31,7 +31,6 @@ Describe "Verify Markdown Spelling" {
     # start all link verification in parallel
     Foreach($group in $groups)
     {
-        Write-Verbose -verbose "starting spelling jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
@@ -56,11 +55,9 @@ Describe "Verify Markdown Spelling" {
         {
             $file = $jobResult.file
             $result = $jobResult.results
-            Context "Verify links in $file" {
-                $failures = $result -like '*fail*' | ForEach-Object { $_.Substring(4).Trim() }
-                $passes = $result -like '*are free of spelling errors*' | ForEach-Object {
-                    @{url=$_.Substring(4).Trim() }
-                }
+            Context "Verify spellling in $file" {
+                $failures = $result -like '*spelling errors found in*'
+                $passes = $result -like '*are free of spelling errors*'
                 $trueFailures = @()
                 $verifyFailures = @()
 
