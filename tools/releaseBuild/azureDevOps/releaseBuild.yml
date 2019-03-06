@@ -86,3 +86,13 @@ jobs:
       - build_rpm
       - build_alpine
       - build_macOS
+
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: windows
+    pool: Hosted VS2017
+
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: linux
+    pool: Hosted Ubuntu 1604
