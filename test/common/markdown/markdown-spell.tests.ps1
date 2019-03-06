@@ -31,8 +31,7 @@ Describe "Verify Markdown Spelling"
     # start all link verification in parallel
     Foreach($group in $groups)
     {
-        $job = Start-ThreadJob
-        {
+        $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
             {
@@ -60,7 +59,7 @@ Describe "Verify Markdown Spelling"
             {
                 $failures = $result -like '*spelling errors found*'
                 $passes = $result -like '*free of spelling errors*'
-                $trueFailures = @()
+                $didFail = $false
 
                 # must have some code in the test for it to pass
                 function noop {}
@@ -74,14 +73,15 @@ Describe "Verify Markdown Spelling"
                 }
                 else
                 {
-                    $trueFailures += "fail"
+                    $didFail = $true
                 }
 
-                if($trueFailures)
+                if($didFail)
                 {
                     it "<mdfile> should have no spelling issues" -TestCases $trueFailures
                     {
                         param($mdfile)
+                        Write-Verbose "File failing is $mdfile" -Verbose
                         throw "You have a spelling error! Did you recently modify any markdown files?"
                     }
                 }
