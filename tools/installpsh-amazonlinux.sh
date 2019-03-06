@@ -50,9 +50,9 @@ lowercase(){
     echo "$1" | tr [A-Z] [a-z]
 }
 
-OS=`lowercase \`uname\``
-KERNEL=`uname -r`
-MACH=`uname -m`
+OS=$(lowercase $(uname))
+KERNEL=$(uname -r)
+MACH=$(uname -m)
 
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
@@ -65,25 +65,25 @@ elif [ "${OS}" == "darwin" ]; then
     SCRIPTFOLDER=$(dirname $0)
 else
     SCRIPTFOLDER=$(dirname $(readlink -f $0))
-    OS=`uname`
+    OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
-        ARCH=`uname -p`
-        OSSTR="${OS} ${REV}(${ARCH} `uname -v`)"
+        ARCH=$(uname -p)
+        OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
         DistroBasedOn=sunos
     elif [ "${OS}" == "AIX" ] ; then
-        OSSTR="${OS} `oslevel` (`oslevel -r`)"
+        OSSTR="${OS} $(oslevel) ($(oslevel -r))"
         DistroBasedOn=aix
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
-            DIST=`cat /etc/redhat-release |sed s/\ release.*//`
-            PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-            REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+            DIST=$(cat /etc/redhat-release |sed s/\ release.*//)
+            PSUEDONAME=$(cat /etc/redhat-release | sed s/.*\(// | sed s/\)//)
+            REV=$(cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//)
         elif [ -f /etc/system-release ] ; then
-            DIST=`cat /etc/system-release |sed s/\ release.*//`
-            PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
-            REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+            DIST=$(cat /etc/system-release |sed s/\ release.*//)
+            PSUEDONAME=$(cat /etc/system-release | sed s/.*\(// | sed s/\)//)
+            REV=$(cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//)
             if [[ $DIST == *"Amazon Linux"* ]] ; then
                 DistroBasedOn='amazonlinux'
             else
@@ -91,23 +91,23 @@ else
             fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
-            PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
-            REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
+            PSUEDONAME=$(cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//)
+            REV=$(cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //)
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
-            PSUEDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
-            REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
+            PSUEDONAME=$(cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//)
+            REV=$(cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//)
         elif [ -f /etc/debian_version ] ; then
             DistroBasedOn='debian'
-            DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
-            PSUEDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
-            REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+            DIST=$(cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }')
+            PSUEDONAME=$(cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }')
+            REV=$(cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }')
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+            DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
         fi
-        OS=`lowercase $OS`
-        DistroBasedOn=`lowercase $DistroBasedOn`
+        OS=$(lowercase $OS)
+        DistroBasedOn=$(lowercase $DistroBasedOn)
         readonly OS
         readonly DIST
         readonly DistroBasedOn
@@ -170,7 +170,7 @@ echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unl
 if [[ "'$*'" =~ preview ]] ; then
     echo
     echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
-    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+    release=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
     pwshlink=/usr/bin/pwsh-preview
 else
     echo "Finding the latest production release"

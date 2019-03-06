@@ -49,9 +49,9 @@ install(){
         echo "$1" | tr [A-Z] [a-z]
     }
 
-    local OS=`lowercase \`uname\``
-    local KERNEL=`uname -r`
-    local MACH=`uname -m`
+    local OS=$(lowercase $(uname))
+    local KERNEL=$(uname -r)
+    local MACH=$(uname -m)
     local DIST
     local DistroBasedOn
     local PSUEDONAME
@@ -68,25 +68,25 @@ install(){
         SCRIPTFOLDER=$(dirname $0)
     else
         SCRIPTFOLDER=$(dirname $(readlink -f $0))
-        OS=`uname`
+        OS=$(uname)
         if [ "${OS}" == "SunOS" ] ; then
             OS=solaris
-            ARCH=`uname -p`
-            OSSTR="${OS} ${REV}(${ARCH} `uname -v`)"
+            ARCH=$(uname -p)
+            OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
             DistroBasedOn=sunos
         elif [ "${OS}" == "AIX" ] ; then
-            OSSTR="${OS} `oslevel` (`oslevel -r`)"
+            OSSTR="${OS} $(oslevel) ($(oslevel -r))"
             DistroBasedOn=aix
         elif [ "${OS}" == "Linux" ] ; then
             if [ -f /etc/redhat-release ] ; then
                 DistroBasedOn='redhat'
-                DIST=`cat /etc/redhat-release |sed s/\ release.*//`
-                PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(cat /etc/redhat-release |sed s/\ release.*//)
+                PSUEDONAME=$(cat /etc/redhat-release | sed s/.*\(// | sed s/\)//)
+                REV=$(cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//)
             elif [ -f /etc/system-release ] ; then
-                DIST=`cat /etc/system-release |sed s/\ release.*//`
-                PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(cat /etc/system-release |sed s/\ release.*//)
+                PSUEDONAME=$(cat /etc/system-release | sed s/.*\(// | sed s/\)//)
+                REV=$(cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//)
                 if [[ $DIST == *"Amazon Linux"* ]] ; then
                     DistroBasedOn='amazonlinux'
                 else
@@ -94,23 +94,23 @@ install(){
                 fi
             elif [ -f /etc/SuSE-release ] ; then
                 DistroBasedOn='suse'
-                PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
-                REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
+                PSUEDONAME=$(cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//)
+                REV=$(cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //)
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
-                PSUEDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
+                PSUEDONAME=$(cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//)
+                REV=$(cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//)
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
-                DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
-                PSUEDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
-                REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+                DIST=$(cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }')
+                PSUEDONAME=$(cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }')
+                REV=$(cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }')
             fi
             if [ -f /etc/UnitedLinux-release ] ; then
-                DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+                DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
             fi
-            OS=`lowercase $OS`
-            DistroBasedOn=`lowercase $DistroBasedOn`
+            OS=$(lowercase $OS)
+            DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
     fi
 

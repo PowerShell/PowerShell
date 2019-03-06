@@ -48,7 +48,7 @@ lowercase(){
     echo "$1" | tr [A-Z] [a-z]
 }
 
-OS=`lowercase \`uname\``
+OS=$(lowercase $(uname))
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -56,14 +56,14 @@ elif [ "${OS}" == "darwin" ]; then
     OS=osx
     DistroBasedOn=osx
 else
-    OS=`uname`
+    OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
-        ARCH=`uname -p`
-        OSSTR="${OS} ${REV}(${ARCH} `uname -v`)"
+        ARCH=$(uname -p)
+        OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
         DistroBasedOn=sunos
     elif [ "${OS}" == "AIX" ] ; then
-        OSSTR="${OS} `oslevel` (`oslevel -r`)"
+        OSSTR="${OS} $(oslevel) ($(oslevel -r))"
         DistroBasedOn=aix
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
@@ -78,11 +78,11 @@ else
             DistroBasedOn='debian'
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+            DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
             DistroBasedOn=unitedlinux
         fi
-        OS=`lowercase $OS`
-        DistroBasedOn=`lowercase $DistroBasedOn`
+        OS=$(lowercase $OS)
+        DistroBasedOn=$(lowercase $DistroBasedOn)
     fi
 fi
 
@@ -116,13 +116,13 @@ if [[ "'$*'" =~ preview ]] ; then
     powershellpackageid=powershell-preview
 fi
 
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`echo
+release=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO yum install -y curl
 fi
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+release=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
 
 echo "*** Current version on git is: $release, repo version may differ slightly..."
 

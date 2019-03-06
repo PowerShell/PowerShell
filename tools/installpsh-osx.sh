@@ -44,7 +44,7 @@ lowercase(){
     echo "$1" | tr [A-Z] [a-z]
 }
 
-OS=`lowercase \`uname\``
+OS=$(lowercase $(uname))
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -52,14 +52,14 @@ elif [ "${OS}" == "darwin" ]; then
     OS=osx
     DistroBasedOn=osx
 else
-    OS=`uname`
+    OS=$(uname)
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
-        ARCH=`uname -p`
-        OSSTR="${OS} ${REV}(${ARCH} `uname -v`)"
+        ARCH=$(uname -p)
+        OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
         DistroBasedOn=sunos
     elif [ "${OS}" == "AIX" ] ; then
-        OSSTR="${OS} `oslevel` (`oslevel -r`)"
+        OSSTR="${OS} $(oslevel) ($(oslevel -r))"
         DistroBasedOn=aix
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
@@ -72,11 +72,11 @@ else
             DistroBasedOn='debian'
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+            DIST="${DIST}[$(cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//)]"
             DistroBasedOn=unitedlinux
         fi
-        OS=`lowercase $OS`
-        DistroBasedOn=`lowercase $DistroBasedOn`
+        OS=$(lowercase $OS)
+        DistroBasedOn=$(lowercase $DistroBasedOn)
     fi
 fi
 
