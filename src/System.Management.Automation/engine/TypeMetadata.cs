@@ -934,9 +934,12 @@ namespace System.Management.Automation
                         format = ValidateRangeFormat;
                     }
 
-                    result = string.Format(CultureInfo.InvariantCulture,
-                        format, prefix,
-                        validRangeAttrib.MinRange, validRangeAttrib.MaxRange);
+                    result = string.Format(
+                        CultureInfo.InvariantCulture,
+                        format,
+                        prefix,
+                        validRangeAttrib.MinRange,
+                        validRangeAttrib.MaxRange);
                     return result;
                 }
             }

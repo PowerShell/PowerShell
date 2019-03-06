@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe 'ProxyCommand Tests' -Tag 'CI' {
     BeforeAll {
         $testCases = @(
@@ -19,12 +20,8 @@ Describe 'ProxyCommand Tests' -Tag 'CI' {
     }
 
     Context 'GetParamBlock method' {
-        BeforeEach {
-            $errorRecord = $null
-        }
-
         AfterAll {
-            Remove-Item function:testProxyCommandFunction
+            Remove-Item function:testProxyCommandFunction -ErrorAction SilentlyContinue
         }
 
         It 'Generates a param block when <Name> is used' -TestCases $testCases {
