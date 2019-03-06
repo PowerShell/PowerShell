@@ -62,14 +62,13 @@ Describe "Verify Markdown Spelling" {
                 $verifyFailures = @()
 
                 # must have some code in the test for it to pass
-                function log_that_it_works {
-                    Write-Host "Hello, it looks like this file has no spelling issues"
+                function noop {
                 }
 
                 if($passes)
                 {
                     it "<mdfile> should have no spelling issues" -TestCases $passes {
-                        log_that_it_works
+                        noop
                     }
                 }
 
