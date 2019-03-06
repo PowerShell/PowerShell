@@ -7,8 +7,8 @@ Describe "Verify Markdown Spelling" {
         {
             Write-Host "installing markdown-spelling tool please wait ...!" -Verbose
             start-nativeExecution {
-                    sudo npm install -g markdown-spellcheck@0.11.0
-                }
+                sudo npm install -g markdown-spellcheck@0.11.0
+            }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
@@ -64,16 +64,6 @@ Describe "Verify Markdown Spelling" {
                 }
                 $trueFailures = @()
                 $verifyFailures = @()
-                foreach ($failure in $failures) {
-                    if($failure -like 'https://www.amazon.com*') {
-                        # In testing amazon links often failed when they are valid
-                        # Verify manually
-                        $verifyFailures += @{url = $failure}
-                    }
-                    else {
-                        $trueFailures += @{url = $failure}
-                    }
-                }
 
                 # must have some code in the test for it to pass
                 function noop {
@@ -97,13 +87,6 @@ Describe "Verify Markdown Spelling" {
                 if($verifyFailures)
                 {
                     it "<url> should work" -TestCases $verifyFailures -Pending  {
-                    }
-                }
-
-                if(!$passes -and !$trueFailures -and !$verifyFailures)
-                {
-                    It "has no links" {
-                        noop
                     }
                 }
             }
