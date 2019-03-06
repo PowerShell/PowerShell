@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
-        public PSObject[] InputObject { get; set; }
+        public PSObject InputObject { get; set; }
 
         /// <summary>
         /// Prevents Write-Output from unravelling collections passed to the InputObject parameter.
@@ -37,9 +37,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            bool enumerate = !NoEnumerate.IsPresent;
-
-            WriteObject(InputObject, enumerate);
+            WriteObject(InputObject, !NoEnumerate.IsPresent);
         }
     }
     #endregion
