@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Verify Markdown Spelling"
-{
+Describe "Verify Markdown Spelling" {
     BeforeAll
     {
         # Try to run `mdspell`, if it doesn't work, install it:
