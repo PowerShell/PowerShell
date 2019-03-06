@@ -12,11 +12,6 @@ Describe "Verify Markdown Links" {
             }
         }
 
-        if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))
-        {
-            Install-Module -Name ThreadJob -Scope CurrentUser
-        }
-
         # Cleanup jobs for reliability
         get-job | remove-job -force
     }
