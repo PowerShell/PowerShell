@@ -36,7 +36,7 @@ phases:
   - powershell:  Install-Module -Name pester -Scope CurrentUser -Force
     displayName: Install Pester
     condition: succeededOrFailed()
- 
+
   - powershell: Install-Module -Name ThreadJob -Scope CurrentUser -Force
     displayName: Install ThreadJob
     condition: succeededOrFailed()
