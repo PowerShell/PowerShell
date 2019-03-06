@@ -14,11 +14,6 @@ Describe "Verify Markdown Spelling"
                 sudo npm install -g markdown-spellcheck@0.11.0
             }
         }
-        # Check if ThreadJob module is installed, if not, install it:
-        if( !(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue) )
-        {
-            Install-Module -Name ThreadJob -Scope CurrentUser
-        }
 
         # Cleanup jobs for reliability
         get-job | remove-job -force
