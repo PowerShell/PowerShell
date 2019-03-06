@@ -194,16 +194,28 @@ namespace System.Management.Automation
 
             char[] temp = new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
+            bool charNeedsEscaping = false;
 
             for (int i = 0; i < pattern.Length; i++)
             {
                 char ch = pattern[i];
 
-                //
-                // if it is a wildcard char or escape char, escape it
-                //
-                if ((IsWildcardChar(ch) || ch == escapeChar) &&
-                    !charsNotToEscape.Contains(ch))
+                if (ExperimentalFeature.IsEnabled("PSWildcardEscapeEscape"))
+                {
+                    //
+                    // if it is a wildcard char or escape char, escape it
+                    //
+                    charNeedsEscaping = IsWildcardChar(ch) || ch == escapeChar;
+                }
+                else
+                {
+                    //
+                    // if it is a wildcard char, escape it
+                    //
+                    charNeedsEscaping = IsWildcardChar(ch);
+                }
+
+                if (charNeedsEscaping && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }

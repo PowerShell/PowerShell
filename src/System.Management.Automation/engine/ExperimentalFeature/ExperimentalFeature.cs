@@ -114,6 +114,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+                new ExperimentalFeature(
+                    name: "PSWildcardEscapeEscape",
+                    description: "Fix WildcardPattern API: escape the escape character"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

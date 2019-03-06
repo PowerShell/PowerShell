@@ -309,18 +309,3 @@ Describe "Hashtable is case insensitive" -Tag CI {
         sh -c 'LANG=C.UTF-8 pwsh -NoProfile -Command ''$h=@{p=1};$h.P''' | Should -Be 1
     }
 }
-
-Describe "WildcardPattern" -Tags "CI" {
-    It "Unescaping '<escapedStr>' which escaped from '<inputStr>' should get the original" -TestCases @(
-        @{inputStr = '*This'; escapedStr = '`*This'}
-        @{inputStr = 'Is?'; escapedStr = 'Is`?'}
-        @{inputStr = 'Real[ly]'; escapedStr = 'Real`[ly`]'}
-        @{inputStr = 'Ba`sic'; escapedStr = 'Ba``sic'}
-        @{inputStr = 'Test `[more`]?'; escapedStr = 'Test ```[more```]`?'}
-    ) {
-        param($inputStr, $escapedStr)
-
-        [WildcardPattern]::Escape($inputStr) | Should -BeExactly $escapedStr
-        [WildcardPattern]::Unescape($escapedStr) | Should -BeExactly $inputStr
-    }
-}
