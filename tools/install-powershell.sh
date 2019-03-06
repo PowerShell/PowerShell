@@ -46,7 +46,7 @@ install(){
     ' INT
 
     lowercase(){
-        echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+        echo "$1" | tr [A-Z] [a-z]
     }
 
     local OS=`lowercase \`uname\``
