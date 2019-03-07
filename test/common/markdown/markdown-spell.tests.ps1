@@ -31,7 +31,7 @@ Describe "Verify Markdown Spelling" {
             param([object[]] $group)
             foreach($file in $group)
             {
-                $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
+                $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1 '!CHANGELOG.md'
                 Write-Output ([PSCustomObject]@{
                     file = $file
                     results = $results
