@@ -620,7 +620,7 @@ foo
             $pipePath = Get-PipePath $pipeName
 
             # The pipePath should be created by the time the -Command is executed.
-            pwsh -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
+            & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
         }
 
         It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {

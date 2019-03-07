@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+$powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+
 function Wait-JobPid {
     param (
         $Job
@@ -41,7 +43,7 @@ $pid
 Exit-PSHostProcess
 '@ -f $i, $ArgumentString
 
-        ($commandStr | pwsh -c -) -eq $Id
+        ($commandStr | & $powershell -c -) -eq $Id
     }
 
     $result = $false
@@ -118,7 +120,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                     Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$powershellId'."
 
             } finally {
-                $powershellJob | Stop-Process -Force -ErrorAction SilentlyContinue
+                $powershellJob | Stop-Job -PassThru | Remove-Job
             }
         }
 
@@ -134,6 +136,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 $ps.AddScript('$pid').Invoke() | Should -Be $pwshId
             } finally {
                 $rs.Dispose()
+                $ps.Dispose()
             }
         }
     }
