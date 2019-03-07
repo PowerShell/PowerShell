@@ -48,7 +48,7 @@ jobs:
 
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture Environment
+    displayName: Capture environment
     condition: succeededOrFailed()
 
   - powershell: |
