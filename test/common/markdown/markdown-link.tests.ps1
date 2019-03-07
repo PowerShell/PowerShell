@@ -49,10 +49,10 @@ Describe "Verify Markdown Links" {
     {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
+        Write-Verbose -verbose "Getting and printing results ..."
         Remove-job -job $Job
         foreach($jobResult in $results)
         {
-            Write-Verbose -verbose "Getting and printing results ..."
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify links in $file" {
