@@ -173,6 +173,7 @@ disconnect-pssession
 displaydataquery
 distro
 distros
+dll
 dlls
 dlwyatt
 dockerbasedbuild
@@ -560,6 +561,7 @@ rc3-24011
 readme
 readme.md
 readonly
+rdil
 rebase
 rebasing
 receive-pssession
@@ -617,6 +619,7 @@ sazonov
 schvartzman
 schwartzmeyer
 scriptblock
+sdk
 securestring
 seemethere
 select-xml
