@@ -6,7 +6,7 @@ Describe "Verify Markdown Spelling" {
         if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
         {
             start-nativeExecution {
-                sudo npm install -g mdspell@latest
+                sudo npm install -g markdown-spellcheck@0.11.0
             }
         }
 
