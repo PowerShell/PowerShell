@@ -16,7 +16,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
         {
             $NpmInstalled = "Installed"
-            Write-Verbose -Message "npm is checking Gulp is installed. This may take a few moments." -Verbose
+            Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
             start-nativeExecution { sudo npm install --silent }
             start-nativeExecution { sudo npm install 'gulp@4.0.0' --silent }
             if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
