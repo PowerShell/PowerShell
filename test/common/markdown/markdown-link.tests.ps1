@@ -64,7 +64,7 @@ Describe "Verify Markdown Links" {
                 foreach ($failure in $failures) {
                     if($failure -like 'https://www.amazon.com*')
                     {
-                        # In testing Amazon links often failed when they are valid
+                        # In testing amazon links often failed when they are valid
                         # Verify manually
                         $verifyFailures += @{url = $failure}
                     }
