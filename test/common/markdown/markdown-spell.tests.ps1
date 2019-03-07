@@ -53,7 +53,9 @@ Describe "Verify Markdown Spelling" {
                 $failures = $result -like '*spelling errors found in*'
                 $passes = $result -like '*free of spelling*'
  
-                $trueFailures = @()
+                $trueFailures = foreach ($Failure in $Failures) {
+                    @{ Spell = $Failure }
+                }
                 foreach ($failure in $failures) {
                     $trueFailures += @{spell = $failure}
 
