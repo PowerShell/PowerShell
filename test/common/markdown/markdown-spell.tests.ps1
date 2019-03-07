@@ -58,16 +58,6 @@ Describe "Verify Markdown Spelling" {
                 $trueFailures = foreach ($Failure in $Failures) {
                     @{ Spell = $Failure }
                 }
-                foreach ($failure in $failures) {
-
-                # must have some code in the test for it to pass
-                function noop {}
-
-                if($passes) {
-                    it "<spell> should work" -TestCases $passes {
-                        noop
-                    }
-                }
 
                 if($trueFailures) {
                     it "<spell> should work" -TestCases $trueFailures {
