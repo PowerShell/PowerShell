@@ -12,7 +12,7 @@ jobs:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture Environment
+    displayName: Capture environment
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
