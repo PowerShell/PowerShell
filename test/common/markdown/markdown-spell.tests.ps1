@@ -37,7 +37,7 @@ Describe "Verify Markdown Spelling" {
                     results = $results
                 })
             }
-        } -ArgumentList @($group)
+        } -ArgumentList @($group.Group)
         $jobs.add($group.name,$job)
     }
 
