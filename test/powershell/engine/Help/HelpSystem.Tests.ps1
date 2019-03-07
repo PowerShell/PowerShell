@@ -16,8 +16,6 @@ $script:cmdletsToSkip = @(
     "Disable-ExperimentalFeature"
 )
 
-$PSDefaultParameterValues["Update-Help:UICulture"] = "en-US"
-
 function UpdateHelpFromLocalContentPath {
     param ([string]$ModuleName, [string] $Scope = 'CurrentUser')
 
@@ -100,9 +98,14 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
-        $j = Start-Job { Get-Help DoesNotExist }
-        $j | Wait-Job
-        $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+        try {
+            $j = Start-Job { Get-Help DoesNotExist }
+            $j | Wait-Job
+            $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+        }
+        finally {
+            $j | Remove-Job
+        }
     }
 }
 
