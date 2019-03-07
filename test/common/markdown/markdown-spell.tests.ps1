@@ -51,9 +51,8 @@ Describe "Verify Markdown Spelling" {
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify spelling in $file" {
-                $failures = $result -like 'spelling errors found in'
-                $passes = $result -like '*free of spelling*' | ForEach-Object {
-                    @{spell=$_.Substring(4).Trim() }
+                $failures = $result -like '*spelling errors found in*'
+                $passes = $result -like '*free of spelling*'
                 }
                 $trueFailures = @()
                 foreach ($failure in $failures) {
