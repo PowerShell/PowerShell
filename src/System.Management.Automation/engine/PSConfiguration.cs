@@ -408,10 +408,6 @@ namespace System.Management.Automation.Configuration
                     }
                 }
             }
-            catch (IOException)
-            {
-                return defaultValue;
-            }
             finally
             {
                 fileLock.ExitReadLock();
@@ -422,7 +418,7 @@ namespace System.Management.Automation.Configuration
 
         private FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
         {
-            const int MaxTries = 20;
+            const int MaxTries = 5;
             for (int numTries = 0; numTries < MaxTries; numTries++)
             {
                 try
@@ -436,7 +432,7 @@ namespace System.Management.Automation.Configuration
                         throw;
                     }
 
-                    Thread.Sleep(20);
+                    Thread.Sleep(50);
                 }
             }
 
