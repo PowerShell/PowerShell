@@ -84,15 +84,16 @@ try {
         It 'cannot invoke a single script asynchronously in a runspace that has not been opened' {
             $rs = [runspacefactory]::CreateRunspace()
             $ps = [powershell]::Create($rs)
+
             try {
-                $r = $ps.AddScript('@(1..10).foreach{Start-Sleep -Milliseconds 500}').InvokeAsync()
                 # This test is designed to fail. You cannot invoke PowerShell asynchronously
                 # in a runspace that has not been opened.
-                $r.IsFaulted | Should -Be $true
-                $r.Exception -is [System.AggregateException] | Should -Be $true
-                $r.Exception.InnerException -is [System.Management.Automation.Runspaces.InvalidRunspaceStateException] | Should -Be $true
-                $r.Exception.InnerException.CurrentState | Should -Be 'BeforeOpen'
-                $r.Exception.InnerException.ExpectedState | Should -Be 'Opened'
+                $err = { $ps.AddScript('1+1').InvokeAsync() } | Should -Throw -ErrorId "InvalidRunspaceStateException" -PassThru
+
+                $err.Exception | Should -BeOfType "System.Management.Automation.MethodInvocationException"
+                $err.Exception.InnerException | Should -BeOfType "System.Management.Automation.Runspaces.InvalidRunspaceStateException"
+                $err.Exception.InnerException.CurrentState | Should -Be 'BeforeOpen'
+                $err.Exception.InnerException.ExpectedState | Should -Be 'Opened'
             } finally {
                 $ps.Dispose()
                 $rs.Dispose()
@@ -117,7 +118,7 @@ try {
                 # This test is designed to fail. You cannot invoke PowerShell asynchronously
                 # in the current runspace because nested PowerShell instances cannot be
                 # invoked asynchronously
-                $err = { InvokeAsyncHelper -PowerShell $ps -Wait } | Should -Throw -ErrorId 'AggregateException' -PassThru
+                $err = { $ps.AddScript('1+1').InvokeAsync() } | Should -Throw -ErrorId 'PSInvalidOperationException' -PassThru
                 GetInnerErrorId -Exception $err.Exception | Should -Be 'InvalidOperation'
             } finally {
                 $ps.Dispose()
