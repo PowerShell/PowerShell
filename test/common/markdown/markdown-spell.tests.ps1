@@ -3,8 +3,7 @@
 
 Describe "Verify Markdown Spelling" {
     BeforeAll {
-        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue))
-        {
+        if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue)) {
             start-nativeExecution {
                 sudo npm install -g markdown-spellcheck@0.11.0
             }
@@ -53,7 +52,7 @@ Describe "Verify Markdown Spelling" {
             Context "Verify spelling in $file" {
                 $failures = $result -like '*spelling errors found in*'
                 $passes = $result -like '*free of spelling*'
-                }
+ 
                 $trueFailures = @()
                 foreach ($failure in $failures) {
                     $trueFailures += @{spell = $failure}
@@ -62,16 +61,14 @@ Describe "Verify Markdown Spelling" {
                 # must have some code in the test for it to pass
                 function noop {}
 
-                if($passes)
-                {
+                if($passes) {
                     it "<spell> should work" -TestCases $passes {
                         noop
                     }
                 }
 
-                if($trueFailures)
-                {
-                    it "<spell> should work" -TestCases $trueFailures  {
+                if($trueFailures) {
+                    it "<spell> should work" -TestCases $trueFailures {
                         param($spell)
                         throw "Tool reported spelling as wrong."
                     }
