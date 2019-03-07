@@ -6,10 +6,18 @@ function Wait-JobPid {
         $Job
     )
 
+    # This is to prevent hanging in the test.
+    $startTime = [DateTime]::Now
+    $TimeoutInMilliseconds = 10000
+
     # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
     do {
         Start-Sleep -Seconds 1
         $pwshId = Receive-Job $Job
+
+        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
+            throw "Unable to receive PowerShell process id."
+        }
     } while (!$pwshId)
 
     $pwshId
@@ -24,24 +32,31 @@ function Invoke-PSHostProcessScript {
     )
 
     $sb = {
+        # use $i as an incrementally growing pause based on the attempt number
+        # so that it's more likely to succeed.
         $commandStr = @'
 Start-Sleep -Seconds {0}
 Enter-PSHostProcess {1} -ErrorAction Stop
 $pid
 Exit-PSHostProcess
-'@ -f $Retry, $ArgumentString
+'@ -f $i, $ArgumentString
 
         ($commandStr | pwsh -c -) -eq $Id
     }
 
     $result = $false
+    $failures = 0
     foreach ($i in 0..$Retry) {
         if ($sb.Invoke()) {
             $result = $true
             break
         }
 
-        Write-Warning "Enter-PSHostProcess attempt '$i' failed. $($Retry - $i) attempts left."
+        $failures++
+    }
+
+    if($failures) {
+        Write-Warning "Enter-PSHostProcess script failed $i out of $Retry times."
     }
 
     $result
@@ -76,7 +91,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
             # Re-enter and exit the other process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
-                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
+                Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$pwshId'."
         }
 
         It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
@@ -100,7 +115,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 # Re-enter and exit the other process
                 Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
-                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$powershellId'."
+                    Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$powershellId'."
 
             } finally {
                 $powershellJob | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -149,7 +164,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 # Re-enter and exit the other process
                 Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
-                    Should -BeTrue -Because "The script was able to enter another process and grab the pipe of '$pipeName'."
+                    Should -BeTrue -Because "The script was able to re-enter another process and grab the pipe of '$pipeName'."
 
             } finally {
                 $pwshJob | Stop-Job -PassThru | Remove-Job
