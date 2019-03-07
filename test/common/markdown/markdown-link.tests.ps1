@@ -116,7 +116,7 @@ Describe "Verify Markdown Links" {
 
                 if($verifyFailures)
                 {
-                    it "<url> should work" -TestCases $verifyFailures -Pending {
+                    it "<url> should work" -TestCases $verifyFailures -Pending  {
                     }
                 }
 
