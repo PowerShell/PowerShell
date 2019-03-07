@@ -33,12 +33,10 @@ phases:
     displayName: Capture environment
     condition: succeededOrFailed()
 
-  - powershell:  Install-Module -Name pester -Scope CurrentUser -Force
-    displayName: Install Pester
-    condition: succeededOrFailed()
-
-  - powershell: Install-Module -Name ThreadJob -Scope CurrentUser -Force
-    displayName: Install ThreadJob
+  - powershell: |
+      Install-Module -Name pester -Scope CurrentUser -Force
+      Install-Module -Name ThreadJob -Scope CurrentUser -Force
+    displayName: Install Dependencies
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
