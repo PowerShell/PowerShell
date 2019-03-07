@@ -37,7 +37,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
-            Write-Warning "node and npm are required to run this test"
+            Write-Warning "Node and npm are required to run this test"
             $skip = $true
         }
 
