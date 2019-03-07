@@ -43,13 +43,12 @@ Describe "Verify Markdown Links" {
         } -ArgumentList @($group)
         $jobs.add($group.name,$job)
     }
-
+    Write-Verbose -verbose "Getting and printing results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
-        Write-Verbose -verbose "Getting and printing results ..."
         Remove-job -job $Job
         foreach($jobResult in $results)
         {
