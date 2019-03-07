@@ -56,7 +56,6 @@ Describe "Verify Markdown Spelling" {
                 $trueFailures = @()
                 foreach ($failure in $failures) {
                     $trueFailures += @{spell = $failure}
-                }
 
                 # must have some code in the test for it to pass
                 function noop {}
