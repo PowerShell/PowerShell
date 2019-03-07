@@ -27,7 +27,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             }
             if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
             {
-                throw "Node.js not found"
+                throw "node not found"
             }
         }
         if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
@@ -37,7 +37,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 For now we will skip, and write a warning.  Work to resolve this is tracked in:
                 https://github.com/PowerShell/PowerShell/issues/3429
             #>
-            Write-Warning "Node.js and npm are required to run this test"
+            Write-Warning "node and npm are required to run this test"
             $skip = $true
         }
 
