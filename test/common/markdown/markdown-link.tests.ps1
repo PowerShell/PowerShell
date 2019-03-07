@@ -102,7 +102,7 @@ Describe "Verify Markdown Links" {
                             }
                             catch
                             {
-                                throw "Retry of URL failed with error: $($_.Message)"
+                                throw "retry of URL failed with error: $($_.Message)"
                             }
                         }
                         else {
