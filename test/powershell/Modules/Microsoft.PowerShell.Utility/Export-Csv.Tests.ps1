@@ -233,4 +233,33 @@ Describe "Export-Csv" -Tags "CI" {
         $contents[0].Contains($delimiter) | Should -BeTrue
         $contents[1].Contains($delimiter) | Should -BeTrue
     }
+
+    Context "UseQuotes parameter" {
+
+        # A minimum of tests. The rest are in ConvertTo-Csv.Tests.ps1
+
+        BeforeAll {
+            $Name = "Hello"; $Data = "World";
+            $testOutputObject = [pscustomobject]@{ FirstColumn = $Name; SecondColumn = $Data }
+            $testFile = Join-Path -Path $TestDrive -ChildPath "output.csv"
+            $testFile2 = Join-Path -Path $TestDrive -ChildPath "output2.csv"
+        }
+
+        It "UseQuotes Always" {
+            $testOutputObject | Export-Csv -Path $testFile -UseQuotes Always -Delimiter ','
+            $result = Get-Content -Path $testFile
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"Hello`",`"World`""
+        }
+
+        It "UseQuotes Always is default" {
+            $testOutputObject | Export-Csv -Path $testFile -UseQuotes Always -Delimiter ','
+            $result = Get-Content -Raw -Path $testFile
+            $testOutputObject | Export-Csv -Path $testFile2 -Delimiter ','
+            $result2 = Get-Content -Raw -Path $testFile2
+
+            $result | Should -BeExactly $result2
+        }
+    }
 }
