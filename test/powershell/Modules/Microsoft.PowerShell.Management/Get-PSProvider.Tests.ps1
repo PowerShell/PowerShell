@@ -31,6 +31,9 @@ Describe "Get-PSProvider" -Tags "CI" {
                 @{Provider = 'FileSystem'; Value = @("\", "/")}
                 @{Provider = 'Variable'; Value = @("\", "/")}
                 @{Provider = 'Function'; Value = @("\", "/")}
+                @{Provider = 'Alias'; Value = @("\", "/")}
+                @{Provider = 'Environment'; Value = @("\", "/")}
+                @{Provider = 'Certificate'; Value = @("\", "/")}
                 @{Provider = 'Registry'; Value = @("\")}
             )
 
@@ -38,6 +41,9 @@ Describe "Get-PSProvider" -Tags "CI" {
                 @{Provider = 'FileSystem'; Value = @("/", "\")}
                 @{Provider = 'Variable'; Value = @("/", "\")}
                 @{Provider = 'Function'; Value = @("/", "\")}
+                @{Provider = 'Alias'; Value = @("/", "\")}
+                @{Provider = 'Environment'; Value = @("/", "\")}
+                @{Provider = 'Certificate'; Value = @("/", "\")}
             )
 
             $testCases = if ($IsWindows) {
@@ -54,6 +60,12 @@ Describe "Get-PSProvider" -Tags "CI" {
             (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
         }
 
+        It 'PathSeparator property is read-only in <Provider> provider' -TestCases $testCases {
+            param ($Provider, $Value)
+
+            { (Get-PSProvider $Provider).PathSeparator = $null } | Should -Throw
+        }
+
         It 'cannot modify PathSeparator collection in <Provider> provider' -TestCases $testCases {
             param ($Provider, $Value)
 
@@ -67,13 +79,13 @@ Describe "Get-PSProvider" -Tags "CI" {
 
             $separator = (Get-PSProvider $Provider).PathSeparator
 
-                # copying to a new object
-                $copy = @("", "")
-                $separator.CopyTo($copy, 0)
+            # copying to a new object
+            $copy = @("", "")
+            $separator.CopyTo($copy, 0)
 
-                $copy[0] = "w"
+            $copy[0] = "w"
 
-                (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
+            (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
         }
     }
 }

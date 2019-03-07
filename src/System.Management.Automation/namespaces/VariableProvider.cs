@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providerInfo != null) 
             {
-                providerInfo.PathSeparator = ProviderInfoPathSeparators.Variable;
+                providerInfo.PathSeparator = Utils.Separators.BackAndForwardSlashSeparators;
             }
 
             return providerInfo;

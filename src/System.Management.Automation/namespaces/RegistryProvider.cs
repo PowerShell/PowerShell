@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providerInfo != null) 
             {
-                providerInfo.PathSeparator = ProviderInfoPathSeparators.Registry;
+                providerInfo.PathSeparator = Utils.Separators.BackSlashOnlySeparators;
             }
 
             return providerInfo;

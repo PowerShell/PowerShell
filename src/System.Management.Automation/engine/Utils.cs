@@ -1225,6 +1225,20 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
+            
+            public static readonly ReadOnlyCollection<string> BackAndForwardSlashSeparators = new ReadOnlyCollection<string>( 
+            new List<string> 
+            { 
+                StringLiterals.DefaultPathSeparatorString, 
+                StringLiterals.AlternatePathSeparatorString
+            });    
+
+            public static readonly ReadOnlyCollection<string> BackSlashOnlySeparators = new ReadOnlyCollection<string>( 
+            new List<string> 
+            { 
+                StringLiterals.DefaultPathSeparatorString, 
+            });   
+
             internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };

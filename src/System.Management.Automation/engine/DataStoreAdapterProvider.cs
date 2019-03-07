@@ -263,7 +263,7 @@ namespace System.Management.Automation
         /// Gets the path separators characters for this provider.
         /// </summary>
         /// <returns>
-        /// Array of strings representing the path separators characters for this provider.
+        /// Read-only collection of strings representing the path separators characters for this provider.
         /// </returns>
         public ReadOnlyCollection<string> PathSeparator { get; internal set; } = new ReadOnlyCollection<string>(new List<string>());
 
@@ -670,36 +670,6 @@ namespace System.Management.Automation
 
             return _noteProperty;
         }
-    }
-
-    internal static class ProviderInfoPathSeparators 
-    {
-        public static readonly ReadOnlyCollection<string> FileSystem = new ReadOnlyCollection<string>(
-            new List<string> 
-            { 
-                StringLiterals.DefaultPathSeparatorString, 
-                StringLiterals.AlternatePathSeparatorString
-            });
-
-        public static readonly ReadOnlyCollection<string> Variable = new ReadOnlyCollection<string>(
-            new List<string> 
-            { 
-                StringLiterals.DefaultPathSeparatorString, 
-                StringLiterals.AlternatePathSeparatorString
-            });
-
-        public static readonly ReadOnlyCollection<string> Function = new ReadOnlyCollection<string>(
-            new List<string>
-            {
-                StringLiterals.DefaultPathSeparatorString,
-                StringLiterals.AlternatePathSeparatorString
-            });
-
-        public static readonly ReadOnlyCollection<string> Registry = new ReadOnlyCollection<string>(
-            new List<string>
-            {
-                StringLiterals.DefaultPathSeparatorString,
-            });
     }
 }
 
