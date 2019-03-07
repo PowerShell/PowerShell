@@ -280,6 +280,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.Management.Infrastructure.CimInstance#__PartialCIMInstance",
                 ViewsOf_Microsoft_Management_Infrastructure_CimInstance___PartialCIMInstance());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Threading.Tasks.Task",
+                ViewsOf_System_Threading_Tasks_Task());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_CodeDom_Compiler_CompilerError()
@@ -1708,6 +1712,52 @@ namespace System.Management.Automation.Runspaces
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Threading_Tasks_Task()
+        {
+            // Avoid referencing the Result property in these views to avoid potential
+            // deadlocks that may occur. Result should only be referenced once the task
+            // is actually completed.
+            yield return new FormatViewDefinition(
+                "System.Threading.Tasks.Task",
+                TableControl
+                    .Create()
+                        .AddHeader(label: "Id")
+                        .AddHeader(label: "IsCompleted")
+                        .AddHeader(label: "Status")
+                        .StartRowDefinition()
+                            .AddPropertyColumn("Id")
+                            .AddPropertyColumn("IsCompleted")
+                            .AddPropertyColumn("Status")
+                        .EndRowDefinition()
+                    .EndTable());
+
+            yield return new FormatViewDefinition(
+                "System.Threading.Tasks.Task",
+                ListControl
+                    .Create()
+                        .StartEntry()
+                            .AddItemProperty(@"AsyncState")
+                            .AddItemProperty(@"AsyncWaitHandle")
+                            .AddItemProperty(@"CompletedSynchronously")
+                            .AddItemProperty(@"CreationOptions")
+                            .AddItemProperty(@"Exception")
+                            .AddItemProperty(@"Id")
+                            .AddItemProperty(@"IsCanceled")
+                            .AddItemProperty(@"IsCompleted")
+                            .AddItemProperty(@"IsCompletedSuccessfully")
+                            .AddItemProperty(@"IsFaulted")
+                            .AddItemScriptBlock(
+                                @"
+                                    if ($_.IsCompleted) {
+                                        $_.Result
+                                    }
+                                ",
+                                label: "Result")
+                            .AddItemProperty(@"Status")
+                        .EndEntry()
+                    .EndList());
         }
     }
 }
