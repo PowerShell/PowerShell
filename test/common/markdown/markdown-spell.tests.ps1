@@ -28,7 +28,7 @@ Describe "Verify Markdown Spelling" {
     {
         Write-Verbose -verbose "starting jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
-            param([object] $group)
+            param([object[]] $group)
             foreach($file in $group.Group)
             {
                 $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
