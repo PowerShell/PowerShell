@@ -50,6 +50,7 @@ Describe "Verify Markdown Links" {
         Remove-job -job $Job
         foreach($jobResult in $results)
         {
+            Write-Verbose -verbose "Getting and printing results ..."
             $file = $jobResult.file
             $result = $jobResult.results
             Context "Verify links in $file" {
