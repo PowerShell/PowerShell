@@ -30,6 +30,10 @@ namespace Microsoft.PowerShell.Commands
         internal Collection<string> ParseCsv(string csv)
         {        
             csv = csv.Trim();    
+            if (csv.Length == 0 || csv[0] == '#')
+            {
+                return new Collection<string>();
+            }
 
             // regex expression, inspiration from
             // https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
