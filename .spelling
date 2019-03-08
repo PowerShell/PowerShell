@@ -855,8 +855,9 @@ corehost
  - docs/testing-guidelines/CodeCoverageAnalysis.md
 de5f69c
  - docs/testing-guidelines/TestRoadmap.md
-_no_
+_on_
  - docs/testing-guidelines/WritingPesterTests.md
+_no_
 nGet-ContentOut-String
 nGet-MultiLineString
 PSDefaultParameterValues-skip
@@ -875,3 +876,11 @@ wpaProfile
 2.x
 .NET
 netstandard
+de5f69c
+semantic
+Node.js
+ConnectionCredential
+Markdown
+Rhodes
+Lifecycle
+honour
