@@ -893,3 +893,7 @@ net-core-sdk
 Unix
 SDK
 Core
+Invoke-PerfviewPS.ps1
+JIT.Regions.xml
+PowerShell.Regions.xml
+PowerShell.stacktags
