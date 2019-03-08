@@ -1,13 +1,14 @@
 parameters:
   pool: 'Hosted VS2017'
   jobName: 'win_build'
+  displayName: Windows Build
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
     name: ${{ parameters.pool }}
 
-  displayName: Windows Build
+  displayName: ${{ parameters.displayName }}
 
   steps:
   - powershell: |
@@ -24,7 +25,7 @@ jobs:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
-      Invoke-CIInstall
+      Invoke-CIInstall -SkipUser
     displayName: Bootstrap
     condition: succeededOrFailed()
 
