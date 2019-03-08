@@ -1,0 +1,6 @@
+test_task:
+  container:
+    image: node:latest
+  script:
+    - npm i -g markdown-spellcheck@latest
+    - find . -name \*.md -exec mdspell --report --en-us --ignore-numbers --ignore-acronyms {} \;
