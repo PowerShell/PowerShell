@@ -376,12 +376,12 @@ namespace System.Management.Automation.Language
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.PSTypeNames), new Type[] { typeof(PSObject) });
 
         internal static readonly MethodInfo RestrictedLanguageChecker_CheckDataStatementLanguageModeAtRuntime =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementLanguageModeAtRuntime), staticFlags, null, new Type[] { typeof(DataStatementAst), typeof(ExecutionContext) }, null);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementLanguageModeAtRuntime), staticFlags);
         internal static readonly MethodInfo RestrictedLanguageChecker_CheckDataStatementAstAtRuntime =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementAstAtRuntime), staticFlags, null, new Type[] { typeof(DataStatementAst), typeof(string[]) }, null);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.CheckDataStatementAstAtRuntime), staticFlags);
 
         internal static readonly MethodInfo RestrictedLanguageChecker_EnsureUtilityModuleLoaded =
-            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags, null, new Type[] { typeof(ExecutionContext) }, null);
+            typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags);
 
         internal static readonly ConstructorInfo ReturnException_ctor =
             typeof(ReturnException).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(object) }, null);
@@ -390,35 +390,40 @@ namespace System.Management.Automation.Language
             typeof(RuntimeException).GetProperty(nameof(RuntimeException.ErrorRecord));
 
         internal static readonly MethodInfo ScriptBlock_DoInvokeReturnAsIs =
-            typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.DoInvokeReturnAsIs), instanceFlags, null, new Type[] { typeof(bool), typeof(ScriptBlock.ErrorHandlingBehavior), typeof(object), typeof(object), typeof(object), typeof(object[]) }, null);
+            typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.DoInvokeReturnAsIs), instanceFlags);
         internal static readonly MethodInfo ScriptBlock_InvokeAsDelegateHelper =
-            typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.InvokeAsDelegateHelper), instanceFlags, null, new Type[] { typeof(object), typeof(object), typeof(object[]) }, null);
+            typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.InvokeAsDelegateHelper), instanceFlags);
         internal static readonly MethodInfo ScriptBlockExpressionWrapper_GetScriptBlock =
-            typeof(ScriptBlockExpressionWrapper).GetMethod(nameof(ScriptBlockExpressionWrapper.GetScriptBlock), instanceFlags, null, new Type[] { typeof(ExecutionContext), typeof(bool) }, null);
+            typeof(ScriptBlockExpressionWrapper).GetMethod(nameof(ScriptBlockExpressionWrapper.GetScriptBlock), instanceFlags);
 
         internal static readonly ConstructorInfo SetValueException_ctor =
-            typeof(SetValueException).GetConstructor(instanceFlags, null, new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
+            typeof(SetValueException).GetConstructor(instanceFlags, null,
+                                                     new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
 
         internal static readonly ConstructorInfo GetValueException_ctor =
-            typeof(GetValueException).GetConstructor(instanceFlags, null, new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
+            typeof(GetValueException).GetConstructor(instanceFlags, null,
+                                                     new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) }, null);
         internal static readonly ConstructorInfo StreamReader_ctor =
             typeof(StreamReader).GetConstructor(new Type[] { typeof(string) });
         internal static readonly MethodInfo StreamReader_ReadLine =
-            typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine), Type.EmptyTypes);
+            typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine));
 
         internal static readonly ConstructorInfo String_ctor_char_int =
             typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
         internal static readonly MethodInfo String_Concat_String =
-            typeof(string).GetMethod(nameof(string.Concat), staticPublicFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
+            typeof(string).GetMethod(nameof(string.Concat), staticPublicFlags, null,
+                                     CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
+            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
+                                     CallingConventions.Standard,
+                                     new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo StringOps_Compare =
-            typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(string), typeof(CultureInfo), typeof(CompareOptions) }, null);
+            typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags);
         internal static readonly MethodInfo StringOps_Equals =
-            typeof(StringOps).GetMethod(nameof(StringOps.Equals), staticFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(string), typeof(CultureInfo), typeof(CompareOptions) }, null);
+            typeof(StringOps).GetMethod(nameof(StringOps.Equals), staticFlags);
 
         internal static readonly MethodInfo StringOps_FormatOperator =
-            typeof(StringOps).GetMethod(nameof(StringOps.FormatOperator), staticFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object) }, null);
+            typeof(StringOps).GetMethod(nameof(StringOps.FormatOperator), staticFlags);
         internal static readonly MethodInfo StringOps_Multiply =
             typeof(StringOps).GetMethod(nameof(StringOps.Multiply), staticFlags);
 
