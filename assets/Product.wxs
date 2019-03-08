@@ -25,12 +25,12 @@
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- The ProductCode is Product Id and needs to be unique for every PowerShell version to allow SxS install: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
-  <Product 
-    Id="$(var.ProductCode)" 
-    Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)" 
-    Language="1033" 
-    Version="$(var.ProductVersion)" 
-    Manufacturer="Microsoft Corporation" 
+  <Product
+    Id="$(var.ProductCode)"
+    Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
+    Language="1033"
+    Version="$(var.ProductVersion)"
+    Manufacturer="Microsoft Corporation"
     UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
@@ -48,6 +48,8 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
+    <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
+    <Property Id="REINSTALLMODE" Value="dmus"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
     <SetProperty Id="RegisterManifest"
@@ -154,7 +156,7 @@
               <CreateFolder/>
             </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
-                <!-- create key for easy detection of a particular version of a powershell core package 
+                <!-- create key for easy detection of a particular version of a powershell core package
                      The upgrade code is used in the key because it will change when we allow SxS       -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                     <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion"/>
@@ -227,9 +229,9 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="*">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
-                      Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
-                      Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut"
+                      Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
+                      Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
                       Target="[$(var.ProductDirectoryName)]pwsh.exe"
                       Arguments="-WorkingDirectory ~"
                       Icon = "PowerShellExe.ico" />
@@ -265,7 +267,7 @@
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/ThirdPartyNotices.txt">Please review the ThirdPartyNotices.txt</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
-      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>    
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
@@ -277,7 +279,7 @@
 
 <!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
 <Fragment>
-  <UI Id="CustomWixUI_InstallDir">        
+  <UI Id="CustomWixUI_InstallDir">
       <!--
       First-time install dialog sequence:
       - WixUI_WelcomeDlg
@@ -313,8 +315,8 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
       <DialogRef Id="ExplorerContextMenuDialog" />
-      
-      
+
+
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
@@ -332,7 +334,7 @@
       <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="5">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-      
+
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>

@@ -6,8 +6,8 @@ One of their primary responsibilities is merging pull requests after all require
 They have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repositories which gives them the power to:
 
 1. `git push` to the official PowerShell repository
-1. Merge pull requests
-1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/)
+1. Merge [pull requests](https://www.thinkful.com/learn/github-pull-request-tutorial/)
+1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/) and [pull requests](https://www.thinkful.com/learn/github-pull-request-tutorial/)
 
 ## Table of Contents
 
@@ -20,18 +20,22 @@ They have [write access](https://help.github.com/articles/repository-permission-
 
 ## Current Repository Maintainers
 
-- Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-- Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
+<!-- please keep in alphabetical order -->
+
 - Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
-- Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
 - Andrew Menagarishvili ([anmenaga](https://github.com/anmenaga))
+- Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
+- Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 
 ## Former Repository Maintainers
 
-- Jason Shirk ([lzybkr](https://github.com/lzybkr))
-- Sergei Vorobev ([vors](https://github.com/vors))
-- Mike Richmond ([mirichmo](https://github.com/mirichmo))
+<!-- please keep in alphabetical order -->
+
 - Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
+- Jason Shirk ([lzybkr](https://github.com/lzybkr))
+- Mike Richmond ([mirichmo](https://github.com/mirichmo))
+- Sergei Vorobev ([vors](https://github.com/vors))
 
 ## Repository Maintainer Responsibilities
 
@@ -39,7 +43,7 @@ Repository Maintainers enable rapid contributions while maintaining a high level
 
 If you are a Repository Maintainer, you:
 
-1. **MUST** ensure that each contributor has signed a valid Contributor License Agreement (CLA)
+1. **MUST** ensure that each contributor has signed a valid Microsoft Contributor License Agreement (CLA)
 1. **MUST** verify compliance with any third party code license terms (e.g., requiring attribution, etc.) if the contribution contains third party code.
 1. **MUST** make sure that [any change requiring approval from the PowerShell Committee](../community/governance.md#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
 1. **MUST** validate that code reviews have been conducted before merging a pull request when no code is written

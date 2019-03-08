@@ -1,6 +1,6 @@
 @startuml
 
-folder "Linux Builds" {
+folder "Linux Builds" as LinuxBuilds {
     ' Define the build tasks as business processes
     agent "DEB"  as BuildDEB
     agent "RPM"  as BuildRPM
@@ -21,26 +21,29 @@ folder "Windows Builds" as WinBuilds {
 
 agent "ComponentRegistration"  as BuildCG
 
-folder "Linux Package Scanning and Upload" {
+folder "Linux Package Scanning and Upload" as PkgScanUploadLinux {
     agent "DEB"  as UploadDEB
     agent "RPM"  as UploadRPM
     agent "Alpine"  as UploadAlpine
     agent "Linux-FxDependent"  as UploadLinuxFx
 }
 
-folder "Package Signing and Upload" {
+folder "Package Signing and Upload" as PkgSignUpload {
     agent "macOS"  as SignMac
 
     agent "Windows"  as SignWin
 }
 
+folder "Build Test Artifacts" as TestArtifacts {
+    agent "Windows" as WinTest
+    agent "Linux" as LinuxTest
+}
 
 agent "Compliance"  as Compliance
 
-folder "Create & Upload FxDependent DotNet SDK" {
-    agent "Linux" as BuildLinuxFxSdk
-    agent "Windows" as BuildWinFxSdk
-}
+
+agent "Create SDK and Global Tool and Upload" as BuildNuGet
+
 
 ' Define finishing the build as a goal filled
 control "Finish"  as Finish
@@ -68,8 +71,8 @@ BuildWinX86 -down-> Compliance
 BuildWinX64 -down-> Compliance
 BuildWinFx -down-> Compliance
 
-BuildLinuxFx -down-> BuildLinuxFxSdk
-SignWin -down-> BuildWinFxSdk
+PkgSignUpload -down-> BuildNuGet
+LinuxBuilds -down-> BuildNuGet
 
 ' map all leafs to finish
 Compliance ~~ Finish
@@ -79,8 +82,8 @@ UploadRPM ~~ Finish
 UploadLinuxFx ~~ Finish
 SignMac ~~ Finish
 BuildCG ~~ Finish
-BuildLinuxFxSdk ~~ Finish
-BuildWinFxSdk ~~ Finish
+BuildNuGet ~~ Finish
+TestArtifacts ~~ Finish
 
 Start ~~ BuildDEB
 Start ~~ BuildRPM
@@ -93,5 +96,6 @@ Start ~~ BuildWinFx
 Start ~~ BuildWinArm32
 Start ~~ BuildWinArm64
 Start ~~ BuildCG
+Start ~~ TestArtifacts
 
 @enduml

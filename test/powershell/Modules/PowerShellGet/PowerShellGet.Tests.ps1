@@ -25,7 +25,7 @@ if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
-elseif(IsCoreCLR){
+elseif(IsCoreCLR) {
     if(IsWindows) {
         $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
     }
@@ -145,7 +145,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -158,8 +158,7 @@ Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledModules
     }
 
-    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Travis CI Linux build
-    It "Should install a module correctly to the required location with AllUsers scope" -Pending:$IsLinux {
+    It "Should install a module correctly to the required location with AllUsers scope" {
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -215,7 +214,7 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -228,8 +227,7 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledScripts
     }
 
-    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Travis CI Linux build
-    It "Should install a script correctly to the required location with AllUsers scope" -Pending:$IsLinux {
+    It "Should install a script correctly to the required location with AllUsers scope" {
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
