@@ -889,3 +889,4 @@ transitivity
 msi
 ConsoleHost
 NoEcho
+net-core-sdk
