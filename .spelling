@@ -890,3 +890,5 @@ msi
 ConsoleHost
 NoEcho
 net-core-sdk
+Unix
+SDK
