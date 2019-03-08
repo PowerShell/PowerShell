@@ -31,11 +31,14 @@ Describe "Verify Markdown Spelling" {
             param([object[]] $group)
             foreach($file in $group)
             {
-                $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1 '!CHANGELOG.md'
-                Write-Output ([PSCustomObject]@{
-                    file = $file
-                    results = $results
-                })
+                if($file -eq 'CHANGELOG.md') {}
+                else {
+                    $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
+                    Write-Output ([PSCustomObject]@{
+                        file = $file
+                        results = $results
+                    })
+                }
             }
         } -ArgumentList @($group.Group)
         $jobs.add($group.name,$job)
