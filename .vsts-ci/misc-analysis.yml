@@ -38,6 +38,9 @@ phases:
       Install-Module -Name ThreadJob -Scope CurrentUser -Force
     displayName: Install Dependencies
     condition: succeededOrFailed()
+  - bash: |
+      sudo npm install -g markdown-spellcheck@0.11.0
+      find . -name \*.md -exec mdspell --report --en-us --ignore-numbers --ignore-acronyms {} \;
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
