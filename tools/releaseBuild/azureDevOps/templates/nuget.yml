@@ -39,11 +39,8 @@ jobs:
     displayName: 'Download PowerShell build artifacts'
     inputs:
       buildType: current
-      downloadType: specific
-      itemPattern: |
-        finalResults/PowerShell-*-win-*.zip
-        finalResults/powershell-*.tar.gz
-        results/powershell-*-osx-x64.tar.gz
+      downloadType: single
+      artifactName: finalResults
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: 'Get-ChildItem $(System.ArtifactsDirectory) -recurse'
