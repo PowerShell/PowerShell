@@ -59,8 +59,8 @@ Describe "Verify Markdown Spelling" {
                     @{ Spell = $Failure }
                 }
 
-                if($trueFailures -and (!$file -eq "/home/vsts/work/1/s/CHANGELOG.md")) {
-                    it "<spell> should work" -TestCases $trueFailures {
+                if($trueFailures) {
+                    it "<spell> is wrong" -TestCases $trueFailures {
                         param($spell)
                         throw "Tool reported spelling as wrong."
                     }
