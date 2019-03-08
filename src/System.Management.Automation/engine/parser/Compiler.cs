@@ -420,55 +420,55 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo StringOps_FormatOperator =
             typeof(StringOps).GetMethod(nameof(StringOps.FormatOperator), staticFlags, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object) }, null);
         internal static readonly MethodInfo StringOps_Multiply =
-            typeof(StringOps).GetMethod(nameof(StringOps.Multiply), staticFlags, null, new Type[] { typeof(string), typeof(int) }, null);
+            typeof(StringOps).GetMethod(nameof(StringOps.Multiply), staticFlags);
 
         internal static readonly MethodInfo SwitchOps_ConditionSatisfiedRegex =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedRegex), staticFlags, null, new Type[] { typeof(bool), typeof(object), typeof(IScriptExtent), typeof(string), typeof(ExecutionContext) }, null);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedRegex), staticFlags);
         internal static readonly MethodInfo SwitchOps_ConditionSatisfiedWildcard =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), staticFlags, null, new Type[] { typeof(bool), typeof(object), typeof(string), typeof(ExecutionContext) }, null);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), staticFlags);
         internal static readonly MethodInfo SwitchOps_ResolveFilePath =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), staticFlags, null, new Type[] { typeof(IScriptExtent), typeof(object), typeof(ExecutionContext) }, null);
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), staticFlags);
 
         internal static readonly MethodInfo TypeOps_AsOperator =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), staticFlags, null, new Type[] { typeof(object), typeof(Type) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), staticFlags);
         internal static readonly MethodInfo TypeOps_AddPowerShellTypesToTheScope =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.AddPowerShellTypesToTheScope), staticFlags, null, new Type[] { typeof(Dictionary<string, TypeDefinitionAst>), typeof(ExecutionContext) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.AddPowerShellTypesToTheScope), staticFlags);
         internal static readonly MethodInfo TypeOps_InitPowerShellTypesAtRuntime =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.InitPowerShellTypesAtRuntime), staticFlags, null, new Type[] { typeof(TypeDefinitionAst[]) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.InitPowerShellTypesAtRuntime), staticFlags);
         internal static readonly MethodInfo TypeOps_SetCurrentTypeResolutionState =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.SetCurrentTypeResolutionState), staticFlags, null, new Type[] { typeof(TypeResolutionState), typeof(ExecutionContext) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.SetCurrentTypeResolutionState), staticFlags);
         internal static readonly MethodInfo TypeOps_SetAssemblyDefiningPSTypes =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), staticFlags, null, new Type[] { typeof(FunctionContext), typeof(Assembly) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.SetAssemblyDefiningPSTypes), staticFlags);
         internal static readonly MethodInfo TypeOps_IsInstance =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), staticFlags, null, new Type[] { typeof(object), typeof(object) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.IsInstance), staticFlags);
         internal static readonly MethodInfo TypeOps_ResolveTypeName =
-            typeof(TypeOps).GetMethod(nameof(TypeOps.ResolveTypeName), staticFlags, null, new Type[] { typeof(ITypeName), typeof(IScriptExtent) }, null);
+            typeof(TypeOps).GetMethod(nameof(TypeOps.ResolveTypeName), staticFlags);
 
         internal static readonly MethodInfo VariableOps_GetUsingValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetUsingValue), staticFlags, null, new Type[] { typeof(MutableTuple), typeof(string), typeof(int), typeof(ExecutionContext) }, null);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetUsingValue), staticFlags);
         internal static readonly MethodInfo VariableOps_GetVariableAsRef =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableAsRef), staticFlags, null, new Type[] { typeof(VariablePath), typeof(ExecutionContext), typeof(Type) }, null);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableAsRef), staticFlags);
         internal static readonly MethodInfo VariableOps_GetVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableValue), staticFlags, null, new Type[] { typeof(VariablePath), typeof(ExecutionContext), typeof(VariableExpressionAst) }, null);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetVariableValue), staticFlags);
         internal static readonly MethodInfo VariableOps_GetAutomaticVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.GetAutomaticVariableValue), staticFlags, null, new Type[] { typeof(int), typeof(ExecutionContext), typeof(VariableExpressionAst) }, null);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.GetAutomaticVariableValue), staticFlags);
         internal static readonly MethodInfo VariableOps_SetVariableValue =
-            typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), staticFlags, null, new Type[] { typeof(VariablePath), typeof(object), typeof(ExecutionContext), typeof(AttributeBaseAst[]) }, null);
+            typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), staticFlags);
 
         internal static readonly MethodInfo Utils_IsComObject =
-            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags, null, new Type[] { typeof(object) }, null);
+            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags);
 
         internal static readonly MethodInfo ClassOps_ValidateSetProperty =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags, null, new Type[] { typeof(Type), typeof(string), typeof(object) }, null);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallBaseCtor =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallBaseCtor), staticPublicFlags, null, new Type[] { typeof(object), typeof(ConstructorInfo), typeof(object[]) }, null);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallBaseCtor), staticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallMethodNonVirtually =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallMethodNonVirtually), staticPublicFlags, null, new Type[] { typeof(object), typeof(MethodInfo), typeof(object[]) }, null);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallMethodNonVirtually), staticPublicFlags);
         internal static readonly MethodInfo ClassOps_CallVoidMethodNonVirtually =
-            typeof(ClassOps).GetMethod(nameof(ClassOps.CallVoidMethodNonVirtually), staticPublicFlags, null, new Type[] { typeof(object), typeof(MethodInfo), typeof(object[]) }, null);
+            typeof(ClassOps).GetMethod(nameof(ClassOps.CallVoidMethodNonVirtually), staticPublicFlags);
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
-            typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), instancePublicFlags, null, new Type[] { typeof(EngineIntrinsics), typeof(object) }, null);
+            typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), instancePublicFlags);
         // ReSharper restore InconsistentNaming
     }
 
