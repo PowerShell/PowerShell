@@ -29,11 +29,12 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal Collection<string> ParseCsv(string csv)
         {        
-            //performing trimming, just like in the old implementation
+
+            // performing trimming, just like in the old implementation
             csv = csv.Trim();    
-            //regex expression, inspiration from
-            //https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
-            string[] elements = Regex.Split(csv, Delimiter+"|(\"[^\"]*\")").Where(exp => !String.IsNullOrEmpty(exp)).ToArray();          
+            // regex expression, inspiration from
+            // https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
+            string[] elements = Regex.Split(csv, Delimiter + "|(\"[^\"]*\")").Where(exp => !String.IsNullOrEmpty(exp)).ToArray();          
             Collection<string> result = new Collection<string>(elements);          
             return result;           
         }
