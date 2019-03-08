@@ -29,8 +29,6 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal Collection<string> ParseCsv(string csv)
         {        
-
-            // performing trimming, just like in the old implementation
             csv = csv.Trim();    
             // regex expression, inspiration from
             // https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
