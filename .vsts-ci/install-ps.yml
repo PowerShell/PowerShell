@@ -47,12 +47,6 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
-    jobName: InstallPowerShellUbuntu
-    pool: Hosted Ubuntu 1604
-
-- template: templates/install-ps-phase.yml
-  parameters:
-    scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellAmazonLinux
     pool: Hosted Ubuntu 1604
     container: amazonlinux:latest
