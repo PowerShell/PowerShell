@@ -60,7 +60,7 @@ Describe "Verify Markdown Spelling" {
                 }
 
                 if($trueFailures) {
-                    it "<spell> is wrong" -TestCases $trueFailures {
+                    it "<spell>!" -TestCases $trueFailures {
                         param($spell)
                         throw "Tool reported spelling as wrong."
                     }
