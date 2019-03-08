@@ -204,6 +204,7 @@ enums
 ergo3114
 errorrecord
 etl
+etw
 excludeversion
 exe
 executables
@@ -706,6 +707,7 @@ timothywlewis
 -title
 tomconte
 toolchain
+toolkit
 toolset
 tracesource
 travisez13
