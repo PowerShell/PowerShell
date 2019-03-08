@@ -252,35 +252,35 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ParserOps_LikeOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object), typeof(TokenKind) }, null);
         internal static readonly MethodInfo ParserOps_MatchOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object), typeof(bool), typeof(bool) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_RangeOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags, null, new Type[] { typeof(object), typeof(object) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_GetRangeEnumerator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags, null, new Type[] { typeof(object), typeof(object) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object), typeof(bool) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.SplitOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object), typeof(object), typeof(bool) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.SplitOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_UnaryJoinOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.UnaryJoinOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.UnaryJoinOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_UnarySplitOperator =
-            typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(IScriptExtent), typeof(object) }, null);
+            typeof(ParserOps).GetMethod(nameof(ParserOps.UnarySplitOperator), staticFlags);
 
         internal static readonly ConstructorInfo Pipe_ctor =
             typeof(Pipe).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(List<object>) }, null);
         internal static readonly MethodInfo Pipe_Add =
-            typeof(Pipe).GetMethod(nameof(Pipe.Add), instanceFlags, null, new Type[] { typeof(object) }, null);
+            typeof(Pipe).GetMethod(nameof(Pipe.Add), instanceFlags);
         internal static readonly MethodInfo Pipe_SetVariableListForTemporaryPipe =
-            typeof(Pipe).GetMethod(nameof(Pipe.SetVariableListForTemporaryPipe), instanceFlags, null, new Type[] { typeof(Pipe) }, null);
+            typeof(Pipe).GetMethod(nameof(Pipe.SetVariableListForTemporaryPipe), instanceFlags);
 
         internal static readonly MethodInfo PipelineOps_CheckAutomationNullInCommandArgument =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgument), staticFlags, null, new Type[] { typeof(object) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgument), staticFlags);
         internal static readonly MethodInfo PipelineOps_CheckAutomationNullInCommandArgumentArray =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgumentArray), staticFlags, null, new Type[] { typeof(object[]) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckAutomationNullInCommandArgumentArray), staticFlags);
         internal static readonly MethodInfo PipelineOps_CheckForInterrupts =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckForInterrupts), staticFlags, null, new Type[] { typeof(ExecutionContext) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.CheckForInterrupts), staticFlags);
         internal static readonly MethodInfo PipelineOps_GetExitException =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.GetExitException), staticFlags, null, new Type[] { typeof(object) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.GetExitException), staticFlags);
         internal static readonly MethodInfo PipelineOps_FlushPipe =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), staticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipeline =
@@ -288,7 +288,7 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PipelineOps_InvokePipelineInBackground =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), staticFlags);
         internal static readonly MethodInfo PipelineOps_Nop =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), staticFlags, null, Type.EmptyTypes, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), staticFlags);
         internal static readonly MethodInfo PipelineOps_PipelineResult =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.PipelineResult), staticFlags);
         internal static readonly MethodInfo PipelineOps_ClearPipe =
