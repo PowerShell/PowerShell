@@ -94,6 +94,7 @@ cimsession
 cimsupport
 classlib
 clear-itemproperty
+cli
 cloudydino
 cls
 cmake
@@ -141,6 +142,7 @@ crontab
 crossgen
 crossgen'ing
 crossplatform
+cu
 csharp
 csmacnz
 csphysicallyinstalledmemory
@@ -871,3 +873,5 @@ wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
 2.x
+.NET
+netstandard
