@@ -282,17 +282,17 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PipelineOps_GetExitException =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.GetExitException), staticFlags, null, new Type[] { typeof(object) }, null);
         internal static readonly MethodInfo PipelineOps_FlushPipe =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), staticFlags, null, new Type[] { typeof(Pipe), typeof(List<object>) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), staticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipeline =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipeline), staticFlags, null, new Type[] { typeof(object), typeof(bool), typeof(CommandParameterInternal[][]), typeof(CommandBaseAst[]), typeof(CommandRedirection[][]), typeof(FunctionContext) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipeline), staticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipelineInBackground =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), staticFlags, null, new Type[] { typeof(PipelineAst), typeof(FunctionContext) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), staticFlags);
         internal static readonly MethodInfo PipelineOps_Nop =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), staticFlags, null, Type.EmptyTypes, null);
         internal static readonly MethodInfo PipelineOps_PipelineResult =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.PipelineResult), staticFlags, null, new Type[] { typeof(List<object>) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.PipelineResult), staticFlags);
         internal static readonly MethodInfo PipelineOps_ClearPipe =
-            typeof(PipelineOps).GetMethod(nameof(PipelineOps.ClearPipe), staticFlags, null, new Type[] { typeof(List<object>) }, null);
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.ClearPipe), staticFlags);
 
         internal static readonly MethodInfo PSGetDynamicMemberBinder_GetIDictionaryMember =
             typeof(PSGetDynamicMemberBinder).GetMethod(nameof(PSGetDynamicMemberBinder.GetIDictionaryMember), staticFlags);
