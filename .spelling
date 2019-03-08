@@ -897,3 +897,7 @@ Invoke-PerfviewPS.ps1
 JIT.Regions.xml
 PowerShell.Regions.xml
 PowerShell.stacktags
+markdown-spellcheck
+npm
+ConnectionCredential
+parameter
