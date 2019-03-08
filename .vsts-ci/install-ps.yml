@@ -44,12 +44,7 @@ phases:
     jobName: InstallPowerShellUbuntu
     pool: Hosted Ubuntu 1604
 
-- template: templates/install-ps-phase.yml
-  parameters:
-    scriptName: ./tools/install-powershell.sh
-    jobName: InstallPowerShellAmazonLinux
-    pool: Hosted Ubuntu 1604
-    container: pshorg/powershellcommunity:amazonlinux-2.0
+# amazonlinux was missing adduser
 
 - template: templates/install-ps-phase.yml
   parameters:
@@ -58,12 +53,9 @@ phases:
     pool: Hosted Ubuntu 1604
     container: mcr.microsoft.com/powershell:centos-7
 
-- template: templates/install-ps-phase.yml
-  parameters:
-    scriptName: ./tools/install-powershell.sh
-    jobName: InstallPowerShellOpenSUSE
-    pool: Hosted Ubuntu 1604
-    container: mcr.microsoft.com/powershell:opensuse-42.3
+# VSTS could not find pwsh in:
+# mcr.microsoft.com/powershell:opensuse-42.3
+# could not repo locally
 
 - template: templates/install-ps-phase.yml
   parameters:
