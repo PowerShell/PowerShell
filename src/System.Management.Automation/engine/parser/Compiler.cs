@@ -38,15 +38,15 @@ namespace System.Management.Automation.Language
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags, null, new Type[] { typeof(Array), typeof(int[]), typeof(bool) }, null);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
         internal static readonly MethodInfo ArrayOps_GetMDArrayValueOrSlice =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValueOrSlice), staticFlags, null, new Type[] { typeof(Array), typeof(object) }, null);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValueOrSlice), staticFlags);
         internal static readonly MethodInfo ArrayOps_GetNonIndexable =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetNonIndexable), staticFlags, null, new Type[] { typeof(object), typeof(object[]) }, null);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetNonIndexable), staticFlags);
         internal static readonly MethodInfo ArrayOps_IndexStringMessage =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.IndexStringMessage), staticFlags, null, new Type[] { typeof(object) }, null);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.IndexStringMessage), staticFlags);
         internal static readonly MethodInfo ArrayOps_Multiply =
-            typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), genericParameterCount: 1, staticFlags, null, new Type[] { Type.MakeGenericMethodParameter(0).MakeArrayType(), typeof(uint) }, null);
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), staticFlags);
         internal static readonly MethodInfo ArrayOps_SetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), staticFlags);
         internal static readonly MethodInfo ArrayOps_SlicingIndex =
