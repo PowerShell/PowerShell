@@ -124,19 +124,19 @@ namespace System.Management.Automation.Language
             typeof(Exception).GetProperty(nameof(Exception.Message));
 
         internal static readonly MethodInfo ExceptionHandlingOps_CheckActionPreference =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.CheckActionPreference), staticFlags, null, new Type[] { typeof(FunctionContext), typeof(Exception) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.CheckActionPreference), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToArgumentConversionException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToArgumentConversionException), staticFlags, null, new Type[] { typeof(Exception), typeof(string), typeof(object), typeof(string), typeof(Type) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToArgumentConversionException), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToException), staticFlags, null, new Type[] { typeof(object), typeof(IScriptExtent) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToException), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToMethodInvocationException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), staticFlags, null, new Type[] { typeof(Exception), typeof(Type), typeof(string), typeof(int), typeof(MemberInfo) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_FindMatchingHandler =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), staticFlags, null, new Type[] { typeof(MutableTuple), typeof(RuntimeException), typeof(Type[]), typeof(ExecutionContext) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_RestoreStoppingPipeline =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.RestoreStoppingPipeline), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(bool) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.RestoreStoppingPipeline), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_SuspendStoppingPipeline =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.SuspendStoppingPipeline), staticFlags, null, new Type[] { typeof(ExecutionContext) }, null);
+            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.SuspendStoppingPipeline), staticFlags);
 
         internal static readonly PropertyInfo ExecutionContext_CurrentExceptionBeingHandled =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.CurrentExceptionBeingHandled), instanceFlags);
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Language
         internal static readonly PropertyInfo ExecutionContext_ExceptionHandlerInEnclosingStatementBlock =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.PropagateExceptionsToEnclosingStatementBlock), instanceFlags);
         internal static readonly MethodInfo ExecutionContext_IsStrictVersion =
-            typeof(ExecutionContext).GetMethod(nameof(ExecutionContext.IsStrictVersion), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(int) }, null);
+            typeof(ExecutionContext).GetMethod(nameof(ExecutionContext.IsStrictVersion), staticFlags);
         internal static readonly PropertyInfo ExecutionContext_QuestionMarkVariableValue =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.QuestionMarkVariableValue), instanceFlags);
         internal static readonly PropertyInfo ExecutionContext_LanguageMode =
@@ -155,13 +155,14 @@ namespace System.Management.Automation.Language
         internal static readonly PropertyInfo ExecutionContext_EngineIntrinsics =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.EngineIntrinsics), instanceFlags);
         internal static readonly MethodInfo FileRedirection_BindForExpression =
-            typeof(FileRedirection).GetMethod(nameof(FileRedirection.BindForExpression), instanceFlags, null, new Type[] { typeof(FunctionContext) }, null);
+            typeof(FileRedirection).GetMethod(nameof(FileRedirection.BindForExpression), instanceFlags);
         internal static readonly MethodInfo FileRedirection_CallDoCompleteForExpression =
-            typeof(FileRedirection).GetMethod(nameof(FileRedirection.CallDoCompleteForExpression), instanceFlags, null, Type.EmptyTypes, null);
+            typeof(FileRedirection).GetMethod(nameof(FileRedirection.CallDoCompleteForExpression), instanceFlags);
         internal static readonly ConstructorInfo FileRedirection_ctor =
-            typeof(FileRedirection).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(RedirectionStream), typeof(bool), typeof(string) }, null);
+            typeof(FileRedirection).GetConstructor(instanceFlags, null, CallingConventions.Standard,
+                                                   new Type[] { typeof(RedirectionStream), typeof(bool), typeof(string) }, null);
         internal static readonly MethodInfo FileRedirection_Dispose =
-            typeof(FileRedirection).GetMethod(nameof(FileRedirection.Dispose), Type.EmptyTypes);
+            typeof(FileRedirection).GetMethod(nameof(FileRedirection.Dispose));
 
         internal static readonly FieldInfo FunctionContext__currentSequencePointIndex =
             typeof(FunctionContext).GetField(nameof(FunctionContext._currentSequencePointIndex), instanceFlags);
@@ -174,20 +175,21 @@ namespace System.Management.Automation.Language
         internal static readonly FieldInfo FunctionContext__outputPipe =
             typeof(FunctionContext).GetField(nameof(FunctionContext._outputPipe), instanceFlags);
         internal static readonly MethodInfo FunctionContext_PopTrapHandlers =
-            typeof(FunctionContext).GetMethod(nameof(FunctionContext.PopTrapHandlers), instanceFlags, null, Type.EmptyTypes, null);
+            typeof(FunctionContext).GetMethod(nameof(FunctionContext.PopTrapHandlers), instanceFlags);
         internal static readonly MethodInfo FunctionContext_PushTrapHandlers =
-            typeof(FunctionContext).GetMethod(nameof(FunctionContext.PushTrapHandlers), instanceFlags, null, new Type[] { typeof(Type[]), typeof(Action<FunctionContext>[]), typeof(Type[]) }, null);
+            typeof(FunctionContext).GetMethod(nameof(FunctionContext.PushTrapHandlers), instanceFlags);
 
         internal static readonly MethodInfo FunctionOps_DefineFunction =
-            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags, null, new Type[] { typeof(ExecutionContext), typeof(FunctionDefinitionAst), typeof(ScriptBlockExpressionWrapper) }, null);
+            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags);
 
         internal static readonly ConstructorInfo Hashtable_ctor =
-            typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
+            typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
+                                             CallingConventions.Standard, new Type[] { typeof(int), typeof(IEqualityComparer) }, null);
 
         internal static readonly MethodInfo HashtableOps_Add =
-            typeof(HashtableOps).GetMethod(nameof(HashtableOps.Add), staticFlags, null, new Type[] { typeof(IDictionary), typeof(IDictionary) }, null);
+            typeof(HashtableOps).GetMethod(nameof(HashtableOps.Add), staticFlags);
         internal static readonly MethodInfo HashtableOps_AddKeyValuePair =
-            typeof(HashtableOps).GetMethod(nameof(HashtableOps.AddKeyValuePair), staticFlags, null, new Type[] { typeof(IDictionary), typeof(object), typeof(object), typeof(IScriptExtent) }, null);
+            typeof(HashtableOps).GetMethod(nameof(HashtableOps.AddKeyValuePair), staticFlags);
 
         internal static readonly PropertyInfo ICollection_Count =
             typeof(ICollection).GetProperty(nameof(ICollection.Count));
