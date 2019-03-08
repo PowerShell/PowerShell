@@ -2,14 +2,19 @@ parameters:
   pool: 'Hosted Ubuntu 1604'
   jobName: 'none'
   scriptName: ''
+  container: ''
 
 jobs:
+
 - job: ${{ parameters.jobName }}
   variables:
     scriptName: ${{ parameters.scriptName }}
 
-  pool:
-    name: ${{ parameters.pool }}
+  ${{ if ne(parameters.contaner, '') }}:
+    container: ${{ parameters.container }}
+
+  ${{ if eq(parameters.contaner, '') }}:
+    pool: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 

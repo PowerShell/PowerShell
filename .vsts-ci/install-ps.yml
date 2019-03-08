@@ -47,6 +47,33 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellUbuntu
+    pool: Hosted Ubuntu 1604
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellAmazonLinux
+    pool: Hosted Ubuntu 1604
+    container: amazonlinux:latest
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellCentOS
+    pool: Hosted Ubuntu 1604
+    container: centos:7
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellOpenSUSE
+    pool: Hosted Ubuntu 1604
+    container: opensuse:42.3
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellMacOS
     pool: Hosted macOS
 
