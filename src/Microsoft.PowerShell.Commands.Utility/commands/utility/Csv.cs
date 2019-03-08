@@ -35,7 +35,8 @@ namespace Microsoft.PowerShell.Commands
             
             csv = csv.Trim();
 
-            //string data = "Method,\"value1,value2\",Method2";
+            //regex expression:
+            //https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
             string[] pieces = Regex.Split(csv, ",|(\"[^\"]*\")").Where(exp => !String.IsNullOrEmpty(exp)).ToArray();
 
             foreach (string piece in pieces)
