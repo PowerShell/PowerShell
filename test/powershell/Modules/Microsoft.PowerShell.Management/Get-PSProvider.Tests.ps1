@@ -27,30 +27,26 @@ Describe "Get-PSProvider" -Tags "CI" {
 
     Context 'PathSeparators' {
         BeforeAll {
-            $windowsTestCases = @(
-                @{Provider = 'FileSystem'; Value = @("\", "/")}
-                @{Provider = 'Variable'; Value = @("\", "/")}
-                @{Provider = 'Function'; Value = @("\", "/")}
-                @{Provider = 'Alias'; Value = @("\", "/")}
-                @{Provider = 'Environment'; Value = @("\", "/")}
-                @{Provider = 'Certificate'; Value = @("\", "/")}
-                @{Provider = 'Registry'; Value = @("\")}
-            )
-
-            $nonWindowsTestCases = @(
-                @{Provider = 'FileSystem'; Value = @("/", "\")}
-                @{Provider = 'Variable'; Value = @("/", "\")}
-                @{Provider = 'Function'; Value = @("/", "\")}
-                @{Provider = 'Alias'; Value = @("/", "\")}
-                @{Provider = 'Environment'; Value = @("/", "\")}
-                @{Provider = 'Certificate'; Value = @("/", "\")}
-            )
-
             $testCases = if ($IsWindows) {
-                            $windowsTestCases
+                            @(
+                                @{Provider = 'FileSystem'; Value = @("\", "/")}
+                                @{Provider = 'Variable'; Value = @("\", "/")}
+                                @{Provider = 'Function'; Value = @("\", "/")}
+                                @{Provider = 'Alias'; Value = @("\", "/")}
+                                @{Provider = 'Environment'; Value = @("\", "/")}
+                                @{Provider = 'Certificate'; Value = @("\", "/")}
+                                @{Provider = 'Registry'; Value = @("\")}
+                            )
                         }
                         else {
-                            $nonWindowsTestCases
+                            @(
+                                @{Provider = 'FileSystem'; Value = @("/", "\")}
+                                @{Provider = 'Variable'; Value = @("/", "\")}
+                                @{Provider = 'Function'; Value = @("/", "\")}
+                                @{Provider = 'Alias'; Value = @("/", "\")}
+                                @{Provider = 'Environment'; Value = @("/", "\")}
+                                @{Provider = 'Certificate'; Value = @("/", "\")}
+                            )
                         }
         }
 
