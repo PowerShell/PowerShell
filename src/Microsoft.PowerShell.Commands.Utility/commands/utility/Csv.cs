@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -29,6 +30,40 @@ namespace Microsoft.PowerShell.Commands
         internal Collection<string> ParseCsv(string csv)
         {
             Collection<string> result = new Collection<string>();
+
+            /////////new code with regex/////
+            
+            csv = csv.Trim();
+
+            //string data = "Method,\"value1,value2\",Method2";
+            string[] pieces = Regex.Split(csv, ",|(\"[^\"]*\")").Where(exp => !String.IsNullOrEmpty(exp)).ToArray();
+
+            foreach (string piece in pieces)
+            {
+                result.add(piece);
+            }
+            
+            return result;
+            /* 
+            //using a reader//
+            if (csv.Length == 0 || csv[0] == '#')
+            {
+                return result;
+            }
+
+            using (StringReader reader = new StringReader(csv.ToString()))
+                {
+                    while ((readText = await reader.ReadLineAsync()) != null)
+                    {
+                        String line = readText;
+                        //split line
+
+
+                    }
+                }
+
+            ////////old code below////////
+
             string tempString = string.Empty;
             csv = csv.Trim();
             if (csv.Length == 0 || csv[0] == '#')
@@ -37,6 +72,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool inQuote = false;
+
+            // for each character in the file (use stream instead of for loop for speed)
+            // if the character is a delimiter,
+
             for (int i = 0; i < csv.Length; i++)
             {
                 char c = csv[i];
@@ -106,6 +145,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
+            */
         }
     }
 }
