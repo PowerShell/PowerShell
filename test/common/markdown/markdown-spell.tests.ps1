@@ -31,14 +31,11 @@ Describe "Verify Markdown Spelling" {
             param([object[]] $group)
             foreach($file in $group)
             {
-                if($file -eq 'CHANGELOG.md') {}
-                else {
-                    $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
-                    Write-Output ([PSCustomObject]@{
-                        file = $file
-                        results = $results
-                    })
-                }
+                $results = mdspell --en-us --ignore-numbers --ignore-acronyms --report $file 2>&1
+                Write-Output ([PSCustomObject]@{
+                    file = $file
+                    results = $results
+                })
             }
         } -ArgumentList @($group.Group)
         $jobs.add($group.name,$job)
@@ -62,7 +59,7 @@ Describe "Verify Markdown Spelling" {
                     @{ Spell = $Failure }
                 }
 
-                if($trueFailures) {
+                if($trueFailures -and (!$file -eq "/home/vsts/work/1/s/CHANGELOG.md")) {
                     it "<spell> should work" -TestCases $trueFailures {
                         param($spell)
                         throw "Tool reported spelling as wrong."
