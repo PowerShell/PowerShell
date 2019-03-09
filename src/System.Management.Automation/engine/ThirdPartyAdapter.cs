@@ -348,6 +348,9 @@ namespace System.Management.Automation
         /// </summary>
         public abstract string GetPropertyTypeName(PSAdaptedProperty adaptedProperty);
 
-        internal abstract PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate propertyName);
+        /// <summary>
+        /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
+        /// </summary>
+        public abstract PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate propertyName);
     }
 }

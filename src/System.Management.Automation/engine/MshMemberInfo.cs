@@ -3685,7 +3685,12 @@ namespace System.Management.Automation
         }
     }
 
-    internal delegate bool MemberNamePredicate(string memberName);
+    /// <summary>
+    /// A Predicate that determine if a member name matches a criterion.
+    /// </summary>
+    /// <param name="memberName"></param>
+    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    public delegate bool MemberNamePredicate(string memberName);
 
     /// <summary>
     /// Serves as the collection of members in an PSObject or MemberSet.
@@ -3818,7 +3823,7 @@ namespace System.Management.Automation
 
         #endregion IEnumerable
 
-        internal abstract PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate);
+        internal abstract T GetFirstOrDefault(MemberNamePredicate predicate);
     }
 
     /// <summary>
@@ -4269,13 +4274,15 @@ namespace System.Management.Automation
             }
         }
 
-        internal override PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate)
+        internal override T GetFirstOrDefault(MemberNamePredicate predicate)
         {
-            foreach (string name in _members.Keys)
+            var enumerator = _members.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                if (predicate.Invoke(name))
+                var key = (string) enumerator.Key;
+                if (predicate(key))
                 {
-                    return (T)_members[name];
+                    return (T)enumerator.Value;
                 }
             }
 
@@ -4291,19 +4298,19 @@ namespace System.Management.Automation
 
         internal delegate T GetMemberDelegate(PSObject obj, string name);
 
-        internal delegate PSMemberInfo GetFirstOrDefaultDelegate(PSObject obj, MemberNamePredicate predicate);
+        internal delegate T GetFirstOrDefaultDelegate(PSObject obj, MemberNamePredicate predicate);
 
         internal CollectionEntry(
             GetMembersDelegate getMembers,
             GetMemberDelegate getMember,
-            GetFirstOrDefaultDelegate getGetFirstOrDefault,
+            GetFirstOrDefaultDelegate getFirstOrDefault,
             bool shouldReplicateWhenReturning,
             bool shouldCloneWhenReturning,
             string collectionNameForTracing)
         {
             GetMembers = getMembers;
             GetMember = getMember;
-            GetGetFirstOrDefault = getGetFirstOrDefault;
+            GetFirstOrDefault = getFirstOrDefault;
             ShouldReplicateWhenReturning = shouldReplicateWhenReturning;
             ShouldCloneWhenReturning = shouldCloneWhenReturning;
             CollectionNameForTracing = collectionNameForTracing;
@@ -4313,13 +4320,30 @@ namespace System.Management.Automation
 
         internal GetMemberDelegate GetMember { get; }
 
-        internal GetFirstOrDefaultDelegate GetGetFirstOrDefault { get; }
-
-        internal bool ShouldReplicateWhenReturning { get; }
-
-        internal bool ShouldCloneWhenReturning { get; }
+        internal GetFirstOrDefaultDelegate GetFirstOrDefault { get; }
 
         internal string CollectionNameForTracing { get; }
+
+        private bool ShouldReplicateWhenReturning { get; }
+
+        private bool ShouldCloneWhenReturning { get; }
+
+
+        internal T CloneOrReplicateObject(object owner, T member)
+        {
+            if (ShouldCloneWhenReturning)
+            {
+                member = (T)member.Copy();
+            }
+
+            if (ShouldReplicateWhenReturning)
+            {
+                owner = owner is PSMemberSet memberSet ? memberSet.instance : owner;
+                member.ReplicateInstance(owner);
+            }
+
+            return member;
+        }
     }
 
     #endregion CollectionEntry
@@ -4757,17 +4781,7 @@ namespace System.Management.Automation
                         T memberAsT = collection.GetMember((PSObject) delegateOwner, name);
                         if (memberAsT != null)
                         {
-                            if (collection.ShouldCloneWhenReturning)
-                            {
-                                memberAsT = (T) memberAsT.Copy();
-                            }
-
-                            if (collection.ShouldReplicateWhenReturning)
-                            {
-                                memberAsT.ReplicateInstance(delegateOwner);
-                            }
-
-                            return memberAsT;
+                            return collection.CloneOrReplicateObject(delegateOwner, memberAsT);
                         }
                     }
 
@@ -4835,21 +4849,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        T memberToAdd;
-                        if (collection.ShouldCloneWhenReturning)
-                        {
-                            memberToAdd = (T) member.Copy();
-                        }
-                        else
-                        {
-                            memberToAdd = member;
-                        }
-
-                        if (collection.ShouldReplicateWhenReturning)
-                        {
-                            memberToAdd.ReplicateInstance(delegateOwner);
-                        }
-
+                        T memberToAdd = collection.CloneOrReplicateObject(delegateOwner, member);
                         returnValue.Add(memberToAdd);
                     }
                 }
@@ -4932,15 +4932,15 @@ namespace System.Management.Automation
             return new Enumerator<T>(this);
         }
 
-        internal override PSMemberInfo GetFirstOrDefault(MemberNamePredicate predicate)
+        internal override T GetFirstOrDefault(MemberNamePredicate predicate)
         {
             for (int i = 0; i < Collections.Count; i++)
             {
                 var collectionEntry = Collections[i];
-                var res = collectionEntry.GetGetFirstOrDefault(_mshOwner, predicate);
+                var res = collectionEntry.GetFirstOrDefault(_mshOwner, predicate);
                 if (res != null)
                 {
-                    return res;
+                    return collectionEntry.CloneOrReplicateObject(_mshOwner, res);
                 }
             }
 

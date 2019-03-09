@@ -133,7 +133,9 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-        internal override PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate predicate)
+        
+        /// <inheritdoc />
+        public override PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate predicate)
         {
             if (predicate == null)
             {
@@ -152,17 +154,17 @@ namespace Microsoft.PowerShell.Cim
                 throw new PSInvalidOperationException(msg);
             }
 
+            if (predicate(RemotingConstants.ComputerNameNoteProperty))
+            {
+                PSAdaptedProperty prop = GetPSComputerNameAdapter(cimInstance);
+                return prop;
+            }
+
             foreach (CimProperty cimProperty in cimInstance.CimInstanceProperties)
             {
                 if (cimProperty != null && predicate(cimProperty.Name))
                 {
                     PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
-                    return prop;
-                }
-
-                if (predicate(RemotingConstants.ComputerNameNoteProperty))
-                {
-                    PSAdaptedProperty prop = GetPSComputerNameAdapter(cimInstance);
                     return prop;
                 }
             }

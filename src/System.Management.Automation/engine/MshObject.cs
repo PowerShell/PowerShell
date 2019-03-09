@@ -141,7 +141,7 @@ namespace System.Management.Automation
             return retValue;
         }
 
-        private static PSMemberInfo AdapterGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
+        private static T AdapterGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             if (msjObj.IsDeserialized && typeof(PSPropertyInfo).IsAssignableFrom(typeof(T)))
             {
@@ -227,10 +227,10 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static PSMemberInfo DotNetGetFirstOrDefaultMemberDelegate(PSObject msjObj, MemberNamePredicate predicate)
+        private static T DotNetGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            return msjObj.InternalBaseDotNetAdapter?.BaseGetMember<PSMemberInfo>(msjObj._immediateBaseObject, predicate);
+            return msjObj.InternalBaseDotNetAdapter?.BaseGetMember<T>(msjObj._immediateBaseObject, predicate);
         }
 
 
@@ -299,7 +299,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMemberInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMemberInfo>,
-                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
+                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members"));
@@ -329,7 +329,7 @@ namespace System.Management.Automation
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMethodInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMethodInfo>,
-                    PSObject.DotNetGetFirstOrDefaultMemberDelegate,
+                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members")
@@ -401,7 +401,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                     PSObject.DotNetGetMembersDelegate<PSPropertyInfo>,
                     PSObject.DotNetGetMemberDelegate<PSPropertyInfo>,
-                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
                     false, false, "clr members"));
             }
 

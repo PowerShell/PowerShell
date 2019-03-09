@@ -203,7 +203,13 @@ namespace System.Management.Automation
             // obj should never be null
             Diagnostics.Assert(obj != null, "Input object is null");
 
-            ManagementBaseObject wmiObject = (ManagementBaseObject)obj;
+            ManagementBaseObject wmiObject = obj as ManagementBaseObject;
+
+            if (wmiObject == null)
+            {
+                return null;
+            }
+
             return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
                 ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
         }
