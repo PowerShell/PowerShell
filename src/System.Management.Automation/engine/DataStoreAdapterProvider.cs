@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Read-only collection of strings representing the path separators characters for this provider.
         /// </returns>
-        public ReadOnlyCollection<string> PathSeparator { get; internal set; } = new ReadOnlyCollection<string>(new List<string>());
+        public ReadOnlyCollection<string> PathSeparator { get; set; } = new ReadOnlyCollection<string>(new List<string>());
 
         /// <summary>
         /// Constructs an instance of the class using an existing reference

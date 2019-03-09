@@ -45,7 +45,6 @@ Describe "Get-PSProvider" -Tags "CI" {
                                 @{Provider = 'Function'; Value = @("/", "\")}
                                 @{Provider = 'Alias'; Value = @("/", "\")}
                                 @{Provider = 'Environment'; Value = @("/", "\")}
-                                @{Provider = 'Certificate'; Value = @("/", "\")}
                             )
                         }
         }
