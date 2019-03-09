@@ -18,6 +18,7 @@
 * `sed`
 * native package manager available
 * `curl` (auto-installed if missing)
+* `tr`
 
 ## Parameters
 
@@ -25,7 +26,6 @@
 * -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
 * -skip-sudo-check - use sudo without verifying its availability (hard to accurately do on some distros)
 * -preview - installs the latest preview release of PowerShell core side-by-side with any existing production releases
-* -appimage - perform an AppImage install instead of a native install
 
 ## Usage
 

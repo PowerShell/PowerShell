@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -333,22 +333,6 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
-                }
-            }
-            "AppImage" {
-                if ($IncludeSymbols.IsPresent) {
-                    throw "AppImage does not support packaging '-IncludeSymbols'"
-                }
-
-                if ($Environment.IsUbuntu14) {
-                    $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
-                    $appImage = Get-Item powershell-*.AppImage
-                    if ($appImage.Count -gt 1) {
-                        throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
-                    }
-                    Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
-                } else {
-                    Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
                 }
             }
             'nupkg' {
