@@ -1889,6 +1889,8 @@ namespace Microsoft.PowerShell.Commands
                     // Handle the '-SecurityDescriptorSddl' parameter
                     if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
+                        //IntPtr hDacl = IntPtr.Zero;
+                        IntPtr lpDacl = IntPtr.Zero;
                         var rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptorSddl);
                         RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
                         var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
@@ -1899,11 +1901,15 @@ namespace Microsoft.PowerShell.Commands
                         byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
                         rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
 
+                        GCHandle hDacl = GCHandle.Alloc(rawDacl, GCHandleType.Pinned);
+                        lpDacl = hDacl.AddrOfPinnedObject();
+
                         status = NativeMethods.SetServiceObjectSecurity(
                                     hService,
                                     SecurityInfos.DiscretionaryAcl,
-                                    securityDescriptorByte);
+                                    lpDacl);
 
+                        hDacl.Free();
 
                         if (!status)
                         {
@@ -2739,7 +2745,7 @@ namespace Microsoft.PowerShell.Commands
         bool SetServiceObjectSecurity(
             NakedWin32Handle hSCManager,
             System.Security.AccessControl.SecurityInfos dwSecurityInformation,
-            byte[] lpSecurityDescriptor
+            [In] IntPtr lpSecurityDescriptor
             );
 
         /// <summary>
