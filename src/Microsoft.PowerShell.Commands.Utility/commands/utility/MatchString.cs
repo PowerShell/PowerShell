@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
                     close = "*";
                 }
 
-                Line = String.Create(_matchIndexes.Count * (open.Length + close.Length) + Line.Length, Line, (chars, buf) =>
+                Line = string.Create((_matchIndexes.Count * (open.Length + close.Length)) + Line.Length, Line, (chars, buf) =>
                 {
                     int lineIndex = 0;
                     int charsIndex = 0;
@@ -333,7 +333,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                         
                         // Adds characters being emphasized
-                        for (int j = 0; j < _matchLengths[i]; j++) {
+                        for (int j = 0; j < _matchLengths[i]; j++)
+                        {
                             chars[charsIndex] = Line[lineIndex];
                             lineIndex++;
                             charsIndex++; 
