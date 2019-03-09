@@ -133,7 +133,6 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-        
         /// <inheritdoc />
         public override PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate predicate)
         {

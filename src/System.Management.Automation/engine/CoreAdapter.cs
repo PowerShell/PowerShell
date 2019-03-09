@@ -1887,7 +1887,6 @@ namespace System.Management.Automation
         #endregion
 
         #endregion base
-
     }
     /// <summary>
     /// Ordered and case insensitive hashtable.
@@ -1928,7 +1927,7 @@ namespace System.Management.Automation
             {
                 if (predicate(entry.Key))
                 {
-                    return this.memberCollection[entry.Value];                    
+                    return this.memberCollection[entry.Value];
                 }
             }
 
@@ -3478,22 +3477,21 @@ namespace System.Management.Automation
 
             object entry = predicate != null
                                ? typeTable.GetOrDefault(predicate)
-                               : typeTable[propertyName];            
+                               : typeTable[propertyName];
             switch (entry)
             {
                 case null: return null;
-                case PropertyCacheEntry propertyEntry when lookingForProperties:
+                case PropertyCacheEntry cacheEntry when lookingForProperties:
                 {
-                    var isHidden = propertyEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
-                    return new PSProperty(propertyEntry.member.Name, this, obj, propertyEntry) { IsHidden = isHidden } as T;
+                    var isHidden = cacheEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                    return new PSProperty(cacheEntry.member.Name, this, obj, cacheEntry) { IsHidden = isHidden } as T;
                 }
-                case ParameterizedPropertyCacheEntry parameterizedPropertyEntry when lookingForParameterizedProperties:
+                case ParameterizedPropertyCacheEntry paramCacheEntry when lookingForParameterizedProperties:
 
                     // TODO: check for HiddenAttribute
                     // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
                     // but if someone added the attribute to their C#, it'd be good to set isHidden correctly here.
-                    return new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
-                                                       this, obj, parameterizedPropertyEntry) as T;
+                    return new PSParameterizedProperty(paramCacheEntry.propertyName, this, obj, paramCacheEntry) as T;
                 default: return null;
             }
         }
@@ -3505,7 +3503,7 @@ namespace System.Management.Automation
 
         protected T GetDotNetProperty<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            return GetDotNetPropertyImpl<T>(obj, propertyName: null, predicate);            
+            return GetDotNetPropertyImpl<T>(obj, propertyName: null, predicate);
         }
 
         private T GetDotNetMethodImpl<T>(object obj, string methodName, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3519,7 +3517,7 @@ namespace System.Management.Automation
                                        ? GetStaticMethodReflectionTable((Type)obj)
                                        : GetInstanceMethodReflectionTable(obj.GetType());
 
-            var methods = predicate != null 
+            var methods = predicate != null
                               ? (MethodCacheEntry)typeTable.GetOrDefault(predicate)
                               : (MethodCacheEntry)typeTable[methodName];
 
@@ -3550,7 +3548,7 @@ namespace System.Management.Automation
 
         internal T GetDotNetMethod<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            return GetDotNetMethodImpl<T>(obj, methodName: null, predicate);            
+            return GetDotNetMethodImpl<T>(obj, methodName: null, predicate);
         }
 
         internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
@@ -3568,8 +3566,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < table.memberCollection.Count; i++)
             {
-                var propertyEntry = table.memberCollection[i] as PropertyCacheEntry;
-                if (propertyEntry != null)
+                if (table.memberCollection[i] is PropertyCacheEntry propertyEntry)
                 {
                     if (lookingForProperties)
                     {
@@ -3776,7 +3773,7 @@ namespace System.Management.Automation
 
             return null;
         }
-      
+
         /// <summary>
         /// Retrieves all the members available in the object.
         /// The adapter implementation is encouraged to cache all properties/methods available
@@ -4476,7 +4473,6 @@ namespace System.Management.Automation
         #endregion parameterized property
 
         #endregion virtual
-
     }
 
     #region DotNetAdapterWithOnlyPropertyLookup
@@ -4505,6 +4501,7 @@ namespace System.Management.Automation
             if (typeof(T) == typeof(PSMemberInfo))
             {
                 T returnValue = base.GetDotNetMethod<T>(obj, predicate);
+
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4515,7 +4512,8 @@ namespace System.Management.Automation
 
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+                var parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4968,9 +4966,10 @@ namespace System.Management.Automation
         /// Returns a PSMemberInfo if the predicate matches any member name in the adapter or
         /// null.
         /// </summary>
+        /// <typeparam name="T">A subtype of <see cref="PSMemberInfo"/>.</typeparam>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="predicate">A name matching predicate.</param>
-        /// <returns>The PSMemberInfo corresponding to the predicate match.</returns>
+        /// /// <returns>The PSMemberInfo corresponding to the predicate match.</returns>
         protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
         {
             PSProperty property = DoGetProperty(obj, predicate);
@@ -4983,6 +4982,7 @@ namespace System.Management.Automation
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
                 T returnValue = base.GetDotNetMethod<T>(obj, predicate);
+
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4993,7 +4993,8 @@ namespace System.Management.Automation
 
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+                var parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -5409,7 +5410,7 @@ namespace System.Management.Automation
         }
 
         private static XmlNode FindNode(object obj, MemberNamePredicate predicate)
-        {            
+        {
             XmlNode node = (XmlNode)obj;
 
             if (node.Attributes != null)
@@ -5503,7 +5504,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property.
@@ -5627,7 +5627,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property.

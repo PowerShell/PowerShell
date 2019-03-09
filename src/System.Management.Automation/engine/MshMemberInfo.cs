@@ -4279,7 +4279,7 @@ namespace System.Management.Automation
             var enumerator = _members.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                var key = (string) enumerator.Key;
+                var key = (string)enumerator.Key;
                 if (predicate(key))
                 {
                     return (T)enumerator.Value;
@@ -4327,7 +4327,6 @@ namespace System.Management.Automation
         private bool ShouldReplicateWhenReturning { get; }
 
         private bool ShouldCloneWhenReturning { get; }
-
 
         internal T CloneOrReplicateObject(object owner, T member)
         {
