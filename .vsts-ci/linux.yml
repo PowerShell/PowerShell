@@ -81,7 +81,7 @@ jobs:
 
   - powershell: |
       Import-Module ./tools/ci.psm1
-      Invoke-Bootstrap-Stage
+      Invoke-BootstrapStage
     displayName: Bootstrap
     condition: succeeded()
 
