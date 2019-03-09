@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 if($PSVersionTable.PSEdition -ne 'Desktop')
 {
     throw 'Must be run from Windows PowerShell'
