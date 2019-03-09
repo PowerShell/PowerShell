@@ -71,31 +71,47 @@ Describe "Select-String" -Tags "CI" {
 	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -BeExactly "hello", "Hello"
 	}
 
-	it "Should return an array of matching strings with the first match highlighted when Emphasize is used" {
-		if ($IsWindows)
+	it "Should output a string with the first match highlighted when Emphasize is used" {
+		if ($Host.UI.SupportsVirtualTerminal)
 		{
-			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize | Out-String
+			$result | Should -Be "`nhe`e[31ml`e[0mlo`nHe`e[31ml`e[0mlo`n`n"
 		}
 		else
 		{
-			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result | Should -Be "`nhe*l*lo`nHe*l*lo`n`n"
 		}
 	}
 
-	it "Should return an array of matching strings with all matches highlighted when Emphasize and AllMatch is used" {
-		if ($IsWindows) {
-			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l**l*o", "he*l**l*o"
-		} else {
-			$testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Should -Be "he[31ml[0m[31ml[0mo", "he[31ml[0m[31ml[0mo"
+	it "Should output a string with all matches highlighted when Emphasize and AllMatch is used" {
+		if ($Host.UI.SupportsVirtualTerminal)
+		{
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Out-String
+			$result | Should -Be "`nhe`e[31ml`e[0m`e[31ml`e[0mo`nHe`e[31ml`e[0m`e[31ml`e[0mo`n`n"
+		}
+		else
+		{
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result | Should -Be "`nhe*l**l*o`nHe*l**l*o`n`n"
 		}
 	}
 
-	it "Should return an array of matching strings with the first match highlighted when Emphasize and SimpleMatch is used" {
-		if ($IsWindows) {
-			$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "he*l*lo", "he*l*lo"
-		} else {
-			$testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Should -Be "he[31ml[0mlo", "he[31ml[0mlo"
+	it "Should output a string with the first match highlighted when Emphasize and SimpleMatch is used" {
+		if ($Host.UI.SupportsVirtualTerminal)
+		{
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result | Should -Be "`nhe`e[31ml`e[0mlo`nHe`e[31ml`e[0mlo`n`n"
 		}
+		else
+		{
+			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
+			$result | Should -Be "`nhe*l*lo`nHe*l*lo`n`n"
+		}
+	}
+
+	it "Should return an array of matching strings without virtual terminal sequences when Emphasize is used" {
+		$testinputone | Select-String -Pattern "l" -Emphasize | Should -Be "hello", "hello"
 	}
 
 	it "Should return the same as NotMatch" {

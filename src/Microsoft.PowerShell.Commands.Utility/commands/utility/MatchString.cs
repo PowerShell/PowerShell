@@ -119,12 +119,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchInfo"/> class.
         /// </summary>
-        /// <param name="isRaw">Used for implementing -Raw.</param>
         /// <param name="matchIndexes">Sets the matchIndexes.</param>
         /// <param name="matchLengths">Sets the matchLengths.</param>
         /// <param name="emphasize">Used for implementing -Emphasize.</param>
         /// <param name="vt">Sets a value indicating whether or not virtual terminal is supported.</param>
-        public MatchInfo(bool isRaw, List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool vt)
+        public MatchInfo(List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool vt)
         {
             this.Emphasize = emphasize;
             this._matchIndexes = matchIndexes;
@@ -260,7 +259,42 @@ namespace Microsoft.PowerShell.Commands
         public string ToString(string directory)
         {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
-            string modifiedLine;
+
+            // Just return a single line if the user didn't
+            // enable context-tracking.
+            if (Context == null)
+            {
+                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+            }
+
+            // Otherwise, render the full context.
+            List<string> lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
+
+            int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
+            foreach (string contextLine in Context.DisplayPreContext)
+            {
+                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+            }
+
+            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+
+            foreach (string contextLine in Context.DisplayPostContext)
+            {
+                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
+            }
+
+            return string.Join(System.Environment.NewLine, lines.ToArray());
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object same format as ToString()
+        /// and adds color to the matched text if virtual terminal is supported.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <returns>The colored string representation of the match object.</returns>
+        public string ToEmphasizedString(string directory)
+        {
+            string originalLine = Line;
             if (Emphasize)
             {
                 string open;
@@ -277,45 +311,56 @@ namespace Microsoft.PowerShell.Commands
                     close = "*";
                 }
 
-                StringBuilder sb = new StringBuilder(Line);
-                for (int i = 0; i < _matchIndexes.Count; i++)
+                Line = String.Create(_matchIndexes.Count * (open.Length + close.Length) + Line.Length, Line, (chars, buf) =>
                 {
-                    int offset = open.Length + close.Length;
-                    sb.Insert(_matchIndexes[i] + (i * offset), open);
-                    sb.Insert(_matchIndexes[i] + _matchLengths[i] + ((i * offset) + open.Length), close);
-                }
+                    int lineIndex = 0;
+                    int charsIndex = 0;
+                    for (int i = 0; i < _matchIndexes.Count; i++) 
+                    {
+                        // Adds characters before match
+                        while (lineIndex < _matchIndexes[i])
+                        {
+                            chars[charsIndex] = Line[lineIndex];
+                            lineIndex++;
+                            charsIndex++;
+                        }
+                        
+                        // Adds opening vt sequence
+                        for (int j = 0; j < open.Length; j++)
+                        {
+                            chars[charsIndex] = open[j];
+                            charsIndex++;
+                        }
+                        
+                        // Adds characters being emphasized
+                        for (int j = 0; j < _matchLengths[i]; j++) {
+                            chars[charsIndex] = Line[lineIndex];
+                            lineIndex++;
+                            charsIndex++; 
+                        }
 
-                modifiedLine = sb.ToString();
+                        // Adds closing vt sequence
+                        for (int j = 0; j < close.Length; j++)
+                        {
+                            chars[charsIndex] = close[j];
+                            charsIndex++;
+                        }
+                    }
+
+                    // Adds remaining characters in line
+                    while (lineIndex < Line.Length)
+                    {
+                        chars[charsIndex] = Line[lineIndex];
+                        lineIndex++;
+                        charsIndex++;
+                    }
+                });
             }
-            else
-            {
-                modifiedLine = Line;
-            }
 
-            // Just return a single line if the user didn't
-            // enable context-tracking.
-            if (Context == null)
-            {
-                return FormatLine(modifiedLine, this.LineNumber, displayPath, EmptyPrefix);
-            }
+            string modifiedLine = ToString(directory);
+            Line = originalLine;
 
-            // Otherwise, render the full context.
-            List<string> lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
-
-            int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
-            foreach (string contextLine in Context.DisplayPreContext)
-            {
-                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
-            }
-
-            lines.Add(FormatLine(modifiedLine, displayLineNumber++, displayPath, MatchPrefix));
-
-            foreach (string contextLine in Context.DisplayPostContext)
-            {
-                lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
-            }
-
-            return string.Join(System.Environment.NewLine, lines.ToArray());
+            return modifiedLine;
         }
 
         /// <summary>
@@ -1733,7 +1778,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(false, indexes, lengths, Emphasize.IsPresent, Host.UI.SupportsVirtualTerminal)
+                matchResult = new MatchInfo(indexes, lengths, Emphasize.IsPresent, Host.UI.SupportsVirtualTerminal)
                 {
                     IgnoreCase = !CaseSensitive,
                     Line = operandString,
