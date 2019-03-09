@@ -278,7 +278,7 @@ namespace System.Management.Automation
 
                 // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
                 // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
-                // such as "Configuration keyword not allowed".
+                // such as "Configuration or Class keyword not allowed".
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
                     DefiningLanguageMode == PSLanguageMode.FullLanguage)

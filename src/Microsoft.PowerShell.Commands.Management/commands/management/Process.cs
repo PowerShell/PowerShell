@@ -189,14 +189,23 @@ namespace Microsoft.PowerShell.Commands
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
+                    string errorText = ProcessResources.NoProcessFoundForGivenName;
+                    string errorName = nameof(ProcessResources.NoProcessFoundForGivenName);
+
+                    if (int.TryParse(pattern, out int x) && x >= 0)
+                    {
+                        errorText = ProcessResources.RecommendIdTagForGivenName;
+                        errorName = nameof(ProcessResources.RecommendIdTagForGivenName);
+                    }
+
                     WriteNonTerminatingError(
-                        pattern,
-                        0,
-                        pattern,
-                        null,
-                        ProcessResources.NoProcessFoundForGivenName,
-                        "NoProcessFoundForGivenName",
-                        ErrorCategory.ObjectNotFound);
+                        processName: pattern,
+                        processId: 0,
+                        targetObject: pattern,
+                        innerException: null,
+                        resourceId: errorText,
+                        errorId: errorName,
+                        category: ErrorCategory.ObjectNotFound);
                 }
             }
         }
@@ -2680,10 +2689,11 @@ namespace Microsoft.PowerShell.Commands
 
         // Methods
 
-        [DllImport(PinvokeDllNames.GetStdHandleDllName, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
 
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
             string domain,
             IntPtr password,
@@ -2697,6 +2707,7 @@ namespace Microsoft.PowerShell.Commands
             SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CreateProcess([MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
             [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpCommandLine,
             SECURITY_ATTRIBUTES lpProcessAttributes,

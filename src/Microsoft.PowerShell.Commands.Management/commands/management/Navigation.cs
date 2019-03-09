@@ -1451,7 +1451,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (nameMatcher.IsMatch(drive.Name))
+                        if (nameMatcher != null && nameMatcher.IsMatch(drive.Name))
                             addDrive = true;
                     }
 

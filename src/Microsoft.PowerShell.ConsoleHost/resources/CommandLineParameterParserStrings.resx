@@ -186,6 +186,12 @@
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
     <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
   </data>
+  <data name="MissingCustomPipeNameArgument" xml:space="preserve">
+    <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Cannot process the command because -CustomPipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+  </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
     <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
   </data>

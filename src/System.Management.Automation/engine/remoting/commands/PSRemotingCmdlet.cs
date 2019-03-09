@@ -3317,9 +3317,8 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (ShouldUseSteppablePipelineOnServer)
+                if (ShouldUseSteppablePipelineOnServer && pipeline is RemotePipeline rPipeline)
                 {
-                    RemotePipeline rPipeline = pipeline as RemotePipeline;
                     rPipeline.SetIsNested(true);
                     rPipeline.SetIsSteppable(true);
                 }

@@ -94,8 +94,6 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.AddObject), staticFlags);
         internal static readonly MethodInfo EnumerableOps_Compare =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Compare), staticFlags);
-        internal static readonly MethodInfo EnumerableOps_Current =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Current), staticFlags);
         internal static readonly MethodInfo EnumerableOps_GetEnumerator =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetEnumerator), staticFlags);
         internal static readonly MethodInfo EnumerableOps_GetCOMEnumerator =
@@ -110,8 +108,6 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Where), staticFlags);
         internal static readonly MethodInfo EnumerableOps_ForEach =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ForEach), staticFlags);
-        internal static readonly MethodInfo EnumerableOps_MoveNext =
-            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MoveNext), staticFlags);
         internal static readonly MethodInfo EnumerableOps_Multiply =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.Multiply), staticFlags);
         internal static readonly MethodInfo EnumerableOps_PropertyGetter =
@@ -138,8 +134,6 @@ namespace System.Management.Automation.Language
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToException), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToMethodInvocationException =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), staticFlags);
-        internal static readonly MethodInfo ExceptionHandlingOps_ConvertToRuntimeException =
-            typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToRuntimeException), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_FindMatchingHandler =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), staticFlags);
         internal static readonly MethodInfo ExceptionHandlingOps_RestoreStoppingPipeline =
@@ -163,20 +157,6 @@ namespace System.Management.Automation.Language
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.LanguageMode), instanceFlags);
         internal static readonly PropertyInfo ExecutionContext_EngineIntrinsics =
             typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.EngineIntrinsics), instanceFlags);
-        internal static readonly PropertyInfo ExecutionContext_ShellFunctionErrorOutputPipe =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.ShellFunctionErrorOutputPipe), instanceFlags);
-        internal static readonly PropertyInfo ExecutionContext_TypeTable =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.TypeTable), instanceFlags);
-
-        internal static readonly PropertyInfo ExecutionContext_ExpressionWarningOutputPipe =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.ExpressionWarningOutputPipe), instanceFlags);
-        internal static readonly PropertyInfo ExecutionContext_ExpressionVerboseOutputPipe =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.ExpressionVerboseOutputPipe), instanceFlags);
-        internal static readonly PropertyInfo ExecutionContext_ExpressionDebugOutputPipe =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.ExpressionDebugOutputPipe), instanceFlags);
-        internal static readonly PropertyInfo ExecutionContext_ExpressionInformationOutputPipe =
-            typeof(ExecutionContext).GetProperty(nameof(ExecutionContext.ExpressionInformationOutputPipe), instanceFlags);
-
         internal static readonly MethodInfo FileRedirection_BindForExpression =
             typeof(FileRedirection).GetMethod(nameof(FileRedirection.BindForExpression), instanceFlags);
         internal static readonly MethodInfo FileRedirection_CallDoCompleteForExpression =
@@ -197,8 +177,6 @@ namespace System.Management.Automation.Language
             typeof(FunctionContext).GetField(nameof(FunctionContext._localsTuple), instanceFlags);
         internal static readonly FieldInfo FunctionContext__outputPipe =
             typeof(FunctionContext).GetField(nameof(FunctionContext._outputPipe), instanceFlags);
-        internal static readonly FieldInfo FunctionContext__traps =
-            typeof(FunctionContext).GetField(nameof(FunctionContext._traps), instanceFlags);
         internal static readonly MethodInfo FunctionContext_PopTrapHandlers =
             typeof(FunctionContext).GetMethod(nameof(FunctionContext.PopTrapHandlers), instanceFlags);
         internal static readonly MethodInfo FunctionContext_PushTrapHandlers =
@@ -221,10 +199,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo IComparable_CompareTo =
             typeof(IComparable).GetMethod(nameof(IComparable.CompareTo));
-
-        internal static readonly MethodInfo IDictionary_set_Item =
-            typeof(IDictionary).GetMethod("set_Item");
-
         internal static readonly MethodInfo IDisposable_Dispose =
             typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose));
 
@@ -425,9 +399,6 @@ namespace System.Management.Automation.Language
             typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.DoInvokeReturnAsIs), instanceFlags);
         internal static readonly MethodInfo ScriptBlock_InvokeAsDelegateHelper =
             typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.InvokeAsDelegateHelper), instanceFlags);
-        internal static readonly MethodInfo ScriptBlock_InvokeAsMemberFunction =
-            typeof(ScriptBlock).GetMethod(nameof(ScriptBlock.InvokeAsMemberFunction), instanceFlags);
-
         internal static readonly MethodInfo ScriptBlockExpressionWrapper_GetScriptBlock =
             typeof(ScriptBlockExpressionWrapper).GetMethod(nameof(ScriptBlockExpressionWrapper.GetScriptBlock), instanceFlags);
 
@@ -452,11 +423,6 @@ namespace System.Management.Automation.Language
             typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
-        internal static readonly MethodInfo String_get_Chars =
-            typeof(string).GetMethod("get_Chars");
-        internal static readonly PropertyInfo String_Length =
-            typeof(string).GetProperty(nameof(string.Length));
-
         internal static readonly MethodInfo StringOps_Compare =
             typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags);
         internal static readonly MethodInfo StringOps_Equals =
@@ -687,8 +653,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly CatchBlock[] _stmtCatchHandlers;
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
-        internal static Type DottedScriptCmdletLocalsTupleType =
-            MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes.Concat(SpecialVariables.PreferenceVariableTypes).ToArray());
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length, StringComparer.OrdinalIgnoreCase);
         internal static readonly Dictionary<string, int> DottedScriptCmdletLocalsNameIndexMap =

@@ -156,10 +156,9 @@ Function Set-BuildVariable
 }
 
 # Emulates running all of CI but locally
-function Invoke-AppVeyorFull
+function Invoke-CIFull
 {
     param(
-        [switch] $APPVEYOR_SCHEDULED_BUILD,
         [switch] $CleanRepo
     )
     if($CleanRepo)
@@ -167,14 +166,14 @@ function Invoke-AppVeyorFull
         Clear-PSRepo
     }
 
-    Invoke-AppVeyorInstall
-    Invoke-AppVeyorBuild
-    Invoke-AppVeyorTest -ErrorAction Continue
-    Invoke-AppveyorFinish
+    Invoke-CIInstall
+    Invoke-CIBuild
+    Invoke-CITest -ErrorAction Continue
+    Invoke-CIFinish
 }
 
 # Implements the CI 'build_script' step
-function Invoke-AppVeyorBuild
+function Invoke-CIBuild
 {
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
@@ -191,10 +190,24 @@ function Invoke-AppVeyorBuild
     }
 
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+
+    Save-PSOptions
+
+    $options = (Get-PSOptions)
+
+    $path = split-path -path $options.Output
+
+    $psOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath '../psoptions.json')
+    $buildZipPath = (Join-Path -Path $PSScriptRoot -ChildPath '../build.zip')
+
+    Compress-Archive -Path $path -DestinationPath $buildZipPath
+
+    Push-Artifact -Path $psOptionsPath -Name 'build'
+    Push-Artifact -Path $buildZipPath -Name 'build'
 }
 
 # Implements the CI 'install' step
-function Invoke-AppVeyorInstall
+function Invoke-CIInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
@@ -226,7 +239,7 @@ function Invoke-AppVeyorInstall
         # Provide credentials globally for remote tests.
         $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
         $ciRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+        $ciRemoteCredential | Export-Clixml -Path "$env:TEMP\CIRemoteCred.xml" -Force
 
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
@@ -249,35 +262,46 @@ function Invoke-AppVeyorInstall
     Start-PSBootstrap -Confirm:$false
 }
 
-# A wrapper to ensure that we upload test results
-# and that if we are not able to that it does not fail
-# the CI build
-function Update-TestResults
+function Invoke-CIxUnit
 {
     param(
-        [string] $resultsFile
+        [switch]
+        $SkipFailing
     )
-    if(!$pushedResults)
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+    if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
-            Write-Warning "Failed to push all artifacts for $resultsFile"
+        throw "CoreCLR pwsh.exe was not built"
+    }
+
+    $xUnitTestResultsFile = "$pwd\xUnitTestResults.xml"
+
+    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
+    Push-Artifact -Path $xUnitTestResultsFile -name xunit
+
+    if(!$SkipFailing.IsPresent)
+    {
+        # Fail the build, if tests failed
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     }
 }
 
 # Implement CI 'Test_script'
-function Invoke-AppVeyorTest
+function Invoke-CITest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
-        [string] $Purpose
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
+        [string] $Purpose,
+        [ValidateSet('CI', 'Others')]
+        [string] $TagSet
     )
     # CoreCLR
 
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     Write-Host -Foreground Green 'Run CoreCLR tests'
-    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
-    $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
+    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin-$TagSet.xml"
+    $testResultsAdminFile = "$pwd\TestsResultsAdmin-$TagSet.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -286,15 +310,18 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    if (Test-DailyBuild)
-    {
-        $ExcludeTag = @()
-        Write-Host -Foreground Green 'Running all CoreCLR tests..'
-    }
-    else
-    {
-        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
-        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+    switch ($TagSet) {
+        'CI' {
+            Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
+            $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+        }
+        'Others' {
+            Write-Host -Foreground Green 'Running non-CI CoreCLR tests..'
+            $ExcludeTag = @('CI')
+        }
+        Default {
+            throw "Unknow TagSet: '$TagSet'"
+        }
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -309,9 +336,7 @@ function Invoke-AppVeyorTest
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
-        Start-PSPester @arguments -Title 'Pester Unelevated'
-        Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
-        Update-TestResults -resultsFile $testResultsNonAdminFile
+        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -334,14 +359,12 @@ function Invoke-AppVeyorTest
             }
             Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
 
-            Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
-            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
     }
 
-    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
+    if ($Purpose -eq 'ElevatedPesterTests') {
         $arguments = @{
             Terse = $true
             Bindir = $env:CoreOutput
@@ -349,17 +372,10 @@ function Invoke-AppVeyorTest
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
         }
-        Start-PSPester @arguments -Title 'Pester Elevated'
-        Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
-        Update-TestResults -resultsFile $testResultsAdminFile
-
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-        Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-TestResults -resultsFile $ParallelXUnitTestResultsFile
+        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator())
@@ -383,8 +399,6 @@ function Invoke-AppVeyorTest
             }
             Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
 
-            Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
-            Update-TestResults -resultsFile $expFeatureTestResultFile
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
@@ -394,17 +408,16 @@ function Invoke-AppVeyorTest
 }
 
 # Implement CI 'after_test' phase
-function Invoke-AppVeyorAfterTest
+function Invoke-CIAfterTest
 {
     [CmdletBinding()]
     param()
 
     if (Test-DailyBuild)
     {
-        ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        Push-Artifact -Path $_ -Name 'CodeCoverage'
-        Push-Artifact $testPackageFullName -Name 'artifacts'
-        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
+        Start-PSBuild -Configuration 'CodeCoverage' -Clean
+
+        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
@@ -416,7 +429,7 @@ function Invoke-AppVeyorAfterTest
         $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
-        Push-Artifact $testPackageFullName -Name 'artifacts'
+        Push-Artifact $testPackageFullName -Name 'CodeCoverage'
     }
 }
 
@@ -452,9 +465,6 @@ function Compress-CoverageArtifacts
 
     # Create archive for test content, OpenCover module and CodeCoverage build
     $artifacts = New-Object System.Collections.ArrayList
-    $zipTestContentPath = Join-Path $pwd 'tests.zip'
-    Compress-TestContent -Destination $zipTestContentPath
-    $null = $artifacts.Add($zipTestContentPath)
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
@@ -484,7 +494,7 @@ function Get-ReleaseTag
 }
 
 # Implements CI 'on_finish' step
-function Invoke-AppveyorFinish
+function Invoke-CIFinish
 {
     param(
         [string] $NuGetKey
@@ -729,10 +739,10 @@ function Invoke-LinuxTests
     }
 
     try {
-        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
-        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        $xUnitTestResultsFile = "$pwd/xUnitTestResults.xml"
+        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     } catch {
         $result = "FAIL"
         if (!$resultError)

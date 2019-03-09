@@ -30,7 +30,7 @@ class CommitNode {
 }
 
 # These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
-# We have their names in this array so that we don't need to query Github to find out if they are powershell team members.
+# We have their names in this array so that we don't need to query GitHub to find out if they are powershell team members.
 $Script:powershell_team = @(
     "Robert Holt"
 )
@@ -43,7 +43,7 @@ $Script:community_login_map = @{
     "info@powercode-consulting.se" = "powercode"
 }
 
-# ignore dependency bumping bot (dependabot):
+# Ignore dependency bumping bot (Dependabot):
 $Script:attribution_ignore_list = @(
     'dependabot[bot]@users.noreply.github.com'
 )
@@ -200,28 +200,28 @@ function Get-ChangeLog
     # Array of PRs with multiple labels. The label "CL-BreakingChange" is allowed with some other "CL-*" label.
     $multipleLabelsPRs = @()
 
-    # Array of Breaking Change PRs.
+    # Array of PRs tagged with 'CL-BreakingChange' label.
     $clBreakingChange = @()
 
-    # Array of PRs with build and packaging changes.
+    # Array of PRs tagged with 'CL-BuildPackaging' label.
     $clBuildPackage = @()
 
-    # Array of PRs with code cleanup changes.
+    # Array of PRs tagged with 'CL-CodeCleanup' label.
     $clCodeCleanup = @()
 
-    # Array of PRs with documentation changes.
+    # Array of PRs tagged with 'CL-Docs' label.
     $clDocs = @()
 
-    # Array of PRs with engine changes.
+    # Array of PRs tagged with 'CL-Engine' label.
     $clEngine = @()
 
     # Array of PRs with general cmdlet changes.
     $clGeneral = @()
 
-    # Array of PRs with test changes.
+    # Array of PRs tagged with 'CL-Test' label.
     $clTest = @()
 
-    # Array of PRs with tool changes.
+    # Array of PRs tagged with 'CL-Tools' label.
     $clTools = @()
 
     # Array of PRs tagged with 'CL-Untagged' label.

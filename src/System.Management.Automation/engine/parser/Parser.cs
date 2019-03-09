@@ -4161,6 +4161,17 @@ namespace System.Management.Automation.Language
             // G      class-member  new-lines:opt
             // G      class-member-list   class-member
 
+            // PowerShell classes are not supported in ConstrainedLanguage
+            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                ReportError(classToken.Extent,
+                            nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
+                            ParserStrings.ClassesNotAllowedInConstrainedLanguage,
+                            classToken.Kind.Text());
+
+                return null;
+            }
+
             SkipNewlines();
             Token classNameToken;
             var name = SimpleNameRule(out classNameToken);

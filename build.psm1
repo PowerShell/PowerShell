@@ -15,7 +15,7 @@ $tagsUpToDate = $false
 # When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
 # Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
 # This function can ensure that tags have been fetched.
-# This function is used during the setup phase in tools/ci.psm1 and tools/travis.ps1
+# This function is used during the setup phase in tools/ci.psm1
 function Sync-PSTags
 {
     param(
@@ -23,7 +23,7 @@ function Sync-PSTags
         $AddRemoteIfMissing
     )
 
-    $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
+    $PowerShellRemoteUrl = "https://github.com/PowerShell/PowerShell.git"
     $upstreamRemoteDefaultName = 'upstream'
     $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
     $upstreamRemote = $null
@@ -379,6 +379,20 @@ Fix steps:
             Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             Write-Log "PowerShell output: $($Options.Output)"
+
+            if ($Options.Runtime -eq 'fxdependent') {
+                $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
+
+                try {
+                    Push-Location $globalToolSrcFolder
+                    $Arguments += "--output", $publishPath
+                    Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                    Start-NativeExecution { dotnet $Arguments }
+                }
+                finally {
+                    Pop-Location
+                }
+            }
         }
     } finally {
         Pop-Location
@@ -497,6 +511,10 @@ function Restore-PSPackage
     if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+
+        if ($Options.Runtime -eq 'fxdependent') {
+            $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
+        }
     }
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
@@ -1374,7 +1392,7 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
+        [string] $xUnitTestResultsFile = "xUnitResults.xml"
     )
 
     # Add .NET CLI tools to PATH
@@ -1420,23 +1438,15 @@ function Start-PSxUnit {
             }
         }
 
-        dotnet build --configuration $Options.configuration
-
-        if (Test-Path $ParallelTestResultsFile) {
-            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
+        if (Test-Path $xUnitTestResultsFile) {
+            Remove-Item $xUnitTestResultsFile -Force -ErrorAction SilentlyContinue
         }
 
-        # we are having intermittent issues on macOS with these tests failing.
-        # VSTS has suggested forcing them to be sequential
-        if($env:TF_BUILD -and $IsMacOS)
-        {
-            Write-Log 'Forcing parallel xunit tests to run sequentially.'
-            dotnet test -p:ParallelizeTestCollections=false --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
-        } else {
-            dotnet test --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
-        }
+        # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
+        # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
+        dotnet test --configuration $Options.configuration --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
 
-        Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
+        Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
     finally {
         Pop-Location
@@ -2726,45 +2736,6 @@ assembly
             $combinedLog
         }
     }
-}
-
-# Save PSOptions to be restored by Restore-PSOptions
-function Save-PSOptions {
-    param(
-        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
-
-        [ValidateNotNullOrEmpty()]
-        [object]
-        $Options = (Get-PSOptions -DefaultToNew)
-    )
-
-    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
-}
-
-# Restore PSOptions
-# Optionally remove the PSOptions file
-function Restore-PSOptions {
-    param(
-        [ValidateScript({Test-Path $_})]
-        [string]
-        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
-        [switch]
-        $Remove
-    )
-
-    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
-
-    if($Remove)
-    {
-        # Remove PSOptions.
-        # The file is only used to set the PSOptions.
-        Remove-Item -Path $psOptionsPath
-    }
-
-    Set-PSOptions -Options $options
 }
 
 # Save PSOptions to be restored by Restore-PSOptions
