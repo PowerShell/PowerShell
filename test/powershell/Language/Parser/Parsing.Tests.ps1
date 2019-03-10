@@ -216,6 +216,7 @@ Describe 'switch statement parsing' -Tags "CI" {
     ShouldBeParseError 'switch' PipelineValueRequired 6
     ShouldBeParseError 'switch -abc' InvalidSwitchFlag,PipelineValueRequired 7,11
     ShouldBeParseError 'switch -file' MissingFilenameOption 12
+    ShouldBeParseError 'switch -literalfile' MissingFilenameOption 19
     ShouldBeParseError 'switch -file a (1)' PipelineValueRequired,MissingCurlyBraceInSwitchStatement 15,18
     ShouldBeParseError 'switch (' PipelineValueRequired 8
     ShouldBeParseError 'switch ()' PipelineValueRequired,MissingCurlyBraceInSwitchStatement 8,9
@@ -230,6 +231,7 @@ Describe 'switch statement parsing' -Tags "CI" {
     Test-ErrorStmt 'switch ('              'switch ('
     Test-ErrorStmt 'switch ()'             'switch ()'
     Test-ErrorStmt 'switch -file'          'switch -file'
+    Test-ErrorStmt 'switch -literalfile'          'switch -literalfile'
     Test-ErrorStmt              'switch -file a'         'switch -file a'
     Test-ErrorStmtForSwitchFlag 'switch -file a'         'file'  'a' 'a' 'a'
     Test-ErrorStmt              'switch -file a (1)'     'switch -file a (1)'  '1' '1' '1'

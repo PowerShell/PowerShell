@@ -535,6 +535,19 @@ try
 
             $rs.Dispose()
         }
+
+        It "Verifies that switch -literalfile will not work in constrained language without provider" {
+
+            [initialsessionstate] $iss = [initialsessionstate]::Create()
+            $iss.LanguageMode = "ConstrainedLanguage"
+            [runspace] $rs = [runspacefactory]::CreateRunspace($iss)
+            $rs.Open()
+            $pl = $rs.CreatePipeline("switch -literalfile $testDrive/foo.txt { 'A' { 'B' } }")
+
+            $e = { $pl.Invoke() } | Should -Throw -ErrorId "DriveNotFoundException"
+
+            $rs.Dispose()
+        }
     }
 
     Describe "Get content syntax in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
@@ -1003,7 +1016,7 @@ try
             $scriptModuleName = "UntrustedModuleScriptBlockTest"
             $scriptModulePath = Join-Path $TestDrive ($scriptModuleName + ".psm1")
             @'
-            function RunScriptBlock {{ 
+            function RunScriptBlock {{
                 $sb = (Get-Command -Name {0}).ScriptBlock
 
                 # ScriptBlock trusted function, TrustedFn, is dot sourced into current scope
