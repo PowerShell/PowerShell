@@ -375,10 +375,9 @@ namespace Microsoft.PowerShell.Commands
             var moduleSpecTable = new Dictionary<string, ModuleSpecification>(StringComparer.OrdinalIgnoreCase);
             if (FullyQualifiedName != null)
             {
-                // TODO:
-                // FullyQualifiedName.Name could be a path, in which case it will not match module.Name.
-                // This is potentially a bug (since version checks are ignored).
-                // We should normalize FullyQualifiedName.Name here with ModuleIntrinsics.NormalizeModuleName().
+                FullyQualifiedName = FullyQualifiedName.Select(
+                    ModuleSpecification => ModuleSpecification.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)
+                ).ToArray();
                 moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
                 strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
             }
@@ -545,26 +544,31 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PSModuleInfo module in modules)
             {
-                // TODO:
-                // moduleSpecification.Name may be a path and will not match module.Name when they refer to the same module.
-                // This actually causes the module to be returned always, so other specification checks are skipped erroneously.
-                // Instead we need to be able to look up or match modules by path as well (e.g. a new comparer for PSModuleInfo).
-
-                // No table entry means we return the module
-                if (!moduleSpecificationTable.TryGetValue(module.Name, out ModuleSpecification moduleSpecification))
-                {
-                    yield return module;
-                    continue;
-                }
+                IEnumerable<ModuleSpecification> candidateModuleSpecs = GetCandidateModuleSpecs(moduleSpecificationTable, module);
 
                 // Modules with table entries only get returned if they match them
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification))
-                {
-                    yield return module;
+                // We skip the name check since modules have already been prefiltered base on the moduleSpec path/name
+                foreach(ModuleSpecification moduleSpec in candidateModuleSpecs) {
+                    if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpec, skipNameCheck: true))
+                    {
+                        yield return module;
+                    }
+                }
+            }
+        }
+    
+        private static IEnumerable<ModuleSpecification> GetCandidateModuleSpecs(
+            IDictionary<string, ModuleSpecification> moduleSpecTable,
+            PSModuleInfo module)
+        {
+            foreach (ModuleSpecification moduleSpec in moduleSpecTable.Values) {
+                if (moduleSpec.Name == module.Name || moduleSpec.Name == module.Path || module.Path.Contains(moduleSpec.Name)) {
+                    yield return moduleSpec;
                 }
             }
         }
     }
+
 
     /// <summary>
     /// PSEditionArgumentCompleter for PowerShell Edition names.
