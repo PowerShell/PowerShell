@@ -2618,9 +2618,10 @@ namespace System.Management.Automation.Language
                         specifiedFlags.Add("parallel", new Tuple<Token, Ast>(switchParameterToken, null));
                     }
                 }
-                else if (IsSpecificParameter(switchParameterToken, "file"))
+                else if (IsSpecificParameter(switchParameterToken, "file") || IsSpecificParameter(switchParameterToken, "literalfile"))
                 {
-                    flags |= SwitchFlags.File;
+                    bool isLiteralPath = IsSpecificParameter(switchParameterToken, "literalfile");
+                    flags |= isLiteralPath ? SwitchFlags.LiteralFile : SwitchFlags.File;
                     SkipNewlines();
                     ExpressionAst fileNameExpr = GetSingleCommandArgument(CommandArgumentContext.FileName);
                     if (fileNameExpr == null)
@@ -2632,7 +2633,11 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingFilenameOption),
                             ParserStrings.MissingFilenameOption);
 
-                        if (!specifiedFlags.ContainsKey("file"))
+                        if (isLiteralPath && !specifiedFlags.ContainsKey("literalfile"))
+                        {
+                            specifiedFlags.Add("literalfile", new Tuple<Token, Ast>(switchParameterToken, null));
+                        }
+                        else if (!isLiteralPath && !specifiedFlags.ContainsKey("file"))
                         {
                             specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, null));
                         }
@@ -2643,10 +2648,15 @@ namespace System.Management.Automation.Language
                         condition = new PipelineAst(fileNameExpr.Extent,
                                                     new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), background: false);
 
-                        if (!specifiedFlags.ContainsKey("file"))
+                        if (isLiteralPath && !specifiedFlags.ContainsKey("literalfile"))
                         {
-                            specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, condition));
+                            specifiedFlags.Add("literalfile", new Tuple<Token, Ast>(switchParameterToken, null));
                         }
+                        else if (!isLiteralPath && !specifiedFlags.ContainsKey("file"))
+                        {
+                            specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, null));
+                        }
+
                     }
                 }
                 else

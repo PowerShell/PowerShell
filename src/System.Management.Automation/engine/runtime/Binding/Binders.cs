@@ -1488,7 +1488,7 @@ namespace System.Management.Automation.Language
         // Increase this cache size if we add a new flag to the switch statement that:
         //    - Influences evaluation of switch elements
         //    - Is commonly used
-        private static readonly PSSwitchClauseEvalBinder[] s_binderCache = new PSSwitchClauseEvalBinder[32];
+        private static readonly PSSwitchClauseEvalBinder[] s_binderCache = new PSSwitchClauseEvalBinder[65];
         private readonly SwitchFlags _flags;
 
         internal static PSSwitchClauseEvalBinder Get(SwitchFlags flags)

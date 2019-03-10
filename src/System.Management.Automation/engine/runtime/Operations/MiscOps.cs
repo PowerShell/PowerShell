@@ -2413,6 +2413,51 @@ namespace System.Management.Automation
                 throw;
             }
         }
+
+        internal static string ResolveLiteralFilePath(IScriptExtent errorExtent, object obj, ExecutionContext context)
+        {
+            try
+            {
+                FileInfo file = obj as FileInfo;
+                string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
+
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    throw InterpreterError.NewInterpreterException(filePath,
+                        typeof(RuntimeException), errorExtent, "InvalidFilenameOption", ParserStrings.InvalidFilenameOption);
+                }
+
+                ProviderInfo provider;
+                SessionState sessionState = new SessionState(context.EngineSessionState);
+
+                filePath = sessionState.Path.GetUnresolvedProviderPathFromPSPath(filePath, out provider, out PSDriveInfo drive);
+
+                // Make sure that the path is in the file system - that's all we can handle currently...
+                if (!provider.NameEquals(context.ProviderNames.FileSystem))
+                {
+                    // "The current provider ({0}) cannot open a file"
+                    throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
+                                                                   "FileOpenError", ParserStrings.FileOpenError,
+                                                                   provider.FullName);
+                }
+
+                // Make sure the file was found...
+                if (filePath == null)
+                {
+                    // "No files matching '{0}' were found.."
+                    throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
+                                                                   "FileNotFound", ParserStrings.FileNotFound, filePath);
+                }
+                return filePath;
+            }
+            catch (RuntimeException rte)
+            {
+                // Add the invocation info to this command...
+                if (rte.ErrorRecord != null && rte.ErrorRecord.InvocationInfo == null)
+                    rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorExtent, context));
+                throw;
+            }
+        }
     }
 
     /// <summary>

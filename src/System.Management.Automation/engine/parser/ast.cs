@@ -4594,6 +4594,11 @@ namespace System.Management.Automation.Language
         /// </summary>
         Parallel = 0x20,
 
+        /// <summary>
+        /// The -literalfile flag.
+        /// </summary>
+        LiteralFile = 0x40,
+
         // If any flags are added that influence evaluation of switch elements,
         // then the caching strategy in SwitchClauseEvalBinder needs to be updated,
         // and possibly its _binderCache.

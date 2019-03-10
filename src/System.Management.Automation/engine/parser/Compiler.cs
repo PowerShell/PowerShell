@@ -439,6 +439,8 @@ namespace System.Management.Automation.Language
             typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), staticFlags);
         internal static readonly MethodInfo SwitchOps_ResolveFilePath =
             typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), staticFlags);
+        internal static readonly MethodInfo SwitchOps_ResolveLiteralFilePath =
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveLiteralFilePath), staticFlags);
 
         internal static readonly MethodInfo TypeOps_AsOperator =
             typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), staticFlags);
@@ -3753,7 +3755,7 @@ namespace System.Management.Automation.Language
 
             var switchBodyGenerator = GetSwitchBodyGenerator(switchStatementAst, avs, skipDefault);
 
-            if ((switchStatementAst.Flags & SwitchFlags.File) != 0)
+            if ((switchStatementAst.Flags & (SwitchFlags.File | SwitchFlags.LiteralFile)) != 0)
             {
                 // Generate:
                 //
@@ -3782,6 +3784,7 @@ namespace System.Management.Automation.Language
                 //        if (sr != null) sr.Dispose();
                 //    }
 
+                bool isLiteralPath = (switchStatementAst.Flags & SwitchFlags.LiteralFile) == SwitchFlags.LiteralFile;
                 var exprs = new List<Expression>();
 
                 var path = NewTemp(typeof(string), "path");
@@ -3796,7 +3799,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(
                     Expression.Assign(
                         path,
-                        Expression.Call(CachedReflectionInfo.SwitchOps_ResolveFilePath,
+                        Expression.Call(isLiteralPath ? CachedReflectionInfo.SwitchOps_ResolveLiteralFilePath : CachedReflectionInfo.SwitchOps_ResolveFilePath,
                                         Expression.Constant(switchStatementAst.Condition.Extent),
                                         cond,
                                         _executionContextParameter)));
