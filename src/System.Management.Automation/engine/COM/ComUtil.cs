@@ -315,7 +315,7 @@ namespace System.Management.Automation
                     ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
                 }
 
-#pragma warning enable 56515
+#pragma warning restore 56515
 
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 

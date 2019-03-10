@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Get path
                 return instance.Properties["PSPath"].Value.ToString();
-#pragma warning enable 56506
+#pragma warning restore 56506
             }
         }
 
