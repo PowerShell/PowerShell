@@ -548,7 +548,8 @@ namespace Microsoft.PowerShell.Commands
 
                 // Modules with table entries only get returned if they match them
                 // We skip the name check since modules have already been prefiltered base on the moduleSpec path/name
-                foreach(ModuleSpecification moduleSpec in candidateModuleSpecs) {
+                foreach (ModuleSpecification moduleSpec in candidateModuleSpecs)
+                {
                     if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpec, skipNameCheck: true))
                     {
                         yield return module;
