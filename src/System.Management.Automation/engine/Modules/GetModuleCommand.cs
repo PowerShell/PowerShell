@@ -578,7 +578,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     /// <summary>
     /// PSEditionArgumentCompleter for PowerShell Edition names.
     /// </summary>
