@@ -412,7 +412,7 @@ namespace System.Management.Automation.Language
         internal static readonly ConstructorInfo StreamReader_ctor =
             typeof(StreamReader).GetConstructor(new Type[] { typeof(string) });
         internal static readonly MethodInfo StreamReader_ReadLine =
-            typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine));
+            typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine), Type.EmptyTypes);
 
         internal static readonly ConstructorInfo String_ctor_char_int =
             typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
