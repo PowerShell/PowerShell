@@ -1488,13 +1488,19 @@ namespace System.Management.Automation.Language
         // Increase this cache size if we add a new flag to the switch statement that:
         //    - Influences evaluation of switch elements
         //    - Is commonly used
-        private static readonly PSSwitchClauseEvalBinder[] s_binderCache = new PSSwitchClauseEvalBinder[65];
+        private static readonly PSSwitchClauseEvalBinder[] s_binderCache = new PSSwitchClauseEvalBinder[32];
         private readonly SwitchFlags _flags;
 
         internal static PSSwitchClauseEvalBinder Get(SwitchFlags flags)
         {
             lock (s_binderCache)
             {
+                // Switch clauses for File and LiteralFile options share the same cache plane
+                if ((flags & SwitchFlags.LiteralFile) == SwitchFlags.LiteralFile)
+                {
+                    flags = (flags & ~SwitchFlags.LiteralFile) | SwitchFlags.File;
+                }
+
                 return s_binderCache[(int)flags] ?? (s_binderCache[(int)flags] = new PSSwitchClauseEvalBinder(flags));
             }
         }
