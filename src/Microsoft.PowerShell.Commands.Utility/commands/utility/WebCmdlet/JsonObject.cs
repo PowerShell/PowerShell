@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
                         object value;
                         try
                         {
-                            value = getMethod.Invoke(o, new object[0]);
+                            value = getMethod.Invoke(o, Array.Empty<object>());
                         }
                         catch (Exception)
                         {

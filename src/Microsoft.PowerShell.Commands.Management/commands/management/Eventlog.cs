@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName { get; set; } = new string[0];
+        public string[] ComputerName { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Read only this number of entries.

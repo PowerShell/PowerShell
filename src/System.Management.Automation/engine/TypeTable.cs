@@ -1488,7 +1488,7 @@ namespace System.Management.Automation.Runspaces
             UpdateKey();
         }
 
-        internal static readonly ConsolidatedString Empty = new ConsolidatedString(Utils.EmptyArray<string>());
+        internal static readonly ConsolidatedString Empty = new ConsolidatedString(Array.Empty<string>());
 
         internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 

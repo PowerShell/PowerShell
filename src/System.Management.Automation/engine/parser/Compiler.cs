@@ -33,9 +33,9 @@ namespace System.Management.Automation.Language
         internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
         internal static readonly ConstructorInfo ObjectList_ctor =
-            typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
+            typeof(List<object>).GetConstructor(Type.EmptyTypes);
         internal static readonly MethodInfo ObjectList_ToArray =
-            typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
+            typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
@@ -778,7 +778,7 @@ namespace System.Management.Automation.Language
 
         private IEnumerable<Expression> CompileInvocationArguments(IEnumerable<ExpressionAst> arguments)
         {
-            return arguments == null ? Utils.EmptyArray<Expression>() : arguments.Select(CompileExpressionOperand);
+            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand);
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
@@ -1266,7 +1266,7 @@ namespace System.Management.Automation.Language
             OutputTypeAttribute result;
             if (ast.PositionalArguments.Count == 0)
             {
-                result = new OutputTypeAttribute(Utils.EmptyArray<string>());
+                result = new OutputTypeAttribute(Array.Empty<string>());
             }
             else if (ast.PositionalArguments.Count == 1)
             {
@@ -3726,7 +3726,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression CreateThrow(Type resultType, Type exception, params object[] exceptionArgs)
         {
-            Type[] argTypes = PSTypeExtensions.EmptyTypes;
+            Type[] argTypes = Type.EmptyTypes;
             if (exceptionArgs != null)
             {
                 argTypes = new Type[exceptionArgs.Length];
@@ -5914,7 +5914,7 @@ namespace System.Management.Automation.Language
             }
 
             return InvokeMemberExpressionAst.Arguments == null
-               ? Utils.EmptyArray<Expression>()
+               ? Array.Empty<Expression>()
                : (InvokeMemberExpressionAst.Arguments.Select(compiler.Compile)).ToArray();
         }
 

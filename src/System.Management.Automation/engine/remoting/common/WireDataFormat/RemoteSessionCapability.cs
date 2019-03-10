@@ -130,7 +130,7 @@ namespace System.Management.Automation.Remoting
                 // ignore it and dont try to serialize again.
                 if (e != null)
                 {
-                    _timeZoneInByteFormat = Utils.EmptyArray<byte>();
+                    _timeZoneInByteFormat = Array.Empty<byte>();
                 }
             }
 

@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    var emptyArray = Utils.EmptyArray<object>();
+                    var emptyArray = Array.Empty<object>();
                     _transactedScript.InvokeUsingCmdlet(
                         contextCmdlet: this,
                         useLocalScope: false,

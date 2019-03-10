@@ -506,7 +506,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
@@ -526,7 +526,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
                 dollarUnder: LanguagePrimitives.AsPSObjectOrNull(element),
                 input: AutomationNull.Value,
                 scriptThis: AutomationNull.Value,
-                args: Utils.EmptyArray<object>());
+                args: Array.Empty<object>());
 
             if (!LanguagePrimitives.IsTrue(result))
             {

@@ -608,12 +608,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The glob string used to determine which items are included.
         /// </summary>
-        private string[] _include = new string[0];
+        private string[] _include = Array.Empty<string>();
 
         /// <summary>
         /// The glob string used to determine which items are excluded.
         /// </summary>
-        private string[] _exclude = new string[0];
+        private string[] _exclude = Array.Empty<string>();
     }
 
 #if !UNIX

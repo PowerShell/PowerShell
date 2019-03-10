@@ -124,7 +124,7 @@ namespace System.Management.Automation
 
     internal class TypeInferenceContext
     {
-        public static readonly PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
+        public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
         private readonly PowerShell _powerShell;
 
         public TypeInferenceContext()
@@ -1496,13 +1496,13 @@ namespace System.Management.Automation
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
             if (memberAsStringConst == null)
             {
-                return Utils.EmptyArray<PSTypeName>();
+                return Array.Empty<PSTypeName>();
             }
 
             var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
             {
-                return Utils.EmptyArray<PSTypeName>();
+                return Array.Empty<PSTypeName>();
             }
 
             var res = new List<PSTypeName>(10);
