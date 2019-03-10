@@ -496,6 +496,26 @@ namespace Microsoft.PowerShell.Commands
         public string ReleaseNotes { get; set; }
 
         /// <summary>
+        /// Specify that the module is prerelease.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        [ValidateNotNullOrEmpty]
+        public string Prerelease { get; set; }
+
+        /// <summary>
+        /// Specify whether the module requires explicit user acceptance for install/update/save.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter RequireLicenseAcceptance { get; set; }
+
+        /// <summary>
+        /// Specify the ReleaseNotes.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        [ValidateNotNullOrEmpty]
+        public string[] ExternalModuleDependencies { get; set; }
+
+        /// <summary>
         /// Specify the HelpInfo URI.
         /// </summary>
         [Parameter]
@@ -1197,6 +1217,9 @@ namespace Microsoft.PowerShell.Commands
                 BuildModuleManifest(result, "ProjectUri", Modules.ProjectUri, ProjectUri != null, () => QuoteName(ProjectUri), streamWriter);
                 BuildModuleManifest(result, "IconUri", Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
                 BuildModuleManifest(result, "ReleaseNotes", Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
+                BuildModuleManifest(result, "Prerelease", Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
+                BuildModuleManifest(result, "RequireLicenseAcceptance", Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => {return RequireLicenseAcceptance.IsPresent ? "$true" : "False";}, streamWriter);
+                BuildModuleManifest(result, "ExternalModuleDependencies", Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");
                 result.Append(ManifestComment(StringUtil.Format(Modules.EndOfManifestHashTable, "PSData"), streamWriter));
