@@ -27,7 +27,6 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Az\Az.psm1" > $null
 
         $fullyQualifiedPathTestCases = @(
-            # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
             @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }

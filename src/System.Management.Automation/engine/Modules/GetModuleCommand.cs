@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    
+
         private static IEnumerable<ModuleSpecification> GetCandidateModuleSpecs(
             IDictionary<string, ModuleSpecification> moduleSpecTable,
             PSModuleInfo module)
