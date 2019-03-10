@@ -2650,11 +2650,11 @@ namespace System.Management.Automation.Language
 
                         if (isLiteralPath && !specifiedFlags.ContainsKey("literalfile"))
                         {
-                            specifiedFlags.Add("literalfile", new Tuple<Token, Ast>(switchParameterToken, null));
+                            specifiedFlags.Add("literalfile", new Tuple<Token, Ast>(switchParameterToken, condition));
                         }
                         else if (!isLiteralPath && !specifiedFlags.ContainsKey("file"))
                         {
-                            specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, null));
+                            specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, condition));
                         }
 
                     }
