@@ -1889,8 +1889,6 @@ namespace Microsoft.PowerShell.Commands
                     // Handle the '-SecurityDescriptorSddl' parameter
                     if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
-                        //IntPtr hDacl = IntPtr.Zero;
-                        IntPtr lpDacl = IntPtr.Zero;
                         var rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptorSddl);
                         RawAcl rawDiscretionaryAcl  = rawSecurityDescriptor.DiscretionaryAcl ;
                         var  discretionaryAcl   = new DiscretionaryAcl (false, false, rawDiscretionaryAcl );
@@ -1901,22 +1899,33 @@ namespace Microsoft.PowerShell.Commands
                         byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
                         rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
 
-                        GCHandle hDacl = GCHandle.Alloc(rawDacl, GCHandleType.Pinned);
-                        lpDacl = hDacl.AddrOfPinnedObject();
-
-                        status = NativeMethods.SetServiceObjectSecurity(
-                                    hService,
-                                    SecurityInfos.DiscretionaryAcl,
-                                    lpDacl);
-
-                        hDacl.Free();
-
-                        if (!status)
+                        GCHandle hDacl = GCHandle.Alloc(securityDescriptorByte, GCHandleType.Pinned);
+                        try
                         {
-                            int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
-                            string errorMessage = StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl,Name,exception.Message);
-                            throw new Exception(errorMessage);
+                            status = NativeMethods.SetServiceObjectSecurity(
+                                        hService,
+                                        SecurityInfos.DiscretionaryAcl,
+                                        hDacl.AddrOfPinnedObject());
+
+                            if (!status)
+                            {
+                                int lastError = Marshal.GetLastWin32Error();
+                                Win32Exception exception = new Win32Exception(lastError);
+                                bool accessDenied = exception.NativeErrorCode == 0x5;
+                                WriteNonTerminatingError(
+                                    service,
+                                    exception,
+                                    nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
+                                    StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, Name, exception.Message),
+                                    accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.WriteError);
+                            }
+                        }
+                        finally
+                        {
+                            if (hDacl.IsAllocated)
+                            {
+                                hDacl.Free();
+                            }
                         }
                     }
 
