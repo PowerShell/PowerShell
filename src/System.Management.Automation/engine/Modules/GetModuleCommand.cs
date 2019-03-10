@@ -376,8 +376,8 @@ namespace Microsoft.PowerShell.Commands
             if (FullyQualifiedName != null)
             {
                 FullyQualifiedName = FullyQualifiedName.Select(
-                    ModuleSpecification => ModuleSpecification.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)
-                ).ToArray();
+                    ModuleSpecification => ModuleSpecification.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path))
+                .ToArray();
                 moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
                 strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
             }
@@ -557,12 +557,21 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Take a dictionary of module specifications and return those that potentially match the module
+        /// passed in as a parameter (checks on names and paths).
+        /// </summary>
+        /// <param name="moduleSpecTable">The module specifications to filter candidates from.</param>
+        /// <param name="module">The module to find candidates for from the module specification table.</param>
+        /// <returns>The module specifications matching the module based on name, path and subpath.</returns>
         private static IEnumerable<ModuleSpecification> GetCandidateModuleSpecs(
             IDictionary<string, ModuleSpecification> moduleSpecTable,
             PSModuleInfo module)
         {
-            foreach (ModuleSpecification moduleSpec in moduleSpecTable.Values) {
-                if (moduleSpec.Name == module.Name || moduleSpec.Name == module.Path || module.Path.Contains(moduleSpec.Name)) {
+            foreach (ModuleSpecification moduleSpec in moduleSpecTable.Values)
+            {
+                if (moduleSpec.Name == module.Name || moduleSpec.Name == module.Path || module.Path.Contains(moduleSpec.Name))
+                {
                     yield return moduleSpec;
                 }
             }
