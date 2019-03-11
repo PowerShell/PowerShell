@@ -10,7 +10,7 @@ $PSDefaultParameterValues["it:skip"] = $skipTest
 
 try
 {
-    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows","RequireSudoOnUnix" {
 
         BeforeAll {
 
@@ -159,7 +159,7 @@ try
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
-	    }
+	}
     }
 
     Describe "Import-PSSession Cmdlet error handling" -tags "Feature","RequireAdminOnWindows" {
