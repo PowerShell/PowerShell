@@ -1624,7 +1624,7 @@ namespace System.Management.Automation
             int parametersLength = parameters.Length;
             if (parametersLength == 0)
             {
-                return Utils.EmptyArray<object>();
+                return Array.Empty<object>();
             }
 
             object[] retValue = new object[parametersLength];

@@ -190,7 +190,7 @@ namespace System.Management.Automation
                     IntPtr.Zero,
                     pSignInfo,
                     IntPtr.Zero);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 if (si.pSignExtInfo != null)
                 {
@@ -513,7 +513,7 @@ namespace System.Management.Automation
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 wtData = Marshal.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
             }
@@ -538,7 +538,7 @@ namespace System.Management.Automation
 #pragma warning disable 56523
             IntPtr pCert =
                 NativeMethods.WTHelperGetProvCertFromChain(pSigner, 0);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
             if (pCert != IntPtr.Zero)
             {
@@ -608,7 +608,7 @@ namespace System.Management.Automation
 #pragma warning disable 56523
             IntPtr pProvData =
                 NativeMethods.WTHelperProvDataFromStateData(wvtStateData);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
             if (pProvData != IntPtr.Zero)
             {

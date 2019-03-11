@@ -8,6 +8,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Collections;
+using System.Collections.Generic;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -145,23 +146,12 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        // RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml, .dll or .exe.  Anything else is invalid.
-                        if (module.RootModule != null && module.RootModule != string.Empty)
+                        if (!HasValidRootModule(module))
                         {
-                            string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
-                            if ((!IsValidFilePath(module.RootModule, module, true) && !IsValidGacAssembly(module.RootModule)) ||
-                                (!rootModuleExt.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
-                            )
-                            {
-                                string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
-                                var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidRootModuleInModuleManifest",
-                                        ErrorCategory.InvalidArgument, _path);
-                                WriteError(errorRecord);
-                            }
+                            string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
+                            var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidRootModuleInModuleManifest",
+                                    ErrorCategory.InvalidArgument, _path);
+                            WriteError(errorRecord);
                         }
 
                         Hashtable data = null;
@@ -300,6 +290,60 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
+        }
+
+        // All module extensions except ".psd1" are valid RootModule extensions
+        private static readonly IReadOnlyList<string> s_validRootModuleExtensions = ModuleIntrinsics.PSModuleExtensions
+            .Where(ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        /// <summary>
+        /// Checks whether the RootModule field of a module is valid or not.
+        /// Valid root modules are:
+        ///  - null
+        ///  - Empty string
+        ///  - A valid non-psd1 module file (psm1, cdxml, xaml, dll), as name with extension, name without extension, or path.
+        /// </summary>
+        /// <param name="module">The module for which we want to check the validity of the root module.</param>
+        /// <returns>True if the root module is valid, false otherwise.</returns>
+        private bool HasValidRootModule(PSModuleInfo module)
+        {
+            // Empty/null root modules are allowed
+            if (string.IsNullOrEmpty(module.RootModule))
+            {
+                return true;
+            }
+
+            // GAC assemblies are allowed
+            if (IsValidGacAssembly(module.RootModule))
+            {
+                return true;
+            }
+
+            // Check for extensions
+            string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
+            if (!string.IsNullOrEmpty(rootModuleExt))
+            {
+                // Check that the root module's extension is an allowed one
+                if (!s_validRootModuleExtensions.Contains(rootModuleExt, StringComparer.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                // Check the file path of the full root module
+                return IsValidFilePath(module.RootModule, module, verifyPathScope: true);
+            }
+
+            // We have no extension, so we need to check all of them
+            foreach (string extension in s_validRootModuleExtensions)
+            {
+                if (IsValidFilePath(module.RootModule + extension, module, verifyPathScope: true))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -804,7 +804,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (this.Type == (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY)
                         return _data;
                     else
-                        return Utils.EmptyArray<byte>();
+                        return Array.Empty<byte>();
                 }
             }
 
