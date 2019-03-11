@@ -82,9 +82,9 @@ jobs:
   parameters:
     parentJobs:
       - WinPackageSigningJob
-      - build_deb
-      - build_rpm
-      - build_alpine
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
       - build_macOS
 
 - template: templates/testartifacts.yml
