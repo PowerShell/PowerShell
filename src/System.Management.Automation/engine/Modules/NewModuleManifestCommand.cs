@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter RequireLicenseAcceptance { get; set; }
 
         /// <summary>
-        /// Specify the ReleaseNotes.
+        /// Specify the external module dependencies.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
