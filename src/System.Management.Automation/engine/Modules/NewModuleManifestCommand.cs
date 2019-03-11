@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell.Commands
                 BuildModuleManifest(result, "IconUri", Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
                 BuildModuleManifest(result, "ReleaseNotes", Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
                 BuildModuleManifest(result, "Prerelease", Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
-                BuildModuleManifest(result, "RequireLicenseAcceptance", Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "False"; }, streamWriter);
+                BuildModuleManifest(result, "RequireLicenseAcceptance", Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "$false"; }, streamWriter);
                 BuildModuleManifest(result, "ExternalModuleDependencies", Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");
