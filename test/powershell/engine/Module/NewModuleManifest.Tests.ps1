@@ -33,7 +33,11 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
             -DotNetFrameworkVersion '3.2.1' `
             -PowerShellHostVersion '1.2.3' `
             -Tags @('tag1', 'tag2') `
-            -ReleaseNotes 'release note'
+            -ReleaseNotes 'release note' `
+            -RequiredModules @('PSReadline') `
+            -ExternalModuleDependencies @('PSReadline') `
+            -Prerelease 'prerelease' `
+            -RequireLicenseAcceptance
 
         $module = Test-ModuleManifest -Path $manifestPath
         $module.Name | Should -BeExactly "test"
@@ -46,6 +50,10 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
         $module.PowerShellHostVersion | Should -BeExactly "1.2.3"
         $module.Tags | Should -BeExactly @('tag1', 'tag2')
         $module.ReleaseNotes | Should -BeExactly 'release note'
+        $module.RequiredModules | Should -BeExactly 'PSReadline'
+        $module.PrivateData.PSData.ExternalModuleDependencies | Should -BeExactly 'PSReadline'
+        $module.PrivateData.PSData.Prerelease | Should -BeExactly 'prerelease'
+        $module.PrivateData.PSData.RequireLicenseAcceptance | Should -BeExactly $true
     }
 }
 
