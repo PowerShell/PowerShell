@@ -218,6 +218,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Copies this suggestion, optionally providing new arguments to be supplied to the script block when
+        /// displaying the new suggestion.
+        /// </summary>
+        /// <param name="args">Arguments to be passed to the script block to use in the suggestion text.</param>
+        /// <returns>Returns a copy of this suggestion with the same Suggestion script,
+        /// optionally with new arguments.</returns>
+        public ErrorSuggestionInfo Copy(params object[] args)
+            => new ErrorSuggestionInfo(Suggestion, args);
+
+        /// <summary>
+        /// Copies this suggestion, including the original arguments supplied.
+        /// </summary>
+        /// <returns>Returns a copy of this suggestion with the same Suggestion script and arguments.</returns>
+        public ErrorSuggestionInfo Copy()
+            => Copy(SuggestionArgs);
+
+        /// <summary>
         /// A scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
         /// corresponding error is encountered.
         /// </summary>
@@ -237,8 +254,8 @@ namespace System.Management.Automation
         /// Returns the suggestion text using the provided script block and arguments.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() =>
-            SuggestionArgs == null || SuggestionArgs.Length == 0
+        public override string ToString()
+            => SuggestionArgs == null || SuggestionArgs.Length == 0
                 ? Suggestion.InvokeReturnAsIs() as string
                 : Suggestion.InvokeReturnAsIs(SuggestionArgs) as string;
     }
@@ -1077,7 +1094,45 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject)
-            : this(exception, errorId, errorCategory, targetObject, null)
+            : this(exception, errorId, errorCategory, targetObject, (ErrorSuggestionInfo)null)
+        {
+
+        }
+
+
+        /// <summary>
+        /// Creates an instance of ErrorRecord.
+        /// </summary>
+        /// <param name="exception">
+        /// This is an exception which describes the error.
+        /// This argument may not be null, but it is not required that the exception have ever been thrown.
+        /// </param>
+        /// <param name="errorId">
+        /// This string will be used to construct the FullyQualifiedErrorId, which is a global identifier of the
+        /// error condition.
+        /// Pass a non-empty string which is specific to this error condition in this context.
+        /// </param>
+        /// <param name="errorCategory">
+        /// This is the ErrorCategory which best describes the error.
+        /// </param>
+        /// <param name="targetObject">
+        /// This is the object against which the cmdlet or provider was operating when the error occurred.
+        /// This is optional.
+        /// </param>
+        /// <param name="suggestion">
+        /// The optional suggestion script used for constructing the suggestion for display with the error.
+        /// </param>
+        /// <param name="suggestionArgs">
+        /// The arguments to supply to the suggestion script when displaying the suggestion in the console.
+        /// </param>
+        public ErrorRecord(
+            Exception exception,
+            string errorId,
+            ErrorCategory errorCategory,
+            object targetObject,
+            ScriptBlock suggestion,
+            params object[] suggestionArgs)
+            : this(exception, errorId, errorCategory, targetObject, new ErrorSuggestionInfo(suggestion, suggestionArgs))
         {
 
         }
@@ -1110,7 +1165,7 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject,
-            ErrorSuggestionInfo suggestion)
+            params ErrorSuggestionInfo[] suggestion)
         {
             if (exception == null)
             {
@@ -1127,7 +1182,7 @@ namespace System.Management.Automation
             _errorId = errorId;
             _category = errorCategory;
             _target = targetObject;
-            Suggestion = suggestion;
+            Suggestion = new Collection<ErrorSuggestionInfo>(suggestion);
         }
 
         #region Serialization
@@ -1510,6 +1565,7 @@ namespace System.Management.Automation
             _reasonOverride = errorRecord._reasonOverride;
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
+            Suggestion = errorRecord.Suggestion;
             if (errorRecord.ErrorDetails != null)
             {
                 ErrorDetails = new ErrorDetails(errorRecord.ErrorDetails);
@@ -1586,7 +1642,7 @@ namespace System.Management.Automation
         /// Suggestions should provide solutions to commonly-encountered errors or possible alternate commands
         /// to be used instead in forseeable circumstances.
         /// </remarks>
-        public ErrorSuggestionInfo Suggestion { get; }
+        public Collection<ErrorSuggestionInfo> Suggestion { get; }
 
         /// <summary>
         /// String which uniquely identifies this error condition.
