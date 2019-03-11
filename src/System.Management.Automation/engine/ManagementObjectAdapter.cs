@@ -198,20 +198,15 @@ namespace System.Management.Automation
             return null;
         }
 
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
-            // obj should never be null
-            Diagnostics.Assert(obj != null, "Input object is null");
-
-            ManagementBaseObject wmiObject = obj as ManagementBaseObject;
-
-            if (wmiObject == null)
+            if (obj is ManagementBaseObject wmiObject)
             {
-                return null;
+                return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
+                    ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
             }
 
-            return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
-                ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
+            return null;
         }
 
         /// <summary>
@@ -888,10 +883,6 @@ namespace System.Management.Automation
 
         #region Abstract Methods
 
-        protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
-
-        protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
-
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
@@ -937,6 +928,16 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);
+
+        /// <summary>
+        /// Returns the first property whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// </summary>
+        protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+
+        /// <summary>
+        /// Returns the first method whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// </summary>
+        protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
 
         #endregion
 
@@ -1057,11 +1058,8 @@ namespace System.Management.Automation
                 return null;
             }
 
-            CacheTable typeTable;
-            WMIMethodCacheEntry method;
-
-            typeTable = GetInstanceMethodTable(wmiObject, true);
-            method = (WMIMethodCacheEntry)typeTable[methodName];
+            CacheTable typeTable = GetInstanceMethodTable(wmiObject, true);
+            WMIMethodCacheEntry method = (WMIMethodCacheEntry)typeTable[methodName];
 
             if (method == null)
             {
@@ -1073,6 +1071,11 @@ namespace System.Management.Automation
 
         protected override T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
         {
+            if (!typeof(T).IsAssignableFrom(typeof(PSProperty)))
+            {
+                return null;
+            }
+
             if (wmiObject.SystemProperties != null)
             {
                 foreach (PropertyData property in wmiObject.SystemProperties)
@@ -1089,16 +1092,12 @@ namespace System.Management.Automation
 
         protected override T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
         {
-            Diagnostics.Assert((wmiObject != null), "Input arguments should not be null.");
-
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
                 return null;
             }
 
-            CacheTable table;
-            table = GetInstanceMethodTable(wmiObject, true);
-
+            CacheTable table = GetInstanceMethodTable(wmiObject, true);
             foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
             {
                 if (predicate(methodEntry.Name))

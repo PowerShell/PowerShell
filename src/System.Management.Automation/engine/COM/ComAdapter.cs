@@ -84,7 +84,10 @@ namespace System.Management.Automation
             return null;
         }
 
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        /// <summary>
+        /// Returns the first PSMemberInfo whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// </summary>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
             bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
             bool lookingForParameterizedProperties = typeof(T).IsAssignableFrom(typeof(PSParameterizedProperty));
