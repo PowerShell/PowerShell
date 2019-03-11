@@ -4,7 +4,7 @@
 
 If you believe that there is a security vulnerability in PowerShell Core,
 it **must** be reported to [secure@microsoft.com](https://technet.microsoft.com/security/ff852094.aspx) to allow for [Coordinated Vulnerability Disclosure](https://technet.microsoft.com/security/dn467923).
-**Only** file an issue, if secure@microsoft.com has confirmed filing an issue is appropriate.
+**Only** file an issue, if [secure@microsoft.com](https://www.microsoft.com/en-us/msrc/faqs-report-an-issue?rtc=1) has confirmed filing an issue is appropriate.
 
 ## Long-living issue labels
 
@@ -53,15 +53,15 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-HelpSystem`: anything related to the help infrastructure and formatting of help
 * `Area-Intellisense`: tab completion
 * `Area-Language`: parser, language semantics
-* `Area-OMI`: omi
+* `Area-OMI`: OMI
 * `Area-PackageManagement`: PackageManagement related issues
 * `Area-Performance`: a performance issue
 * `Area-Portability`: anything affecting script portability
 * `Area-PowerShellGet`: PowerShellGet related issues
-* `Area-Providers`: PowerShell providers like FileSystem, Certificates, Registry, etc...
+* `Area-Providers`: PowerShell providers such as FileSystem, Certificates, Registry, etc...
 * `Area-PSReadline`: PSReadline related issues
 * `Area-Remoting`: PSRP issues with any transport layer
-* `Area-Security`: security related areas like [JEA](https://github.com/powershell/JEA)
+* `Area-Security`: security related areas such as [JEA](https://github.com/powershell/JEA)
 * `Area-SideBySide`: side by side support
 * `Area-Test`: issues in a test or in test infrastructure
 
@@ -80,7 +80,7 @@ The following labels are used on PRs:
 
 * `Review - Needed` : The PR is being reviewed.  Please see [Pull Request - Code Review](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---code-review)
 * `Review - Waiting on Author` : The PR was reviewed by the team and requires changes or comments from the author before being accepted.
-* `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
+* `Review - Abandoned` : The PR was not updated for a significant number of days (the exact number could vary over time).
   Maintainers should look into such PRs and re-evaluate them.
 * `Review - Committee` : The PR/Issue needs a review from [powershell-committee](../community/governance.md#powershell-committee)
 

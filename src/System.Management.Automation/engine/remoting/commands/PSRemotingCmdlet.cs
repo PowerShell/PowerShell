@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (computerNames.Length == 0)
             {
-                resolvedComputerNames = Utils.EmptyArray<string>();
+                resolvedComputerNames = Array.Empty<string>();
             }
             else
             {

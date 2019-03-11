@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // if Process() never got called, no sub pipeline
                 // ever got created, hence we just return an empty array
-                return new object[0];
+                return Array.Empty<object>();
             }
 
             PipelineProcessor ppTemp = _pp;

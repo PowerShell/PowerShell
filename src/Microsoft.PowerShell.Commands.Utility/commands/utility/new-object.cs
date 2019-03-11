@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ArgumentList == null || ArgumentList.Length == 0)
                 {
-                    ConstructorInfo ci = type.GetConstructor(PSTypeExtensions.EmptyTypes);
+                    ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
                         _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });

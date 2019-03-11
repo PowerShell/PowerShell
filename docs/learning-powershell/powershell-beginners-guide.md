@@ -66,20 +66,21 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 
 ```
 
-2. `Clear-Host`: Clears the display in the host program.
+1. `Clear-Host`: Clears the display in the host program.
 
 ```powershell
 PS /> Get-Process
 PS /> Clear-Host
 ```
+
 Type too much just for clearing the screen?
 
 Here is how the alias can help.
 
-3. `Get-Alias`: Gets the aliases for the current session.
+1. `Get-Alias`: Gets the aliases for the current session.
 
 ```powershell
-PS /> Get-Alias
+Get-Alias
 
 CommandType     Name
 -----------     ----
@@ -100,19 +101,20 @@ Alias           type -> Get-Content
 As you can see `cls` or `clear` is an alias of `Clear-Host`.
 
 Now try it:
+
 ```powershell
 PS /> Get-Process
 PS /> cls
 ```
 
-4. `cd -> Set-Location`: Sets the current working location to a specified location.
+1. `cd -> Set-Location`: Sets the current working location to a specified location.
 
 ```powershell
 PS /> Set-Location /home
 PS /home>
 ```
 
-5. `dir -> Get-ChildItem`: Gets the items and child items in one or more specified locations.
+1. `dir -> Get-ChildItem`: Gets the items and child items in one or more specified locations.
 
 ```powershell
 # Get all files under the current directory:
@@ -181,7 +183,7 @@ Or simply use `>` as below:
 
 The pound sign `#` above is used for comments in PowerShell.
 
-7. `type -> Get-Content`: Gets the content of the item at the specified location.
+1. `type -> Get-Content`: Gets the content of the item at the specified location.
 
 ```powershell
 PS /home/jen> Get-Content -Path ./test.txt
@@ -190,7 +192,7 @@ PS /home/jen> type -Path ./test.txt
 Hello world again!
 ```
 
-8. `del -> Remove-Item`: Deletes the specified items.
+1. `del -> Remove-Item`: Deletes the specified items.
 
 This cmdlet will delete the file `/home/jen/test.txt`:
 
@@ -198,7 +200,7 @@ This cmdlet will delete the file `/home/jen/test.txt`:
 PS /home/jen> Remove-Item ./test.txt
 ```
 
-9. `$PSVersionTable`: Displays the version of PowerShell you are currently using.
+1. `$PSVersionTable`: Displays the version of PowerShell you are currently using.
 
 Type `$PSVersionTable` in your PowerShell session, you will see something like below.
 "PSVersion" indicates the PowerShell version that you are using.
@@ -218,10 +220,10 @@ SerializationVersion           1.1.0.1
 
 ```
 
-10. `Exit`: To exit the PowerShell session, type `exit`.
+1. `Exit`: To exit the PowerShell session, type `exit`.
 
 ```powershell
-PS /home/jen> exit
+exit
 ```
 
 ## Need Help?
@@ -329,7 +331,7 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 [tutorial]: https://www.computerperformance.co.uk/powershell/index.htm
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
 [ps-module]:https://msdn.microsoft.com/library/dd878324%28v=vs.85%29.aspx
-[create-ps-module]:http://www.tomsitpro.com/articles/powershell-modules,2-846.html
+[create-ps-module]:https://www.business.com/articles/powershell-modules/
 [remoting]:https://channel9.msdn.com/Series/GetStartedPowerShell3/06
 [in-depth]: https://channel9.msdn.com/events/MMS/2012/SV-B406
 [remote-mgmt]:https://windowsitpro.com/powershell/powershell-basics-remote-management

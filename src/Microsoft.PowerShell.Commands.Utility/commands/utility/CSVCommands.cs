@@ -59,7 +59,35 @@ namespace Microsoft.PowerShell.Commands
         [Alias("NTI")]
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets option to use or suppress quotes in output.
+        /// </summary>
+        [Parameter]
+        [Alias("UQ")]
+        public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
+
         #endregion Command Line Parameters
+
+        /// <summary>
+        /// Kind of output quoting.
+        /// </summary>
+        public enum QuoteKind
+        {
+            /// <summary>
+            /// Never quote output.
+            /// </summary>
+            Never,
+
+            /// <summary>
+            /// Always quote output.
+            /// </summary>
+            Always,
+
+            /// <summary>
+            /// Quote output as needed (a field contains used delimiter).
+            /// </summary>
+            AsNeeded
+        }
 
         /// <summary>
         /// Write the string to a file or pipeline.
@@ -217,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
 
             CreateFileStream();
 
-            _helper = new ExportCsvHelper(this, base.Delimiter);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes);
         }
 
         /// <summary>
@@ -644,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            _helper = new ExportCsvHelper(this, base.Delimiter);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes);
         }
 
         /// <summary>
@@ -806,28 +834,24 @@ namespace Microsoft.PowerShell.Commands
     #region ExportHelperConversion
 
     /// <summary>
-    /// Helper class for Export-Csvlper.
+    /// Helper class for Export-Csv and ConvertTo-Csv.
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
-        private PSCmdlet _cmdlet;
-
         private char _delimiter;
+        readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
+        readonly private StringBuilder _outputString;
 
         /// <summary>
+        /// Create ExportCsvHelper instance.
         /// </summary>
-        /// <param name="cmdlet"></param>
-        /// <param name="delimiter"></param>
-        /// <exception cref="ArgumentNullException">Throw if cmdlet is null.</exception>
-        internal ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
+        /// <param name="delimiter">Delimiter char.</param>
+        /// <param name="quoteKind">Kind of quoting.</param>
+        internal ExportCsvHelper(char delimiter, BaseCsvWritingCommand.QuoteKind quoteKind)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException("cmdlet");
-            }
-
-            _cmdlet = cmdlet;
             _delimiter = delimiter;
+            _quoteKind = quoteKind;
+            _outputString = new StringBuilder(128);
         }
 
         // Name of properties to be written in CSV format
@@ -865,11 +889,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (propertyNames == null)
             {
-                throw new ArgumentNullException("propertyNames");
+                throw new ArgumentNullException(nameof(propertyNames));
             }
 
-            StringBuilder dest = new StringBuilder();
+            _outputString.Clear();
             bool first = true;
+
             foreach (string propertyName in propertyNames)
             {
                 if (first)
@@ -878,14 +903,32 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // changed to delimiter
-                    dest.Append(_delimiter);
+                    _outputString.Append(_delimiter);
                 }
 
-                EscapeAndAppendString(dest, propertyName);
+                switch (_quoteKind)
+                {
+                    case BaseCsvWritingCommand.QuoteKind.Always:
+                        AppendStringWithEscapeAlways(_outputString, propertyName);
+                        break;
+                    case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                        if (propertyName.Contains(_delimiter))
+                        {
+                            AppendStringWithEscapeAlways(_outputString, propertyName);
+                        }
+                        else
+                        {
+                            _outputString.Append(propertyName);
+                        }
+
+                        break;
+                    case BaseCsvWritingCommand.QuoteKind.Never:
+                        _outputString.Append(propertyName);
+                        break;
+                }
             }
 
-            return dest.ToString();
+            return _outputString.ToString();
         }
 
         /// <summary>
@@ -898,10 +941,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (propertyNames == null)
             {
-                throw new ArgumentNullException("propertyNames");
+                throw new ArgumentNullException(nameof(propertyNames));
             }
 
-            StringBuilder dest = new StringBuilder();
+            _outputString.Clear();
             bool first = true;
 
             foreach (string propertyName in propertyNames)
@@ -912,21 +955,41 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    dest.Append(_delimiter);
+                    _outputString.Append(_delimiter);
                 }
 
-                PSPropertyInfo property = mshObject.Properties[propertyName] as PSPropertyInfo;
-                string value = null;
-                // If property is not present, assume value is null
-                if (property != null)
+                // If property is not present, assume value is null and skip it.
+                if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                 {
-                    value = GetToStringValueForProperty(property);
-                }
+                    var value = GetToStringValueForProperty(property);
 
-                EscapeAndAppendString(dest, value);
+                    switch (_quoteKind)
+                    {
+                        case BaseCsvWritingCommand.QuoteKind.Always:
+                            AppendStringWithEscapeAlways(_outputString, value);
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                            if (value.Contains(_delimiter))
+                            {
+                                AppendStringWithEscapeAlways(_outputString, value);
+                            }
+                            else
+                            {
+                                _outputString.Append(value);
+                            }
+
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.Never:
+                            _outputString.Append(value);
+                            break;
+                        default:
+                            Diagnostics.Assert(false, "BaseCsvWritingCommand.QuoteKind has new item.");
+                            break;
+                    }
+                }
             }
 
-            return dest.ToString();
+            return _outputString.ToString();
         }
 
         /// <summary>
@@ -938,7 +1001,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (property == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException(nameof(property));
             }
 
             string value = null;
@@ -999,12 +1062,13 @@ namespace Microsoft.PowerShell.Commands
         /// Escapes the " in string if necessary.
         /// Encloses the string in double quotes if necessary.
         /// </summary>
-        internal static void EscapeAndAppendString(StringBuilder dest, string source)
+        internal static void AppendStringWithEscapeAlways(StringBuilder dest, string source)
         {
             if (source == null)
             {
                 return;
             }
+
             // Adding Double quote to all strings
             dest.Append('"');
             for (int i = 0; i < source.Length; i++)
@@ -1102,12 +1166,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (cmdlet == null)
             {
-                throw new ArgumentNullException("cmdlet");
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
             if (streamReader == null)
             {
-                throw new ArgumentNullException("streamReader");
+                throw new ArgumentNullException(nameof(streamReader));
             }
 
             _cmdlet = cmdlet;
