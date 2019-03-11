@@ -395,20 +395,20 @@ try
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
-            It "Verifies proxy should return remote pid" -Pending {
+            It "Verifies proxy should return remote pid" {
                 (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
-            It "Verifies ApplicationArguments got preserved correctly" -Pending {
+            It "Verifies ApplicationArguments got preserved correctly" {
                 $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should -BeExactly "MyValue"
             }
 
-            It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
+            It "Verifies Remove-Module removed the runspace that was automatically created" {
                 Remove-Module $module -Force
                 (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
 
-            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
+            It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" {
                 ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Closed"
             }
         }
