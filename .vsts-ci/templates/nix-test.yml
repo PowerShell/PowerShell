@@ -62,14 +62,11 @@ jobs:
       $options = (Get-PSOptions)
       $rootPath = '$(System.ArtifactsDirectory)\bins'
       $originalRootPath = Split-Path -path $options.Output
-      Write-Host "orp- '$originalRootPath'"
       $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
-      Write-Host "path- '$path'"
       $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
       chmod a+x $pwshPath
       $options.Output = $pwshPath
       Set-PSOptions $options
-      Write-Host "$(${options}|out-string)"
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
     condition: succeeded()
