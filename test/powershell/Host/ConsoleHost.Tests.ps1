@@ -119,6 +119,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
+
     Context "CommandLine" {
         It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should -Be "hello world"
@@ -609,6 +610,26 @@ foo
                     Remove-Item $PROFILE
                 }
             }
+        }
+    }
+
+    Context "CustomPipeName startup tests" {
+
+        It "Should create pipe file if CustomPipeName is specified" {
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = Get-PipePath $pipeName
+
+            # The pipePath should be created by the time the -Command is executed.
+            & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
+        }
+
+        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
+            # Generate a string that is larger than the max pipe name length.
+            $longPipeName = [string]::new("A", 200)
+
+            "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
+            # 64 is the ExitCode for BadCommandLineParameter
+            $LASTEXITCODE | Should -Be 64
         }
     }
 }
