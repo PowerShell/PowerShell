@@ -243,7 +243,7 @@
     {
         "Name": "ubuntu.14.04-unused",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage -TarX64 -TarArm",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -TarX64 -TarArm",
         "BuildDockerOptions": [
             "--cap-add",
             "SYS_ADMIN",
