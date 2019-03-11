@@ -29,7 +29,7 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - pwsh: |
-      dir "$(System.ArtifactsDirectory)\*" -Recurse
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
 
@@ -52,7 +52,7 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      dir "$(System.ArtifactsDirectory)\bins\*" -Recurse -ErrorAction SilentlyContinue
+      Get-ChildItem "$(System.ArtifactsDirectory)\bins\*" -Recurse -ErrorAction SilentlyContinue
     displayName: 'Capture extracted build zip'
     continueOnError: true
 

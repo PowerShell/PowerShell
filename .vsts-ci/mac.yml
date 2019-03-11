@@ -85,7 +85,7 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - pwsh: |
-      dir "$(System.ArtifactsDirectory)\*" -Recurse
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
 
