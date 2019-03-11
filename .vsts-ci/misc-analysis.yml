@@ -33,7 +33,8 @@ phases:
     displayName: Capture environment
     condition: succeededOrFailed()
 
-  - powershell:  Install-module pester -Scope CurrentUser -Force -SkipPublisherCheck
+  - powershell: |
+      Install-module pester -Scope CurrentUser -Force
     displayName: Install Pester
     condition: succeededOrFailed()
 
@@ -50,7 +51,7 @@ phases:
 
   - bash: |
       mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
-    displayName: Test Spelling
+    displayName: Test Spelling in Markdown Files
     condition: succeededOrFailed()
 
   - powershell: |
@@ -58,9 +59,6 @@ phases:
       $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
       $results = invoke-pester -Script ./test/common -OutputFile $path -OutputFormat NUnitXml -PassThru
       Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Common Tests;publishRunAttachments=true;resultFiles=$path;]"
-      if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
-      {
-        throw "markdown link tests failed"
-      }
+      if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0) { throw "Common tests failed" }
     displayName: Run Common Tests
     condition: succeededOrFailed()
