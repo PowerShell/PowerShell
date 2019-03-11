@@ -96,7 +96,20 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
     }
 }
 
-Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature','RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Testing Get-Help Progress" -Tags @('Feature') {
+    It "Last ProgressRecord should be Completed" {
+        try {
+            $j = Start-Job { Get-Help DoesNotExist }
+            $j | Wait-Job
+            $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+        }
+        finally {
+            $j | Remove-Job
+        }
+    }
+}
+
+Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -546,7 +559,7 @@ Describe "Help failure cases" -Tags Feature {
     It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
         @{ command = "help" },
         @{ command = "get-help" }
-    ){
+    ) {
         param($command)
 
         { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
