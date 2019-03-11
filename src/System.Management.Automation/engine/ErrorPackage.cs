@@ -203,11 +203,6 @@ namespace System.Management.Automation
                 throw new ArgumentNullException(nameof(suggestion));
             }
 
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
-
             Suggestion = suggestion;
             SuggestionArgs = args;
         }
@@ -232,7 +227,10 @@ namespace System.Management.Automation
         /// Returns the suggestion text using the provided script block and arguments.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => Suggestion.InvokeReturnAsIs(SuggestionArgs) as string;
+        public override string ToString() =>
+            SuggestionArgs == null || SuggestionArgs.Length == 0
+                ? Suggestion.InvokeReturnAsIs() as string
+                : Suggestion.InvokeReturnAsIs(SuggestionArgs) as string;
     }
 
     /// <summary>
