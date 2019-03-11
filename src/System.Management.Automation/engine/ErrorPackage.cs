@@ -208,6 +208,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Creates an ErrorSuggestionInfo object.
+        /// </summary>
+        /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
+        /// This script should resolve to a single string value. If it does not, the final value will be
+        /// converted to string for display.</param>
+        public ErrorSuggestionInfo(ScriptBlock suggestion) : this(suggestion, null)
+        {
+        }
+
+        /// <summary>
         /// A scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
         /// corresponding error is encountered.
         /// </summary>
