@@ -94,7 +94,7 @@ cimsession
 cimsupport
 classlib
 clear-itemproperty
-cli
+CLI
 cloudydino
 cls
 cmake
@@ -902,4 +902,3 @@ npm
 ConnectionCredential
 parameter
 [PowerShell Support Lifecycle](https://aka.ms/pslifecycle)
-|
