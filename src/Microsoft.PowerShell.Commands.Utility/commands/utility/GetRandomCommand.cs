@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
                 // cache MyParameterSet enum instead of doing string comparison every time
                 if (_effectiveParameterSet == MyParameterSet.Unknown)
                 {
-                    if ((this.MyInvocation.ExpectingInput) && (this.Maximum == null) && (this.Minimum == null))
+                    if ((MyInvocation.ExpectingInput) && (Maximum == null) && (Minimum == null))
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -52,11 +52,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
-                    else if (this.ParameterSetName.Equals(GetRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
+                    else if (ParameterSetName.Equals(GetRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
                     {
-                        if ((this.Maximum != null) && (this.Maximum.GetType().IsArray))
+                        if ((Maximum != null) && (Maximum.GetType().IsArray))
                         {
-                            this.InputObject = (object[])this.Maximum;
+                            InputObject = (object[])Maximum;
                             _effectiveParameterSet = MyParameterSet.RandomListItem;
                         }
                         else
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorCategory.InvalidArgument,
                 null);
 
-            this.ThrowTerminatingError(errorRecord);
+            ThrowTerminatingError(errorRecord);
         }
 
         #endregion
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_generator == null)
                 {
-                    Guid runspaceId = this.Context.CurrentRunspace.InstanceId;
+                    Guid runspaceId = Context.CurrentRunspace.InstanceId;
 
                     bool needToInitialize = false;
                     try
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (needToInitialize)
                     {
-                        this.Generator = new PolymorphicRandomNumberGenerator();
+                        Generator = new PolymorphicRandomNumberGenerator();
                     }
                 }
 
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _generator = value;
-                Runspace myRunspace = this.Context.CurrentRunspace;
+                Runspace myRunspace = Context.CurrentRunspace;
 
                 try
                 {
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = GetRandomCommand.RandomListItemParameterSet)]
         [ValidateRange(1, int.MaxValue)]
-        public int Count { get; set; }
+        public int Count { get; set; } = 1;
 
         #endregion
 
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
 
         private double GetRandomDouble(double min, double max)
         {
-            double randomNumber;
+            double result;
             double diff = max - min;
 
             // I couldn't find a better fix for bug #216893 then
@@ -306,23 +306,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 do
                 {
-                    double r = this.Generator.NextDouble();
-                    randomNumber = min + r * max - r * min;
+                    double r = Generator.NextDouble();
+                    result = min + r * max - r * min;
                 }
-                while (randomNumber >= max);
+                while (result >= max);
             }
             else
             {
                 do
                 {
-                    double r = this.Generator.NextDouble();
-                    randomNumber = min + r * diff;
+                    double r = Generator.NextDouble();
+                    result = min + r * diff;
                     diff = diff * r;
                 }
-                while (randomNumber >= max);
+                while (result >= max);
             }
 
-            return randomNumber;
+            Debug.Assert(min <= result, "lower bound <= random number");
+            Debug.Assert(result < max, "random number < upper bound");
+            return result;
         }
 
         /// <summary>
@@ -342,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
             // When the difference is less than int.MaxValue, use Random.Next(int, int)
             if (bigIntegerDiff <= int.MaxValue)
             {
-                int randomDiff = this.Generator.Next(0, (int)(max - min));
+                int randomDiff = Generator.Next(0, (int)(max - min));
                 return min + randomDiff;
             }
 
@@ -361,13 +363,16 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Randomly fill the buffer
-                this.Generator.NextBytes(buffer);
+                Generator.NextBytes(buffer);
                 randomUint64 = BitConverter.ToUInt64(buffer, 0);
                 // Get the last 'bitsToRepresentDiff' number of randon bits
                 randomUint64 &= mask;
             } while (uint64Diff <= randomUint64);
 
             double result = min * 1.0 + randomUint64 * 1.0;
+
+            Debug.Assert(min <= result, "lower bound <= random number");
+            Debug.Assert(result < max, "random number < upper bound");
             return (Int64)result;
         }
 
@@ -376,15 +381,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (this.SetSeed.HasValue)
+            if (SetSeed.HasValue)
             {
-                this.Generator = new PolymorphicRandomNumberGenerator(this.SetSeed.Value);
+                Generator = new PolymorphicRandomNumberGenerator(SetSeed.Value);
             }
 
-            if (this.EffectiveParameterSet == MyParameterSet.RandomNumber)
+            if (EffectiveParameterSet == MyParameterSet.RandomNumber)
             {
-                object maxOperand = ProcessOperand(this.Maximum);
-                object minOperand = ProcessOperand(this.Minimum);
+                object maxOperand = ProcessOperand(Maximum);
+                object minOperand = ProcessOperand(Minimum);
 
                 if (IsInt(maxOperand) && IsInt(minOperand))
                 {
@@ -393,14 +398,11 @@ namespace Microsoft.PowerShell.Commands
 
                     if (min >= max)
                     {
-                        this.ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(min, max);
                     }
 
-                    int randomNumber = this.Generator.Next(min, max);
-                    Debug.Assert(min <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < max, "random number < upper bound");
-
-                    this.WriteObject(randomNumber);
+                    int randomNumber = Generator.Next(min, max);
+                    WriteObject(randomNumber);
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
                 {
@@ -409,65 +411,54 @@ namespace Microsoft.PowerShell.Commands
 
                     if (min >= max)
                     {
-                        this.ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(min, max);
                     }
 
-                    Int64 randomNumber = this.GetRandomInt64(min, max);
-                    Debug.Assert(min <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < max, "random number < upper bound");
-
-                    this.WriteObject(randomNumber);
+                    Int64 randomNumber = GetRandomInt64(min, max);
+                    WriteObject(randomNumber);
                 }
                 else
                 {
-                    double min = (minOperand is double) ? (double)minOperand : this.ConvertToDouble(this.Minimum, 0.0);
-                    double max = (maxOperand is double) ? (double)maxOperand : this.ConvertToDouble(this.Maximum, double.MaxValue);
+                    double min = (minOperand is double) ? (double)minOperand : ConvertToDouble(Minimum, 0.0);
+                    double max = (maxOperand is double) ? (double)maxOperand : ConvertToDouble(Maximum, double.MaxValue);
 
                     if (min >= max)
                     {
-                        this.ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(min, max);
                     }
 
-                    double randomNumber = this.GetRandomDouble(min, max);
-                    Debug.Assert(min <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < max, "random number < upper bound");
-
-                    this.WriteObject(randomNumber);
+                    double randomNumber = GetRandomDouble(min, max);
+                    WriteObject(randomNumber);
                 }
             }
-            else if (this.EffectiveParameterSet == MyParameterSet.RandomListItem)
+            else if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
                 _chosenListItems = new List<object>();
                 _numberOfProcessedListItems = 0;
-
-                if (this.Count == 0) // -Count not specified
-                {
-                    this.Count = 1; // default to one random item by default
-                }
             }
         }
 
         // rough proof that when choosing random K items out of N items
         // each item has got K/N probability of being included in the final list
         //
-        // probability that a particular item in this.chosenListItems is NOT going to be replaced
+        // probability that a particular item in chosenListItems is NOT going to be replaced
         // when processing I-th input item [assumes I > K]:
         // P_one_step(I) = 1 - ((K / I) * ((K - 1) / K) + ((I - K) / I) = (I - 1) / I
         //                      <--A-->   <-----B----->   <-----C----->
-        // A - probability that I-th element is going to be replacing an element from this.chosenListItems
+        // A - probability that I-th element is going to be replacing an element from chosenListItems
         //     (see (1) in the code below)
-        // B - probability that a particular element from this.chosenListItems is NOT going to be replaced
+        // B - probability that a particular element from chosenListItems is NOT going to be replaced
         //     (see (2) in the code below)
-        // C - probability that I-th element is NOT going to be replacing an element from this.chosenListItems
+        // C - probability that I-th element is NOT going to be replacing an element from chosenListItems
         //     (see (1) in the code below)
         //
-        // probability that a particular item in this.chosenListItems is NOT going to be replaced
+        // probability that a particular item in chosenListItems is NOT going to be replaced
         // when processing input items J through N [assumes J > K]
         // P_removal(J) = Multiply(for I = J to N) P(I) =
         //              = ((J - 1) / J) * (J / (J + 1)) * ... * ((N - 2) / (N - 1)) * ((N - 1) / N) =
         //              = (J - 1) / N
         //
-        // probability that when processing an element it is going to be put into this.chosenListItems
+        // probability that when processing an element it is going to be put into chosenListItems
         // P_insertion(I) = 1.0 when I <= K - see (3) in the code below
         // P_insertion(I) = K/N otherwise - see (1) in the code below
         //
@@ -483,21 +474,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (this.EffectiveParameterSet == MyParameterSet.RandomListItem)
+            if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                foreach (object item in this.InputObject)
+                foreach (object item in InputObject)
                 {
-                    if (_numberOfProcessedListItems < this.Count) // (3)
+                    if (_numberOfProcessedListItems < Count) // (3)
                     {
-                        Debug.Assert(_chosenListItems.Count == _numberOfProcessedListItems, "Initial K elements should all be included in this.chosenListItems");
+                        Debug.Assert(_chosenListItems.Count == _numberOfProcessedListItems, "Initial K elements should all be included in chosenListItems");
                         _chosenListItems.Add(item);
                     }
                     else
                     {
-                        Debug.Assert(_chosenListItems.Count == this.Count, "After processing K initial elements, the length of this.chosenItems should stay equal to K");
-                        if (this.Generator.Next(_numberOfProcessedListItems + 1) < this.Count) // (1)
+                        Debug.Assert(_chosenListItems.Count == Count, "After processing K initial elements, the length of chosenItems should stay equal to K");
+                        if (Generator.Next(_numberOfProcessedListItems + 1) < Count) // (1)
                         {
-                            int indexToReplace = this.Generator.Next(_chosenListItems.Count); // (2)
+                            int indexToReplace = Generator.Next(_chosenListItems.Count); // (2)
                             _chosenListItems[indexToReplace] = item;
                         }
                     }
@@ -512,7 +503,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (this.EffectiveParameterSet == MyParameterSet.RandomListItem)
+            if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
                 // make sure the order is truly random
                 // (all permutations with the same probability)
@@ -521,9 +512,9 @@ namespace Microsoft.PowerShell.Commands
                 for (int i = 0; i < n; i++)
                 {
                     // randomly choose j from [i...n)
-                    int j = this.Generator.Next(i, n);
+                    int j = Generator.Next(i, n);
 
-                    this.WriteObject(_chosenListItems[j]);
+                    WriteObject(_chosenListItems[j]);
 
                     // remove the output object from consideration in the next iteration.
                     if (i != j)
@@ -617,28 +608,32 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a random integer that is within a specified range.
         /// </summary>
-        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
+        /// <param name="min">The inclusive lower bound of the random number returned.</param>
+        /// <param name="max">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
         /// <returns></returns>
-        public int Next(int minValue, int maxValue)
+        public int Next(int min, int max)
         {
-            if (minValue > maxValue)
+            if (min > max)
             {
                 throw new ArgumentOutOfRangeException("minValue", GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
             }
 
-            long range = (long)maxValue - (long)minValue;
+            int result = 0;
+
+            long range = (long)max - (long)min;
             if (range <= int.MaxValue)
             {
-                return ((int)(NextDouble() * range) + minValue);
+                result = ((int)(NextDouble() * range) + min);
             }
             else
             {
                 double largeSample = InternalSampleLargeRange() * (1.0 / (2 * ((uint)Int32.MaxValue)));
-                int result = (int)((long)(largeSample * range) + minValue);
-
-                return result;
+                result = (int)((long)(largeSample * range) + min);
             }
+
+            Debug.Assert(min <= result, "lower bound <= random number");
+            Debug.Assert(result < max, "random number < upper bound");
+            return result;
         }
 
         /// <summary>
