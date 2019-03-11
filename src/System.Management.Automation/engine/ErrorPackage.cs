@@ -185,93 +185,54 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// TODO
-    /// </summary>
-    public enum SuggestionMatchType
-    {
-        /// <summary>Match on a command.</summary>
-        Command = 0,
-        /// <summary>Match based on exception message.</summary>
-        Error = 1,
-        /// <summary>Match by running a script block.</summary>
-        Dynamic = 2,
-
-        /// <summary>Match by fully qualified ErrorId.</summary>
-        ErrorId = 3
-    }
-
-    /// <summary>
-    /// TODO
+    /// Defines the ErrorSuggestionInfo class.
     /// </summary>
     public class ErrorSuggestionInfo
     {
         /// <summary>
-        /// TODO
+        /// Creates an ErrorSuggestionInfo object.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="suggestion"></param>
-        /// <param name="category"></param>
-        /// <param name="matchType"></param>
-        /// <param name="rule"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public ErrorSuggestionInfo Create(
-            int id,
-            ScriptBlock suggestion,
-            string category = "NotSpecified",
-            SuggestionMatchType matchType = SuggestionMatchType.Error,
-            ScriptBlock rule = null,
-            params object[] args)
-            => new ErrorSuggestionInfo(id, category, matchType, rule, suggestion, args);
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="category"></param>
-        /// <param name="matchType"></param>
-        /// <param name="rule"></param>
-        /// <param name="suggestion"></param>
-        /// <param name="args"></param>
-        public ErrorSuggestionInfo(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, object[] args)
+        /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
+        /// This script should resolve to a single string value. If it does not, the final value will be
+        /// converted to string for display.</param>
+        /// <param name="args">Arguments to be passed to the script block to use in the suggestion text.</param>
+        public ErrorSuggestionInfo(ScriptBlock suggestion, params object[] args)
         {
-            Id = id;
-            Category = category;
-            MatchType = matchType;
-            Rule = rule;
+            if (suggestion == null)
+            {
+                throw new ArgumentNullException(nameof(suggestion));
+            }
+
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             Suggestion = suggestion;
             SuggestionArgs = args;
         }
 
         /// <summary>
-        /// TODO
+        /// A scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
+        /// corresponding error is encountered.
         /// </summary>
-        public int Id { get; }
+        /// <remarks>
+        /// The scriptblock should result in a string value. If it does not, the final value will be converted to
+        /// a string for use in the error suggestion display.
+        /// </remarks>
+        private ScriptBlock Suggestion { get; }
 
         /// <summary>
-        /// TODO
+        /// Arguments to be passed into the scriptblock in order to supply the necessary data to determine the
+        /// appropriate message or elements of a base message to include as the suggestion for the error.
         /// </summary>
-        public string Category { get; }
+        private object[] SuggestionArgs { get; }
 
         /// <summary>
-        /// TODO
+        /// Returns the suggestion text using the provided script block and arguments.
         /// </summary>
-        public SuggestionMatchType MatchType { get; }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public ScriptBlock Rule { get; }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public ScriptBlock Suggestion { get; }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public object[] SuggestionArgs { get; }
+        /// <returns></returns>
+        public override string ToString() => Suggestion.InvokeReturnAsIs(SuggestionArgs) as string;
     }
 
     /// <summary>
@@ -1108,6 +1069,40 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject)
+            : this(exception, errorId, errorCategory, targetObject, null)
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an instance of ErrorRecord.
+        /// </summary>
+        /// <param name="exception">
+        /// This is an exception which describes the error.
+        /// This argument may not be null, but it is not required that the exception have ever been thrown.
+        /// </param>
+        /// <param name="errorId">
+        /// This string will be used to construct the FullyQualifiedErrorId, which is a global identifier of the
+        /// error condition.
+        /// Pass a non-empty string which is specific to this error condition in this context.
+        /// </param>
+        /// <param name="errorCategory">
+        /// This is the ErrorCategory which best describes the error.
+        /// </param>
+        /// <param name="targetObject">
+        /// This is the object against which the cmdlet or provider was operating when the error occurred.
+        /// This is optional.
+        /// </param>
+        /// <param name="suggestion">
+        /// This contains the optional suggestion information to be displayed alongside the error when it is
+        /// displayed in the console.
+        /// </param>
+        public ErrorRecord(
+            Exception exception,
+            string errorId,
+            ErrorCategory errorCategory,
+            object targetObject,
+            ErrorSuggestionInfo suggestion)
         {
             if (exception == null)
             {
@@ -1119,11 +1114,12 @@ namespace System.Management.Automation
                 errorId = string.Empty;
             }
 
-            // targetObject may be null
+            // targetObject and Suggestion may be null
             _error = exception;
             _errorId = errorId;
             _category = errorCategory;
             _target = targetObject;
+            Suggestion = suggestion;
         }
 
         #region Serialization
@@ -1574,6 +1570,15 @@ namespace System.Management.Automation
         public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
 
         private ErrorCategoryInfo _categoryInfo;
+
+        /// <summary>
+        /// Suggestion information to be displayed alongside the error when displayed in PowerShell.
+        /// </summary>
+        /// <remarks>
+        /// Suggestions should provide solutions to commonly-encountered errors or possible alternate commands
+        /// to be used instead in forseeable circumstances.
+        /// </remarks>
+        public ErrorSuggestionInfo Suggestion { get; }
 
         /// <summary>
         /// String which uniquely identifies this error condition.
