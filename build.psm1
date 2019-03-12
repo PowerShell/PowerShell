@@ -1223,9 +1223,11 @@ function Publish-TestResults
 
         # Althought NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
-        # Azure DevOps doesn't work with Inconclusive, so we will translate it to Ignored.
+        # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
+        # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+        # So, we will map skipped to the actual value in the NUnit spec and they will ignore all results for tests which were not executed
         Get-Content $Path | ForEach-Object {
-            $_ -replace 'result="Inconclusive"', 'result="Ignored"'
+            $_ -replace 'result="Ignored"', 'result="Skipped"'
         } | Out-File -FilePath $tempFilePath -Encoding ascii -Force
 
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
