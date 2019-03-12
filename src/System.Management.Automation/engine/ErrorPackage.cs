@@ -190,7 +190,7 @@ namespace System.Management.Automation
     public class ErrorSuggestionInfo
     {
         /// <summary>
-        /// Creates an ErrorSuggestionInfo object.
+        /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
         /// </summary>
         /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
         /// This script should resolve to a single string value. If it does not, the final value will be
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an ErrorSuggestionInfo object.
+        /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
         /// </summary>
         /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
         /// This script should resolve to a single string value. If it does not, the final value will be
@@ -235,7 +235,7 @@ namespace System.Management.Automation
             => Copy(SuggestionArgs);
 
         /// <summary>
-        /// A scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
+        /// Gets a scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
         /// corresponding error is encountered.
         /// </summary>
         /// <remarks>
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         private ScriptBlock Suggestion { get; }
 
         /// <summary>
-        /// Arguments to be passed into the scriptblock in order to supply the necessary data to determine the
+        /// Gets arguments to be passed into the scriptblock in order to supply the necessary data to determine the
         /// appropriate message or elements of a base message to include as the suggestion for the error.
         /// </summary>
         private object[] SuggestionArgs { get; }
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of ErrorRecord.
+        /// Initializes a new instance of the <see cref="ErrorRecord" /> class.
         /// </summary>
         /// <param name="exception">
         /// This is an exception which describes the error.
@@ -1096,12 +1096,10 @@ namespace System.Management.Automation
             object targetObject)
             : this(exception, errorId, errorCategory, targetObject, (ErrorSuggestionInfo)null)
         {
-
         }
 
-
         /// <summary>
-        /// Creates an instance of ErrorRecord.
+        /// Initializes a new instance of the <see cref="ErrorRecord" /> class.
         /// </summary>
         /// <param name="exception">
         /// This is an exception which describes the error.
@@ -1134,11 +1132,10 @@ namespace System.Management.Automation
             params object[] suggestionArgs)
             : this(exception, errorId, errorCategory, targetObject, new ErrorSuggestionInfo(suggestion, suggestionArgs))
         {
-
         }
 
         /// <summary>
-        /// Creates an instance of ErrorRecord.
+        /// Initializes a new instance of the <see cref="ErrorRecord" /> class.
         /// </summary>
         /// <param name="exception">
         /// This is an exception which describes the error.
@@ -1182,7 +1179,13 @@ namespace System.Management.Automation
             _errorId = errorId;
             _category = errorCategory;
             _target = targetObject;
-            Suggestions = new Collection<ErrorSuggestionInfo>(suggestions);
+            if (suggestions != null)
+            {
+                foreach (var item in suggestions)
+                {
+                    Suggestions.Add(item);
+                }
+            }
         }
 
         #region Serialization
@@ -1565,7 +1568,11 @@ namespace System.Management.Automation
             _reasonOverride = errorRecord._reasonOverride;
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
-            Suggestions = errorRecord.Suggestions;
+            foreach (var suggestion in errorRecord.Suggestions)
+            {
+                Suggestions.Add(suggestion);
+            }
+
             if (errorRecord.ErrorDetails != null)
             {
                 ErrorDetails = new ErrorDetails(errorRecord.ErrorDetails);
@@ -1636,13 +1643,13 @@ namespace System.Management.Automation
         private ErrorCategoryInfo _categoryInfo;
 
         /// <summary>
-        /// Suggestion information to be displayed alongside the error when displayed in PowerShell.
+        /// Gets suggestion information to be displayed alongside the error when displayed in PowerShell.
         /// </summary>
         /// <remarks>
         /// Suggestions should provide solutions to commonly-encountered errors or possible alternate commands
         /// to be used instead in forseeable circumstances.
         /// </remarks>
-        public Collection<ErrorSuggestionInfo> Suggestions { get; }
+        public Collection<ErrorSuggestionInfo> Suggestions { get; } = new Collection<ErrorSuggestionInfo>();
 
         /// <summary>
         /// String which uniquely identifies this error condition.

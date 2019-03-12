@@ -29,36 +29,6 @@ namespace System.Management.Automation
     {
         #region Internal Access
 
-        private static string s_checkForCommandInCurrentDirectoryScript = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param()
-
-            $foundSuggestion = $false
-
-            if($lastError -and
-                ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
-            {
-                $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($lastError.TargetObject)
-                $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
-            }
-
-            $foundSuggestion
-        ";
-
-        private static string s_createCommandExistsInCurrentDirectoryScript = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param([string] $formatString)
-
-            $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
-        ";
-
-        private static string s_getFuzzyMatchedCommands = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param([string] $formatString)
-
-            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
-        ";
-
         private static ArrayList s_suggestions = InitializeSuggestions();
 
         private static ArrayList InitializeSuggestions()
@@ -79,29 +49,8 @@ namespace System.Management.Automation
                         matchType: SuggestionMatchType.Command,
                         rule: "^Use-Transaction",
                         suggestion: SuggestionStrings.Suggestion_UseTransaction,
-                        enabled: true),
-                    NewSuggestion(
-                        id: 3,
-                        category: "General",
-                        matchType: SuggestionMatchType.Dynamic,
-                        rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
-                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
-                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
                         enabled: true)
                 });
-
-            if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
-            {
-                suggestions.Add(
-                    NewSuggestion(
-                        id: 4,
-                        category: "General",
-                        matchType: SuggestionMatchType.ErrorId,
-                        rule: "CommandNotFoundException",
-                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
-                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
-                        enabled: true));
-            }
 
             return suggestions;
         }

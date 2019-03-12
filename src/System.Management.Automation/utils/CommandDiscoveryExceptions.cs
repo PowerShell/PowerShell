@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
@@ -15,6 +16,30 @@ namespace System.Management.Automation
     [Serializable]
     public class CommandNotFoundException : RuntimeException
     {
+        private static string s_getFuzzyMatchedCommands = @"
+            [System.Diagnostics.DebuggerHidden()]
+            param([string] $formatString)
+
+            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
+        ";
+
+        private static string s_createCommandIfExistsInCurrentDirectoryScript = @"
+            [System.Diagnostics.DebuggerHidden()]
+            param()
+
+            $foundSuggestion = $false
+
+            if($lastError -and ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
+            {
+                $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($lastError.TargetObject)
+                $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
+            }
+
+            if ($foundSuggestion) {
+                $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
+            }
+        ";
+
         /// <summary>
         /// Constructs a CommandNotFoundException. This is the recommended constructor.
         /// </summary>
@@ -125,11 +150,36 @@ namespace System.Management.Automation
             {
                 if (_errorRecord == null)
                 {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        _errorCategory,
-                        _commandName);
+                    var commandInCurrentDirSuggestion = new ErrorSuggestionInfo(
+                        ScriptBlock.CreateDelayParsedScriptBlock(
+                            s_createCommandIfExistsInCurrentDirectoryScript, isProductCode: true),
+                        new object[] { CodeGeneration.EscapeSingleQuotedStringContent(
+                                SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) });
+
+                    if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
+                    {
+                        var fuzzyMatchSuggestion = new ErrorSuggestionInfo(
+                            ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
+                            new object[] { CodeGeneration.EscapeSingleQuotedStringContent(
+                                SuggestionStrings.Suggestion_CommandNotFound) });
+
+                        _errorRecord = new ErrorRecord(
+                            new ParentContainsErrorRecordException(this),
+                            _errorId,
+                            _errorCategory,
+                            _commandName,
+                            fuzzyMatchSuggestion,
+                            commandInCurrentDirSuggestion);
+                    }
+                    else
+                    {
+                        _errorRecord = new ErrorRecord(
+                            new ParentContainsErrorRecordException(this),
+                            _errorId,
+                            _errorCategory,
+                            _commandName,
+                            commandInCurrentDirSuggestion);
+                    }
                 }
 
                 return _errorRecord;
@@ -536,4 +586,3 @@ namespace System.Management.Automation
         #endregion Private
     }
 }
-
