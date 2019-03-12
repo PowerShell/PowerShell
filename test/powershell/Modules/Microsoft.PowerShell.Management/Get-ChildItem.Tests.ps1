@@ -191,7 +191,7 @@ Describe "Get-ChildItem" -Tags "CI" {
     }
 }
 
-Describe 'FileSystem Provider Formatting' -Tag "RequireAdminOnWindows" {
+Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
 
     BeforeAll {
         $modeTestDir = New-Item -Path "$TestDrive/testmodedirectory" -ItemType Directory -Force
