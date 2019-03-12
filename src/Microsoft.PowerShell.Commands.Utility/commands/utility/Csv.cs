@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -39,19 +40,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var reader = new StringReader(csv);
-            var tempString = string.Empty;
+            StringBuilder bld = new StringBuilder();
 
-            // old implementation but now using the reader class
             while (reader.Peek() != -1) 
             {
                 char nextChar = (char)reader.Read();
 
-                // if next character was delimiter, add string to collection and reset
-                // else if next character was quote, perform reading untill next quote and add it to tempString
+                // if next character was delimiter, add string to builder and clear builder
+                // else if next character was quote, perform reading untill next quote and add it to builder
+                // else read and add it to builder
                 if (nextChar == Delimiter) 
                 {
-                    result.Add(tempString);
-                    tempString = string.Empty;
+                    result.Add(bld.ToString());
+                    bld.Clear();
                 } 
                 else if (nextChar == Quote) 
                 {
@@ -64,15 +65,17 @@ namespace Microsoft.PowerShell.Commands
                             isinQuotes = false;
                         } 
                         else {
-                            tempString += nextChar;
+                            bld.Append(nextChar);
                         }
                     }
+                } else {
+                    bld.Append(nextChar);
                 }
             }
 
-            // add last word if toAdd is not empty
-            if (tempString != string.Empty) {
-                result.Add(tempString);
+            // add last word if remainder is not empty
+            if (bld.ToString() != string.Empty) {
+                result.Add(bld.ToString());
             }
 
             reader.Close();    
