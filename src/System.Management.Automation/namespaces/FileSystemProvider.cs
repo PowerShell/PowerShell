@@ -1908,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
                 bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
                 ReadOnlySpan<char> mode = stackalloc char[]
                 {
-                    (isReparsePoint || isLink)  ? 'l' : isDirectory ? 'd' : '-',
+                    isLink ? 'l' : isDirectory ? 'd' : '-',
                     fileAttributes.HasFlag(FileAttributes.Archive)  ? 'a' : '-',
                     fileAttributes.HasFlag(FileAttributes.ReadOnly) ? 'r' : '-',
                     fileAttributes.HasFlag(FileAttributes.Hidden)   ? 'h' : '-',
@@ -7788,7 +7788,7 @@ namespace Microsoft.PowerShell.Commands
                     return linkTarget;
                 }
 #else
-               return InternalGetTarget(fileSysInfo.FullName);
+               return UnixInternalGetTarget(fileSysInfo.FullName);
 #endif
             }
 
@@ -7808,22 +7808,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InternalGetLinkType(fileSysInfo);
             }
-            else
-                return null;
+
+            return null;
         }
 
 #if UNIX
-        private static string InternalGetTarget(string filePath)
+        private static string UnixInternalGetTarget(string filePath)
         {
             string link = Platform.NonWindowsInternalGetTarget(filePath);
-            if (!string.IsNullOrEmpty(link))
-            {
-                return link;
-            }
-            else
+
+            if (string.IsNullOrEmpty(link))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
+
+            return link;
         }
 #endif
 
