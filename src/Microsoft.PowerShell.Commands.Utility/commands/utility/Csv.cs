@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var reader = new StringReader(csv);
-            StringBuilder bld = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
 
             while (reader.Peek() != -1) 
             {
@@ -51,8 +51,8 @@ namespace Microsoft.PowerShell.Commands
                 // else read and add it to builder
                 if (nextChar == Delimiter) 
                 {
-                    result.Add(bld.ToString());
-                    bld.Clear();
+                    result.Add(stringBuilder.ToString());
+                    stringBuilder.Clear();
                 } 
                 else if (nextChar == Quote) 
                 {
@@ -65,17 +65,17 @@ namespace Microsoft.PowerShell.Commands
                             isinQuotes = false;
                         } 
                         else {
-                            bld.Append(nextChar);
+                            stringBuilder.Append(nextChar);
                         }
                     }
                 } else {
-                    bld.Append(nextChar);
+                    stringBuilder.Append(nextChar);
                 }
             }
 
             // add last word if remainder is not empty
-            if (bld.ToString() != string.Empty) {
-                result.Add(bld.ToString());
+            if (stringBuilder.ToString() != string.Empty) {
+                result.Add(stringBuilder.ToString());
             }
 
             reader.Close();    
