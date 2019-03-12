@@ -2760,7 +2760,7 @@ function New-MSIPackage
         $errorMessage = "Failed to create $msiLocationPath"
         if ($null -ne $env:CI)
         {
-           Add-CICompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
         }
         throw $errorMessage
     }
