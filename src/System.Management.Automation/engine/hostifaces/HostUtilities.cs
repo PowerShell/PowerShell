@@ -42,13 +42,6 @@ namespace System.Management.Automation
                         matchType: SuggestionMatchType.Command,
                         rule: "^Start-Transaction",
                         suggestion: SuggestionStrings.Suggestion_StartTransaction,
-                        enabled: true),
-                    NewSuggestion(
-                        id: 2,
-                        category: "Transactions",
-                        matchType: SuggestionMatchType.Command,
-                        rule: "^Use-Transaction",
-                        suggestion: SuggestionStrings.Suggestion_UseTransaction,
                         enabled: true)
                 });
 

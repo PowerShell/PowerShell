@@ -185,7 +185,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the ErrorSuggestionInfo class.
+    /// Defines the <see cref="ErrorSuggestionInfo" /> class.
     /// </summary>
     public class ErrorSuggestionInfo
     {
@@ -203,8 +203,8 @@ namespace System.Management.Automation
                 throw new ArgumentNullException(nameof(suggestion));
             }
 
-            Suggestion = suggestion;
-            SuggestionArgs = args;
+            _suggestion = suggestion;
+            _args = args;
         }
 
         /// <summary>
@@ -224,40 +224,41 @@ namespace System.Management.Automation
         /// <param name="args">Arguments to be passed to the script block to use in the suggestion text.</param>
         /// <returns>Returns a copy of this suggestion with the same Suggestion script,
         /// optionally with new arguments.</returns>
-        public ErrorSuggestionInfo Copy(params object[] args)
-            => new ErrorSuggestionInfo(Suggestion, args);
+        public ErrorSuggestionInfo Copy(params object[] args) => new ErrorSuggestionInfo(_suggestion, args);
 
         /// <summary>
         /// Copies this suggestion, including the original arguments supplied.
         /// </summary>
         /// <returns>Returns a copy of this suggestion with the same Suggestion script and arguments.</returns>
-        public ErrorSuggestionInfo Copy()
-            => Copy(SuggestionArgs);
+        public ErrorSuggestionInfo Copy() => Copy(_args);
+
+        private ScriptBlock _suggestion { get; }
+        private object[] _args { get; }
+
+        private string _suggestionText;
+        /// <summary>
+        /// Gets the final suggestion text.
+        /// </summary>
+        public string SuggestionText
+        {
+            get
+            {
+                if (_suggestionText == null)
+                {
+                    _suggestionText = _args == null || _args.Length == 0
+                        ? _suggestion.InvokeReturnAsIs() as string
+                        : _suggestion.InvokeReturnAsIs(_args) as string;
+                }
+
+                return _suggestionText;
+            }
+        }
 
         /// <summary>
-        /// Gets a scriptblock containing the logic necessary to determine the appropriate suggestion to give when the
-        /// corresponding error is encountered.
+        /// Gets the final suggestion text.
         /// </summary>
-        /// <remarks>
-        /// The scriptblock should result in a string value. If it does not, the final value will be converted to
-        /// a string for use in the error suggestion display.
-        /// </remarks>
-        private ScriptBlock Suggestion { get; }
-
-        /// <summary>
-        /// Gets arguments to be passed into the scriptblock in order to supply the necessary data to determine the
-        /// appropriate message or elements of a base message to include as the suggestion for the error.
-        /// </summary>
-        private object[] SuggestionArgs { get; }
-
-        /// <summary>
-        /// Returns the suggestion text using the provided script block and arguments.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-            => SuggestionArgs == null || SuggestionArgs.Length == 0
-                ? Suggestion.InvokeReturnAsIs() as string
-                : Suggestion.InvokeReturnAsIs(SuggestionArgs) as string;
+        /// <returns>A string value representing the final value of this suggestion.</returns>
+        public override string ToString() => SuggestionText;
     }
 
     /// <summary>

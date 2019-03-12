@@ -15,6 +15,11 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsOther.Use, "Transaction", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135271")]
     public class UseTransactionCommand : PSCmdlet
     {
+        private static string s_errorSuggestionScript = @"
+            param($s)
+
+            $s
+        ";
         /// <summary>
         /// This parameter specifies the script block to run in the current
         /// PowerShell transaction.
@@ -57,8 +62,16 @@ namespace Microsoft.PowerShell.Commands
                 catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
+                    var suggestion = new ErrorSuggestionInfo(
+                        ScriptBlock.CreateDelayParsedScriptBlock(s_errorSuggestionScript, isProductCode: true),
+                        SuggestionStrings.Suggestion_StartTransaction);
 
-                    ErrorRecord errorRecord = new ErrorRecord(e, "TRANSACTED_SCRIPT_EXCEPTION", ErrorCategory.NotSpecified, null);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        e,
+                        "TRANSACTED_SCRIPT_EXCEPTION",
+                        ErrorCategory.NotSpecified,
+                        null,
+                        suggestion);
 
                     // The "transaction timed out" exception is
                     // exceedingly obtuse. We clarify things here.
