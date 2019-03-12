@@ -2648,13 +2648,13 @@ namespace System.Management.Automation.Language
                         condition = new PipelineAst(fileNameExpr.Extent,
                                                     new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), background: false);
 
-                        if (isLiteralPath && !specifiedFlags.ContainsKey("literalfile"))
+                        if (isLiteralPath)
                         {
-                            specifiedFlags.Add("literalfile", new Tuple<Token, Ast>(switchParameterToken, condition));
+                            specifiedFlags.TryAdd("literalfile", new Tuple<Token, Ast>(switchParameterToken, condition));
                         }
-                        else if (!isLiteralPath && !specifiedFlags.ContainsKey("file"))
+                        else
                         {
-                            specifiedFlags.Add("file", new Tuple<Token, Ast>(switchParameterToken, condition));
+                            specifiedFlags.TryAdd("file", new Tuple<Token, Ast>(switchParameterToken, condition));
                         }
 
                     }

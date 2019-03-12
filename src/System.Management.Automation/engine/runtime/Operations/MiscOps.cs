@@ -2414,18 +2414,12 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string ResolveLiteralFilePath(IScriptExtent errorExtent, object obj, ExecutionContext context)
+        internal static string GetLiteralFilePath(IScriptExtent errorExtent, object obj, ExecutionContext context)
         {
             try
             {
                 FileInfo file = obj as FileInfo;
-                string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
-
-                if (string.IsNullOrEmpty(filePath))
-                {
-                    throw InterpreterError.NewInterpreterException(filePath,
-                        typeof(RuntimeException), errorExtent, "InvalidFilenameOption", ParserStrings.InvalidFilenameOption);
-                }
+                string filePath = file?.FullName ?? PSObject.ToStringParser(context, obj);
 
                 ProviderInfo provider;
                 SessionState sessionState = new SessionState(context.EngineSessionState);
@@ -2441,13 +2435,6 @@ namespace System.Management.Automation
                                                                    provider.FullName);
                 }
 
-                // Make sure the file was found...
-                if (filePath == null)
-                {
-                    // "No files matching '{0}' were found.."
-                    throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
-                                                                   "FileNotFound", ParserStrings.FileNotFound, filePath);
-                }
                 return filePath;
             }
             catch (RuntimeException rte)

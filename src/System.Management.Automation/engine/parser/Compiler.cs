@@ -439,8 +439,8 @@ namespace System.Management.Automation.Language
             typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedWildcard), staticFlags);
         internal static readonly MethodInfo SwitchOps_ResolveFilePath =
             typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveFilePath), staticFlags);
-        internal static readonly MethodInfo SwitchOps_ResolveLiteralFilePath =
-            typeof(SwitchOps).GetMethod(nameof(SwitchOps.ResolveLiteralFilePath), staticFlags);
+        internal static readonly MethodInfo SwitchOps_GetLiteralFilePath =
+            typeof(SwitchOps).GetMethod(nameof(SwitchOps.GetLiteralFilePath), staticFlags);
 
         internal static readonly MethodInfo TypeOps_AsOperator =
             typeof(TypeOps).GetMethod(nameof(TypeOps.AsOperator), staticFlags);
@@ -3755,7 +3755,7 @@ namespace System.Management.Automation.Language
 
             var switchBodyGenerator = GetSwitchBodyGenerator(switchStatementAst, avs, skipDefault);
 
-            if ((switchStatementAst.Flags & (SwitchFlags.File | SwitchFlags.LiteralFile)) != 0)
+            if (switchStatementAst.Flags.HasFlag(SwitchFlags.File) | switchStatementAst.Flags.HasFlag(SwitchFlags.LiteralFile))
             {
                 // Generate:
                 //
@@ -3784,13 +3784,13 @@ namespace System.Management.Automation.Language
                 //        if (sr != null) sr.Dispose();
                 //    }
 
-                bool isLiteralPath = (switchStatementAst.Flags & SwitchFlags.LiteralFile) == SwitchFlags.LiteralFile;
+                var pathMethod = switchStatementAst.Flags.HasFlag(SwitchFlags.LiteralFile) ? CachedReflectionInfo.SwitchOps_GetLiteralFilePath : CachedReflectionInfo.SwitchOps_ResolveFilePath;
                 var exprs = new List<Expression>();
-
                 var path = NewTemp(typeof(string), "path");
                 temps.Add(path);
 
                 exprs.Add(UpdatePosition(switchStatementAst.Condition));
+
 
                 // We should not preserve the partial output if exception is thrown when evaluating the condition.
                 var cond = DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
@@ -3799,7 +3799,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(
                     Expression.Assign(
                         path,
-                        Expression.Call(isLiteralPath ? CachedReflectionInfo.SwitchOps_ResolveLiteralFilePath : CachedReflectionInfo.SwitchOps_ResolveFilePath,
+                        Expression.Call(pathMethod,
                                         Expression.Constant(switchStatementAst.Condition.Extent),
                                         cond,
                                         _executionContextParameter)));
