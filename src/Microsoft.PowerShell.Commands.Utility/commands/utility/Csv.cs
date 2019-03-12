@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the delimiter that separates the values.
         /// </summary>
         internal char Delimiter { get; } = ',';
+
         internal char Quote { get; } = '"';
 
         /// <summary>
@@ -46,12 +47,14 @@ namespace Microsoft.PowerShell.Commands
                 char nextChar = (char)reader.Read();
 
                 // if next character was delimiter, add string to collection and reset
-                if (nextChar == Delimiter) {
+                // else if next character was quote, perform reading untill next quote and add it to tempString
+                if (nextChar == Delimiter) 
+                {
                     result.Add(tempString);
                     tempString = string.Empty;
                 } 
-                // if next character was quote, perform reading untill next quote and add it to tempString
-                else if (nextChar == Quote) {
+                else if (nextChar == Quote) 
+                {
                     bool isinQuotes = true;
                     while (reader.Peek() != -1 && isinQuotes) 
                     {
@@ -71,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
             if (tempString != string.Empty) {
                 result.Add(tempString);
             }
-
+            reader.Close();
             //return new Collection<string>();      
             return result;           
         }
