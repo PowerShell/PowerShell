@@ -16,14 +16,14 @@ namespace System.Management.Automation
     [Serializable]
     public class CommandNotFoundException : RuntimeException
     {
-        private static string s_getFuzzyMatchedCommands = @"
+        private static string _getFuzzyMatchedCommands = @"
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
 
             $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
         ";
 
-        private static string s_createCommandIfExistsInCurrentDirectoryScript = @"
+        private static string _createCommandIfExistsInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
             param()
 
@@ -152,16 +152,20 @@ namespace System.Management.Automation
                 {
                     var commandInCurrentDirSuggestion = new ErrorSuggestionInfo(
                         ScriptBlock.CreateDelayParsedScriptBlock(
-                            s_createCommandIfExistsInCurrentDirectoryScript, isProductCode: true),
-                        new object[] { CodeGeneration.EscapeSingleQuotedStringContent(
-                                SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) });
+                            _createCommandIfExistsInCurrentDirectoryScript, isProductCode: true),
+                        new object[] {
+                            CodeGeneration.EscapeSingleQuotedStringContent(
+                            SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory)
+                        });
 
                     if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
                     {
                         var fuzzyMatchSuggestion = new ErrorSuggestionInfo(
-                            ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
-                            new object[] { CodeGeneration.EscapeSingleQuotedStringContent(
-                                SuggestionStrings.Suggestion_CommandNotFound) });
+                            ScriptBlock.CreateDelayParsedScriptBlock(_getFuzzyMatchedCommands, isProductCode: true),
+                            new object[] {
+                                CodeGeneration.EscapeSingleQuotedStringContent(
+                                    SuggestionStrings.Suggestion_CommandNotFound)
+                            });
 
                         _errorRecord = new ErrorRecord(
                             new ParentContainsErrorRecordException(this),

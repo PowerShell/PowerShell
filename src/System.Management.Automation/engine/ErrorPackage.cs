@@ -190,6 +190,12 @@ namespace System.Management.Automation
     public class ErrorSuggestionInfo
     {
         /// <summary>
+        /// Gets the string representation of the suggestion object.
+        /// </summary>
+        /// <param name="suggestion">The suggestion to convert to string.</param>
+        public static implicit operator string(ErrorSuggestionInfo suggestion) => suggestion.ToString();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
         /// </summary>
         /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
@@ -233,6 +239,7 @@ namespace System.Management.Automation
         public ErrorSuggestionInfo Copy() => Copy(_args);
 
         private ScriptBlock _suggestion { get; }
+
         private object[] _args { get; }
 
         private string _suggestionText;
@@ -268,12 +275,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>A string value representing the final value of this suggestion.</returns>
         public override string ToString() => SuggestionText;
-
-        /// <summary>
-        /// Gets the string representation of the suggestion object.
-        /// </summary>
-        /// <param name="suggestion">The suggestion to convert to string.</param>
-        public static implicit operator String(ErrorSuggestionInfo suggestion) => suggestion.ToString();
     }
 
     /// <summary>
