@@ -61,20 +61,25 @@ namespace Microsoft.PowerShell.Commands
                     {
                         nextChar = (char)reader.Read();
                         
-                        if (nextChar == Quote) {
+                        if (nextChar == Quote) 
+                        {
                             isinQuotes = false;
                         } 
-                        else {
+                        else 
+                        {
                             stringBuilder.Append(nextChar);
                         }
                     }
-                } else {
+                } 
+                else 
+                {
                     stringBuilder.Append(nextChar);
                 }
             }
 
             // add last word if remainder is not empty
-            if (stringBuilder.ToString() != string.Empty) {
+            if (stringBuilder.ToString() != string.Empty) 
+            {
                 result.Add(stringBuilder.ToString());
             }
 
