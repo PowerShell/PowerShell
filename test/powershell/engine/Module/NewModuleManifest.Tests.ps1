@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "New-ModuleManifest basic tests" -tags "CI" {
-    BeforeEach {
+    BeforeAll {
         $moduleName = 'test'
         $modulePath = "$TestDrive/Modules/$moduleName"
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
@@ -10,7 +11,11 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
     }
 
     AfterEach {
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $modulePath
+        Remove-Item -Path $manifestPath -Force -ErrorAction SilentlyContinue
+    }
+
+    AfterAll {
+        Remove-Item -Path $modulePath -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     It "Verify manifest fields 1" {
@@ -58,25 +63,28 @@ Describe "New-ModuleManifest basic tests" -tags "CI" {
 }
 
 Describe "New-ModuleManifest tests" -tags "CI" {
-    BeforeEach {
+    BeforeAll {
         $moduleName = 'test'
         $modulePath = "$TestDrive/Modules/$moduleName"
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
 
         New-Item -Path "$TestDrive/Modules/$moduleName" -ItemType Directory
-    }
 
-    AfterEach {
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $modulePath
-    }
-
-    BeforeAll {
         if ($IsWindows) {
             $ExpectedManifestBytes = @(35,13) # CR
         } else {
             $ExpectedManifestBytes = @(35,10) # LF
         }
     }
+
+    AfterEach {
+        Remove-Item -Path $manifestPath -Force -ErrorAction SilentlyContinue
+    }
+
+    AfterAll {
+        Remove-Item -Path $modulePath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
 
     It "Uris with spaces are allowed and escaped correctly" {
         $testUri = [Uri]"http://foo.com/hello world"

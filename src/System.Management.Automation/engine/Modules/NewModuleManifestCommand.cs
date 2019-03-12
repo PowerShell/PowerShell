@@ -496,22 +496,22 @@ namespace Microsoft.PowerShell.Commands
         public string ReleaseNotes { get; set; }
 
         /// <summary>
-        /// Specify that the module is prerelease.
+        /// Gets or sets whether or not the module is a prerelease.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string Prerelease { get; set; }
 
         /// <summary>
-        /// Specify whether the module requires explicit user acceptance for install/update/save.
+        /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
         /// </summary>
-        [Parameter(Mandatory = false)]
-        public SwitchParameter RequireLicenseAcceptance { get; set; }
+        [Parameter]
+        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
 
         /// <summary>
-        /// Specify the external module dependencies.
+        /// Gets or sets the external module dependencies.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string[] ExternalModuleDependencies { get; set; }
 
