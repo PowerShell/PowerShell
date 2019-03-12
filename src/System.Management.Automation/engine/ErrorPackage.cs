@@ -259,6 +259,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>A string value representing the final value of this suggestion.</returns>
         public override string ToString() => SuggestionText;
+
+        /// <summary>
+        /// Gets the string representation of the suggestion object.
+        /// </summary>
+        /// <param name="suggestion">The suggestion to convert to string.</param>
+        public static implicit operator String(ErrorSuggestionInfo suggestion) => suggestion.ToString();
     }
 
     /// <summary>
