@@ -3,7 +3,7 @@
 
 using System.Collections.ObjectModel;
 //using System.Text.RegularExpressions;
-using Microsoft.VisualBasic.FileIO.TextFieldParser;
+//using System.IO;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the delimiter that separates the values.
         /// </summary>
         internal char Delimiter { get; } = ',';
+        internal char Quote { get; } = '"';
 
         /// <summary>
         /// Parse a CSV string.
@@ -37,24 +38,37 @@ namespace Microsoft.PowerShell.Commands
                 return result;
             }
 
+            var reader = new System.IO.StringReader(csv);
+            var tempString = string.Empty;
 
-            var reader = new System.IO.StringReader(sampleText);
-            using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(reader))
-            {
-                parser.Delimiters = new string[] { "," };
-                parser.HasFieldsEnclosedInQuotes = true; // <--- !!!
-                string[] fields;
-                while ((fields = parser.ReadFields()) != null)
-                {
-                    result.Add(fields);
+            // old implementation but now using the reader class
+            while(reader.Peek() != -1) {
+                char nextChar = (char)reader.Read();
+                if(nextChar == Delimiter) {
+                    //next character was delimiter found, so add string to collection
+                    result.Add(tempString);
+                    tempString = string.Empty;
+                } else if(nextChar == Quote) {
+                    //next character was quote, so perform reading untill next quote and add it to tempString
+                    bool inQuote = true;
+                    while(reader.Peek() != -1 && inQuote) {
+                        nextChar = (char)reader.Read();
+                        if(nextChar == Quote) {
+                            //exit quote found
+                            inQuote = false;
+                        } else {
+                            // add to emptyString
+                            tempString += nextChar;
+                        }
+                    }
                 }
             }
-            
-            // regex expression, inspiration from
-            // https://stackoverflow.com/questions/31118964/delimit-a-string-by-character-unless-within-quotation-marks-c-sharp
-            // string[] elements = Regex.Split(csv, Delimiter + "|(\"[^\"]*\")"); 
-            // todo: exclude " in split
-            // Collection<string> result = new Collection<string>(elements);          
+            // add last word if toAdd is not empty
+            if(tempString != string.Empty) {
+                result.Add(tempString);
+            }
+
+            //return new Collection<string>();      
             return result;           
         }
     }
