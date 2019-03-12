@@ -9,7 +9,8 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         if ($IsWindows) {
             $userName = "testuserservices"
             $testPass = "Secret123!"
-            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(D;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)'
+            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+            $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
             net user $userName $testPass /add > $null
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new(".\$userName", $password)
@@ -75,12 +76,28 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
         },
         @{
-            script  = {Set-Service -Name $testservicename1 -SecurityDescriptorSddl 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA' };
+            script  = {Set-Service -Name $testservicename1 -SecurityDescriptorSddl $WrongSecurityDescriptorSddl };
             errorid = "System.ArgumentException,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
         param($script, $errorid)
         { & $script } | Should -Throw -ErrorId $errorid
+    }
+
+
+    It "Sets securitydescriptor of service using Set-Service " {
+        Set-Service -Name $TestServiceName1 -SecurityDescriptor $SecurityDescriptorSddl
+        $Counter      = 0
+        $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
+        $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $TestServiceName1)[-1]
+
+        $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
+        $UpdatedSDDL.Group | Should -Be $ExpectedSDDL.Group
+        $UpdatedSDDL.DiscretionaryAcl.Count | Should -Be $ExpectedSDDL.DiscretionaryAcl.Count
+        $UpdatedSDDL.DiscretionaryAcl | ForEach-Object -Process {
+            $_ | Should -Be $ExpectedSDDL.DiscretionaryAcl[$Counter]
+            $Counter++
+        }
     }
 
     It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(

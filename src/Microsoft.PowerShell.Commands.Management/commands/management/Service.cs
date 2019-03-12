@@ -1899,33 +1899,22 @@ namespace Microsoft.PowerShell.Commands
                         byte[] securityDescriptorByte = new byte[rawSecurityDescriptor.BinaryLength];
                         rawSecurityDescriptor.GetBinaryForm(securityDescriptorByte, 0);
 
-                        GCHandle hDacl = GCHandle.Alloc(securityDescriptorByte, GCHandleType.Pinned);
-                        try
-                        {
-                            status = NativeMethods.SetServiceObjectSecurity(
-                                        hService,
-                                        SecurityInfos.DiscretionaryAcl,
-                                        hDacl.AddrOfPinnedObject());
+                        status = NativeMethods.SetServiceObjectSecurity(
+                                    hService,
+                                    SecurityInfos.DiscretionaryAcl,
+                                    securityDescriptorByte);
 
-                            if (!status)
-                            {
-                                int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                bool accessDenied = exception.NativeErrorCode == 0x5;
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
-                                    StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, Name, exception.Message),
-                                    accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.WriteError);
-                            }
-                        }
-                        finally
+                        if (!status)
                         {
-                            if (hDacl.IsAllocated)
-                            {
-                                hDacl.Free();
-                            }
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            bool accessDenied = exception.NativeErrorCode == 0x5;
+                            WriteNonTerminatingError(
+                                service,
+                                exception,
+                                nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
+                                StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, Name, exception.Message),
+                                accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.WriteError);
                         }
                     }
 
@@ -2754,7 +2743,7 @@ namespace Microsoft.PowerShell.Commands
         bool SetServiceObjectSecurity(
             NakedWin32Handle hSCManager,
             System.Security.AccessControl.SecurityInfos dwSecurityInformation,
-            [In] IntPtr lpSecurityDescriptor
+            byte[] lpSecurityDescriptor
             );
 
         /// <summary>
