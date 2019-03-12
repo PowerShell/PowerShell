@@ -1218,10 +1218,13 @@ function Publish-TestResults
     # In VSTS publish Test Results
     if($env:TF_BUILD)
     {
-        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
-        Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
+        $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath ([system.io.path]::GetRandomFileName() + ".xml")
+        Get-Content $Path | ForEach-Object {
+            $_ -replace 'result="Inconclusive"', 'result="Not Executed"' -replace 'result="Ignored"', 'result="Not Applicable"'
+        } | Out-File -FilePath $tempFilePath -Encoding ascii
 
-        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+        Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
+        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$tempFilePath"
     }
 }
 
