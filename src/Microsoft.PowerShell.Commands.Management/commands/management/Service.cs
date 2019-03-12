@@ -1908,13 +1908,13 @@ namespace Microsoft.PowerShell.Commands
                         {
                             int lastError = Marshal.GetLastWin32Error();
                             Win32Exception exception = new Win32Exception(lastError);
-                            bool accessDenied = exception.NativeErrorCode == 0x5;
+                            bool accessDenied = exception.NativeErrorCode == NativeMethods.ERROR_ACCESS_DENIED;
                             WriteNonTerminatingError(
                                 service,
                                 exception,
                                 nameof(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl),
                                 StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, Name, exception.Message),
-                                accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.WriteError);
+                                accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
                         }
                     }
 
@@ -2602,6 +2602,7 @@ namespace Microsoft.PowerShell.Commands
         internal const int ERROR_SERVICE_ALREADY_RUNNING = 1056;
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
         internal const int ERROR_INSUFFICIENT_BUFFER = 122;
+        internal const DWORD ERROR_ACCESS_DENIED = 0x5;
         internal const DWORD SC_MANAGER_CONNECT = 1;
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
         internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
