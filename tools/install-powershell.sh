@@ -22,7 +22,6 @@ install(){
     # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
     # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
     # -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
-    # -appimage           - perform an AppImage install instead of a native install
 
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -128,27 +127,7 @@ install(){
     echo "  OSSTR: $OSSTR"
 
 
-
-    if [[ "'$*'" =~ appimage ]] ; then
-        if [ -f "$SCRIPTFOLDER/appimage.sh" ]; then
-            #Script files were copied local - use them
-            # shellcheck source=/dev/null
-            . "$SCRIPTFOLDER/appimage.sh"
-        else
-            #Script files are not local - pull from remote
-            echo "Could not find \"appimage.sh\" next to this script..."
-            echo "Pulling and executing it from \"$gitreposcriptroot/appimage.sh\""
-            if [ -n "$(command -v curl)" ]; then
-                echo "found and using curl"
-                bash <(curl -s $gitreposcriptroot/appimage.sh) "$@"
-            elif [ -n "$(command -v wget)" ]; then
-                echo "found and using wget"
-                bash <(wget -qO- $gitreposcriptroot/appimage.sh) "$@"
-            else
-                echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/appimage.sh\""
-            fi
-        fi
-    elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
+    if [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
         echo "Configuring PowerShell Core Environment for: $DistroBasedOn $DIST $REV"
         if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
             #Script files were copied local - use them
