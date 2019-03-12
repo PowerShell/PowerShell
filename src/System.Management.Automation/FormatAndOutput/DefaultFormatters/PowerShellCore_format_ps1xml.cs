@@ -849,7 +849,16 @@ namespace System.Management.Automation.Runspaces
                                         } else {
                                             $_.ErrorDetails.Message + $posmsg
                                         }
-                                   }
+                                    }
+                                ")
+                        .AddScriptBlockExpressionBinding(@"
+                                    if ($_.Suggestions.Length > 0) {
+                                        foreach ($item in $_.Suggestions) {
+                                            if (-not [string]::IsNullOrEmpty($item -as [string])) {
+                                                $item + ""`n""
+                                            }
+                                        }
+                                    }
                                 ")
                     .EndEntry()
                 .EndControl());

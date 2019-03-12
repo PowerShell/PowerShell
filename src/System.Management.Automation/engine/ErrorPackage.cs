@@ -243,11 +243,20 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_suggestionText == null)
+                if (string.IsNullOrEmpty(_suggestionText))
                 {
-                    _suggestionText = _args == null || _args.Length == 0
-                        ? _suggestion.InvokeReturnAsIs() as string
-                        : _suggestion.InvokeReturnAsIs(_args) as string;
+                    try
+                    {
+                        _suggestionText = _args == null || _args.Length == 0
+                            ? _suggestion.InvokeReturnAsIs() as string
+                            : _suggestion.InvokeReturnAsIs(_args) as string;
+                    }
+                    catch
+                    {
+                        // If any suggestions throw an error generating the string, they should be ignored.
+                        // We give the benefit of the doubt and don't cache a dummy string.
+                        _suggestionText = string.Empty;
+                    }
                 }
 
                 return _suggestionText;
