@@ -41,28 +41,26 @@ namespace Microsoft.PowerShell.Commands
             var tempString = string.Empty;
 
             // old implementation but now using the reader class
-            while (reader.Peek() != -1) {
+            while (reader.Peek() != -1) 
+            {
                 char nextChar = (char)reader.Read();
-                if (nextChar == Delimiter) {
 
-                    //next character was delimiter found, so add string to collection
+                // if next character was delimiter, add string to collection and reset
+                if (nextChar == Delimiter) {
                     result.Add(tempString);
                     tempString = string.Empty;
                 } 
-                else if(nextChar == Quote) {
-
-                    //next character was quote, so perform reading untill next quote and add it to tempString
+                // if next character was quote, perform reading untill next quote and add it to tempString
+                else if (nextChar == Quote) {
                     bool isinQuotes = true;
-                    while (reader.Peek() != -1 && isinQuotes) {
+                    while (reader.Peek() != -1 && isinQuotes) 
+                    {
                         nextChar = (char)reader.Read();
+                        
                         if (nextChar == Quote) {
-
-                            //exit quote found
                             isinQuotes = false;
                         } 
                         else {
-
-                            // add to emptyString
                             tempString += nextChar;
                         }
                     }
@@ -70,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // add last word if toAdd is not empty
-            if(tempString != string.Empty) {
+            if (tempString != string.Empty) {
                 result.Add(tempString);
             }
 
