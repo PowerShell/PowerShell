@@ -1221,7 +1221,7 @@ function Publish-TestResults
         $fileName = Split-Path -Leaf -Path $Path
         $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath $fileName
 
-        # Althought NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
+        # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
         # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
         # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
