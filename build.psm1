@@ -1231,7 +1231,9 @@ function Publish-TestResults
         } | Out-File -FilePath $tempFilePath -Encoding ascii -Force
 
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
-        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$tempFilePath"
+
+        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
+        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
     }
 }
 
