@@ -74,8 +74,8 @@ namespace Microsoft.PowerShell.Commands
             if (tempString != string.Empty) {
                 result.Add(tempString);
             }
-            reader.Close();
-            //return new Collection<string>();      
+
+            reader.Close();    
             return result;           
         }
     }
