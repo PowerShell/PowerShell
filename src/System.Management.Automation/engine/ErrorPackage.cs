@@ -1156,7 +1156,7 @@ namespace System.Management.Automation
         /// This is the object against which the cmdlet or provider was operating when the error occurred.
         /// This is optional.
         /// </param>
-        /// <param name="suggestion">
+        /// <param name="suggestions">
         /// This contains the optional suggestion information to be displayed alongside the error when it is
         /// displayed in the console.
         /// </param>
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject,
-            params ErrorSuggestionInfo[] suggestion)
+            params ErrorSuggestionInfo[] suggestions)
         {
             if (exception == null)
             {
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
             _errorId = errorId;
             _category = errorCategory;
             _target = targetObject;
-            Suggestion = new Collection<ErrorSuggestionInfo>(suggestion);
+            Suggestions = new Collection<ErrorSuggestionInfo>(suggestions);
         }
 
         #region Serialization
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
             _reasonOverride = errorRecord._reasonOverride;
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
-            Suggestion = errorRecord.Suggestion;
+            Suggestions = errorRecord.Suggestions;
             if (errorRecord.ErrorDetails != null)
             {
                 ErrorDetails = new ErrorDetails(errorRecord.ErrorDetails);
@@ -1642,7 +1642,7 @@ namespace System.Management.Automation
         /// Suggestions should provide solutions to commonly-encountered errors or possible alternate commands
         /// to be used instead in forseeable circumstances.
         /// </remarks>
-        public Collection<ErrorSuggestionInfo> Suggestion { get; }
+        public Collection<ErrorSuggestionInfo> Suggestions { get; }
 
         /// <summary>
         /// String which uniquely identifies this error condition.
