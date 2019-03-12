@@ -587,6 +587,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
             base.Deserialize(so, deserializer);
+
             // The "repeatHeader" property was added later (V5,V6) and presents an incompatibility when remoting to older version PowerShell sessions.
             // When the property is missing from the serialized object, let the deserialized property be false.
             this.repeatHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader", cannotBeNull: false);
