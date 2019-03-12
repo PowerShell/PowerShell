@@ -42,21 +42,23 @@ namespace Microsoft.PowerShell.Commands
             var tempString = string.Empty;
 
             // old implementation but now using the reader class
-            while(reader.Peek() != -1) {
+            while (reader.Peek() != -1) {
                 char nextChar = (char)reader.Read();
-                if(nextChar == Delimiter) {
+                if (nextChar == Delimiter) {
                     //next character was delimiter found, so add string to collection
                     result.Add(tempString);
                     tempString = string.Empty;
-                } else if(nextChar == Quote) {
+                } 
+                else if(nextChar == Quote) {
                     //next character was quote, so perform reading untill next quote and add it to tempString
-                    bool inQuote = true;
-                    while(reader.Peek() != -1 && inQuote) {
+                    bool isinQuotes = true;
+                    while (reader.Peek() != -1 && isinQuotes) {
                         nextChar = (char)reader.Read();
-                        if(nextChar == Quote) {
+                        if (nextChar == Quote) {
                             //exit quote found
-                            inQuote = false;
-                        } else {
+                            isinQuotes = false;
+                        } 
+                        else {
                             // add to emptyString
                             tempString += nextChar;
                         }
