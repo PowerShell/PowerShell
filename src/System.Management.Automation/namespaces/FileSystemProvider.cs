@@ -1886,8 +1886,8 @@ namespace Microsoft.PowerShell.Commands
                 FileAttributes fileAttributes = fileSystemInfo.Attributes;
 
                 bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
-                bool isHardLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
-                if (!isHardLink)
+                bool isLink = isReparsePoint || excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo);
+                if (!isLink)
                 {
                     // special casing for the common cases - no allocations
                     switch (fileAttributes)
@@ -1908,11 +1908,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
                 ReadOnlySpan<char> mode = stackalloc char[]
                 {
-                    isReparsePoint || isHardLink ? 'l' : isDirectory ? 'd' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Archive)   ? 'a' : '-',
-                    fileAttributes.HasFlag(FileAttributes.ReadOnly)  ? 'r' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Hidden)    ? 'h' : '-',
-                    fileAttributes.HasFlag(FileAttributes.System)    ? 's' : '-',
+                    (isReparsePoint || isLink)  ? 'l' : isDirectory ? 'd' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Archive)  ? 'a' : '-',
+                    fileAttributes.HasFlag(FileAttributes.ReadOnly) ? 'r' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Hidden)   ? 'h' : '-',
+                    fileAttributes.HasFlag(FileAttributes.System)   ? 's' : '-',
                 };
                 return new string(mode);
             }
