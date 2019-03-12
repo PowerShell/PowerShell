@@ -36,7 +36,7 @@ resources:
   clean: true
 
 jobs:
-- template: templates/windows-build.yml
+- template: templates/ci-build.yml
 
 - template: templates/windows-test.yml
   parameters:
