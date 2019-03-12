@@ -2387,8 +2387,6 @@ function Get-NugetSemanticVersion
 # Get the paths to various WiX tools
 function Get-WixPath
 {
-    ## AppVeyor base image might update the version for Wix. Hence, we should
-    ## not hard code version numbers.
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
@@ -2857,18 +2855,7 @@ function Test-FileWxs
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
         Write-Log -message "Updated xml saved to $newXmlFileName."
         Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
-        if ($env:appveyor)
-        {
-            try
-            {
-                Push-AppveyorArtifact $newXmlFileName
-            }
-            catch
-            {
-                Write-Warning -Message "Pushing MSI File fragment failed."
-            }
-        }
-        elseif ($env:TF_BUILD)
+        if ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
         }
