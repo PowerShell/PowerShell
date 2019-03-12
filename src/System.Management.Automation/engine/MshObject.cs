@@ -159,7 +159,7 @@ namespace System.Management.Automation
                 }
             }
 
-            T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, predicate);
+            T retValue = msjObj.InternalAdapter.BaseGetFirstMemberOrDefault<T>(msjObj._immediateBaseObject, predicate);
             return retValue;
         }
 
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         private static T DotNetGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            return msjObj.InternalBaseDotNetAdapter?.BaseGetMember<T>(msjObj._immediateBaseObject, predicate);
+            return msjObj.InternalBaseDotNetAdapter?.BaseGetFirstMemberOrDefault<T>(msjObj._immediateBaseObject, predicate);
         }
 
 

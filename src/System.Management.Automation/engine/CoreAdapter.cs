@@ -89,7 +89,14 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected abstract T GetMember<T>(object obj, string memberName) where T : PSMemberInfo;
 
-        protected abstract T GetMember<T>(object o, MemberNamePredicate predicate) where T : PSMemberInfo;
+        /// <summary>
+        /// Returns the first PSMemberInfo whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
+        /// </summary>
+        /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
+        /// <param name="predicate">The predicate to find the matching member.</param>
+        /// <returns>The PSMemberInfo corresponding to the predicate match.</returns>
+        protected abstract T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo;
 
         /// <summary>
         /// Retrieves all the members available in the object.
@@ -214,6 +221,7 @@ namespace System.Management.Automation
         #endregion method
 
         #region parameterized property
+
         /// <summary>
         /// Returns the name of the type corresponding to the property's value.
         /// </summary>
@@ -328,8 +336,12 @@ namespace System.Management.Automation
 
         #region private
 
-        private static Exception NewException(Exception e, string errorId,
-            string targetErrorId, string resourceString, params object[] parameters)
+        private static Exception NewException(
+            Exception e,
+            string errorId,
+            string targetErrorId,
+            string resourceString,
+            params object[] parameters)
         {
             object[] newParameters = new object[parameters.Length + 1];
             for (int i = 0; i < parameters.Length; i++)
@@ -358,6 +370,7 @@ namespace System.Management.Automation
         #endregion private
 
         #region member
+
         internal ConsolidatedString BaseGetTypeNameHierarchy(object obj)
         {
             try
@@ -386,11 +399,11 @@ namespace System.Management.Automation
             }
         }
 
-        internal T BaseGetMember<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        internal T BaseGetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             try
             {
-                return this.GetMember<T>(obj, predicate);
+                return this.GetFirstMemberOrDefault<T>(obj, predicate);
             }
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
@@ -1921,7 +1934,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal object GetOrDefault(MemberNamePredicate predicate)
+        internal object GetFirstOrDefault(MemberNamePredicate predicate)
         {
             foreach (var entry in _indexes)
             {
@@ -3476,7 +3489,7 @@ namespace System.Management.Automation
                                        : GetInstancePropertyReflectionTable(obj.GetType());
 
             object entry = predicate != null
-                               ? typeTable.GetOrDefault(predicate)
+                               ? typeTable.GetFirstOrDefault(predicate)
                                : typeTable[propertyName];
             switch (entry)
             {
@@ -3496,16 +3509,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
-        {
-            return GetDotNetPropertyImpl<T>(obj, propertyName, predicate: null);
-        }
-
-        protected T GetDotNetProperty<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
-        {
-            return GetDotNetPropertyImpl<T>(obj, propertyName: null, predicate);
-        }
-
         private T GetDotNetMethodImpl<T>(object obj, string methodName, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
@@ -3518,7 +3521,7 @@ namespace System.Management.Automation
                                        : GetInstanceMethodReflectionTable(obj.GetType());
 
             var methods = predicate != null
-                              ? (MethodCacheEntry)typeTable.GetOrDefault(predicate)
+                              ? (MethodCacheEntry)typeTable.GetFirstOrDefault(predicate)
                               : (MethodCacheEntry)typeTable[methodName];
 
             if (methods == null)
@@ -3541,14 +3544,70 @@ namespace System.Management.Automation
             return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
         }
 
+        internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
+        {
+            return GetDotNetPropertyImpl<T>(obj, propertyName, predicate: null);
+        }
+
         internal T GetDotNetMethod<T>(object obj, string methodName) where T : PSMemberInfo
         {
             return GetDotNetMethodImpl<T>(obj, methodName, predicate: null);
         }
 
-        internal T GetDotNetMethod<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        protected T GetFirstDotNetPropertyOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            return GetDotNetPropertyImpl<T>(obj, propertyName: null, predicate);
+        }
+
+        protected T GetFirstDotNetMethodOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             return GetDotNetMethodImpl<T>(obj, methodName: null, predicate);
+        }
+
+        protected T GetFirstDotNetEventOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
+            {
+                return null;
+            }
+
+            var table = _isStatic
+                ? GetStaticEventReflectionTable((Type)obj)
+                : GetInstanceEventReflectionTable(obj.GetType());
+
+            foreach (var psEvent in table.Values)
+            {
+                if (predicate(psEvent.events[0].Name))
+                {
+                    return new PSEvent(psEvent.events[0]) as T;
+                }
+            }
+
+            return null;
+        }
+
+        protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            var idmop = obj as IDynamicMetaObjectProvider;
+            if (idmop == null || obj is PSObject)
+            {
+                return null;
+            }
+
+            if (!typeof(T).IsAssignableFrom(typeof(PSDynamicMember)))
+            {
+                return null;
+            }
+
+            foreach (var name in idmop.GetMetaObject(Expression.Variable(idmop.GetType())).GetDynamicMemberNames())
+            {
+                if (predicate(name))
+                {
+                    return new PSDynamicMember(name) as T;
+                }
+            }
+
+            return null;
         }
 
         internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
@@ -3722,56 +3781,13 @@ namespace System.Management.Automation
             return GetDotNetMethod<T>(obj, memberName);
         }
 
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        /// <summary>
+        /// Get the first .NET member whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// </summary>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
-            return GetDotNetProperty<T>(obj, predicate) ?? GetDotNetMethod<T>(obj, predicate) ??
-                   GetFirstEventOrDefault<T>(obj, predicate) ?? GetFirstDynamicMemberOrDefault<T>(obj, predicate);
-        }
-
-        protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
-        {
-            var idmop = obj as IDynamicMetaObjectProvider;
-            if (idmop == null || obj is PSObject)
-            {
-                return null;
-            }
-
-            if (!typeof(T).IsAssignableFrom(typeof(PSDynamicMember)))
-            {
-                return null;
-            }
-
-            foreach (var name in idmop.GetMetaObject(Expression.Variable(idmop.GetType())).GetDynamicMemberNames())
-            {
-                if (predicate(name))
-                {
-                    return new PSDynamicMember(name) as T;
-                }
-            }
-
-            return null;
-        }
-
-        protected T GetFirstEventOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
-        {
-            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
-            {
-                return null;
-            }
-
-            var table = _isStatic
-                ? GetStaticEventReflectionTable((Type)obj)
-                : GetInstanceEventReflectionTable(obj.GetType());
-
-            foreach (var psEvent in table.Values)
-            {
-                if (predicate(psEvent.events[0].Name))
-                {
-                    return new PSEvent(psEvent.events[0]) as T;
-                }
-            }
-
-            return null;
+            return GetFirstDotNetPropertyOrDefault<T>(obj, predicate) ?? GetFirstDotNetMethodOrDefault<T>(obj, predicate) ??
+                   GetFirstDotNetEventOrDefault<T>(obj, predicate) ?? GetFirstDynamicMemberOrDefault<T>(obj, predicate);
         }
 
         /// <summary>
@@ -4486,52 +4502,10 @@ namespace System.Management.Automation
     /// </remarks>
     internal class BaseDotNetAdapterForAdaptedObjects : DotNetAdapter
     {
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
-        {
-            PSProperty property = base.GetDotNetProperty<PSProperty>(obj, predicate);
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (property != null))
-            {
-                return property as T;
-            }
-
-            // In order to not break v1..base dotnet adapter should not return methods
-            // when accessed with T as PSMethod.. accessing method with PSMemberInfo
-            // is ok as property always gets precedence over methods and duplicates
-            // are ignored.
-            if (typeof(T) == typeof(PSMemberInfo))
-            {
-                T returnValue = base.GetDotNetMethod<T>(obj, predicate);
-
-                // We only return a method if there is no property by the same name
-                // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
-                {
-                    return returnValue;
-                }
-            }
-
-            if (IsTypeParameterizedProperty(typeof(T)))
-            {
-                var parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
-
-                // We only return a parameterized property if there is no property by the same name
-                // to match the behavior we have in GetMembers
-                if (parameterizedProperty != null && property == null)
-                {
-                    return parameterizedProperty as T;
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Return a collection representing the <paramref name="obj"/> object's
         /// members as returned by CLR reflection.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
@@ -4545,10 +4519,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a member representing the <paramref name="obj"/> as given by CLR reflection.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="memberName"></param>
-        /// <returns></returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
             PSProperty property = base.GetDotNetProperty<PSProperty>(obj, memberName);
@@ -4575,6 +4545,49 @@ namespace System.Management.Automation
             if (IsTypeParameterizedProperty(typeof(T)))
             {
                 PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
+                // We only return a parameterized property if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (parameterizedProperty != null && property == null)
+                {
+                    return parameterizedProperty as T;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the first reflection member whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
+        /// </summary>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
+        {
+            PSProperty property = base.GetFirstDotNetPropertyOrDefault<PSProperty>(obj, predicate);
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property != null)
+            {
+                return property as T;
+            }
+
+            // In order to not break v1..base dotnet adapter should not return methods
+            // when accessed with T as PSMethod.. accessing method with PSMemberInfo
+            // is ok as property always gets precedence over methods and duplicates
+            // are ignored.
+            if (typeof(T) == typeof(PSMemberInfo))
+            {
+                T returnValue = base.GetFirstDotNetMethodOrDefault<T>(obj, predicate);
+
+                // We only return a method if there is no property by the same name
+                // to match the behavior we have in GetMembers
+                if (returnValue != null && property == null)
+                {
+                    return returnValue;
+                }
+            }
+
+            if (IsTypeParameterizedProperty(typeof(T)))
+            {
+                var parameterizedProperty = base.GetFirstDotNetPropertyOrDefault<PSParameterizedProperty>(obj, predicate);
+
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4766,7 +4779,11 @@ namespace System.Management.Automation
             return ((PSObject)obj).Members[memberName] as T;
         }
 
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        /// <summary>
+        /// Returns the first PSMemberInfo whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
+        /// </summary>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
             return ((PSObject)obj).GetFirstPropertyOrDefault(predicate) as T;
         }
@@ -4830,13 +4847,17 @@ namespace System.Management.Automation
             return ((PSMemberSet)obj).Members[memberName] as T;
         }
 
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        /// <summary>
+        /// Returns the first PSMemberInfo whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
+        /// </summary>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
-            foreach (var mem in ((PSMemberSet)obj).Members)
+            foreach (var member in ((PSMemberSet)obj).Members)
             {
-                if (predicate(mem.Name))
+                if (predicate(member.Name))
                 {
-                    return mem as T;
+                    return member as T;
                 }
             }
 
@@ -4912,7 +4933,14 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected abstract PSProperty DoGetProperty(object obj, string propertyName);
 
-        protected abstract PSProperty DoGetProperty(object obj, MemberNamePredicate predicate);
+        /// <summary>
+        /// Returns the first PSProperty whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
+        /// </summary>
+        /// <param name="obj">Object to retrieve the PSProperty from.</param>
+        /// <param name="predicate">The predicate to find the matching member.</param>
+        /// <returns>The first PSProperty whose name matches the <paramref name="predicate"/>.</returns>
+        protected abstract PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate);
 
         /// <summary>
         /// Retrieves all the properties available in the object.
@@ -4963,16 +4991,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a PSMemberInfo if the predicate matches any member name in the adapter or
-        /// null.
+        /// Returns the first PSMemberInfo whose name matches the specified <see cref="MemberNamePredicate"/>.
+        /// Otherwise, return null.
         /// </summary>
         /// <typeparam name="T">A subtype of <see cref="PSMemberInfo"/>.</typeparam>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="predicate">A name matching predicate.</param>
-        /// /// <returns>The PSMemberInfo corresponding to the predicate match.</returns>
-        protected override T GetMember<T>(object obj, MemberNamePredicate predicate)
+        /// <returns>The PSMemberInfo corresponding to the predicate match.</returns>
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
         {
-            PSProperty property = DoGetProperty(obj, predicate);
+            PSProperty property = DoGetFirstPropertyOrDefault(obj, predicate);
 
             if (typeof(T).IsAssignableFrom(typeof(PSProperty)))
             {
@@ -4981,7 +5009,7 @@ namespace System.Management.Automation
 
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
-                T returnValue = base.GetDotNetMethod<T>(obj, predicate);
+                T returnValue = base.GetFirstDotNetMethodOrDefault<T>(obj, predicate);
 
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
@@ -4993,7 +5021,7 @@ namespace System.Management.Automation
 
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                var parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, predicate);
+                var parameterizedProperty = base.GetFirstDotNetPropertyOrDefault<PSParameterizedProperty>(obj, predicate);
 
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
@@ -5161,7 +5189,7 @@ namespace System.Management.Automation
             return new PSProperty(nodes[0].LocalName, this, obj, nodes);
         }
 
-        protected override PSProperty DoGetProperty(object obj, MemberNamePredicate predicate)
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             XmlNode node = FindNode(obj, predicate);
             return node == null ? null : new PSProperty(node.LocalName, this, obj, node);
@@ -5490,7 +5518,7 @@ namespace System.Management.Automation
             return new PSProperty(columnName, this, obj, columnName);
         }
 
-        protected override PSProperty DoGetProperty(object obj, MemberNamePredicate predicate)
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             DataRow dataRow = (DataRow)obj;
 
@@ -5612,7 +5640,7 @@ namespace System.Management.Automation
             return new PSProperty(columnName, this, obj, columnName);
         }
 
-        protected override PSProperty DoGetProperty(object obj, MemberNamePredicate predicate)
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             DataRowView dataRowView = (DataRowView)obj;
 

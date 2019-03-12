@@ -128,13 +128,13 @@ namespace System.Management.Automation
             return property;
         }
 
-        protected override PSProperty DoGetProperty(object obj, MemberNamePredicate predicate)
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             PSAdaptedProperty property = null;
 
             try
             {
-                property = _externalAdapter.GetProperty(obj, predicate);
+                property = _externalAdapter.GetFirstPropertyOrDefault(obj, predicate);
             }
             catch (Exception exception)
             {
@@ -352,6 +352,17 @@ namespace System.Management.Automation
         /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
         /// </summary>
         /// <returns>An adapted property if the predicate matches, or <c>null</c>.</returns>
-        public abstract PSAdaptedProperty GetProperty(object baseObject, MemberNamePredicate propertyName);
+        public virtual PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
+        {
+            foreach (var property in GetProperties(baseObject))
+            {
+                if (predicate(property.Name))
+                {
+                    return property;
+                }
+            }
+
+            return null;
+        }
     }
 }
