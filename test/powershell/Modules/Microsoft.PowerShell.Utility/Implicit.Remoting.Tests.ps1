@@ -10,7 +10,7 @@ $PSDefaultParameterValues["it:skip"] = $skipTest
 
 try
 {
-    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows","RequireSudoOnUnix" {
+    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" {
 
         BeforeAll {
 
