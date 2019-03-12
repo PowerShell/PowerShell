@@ -413,7 +413,7 @@ try
             }
         }
 
-        Context "Runspace created by the module with explicit session options" -Pending {
+        Context "Runspace created by the module with explicit session options" {
             BeforeAll {
                 if ($skipTest) { return }
                 $explicitSessionOption = New-PSSessionOption -Culture fr-FR -UICulture de-DE
