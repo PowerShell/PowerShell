@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -193,6 +194,22 @@ namespace Microsoft.PowerShell.Commands
         /// Suppress KeyFilePath.
         /// </summary>
         public override string KeyFilePath
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress HostName.
+        /// </summary>
+        public override string[] HostName
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress Subsystem.
+        /// </summary>
+        public override string Subsystem
         {
             get { return null; }
         }
@@ -548,6 +565,25 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (!File.Exists(PowerShellProcessInstance.PwshExePath))
+            {
+                // The pwsh executable file is not found under $PSHOME.
+                // This means that PowerShell is currently being hosted in another application,
+                // and 'Start-Job' is not supported by design in that scenario.
+                string message = StringUtil.Format(
+                    RemotingErrorIdStrings.IPCPwshExecutableNotFound,
+                    PowerShellProcessInstance.PwshExePath);
+
+                var exception = new PSNotSupportedException(message);
+                var errorRecord = new ErrorRecord(
+                        exception,
+                        "IPCPwshExecutableNotFound",
+                        ErrorCategory.NotInstalled,
+                        PowerShellProcessInstance.PwshExePath);
+
+                ThrowTerminatingError(errorRecord);
+            }
+
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);
 
             if (ParameterSetName == DefinitionNameParameterSet)
