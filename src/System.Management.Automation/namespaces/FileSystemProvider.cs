@@ -7812,9 +7812,9 @@ namespace Microsoft.PowerShell.Commands
                 return null;
         }
 
+#if UNIX
         private static string InternalGetTarget(string filePath)
         {
-#if UNIX
             string link = Platform.NonWindowsInternalGetTarget(filePath);
             if (!string.IsNullOrEmpty(link))
             {
@@ -7824,9 +7824,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
-#endif
-            return null;
         }
+#endif
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
