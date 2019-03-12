@@ -1218,10 +1218,15 @@ function Publish-TestResults
     # In VSTS publish Test Results
     if($env:TF_BUILD)
     {
-        $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath ([system.io.path]::GetRandomFileName() + ".xml")
+        $fileName = Split-Path -Leaf -Path $Path
+        $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath $fileName
+
+        # Translate the results to something that AzureDevOps understands
+        # Pending (Inconclusive) to Not Executed
+        # Skipped (Ignored) to Not Applicable
         Get-Content $Path | ForEach-Object {
             $_ -replace 'result="Inconclusive"', 'result="Not Executed"' -replace 'result="Ignored"', 'result="Not Applicable"'
-        } | Out-File -FilePath $tempFilePath -Encoding ascii
+        } | Out-File -FilePath $tempFilePath -Encoding ascii -Force
 
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$tempFilePath"
