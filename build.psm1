@@ -1221,11 +1221,11 @@ function Publish-TestResults
         $fileName = Split-Path -Leaf -Path $Path
         $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath $fileName
 
-        # Translate the results for skipped test from Ignored to the allowed value of Skipped
-        # All allowed values are: Passed, Failed, Inconclusive or Skipped
+        # Althought NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
+        # Azure DevOps doesn't work with Inconclusive, so we will translate it to Ignored.
         Get-Content $Path | ForEach-Object {
-            $_ -replace 'result="Ignored"', 'result="Skipped"'
+            $_ -replace 'result="Inconclusive"', 'result="Ignored"'
         } | Out-File -FilePath $tempFilePath -Encoding ascii -Force
 
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
