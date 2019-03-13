@@ -186,34 +186,35 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the <see cref="ErrorSuggestionInfo" /> class.
+    /// Defines the <see cref="SuggestionInfo" /> class.
     /// </summary>
-    public class ErrorSuggestionInfo
+    public class SuggestionInfo
     {
         /// <summary>
         /// Gets the string representation of the suggestion object.
         /// </summary>
         /// <param name="suggestion">The suggestion to convert to string.</param>
-        public static implicit operator string(ErrorSuggestionInfo suggestion) => suggestion.ToString();
+        public static implicit operator string(SuggestionInfo suggestion) => suggestion.ToString();
 
-        internal static Dictionary<string, ErrorSuggestionInfo> MiscSuggestionLibrary =
-            new Dictionary<string, ErrorSuggestionInfo>() {
+        internal static readonly Dictionary<string, SuggestionInfo> MiscSuggestionLibrary =
+            new Dictionary<string, SuggestionInfo>
+            {
                 {
                     "Transaction",
-                    new ErrorSuggestionInfo(
+                    new SuggestionInfo(
                         ScriptBlock.CreateDelayParsedScriptBlock(
                             SuggestionStrings.Suggestion_StartTransaction, isProductCode: true))
                 }
             };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
+        /// Initializes a new instance of the <see cref="SuggestionInfo" /> class.
         /// </summary>
         /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
         /// This script should resolve to a single string value. If it does not, the final value will be
         /// converted to string for display.</param>
         /// <param name="args">Arguments to be passed to the script block to use in the suggestion text.</param>
-        public ErrorSuggestionInfo(ScriptBlock suggestion, params object[] args)
+        public SuggestionInfo(ScriptBlock suggestion, params object[] args)
         {
             if (suggestion == null)
             {
@@ -225,12 +226,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
+        /// Initializes a new instance of the <see cref="SuggestionInfo" /> class.
         /// </summary>
         /// <param name="suggestion">The scriptblock to be invoked to create the suggestion text.
         /// This script should resolve to a single string value. If it does not, the final value will be
         /// converted to string for display.</param>
-        public ErrorSuggestionInfo(ScriptBlock suggestion) : this(suggestion, null)
+        public SuggestionInfo(ScriptBlock suggestion) : this(suggestion, null)
         {
         }
 
@@ -241,13 +242,13 @@ namespace System.Management.Automation
         /// <param name="args">Arguments to be passed to the script block to use in the suggestion text.</param>
         /// <returns>Returns a copy of this suggestion with the same Suggestion script,
         /// optionally with new arguments.</returns>
-        public ErrorSuggestionInfo Copy(params object[] args) => new ErrorSuggestionInfo(_suggestion, args);
+        public SuggestionInfo Copy(params object[] args) => new SuggestionInfo(_suggestion, args);
 
         /// <summary>
         /// Copies this suggestion, including the original arguments supplied.
         /// </summary>
         /// <returns>Returns a copy of this suggestion with the same Suggestion script and arguments.</returns>
-        public ErrorSuggestionInfo Copy() => Copy(_args);
+        public SuggestionInfo Copy() => Copy(_args);
 
         private ScriptBlock _suggestion { get; }
 
@@ -265,9 +266,16 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        _suggestionText = _args == null || _args.Length == 0
-                            ? _suggestion.InvokeReturnAsIs() as string
-                            : _suggestion.InvokeReturnAsIs(_args) as string;
+                        var result = _args == null || _args.Length == 0
+                            ? _suggestion.Invoke()
+                            : _suggestion.Invoke(_args);
+                        Collection<string> values = new Collection<string>();
+                        foreach (var item in result)
+                        {
+                            values.Add(item.ToString());
+                        }
+
+                        _suggestionText = string.Join(' ', values);
                     }
                     catch
                     {
@@ -1122,7 +1130,7 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject)
-            : this(exception, errorId, errorCategory, targetObject, (ErrorSuggestionInfo)null)
+            : this(exception, errorId, errorCategory, targetObject, (SuggestionInfo)null)
         {
         }
 
@@ -1158,7 +1166,7 @@ namespace System.Management.Automation
             object targetObject,
             ScriptBlock suggestion,
             params object[] suggestionArgs)
-            : this(exception, errorId, errorCategory, targetObject, new ErrorSuggestionInfo(suggestion, suggestionArgs))
+            : this(exception, errorId, errorCategory, targetObject, new SuggestionInfo(suggestion, suggestionArgs))
         {
         }
 
@@ -1190,7 +1198,7 @@ namespace System.Management.Automation
             string errorId,
             ErrorCategory errorCategory,
             object targetObject,
-            params ErrorSuggestionInfo[] suggestions)
+            params SuggestionInfo[] suggestions)
         {
             if (exception == null)
             {
@@ -1677,7 +1685,7 @@ namespace System.Management.Automation
         /// Suggestions should provide solutions to commonly-encountered errors or possible alternate commands
         /// to be used instead in forseeable circumstances.
         /// </remarks>
-        public Collection<ErrorSuggestionInfo> Suggestions { get; } = new Collection<ErrorSuggestionInfo>();
+        public Collection<SuggestionInfo> Suggestions { get; } = new Collection<SuggestionInfo>();
 
         /// <summary>
         /// String which uniquely identifies this error condition.

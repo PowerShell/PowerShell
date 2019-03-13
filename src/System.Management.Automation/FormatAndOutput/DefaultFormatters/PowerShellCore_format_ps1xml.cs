@@ -791,6 +791,14 @@ namespace System.Management.Automation.Runspaces
                                         {
                                             $myinv.InvocationName + "" : ""
                                         }
+
+                                        if ($_.Suggestions.Count > 0) {
+                                            foreach ($item in $_.Suggestions) {
+                                                if (-not [string]::IsNullOrEmpty($item -as [string])) {
+                                                    $item + ""`n""
+                                                }
+                                            }
+                                        }
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
@@ -850,9 +858,8 @@ namespace System.Management.Automation.Runspaces
                                             $_.ErrorDetails.Message + $posmsg
                                         }
                                     }
-                                ")
-                        .AddScriptBlockExpressionBinding(@"
-                                    if ($_.Suggestions.Length > 0) {
+
+                                    if ($_.Suggestions.Count > 0) {
                                         foreach ($item in $_.Suggestions) {
                                             if (-not [string]::IsNullOrEmpty($item -as [string])) {
                                                 $item + ""`n""

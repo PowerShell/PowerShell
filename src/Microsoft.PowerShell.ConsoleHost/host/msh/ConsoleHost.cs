@@ -2357,7 +2357,6 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
-                bool previousResponseWasEmpty = false;
                 StringBuilder inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
@@ -2399,7 +2398,6 @@ namespace Microsoft.PowerShell
                             ui.Write(prompt);
                         }
 
-                        previousResponseWasEmpty = false;
                         // There could be a profile. So there could be a user defined custom readline command
                         line = ui.ReadLineWithTabCompletion(_exec);
 
@@ -2407,8 +2405,6 @@ namespace Microsoft.PowerShell
 
                         if (line == null)
                         {
-                            previousResponseWasEmpty = true;
-
                             s_tracer.WriteLine("line is null");
                             if (!ui.ReadFromStdin)
                             {
@@ -2442,7 +2438,6 @@ namespace Microsoft.PowerShell
                             }
                             else if (!_parent.InDebugMode)
                             {
-                                previousResponseWasEmpty = true;
                                 continue;
                             }
                         }

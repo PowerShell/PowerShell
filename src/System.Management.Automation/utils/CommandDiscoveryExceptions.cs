@@ -25,18 +25,15 @@ namespace System.Management.Automation
 
         private static string _createCommandIfExistsInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
-            param()
+            param([string] $formatString, [string] $commandName)
 
             $foundSuggestion = $false
 
-            if($lastError -and ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
-            {
-                $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($lastError.TargetObject)
-                $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
-            }
+            $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($commandName)
+            $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
 
             if ($foundSuggestion) {
-                $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
+                $formatString -f $commandName,"".\$($commandName)""
             }
         ";
 
@@ -150,17 +147,18 @@ namespace System.Management.Automation
             {
                 if (_errorRecord == null)
                 {
-                    var commandInCurrentDirSuggestion = new ErrorSuggestionInfo(
+                    var commandInCurrentDirSuggestion = new SuggestionInfo(
                         ScriptBlock.CreateDelayParsedScriptBlock(
                             _createCommandIfExistsInCurrentDirectoryScript, isProductCode: true),
                         new object[] {
                             CodeGeneration.EscapeSingleQuotedStringContent(
-                            SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory)
+                                SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory),
+                            _commandName
                         });
 
                     if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
                     {
-                        var fuzzyMatchSuggestion = new ErrorSuggestionInfo(
+                        var fuzzyMatchSuggestion = new SuggestionInfo(
                             ScriptBlock.CreateDelayParsedScriptBlock(_getFuzzyMatchedCommands, isProductCode: true),
                             new object[] {
                                 CodeGeneration.EscapeSingleQuotedStringContent(

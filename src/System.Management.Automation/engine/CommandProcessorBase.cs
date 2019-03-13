@@ -842,7 +842,7 @@ namespace System.Management.Automation
                                 "TRANSACTION_TIMEOUT",
                                 ErrorCategory.InvalidOperation,
                                 e,
-                                ErrorSuggestionInfo.MiscSuggestionLibrary["Transaction"]);
+                                SuggestionInfo.MiscSuggestionLibrary["Transaction"]);
                             errorRecord.SetInvocationInfo(Command.MyInvocation);
 
                             e = new CmdletInvocationException(errorRecord);
