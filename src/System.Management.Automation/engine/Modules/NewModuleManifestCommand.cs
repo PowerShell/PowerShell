@@ -496,6 +496,26 @@ namespace Microsoft.PowerShell.Commands
         public string ReleaseNotes { get; set; }
 
         /// <summary>
+        /// Gets or sets whether or not the module is a prerelease.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prerelease { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the external module dependencies.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string[] ExternalModuleDependencies { get; set; }
+
+        /// <summary>
         /// Specify the HelpInfo URI.
         /// </summary>
         [Parameter]
@@ -1044,65 +1064,65 @@ namespace Microsoft.PowerShell.Commands
                     if (_rootModule == null)
                         _rootModule = string.Empty;
 
-                    BuildModuleManifest(result, "RootModule", Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
+                    BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
-                    BuildModuleManifest(result, "ModuleVersion", Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(ModuleVersion), Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion), streamWriter);
 
-                    BuildModuleManifest(result, "CompatiblePSEditions", Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(CompatiblePSEditions), Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "GUID", Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.GUID), Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
 
-                    BuildModuleManifest(result, "Author", Modules.Author, !string.IsNullOrEmpty(_author), () => QuoteName(Author), streamWriter);
+                    BuildModuleManifest(result, nameof(Author), Modules.Author, !string.IsNullOrEmpty(_author), () => QuoteName(Author), streamWriter);
 
-                    BuildModuleManifest(result, "CompanyName", Modules.CompanyName, !string.IsNullOrEmpty(_companyName), () => QuoteName(_companyName), streamWriter);
+                    BuildModuleManifest(result, nameof(CompanyName), Modules.CompanyName, !string.IsNullOrEmpty(_companyName), () => QuoteName(_companyName), streamWriter);
 
-                    BuildModuleManifest(result, "Copyright", Modules.Copyright, !string.IsNullOrEmpty(_copyright), () => QuoteName(_copyright), streamWriter);
+                    BuildModuleManifest(result, nameof(Copyright), Modules.Copyright, !string.IsNullOrEmpty(_copyright), () => QuoteName(_copyright), streamWriter);
 
-                    BuildModuleManifest(result, "Description", Modules.Description, !string.IsNullOrEmpty(_description), () => QuoteName(_description), streamWriter);
+                    BuildModuleManifest(result, nameof(Description), Modules.Description, !string.IsNullOrEmpty(_description), () => QuoteName(_description), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellVersion", Modules.PowerShellVersion, _powerShellVersion != null && !string.IsNullOrEmpty(_powerShellVersion.ToString()), () => QuoteName(_powerShellVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellVersion), Modules.PowerShellVersion, _powerShellVersion != null && !string.IsNullOrEmpty(_powerShellVersion.ToString()), () => QuoteName(_powerShellVersion), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellHostName", Modules.PowerShellHostName, !string.IsNullOrEmpty(_PowerShellHostName), () => QuoteName(_PowerShellHostName), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellHostName), Modules.PowerShellHostName, !string.IsNullOrEmpty(_PowerShellHostName), () => QuoteName(_PowerShellHostName), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellHostVersion", Modules.PowerShellHostVersion, _PowerShellHostVersion != null && !string.IsNullOrEmpty(_PowerShellHostVersion.ToString()), () => QuoteName(_PowerShellHostVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellHostVersion), Modules.PowerShellHostVersion, _PowerShellHostVersion != null && !string.IsNullOrEmpty(_PowerShellHostVersion.ToString()), () => QuoteName(_PowerShellHostVersion), streamWriter);
 
-                    BuildModuleManifest(result, "DotNetFrameworkVersion", StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(DotNetFrameworkVersion), StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
 
-                    BuildModuleManifest(result, "CLRVersion", StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.CLRVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
-                    BuildModuleManifest(result, "ProcessorArchitecture", Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
+                    BuildModuleManifest(result, nameof(ProcessorArchitecture), Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 
-                    BuildModuleManifest(result, "RequiredModules", Modules.RequiredModules, _requiredModules != null && _requiredModules.Length > 0, () => QuoteModules(_requiredModules, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(RequiredModules), Modules.RequiredModules, _requiredModules != null && _requiredModules.Length > 0, () => QuoteModules(_requiredModules, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "RequiredAssemblies", Modules.RequiredAssemblies, _requiredAssemblies != null, () => QuoteFiles(_requiredAssemblies, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(RequiredAssemblies), Modules.RequiredAssemblies, _requiredAssemblies != null, () => QuoteFiles(_requiredAssemblies, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "ScriptsToProcess", Modules.ScriptsToProcess, _scripts != null, () => QuoteFiles(_scripts, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(ScriptsToProcess), Modules.ScriptsToProcess, _scripts != null, () => QuoteFiles(_scripts, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "TypesToProcess", Modules.TypesToProcess, _types != null, () => QuoteFiles(_types, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(TypesToProcess), Modules.TypesToProcess, _types != null, () => QuoteFiles(_types, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FormatsToProcess", Modules.FormatsToProcess, _formats != null, () => QuoteFiles(_formats, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FormatsToProcess), Modules.FormatsToProcess, _formats != null, () => QuoteFiles(_formats, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "NestedModules", Modules.NestedModules, _nestedModules != null, () => QuoteModules(PreProcessModuleSpec(_nestedModules), streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(NestedModules), Modules.NestedModules, _nestedModules != null, () => QuoteModules(PreProcessModuleSpec(_nestedModules), streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FunctionsToExport", Modules.FunctionsToExport, true, () => QuoteNames(_exportedFunctions, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FunctionsToExport), Modules.FunctionsToExport, true, () => QuoteNames(_exportedFunctions, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "CmdletsToExport", Modules.CmdletsToExport, true, () => QuoteNames(_exportedCmdlets, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(CmdletsToExport), Modules.CmdletsToExport, true, () => QuoteNames(_exportedCmdlets, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "VariablesToExport", Modules.VariablesToExport, _exportedVariables != null && _exportedVariables.Length > 0, () => QuoteNames(_exportedVariables, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(VariablesToExport), Modules.VariablesToExport, _exportedVariables != null && _exportedVariables.Length > 0, () => QuoteNames(_exportedVariables, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "AliasesToExport", Modules.AliasesToExport, true, () => QuoteNames(_exportedAliases, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(AliasesToExport), Modules.AliasesToExport, true, () => QuoteNames(_exportedAliases, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "DscResourcesToExport", Modules.DscResourcesToExport, _dscResourcesToExport != null && _dscResourcesToExport.Length > 0, () => QuoteNames(_dscResourcesToExport, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(DscResourcesToExport), Modules.DscResourcesToExport, _dscResourcesToExport != null && _dscResourcesToExport.Length > 0, () => QuoteNames(_dscResourcesToExport, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "ModuleList", Modules.ModuleList, _moduleList != null, () => QuoteModules(_moduleList, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(ModuleList), Modules.ModuleList, _moduleList != null, () => QuoteModules(_moduleList, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FileList", Modules.FileList, _miscFiles != null, () => QuoteFiles(_miscFiles, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FileList), Modules.FileList, _miscFiles != null, () => QuoteFiles(_miscFiles, streamWriter), streamWriter);
 
                     BuildPrivateDataInModuleManifest(result, streamWriter);
 
-                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.HelpInfoURI), Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
 
-                    BuildModuleManifest(result, "DefaultCommandPrefix", Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
+                    BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
                     result.Append("}");
                     result.Append(streamWriter.NewLine);
@@ -1174,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteWarning(Modules.PrivateDataValueTypeShouldBeHashTableWarning);
 
-                    BuildModuleManifest(result, "PrivateData", Modules.PrivateData, _privateData != null,
+                    BuildModuleManifest(result, nameof(PrivateData), Modules.PrivateData, _privateData != null,
                         () => QuoteName((string)LanguagePrimitives.ConvertTo(_privateData, typeof(string), CultureInfo.InvariantCulture)),
                         streamWriter);
                 }
@@ -1192,11 +1212,14 @@ namespace Microsoft.PowerShell.Commands
 
                 _indent = "        ";
 
-                BuildModuleManifest(result, "Tags", Modules.Tags, Tags != null && Tags.Length > 0, () => QuoteNames(Tags, streamWriter), streamWriter);
-                BuildModuleManifest(result, "LicenseUri", Modules.LicenseUri, LicenseUri != null, () => QuoteName(LicenseUri), streamWriter);
-                BuildModuleManifest(result, "ProjectUri", Modules.ProjectUri, ProjectUri != null, () => QuoteName(ProjectUri), streamWriter);
-                BuildModuleManifest(result, "IconUri", Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
-                BuildModuleManifest(result, "ReleaseNotes", Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
+                BuildModuleManifest(result, nameof(Tags), Modules.Tags, Tags != null && Tags.Length > 0, () => QuoteNames(Tags, streamWriter), streamWriter);
+                BuildModuleManifest(result, nameof(LicenseUri), Modules.LicenseUri, LicenseUri != null, () => QuoteName(LicenseUri), streamWriter);
+                BuildModuleManifest(result, nameof(ProjectUri), Modules.ProjectUri, ProjectUri != null, () => QuoteName(ProjectUri), streamWriter);
+                BuildModuleManifest(result, nameof(IconUri), Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
+                BuildModuleManifest(result, nameof(ReleaseNotes), Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
+                BuildModuleManifest(result, nameof(Prerelease), Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
+                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "$false"; }, streamWriter);
+                BuildModuleManifest(result, nameof(ExternalModuleDependencies), Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");
                 result.Append(ManifestComment(StringUtil.Format(Modules.EndOfManifestHashTable, "PSData"), streamWriter));
