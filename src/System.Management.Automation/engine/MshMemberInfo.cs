@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMemberInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMemberInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3126,7 +3126,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMethodInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMethodInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3137,7 +3137,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
-                PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3823,7 +3823,7 @@ namespace System.Management.Automation
 
         #endregion IEnumerable
 
-        internal abstract T GetFirstOrDefault(MemberNamePredicate predicate);
+        internal abstract T FirstOrDefault(MemberNamePredicate predicate);
     }
 
     /// <summary>
@@ -4274,15 +4274,19 @@ namespace System.Management.Automation
             }
         }
 
-        internal override T GetFirstOrDefault(MemberNamePredicate predicate)
+        /// <summary>
+        /// Returns the first member that matches the specified <see cref="MemberNamePredicate"/>.
+        /// </summary>
+        internal override T FirstOrDefault(MemberNamePredicate predicate)
         {
-            var enumerator = _members.GetEnumerator();
-            while (enumerator.MoveNext())
+            lock (_members)
             {
-                var key = (string)enumerator.Key;
-                if (predicate(key))
+                foreach (DictionaryEntry entry in _members)
                 {
-                    return (T)enumerator.Value;
+                    if (predicate((string)entry.Key))
+                    {
+                        return entry.Value as T;
+                    }
                 }
             }
 
@@ -4311,8 +4315,8 @@ namespace System.Management.Automation
             GetMembers = getMembers;
             GetMember = getMember;
             GetFirstOrDefault = getFirstOrDefault;
-            ShouldReplicateWhenReturning = shouldReplicateWhenReturning;
-            ShouldCloneWhenReturning = shouldCloneWhenReturning;
+            _shouldReplicateWhenReturning = shouldReplicateWhenReturning;
+            _shouldCloneWhenReturning = shouldCloneWhenReturning;
             CollectionNameForTracing = collectionNameForTracing;
         }
 
@@ -4324,20 +4328,19 @@ namespace System.Management.Automation
 
         internal string CollectionNameForTracing { get; }
 
-        private bool ShouldReplicateWhenReturning { get; }
+        private readonly bool _shouldReplicateWhenReturning;
 
-        private bool ShouldCloneWhenReturning { get; }
+        private readonly bool _shouldCloneWhenReturning;
 
         internal T CloneOrReplicateObject(object owner, T member)
         {
-            if (ShouldCloneWhenReturning)
+            if (_shouldCloneWhenReturning)
             {
                 member = (T)member.Copy();
             }
 
-            if (ShouldReplicateWhenReturning)
+            if (_shouldReplicateWhenReturning)
             {
-                owner = owner is PSMemberSet memberSet ? memberSet.instance : owner;
                 member.ReplicateInstance(owner);
             }
 
@@ -4931,15 +4934,46 @@ namespace System.Management.Automation
             return new Enumerator<T>(this);
         }
 
-        internal override T GetFirstOrDefault(MemberNamePredicate predicate)
+        internal override T FirstOrDefault(MemberNamePredicate predicate)
         {
+            object delegateOwner;
+            if (_mshOwner != null)
+            {
+                delegateOwner = _mshOwner;
+                foreach (PSMemberInfo member in _mshOwner.InstanceMembers)
+                {
+                    if (member is T memberAsT && predicate(memberAsT.Name))
+                    {
+                        return memberAsT;
+                    }
+                }
+            }
+            else
+            {
+                delegateOwner = _memberSetOwner.instance;
+                foreach (PSMemberInfo member in _memberSetOwner.InternalMembers)
+                {
+                    if (member is T memberAsT && predicate(memberAsT.Name))
+                    {
+                        memberAsT.ReplicateInstance(delegateOwner);
+                        return memberAsT;
+                    }
+                }
+            }
+
+            if (delegateOwner == null)
+            {
+                return null;
+            }
+
+            var ownerAsPSObj = PSObject.AsPSObject(delegateOwner);
             for (int i = 0; i < Collections.Count; i++)
             {
                 var collectionEntry = Collections[i];
-                var res = collectionEntry.GetFirstOrDefault(_mshOwner, predicate);
-                if (res != null)
+                var member = collectionEntry.GetFirstOrDefault(ownerAsPSObj, predicate);
+                if (member != null)
                 {
-                    return collectionEntry.CloneOrReplicateObject(_mshOwner, res);
+                    return collectionEntry.CloneOrReplicateObject(ownerAsPSObj, member);
                 }
             }
 

@@ -97,12 +97,12 @@ namespace System.Management.Automation
                 {
                     if (prop.IsParameterized
                         && lookingForParameterizedProperties
-                        && predicate.Invoke(prop.Name))
+                        && predicate(prop.Name))
                     {
                         return new PSParameterizedProperty(prop.Name, this, obj, prop) as T;
                     }
 
-                    if (lookingForProperties && predicate.Invoke(prop.Name))
+                    if (lookingForProperties && predicate(prop.Name))
                     {
                         return new PSProperty(prop.Name, this, obj, prop) as T;
                     }
@@ -115,7 +115,7 @@ namespace System.Management.Automation
             {
                 foreach (ComMethod method in _comTypeInfo.Methods.Values)
                 {
-                    if (predicate.Invoke(method.Name))
+                    if (predicate(method.Name))
                     {
                         var mshMethod = new PSMethod(method.Name, this, obj, method);
                         return mshMethod as T;
