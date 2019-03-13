@@ -54,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
                 } 
                 else if (nextChar == '"') 
                 {
-                    bool isInQuotes = true;
-                    while (reader.Peek() != -1 && isInQuotes) 
+                    bool betweenQuotes = true;
+                    while (reader.Peek() != -1 && betweenQuotes) 
                     {
                         nextChar = (char)reader.Read();
                         
                         if (nextChar == '"') 
                         {
-                            isInQuotes = false;
+                            betweenQuotes = false;
                         } 
                         else 
                         {
