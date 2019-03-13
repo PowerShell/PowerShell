@@ -40,19 +40,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var reader = new StringReader(csv);
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder wordBuffer = new StringBuilder();
 
             while (reader.Peek() != -1) 
             {
                 char nextChar = (char)reader.Read();
 
-                // if next character was delimiter, add string to builder and clear builder
+                // if next character was delimiter, add string to result and clear builder
                 // else if next character was quote, perform reading untill next quote and add it to builder
                 // else read and add it to builder
                 if (nextChar == Delimiter) 
                 {
-                    result.Add(stringBuilder.ToString());
-                    stringBuilder.Clear();
+                    result.Add(wordBuffer.ToString());
+                    wordBuffer.Clear();
                 } 
                 else if (nextChar == Quote) 
                 {
@@ -67,20 +67,20 @@ namespace Microsoft.PowerShell.Commands
                         } 
                         else 
                         {
-                            stringBuilder.Append(nextChar);
+                            wordBuffer.Append(nextChar);
                         }
                     }
                 } 
                 else 
                 {
-                    stringBuilder.Append(nextChar);
+                    wordBuffer.Append(nextChar);
                 }
             }
 
             // add last word if remainder is not empty
-            if (stringBuilder.ToString() != string.Empty) 
+            if (wordBuffer.ToString() != string.Empty) 
             {
-                result.Add(stringBuilder.ToString());
+                result.Add(wordBuffer.ToString());
             }
 
             reader.Close();    
