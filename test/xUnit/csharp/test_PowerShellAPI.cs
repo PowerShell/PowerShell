@@ -8,17 +8,18 @@ using Xunit;
 namespace PSTests.Sequential
 {
     // Not static because a test requires non-const variables
-    public class PowerShellHostingScenario
+    public static class PowerShellHostingScenario
     {
         // Test that it does not throw an exception
         [Fact]
-        public void TestStartJobThrowTerminatingException()
+        public static void TestStartJobThrowTerminatingException()
         {
             using (var ps = PowerShell.Create())
             {
                 ps.AddCommand("Start-Job").AddParameter("ScriptBlock", ScriptBlock.Create("1+1"));
-                Exception ex = Assert.Throws<CmdletInvocationException>(() => ps.Invoke());
+                var ex = Assert.Throws<CmdletInvocationException>(() => ps.Invoke());
                 Assert.IsType<PSNotSupportedException>(ex.InnerException);
+                Assert.Equal("IPCPwshExecutableNotFound,Microsoft.PowerShell.Commands.StartJobCommand", ex.ErrorRecord.FullyQualifiedErrorId);
             }
         }
     }
