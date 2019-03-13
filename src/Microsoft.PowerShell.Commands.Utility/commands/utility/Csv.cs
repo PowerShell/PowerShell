@@ -76,7 +76,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string lastWord = wordBuffer.ToString();
-            if (lastWord != string.Empty) {
+            if (lastWord != string.Empty)
+            {
                 result.Add(lastWord);
             }
 
