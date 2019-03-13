@@ -1946,7 +1946,7 @@ try
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
         ## Implicit credential doesn't work in the Windows Azure DevOps builder, so mark this test '-pending'.
         ## Also, this feature doesn't work on macOS or Linux
-        It "Should have a new session when the disconnected session cannot be re-connected" -Pending:(Test-IsVstsLinux -or Test-IsVstsWindows -or $IsMacOS) {
+        It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
             ## Disconnect session and make it un-connectable.
             Disconnect-PSSession $session
             Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
@@ -2053,7 +2053,6 @@ try
         }
 
         AfterAll {
-
             if ($skipTest) { return }
 
             if ($session -ne $null) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }
