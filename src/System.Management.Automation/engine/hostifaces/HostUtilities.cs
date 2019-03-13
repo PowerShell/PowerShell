@@ -29,25 +29,6 @@ namespace System.Management.Automation
     {
         #region Internal Access
 
-        private static ArrayList s_suggestions = InitializeSuggestions();
-
-        private static ArrayList InitializeSuggestions()
-        {
-            ArrayList suggestions = new ArrayList(
-                new Hashtable[]
-                {
-                    NewSuggestion(
-                        id: 1,
-                        category: "Transactions",
-                        matchType: SuggestionMatchType.Command,
-                        rule: "^Start-Transaction",
-                        suggestion: SuggestionStrings.Suggestion_StartTransaction,
-                        enabled: true)
-                });
-
-            return suggestions;
-        }
-
         #region GetProfileCommands
         /// <summary>
         /// Gets a PSObject whose base object is currentUserCurrentHost and with notes for the other 4 parameters.
@@ -236,219 +217,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        internal static ArrayList GetSuggestion(Runspace runspace)
-        {
-            LocalRunspace localRunspace = runspace as LocalRunspace;
-            if (localRunspace == null) { return new ArrayList(); }
-
-            // Get the last value of $?
-            bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
-
-            // Get the last history item
-            History history = localRunspace.History;
-            HistoryInfo[] entries = history.GetEntries(-1, 1, true);
-
-            if (entries.Length == 0)
-                return new ArrayList();
-
-            HistoryInfo lastHistory = entries[0];
-
-            // Get the last error
-            ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
-            object lastError = null;
-
-            if (errorList.Count > 0)
-            {
-                lastError = errorList[0] as Exception;
-                ErrorRecord lastErrorRecord = null;
-
-                // The error was an actual ErrorRecord
-                if (lastError == null)
-                {
-                    lastErrorRecord = errorList[0] as ErrorRecord;
-                }
-                else if (lastError is RuntimeException)
-                {
-                    lastErrorRecord = ((RuntimeException)lastError).ErrorRecord;
-                }
-
-                // If we got information about the error invocation,
-                // we can be more careful with the errors we pass along
-                if ((lastErrorRecord != null) && (lastErrorRecord.InvocationInfo != null))
-                {
-                    if (lastErrorRecord.InvocationInfo.HistoryId == lastHistory.Id)
-                        lastError = lastErrorRecord;
-                    else
-                        lastError = null;
-                }
-            }
-
-            Runspace oldDefault = null;
-            bool changedDefault = false;
-            if (Runspace.DefaultRunspace != runspace)
-            {
-                oldDefault = Runspace.DefaultRunspace;
-                changedDefault = true;
-                Runspace.DefaultRunspace = runspace;
-            }
-
-            ArrayList suggestions = null;
-
-            try
-            {
-                suggestions = GetSuggestion(lastHistory, lastError, errorList);
-            }
-            finally
-            {
-                if (changedDefault)
-                {
-                    Runspace.DefaultRunspace = oldDefault;
-                }
-            }
-
-            // Restore $?
-            localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkVariableValue;
-            return suggestions;
-        }
-
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
-        {
-            ArrayList returnSuggestions = new ArrayList();
-
-            PSModuleInfo invocationModule = new PSModuleInfo(true);
-            invocationModule.SessionState.PSVariable.Set("lastHistory", lastHistory);
-            invocationModule.SessionState.PSVariable.Set("lastError", lastError);
-
-            int initialErrorCount = 0;
-
-            // Go through all of the suggestions
-            foreach (Hashtable suggestion in s_suggestions)
-            {
-                initialErrorCount = errorList.Count;
-
-                // Make sure the rule is enabled
-                if (!LanguagePrimitives.IsTrue(suggestion["Enabled"]))
-                    continue;
-
-                SuggestionMatchType matchType = (SuggestionMatchType)LanguagePrimitives.ConvertTo(
-                    suggestion["MatchType"],
-                    typeof(SuggestionMatchType),
-                    CultureInfo.InvariantCulture);
-
-                // If this is a dynamic match, evaluate the ScriptBlock
-                if (matchType == SuggestionMatchType.Dynamic)
-                {
-                    object result = null;
-
-                    ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
-                    if (evaluator == null)
-                    {
-                        suggestion["Enabled"] = false;
-
-                        throw new ArgumentException(
-                            SuggestionStrings.RuleMustBeScriptBlock, "Rule");
-                    }
-
-                    try
-                    {
-                        result = invocationModule.Invoke(evaluator, null);
-                    }
-                    catch (Exception)
-                    {
-                        // Catch-all OK. This is a third-party call-out.
-                        suggestion["Enabled"] = false;
-                        continue;
-                    }
-
-                    // If it returned results, evaluate its suggestion
-                    if (LanguagePrimitives.IsTrue(result))
-                    {
-                        string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
-
-                        if (!string.IsNullOrEmpty(suggestionText))
-                        {
-                            string returnString = string.Format(
-                                CultureInfo.CurrentCulture,
-                                "Suggestion [{0},{1}]: {2}",
-                                (int)suggestion["Id"],
-                                (string)suggestion["Category"],
-                                suggestionText);
-
-                            returnSuggestions.Add(returnString);
-                        }
-                    }
-                }
-                else
-                {
-                    string matchText = string.Empty;
-
-                    // Otherwise, this is a Regex match against the
-                    // command or error
-                    if (matchType == SuggestionMatchType.Command)
-                    {
-                        matchText = lastHistory.CommandLine;
-                    }
-                    else if (matchType == SuggestionMatchType.Error)
-                    {
-                        if (lastError != null)
-                        {
-                            Exception lastException = lastError as Exception;
-                            if (lastException != null)
-                            {
-                                matchText = lastException.Message;
-                            }
-                            else
-                            {
-                                matchText = lastError.ToString();
-                            }
-                        }
-                    }
-                    else if (matchType == SuggestionMatchType.ErrorId)
-                    {
-                        if (lastError != null && lastError is ErrorRecord errorRecord)
-                        {
-                            matchText = errorRecord.FullyQualifiedErrorId;
-                        }
-                    }
-                    else
-                    {
-                        suggestion["Enabled"] = false;
-
-                        throw new ArgumentException(
-                            SuggestionStrings.InvalidMatchType,
-                            "MatchType");
-                    }
-
-                    // If the text matches, evaluate the suggestion
-                    if (Regex.IsMatch(matchText, (string)suggestion["Rule"], RegexOptions.IgnoreCase))
-                    {
-                        string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
-
-                        if (!string.IsNullOrEmpty(suggestionText))
-                        {
-                            string returnString = string.Format(
-                                CultureInfo.CurrentCulture,
-                                "Suggestion [{0},{1}]: {2}",
-                                (int)suggestion["Id"],
-                                (string)suggestion["Category"],
-                                suggestionText);
-
-                            returnSuggestions.Add(returnString);
-                        }
-                    }
-                }
-
-                // If the rule generated an error, disable it
-                if (errorList.Count != initialErrorCount)
-                {
-                    suggestion["Enabled"] = false;
-                }
-            }
-
-            return returnSuggestions;
-        }
-
         /// <summary>
         /// Remove the GUID from the message if the message is in the pre-defined format.
         /// </summary>
@@ -491,119 +259,178 @@ namespace System.Management.Automation
             return message;
         }
 
-        /// <summary>
-        /// Create suggestion with string rule and suggestion.
-        /// </summary>
-        /// <param name="id">Identifier for the suggestion.</param>
-        /// <param name="category">Category for the suggestion.</param>
-        /// <param name="matchType">Suggestion match type.</param>
-        /// <param name="rule">Rule to match.</param>
-        /// <param name="suggestion">Suggestion to return.</param>
-        /// <param name="enabled">True if the suggestion is enabled.</param>
-        /// <returns>Hashtable representing the suggestion.</returns>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, string suggestion, bool enabled)
+        internal static PSCredential CredUIPromptForCredential(
+            string caption,
+            string message,
+            string userName,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options,
+            IntPtr parentHWND)
         {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            PSCredential cred = null;
 
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["Enabled"] = enabled;
+            // From WinCred.h
+            const int CRED_MAX_USERNAME_LENGTH = (256 + 1 + 256);
+            const int CRED_MAX_CREDENTIAL_BLOB_SIZE = 512;
+            const int CRED_MAX_PASSWORD_LENGTH = CRED_MAX_CREDENTIAL_BLOB_SIZE / 2;
+            const int CREDUI_MAX_MESSAGE_LENGTH = 1024;
+            const int CREDUI_MAX_CAPTION_LENGTH = 128;
 
-            return result;
-        }
-
-        /// <summary>
-        /// Create suggestion with string rule and scriptblock suggestion.
-        /// </summary>
-        /// <param name="id">Identifier for the suggestion.</param>
-        /// <param name="category">Category for the suggestion.</param>
-        /// <param name="matchType">Suggestion match type.</param>
-        /// <param name="rule">Rule to match.</param>
-        /// <param name="suggestion">Scriptblock to run that returns the suggestion.</param>
-        /// <param name="suggestionArgs">Arguments to pass to suggestion scriptblock.</param>
-        /// <param name="enabled">True if the suggestion is enabled.</param>
-        /// <returns>Hashtable representing the suggestion.</returns>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
-        {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["SuggestionArgs"] = suggestionArgs;
-            result["Enabled"] = enabled;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Create suggestion with scriptblock rule and suggestion.
-        /// </summary>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, bool enabled)
-        {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["Enabled"] = enabled;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Create suggestion with scriptblock rule and scriptblock suggestion with arguments.
-        /// </summary>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
-        {
-            Hashtable result = NewSuggestion(id, category, matchType, rule, suggestion, enabled);
-            result.Add("SuggestionArgs", suggestionArgs);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get suggestion text from suggestion scriptblock.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Need to keep this for legacy reflection based use")]
-        private static string GetSuggestionText(Object suggestion, PSModuleInfo invocationModule)
-        {
-            return GetSuggestionText(suggestion, null, invocationModule);
-        }
-
-        /// <summary>
-        /// Get suggestion text from suggestion scriptblock with arguments.
-        /// </summary>
-        private static string GetSuggestionText(Object suggestion, object[] suggestionArgs, PSModuleInfo invocationModule)
-        {
-            if (suggestion is ScriptBlock)
+            // Populate the UI text with defaults, if required
+            if (string.IsNullOrEmpty(caption))
             {
-                ScriptBlock suggestionScript = (ScriptBlock)suggestion;
-
-                object result = null;
-                try
-                {
-                    result = invocationModule.Invoke(suggestionScript, suggestionArgs);
-                }
-                catch (Exception)
-                {
-                    // Catch-all OK. This is a third-party call-out.
-                    return string.Empty;
-                }
-
-                return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);
+                caption = CredUI.PromptForCredential_DefaultCaption;
             }
-            else
+
+            if (string.IsNullOrEmpty(message))
             {
-                return (string)LanguagePrimitives.ConvertTo(suggestion, typeof(string), CultureInfo.CurrentCulture);
+                message = CredUI.PromptForCredential_DefaultMessage;
             }
+
+            if (caption.Length > CREDUI_MAX_CAPTION_LENGTH)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
+            }
+
+            if (message.Length > CREDUI_MAX_MESSAGE_LENGTH)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
+            }
+
+            if (userName != null && userName.Length > CRED_MAX_USERNAME_LENGTH)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
+            }
+
+            CREDUI_INFO credUiInfo = new CREDUI_INFO();
+            credUiInfo.pszCaptionText = caption;
+            credUiInfo.pszMessageText = message;
+
+            StringBuilder usernameBuilder = new StringBuilder(userName, CRED_MAX_USERNAME_LENGTH);
+            StringBuilder passwordBuilder = new StringBuilder(CRED_MAX_PASSWORD_LENGTH);
+
+            bool save = false;
+            int saveCredentials = Convert.ToInt32(save);
+            credUiInfo.cbSize = Marshal.SizeOf(credUiInfo);
+            credUiInfo.hwndParent = parentHWND;
+
+            CREDUI_FLAGS flags = CREDUI_FLAGS.DO_NOT_PERSIST;
+
+            // Set some of the flags if they have not requested a domain credential
+            if ((allowedCredentialTypes & PSCredentialTypes.Domain) != PSCredentialTypes.Domain)
+            {
+                flags |= CREDUI_FLAGS.GENERIC_CREDENTIALS;
+
+                // If they've asked to always prompt, do so.
+                if ((options & PSCredentialUIOptions.AlwaysPrompt) == PSCredentialUIOptions.AlwaysPrompt)
+                    flags |= CREDUI_FLAGS.ALWAYS_SHOW_UI;
+            }
+
+            // To prevent buffer overrun attack, only attempt call if buffer lengths are within bounds.
+            CredUIReturnCodes result = CredUIReturnCodes.ERROR_INVALID_PARAMETER;
+            if (usernameBuilder.Length <= CRED_MAX_USERNAME_LENGTH && passwordBuilder.Length <= CRED_MAX_PASSWORD_LENGTH)
+            {
+                result = CredUIPromptForCredentials(
+                    ref credUiInfo,
+                    targetName,
+                    IntPtr.Zero,
+                    0,
+                    usernameBuilder,
+                    CRED_MAX_USERNAME_LENGTH,
+                    passwordBuilder,
+                    CRED_MAX_PASSWORD_LENGTH,
+                    ref saveCredentials,
+                    flags);
+            }
+
+            if (result == CredUIReturnCodes.NO_ERROR)
+            {
+                // Extract the username
+                string credentialUsername = null;
+                if (usernameBuilder != null)
+                    credentialUsername = usernameBuilder.ToString();
+
+                // Trim the leading '\' from the username, which CredUI automatically adds
+                // if you don't specify a domain.
+                // This is a really common bug in V1 and V2, causing everybody to have to do
+                // it themselves.
+                // This could be a breaking change for hosts that do hard-coded hacking:
+                // $cred.UserName.SubString(1, $cred.Username.Length - 1)
+                // But that's OK, because they would have an even worse bug when you've
+                // set the host (ConsolePrompting = true) configuration (which does not do this).
+                credentialUsername = credentialUsername.TrimStart('\\');
+
+                // Extract the password into a SecureString, zeroing out the memory
+                // as soon as possible.
+                SecureString password = new SecureString();
+                for (int counter = 0; counter < passwordBuilder.Length; counter++)
+                {
+                    password.AppendChar(passwordBuilder[counter]);
+                    passwordBuilder[counter] = (char)0;
+                }
+
+                if (!string.IsNullOrEmpty(credentialUsername))
+                    cred = new PSCredential(credentialUsername, password);
+                else
+                    cred = null;
+            }
+            else // result is not CredUIReturnCodes.NO_ERROR
+            {
+                cred = null;
+            }
+
+            return cred;
+        }
+
+        [DllImport("credui", EntryPoint = "CredUIPromptForCredentialsW", CharSet = CharSet.Unicode)]
+        private static extern CredUIReturnCodes CredUIPromptForCredentials(ref CREDUI_INFO pUiInfo,
+                  string pszTargetName, IntPtr Reserved, int dwAuthError, StringBuilder pszUserName,
+                  int ulUserNameMaxChars, StringBuilder pszPassword, int ulPasswordMaxChars, ref int pfSave, CREDUI_FLAGS dwFlags);
+
+        [Flags]
+        private enum CREDUI_FLAGS
+        {
+            INCORRECT_PASSWORD = 0x1,
+            DO_NOT_PERSIST = 0x2,
+            REQUEST_ADMINISTRATOR = 0x4,
+            EXCLUDE_CERTIFICATES = 0x8,
+            REQUIRE_CERTIFICATE = 0x10,
+            SHOW_SAVE_CHECK_BOX = 0x40,
+            ALWAYS_SHOW_UI = 0x80,
+            REQUIRE_SMARTCARD = 0x100,
+            PASSWORD_ONLY_OK = 0x200,
+            VALIDATE_USERNAME = 0x400,
+            COMPLETE_USERNAME = 0x800,
+            PERSIST = 0x1000,
+            SERVER_CREDENTIAL = 0x4000,
+            EXPECT_CONFIRMATION = 0x20000,
+            GENERIC_CREDENTIALS = 0x40000,
+            USERNAME_TARGET_CREDENTIALS = 0x80000,
+            KEEP_USERNAME = 0x100000,
+        }
+
+        private struct CREDUI_INFO
+        {
+            public int cbSize;
+            public IntPtr hwndParent;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszMessageText;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszCaptionText;
+            public IntPtr hbmBanner;
+        }
+
+        private enum CredUIReturnCodes
+        {
+            NO_ERROR = 0,
+            ERROR_CANCELLED = 1223,
+            ERROR_NO_SUCH_LOGON_SESSION = 1312,
+            ERROR_NOT_FOUND = 1168,
+            ERROR_INVALID_ACCOUNT_NAME = 1315,
+            ERROR_INSUFFICIENT_BUFFER = 122,
+            ERROR_INVALID_PARAMETER = 87,
+            ERROR_INVALID_FLAGS = 1004,
         }
 
         /// <summary>

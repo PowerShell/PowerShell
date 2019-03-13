@@ -2384,12 +2384,6 @@ namespace Microsoft.PowerShell
                                 if (ui.RawUI.CursorPosition.X != 0)
                                     ui.WriteLine();
 
-                                // Evaluate any suggestions
-                                if (!previousResponseWasEmpty)
-                                {
-                                    EvaluateSuggestions(ui);
-                                }
-
                                 // Then output the prompt
                                 if (_parent.InDebugMode)
                                 {
@@ -2676,44 +2670,6 @@ namespace Microsoft.PowerShell
                 }
 
                 return remoteException.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name;
-            }
-
-            private void EvaluateSuggestions(ConsoleHostUserInterface ui)
-            {
-                // Output any training suggestions
-                try
-                {
-                    ArrayList suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
-
-                    if (suggestions.Count > 0)
-                    {
-                        ui.WriteLine();
-                    }
-
-                    bool first = true;
-                    foreach (string suggestion in suggestions)
-                    {
-                        if (!first)
-                            ui.WriteLine();
-
-                        ui.WriteLine(suggestion);
-
-                        first = false;
-                    }
-                }
-                catch (TerminateException)
-                {
-                    // A variable breakpoint may be hit by HostUtilities.GetSuggestion. The debugger throws TerminateExceptions to stop the execution
-                    // of the current statement; we do not want to treat these exceptions as errors.
-                }
-                catch (Exception e)
-                {
-                    // Catch-all OK. This is a third-party call-out.
-                    ui.WriteErrorLine(e.Message);
-
-                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
-                    localRunspace.GetExecutionContext.AppendDollarError(e);
-                }
             }
 
             private string EvaluatePrompt()

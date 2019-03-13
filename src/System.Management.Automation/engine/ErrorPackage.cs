@@ -5,6 +5,7 @@
 #pragma warning disable 56506
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
@@ -194,6 +195,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="suggestion">The suggestion to convert to string.</param>
         public static implicit operator string(ErrorSuggestionInfo suggestion) => suggestion.ToString();
+
+        internal static Dictionary<string, ErrorSuggestionInfo> MiscSuggestionLibrary =
+            new Dictionary<string, ErrorSuggestionInfo>() {
+                {
+                    "Transaction",
+                    new ErrorSuggestionInfo(
+                        ScriptBlock.CreateDelayParsedScriptBlock(
+                            SuggestionStrings.Suggestion_StartTransaction, isProductCode: true))
+                }
+            };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorSuggestionInfo" /> class.
