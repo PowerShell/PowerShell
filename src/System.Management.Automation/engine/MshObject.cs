@@ -111,7 +111,7 @@ namespace System.Management.Automation
             return members;
         }
 
-        internal static T TypeTableGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
+        internal static T TypeTableGetFirstMemberOrDefaultDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             TypeTable table = msjObj.GetTypeTable();
             return TypeTableGetFirstOrDefaultMemberDelegate<T>(msjObj, table, predicate);
@@ -119,7 +119,7 @@ namespace System.Management.Automation
 
         internal static T TypeTableGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, TypeTable typeTableToUse, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            return typeTableToUse?.GetFirstOrDefaultMember<T>(msjObj.InternalTypeNames, predicate);
+            return typeTableToUse?.GetFirstMemberOrDefault<T>(msjObj.InternalTypeNames, predicate);
         }
 
         private static T AdapterGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
@@ -141,9 +141,9 @@ namespace System.Management.Automation
             return retValue;
         }
 
-        private static T AdapterGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
+        private static T AdapterGetFirstMemberOrDefaultDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            if (msjObj.IsDeserialized && typeof(PSPropertyInfo).IsAssignableFrom(typeof(T)))
+            if (msjObj.IsDeserialized && typeof(T).IsAssignableFrom(typeof(PSPropertyInfo)))
             {
                 if (msjObj.AdaptedMembers == null)
                 {
@@ -227,12 +227,11 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static T DotNetGetFirstOrDefaultMemberDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
+        private static T DotNetGetFirstMemberOrDefaultDelegate<T>(PSObject msjObj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
             return msjObj.InternalBaseDotNetAdapter?.BaseGetFirstMemberOrDefault<T>(msjObj._immediateBaseObject, predicate);
         }
-
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet members based on the
@@ -270,7 +269,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
+                        PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMemberInfo>,
                         true, true, "type table members"));
                 }
                 else
@@ -288,7 +287,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMemberInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMemberInfo>,
-                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
+                    PSObject.AdapterGetFirstMemberOrDefaultDelegate<PSMemberInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "adapted members"));
@@ -299,7 +298,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMemberInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMemberInfo>,
-                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSMemberInfo>,
+                    PSObject.DotNetGetFirstMemberOrDefaultDelegate<PSMemberInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members"));
@@ -315,21 +314,21 @@ namespace System.Management.Automation
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                     PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
-                    PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
+                    PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: true,
                     shouldCloneWhenReturning: true,
                     collectionNameForTracing: "type table members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMethodInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMethodInfo>,
-                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
+                    PSObject.AdapterGetFirstMemberOrDefaultDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "adapted members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMethodInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMethodInfo>,
-                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSMethodInfo>,
+                    PSObject.DotNetGetFirstMemberOrDefaultDelegate<PSMethodInfo>,
                     shouldReplicateWhenReturning: false,
                     shouldCloneWhenReturning: false,
                     collectionNameForTracing: "clr members")
@@ -374,7 +373,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                         PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                        PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                         true, true, "type table members"));
                 }
                 else
@@ -382,7 +381,7 @@ namespace System.Management.Automation
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         msjObj => TypeTableGetMembersDelegate<PSPropertyInfo>(msjObj, backupTypeTable),
                         (msjObj, name) => TypeTableGetMemberDelegate<PSPropertyInfo>(msjObj, backupTypeTable, name),
-                        PSObject.TypeTableGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                        PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                         true, true, "type table members"));
                 }
             }
@@ -392,7 +391,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                     PSObject.AdapterGetMembersDelegate<PSPropertyInfo>,
                     PSObject.AdapterGetMemberDelegate<PSPropertyInfo>,
-                    PSObject.AdapterGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                    PSObject.AdapterGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                     false, false, "adapted members"));
             }
 
@@ -401,7 +400,7 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                     PSObject.DotNetGetMembersDelegate<PSPropertyInfo>,
                     PSObject.DotNetGetMemberDelegate<PSPropertyInfo>,
-                    PSObject.DotNetGetFirstOrDefaultMemberDelegate<PSPropertyInfo>,
+                    PSObject.DotNetGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                     false, false, "clr members"));
             }
 
@@ -629,31 +628,6 @@ namespace System.Management.Automation
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
         private PSObjectFlags _flags;
-
-        /// <summary>
-        /// This field contains a stream type used by the formatting system.
-        /// </summary>
-        private WriteStreamType _writeStream;
-
-        /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        private PSMemberInfoInternalCollection<PSPropertyInfo> _adaptedMembers;
-
-        /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        private PSMemberInfoInternalCollection<PSPropertyInfo> _clrMembers;
-
-        // This is toString value set on deserialization
-        private string _toStringFromDeserialization;
-
-        /// <summary>
-        /// If this is non-null return this string as the ToString() for this wrapped object.
-        /// </summary>
-        private string _tokenText;
 
         #endregion instance fields
 
@@ -943,8 +917,7 @@ namespace System.Management.Automation
                 {
                     if (psobj._instanceMembers == null)
                     {
-                        s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj),
-                            out psobj._instanceMembers);
+                        s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj), out psobj._instanceMembers);
                     }
                 }
 
@@ -1536,9 +1509,9 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (_toStringFromDeserialization != null)
+            if (ToStringFromDeserialization != null)
             {
-                return _toStringFromDeserialization;
+                return ToStringFromDeserialization;
             }
 
             return PSObject.ToString(null, this, null, null, null, true, false);
@@ -1557,9 +1530,9 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (_toStringFromDeserialization != null)
+            if (ToStringFromDeserialization != null)
             {
-                return _toStringFromDeserialization;
+                return ToStringFromDeserialization;
             }
 
             return PSObject.ToString(null, this, null, format, formatProvider, true, false);
@@ -1648,7 +1621,7 @@ namespace System.Management.Automation
                 }
             }
 
-            returnValue._writeStream = _writeStream;
+            returnValue.WriteStream = WriteStream;
             returnValue.HasGeneratedReservedMembers = false;
 
             return returnValue;
@@ -2051,21 +2024,15 @@ namespace System.Management.Automation
             if (!target.IsDeserialized)
             {
                 target.IsDeserialized = source.IsDeserialized;
-                target._adaptedMembers = source.AdaptedMembers;
-                target._clrMembers = source.ClrMembers;
+                target.AdaptedMembers = source.AdaptedMembers;
+                target.ClrMembers = source.ClrMembers;
             }
 
-            if (target._toStringFromDeserialization == null)
+            if (target.ToStringFromDeserialization == null)
             {
-                target._toStringFromDeserialization = source._toStringFromDeserialization;
-                target._tokenText = source.TokenText;
+                target.ToStringFromDeserialization = source.ToStringFromDeserialization;
+                target.TokenText = source.TokenText;
             }
-        }
-
-        internal string TokenText
-        {
-            get => _tokenText;
-            set => _tokenText = value;
         }
 
         /// <summary>
@@ -2085,16 +2052,6 @@ namespace System.Management.Automation
             {
                 this.InternalTypeNames = this.InternalAdapter.BaseGetTypeNameHierarchy(value);
             }
-        }
-
-
-        /// <summary>
-        /// Sets the to string value on deserialization.
-        /// </summary>
-        internal string ToStringFromDeserialization
-        {
-            get => _toStringFromDeserialization;
-            set => _toStringFromDeserialization = value;
         }
 
         #endregion serialization
@@ -2399,22 +2356,26 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// If 'this' is non-null, return this string as the ToString() for this wrapped object.
+        /// </summary>
+        internal string TokenText { get; set; }
 
-        internal WriteStreamType WriteStream
-        {
-            get => _writeStream;
-            set => _writeStream = value;
-        }
+        /// <summary>
+        /// Sets the 'ToString' value on deserialization.
+        /// </summary>
+        internal string ToStringFromDeserialization { get; set; }
+
+        /// <summary>
+        /// This property contains a stream type used by the formatting system.
+        /// </summary>
+        internal WriteStreamType WriteStream { get; set; }
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
         /// Null for live objects but not null for deserialized objects.
         /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers
-        {
-            get => _adaptedMembers;
-            set => _adaptedMembers = value;
-        }
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers { get; set; }
 
         internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
 
@@ -2424,11 +2385,7 @@ namespace System.Management.Automation
         /// Members from the adapter of the object before it was serialized
         /// Null for live objects but not null for deserialized objects.
         /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> ClrMembers
-        {
-            get => _clrMembers;
-            set => _clrMembers = value;
-        }
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> ClrMembers { get; set; }
 
         internal static DotNetAdapter DotNetInstanceAdapter => s_dotNetInstanceAdapter;
 
@@ -2437,19 +2394,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSPropertyInfo GetFirstPropertyOrDefault(MemberNamePredicate predicate)
         {
-            if (_instanceMembers != null)
-            {
-                foreach (var instanceMember in _instanceMembers)
-                {
-                    if (instanceMember is PSPropertyInfo propInfo
-                        && predicate.Invoke(propInfo.Name))
-                    {
-                        return propInfo;
-                    }
-                }
-            }
-
-            return Properties.GetFirstOrDefault(predicate) as PSPropertyInfo;
+            return Properties.FirstOrDefault(predicate);
         }
 
         [Flags]

@@ -3633,9 +3633,9 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
-        internal T GetFirstOrDefaultMember<T>(ConsolidatedString types, MemberNamePredicate predicate) where T : PSMemberInfo
+        internal T GetFirstMemberOrDefault<T>(ConsolidatedString types, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            return GetMembers(types).FirstOrDefault(t => t is T && predicate.Invoke(t.Name)) as T;
+            return GetMembers(types).FirstOrDefault(member => member is T && predicate(member.Name)) as T;
         }
 
         internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
@@ -3645,8 +3645,7 @@ namespace System.Management.Automation.Runspaces
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
 
-            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
-            return result;
+            return _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
         }
 
         private PSMemberInfoInternalCollection<PSMemberInfo> MemberFactory(string k, ConsolidatedString types)

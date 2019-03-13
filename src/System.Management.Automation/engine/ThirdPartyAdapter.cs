@@ -141,7 +141,7 @@ namespace System.Management.Automation
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetProperty",
                     exception,
-                    ExtendedTypeSystem.GetProperty, "predicate", obj.ToString());
+                    ExtendedTypeSystem.GetProperty, nameof(predicate), obj.ToString());
             }
 
             if (property != null)
