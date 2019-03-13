@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal Collection<string> ParseCsv(string csv)
         {        
-            csv = csv.Trim(); 
+            csv = csv.Trim();
             Collection<string> result = new Collection<string>();
             if (csv.Length == 0 || csv[0] == '#')
             {
@@ -54,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
                 } 
                 else if (nextChar == '"') 
                 {
-                    bool isinQuotes = true;
-                    while (reader.Peek() != -1 && isinQuotes) 
+                    bool isInQuotes = true;
+                    while (reader.Peek() != -1 && isInQuotes) 
                     {
                         nextChar = (char)reader.Read();
                         
                         if (nextChar == '"') 
                         {
-                            isinQuotes = false;
+                            isInQuotes = false;
                         } 
                         else 
                         {
