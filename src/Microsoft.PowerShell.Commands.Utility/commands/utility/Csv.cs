@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
                 // if next character was delimiter or we are at the end, add string to result and clear builder
                 // else if next character was quote, perform reading untill next quote and add it to builder
                 // else read and add it to builder
-                if ((nextChar == Delimiter) || (reader.Peek() == -1)) 
+                if (nextChar == Delimiter) 
                 {
                     result.Add(wordBuffer.ToString());
                     wordBuffer.Clear();
@@ -73,6 +73,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     wordBuffer.Append(nextChar);
                 }
+            }
+
+            string lastWord = wordBuffer.ToString();
+            if (lastWord != string.Empty) {
+                result.Add(lastWord);
             }
 
             reader.Close();    
