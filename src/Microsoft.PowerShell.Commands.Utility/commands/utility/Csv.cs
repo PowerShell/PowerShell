@@ -22,8 +22,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal char Delimiter { get; } = ',';
 
-        internal char Quote { get; } = '"';
-
         /// <summary>
         /// Parse a CSV string.
         /// </summary>
@@ -46,22 +44,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 char nextChar = (char)reader.Read();
 
-                // if next character was delimiter, add string to result and clear builder
+                // if next character was delimiter or we are at the end, add string to result and clear builder
                 // else if next character was quote, perform reading untill next quote and add it to builder
                 // else read and add it to builder
-                if (nextChar == Delimiter) 
+                if (nextChar == Delimiter || reader.Peek() == -1) 
                 {
                     result.Add(wordBuffer.ToString());
                     wordBuffer.Clear();
                 } 
-                else if (nextChar == Quote) 
+                else if (nextChar == '"') 
                 {
                     bool isinQuotes = true;
                     while (reader.Peek() != -1 && isinQuotes) 
                     {
                         nextChar = (char)reader.Read();
                         
-                        if (nextChar == Quote) 
+                        if (nextChar == '"') 
                         {
                             isinQuotes = false;
                         } 
@@ -75,12 +73,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     wordBuffer.Append(nextChar);
                 }
-            }
-
-            // add last word if remainder is not empty
-            if (wordBuffer.ToString() != string.Empty) 
-            {
-                result.Add(wordBuffer.ToString());
             }
 
             reader.Close();    
