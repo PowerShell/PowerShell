@@ -78,21 +78,21 @@ namespace Microsoft.PowerShell.Commands
 
         #region Error handling
 
-        private void ThrowMinGreaterThanOrEqualMax(object min, object max)
+        private void ThrowMinGreaterThanOrEqualMax(object minValue, object maxValue)
         {
-            if (min == null)
+            if (minValue == null)
             {
                 throw PSTraceSource.NewArgumentNullException("min");
             }
 
-            if (max == null)
+            if (maxValue == null)
             {
                 throw PSTraceSource.NewArgumentNullException("max");
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
                 new ArgumentException(string.Format(
-                    CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, min, max)),
+                    CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, minValue, maxValue)),
                 "MinGreaterThanOrEqualMax",
                 ErrorCategory.InvalidArgument,
                 null);
@@ -289,10 +289,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Cmdlet processing methods
 
-        private double GetRandomDouble(double min, double max)
+        private double GetRandomDouble(double minValue, double maxValue)
         {
-            double result;
-            double diff = max - min;
+            double randomNumber;
+            double diff = maxValue - minValue;
 
             // I couldn't find a better fix for bug #216893 then
             // to test and retry if a random number falls outside the bounds
@@ -307,45 +307,45 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     double r = Generator.NextDouble();
-                    result = min + r * max - r * min;
+                    randomNumber = minValue + r * maxValue - r * minValue;
                 }
-                while (result >= max);
+                while (randomNumber >= maxValue);
             }
             else
             {
                 do
                 {
                     double r = Generator.NextDouble();
-                    result = min + r * diff;
+                    randomNumber = minValue + r * diff;
                     diff = diff * r;
                 }
-                while (result >= max);
+                while (randomNumber >= maxValue);
             }
 
-            Debug.Assert(min <= result, "lower bound <= random number");
-            Debug.Assert(result < max, "random number < upper bound");
-            return result;
+            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+            return randomNumber;
         }
 
         /// <summary>
         /// Get a random Int64 type number.
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
+        /// <param name="minValue"></param>
+        /// <param name="maxValue"></param>
         /// <returns></returns>
-        private Int64 GetRandomInt64(Int64 min, Int64 max)
+        private Int64 GetRandomInt64(Int64 minValue, Int64 maxValue)
         {
             // Randomly generate eight bytes and convert the byte array to UInt64
             var buffer = new byte[sizeof(UInt64)];
             UInt64 randomUint64;
 
-            BigInteger bigIntegerDiff = (BigInteger)max - (BigInteger)min;
+            BigInteger bigIntegerDiff = (BigInteger)maxValue - (BigInteger)minValue;
 
             // When the difference is less than int.MaxValue, use Random.Next(int, int)
             if (bigIntegerDiff <= int.MaxValue)
             {
-                int randomDiff = Generator.Next(0, (int)(max - min));
-                return min + randomDiff;
+                int randomDiff = Generator.Next(0, (int)(maxValue - minValue));
+                return minValue + randomDiff;
             }
 
             // The difference of two Int64 numbers would not exceed UInt64.MaxValue, so it can be represented by a UInt64 number.
@@ -365,15 +365,15 @@ namespace Microsoft.PowerShell.Commands
                 // Randomly fill the buffer
                 Generator.NextBytes(buffer);
                 randomUint64 = BitConverter.ToUInt64(buffer, 0);
-                // Get the last 'bitsToRepresentDiff' number of randon bits
+                // Get the last 'bitsToRepresentDiff' number of random bits
                 randomUint64 &= mask;
             } while (uint64Diff <= randomUint64);
 
-            double result = min * 1.0 + randomUint64 * 1.0;
+            double randomNumber = minValue * 1.0 + randomUint64 * 1.0;
 
-            Debug.Assert(min <= result, "lower bound <= random number");
-            Debug.Assert(result < max, "random number < upper bound");
-            return (Int64)result;
+            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+            return (Int64)randomNumber;
         }
 
         /// <summary>
@@ -393,41 +393,41 @@ namespace Microsoft.PowerShell.Commands
 
                 if (IsInt(maxOperand) && IsInt(minOperand))
                 {
-                    int min = minOperand != null ? (int)minOperand : 0;
-                    int max = maxOperand != null ? (int)maxOperand : int.MaxValue;
+                    int minValue = minOperand != null ? (int)minOperand : 0;
+                    int maxValue = maxOperand != null ? (int)maxOperand : int.MaxValue;
 
-                    if (min >= max)
+                    if (minValue >= maxValue)
                     {
-                        ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    int randomNumber = Generator.Next(min, max);
+                    int randomNumber = Generator.Next(minValue, maxValue);
                     WriteObject(randomNumber);
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
                 {
-                    Int64 min = minOperand != null ? ((minOperand is Int64) ? (Int64)minOperand : (int)minOperand) : 0;
-                    Int64 max = maxOperand != null ? ((maxOperand is Int64) ? (Int64)maxOperand : (int)maxOperand) : Int64.MaxValue;
+                    Int64 minValue = minOperand != null ? ((minOperand is Int64) ? (Int64)minOperand : (int)minOperand) : 0;
+                    Int64 maxValue = maxOperand != null ? ((maxOperand is Int64) ? (Int64)maxOperand : (int)maxOperand) : Int64.MaxValue;
 
-                    if (min >= max)
+                    if (minValue >= maxValue)
                     {
-                        ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    Int64 randomNumber = GetRandomInt64(min, max);
+                    Int64 randomNumber = GetRandomInt64(minValue, maxValue);
                     WriteObject(randomNumber);
                 }
                 else
                 {
-                    double min = (minOperand is double) ? (double)minOperand : ConvertToDouble(Minimum, 0.0);
-                    double max = (maxOperand is double) ? (double)maxOperand : ConvertToDouble(Maximum, double.MaxValue);
+                    double minValue = (minOperand is double) ? (double)minOperand : ConvertToDouble(Minimum, 0.0);
+                    double maxValue = (maxOperand is double) ? (double)maxOperand : ConvertToDouble(Maximum, double.MaxValue);
 
-                    if (min >= max)
+                    if (minValue >= maxValue)
                     {
-                        ThrowMinGreaterThanOrEqualMax(min, max);
+                        ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    double randomNumber = GetRandomDouble(min, max);
+                    double randomNumber = GetRandomDouble(minValue, maxValue);
                     WriteObject(randomNumber);
                 }
             }
@@ -571,23 +571,23 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A non-negative random integer.</returns>
         internal int Next()
         {
-            int result;
+            int randomNumber;
 
             // The CLR implementation just fudges
             // Int32.MaxValue down to (Int32.MaxValue - 1). This implementation
             // errs on the side of correctness.
             do
             {
-                result = InternalSample();
+                randomNumber = InternalSample();
             }
-            while (result == Int32.MaxValue);
+            while (randomNumber == Int32.MaxValue);
 
-            if (result < 0)
+            if (randomNumber < 0)
             {
-                result += Int32.MaxValue;
+                randomNumber += Int32.MaxValue;
             }
 
-            return result;
+            return randomNumber;
         }
 
         /// <summary>
@@ -608,32 +608,32 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a random integer that is within a specified range.
         /// </summary>
-        /// <param name="min">The inclusive lower bound of the random number returned.</param>
-        /// <param name="max">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
         /// <returns></returns>
-        public int Next(int min, int max)
+        public int Next(int minValue, int maxValue)
         {
-            if (min > max)
+            if (minValue > maxValue)
             {
                 throw new ArgumentOutOfRangeException("minValue", GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
             }
 
-            int result = 0;
+            int randomNumber = 0;
 
-            long range = (long)max - (long)min;
+            long range = (long)maxValue - (long)minValue;
             if (range <= int.MaxValue)
             {
-                result = ((int)(NextDouble() * range) + min);
+                randomNumber = ((int)(NextDouble() * range) + minValue);
             }
             else
             {
                 double largeSample = InternalSampleLargeRange() * (1.0 / (2 * ((uint)Int32.MaxValue)));
-                result = (int)((long)(largeSample * range) + min);
+                randomNumber = (int)((long)(largeSample * range) + minValue);
             }
 
-            Debug.Assert(min <= result, "lower bound <= random number");
-            Debug.Assert(result < max, "random number < upper bound");
-            return result;
+            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+            return randomNumber;
         }
 
         /// <summary>
@@ -658,13 +658,13 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A random integer, using the full range of Int32.</returns>
         private int InternalSample()
         {
-            int result;
+            int randomNumber;
             byte[] data = new byte[sizeof(int)];
 
             NextBytes(data);
-            result = BitConverter.ToInt32(data, 0);
+            randomNumber = BitConverter.ToInt32(data, 0);
 
-            return result;
+            return randomNumber;
         }
 
         /// <summary>
@@ -675,15 +675,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private double InternalSampleLargeRange()
         {
-            double result;
+            double randomNumber;
 
             do
             {
-                result = InternalSample();
-            } while (result == Int32.MaxValue);
+                randomNumber = InternalSample();
+            } while (randomNumber == Int32.MaxValue);
 
-            result += Int32.MaxValue;
-            return result;
+            randomNumber += Int32.MaxValue;
+            return randomNumber;
         }
     }
 }
