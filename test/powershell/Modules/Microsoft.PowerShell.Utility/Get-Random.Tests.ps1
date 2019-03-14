@@ -82,7 +82,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Get-Random" -Tags "CI" {
-    It "Should return a random number greater than -1 " {
+    It "Should return a random number greater than -1" {
         Get-Random | Should -BeGreaterThan -1
     }
 
