@@ -322,8 +322,6 @@ namespace Microsoft.PowerShell.Commands
                 while (randomNumber >= maxValue);
             }
 
-            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
             return randomNumber;
         }
 
@@ -370,9 +368,6 @@ namespace Microsoft.PowerShell.Commands
             } while (uint64Diff <= randomUint64);
 
             double randomNumber = minValue * 1.0 + randomUint64 * 1.0;
-
-            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
             return (Int64)randomNumber;
         }
 
@@ -402,6 +397,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     int randomNumber = Generator.Next(minValue, maxValue);
+                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+
                     WriteObject(randomNumber);
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
@@ -415,6 +413,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     Int64 randomNumber = GetRandomInt64(minValue, maxValue);
+                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+
                     WriteObject(randomNumber);
                 }
                 else
@@ -428,6 +429,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     double randomNumber = GetRandomDouble(minValue, maxValue);
+                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+
                     WriteObject(randomNumber);
                 }
             }
@@ -631,8 +635,6 @@ namespace Microsoft.PowerShell.Commands
                 randomNumber = (int)((long)(largeSample * range) + minValue);
             }
 
-            Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-            Debug.Assert(randomNumber < maxValue, "random number < upper bound");
             return randomNumber;
         }
 
