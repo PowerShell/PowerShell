@@ -3055,7 +3055,19 @@ function ReduceFxDependentPackage
     $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
     Get-ChildItem $Path -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
 
+    Write-Log -message "Starting to cleanup runtime folders"
+
     $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
+
+    $runtimeFolderPath = $runtimeFolder | Out-String
+    Write-Log -message $runtimeFolderPath
+
+    if ($runtimeFolder.Count -eq 0)
+    {
+        throw "runtimes folder not found under $Path"
+    }
+
+    Write-Log -message (Get-ChildItem $Path | Out-String)
 
     # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
     # win10-x64 (Nano Server)
@@ -3073,7 +3085,7 @@ function ReduceFxDependentPackage
     }
 
     $runtimeFolder | ForEach-Object {
-        Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+        Get-ChildItem -Path $_.FullName -Directory -Exclude $runtimesToKeep | Remove-Item -Force -Recurse -Verbose
     }
 }
 
@@ -3115,6 +3127,9 @@ function New-GlobalToolNupkg
 
     Remove-Item -Path (Join-Path $LinuxBinPath 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
     Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
+
+    ## Remove unnecessary xml files
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath -Filter *.xml | Remove-Item -Verbose
 
     if ($UnifiedPackage)
     {

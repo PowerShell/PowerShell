@@ -132,14 +132,19 @@ jobs:
     displayName: 'Create Nuget Package Folders'
 
   - powershell: |
+      Get-ChildItem $(linuxFxdPath)
+      Get-ChildItem $(winFxdPath)
+    displayName: Capture fxd folders
+
+  - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
 
       # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)"
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
 
       # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)"
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
     displayName: 'Create Global tool packages'
 
   - powershell: |
@@ -147,7 +152,7 @@ jobs:
     displayName: Capture generated packages
 
   - powershell: |
-      $packages = Get-ChildItem "$(PackagePath)\*.nupkg" | Select-Object -ExpandProperty FullName
+      $packages = Get-ChildItem "$(PackagePath)\*.nupkg", "$(PackagePath)\globaltool\*.nupkg" | Select-Object -ExpandProperty FullName
 
       if($packages.Count -lt 1)
       {
@@ -184,6 +189,12 @@ jobs:
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
+  - powershell: |
+      $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
+      Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
+    displayName: Move global tool packages to subfolder and capture
+
   - task: AzureFileCopy@1
     displayName: 'Upload NuGet packages to Azure'
     inputs:
@@ -192,6 +203,17 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload global tool packages to Azure'
+    inputs:
+      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
+      azureSubscription: '$(GlobalToolSubscription)'
+      Destination: AzureBlob
+      storage: '$(GlobalToolStorageAccount)'
+      ContainerName: 'tool'
+      blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
