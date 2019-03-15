@@ -363,6 +363,7 @@ namespace Microsoft.PowerShell.Commands
                 // Randomly fill the buffer
                 Generator.NextBytes(buffer);
                 randomUint64 = BitConverter.ToUInt64(buffer, 0);
+
                 // Get the last 'bitsToRepresentDiff' number of random bits
                 randomUint64 &= mask;
             } while (uint64Diff <= randomUint64);
