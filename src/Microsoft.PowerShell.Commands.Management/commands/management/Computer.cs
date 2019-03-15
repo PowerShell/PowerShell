@@ -538,7 +538,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost:false, token, this))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -594,7 +594,7 @@ $result
             {
                 try
                 {
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost:false, token, this))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -680,7 +680,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, token, cmdlet))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost:false, token, cmdlet))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -1440,7 +1440,7 @@ $result
             try
             {
                 using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource())
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, cancelTokenSource.Token, this))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, cancelTokenSource.Token, this))
                 {
                     var operationOptions = new CimOperationOptions
                     {
@@ -1503,12 +1503,28 @@ $result
 
                         if (!InternalTestHooks.TestRenameComputer)
                         {
-                            CimMethodResult result = cimSession.InvokeMethod(
-                                ComputerWMIHelper.CimOperatingSystemNamespace,
-                                cimInstance,
-                                "Rename",
-                                methodParameters,
-                                operationOptions);
+                            CimMethodResult result = null;
+
+                            if (isLocalhost)
+                            {
+                                var computerSystem = cimSession.EnumerateInstances(ComputerWMIHelper.CimOperatingSystemNamespace, ComputerWMIHelper.WMI_Class_OperatingSystem);
+
+                                result = cimSession.InvokeMethod(
+                                    ComputerWMIHelper.CimOperatingSystemNamespace,
+                                    computerSystem.FirstOrDefault(),
+                                    ComputerWMIHelper.CimOperatingSystemShutdownMethod,
+                                    methodParameters,
+                                    operationOptions);
+                            }
+                            else
+                            {
+                                result = cimSession.InvokeMethod(
+                                    ComputerWMIHelper.CimOperatingSystemNamespace,
+                                    cimInstance,
+                                    "Rename",
+                                    methodParameters,
+                                    operationOptions);
+                            }
 
                             retVal = Convert.ToInt32(result.ReturnValue.Value, CultureInfo.CurrentCulture);
                         }
@@ -2115,7 +2131,7 @@ $result
                     return false;
                 }
 
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, cancelToken, cmdlet))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cancelToken, cmdlet))
                 {
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;
@@ -2133,12 +2149,29 @@ $result
 
                     if (!InternalTestHooks.TestStopComputer)
                     {
-                        CimMethodResult result = cimSession.InvokeMethod(
-                            ComputerWMIHelper.CimOperatingSystemNamespace,
-                            ComputerWMIHelper.WMI_Class_OperatingSystem,
-                            ComputerWMIHelper.CimOperatingSystemShutdownMethod,
-                            methodParameters,
-                            operationOptions);
+                        CimMethodResult result = null;
+
+                        if (isLocalhost)
+                        {
+                            var computerSystem = cimSession.EnumerateInstances(ComputerWMIHelper.CimOperatingSystemNamespace, ComputerWMIHelper.WMI_Class_OperatingSystem);
+
+                            result = cimSession.InvokeMethod(
+                                ComputerWMIHelper.CimOperatingSystemNamespace,
+                                computerSystem.FirstOrDefault(),
+                                ComputerWMIHelper.CimOperatingSystemShutdownMethod,
+                                methodParameters,
+                                operationOptions);
+                        }
+                        else
+                        {
+                            result = cimSession.InvokeMethod(
+                                ComputerWMIHelper.CimOperatingSystemNamespace,
+                                ComputerWMIHelper.WMI_Class_OperatingSystem,
+                                ComputerWMIHelper.CimOperatingSystemShutdownMethod,
+                                methodParameters,
+                                operationOptions);
+                        }
+
 
                         retVal = Convert.ToInt32(result.ReturnValue.Value, CultureInfo.CurrentCulture);
                     }
