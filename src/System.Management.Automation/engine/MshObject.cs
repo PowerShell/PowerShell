@@ -646,8 +646,6 @@ namespace System.Management.Automation
 
         private AdapterSet _adapterSet;
 
-        internal bool hasGeneratedReservedMembers;
-
         internal PSMemberInfoInternalCollection<PSMemberInfo> InstanceMembers
         {
             get
@@ -1607,7 +1605,7 @@ namespace System.Management.Automation
                 }
             }
 
-            returnValue.hasGeneratedReservedMembers = false;
+            returnValue.HasGeneratedReservedMembers = false;
 
             return returnValue;
         }
@@ -2311,6 +2309,8 @@ namespace System.Management.Automation
         }
 
         private bool _isHelpObject = false;
+
+        internal bool HasGeneratedReservedMembers { get; set; }
 
         #endregion
     }

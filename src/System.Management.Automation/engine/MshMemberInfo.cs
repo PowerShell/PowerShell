@@ -4382,9 +4382,9 @@ namespace System.Management.Automation
 
         private void GenerateAllReservedMembers()
         {
-            if (!_mshOwner.hasGeneratedReservedMembers)
+            if (!_mshOwner.HasGeneratedReservedMembers)
             {
-                _mshOwner.hasGeneratedReservedMembers = true;
+                _mshOwner.HasGeneratedReservedMembers = true;
                 ReservedNameMembers.GeneratePSExtendedMemberSet(_mshOwner);
                 ReservedNameMembers.GeneratePSBaseMemberSet(_mshOwner);
                 ReservedNameMembers.GeneratePSObjectMemberSet(_mshOwner);
