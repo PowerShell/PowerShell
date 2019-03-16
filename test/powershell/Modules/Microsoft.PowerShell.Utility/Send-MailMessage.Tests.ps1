@@ -116,7 +116,7 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1It
+        $mail.To.Count | Should -BeExactly 1
         $body = "Greetings from me."
         $mail.To[0] | Should -BeExactly $address
         $mail.ReplyTo.Count | Should -BeExactly 1
