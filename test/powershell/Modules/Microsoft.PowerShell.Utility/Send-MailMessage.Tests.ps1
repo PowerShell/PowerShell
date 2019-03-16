@@ -61,6 +61,16 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
                 SmtpServer = "127.0.0.1"
             }
         }
+        @{
+            Name = "with No Subject"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                ReplyTo = "noreply@example.com"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
     )
 
     It "Can send mail message using named parameters <Name>" -TestCases $testCases {
@@ -78,7 +88,9 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
@@ -101,28 +113,11 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
-    }
-
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self without subject " + $ItArgs['Name']
-
-    It @ItArgs {
-        $body = "Greetings from me."
-        Send-MailMessage -To $address -From $address -ReplyTo $address -Body $body -SmtpServer 127.0.0.1
-        Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $body = "Greetings from me."
-        $mail.To[0] | Should -BeExactly $address
-        $mail.ReplyTo.Count | Should -BeExactly 1
-        $mail.ReplyTo[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeNullorEmpty
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
     }
 }
