@@ -59,14 +59,29 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     )
 
     # minimum is always set to the actual low end of the range, details refer to closed issue #887.
-    It "get a correct random number for '<Name>'" -TestCases $testData {
+    It "Should return a correct random number for '<Name>'" -TestCases $testData {
         param($maximum, $minimum, $greaterThan, $lessThan, $type)
 
         $result = Get-Random -Maximum $maximum -Minimum $minimum
         $result | Should -BeGreaterThan $greaterThan
         $result | Should -BeLessThan $lessThan
         $result | Should -BeOfType $type
+    }
 
+    It "Should return correct random numbers for '<Name>' with Count specified" -TestCases $testData {
+        param($maximum, $minimum, $greaterThan, $lessThan, $type)
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 1
+        $result | Should -BeGreaterThan $greaterThan
+        $result | Should -BeLessThan $lessThan
+        $result | Should -BeOfType $type
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 3
+        foreach ($randomNumber in $result) {
+            $randomNumber | Should -BeGreaterThan $greaterThan
+            $randomNumber | Should -BeLessThan $lessThan
+            $randomNumber | Should -BeOfType $type
+        }
     }
 
     It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
@@ -163,6 +178,7 @@ Describe "Get-Random" -Tags "CI" {
         $secondRandomNumber = Get-Random 34359738367 -SetSeed 20
         $firstRandomNumber | Should -Be @secondRandomNumber
     }
+
     It "Should throw an error because the hexadecimal number is to large " {
         { Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"
     }
