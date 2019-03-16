@@ -1471,9 +1471,9 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (_toStringFromDeserialization != null)
+            if (ToStringFromDeserialization != null)
             {
-                return _toStringFromDeserialization;
+                return ToStringFromDeserialization;
             }
 
             return PSObject.ToString(null, this, null, null, null, true, false);
@@ -1492,9 +1492,9 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (_toStringFromDeserialization != null)
+            if (ToStringFromDeserialization != null)
             {
-                return _toStringFromDeserialization;
+                return ToStringFromDeserialization;
             }
 
             return PSObject.ToString(null, this, null, format, formatProvider, true, false);
@@ -1994,9 +1994,9 @@ namespace System.Management.Automation
                 target.ClrMembers = source.ClrMembers;
             }
 
-            if (target._toStringFromDeserialization == null)
+            if (target.ToStringFromDeserialization == null)
             {
-                target._toStringFromDeserialization = source._toStringFromDeserialization;
+                target.ToStringFromDeserialization = source.ToStringFromDeserialization;
                 target.TokenText = source.TokenText;
             }
         }
@@ -2020,9 +2020,6 @@ namespace System.Management.Automation
             }
         }
 
-        // This is toString value set on deserialization
-        private string _toStringFromDeserialization = null;
-
         internal bool preserveToString = false;
         internal bool preserveToStringSet = false;
 
@@ -2045,15 +2042,6 @@ namespace System.Management.Automation
 
                 return preserveToString;
             }
-        }
-
-        /// <summary>
-        /// Sets the to string value on deserialization.
-        /// </summary>
-        internal string ToStringFromDeserialization
-        {
-            get => _toStringFromDeserialization;
-            set => _toStringFromDeserialization = value;
         }
 
         #endregion serialization
@@ -2299,6 +2287,11 @@ namespace System.Management.Automation
         /// If this is non-null return this string as the ToString() for this wrapped object.
         /// </summary>
         internal string TokenText;
+
+        /// <summary>
+        /// Sets the to string value on deserialization.
+        /// </summary>
+        internal string ToStringFromDeserialization { get; set; }
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
