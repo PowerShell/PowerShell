@@ -194,10 +194,6 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static readonly Collection<CollectionEntry<PSMemberInfo>> s_memberCollection = GetMemberCollection(PSMemberViewTypes.All);
-        private static readonly Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
-        private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
-
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet members based on the
         /// <paramref name="viewType"/>
@@ -373,26 +369,6 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             _typeTable = context?.TypeTableWeakReference;
         }
-
-        internal static readonly DotNetAdapter s_dotNetInstanceAdapter = new DotNetAdapter();
-        private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
-        internal static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
-
-        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
-        private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
-        private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
-        private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
-            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
-                                                          new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
-                                    PSObject.DotNetInstanceAdapter);
-#if !UNIX
-        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
-#endif
-        private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
 
         #region Adapter Mappings
 
@@ -583,7 +559,10 @@ namespace System.Management.Automation
         #region fields
 
         #region instance fields
+
         private readonly object _lockObject = new Object();
+
+        private ConsolidatedString _typeNames;
 
         /// <summary>
         /// This is the main field in the class representing
@@ -592,8 +571,66 @@ namespace System.Management.Automation
         private object _immediateBaseObject;
 
         private WeakReference<TypeTable> _typeTable;
+        private AdapterSet _adapterSet;
+        private PSMemberInfoInternalCollection<PSMemberInfo> _instanceMembers;
+        private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
+        private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
+
+        #endregion instance fields
 
         private static readonly PSTraceSource s_memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
+        private static readonly ConditionalWeakTable<object, ConsolidatedString> s_typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
+        private static readonly Collection<CollectionEntry<PSMemberInfo>> s_memberCollection = GetMemberCollection(PSMemberViewTypes.All);
+        private static readonly Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
+        private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
+        internal static readonly DotNetAdapter s_dotNetInstanceAdapter = new DotNetAdapter();
+        private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
+        internal static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
+
+        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
+        private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
+        private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
+        private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
+            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
+                                                          new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
+                                    PSObject.DotNetInstanceAdapter);
+#if !UNIX
+        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
+#endif
+        private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
+        private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
+        private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
+
+
+        #endregion fields
+
+        #region properties
+
+        internal PSMemberInfoInternalCollection<PSMemberInfo> InstanceMembers
+        {
+            get
+            {
+                if (_instanceMembers == null)
+                {
+                    lock (_lockObject)
+                    {
+                        if (_instanceMembers == null)
+                        {
+                            _instanceMembers =
+                                s_instanceMembersResurrectionTable.GetValue(
+                                    GetKeyForResurrectionTables(this),
+                                    _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                        }
+                    }
+                }
+
+                return _instanceMembers;
+            }
+
+            set => _instanceMembers = value;
+        }
 
         /// <summary>
         /// This is the adapter that will depend on the type of baseObject.
@@ -641,69 +678,8 @@ namespace System.Management.Automation
             }
         }
 
-        private AdapterSet _adapterSet;
-
-        internal PSMemberInfoInternalCollection<PSMemberInfo> InstanceMembers
-        {
-            get
-            {
-                if (_instanceMembers == null)
-                {
-                    lock (_lockObject)
-                    {
-                        if (_instanceMembers == null)
-                        {
-                            _instanceMembers =
-                                s_instanceMembersResurrectionTable.GetValue(
-                                    GetKeyForResurrectionTables(this),
-                                    _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
-                        }
-                    }
-                }
-
-                return _instanceMembers;
-            }
-
-            set => _instanceMembers = value;
-        }
-
-        private PSMemberInfoInternalCollection<PSMemberInfo> _instanceMembers;
-
-        internal static bool HasInstanceMembers(object obj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers)
-        {
-            if (obj is PSObject psobj)
-            {
-                lock (psobj)
-                {
-                    if (psobj._instanceMembers == null)
-                    {
-                        s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj),
-                                                                        out psobj._instanceMembers);
-                    }
-                }
-
-                instanceMembers = psobj._instanceMembers;
-            }
-            else if (obj != null)
-            {
-                s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out instanceMembers);
-            }
-            else
-            {
-                instanceMembers = null;
-            }
-
-            return instanceMembers != null && instanceMembers.Count > 0;
-        }
-
         private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> s_instanceMembersResurrectionTable =
             new ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>>();
-
-        #endregion instance fields
-
-        #endregion fields
-
-        #region properties
 
         /// <summary>
         /// Gets the member collection.
@@ -751,8 +727,6 @@ namespace System.Management.Automation
             }
         }
 
-        private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
-
         /// <summary>
         /// Gets the Method collection, or the members that are actually methods.
         /// </summary>
@@ -774,8 +748,6 @@ namespace System.Management.Automation
                 return _methods;
             }
         }
-
-        private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
         /// <summary>
         /// Gets the object we are directly wrapping.
@@ -887,12 +859,36 @@ namespace System.Management.Automation
             return s_typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out result);
         }
 
-        private ConsolidatedString _typeNames;
-        private static readonly ConditionalWeakTable<object, ConsolidatedString> s_typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
-
         #endregion properties
 
         #region static methods
+
+        internal static bool HasInstanceMembers(object obj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers)
+        {
+            if (obj is PSObject psobj)
+            {
+                lock (psobj)
+                {
+                    if (psobj._instanceMembers == null)
+                    {
+                        s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj),
+                                                                       out psobj._instanceMembers);
+                    }
+                }
+
+                instanceMembers = psobj._instanceMembers;
+            }
+            else if (obj != null)
+            {
+                s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out instanceMembers);
+            }
+            else
+            {
+                instanceMembers = null;
+            }
+
+            return instanceMembers != null && instanceMembers.Count > 0;
+        }
 
         /// <summary>
         /// </summary>
