@@ -3329,7 +3329,7 @@ namespace System.Management.Automation
 
         private void GenerateInternalMembersFromBase()
         {
-            if (_psObject.isDeserialized)
+            if (_psObject.IsDeserialized)
             {
                 if (_psObject.ClrMembers != null)
                 {
@@ -3353,7 +3353,7 @@ namespace System.Management.Automation
         {
             PSMemberInfoInternalCollection<PSMemberInfo> retVal = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
-            if (_psObject.isDeserialized)
+            if (_psObject.IsDeserialized)
             {
                 if (_psObject.AdaptedMembers != null)
                 {

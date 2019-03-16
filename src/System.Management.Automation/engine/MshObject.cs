@@ -113,7 +113,7 @@ namespace System.Management.Automation
 
         private static T AdapterGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
-            if (msjObj.isDeserialized)
+            if (msjObj.IsDeserialized)
             {
                 if (msjObj.AdaptedMembers == null)
                 {
@@ -152,7 +152,7 @@ namespace System.Management.Automation
 
         private static PSMemberInfoInternalCollection<T> AdapterGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
-            if (msjObj.isDeserialized)
+            if (msjObj.IsDeserialized)
             {
                 if (msjObj.AdaptedMembers == null)
                 {
@@ -1950,7 +1950,7 @@ namespace System.Management.Automation
 
         internal bool ShouldSerializeAdapter()
         {
-            if (this.isDeserialized)
+            if (this.IsDeserialized)
             {
                 return this.AdaptedMembers != null;
             }
@@ -1965,7 +1965,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
         {
-            if (this.isDeserialized)
+            if (this.IsDeserialized)
             {
                 return serializedMembers;
             }
@@ -1980,16 +1980,11 @@ namespace System.Management.Automation
             return returnValue;
         }
 
-        /// <summary>
-        /// This flag is set to true in deserialized shellobject.
-        /// </summary>
-        internal bool isDeserialized;
-
         internal static void CopyDeserializerFields(PSObject source, PSObject target)
         {
-            if (!target.isDeserialized)
+            if (!target.IsDeserialized)
             {
-                target.isDeserialized = source.isDeserialized;
+                target.IsDeserialized = source.IsDeserialized;
                 target.AdaptedMembers = source.AdaptedMembers;
                 target.ClrMembers = source.ClrMembers;
             }
@@ -2267,6 +2262,12 @@ namespace System.Management.Automation
         #endregion
 
         #region Help formatting
+
+        /// <summary>
+        /// This flag is set to true in deserialized shellobject.
+        /// </summary>
+        internal bool IsDeserialized { get; set; }
+
 
         internal bool IsHelpObject
         {

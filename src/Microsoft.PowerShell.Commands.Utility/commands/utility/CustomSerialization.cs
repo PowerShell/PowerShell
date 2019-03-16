@@ -411,7 +411,7 @@ namespace System.Management.Automation
             // We serialize properties of enumerable and on deserialization mark the object
             // as Deserialized. So if object is marked deserialized, we should write properties.
             // Note: we do not serialize the properties of IEnumerable if depth is zero.
-            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized)))
+            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized)))
             {
                 // Note:Depth is the depth for serialization of baseObject.
                 // Depth for serialization of each property is one less.
