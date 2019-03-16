@@ -78,17 +78,17 @@ namespace System.Management.Automation
             PSMemberInfo member = allMembers[name];
             if (member == null)
             {
-                PSObject.memberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
+                PSObject.MemberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
                 return null;
             }
 
             if (member is T memberAsT)
             {
-                PSObject.memberResolution.WriteLine("\"{0}\" present in type table.", name);
+                PSObject.MemberResolution.WriteLine("\"{0}\" present in type table.", name);
                 return memberAsT;
             }
 
-            PSObject.memberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
+            PSObject.MemberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
                 name, member.GetType(), typeof(T));
             return null;
         }
@@ -107,7 +107,7 @@ namespace System.Management.Automation
             }
 
             PSMemberInfoInternalCollection<T> members = typeTableToUse.GetMembers<T>(msjObj.InternalTypeNames);
-            PSObject.memberResolution.WriteLine("Type table members: {0}.", members.Count);
+            PSObject.MemberResolution.WriteLine("Type table members: {0}.", members.Count);
             return members;
         }
 
@@ -121,12 +121,12 @@ namespace System.Management.Automation
                 }
 
                 T adaptedMember = msjObj.AdaptedMembers[name] as T;
-                PSObject.memberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
+                PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
 
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
-            PSObject.memberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
+            PSObject.MemberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
             return retValue;
         }
 
@@ -159,12 +159,12 @@ namespace System.Management.Automation
                     return new PSMemberInfoInternalCollection<T>();
                 }
 
-                PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.AdaptedMembers.Count);
+                PSObject.MemberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.AdaptedMembers.Count);
                 return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.AdaptedMembers);
             }
 
             PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-            PSObject.memberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
+            PSObject.MemberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
             return retValue;
         }
 
@@ -174,7 +174,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-                PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
+                PSObject.MemberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
                 return retValue;
             }
 
@@ -187,7 +187,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
-                PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
+                PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
 
@@ -598,6 +598,8 @@ namespace System.Management.Automation
 
         private WeakReference<TypeTable> _typeTable;
 
+        private static readonly PSTraceSource s_memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
+
         /// <summary>
         /// This is the adapter that will depend on the type of baseObject.
         /// </summary>
@@ -712,8 +714,6 @@ namespace System.Management.Automation
         /// Set to true when the BaseObject is PSCustomObject.
         /// </summary>
         internal bool immediateBaseObjectIsEmpty;
-
-        internal static PSTraceSource memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
 
         #endregion instance fields
 
@@ -2307,6 +2307,8 @@ namespace System.Management.Automation
         internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers { get; set; }
 
         internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
+
+        internal static PSTraceSource MemberResolution => s_memberResolution;
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized

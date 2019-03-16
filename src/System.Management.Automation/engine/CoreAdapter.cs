@@ -1537,7 +1537,7 @@ namespace System.Management.Automation
 
         internal static void SetReferences(object[] arguments, MethodInformation methodInformation, object[] originalArguments)
         {
-            using (PSObject.memberResolution.TraceScope("Checking for possible references."))
+            using (PSObject.MemberResolution.TraceScope("Checking for possible references."))
             {
                 ParameterInformation[] parameters = methodInformation.parameters;
                 for (int i = 0; (i < originalArguments.Length) && (i < parameters.Length) && (i < arguments.Length); i++)
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation
                     }
 
                     object argument = arguments[i];
-                    PSObject.memberResolution.WriteLine("Argument '{0}' was a reference so it will be set to \"{1}\".", i + 1, argument);
+                    PSObject.MemberResolution.WriteLine("Argument '{0}' was a reference so it will be set to \"{1}\".", i + 1, argument);
                     originalArgumentReference.Value = argument;
                 }
             }
@@ -1741,7 +1741,7 @@ namespace System.Management.Automation
             bool isParameterByRef, int parameterIndex, Type resultType,
             IFormatProvider formatProvider)
         {
-            using (PSObject.memberResolution.TraceScope("Method argument conversion."))
+            using (PSObject.MemberResolution.TraceScope("Method argument conversion."))
             {
                 if (resultType == null)
                 {
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation
             PSReference reference = obj as PSReference;
             if (reference != null)
             {
-                PSObject.memberResolution.WriteLine("Parameter was a reference.");
+                PSObject.MemberResolution.WriteLine("Parameter was a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation
 
             if (reference != null)
             {
-                PSObject.memberResolution.WriteLine("Parameter was an PSObject containing a reference.");
+                PSObject.MemberResolution.WriteLine("Parameter was an PSObject containing a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation
         internal static object PropertySetAndMethodArgumentConvertTo(object valueToConvert,
             Type resultType, IFormatProvider formatProvider)
         {
-            using (PSObject.memberResolution.TraceScope("Converting parameter \"{0}\" to \"{1}\".", valueToConvert, resultType))
+            using (PSObject.MemberResolution.TraceScope("Converting parameter \"{0}\" to \"{1}\".", valueToConvert, resultType))
             {
                 if (resultType == null)
                 {
@@ -1808,7 +1808,7 @@ namespace System.Management.Automation
                 {
                     if (resultType == typeof(object))
                     {
-                        PSObject.memberResolution.WriteLine("Parameter was an PSObject and will be converted to System.Object.");
+                        PSObject.MemberResolution.WriteLine("Parameter was an PSObject and will be converted to System.Object.");
                         // we use PSObject.Base so we don't return
                         // PSCustomObject
                         return PSObject.Base(mshObj);
@@ -4061,7 +4061,7 @@ namespace System.Management.Automation
 
             string methodDefinition = bestMethod.methodDefinition;
             ScriptTrace.Trace(1, "TraceMethodCall", ParserStrings.TraceMethodCall, methodDefinition);
-            PSObject.memberResolution.WriteLine("Calling Method: {0}", methodDefinition);
+            PSObject.MemberResolution.WriteLine("Calling Method: {0}", methodDefinition);
             return AuxiliaryMethodInvoke(target, newArguments, bestMethod, arguments);
         }
 
@@ -4084,9 +4084,9 @@ namespace System.Management.Automation
 
         private static object InvokeResolvedConstructor(MethodInformation bestMethod, object[] newArguments, object[] arguments)
         {
-            if ((PSObject.memberResolution.Options & PSTraceSourceOptions.WriteLine) != 0)
+            if ((PSObject.MemberResolution.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
-                PSObject.memberResolution.WriteLine("Calling Constructor: {0}", DotNetAdapter.GetMethodInfoOverloadDefinition(null,
+                PSObject.MemberResolution.WriteLine("Calling Constructor: {0}", DotNetAdapter.GetMethodInfoOverloadDefinition(null,
                     bestMethod.method, 0));
             }
 
@@ -4107,7 +4107,7 @@ namespace System.Management.Automation
             // of all parameters but the last one
             object[] newArguments;
             MethodInformation bestMethod = GetBestMethodAndArguments(propertyName, methodInformation, arguments, out newArguments);
-            PSObject.memberResolution.WriteLine("Calling Set Method: {0}", bestMethod.methodDefinition);
+            PSObject.MemberResolution.WriteLine("Calling Set Method: {0}", bestMethod.methodDefinition);
             ParameterInfo[] bestMethodParameters = bestMethod.method.GetParameters();
             Type propertyType = bestMethodParameters[bestMethodParameters.Length - 1].ParameterType;
 

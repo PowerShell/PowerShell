@@ -4676,7 +4676,7 @@ namespace System.Management.Automation
         {
             get
             {
-                using (PSObject.memberResolution.TraceScope("Lookup"))
+                using (PSObject.MemberResolution.TraceScope("Lookup"))
                 {
                     if (string.IsNullOrEmpty(name))
                     {
@@ -4697,7 +4697,7 @@ namespace System.Management.Automation
                             member = instanceMembers[name];
                             if (member is T memberAsT)
                             {
-                                PSObject.memberResolution.WriteLine("Found PSObject instance member: {0}.", name);
+                                PSObject.MemberResolution.WriteLine("Found PSObject instance member: {0}.", name);
                                 return memberAsT;
                             }
                         }
@@ -4711,7 +4711,7 @@ namespace System.Management.Automation
                             // In membersets we cannot replicate the instance when adding
                             // since the memberset might not yet have an associated PSObject.
                             // We replicate the instance when returning the members of the memberset.
-                            PSObject.memberResolution.WriteLine("Found PSMemberSet member: {0}.", name);
+                            PSObject.MemberResolution.WriteLine("Found PSMemberSet member: {0}.", name);
                             member.ReplicateInstance(delegateOwner);
                             return memberAsT;
                         }
@@ -4748,7 +4748,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<T> GetIntegratedMembers(MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.memberResolution.TraceScope("Generating the total list of members"))
+            using (PSObject.MemberResolution.TraceScope("Generating the total list of members"))
             {
                 PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
                 object delegateOwner;
@@ -4794,14 +4794,14 @@ namespace System.Management.Automation
                         PSMemberInfo previousMember = returnValue[member.Name];
                         if (previousMember != null)
                         {
-                            PSObject.memberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
+                            PSObject.MemberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
                                 member.Name, member.MemberType, previousMember.MemberType);
                             continue;
                         }
 
                         if (!member.MatchesOptions(matchOptions))
                         {
-                            PSObject.memberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
+                            PSObject.MemberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
                             continue;
                         }
 
@@ -4871,7 +4871,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.memberResolution.TraceScope("Matching \"{0}\"", name))
+            using (PSObject.MemberResolution.TraceScope("Matching \"{0}\"", name))
             {
                 if (string.IsNullOrEmpty(name))
                 {
@@ -4886,7 +4886,7 @@ namespace System.Management.Automation
                 WildcardPattern nameMatch = MemberMatch.GetNamePattern(name);
                 PSMemberInfoInternalCollection<T> allMembers = GetIntegratedMembers(matchOptions);
                 ReadOnlyPSMemberInfoCollection<T> returnValue = new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(allMembers, name, nameMatch, memberTypes));
-                PSObject.memberResolution.WriteLine("{0} total matches.", returnValue.Count);
+                PSObject.MemberResolution.WriteLine("{0} total matches.", returnValue.Count);
                 return returnValue;
             }
         }
@@ -4919,7 +4919,7 @@ namespace System.Management.Automation
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
             {
-                using (PSObject.memberResolution.TraceScope("Enumeration Start"))
+                using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
                 {
                     _currentIndex = -1;
                     _current = null;
@@ -4927,13 +4927,13 @@ namespace System.Management.Automation
                     if (integratingCollection._mshOwner != null)
                     {
                         integratingCollection.GenerateAllReservedMembers();
-                        PSObject.memberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);
-                        PSObject.memberResolution.WriteLine("PSObject instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);
+                        PSObject.MemberResolution.WriteLine("PSObject instance members: {0}", _allMembers.VisibleCount);
                     }
                     else
                     {
-                        PSObject.memberResolution.WriteLine("Enumerating PSMemberSet \"{0}\".", integratingCollection._memberSetOwner.Name);
-                        PSObject.memberResolution.WriteLine("MemberSet instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.WriteLine("Enumerating PSMemberSet \"{0}\".", integratingCollection._memberSetOwner.Name);
+                        PSObject.MemberResolution.WriteLine("MemberSet instance members: {0}", _allMembers.VisibleCount);
                     }
                 }
             }
