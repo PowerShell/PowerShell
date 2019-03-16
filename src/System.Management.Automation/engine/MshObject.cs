@@ -891,41 +891,50 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Convert an int to PSObject.
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <returns></returns>
+        /// <param name="valueToConvert">Value to convert.</param>
+        /// <returns>PSObject.</returns>
         public static implicit operator PSObject(int valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
+        /// Convert a string to PSObject.
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <returns></returns>
+        /// <param name="valueToConvert">Value to convert.</param>
+        /// <returns>PSObject.</returns>
         public static implicit operator PSObject(string valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
+        /// Convert a Hastable to PSObject.
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <returns></returns>
+        /// <param name="valueToConvert">Value to convert.</param>
+        /// <returns>PSObject.</returns>
         public static implicit operator PSObject(Hashtable valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
+        /// Convert a double to PSObject.
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <returns></returns>
+        /// <param name="valueToConvert">Value to convert.</param>
+        /// <returns>PSObject.</returns>
         public static implicit operator PSObject(double valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
+        /// Convert a bool to PSObject.
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <returns></returns>
+        /// <param name="valueToConvert">Value to convert.</param>
+        /// <returns>PSObject.</returns>
         public static implicit operator PSObject(bool valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -2342,7 +2351,7 @@ namespace System.Management.Automation
         AllPublicProperties = 0,
         String = 1,
         SpecificProperties = 2
-    };
+    }
 }
 
 #pragma warning restore 56500
