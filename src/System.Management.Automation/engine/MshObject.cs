@@ -699,12 +699,6 @@ namespace System.Management.Automation
         private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> s_instanceMembersResurrectionTable =
             new ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>>();
 
-        /// <summary>
-        /// Indicate whether we store the instance members and type names locally
-        /// for this PSObject instance.
-        /// </summary>
-        private bool _storeTypeNameAndInstanceMembersLocally;
-
         #endregion instance fields
 
         #endregion fields
@@ -1020,7 +1014,7 @@ namespace System.Management.Automation
                 return so;
             }
 
-            return new PSObject(obj) { _storeTypeNameAndInstanceMembersLocally = storeTypeNameAndInstanceMembersLocally };
+            return new PSObject(obj) { StoreTypeNameAndInstanceMembersLocally = storeTypeNameAndInstanceMembersLocally };
         }
 
         /// <summary>
@@ -1047,7 +1041,7 @@ namespace System.Management.Automation
 
             if (psObjectAboveBase.ImmediateBaseObject is PSCustomObject
                 || psObjectAboveBase.ImmediateBaseObject is string
-                || pso._storeTypeNameAndInstanceMembersLocally)
+                || pso.StoreTypeNameAndInstanceMembersLocally)
             {
                 return psObjectAboveBase;
             }
@@ -2268,6 +2262,11 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsDeserialized { get; set; }
 
+        /// <summary>
+        /// Indicate whether we store the instance members and type names locally
+        /// for this PSObject instance.
+        /// </summary>
+        private bool StoreTypeNameAndInstanceMembersLocally { get; set; }
 
         internal bool IsHelpObject
         {
