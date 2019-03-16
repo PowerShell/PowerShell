@@ -586,11 +586,6 @@ namespace System.Management.Automation
         private readonly object _lockObject = new Object();
 
         /// <summary>
-        /// If this is non-null return this string as the ToString() for this wrapped object.
-        /// </summary>
-        internal string TokenText;
-
-        /// <summary>
         /// This is the main field in the class representing
         /// the System.Object we are encapsulating.
         /// </summary>
@@ -2299,6 +2294,11 @@ namespace System.Management.Automation
         /// Set to true when the BaseObject is PSCustomObject.
         /// </summary>
         internal bool ImmediateBaseObjectIsEmpty { get; set; }
+
+        /// <summary>
+        /// If this is non-null return this string as the ToString() for this wrapped object.
+        /// </summary>
+        internal string TokenText;
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
