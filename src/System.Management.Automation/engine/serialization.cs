@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                 moSource = source as PSObject;
             }
 
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // check if source is of type secure string
                 secureString = moSource.ImmediateBaseObject as SecureString;
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation
             IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.immediateBaseObjectIsEmpty)
+            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation
             bool isPSObject = false;
             bool isCimInstance = false;
 
-            if (!mshSource.immediateBaseObjectIsEmpty)
+            if (!mshSource.ImmediateBaseObjectIsEmpty)
             {
                 do // false loop
                 {
@@ -1495,7 +1495,7 @@ namespace System.Management.Automation
             bool writeToString = true;
             if (mshSource.ToStringFromDeserialization == null) // continue to write ToString from deserialized objects, but...
             {
-                if (mshSource.immediateBaseObjectIsEmpty) // ... don't write ToString for property bags
+                if (mshSource.ImmediateBaseObjectIsEmpty) // ... don't write ToString for property bags
                 {
                     writeToString = false;
                 }

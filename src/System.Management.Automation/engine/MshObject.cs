@@ -366,7 +366,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(obj != null, "checked by callers");
             if (obj is PSCustomObject)
             {
-                this.immediateBaseObjectIsEmpty = true;
+                this.ImmediateBaseObjectIsEmpty = true;
             }
 
             _immediateBaseObject = obj;
@@ -710,11 +710,6 @@ namespace System.Management.Automation
         /// </summary>
         private bool _storeTypeNameAndInstanceMembersLocally;
 
-        /// <summary>
-        /// Set to true when the BaseObject is PSCustomObject.
-        /// </summary>
-        internal bool immediateBaseObjectIsEmpty;
-
         #endregion instance fields
 
         #endregion fields
@@ -966,7 +961,7 @@ namespace System.Management.Automation
 
             if (mshObj == AutomationNull.Value)
                 return null;
-            if (mshObj.immediateBaseObjectIsEmpty)
+            if (mshObj.ImmediateBaseObjectIsEmpty)
             {
                 return obj;
             }
@@ -976,7 +971,7 @@ namespace System.Management.Automation
             {
                 returnValue = mshObj._immediateBaseObject;
                 mshObj = returnValue as PSObject;
-            } while ((mshObj != null) && (!mshObj.immediateBaseObjectIsEmpty));
+            } while ((mshObj != null) && (!mshObj.ImmediateBaseObjectIsEmpty));
 
             return returnValue;
         }
@@ -1398,7 +1393,7 @@ namespace System.Management.Automation
             // Since we don't have a brokered ToString, we check for the need to enumerate the object or its properties
             if (recurse)
             {
-                if (mshObj.immediateBaseObjectIsEmpty)
+                if (mshObj.ImmediateBaseObjectIsEmpty)
                 {
                     try
                     {
@@ -1541,12 +1536,12 @@ namespace System.Management.Automation
             if (this.BaseObject is PSCustomObject)
             {
                 returnValue._immediateBaseObject = PSCustomObject.SelfInstance;
-                returnValue.immediateBaseObjectIsEmpty = true;
+                returnValue.ImmediateBaseObjectIsEmpty = true;
             }
             else
             {
                 returnValue._immediateBaseObject = _immediateBaseObject;
-                returnValue.immediateBaseObjectIsEmpty = false;
+                returnValue.ImmediateBaseObjectIsEmpty = false;
             }
 
             // Instance members will be recovered as necessary through the resurrection table.
@@ -1774,7 +1769,7 @@ namespace System.Management.Automation
 
             // We create a wrapper PSObject, so that we can successfully deserialize it
             string serializedContent;
-            if (this.immediateBaseObjectIsEmpty)
+            if (this.ImmediateBaseObjectIsEmpty)
             {
                 PSObject serializeTarget = new PSObject(this);
                 serializedContent = PSSerializer.Serialize(serializeTarget);
@@ -1965,7 +1960,7 @@ namespace System.Management.Automation
                 return this.AdaptedMembers != null;
             }
 
-            return !this.immediateBaseObjectIsEmpty;
+            return !this.ImmediateBaseObjectIsEmpty;
         }
 
         internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties()
@@ -2019,9 +2014,9 @@ namespace System.Management.Automation
         ///<remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
-            Diagnostics.Assert(this.immediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
+            Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
             Diagnostics.Assert(value != null, "known objects are never null");
-            this.immediateBaseObjectIsEmpty = false;
+            this.ImmediateBaseObjectIsEmpty = false;
             _immediateBaseObject = value;
             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
             if (overrideTypeInfo)
@@ -2299,6 +2294,11 @@ namespace System.Management.Automation
         private bool _isHelpObject = false;
 
         internal bool HasGeneratedReservedMembers { get; set; }
+
+        /// <summary>
+        /// Set to true when the BaseObject is PSCustomObject.
+        /// </summary>
+        internal bool ImmediateBaseObjectIsEmpty { get; set; }
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
