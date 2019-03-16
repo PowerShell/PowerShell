@@ -3830,7 +3830,7 @@ namespace System.Management.Automation
             PSGetMemberBinder.SetHasInstanceMember("GetType");
 
             // Set Clr members to a collection which is empty
-            dso.clrMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+            dso.ClrMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             if (ReadStartElementAndHandleEmpty(SerializationStrings.AdapterProperties))
             {

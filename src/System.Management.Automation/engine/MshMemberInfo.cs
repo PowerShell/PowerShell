@@ -3331,9 +3331,9 @@ namespace System.Management.Automation
         {
             if (_psObject.isDeserialized)
             {
-                if (_psObject.clrMembers != null)
+                if (_psObject.ClrMembers != null)
                 {
-                    foreach (PSMemberInfo member in _psObject.clrMembers)
+                    foreach (PSMemberInfo member in _psObject.ClrMembers)
                     {
                         internalMembers.Add(member.Copy());
                     }

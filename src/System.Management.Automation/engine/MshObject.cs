@@ -715,12 +715,6 @@ namespace System.Management.Automation
         internal PSMemberInfoInternalCollection<PSPropertyInfo> adaptedMembers;
 
         /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> clrMembers;
-
-        /// <summary>
         /// Set to true when the BaseObject is PSCustomObject.
         /// </summary>
         internal bool immediateBaseObjectIsEmpty;
@@ -2013,7 +2007,7 @@ namespace System.Management.Automation
             {
                 target.isDeserialized = source.isDeserialized;
                 target.adaptedMembers = source.adaptedMembers;
-                target.clrMembers = source.clrMembers;
+                target.ClrMembers = source.ClrMembers;
             }
 
             if (target._toStringFromDeserialization == null)
@@ -2319,6 +2313,12 @@ namespace System.Management.Automation
         internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers { get; set; }
 
         internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
+
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> ClrMembers { get; set; }
 
         internal static DotNetAdapter DotNetInstanceAdapter => s_dotNetInstanceAdapter;
 
