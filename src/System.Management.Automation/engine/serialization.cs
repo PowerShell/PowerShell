@@ -3463,9 +3463,9 @@ namespace System.Management.Automation
             }
 
             // process properties that were originally "adapted" properties
-            if (deserializedObject.adaptedMembers != null)
+            if (deserializedObject.AdaptedMembers != null)
             {
-                foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.adaptedMembers)
+                foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
                     PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
                     if (deserializedProperty == null)
@@ -3495,7 +3495,7 @@ namespace System.Management.Automation
                 }
 
                 // skip adapted properties
-                if ((deserializedObject.adaptedMembers != null) && (deserializedObject.adaptedMembers[deserializedProperty.Name] != null))
+                if ((deserializedObject.AdaptedMembers != null) && (deserializedObject.AdaptedMembers[deserializedProperty.Name] != null))
                 {
                     continue;
                 }
@@ -3823,7 +3823,7 @@ namespace System.Management.Automation
             // Since we are adding baseobject properties as propertybag,
             // mark the object as deserialized.
             dso.isDeserialized = true;
-            dso.adaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+            dso.AdaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             // Add the GetType method to the instance members, so that it works on deserialized psobjects
             dso.InstanceMembers.Add(PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "GetType"));
@@ -3840,7 +3840,7 @@ namespace System.Management.Automation
                     string property = ReadNameAttribute();
                     object value = ReadOneObject();
                     PSProperty prop = new PSProperty(property, value);
-                    dso.adaptedMembers.Add(prop);
+                    dso.AdaptedMembers.Add(prop);
                 }
 
                 ReadEndElement();

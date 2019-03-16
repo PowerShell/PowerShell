@@ -115,12 +115,12 @@ namespace System.Management.Automation
         {
             if (msjObj.isDeserialized)
             {
-                if (msjObj.adaptedMembers == null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return null;
                 }
 
-                T adaptedMember = msjObj.adaptedMembers[name] as T;
+                T adaptedMember = msjObj.AdaptedMembers[name] as T;
                 PSObject.memberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
@@ -154,13 +154,13 @@ namespace System.Management.Automation
         {
             if (msjObj.isDeserialized)
             {
-                if (msjObj.adaptedMembers == null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return new PSMemberInfoInternalCollection<T>();
                 }
 
-                PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.adaptedMembers.Count);
-                return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.adaptedMembers);
+                PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.AdaptedMembers.Count);
+                return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.AdaptedMembers);
             }
 
             PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
@@ -707,12 +707,6 @@ namespace System.Management.Automation
         /// for this PSObject instance.
         /// </summary>
         private bool _storeTypeNameAndInstanceMembersLocally;
-
-        /// <summary>
-        /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects.
-        /// </summary>
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> adaptedMembers;
 
         /// <summary>
         /// Set to true when the BaseObject is PSCustomObject.
@@ -1968,7 +1962,7 @@ namespace System.Management.Automation
         {
             if (this.isDeserialized)
             {
-                return this.adaptedMembers != null;
+                return this.AdaptedMembers != null;
             }
 
             return !this.immediateBaseObjectIsEmpty;
@@ -1976,7 +1970,7 @@ namespace System.Management.Automation
 
         internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties()
         {
-            return GetProperties(this.adaptedMembers, this.InternalAdapter);
+            return GetProperties(this.AdaptedMembers, this.InternalAdapter);
         }
 
         private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
@@ -2006,7 +2000,7 @@ namespace System.Management.Automation
             if (!target.isDeserialized)
             {
                 target.isDeserialized = source.isDeserialized;
-                target.adaptedMembers = source.adaptedMembers;
+                target.AdaptedMembers = source.AdaptedMembers;
                 target.ClrMembers = source.ClrMembers;
             }
 

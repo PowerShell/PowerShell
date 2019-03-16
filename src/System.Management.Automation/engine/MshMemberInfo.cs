@@ -3355,9 +3355,9 @@ namespace System.Management.Automation
 
             if (_psObject.isDeserialized)
             {
-                if (_psObject.adaptedMembers != null)
+                if (_psObject.AdaptedMembers != null)
                 {
-                    foreach (PSMemberInfo member in _psObject.adaptedMembers)
+                    foreach (PSMemberInfo member in _psObject.AdaptedMembers)
                     {
                         retVal.Add(member.Copy());
                     }
