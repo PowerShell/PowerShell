@@ -6,6 +6,9 @@ jobs:
   displayName: Build macOS
   condition: succeeded()
   pool: Hosted Mac Internal
+  variables:
+    # Turn off Homebrew analytics
+    HOMEBREW_NO_ANALYTICS: 1
   steps:
   #- task: <task type name>@<version>
   #  inputs:
