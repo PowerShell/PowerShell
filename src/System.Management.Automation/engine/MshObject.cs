@@ -376,7 +376,7 @@ namespace System.Management.Automation
 
         internal static readonly DotNetAdapter dotNetInstanceAdapter = new DotNetAdapter();
         private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
-        internal static readonly DotNetAdapter dotNetStaticAdapter = new DotNetAdapter(true);
+        internal static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
 
         private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(dotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
             }
 
             var objType = obj as Type ?? obj.GetType();
-            return dotNetStaticAdapter.BaseGetMember<PSMemberInfo>(objType, methodName);
+            return DotNetStaticAdapter.BaseGetMember<PSMemberInfo>(objType, methodName);
         }
 
         /// <summary>
@@ -2311,6 +2311,14 @@ namespace System.Management.Automation
         private bool _isHelpObject = false;
 
         internal bool HasGeneratedReservedMembers { get; set; }
+
+        /// <summary>
+        /// Members from the adapter of the object before it was serialized
+        /// Null for live objects but not null for deserialized objects.
+        /// </summary>
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers { get; set; }
+
+        internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
 
         #endregion
     }
