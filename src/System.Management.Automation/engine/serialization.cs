@@ -3643,7 +3643,7 @@ namespace System.Management.Automation
                 else if (IsNextElement(SerializationStrings.ToStringElementTag))
                 {
                     dso.ToStringFromDeserialization = ReadDecodedElementString(SerializationStrings.ToStringElementTag);
-                    dso.InstanceMembers.Add(PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "ToString"));
+                    dso.InstanceMembers.Add(PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "ToString"));
                     PSGetMemberBinder.SetHasInstanceMember("ToString");
                     // Fix for Win8:75437
                     // The TokenText property is used in type conversion and it is not being populated during deserialization
@@ -3826,7 +3826,7 @@ namespace System.Management.Automation
             dso.adaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             // Add the GetType method to the instance members, so that it works on deserialized psobjects
-            dso.InstanceMembers.Add(PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "GetType"));
+            dso.InstanceMembers.Add(PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMemberInfo>(dso, "GetType"));
             PSGetMemberBinder.SetHasInstanceMember("GetType");
 
             // Set Clr members to a collection which is empty

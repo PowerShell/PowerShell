@@ -3342,7 +3342,7 @@ namespace System.Management.Automation
             else
             {
                 foreach (PSMemberInfo member in
-                    PSObject.dotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(_psObject.ImmediateBaseObject))
+                    PSObject.DotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(_psObject.ImmediateBaseObject))
                 {
                     internalMembers.Add(member.Copy());
                 }
@@ -3377,7 +3377,7 @@ namespace System.Management.Automation
 
         private void GenerateInternalMembersFromPSObject()
         {
-            PSMemberInfoCollection<PSMemberInfo> members = PSObject.dotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(
+            PSMemberInfoCollection<PSMemberInfo> members = PSObject.DotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(
                 _psObject);
             foreach (PSMemberInfo member in members)
             {

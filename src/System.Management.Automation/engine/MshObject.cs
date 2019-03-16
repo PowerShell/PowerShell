@@ -374,21 +374,21 @@ namespace System.Management.Automation
             _typeTable = context?.TypeTableWeakReference;
         }
 
-        internal static readonly DotNetAdapter dotNetInstanceAdapter = new DotNetAdapter();
+        internal static readonly DotNetAdapter s_dotNetInstanceAdapter = new DotNetAdapter();
         private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
         internal static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
 
-        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(dotNetInstanceAdapter, null);
+        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
         private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
-                                    PSObject.dotNetInstanceAdapter);
+                                    PSObject.DotNetInstanceAdapter);
 #if !UNIX
-        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
-        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
 #endif
         private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
         private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
                         return info != null
-                                   ? new AdapterSet(new ComAdapter(info), dotNetInstanceAdapter)
+                                   ? new AdapterSet(new ComAdapter(info), DotNetInstanceAdapter)
                                    : PSObject.s_dotNetInstanceAdapterSet;
                     }
                     else
@@ -2082,7 +2082,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This class is solely used by PSObject to support .net member lookup for all the
-        /// adapters except for dotNetInstanceAdapter, mshMemberSetAdapter and mshObjectAdapter.
+        /// adapters except for DotNetInstanceAdapter, mshMemberSetAdapter and mshObjectAdapter.
         /// If the original adapter is not one of those, then .net members are also exposed
         /// on the PSObject. This will have the following effect:
         ///
@@ -2319,6 +2319,8 @@ namespace System.Management.Automation
         internal PSMemberInfoInternalCollection<PSPropertyInfo> AdaptedMembers { get; set; }
 
         internal static DotNetAdapter DotNetStaticAdapter => s_dotNetStaticAdapter;
+
+        internal static DotNetAdapter DotNetInstanceAdapter => s_dotNetInstanceAdapter;
 
         #endregion
     }
