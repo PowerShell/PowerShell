@@ -44,9 +44,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 char nextChar = (char)reader.Read();
 
-                // if next character was delimiter or we are at the end, add string to result and clear builder
-                // else if next character was quote, perform reading until next quote and add it to builder
-                // else read and add it to builder
+                // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
+                // else if next character was quote, perform reading until next quote and add it to wordBuffer
+                // else read and add it to wordBuffer
                 if (nextChar == Delimiter) 
                 {
                     result.Add(wordBuffer.ToString());
@@ -55,17 +55,22 @@ namespace Microsoft.PowerShell.Commands
                 else if (nextChar == '"') 
                 {
                     bool inQuotes = true;
+                    // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
+                    // if it is a single quote, escape the quote section
+                    // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
                     while (reader.Peek() != -1 && inQuotes) 
                     {
                         nextChar = (char)reader.Read();
                         
                         if (nextChar == '"') 
                         {
-                            if(reader.Peek() == '"')
+                            if ((char)reader.Peek() == '"')
                             {
                                 wordBuffer.Append(nextChar);
                                 reader.Read();
-                            } else {
+                            } 
+                            else 
+                            {
                                 inQuotes = false;
                             }
                         } 
