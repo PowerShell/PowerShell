@@ -5439,7 +5439,7 @@ namespace System.Management.Automation
 
         private static XmlNode FindNode(object obj, MemberNamePredicate predicate)
         {
-            XmlNode node = (XmlNode)obj;
+            var node = (XmlNode)obj;
 
             if (node.Attributes != null)
             {
@@ -5447,7 +5447,7 @@ namespace System.Management.Automation
                 {
                     if (predicate(attribute.LocalName))
                     {
-                        return node;
+                        return attribute;
                     }
                 }
             }
