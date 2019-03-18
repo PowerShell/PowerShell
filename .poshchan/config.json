@@ -1,0 +1,16 @@
+{
+    "build_targets": {
+        "linux": "Project_CI_Linux",
+        "macos": "Project_CI_macOS",
+        "windows": "Project_CI_windows",
+        "staging": "PowerShell-CI-static-analysis"
+    },
+    "authorized_users": [
+        "SteveL-MSFT",
+        "TravisEz13",
+        "anmenaga",
+        "daxian-dbw",
+        "adityapatwardhan",
+        "iSazonov"
+    ]
+}
