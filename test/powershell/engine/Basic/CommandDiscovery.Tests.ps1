@@ -85,6 +85,41 @@ Describe "Command Discovery tests" -Tags "CI" {
         (& 'location').Path | Should -Be (get-location).Path
     }
 
+    Context "Use literal path when executing scripts" {
+        BeforeAll {
+            $firstResult = 'first script'
+            $secondResult = 'alt script'
+            setup -f '[test1].ps1' -content "'$firstResult'"
+            setup -f '1.ps1' -content "'$secondResult'"
+
+            $executionWithWildcardCases = @(
+                @{command = '.\[test1].ps1' ; expectedResult = $firstResult}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult}
+            )
+
+            $shouldNotExecuteCases = @(
+                @{command = '.\[12].ps1'; testName = 'relative path with bracket wildcard matctching one file'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching one file'}
+            )
+
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Invoking <command> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
+            param($command, $expectedResult)
+            & $command | Should -BeExactly $expectedResult
+        }
+
+        It "'<testName>' should not execute" -TestCases $shouldNotExecuteCases {
+            param($command)
+            { & $command } | Should -Throw -ErrorId 'CommandNotFoundException'
+        }
+    }
+
     Context "Get-Command should use globbing for scripts" {
         BeforeAll {
             $firstResult = '[first script]'
