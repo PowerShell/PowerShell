@@ -459,49 +459,61 @@ namespace System.Management.Automation
 
                 Collection<string> resolvedPaths = new Collection<string>();
 
-                try
+                ProviderInfo provider;
+                if ((_commandResolutionOptions & SearchResolutionOptions.ResolvePathPatterns) != 0 &&
+                    WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
-                    Provider.CmdletProvider providerInstance;
-                    ProviderInfo provider;
-                    resolvedPaths =
-                        _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
+                    try
+                    {
+                        Provider.CmdletProvider providerInstance;
+                        resolvedPaths =
+                            _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
+                    }
+                    catch (ItemNotFoundException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "The path could not be found: {0}",
+                            _commandName);
+                    }
+                    catch (DriveNotFoundException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "A drive could not be found for the path: {0}",
+                            _commandName);
+                    }
+                    catch (ProviderNotFoundException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "A provider could not be found for the path: {0}",
+                            _commandName);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "The path specified a home directory, but the provider home directory was not set. {0}",
+                            _commandName);
+                    }
+                    catch (ProviderInvocationException providerException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "The provider associated with the path '{0}' encountered an error: {1}",
+                            _commandName,
+                            providerException.Message);
+                    }
+                    catch (PSNotSupportedException)
+                    {
+                        CommandDiscovery.discoveryTracer.TraceError(
+                            "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
+                            _commandName);
+                    }
                 }
-                catch (ItemNotFoundException)
+
+                if ((resolvedPaths == null))
                 {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path could not be found: {0}",
-                        _commandName);
-                }
-                catch (DriveNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A drive could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (ProviderNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A provider could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (InvalidOperationException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path specified a home directory, but the provider home directory was not set. {0}",
-                        _commandName);
-                }
-                catch (ProviderInvocationException providerException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' encountered an error: {1}",
-                        _commandName,
-                        providerException.Message);
-                }
-                catch (PSNotSupportedException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                        _commandName);
+                    string path = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
+                    var temp = new System.Collections.ObjectModel.Collection<string>();
+                    temp.Add(path);
+                    resolvedPaths = temp;
                 }
 
                 if (resolvedPaths.Count > 1)
@@ -1092,7 +1104,8 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if (WildcardPattern.ContainsWildcardCharacters(path))
+                if ((_commandResolutionOptions & SearchResolutionOptions.ResolvePathPatterns) != 0 &&
+                     WildcardPattern.ContainsWildcardCharacters(path))
                 {
                     // Let PowerShell resolve relative path with wildcards.
                     Provider.CmdletProvider providerInstance;
@@ -1456,6 +1469,7 @@ namespace System.Management.Automation
                     // path lookup for relative paths.
 
                     string directory = Path.GetDirectoryName(_commandName);
+                    // Not using
                     directory = ResolvePSPath(directory);
 
                     CommandDiscovery.discoveryTracer.WriteLine(
@@ -1609,5 +1623,11 @@ namespace System.Management.Automation
         /// Enable searching for cmdlets/functions by abbreviation expansion.
         /// </summary>
         UseAbbreviationExpansion = 0x20,
+
+        /// <summary>
+        /// Enable resolving wildcard in paths.
+        /// </summary>
+        ResolvePathPatterns = 0x40,
+
     }
 }
