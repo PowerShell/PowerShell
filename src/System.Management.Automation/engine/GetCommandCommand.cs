@@ -704,7 +704,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // First set the search options
 
-            SearchResolutionOptions options = SearchResolutionOptions.None;
+            SearchResolutionOptions options = SearchResolutionOptions.ResolvePathPatterns;
             if (All)
             {
                 options = SearchResolutionOptions.SearchAllScopes;
