@@ -512,8 +512,8 @@ namespace System.Management.Automation
                 if ((resolvedPaths == null))
                 {
                     string path = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
-                    result = GetInfoFromPath(path);
-                    return result;
+                    resolvedPaths = new System.Collections.ObjectModel.Collection<string>();
+                    resolvedPaths.Add(path);
                 }
 
                 if (resolvedPaths.Count > 1)
