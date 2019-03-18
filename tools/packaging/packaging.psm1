@@ -3038,12 +3038,16 @@ Create a smaller framework dependent package based off fxdependent package for d
 
 .PARAMETER Path
 Path to the folder containing the fxdependent package.
+
+.PARAMETER IsWindows
+Specify this switch if the Windows runtimes are to be kept.
 #>
 function ReduceFxDependentPackage
 {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)] [string] $Path
+        [Parameter(Mandatory)] [string] $Path,
+        [switch] $IsWindows
     )
 
     if (-not (Test-Path $path))
@@ -3078,7 +3082,7 @@ function ReduceFxDependentPackage
     # unix, linux, win for dependencies
     # linux-arm and linux-arm64 for arm containers
     # osx to run global tool on macOS
-    $runtimesToKeep = if ($Environment.IsWindows) {
+    $runtimesToKeep = if ($IsWindows) {
         'win10-x64', 'win-arm', 'win-x64', 'win'
     } else {
         'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
@@ -3087,6 +3091,9 @@ function ReduceFxDependentPackage
     $runtimeFolder | ForEach-Object {
         Get-ChildItem -Path $_.FullName -Directory -Exclude $runtimesToKeep | Remove-Item -Force -Recurse -Verbose
     }
+
+    ## Remove the shim layer assemblies
+    Get-ChildItem -Path $Path -Filter "Microsoft.PowerShell.GlobalTool.Shim.*" | Remove-Item -Verbose
 }
 
 <#
@@ -3143,7 +3150,7 @@ function New-GlobalToolNupkg
         ReduceFxDependentPackage -Path $LinuxBinPath
 
         Write-Log "Reducing size of Windows package"
-        ReduceFxDependentPackage -Path $WindowsBinPath
+        ReduceFxDependentPackage -Path $WindowsBinPath -IsWindows
 
         Write-Log "Creating a Linux and Windows packages"
         $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
