@@ -7,10 +7,8 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
-    // Not static because a test requires non-const variables
     public static class PowerShellHostingScenario
     {
-        // Test that it does not throw an exception
         [Fact]
         public static void TestStartJobThrowTerminatingException()
         {

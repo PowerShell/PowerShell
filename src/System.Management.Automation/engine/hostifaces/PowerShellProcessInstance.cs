@@ -48,28 +48,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="useWow64"></param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64)
         {
-            string psWow64Path = PwshExePath;
-
-            if (useWow64)
-            {
-                string procArch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-
-                if (!string.IsNullOrEmpty(procArch) && (procArch.Equals("amd64", StringComparison.OrdinalIgnoreCase) ||
-                                                        procArch.Equals("ia64", StringComparison.OrdinalIgnoreCase)))
-                {
-                    psWow64Path = PwshExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
-
-                    if (!File.Exists(psWow64Path))
-                    {
-                        string message =
-                            PSRemotingErrorInvariants.FormatResourceString(
-                                RemotingErrorIdStrings.IPCWowComponentNotPresent,
-                                psWow64Path);
-                        throw new PSInvalidOperationException(message);
-                    }
-                }
-            }
-
             string processArguments = " -s -NoLogo -NoProfile";
 
             if (initializationScript != null)
@@ -88,7 +66,7 @@ namespace System.Management.Automation.Runspaces
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
             {
-                FileName = useWow64 ? psWow64Path : PwshExePath,
+                FileName = PwshExePath,
                 Arguments = processArguments,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
