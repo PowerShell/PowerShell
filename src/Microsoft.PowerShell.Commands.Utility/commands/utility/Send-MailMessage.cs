@@ -117,9 +117,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the subject of the email message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = false, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("sub")]
-        [ValidateNotNullOrEmpty]
         public string Subject { get; set; }
 
         /// <summary>
