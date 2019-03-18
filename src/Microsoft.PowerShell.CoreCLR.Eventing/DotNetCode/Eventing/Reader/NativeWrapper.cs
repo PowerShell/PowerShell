@@ -1227,32 +1227,32 @@ namespace System.Diagnostics.Eventing.Reader
                     else return false;
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary:
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte):
-                    if (val.Reference == IntPtr.Zero) return new byte[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<byte>();
                     byte[] arByte = new byte[val.Count];
                     Marshal.Copy(val.Reference, arByte, 0, (int)val.Count);
                     return arByte;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt16):
-                    if (val.Reference == IntPtr.Zero) return new Int16[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<Int16>();
                     Int16[] arInt16 = new Int16[val.Count];
                     Marshal.Copy(val.Reference, arInt16, 0, (int)val.Count);
                     return arInt16;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt32):
-                    if (val.Reference == IntPtr.Zero) return new Int32[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<Int32>();
                     Int32[] arInt32 = new Int32[val.Count];
                     Marshal.Copy(val.Reference, arInt32, 0, (int)val.Count);
                     return arInt32;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt64):
-                    if (val.Reference == IntPtr.Zero) return new Int64[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<Int64>();
                     Int64[] arInt64 = new Int64[val.Count];
                     Marshal.Copy(val.Reference, arInt64, 0, (int)val.Count);
                     return arInt64;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSingle):
-                    if (val.Reference == IntPtr.Zero) return new Single[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<Single>();
                     Single[] arSingle = new Single[val.Count];
                     Marshal.Copy(val.Reference, arSingle, 0, (int)val.Count);
                     return arSingle;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeDouble):
-                    if (val.Reference == IntPtr.Zero) return new Double[0];
+                    if (val.Reference == IntPtr.Zero) return Array.Empty<Double>();
                     Double[] arDouble = new Double[val.Count];
                     Marshal.Copy(val.Reference, arDouble, 0, (int)val.Count);
                     return arDouble;
@@ -1351,7 +1351,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr ptr = val.Reference;
             if (ptr == IntPtr.Zero)
             {
-                return new bool[0];
+                return Array.Empty<bool>();
             }
             else
             {
@@ -1373,7 +1373,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr ptr = val.Reference;
             if (ptr == IntPtr.Zero)
             {
-                return new DateTime[0];
+                return Array.Empty<DateTime>();
             }
             else
             {
@@ -1394,7 +1394,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr ptr = val.Reference;
             if (ptr == IntPtr.Zero)
             {
-                return new DateTime[0];
+                return Array.Empty<DateTime>();
             }
             else
             {
@@ -1415,7 +1415,7 @@ namespace System.Diagnostics.Eventing.Reader
         {
             if (val.Reference == IntPtr.Zero)
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
             else
             {

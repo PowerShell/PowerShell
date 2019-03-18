@@ -44,7 +44,6 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'max is double with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
         @{ Name = 'both set to the special numbers as 1.0e+xx '; Maximum = $null; Minimum = 1.0e+100; GreaterThan = 1.0e+99; LessThan = ([double]::MaxValue); Type = 'System.Double' }
         @{ Name = 'max is Double.MaxValue, min is Double.MinValue'; Maximum = ([double]::MaxValue); Minimum = ([double]::MinValue); GreaterThan = ([double]::MinValue); LessThan = ([double]::MaxValue); Type = 'System.Double' }
-
     )
 
     $testDataForError = @(
@@ -57,7 +56,6 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'Min is greater than max and all are negative double-precision number'; Maximum = -20.0; Minimum = -10.0}
         @{ Name = 'Min and Max are same and all are negative double-precision number'; Maximum = -20.0; Minimum = -20.0}
         @{ Name = 'Max is a negative number, min is the default number '; Maximum = -10; Minimum = $null}
-
     )
 
     # minimum is always set to the actual low end of the range, details refer to closed issue #887.
@@ -84,10 +82,11 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Get-Random" -Tags "CI" {
-    It "Should return a random number greater than -1 " {
+    It "Should return a random number greater than -1" {
         Get-Random | Should -BeGreaterThan -1
     }
-    It "Should return a random number less than 100 " {
+
+    It "Should return a random number less than 100" {
         Get-Random -Maximum 100 | Should -BeLessThan 100
         Get-Random -Maximum 100 | Should -BeGreaterThan -1
     }

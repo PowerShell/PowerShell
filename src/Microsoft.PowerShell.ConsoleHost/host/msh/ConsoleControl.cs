@@ -758,7 +758,7 @@ namespace Microsoft.PowerShell
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
-                    out buffer,
+                    buffer,
                     (DWORD)charactersToRead,
                     out charsReadUnused,
                     ref control);
@@ -3022,7 +3022,7 @@ namespace Microsoft.PowerShell
             internal static extern bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
-                out StringBuilder buffer,
+                StringBuilder buffer,
                 DWORD numberOfCharsToRead,
                 out DWORD numberOfCharsRead,
                 ref CONSOLE_READCONSOLE_CONTROL controlData

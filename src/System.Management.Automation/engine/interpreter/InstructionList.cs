@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter
                 int stackDepth = 0;
                 int continuationsDepth = 0;
 
-                var cookieEnumerator = (debugCookies ?? Automation.Utils.EmptyArray<KeyValuePair<int, object>>()).GetEnumerator();
+                var cookieEnumerator = (debugCookies ?? Array.Empty<KeyValuePair<int, object>>()).GetEnumerator();
                 var hasCookie = cookieEnumerator.MoveNext();
 
                 for (int i = 0; i < instructions.Count; i++)

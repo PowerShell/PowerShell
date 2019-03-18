@@ -61,6 +61,16 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
                 SmtpServer = "127.0.0.1"
             }
         }
+        @{
+            Name = "with No Subject"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                ReplyTo = "noreply@example.com"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
     )
 
     It "Can send mail message using named parameters <Name>" -TestCases $testCases {
@@ -78,7 +88,9 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
@@ -101,7 +113,9 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body

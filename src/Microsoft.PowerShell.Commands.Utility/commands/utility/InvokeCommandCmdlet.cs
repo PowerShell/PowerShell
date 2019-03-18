@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -42,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                 myScriptBlock.LanguageMode = PSLanguageMode.ConstrainedLanguage;
             }
 
-            var emptyArray = Utils.EmptyArray<object>();
+            var emptyArray = Array.Empty<object>();
             myScriptBlock.InvokeUsingCmdlet(
                 contextCmdlet: this,
                 useLocalScope: false,

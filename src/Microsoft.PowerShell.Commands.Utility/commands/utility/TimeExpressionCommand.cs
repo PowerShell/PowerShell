@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: InputObject,   // $_
-                input: new object[0], // $input
+                input: Array.Empty<object>(), // $input
                 scriptThis: AutomationNull.Value,
                 outputPipe: new Pipe { NullPipe = true },
                 invocationInfo: null);

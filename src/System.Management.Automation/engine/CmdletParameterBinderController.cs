@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
                     {
                         try
                         {
-                            output = script.DoInvoke(inputToOperateOn, inputToOperateOn, Utils.EmptyArray<object>());
+                            output = script.DoInvoke(inputToOperateOn, inputToOperateOn, Array.Empty<object>());
                             delayedScriptBlock.Value._evaluatedArgument = output;
                         }
                         catch (RuntimeException runtimeException)
