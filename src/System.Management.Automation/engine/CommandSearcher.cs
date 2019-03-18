@@ -508,12 +508,12 @@ namespace System.Management.Automation
                     }
                 }
 
+                // Try literal path resolution if wildcards are disable or wildcard search failed
                 if ((resolvedPaths == null))
                 {
                     string path = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
-                    var temp = new System.Collections.ObjectModel.Collection<string>();
-                    temp.Add(path);
-                    resolvedPaths = temp;
+                    result = GetInfoFromPath(path);
+                    return result;
                 }
 
                 if (resolvedPaths.Count > 1)
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Revert to previous path resolver if wildcards produces no results.
+                // Try literal path resolution if wildcards are disable or wildcard search failed
                 if ((resolvedPath == null) || (provider == null))
                 {
                     resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
@@ -1469,7 +1469,6 @@ namespace System.Management.Automation
                     // path lookup for relative paths.
 
                     string directory = Path.GetDirectoryName(_commandName);
-                    // Not using
                     directory = ResolvePSPath(directory);
 
                     CommandDiscovery.discoveryTracer.WriteLine(
