@@ -93,8 +93,8 @@ Describe "Command Discovery tests" -Tags "CI" {
             setup -f '1.ps1' -content "'$secondResult'"
 
             $executionWithWildcardCases = @(
-                @{command = '.\[test1].ps1' ; expectedResult = $firstResult}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult}
+                @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
             )
 
             $shouldNotExecuteCases = @(
@@ -109,7 +109,7 @@ Describe "Command Discovery tests" -Tags "CI" {
             Pop-Location
         }
 
-        It "Invoking <command> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
+        It "Invoking <name> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
             param($command, $expectedResult)
             & $command | Should -BeExactly $expectedResult
         }
