@@ -975,9 +975,15 @@ namespace System.Management.Automation
             string computerName,
             PSCredential credential,
             string authentication,
+            bool isLocalHost,
             CancellationToken cancellationToken,
             PSCmdlet cmdlet)
         {
+            if (isLocalHost)
+            {
+                return CimSession.Create(null);
+            }
+
             var sessionOptions = new CimSessionOptions();
 
             CimCredential cimCredentials = GetCimCredentials(authentication, credential);
