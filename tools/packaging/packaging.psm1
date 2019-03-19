@@ -3153,14 +3153,21 @@ function New-GlobalToolNupkg
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
 
         Write-Log "Creating a Linux and Windows packages"
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows"; Type = "Windows"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.Alpine"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.x64"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm32"; Type = "Linux"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm64"; Type = "Linux"}
+
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.x64"; Type = "Windows"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.arm32"; Type = "Windows"}
     }
 
     $packageInfo | ForEach-Object {
         $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
 
-        switch ($_.Type)
+        $packageType = $_.Type
+
+        switch ($packageType)
         {
             "Unified"
             {
@@ -3183,17 +3190,63 @@ function New-GlobalToolNupkg
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
             }
 
-            "Linux"
+            "PowerShell.Linux.Alpine"
             {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
                 Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
 
-            "Windows"
+            "PowerShell.Linux.x64"
             {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm64"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.x64"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
                 Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
         }
