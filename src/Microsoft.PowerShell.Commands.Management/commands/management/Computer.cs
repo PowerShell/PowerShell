@@ -1504,11 +1504,11 @@ $result
                         if (!InternalTestHooks.TestRenameComputer)
                         {
                             CimMethodResult result = cimSession.InvokeMethod(
-                                    ComputerWMIHelper.CimOperatingSystemNamespace,
-                                    cimInstance,
-                                    "Rename",
-                                    methodParameters,
-                                    operationOptions);
+                                ComputerWMIHelper.CimOperatingSystemNamespace,
+                                cimInstance,
+                                "Rename",
+                                methodParameters,
+                                operationOptions);
 
                             retVal = Convert.ToInt32(result.ReturnValue.Value, CultureInfo.CurrentCulture);
                         }
