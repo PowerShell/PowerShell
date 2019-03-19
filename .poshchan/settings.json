@@ -1,22 +1,26 @@
 {
     "build_targets": {
         "staging": "PowerShell-CI-static-analysis",
-        "windows": "Project_CI_windows",
-        "macos": "Project_CI_macOS",
-        "linux": "Project_CI_Linux",
+        "windows": "PowerShell_CI_windows",
+        "macos": "PowerShell_CI_macOS",
+        "linux": "PowerShell_CI_Linux",
         "all": [
             "PowerShell-CI-static-analysis",
-            "Project_CI_windows",
-            "Project_CI_macOS",
-            "Project_CI_Linux"
+            "PowerShell_CI_windows",
+            "PowerShell_CI_macOS",
+            "PowerShell_CI_Linux"
         ]
     },
     "authorized_users": [
-        "SteveL-MSFT",
-        "TravisEz13",
+        "adityapatwardhan",
         "anmenaga",
         "daxian-dbw",
-        "adityapatwardhan",
-        "iSazonov"
+        "iSazonov",
+        "JamesWTruher",
+        "PaulHigin",
+        "rjmholt",
+        "SteveL-MSFT",
+        "TravisEz13",
+        "TylerLeonhardt"
     ]
 }
