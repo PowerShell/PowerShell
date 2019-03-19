@@ -716,9 +716,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// Handle to the console device returned by GetInputHandle
-        /// <param name="initialContent">
-        /// Initial contents of the edit buffer, if any. charactersToRead should be at least as large as the length of this string.
-        /// </param>
         /// <param name="charactersToRead">
         /// Number of characters to read from the device.
         /// </param>
@@ -733,18 +730,15 @@ namespace Microsoft.PowerShell
         /// If Win32's ReadConsole fails
         /// </exception>
 
-        internal static string ReadConsole(ConsoleHandle consoleHandle, string initialContent,
-            int charactersToRead, bool endOnTab, out uint keyState)
+        internal static string ReadConsole(ConsoleHandle consoleHandle, int charactersToRead, bool endOnTab, out uint keyState)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-            Dbg.Assert(initialContent != null, "if no initial content is desired, pass string.Empty");
             keyState = 0;
 
             CONSOLE_READCONSOLE_CONTROL control = new CONSOLE_READCONSOLE_CONTROL();
 
             control.nLength = (ULONG)Marshal.SizeOf(control);
-            control.nInitialChars = (ULONG)initialContent.Length;
             control.dwControlKeyState = 0;
             if (endOnTab)
             {
@@ -754,7 +748,7 @@ namespace Microsoft.PowerShell
             }
 
             DWORD charsReadUnused = 0;
-            StringBuilder buffer = new StringBuilder(initialContent, charactersToRead);
+            StringBuilder buffer = new StringBuilder(charactersToRead);
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),

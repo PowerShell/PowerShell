@@ -410,7 +410,6 @@ namespace Microsoft.PowerShell
                    ? string.Empty
                    : ReadLine(
                        endOnTab: false,
-                       initialContent: string.Empty,
                        result: out result,
                        calledFromPipeline: true,
                        transcribeResult: true);
