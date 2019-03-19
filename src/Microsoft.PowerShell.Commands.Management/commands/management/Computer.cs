@@ -1503,28 +1503,12 @@ $result
 
                         if (!InternalTestHooks.TestRenameComputer)
                         {
-                            CimMethodResult result = null;
-
-                            if (isLocalhost)
-                            {
-                                var computerSystem = cimSession.EnumerateInstances(ComputerWMIHelper.CimOperatingSystemNamespace, ComputerWMIHelper.WMI_Class_OperatingSystem);
-
-                                result = cimSession.InvokeMethod(
-                                    ComputerWMIHelper.CimOperatingSystemNamespace,
-                                    computerSystem.FirstOrDefault(),
-                                    ComputerWMIHelper.CimOperatingSystemShutdownMethod,
-                                    methodParameters,
-                                    operationOptions);
-                            }
-                            else
-                            {
-                                result = cimSession.InvokeMethod(
+                            CimMethodResult result = cimSession.InvokeMethod(
                                     ComputerWMIHelper.CimOperatingSystemNamespace,
                                     cimInstance,
                                     "Rename",
                                     methodParameters,
                                     operationOptions);
-                            }
 
                             retVal = Convert.ToInt32(result.ReturnValue.Value, CultureInfo.CurrentCulture);
                         }
@@ -2155,6 +2139,7 @@ $result
                         {
                             var computerSystem = cimSession.EnumerateInstances(ComputerWMIHelper.CimOperatingSystemNamespace, ComputerWMIHelper.WMI_Class_OperatingSystem);
 
+                            // Win32_ComputerSystem is a singleton hence FirstOrDefault() return the only instance returned by EnumerateInstances.
                             result = cimSession.InvokeMethod(
                                 ComputerWMIHelper.CimOperatingSystemNamespace,
                                 computerSystem.FirstOrDefault(),
