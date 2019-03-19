@@ -2140,10 +2140,9 @@ $result
                             // Win32_ComputerSystem is a singleton hence FirstOrDefault() return the only instance returned by EnumerateInstances.
                             var computerSystem = cimSession.EnumerateInstances(ComputerWMIHelper.CimOperatingSystemNamespace, ComputerWMIHelper.WMI_Class_OperatingSystem).FirstOrDefault();
 
-                            // Win32_ComputerSystem is a singleton hence FirstOrDefault() return the only instance returned by EnumerateInstances.
                             result = cimSession.InvokeMethod(
                                 ComputerWMIHelper.CimOperatingSystemNamespace,
-                                computerSystem.FirstOrDefault(),
+                                computerSystem,
                                 ComputerWMIHelper.CimOperatingSystemShutdownMethod,
                                 methodParameters,
                                 operationOptions);
