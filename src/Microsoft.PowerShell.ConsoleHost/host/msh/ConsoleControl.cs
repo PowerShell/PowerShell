@@ -13,6 +13,7 @@
 #pragma warning disable 1634, 1691
 
 using System;
+using System.Buffers;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
@@ -748,27 +749,43 @@ namespace Microsoft.PowerShell
             }
 
             DWORD charsReadUnused = 0;
-            StringBuilder buffer = new StringBuilder(charactersToRead);
-            bool result =
-                NativeMethods.ReadConsole(
-                    consoleHandle.DangerousGetHandle(),
-                    buffer,
-                    (DWORD)charactersToRead,
-                    out charsReadUnused,
-                    ref control);
-            keyState = control.dwControlKeyState;
-            if (result == false)
+
+            // +1 - to put a null in native code.
+            char[] inputBuffer = ArrayPool<char>.Shared.Rent(charactersToRead + 1);
+
+            try
             {
-                int err = Marshal.GetLastWin32Error();
+                bool result =
+                    NativeMethods.ReadConsole(
+                        consoleHandle.DangerousGetHandle(),
+                        inputBuffer,
+                        (DWORD)charactersToRead,
+                        out charsReadUnused,
+                        ref control);
+                keyState = control.dwControlKeyState;
+                if (result == false)
+                {
+                    int err = Marshal.GetLastWin32Error();
 
-                HostException e = CreateHostException(err, "ReadConsole",
-                    ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleExceptionTemplate);
-                throw e;
+                    HostException e = CreateHostException(
+                        err,
+                        "ReadConsole",
+                        ErrorCategory.ReadError,
+                        ConsoleControlStrings.ReadConsoleExceptionTemplate);
+                    throw e;
+                }
+
+                if (charsReadUnused > (uint)charactersToRead)
+                {
+                    charsReadUnused = (uint)charactersToRead;
+                }
+
+                return new string(inputBuffer, 0, (int)charsReadUnused);
             }
-
-            if (charsReadUnused > (uint)buffer.Length)
-                charsReadUnused = (uint)buffer.Length;
-            return buffer.ToString(0, (int)charsReadUnused);
+            finally
+            {
+                ArrayPool<char>.Shared.Return(inputBuffer);
+            }
         }
 
         /// <summary>
@@ -3016,7 +3033,7 @@ namespace Microsoft.PowerShell
             internal static extern bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
-                StringBuilder buffer,
+                char[] buffer,
                 DWORD numberOfCharsToRead,
                 out DWORD numberOfCharsRead,
                 ref CONSOLE_READCONSOLE_CONTROL controlData
