@@ -1444,7 +1444,7 @@ function CreateNugetPlatformFolder
 Creates NuGet packages containing linux, osx and Windows runtime assemblies.
 
 .DESCRIPTION
-Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
+Creates a NuGet package of IL assemblies for unix and windows.
 The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
 Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
 Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
@@ -1456,31 +1456,16 @@ Path where the package will be created.
 .PARAMETER PackageVersion
 Version of the created package.
 
-.PARAMETER Winx86BinPath
-Path to folder containing Windows x86 assemblies.
+.PARAMETER WinFxdBinPath
+Path to folder containing Windows framework dependent assemblies.
 
-.PARAMETER Winx64BinPath
-Path to folder containing Windows x64 assemblies.
-
-.PARAMETER WinArm32BinPath
-Path to folder containing Windows arm32 assemblies.
-
-.PARAMETER WinArm64BinPath
-Path to folder containing Windows arm64 assemblies.
-
-.PARAMETER LinuxArm32BinPath
-Path to folder containing linux arm32 assemblies.
-
-.PARAMETER LinuxBinPath
-Path to folder containing linux x64 assemblies.
-
-.PARAMETER OsxBinPath
-Path to folder containing osx assemblies.
+.PARAMETER LinuxFxdBinPath
+Path to folder containing Linux framework dependent assemblies.
 
 .PARAMETER GenAPIToolPath
 Path to the GenAPI.exe tool.
 #>
-function New-UnifiedNugetPackage
+function New-ILNugetPackage
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -1492,28 +1477,10 @@ function New-UnifiedNugetPackage
         [string] $PackageVersion,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx86BinPath,
+        [string] $WinFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm32BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxArm32BinPath,
-
-        [Parameter(Mandatory = $false)]
-        [string] $LinuxAlpineBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $OsxBinPath,
+        [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $GenAPIToolPath
@@ -1565,22 +1532,11 @@ function New-UnifiedNugetPackage
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
 
-            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
-            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+            CreateNugetPlatformFolder -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
             if ($linuxExceptionList -notcontains $file )
             {
-                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-
-                if ($linuxAlpineBinPath)
-                {
-                    CreateNugetPlatformFolder -Platform 'alpine-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxAlpineBinPath
-                }
-
-                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
-                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
+                CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
             }
 
             #region nuspec
