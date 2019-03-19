@@ -1,14 +1,14 @@
 {
     "build_targets": {
         "staging": "PowerShell-CI-static-analysis",
-        "windows": "PowerShell_CI_windows",
-        "macos": "PowerShell_CI_macOS",
-        "linux": "PowerShell_CI_Linux",
+        "windows": "PowerShell-CI-windows",
+        "macos": "PowerShell-CI-macOS",
+        "linux": "PowerShell-CI-Linux",
         "all": [
             "PowerShell-CI-static-analysis",
-            "PowerShell_CI_windows",
-            "PowerShell_CI_macOS",
-            "PowerShell_CI_Linux"
+            "PowerShell-CI-windows",
+            "PowerShell-CI-macOS",
+            "PowerShell-CI-Linux"
         ]
     },
     "authorized_users": [
