@@ -717,29 +717,48 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// Handle to the console device returned by GetInputHandle
+        /// <param name="initialContentLength">
+        /// Length of initial content of the edit buffer. Zero if no initial content exists.
+        /// Must be less than editBuffer length.
+        /// </param>
+        /// <param name="editBuffer">
+        /// Edit buffer with optional initial content.
+        /// Caution! Last position in the edit buffer is for a null in native code.
+        /// </param>
         /// <param name="charactersToRead">
         /// Number of characters to read from the device.
+        /// Must be less than editBuffer length.
         /// </param>
         /// <param name="endOnTab">
-        /// true to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
+        /// True to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
         /// </param>
         /// <param name="keyState">
-        /// bit mask indicating the state of the control/shift keys at the point input was terminated.
+        /// Bit mask indicating the state of the control/shift keys at the point input was terminated.
+        /// </param>
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsole fails
         /// </exception>
 
-        internal static string ReadConsole(ConsoleHandle consoleHandle, int charactersToRead, bool endOnTab, out uint keyState)
+        internal static string ReadConsole(
+            ConsoleHandle consoleHandle,
+            int initialContentLength,
+            Span<char> editBuffer,
+            int charactersToRead,
+            bool endOnTab,
+            out uint keyState)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
+            Dbg.Assert(initialContentLength < editBuffer.Length, "initialContentLength must be less than editBuffer.Length");
+            Dbg.Assert(charactersToRead < editBuffer.Length, "charactersToRead must be less than editBuffer.Length");
             keyState = 0;
 
             CONSOLE_READCONSOLE_CONTROL control = new CONSOLE_READCONSOLE_CONTROL();
 
             control.nLength = (ULONG)Marshal.SizeOf(control);
+            control.nInitialChars = (ULONG)initialContentLength;
             control.dwControlKeyState = 0;
             if (endOnTab)
             {
@@ -748,44 +767,34 @@ namespace Microsoft.PowerShell
                 control.dwCtrlWakeupMask = (1 << TAB);
             }
 
-            DWORD charsReadUnused = 0;
+            DWORD charsReaded = 0;
 
-            // +1 - to put a null in native code.
-            char[] inputBuffer = ArrayPool<char>.Shared.Rent(charactersToRead + 1);
-
-            try
+            bool result =
+                NativeMethods.ReadConsole(
+                    consoleHandle.DangerousGetHandle(),
+                    editBuffer,
+                    (DWORD)charactersToRead,
+                    out charsReaded,
+                    ref control);
+            keyState = control.dwControlKeyState;
+            if (result == false)
             {
-                bool result =
-                    NativeMethods.ReadConsole(
-                        consoleHandle.DangerousGetHandle(),
-                        inputBuffer,
-                        (DWORD)charactersToRead,
-                        out charsReadUnused,
-                        ref control);
-                keyState = control.dwControlKeyState;
-                if (result == false)
-                {
-                    int err = Marshal.GetLastWin32Error();
+                int err = Marshal.GetLastWin32Error();
 
-                    HostException e = CreateHostException(
-                        err,
-                        "ReadConsole",
-                        ErrorCategory.ReadError,
-                        ConsoleControlStrings.ReadConsoleExceptionTemplate);
-                    throw e;
-                }
-
-                if (charsReadUnused > (uint)charactersToRead)
-                {
-                    charsReadUnused = (uint)charactersToRead;
-                }
-
-                return new string(inputBuffer, 0, (int)charsReadUnused);
+                HostException e = CreateHostException(
+                    err,
+                    "ReadConsole",
+                    ErrorCategory.ReadError,
+                    ConsoleControlStrings.ReadConsoleExceptionTemplate);
+                throw e;
             }
-            finally
+
+            if (charsReaded > (uint)charactersToRead)
             {
-                ArrayPool<char>.Shared.Return(inputBuffer);
+                charsReaded = (uint)charactersToRead;
             }
+
+            return editBuffer.Slice(0, (int)charsReaded).ToString();
         }
 
         /// <summary>
@@ -3030,14 +3039,29 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool ReadConsole
+            internal static extern unsafe bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
-                char[] buffer,
+                char* lpBuffer,
                 DWORD numberOfCharsToRead,
                 out DWORD numberOfCharsRead,
                 ref CONSOLE_READCONSOLE_CONTROL controlData
             );
+
+            internal static unsafe bool ReadConsole
+            (
+                NakedWin32Handle consoleInput,
+                Span<char> buffer,
+                DWORD numberOfCharsToRead,
+                out DWORD numberOfCharsRead,
+                ref CONSOLE_READCONSOLE_CONTROL controlData
+            )
+            {
+                fixed (char* bufferPtr = &MemoryMarshal.GetReference(buffer))
+                {
+                    return ReadConsole(consoleInput, bufferPtr, numberOfCharsToRead, out numberOfCharsRead, ref controlData);
+                }
+            }
 
             [DllImport(PinvokeDllNames.PeekConsoleInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]

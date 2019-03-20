@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
             // call our internal version such that it does not end input on a tab
             ReadLineResult unused;
 
-            return ReadLine(false, out unused, true, true);
+            return ReadLine(false, string.Empty, out unused, true, true);
         }
 
         /// <summary>
@@ -307,8 +307,9 @@ namespace Microsoft.PowerShell
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    uint unused = 0;
-                    string key = ConsoleControl.ReadConsole(handle, 1, false, out unused);
+                    const int CharactersToRead = 1;
+                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out uint _);
 #endif
 
 #if UNIX
@@ -1287,7 +1288,7 @@ namespace Microsoft.PowerShell
             endedOnBreak = 3
         }
 
-        private const int maxInputLineLength = 8192;
+        private const int MaxInputLineLength = 1024;
 
         /// <summary>
         /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In
@@ -1296,6 +1297,10 @@ namespace Microsoft.PowerShell
         /// <param name="endOnTab">
         /// true to end input when the user hits the tab or shift-tab keys, false to only end on the enter key (or a break
         /// event). Ignored if not reading from the console device.
+        /// </param>
+        /// <param name="initialContent">
+        /// The initial contents of the input buffer.  Nice if you want to have a default result. Ignored if not reading from the
+        /// console device.
         /// </param>
         /// <param name="result">
         /// Receives an enum value indicating how input was ended.
@@ -1321,7 +1326,7 @@ namespace Microsoft.PowerShell
         ///    Win32's SetConsoleCursorPosition failed
         /// </exception>
 
-        internal string ReadLine(bool endOnTab, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
+        internal string ReadLine(bool endOnTab, string initialContent, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
         {
             result = ReadLineResult.endedOnEnter;
 
@@ -1331,8 +1336,8 @@ namespace Microsoft.PowerShell
             string restOfLine = null;
 
             string s = ReadFromStdin
-                ? ReadLineFromFile()
-                : ReadLineFromConsole(endOnTab, calledFromPipeline, ref restOfLine, ref result);
+                ? ReadLineFromFile(initialContent)
+                : ReadLineFromConsole(endOnTab, initialContent, calledFromPipeline, ref restOfLine, ref result);
 
             if (transcribeResult)
             {
@@ -1349,9 +1354,15 @@ namespace Microsoft.PowerShell
             return s;
         }
 
-        private string ReadLineFromFile()
+        private string ReadLineFromFile(string initialContent)
         {
             var sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(initialContent))
+            {
+                sb.Append(initialContent);
+                sb.Append('\n');
+            }
+
             var consoleIn = _parent.ConsoleIn.Value;
             while (true)
             {
@@ -1399,7 +1410,7 @@ namespace Microsoft.PowerShell
             return sb.ToString();
         }
 
-        private string ReadLineFromConsole(bool endOnTab, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
+        private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
         {
             PreRead();
             // Ensure that we're in the proper line-input mode.
@@ -1458,13 +1469,16 @@ namespace Microsoft.PowerShell
             _rawui.ClearKeyCache();
             uint keyState = 0;
             string s = string.Empty;
+            Span<char> inputBuffer = stackalloc char[MaxInputLineLength + 1];
+            initialContent.AsSpan().CopyTo(inputBuffer);
+
 #endif
                 do
                 {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
 #else
-                s += ConsoleControl.ReadConsole(handle, maxInputLineLength, endOnTab, out keyState);
+                s += ConsoleControl.ReadConsole(handle, initialContent.Length, inputBuffer, MaxInputLineLength, endOnTab, out keyState);
                 Dbg.Assert(s != null, "s should never be null");
 #endif
 
@@ -1765,6 +1779,7 @@ namespace Microsoft.PowerShell
         internal string ReadLineWithTabCompletion(Executor exec)
         {
             string input = null;
+            string lastInput = string.Empty;
 
             ReadLineResult rlResult = ReadLineResult.endedOnEnter;
 
@@ -1790,7 +1805,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                input = ReadLine(true, out rlResult, false, false);
+                input = ReadLine(true, lastInput, out rlResult, false, false);
 
                 if (input == null)
                 {
@@ -1850,9 +1865,9 @@ namespace Microsoft.PowerShell
                         completedInput += restOfLine;
                     }
 
-                    if (completedInput.Length > (maxInputLineLength - 2))
+                    if (completedInput.Length > (MaxInputLineLength - 2))
                     {
-                        completedInput = completedInput.Substring(0, maxInputLineLength - 2);
+                        completedInput = completedInput.Substring(0, MaxInputLineLength - 2);
                     }
 
                     // Remove any nulls from the string...
@@ -1910,6 +1925,8 @@ namespace Microsoft.PowerShell
                     {
                         lastCompletion = completedInput;
                     }
+
+                    lastInput = completedInput;
                 }
 #endif
             }
