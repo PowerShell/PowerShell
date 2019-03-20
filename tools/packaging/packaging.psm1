@@ -3038,12 +3038,16 @@ Create a smaller framework dependent package based off fxdependent package for d
 
 .PARAMETER Path
 Path to the folder containing the fxdependent package.
+
+.PARAMETER KeepWindowsRuntimes
+Specify this switch if the Windows runtimes are to be kept.
 #>
 function ReduceFxDependentPackage
 {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)] [string] $Path
+        [Parameter(Mandatory)] [string] $Path,
+        [switch] $KeepWindowsRuntimes
     )
 
     if (-not (Test-Path $path))
@@ -3055,7 +3059,19 @@ function ReduceFxDependentPackage
     $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
     Get-ChildItem $Path -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
 
+    Write-Log -message "Starting to cleanup runtime folders"
+
     $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
+
+    $runtimeFolderPath = $runtimeFolder | Out-String
+    Write-Log -message $runtimeFolderPath
+
+    if ($runtimeFolder.Count -eq 0)
+    {
+        throw "runtimes folder not found under $Path"
+    }
+
+    Write-Log -message (Get-ChildItem $Path | Out-String)
 
     # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
     # win10-x64 (Nano Server)
@@ -3066,15 +3082,18 @@ function ReduceFxDependentPackage
     # unix, linux, win for dependencies
     # linux-arm and linux-arm64 for arm containers
     # osx to run global tool on macOS
-    $runtimesToKeep = if ($Environment.IsWindows) {
+    $runtimesToKeep = if ($KeepWindowsRuntimes) {
         'win10-x64', 'win-arm', 'win-x64', 'win'
     } else {
         'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
     }
 
     $runtimeFolder | ForEach-Object {
-        Get-ChildItem $_ -Exclude $runtimesToKeep -Directory | Remove-Item -Force -Recurse -Verbose
+        Get-ChildItem -Path $_.FullName -Directory -Exclude $runtimesToKeep | Remove-Item -Force -Recurse -Verbose
     }
+
+    ## Remove the shim layer assemblies
+    Get-ChildItem -Path $Path -Filter "Microsoft.PowerShell.GlobalTool.Shim.*" | Remove-Item -Verbose
 }
 
 <#
@@ -3116,6 +3135,9 @@ function New-GlobalToolNupkg
     Remove-Item -Path (Join-Path $LinuxBinPath 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
     Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
 
+    ## Remove unnecessary xml files
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath -Filter *.xml | Remove-Item -Verbose
+
     if ($UnifiedPackage)
     {
         Write-Log "Creating a unified package"
@@ -3128,17 +3150,24 @@ function New-GlobalToolNupkg
         ReduceFxDependentPackage -Path $LinuxBinPath
 
         Write-Log "Reducing size of Windows package"
-        ReduceFxDependentPackage -Path $WindowsBinPath
+        ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
 
         Write-Log "Creating a Linux and Windows packages"
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux"; Type = "Linux"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows"; Type = "Windows"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.Alpine"; Type = "PowerShell.Linux.Alpine"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.x64"; Type = "PowerShell.Linux.x64"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm32"; Type = "PowerShell.Linux.arm32"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm64"; Type = "PowerShell.Linux.arm64"}
+
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.x64"; Type = "PowerShell.Windows.x64"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.arm32"; Type = "PowerShell.Windows.arm32"}
     }
 
     $packageInfo | ForEach-Object {
         $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
 
-        switch ($_.Type)
+        $packageType = $_.Type
+
+        switch ($packageType)
         {
             "Unified"
             {
@@ -3161,17 +3190,63 @@ function New-GlobalToolNupkg
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
             }
 
-            "Linux"
+            "PowerShell.Linux.Alpine"
             {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
                 Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
 
-            "Windows"
+            "PowerShell.Linux.x64"
             {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm64"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.x64"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
                 Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
                 $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
             }
         }
