@@ -1488,7 +1488,7 @@ function New-ILNugetPackage
 
     if (-not $Environment.IsWindows)
     {
-        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
+        throw "New-ILNugetPackage can be only executed on Windows platform."
     }
 
     $fileList = @(
@@ -1647,7 +1647,7 @@ function New-ILNugetPackage
 
 <#
   Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
-  This is a helper function used by 'New-UnifiedNugetPackage'
+  This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
 {
