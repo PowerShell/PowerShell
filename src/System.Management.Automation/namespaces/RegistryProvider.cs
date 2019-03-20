@@ -88,24 +88,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region CmdletProvider overrides
 
-        /// <summary>
-        /// Starts the Registry provider. It sets the PathSeparator property.
+        // <summary>
+        /// Gets the alternate item separator character for this provider.
         /// </summary>
-        /// <param name="providerInfo">
-        /// The ProviderInfo object that holds the provider's configuration.
-        /// </param>
-        /// <returns>
-        /// The updated ProviderInfo object that holds the provider's configuration.
-        /// </returns>
-        protected override ProviderInfo Start(ProviderInfo providerInfo)
-        {
-            if (providerInfo != null) 
-            {
-                providerInfo.PathSeparator = Utils.Separators.BackSlashOnlySeparators;
-            }
-
-            return providerInfo;
-        }
+        public override char AltItemSeparator => base.ItemSeparator;
 
         #endregion
 

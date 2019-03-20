@@ -340,6 +340,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region CmdletProvider members
+
         /// <summary>
         /// Starts the File System provider. This method sets the Home for the
         /// provider to providerInfo.Home if specified, and %USERPROFILE%
@@ -356,8 +357,6 @@ namespace Microsoft.PowerShell.Commands
             // Set the home folder for the user
             if (providerInfo != null)
             {
-                providerInfo.PathSeparator = Utils.Separators.BackAndForwardSlashSeparators;
-
                 if (string.IsNullOrEmpty(providerInfo.Home)) 
                 {
                     // %USERPROFILE% - indicate where a user's home directory is located in the file system.

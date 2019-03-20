@@ -41,29 +41,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Constructor
 
-        #region CmdletProvider overrides
-
-        /// <summary>
-        /// Starts the Function provider. It sets the PathSeparator property.
-        /// </summary>
-        /// <param name="providerInfo">
-        /// The ProviderInfo object that holds the provider's configuration.
-        /// </param>
-        /// <returns>
-        /// The updated ProviderInfo object that holds the provider's configuration.
-        /// </returns>
-        protected override ProviderInfo Start(ProviderInfo providerInfo)
-        {
-            if (providerInfo != null) 
-            {
-                providerInfo.PathSeparator = Utils.Separators.BackAndForwardSlashSeparators;
-            }
-
-            return providerInfo;
-        }
-
-        #endregion
-
         #region DriveCmdletProvider overrides
 
         /// <summary>

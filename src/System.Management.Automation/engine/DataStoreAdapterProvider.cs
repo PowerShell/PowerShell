@@ -260,12 +260,14 @@ namespace System.Management.Automation
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
         /// <summary>
-        /// Gets the path separators characters for this provider.
+        /// Gets the default item separator character for this provider.
         /// </summary>
-        /// <returns>
-        /// Read-only collection of strings representing the path separators characters for this provider.
-        /// </returns>
-        public ReadOnlyCollection<string> PathSeparator { get; set; } = new ReadOnlyCollection<string>(new List<string>());
+        public char ItemSeparator { get; private set; }
+
+        // <summary>
+        /// Gets the alternate item separator character for this provider.
+        /// </summary>
+        public char AltItemSeparator { get; private set; }
 
         /// <summary>
         /// Constructs an instance of the class using an existing reference
@@ -300,7 +302,8 @@ namespace System.Management.Automation
             PSSnapIn = providerInfo.PSSnapIn;
             _sessionState = providerInfo._sessionState;
             VolumeSeparatedByColon = providerInfo.VolumeSeparatedByColon;
-            PathSeparator = providerInfo.PathSeparator;
+            ItemSeparator = providerInfo.ItemSeparator;
+            AltItemSeparator = providerInfo.AltItemSeparator;
         }
 
         /// <summary>
@@ -615,6 +618,8 @@ namespace System.Management.Automation
             }
 
             Provider.CmdletProvider result = providerInstance as Provider.CmdletProvider;
+            ItemSeparator = result.ItemSeparator;
+            AltItemSeparator = result.AltItemSeparator;
 
             Dbg.Diagnostics.Assert(
                 result != null,

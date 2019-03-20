@@ -182,35 +182,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion
 
-                #region CmdletProvider overrides
-
-        /// <summary>
-        /// Starts the Registry provider. It sets the PathSeparator property.
-        /// </summary>
-        /// <param name="providerInfo">
-        /// The ProviderInfo object that holds the provider's configuration.
-        /// </param>
-        /// <returns>
-        /// The updated ProviderInfo object that holds the provider's configuration.
-        /// </returns>
-        protected override ProviderInfo Start(ProviderInfo providerInfo)
-        {
-            if (providerInfo != null) 
-            {
-                providerInfo.PathSeparator = new ReadOnlyCollection<string>( 
-                    new List<string> 
-                    { 
-                        WSManStringLiterals.DefaultPathSeparator.ToString(),
-                        WSManStringLiterals.AlternatePathSeparator.ToString()
-                    });   
-            }
-
-            return providerInfo;
-        }
-
-        #endregion
-
-
         #region DriveCmdletProvider
         /// <summary>
         /// </summary>

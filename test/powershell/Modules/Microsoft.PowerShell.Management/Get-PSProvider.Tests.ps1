@@ -25,62 +25,42 @@ Describe "Get-PSProvider" -Tags "CI" {
 	{ $actual | Format-List } | Should -Not -Throw
     }
 
-    Context 'PathSeparators' {
+    Context 'ItemSeparator properties' {
         BeforeAll {
             $testCases = if ($IsWindows) {
                             @(
-                                @{Provider = 'FileSystem'; Value = @("\", "/")}
-                                @{Provider = 'Variable'; Value = @("\", "/")}
-                                @{Provider = 'Function'; Value = @("\", "/")}
-                                @{Provider = 'Alias'; Value = @("\", "/")}
-                                @{Provider = 'Environment'; Value = @("\", "/")}
-                                @{Provider = 'Certificate'; Value = @("\", "/")}
-                                @{Provider = 'Registry'; Value = @("\")}
+                                @{Provider = 'FileSystem'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Variable'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Function'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Alias'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Environment'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Certificate'; ItemSeparator = '\'; AltItemSeparator = '/'}
+                                @{Provider = 'Registry'; ItemSeparator = '\'; AltItemSeparator = '\'}
                             )
                         }
                         else {
                             @(
-                                @{Provider = 'FileSystem'; Value = @("/", "\")}
-                                @{Provider = 'Variable'; Value = @("/", "\")}
-                                @{Provider = 'Function'; Value = @("/", "\")}
-                                @{Provider = 'Alias'; Value = @("/", "\")}
-                                @{Provider = 'Environment'; Value = @("/", "\")}
+                                @{Provider = 'FileSystem'; ItemSeparator = '/'; AltItemSeparator = '\'}
+                                @{Provider = 'Variable'; ItemSeparator = '/'; AltItemSeparator = '\'}
+                                @{Provider = 'Function'; ItemSeparator = '/'; AltItemSeparator = '\'}
+                                @{Provider = 'Alias'; ItemSeparator = '/'; AltItemSeparator = '\'}
+                                @{Provider = 'Environment'; ItemSeparator = '/'; AltItemSeparator = '\'}
                             )
                         }
         }
 
-        It '<Provider> provider has PathSeparator property' -TestCases $testCases {
-            param ($Provider, $Value)
+        It '<Provider> provider has ItemSeparator properties' -TestCases $testCases {
+            param ($Provider, $ItemSeparator, $AltItemSeparator)
 
-            (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
+            (Get-PSProvider $Provider).ItemSeparator | Should -Be $ItemSeparator
+            (Get-PSProvider $Provider).AltItemSeparator | Should -Be $AltItemSeparator
         }
 
-        It 'PathSeparator property is read-only in <Provider> provider' -TestCases $testCases {
-            param ($Provider, $Value)
+        It 'ItemSeparator properties is read-only in <Provider> provider' -TestCases $testCases {
+            param ($Provider, $ItemSeparator, $AltItemSeparator)
 
-            { (Get-PSProvider $Provider).PathSeparator = $null } | Should -Throw
-        }
-
-        It 'cannot modify PathSeparator collection in <Provider> provider' -TestCases $testCases {
-            param ($Provider, $Value)
-
-            $separator = (Get-PSProvider $Provider).PathSeparator
-
-            { $separator[0] = "w" } | Should -Throw
-        }
-
-        It 'copying and modifying values does not affect PathSeparator property in <Provider> provider' -TestCases $testCases {
-            param ($Provider, $Value)
-
-            $separator = (Get-PSProvider $Provider).PathSeparator
-
-            # copying to a new object
-            $copy = @("", "")
-            $separator.CopyTo($copy, 0)
-
-            $copy[0] = "w"
-
-            (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
+            { (Get-PSProvider $Provider).ItemSeparator = $null } | Should -Throw
+            { (Get-PSProvider $Provider).AltItemSeparator = $null } | Should -Throw
         }
     }
 }
