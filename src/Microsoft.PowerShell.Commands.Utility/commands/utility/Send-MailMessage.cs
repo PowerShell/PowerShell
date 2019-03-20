@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Send-MailMessage command.
     /// </summary>
+    [Obsolete("This cmdlet only supports sending mail from insecure SMTP servers. While there is no immediate replacement available in PowerShell, we recommend you do not use Send-MailMessage at this time.")]
     [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
     public sealed class SendMailMessage : PSCmdlet
     {
