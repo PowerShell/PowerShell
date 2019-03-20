@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
-using System.Management.Automation;
 using System.Reflection;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis; // for fxcop
@@ -1391,7 +1390,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         public virtual char ItemSeparator => Path.DirectorySeparatorChar;
 
-        // <summary>
+        /// <summary>
         /// Gets the alternate item separator character for this provider.
         /// </summary>
         public virtual char AltItemSeparator => Path.AltDirectorySeparatorChar;

@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region CmdletProvider overrides
 
-        // <summary>
+        /// <summary>
         /// Gets the alternate item separator character for this provider.
         /// </summary>
         public override char AltItemSeparator => base.ItemSeparator;
