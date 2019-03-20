@@ -31,25 +31,25 @@ Licensed under the MIT License.
    - '_' (ASCII 95) is the only character in \p{Pc} class out of the first 0..255 characters
    - No characters in the first 0..255 characters belong to \p{Cf}, \p{Mn}, \p{Mc}
  
- clrTypeRegex and clrTypeSpecialCharacterRegex are based on http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
+ clrTypeRegex and clrTypeSpecialCharacterRegex are based on https://docs.microsoft.com/dotnet/framework/reflection-and-codedom/specifying-fully-qualified-type-names
  
  clrTypeSpecialCharacterRegex includes the following characters;
  
-   - ',' - part of ReflectionDimension and TypeName productions in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '=' - part of AssemblyProperty production in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
+   - ',' - part of ReflectionDimension and TypeName productions in BNF
+   - '=' - part of AssemblyProperty production in BNF
    - ' ' - unspecified in the docs, but apparently allowed (i.e. between NamespaceTypeName and AssemblyNameSpec in the TypeName production
-   - '+' - part of NestedTypeName production in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '&amp;' - part of ReferenceTypeSpec production in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '*' - part of ReflectionDimension production in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '[' and ']' - part of ArrayTypeSpec production in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '.' - part of ReflectionDimension and NamespaceTypeName productions in BNF at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
-   - '\' - an escape character specified at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx
+   - '+' - part of NestedTypeName production in BNF
+   - '&amp;' - part of ReferenceTypeSpec production in BNF
+   - '*' - part of ReflectionDimension production in BNF
+   - '[' and ']' - part of ArrayTypeSpec production in BNF
+   - '.' - part of ReflectionDimension and NamespaceTypeName productions in BNF
+   - '\' - an escape character
    - '-' - required for Culture property of an Assembly.  
            RFC-1766 defines the format of a culture identifier as:
               Language-Tag = Primary-tag *( "-" Subtag )
               Primary-tag = 1*8ALPHA
               Subtag = 1*8ALPHA
-   - '&quot;' - unspecified in the docs, but used in the examples at http://msdn.microsoft.com/en-us/library/yfsftwz6.aspx (i.e. Culture="")
+   - '&quot;' - unspecified in the docs, but used in the examples (i.e. Culture="")
         
    
 
