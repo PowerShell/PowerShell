@@ -264,7 +264,7 @@ namespace System.Management.Automation
         /// </summary>
         public char ItemSeparator { get; private set; }
 
-        // <summary>
+        /// <summary>
         /// Gets the alternate item separator character for this provider.
         /// </summary>
         public char AltItemSeparator { get; private set; }

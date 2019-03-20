@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the alternate item separator character for this provider.
         /// </summary>
-        public override char AltItemSeparator => base.ItemSeparator;
+        public override char AltItemSeparator => ItemSeparator;
 
         #endregion
 
