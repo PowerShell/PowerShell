@@ -251,7 +251,7 @@ Describe "TabCompletion" -Tags CI {
             setup -f 'remove-powershell.ps1' -content ""
             $separator = [system.io.path]::DirectorySeparatorChar
 
-            $gcmWithWildcardCases = @(
+            $scriptWithWildcardCases = @(
                 @{
                     command = '.\install-*.ps1'
                     expectedCommand = ".${separator}install-powershell.ps1"
@@ -279,7 +279,7 @@ Describe "TabCompletion" -Tags CI {
             Push-Location ${TestDrive}\
         }
 
-        it "Input <name> should successfully complete" -TestCases $gcmWithWildcardCases {
+        it "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
             param($command, $expectedCommand)
             $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
