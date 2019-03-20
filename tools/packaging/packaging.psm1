@@ -1515,7 +1515,7 @@ function New-ILNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
 
         foreach ($file in $fileList)
         {
@@ -1859,7 +1859,7 @@ function New-ReferenceAssembly
             throw "$assemblyName.dll was not found at: $Linux64BinPath"
         }
 
-        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath"
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
         Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
         Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
@@ -1951,6 +1951,26 @@ function CleanupGeneratedSourceCode
             ApplyTo = "Microsoft.PowerShell.Commands.Utility"
             Pattern = "public partial struct ConvertToJsonContext"
             Replacement = "public readonly struct ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
         }
     )
 
