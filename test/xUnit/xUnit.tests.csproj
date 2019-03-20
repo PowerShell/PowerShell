@@ -19,7 +19,7 @@
     <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
     <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
+    <ProjectReference Include="../../src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
   </ItemGroup>
 
   <ItemGroup>
