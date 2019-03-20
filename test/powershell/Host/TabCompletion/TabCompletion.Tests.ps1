@@ -26,13 +26,13 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It 'Should complete abbreviated cmdlet' {
-            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
             $res | Should -HaveCount 1
             $res | Should -BeExactly 'Import-PowerShellDataFile'
         }
 
         It 'Should complete abbreviated function' {
-            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
             $res.Count | Should -BeGreaterOrEqual 1
             $res | Should -BeExactly 'PSConsoleHostReadLine'
         }
@@ -243,6 +243,48 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' '| Should -BeExactly 'blg csv tsv'
+    }
+
+    Context "Script name completion" {
+        BeforeAll {
+            setup -f 'install-powershell.ps1' -content ""
+            setup -f 'remove-powershell.ps1' -content ""
+            $separator = [system.io.path]::DirectorySeparatorChar
+
+            $gcmWithWildcardCases = @(
+                @{
+                    command = '.\install-*.ps1'
+                    expectedCommand = ".${separator}install-powershell.ps1"
+                    name = "'.${separator}install-powershell.ps1'"
+                }
+                @{
+                    command = (Join-Path ${TestDrive}  -ChildPath 'install-*.ps1')
+                    expectedCommand = (Join-Path ${TestDrive}  -ChildPath 'install-powershell.ps1')
+                    name = "'.${separator}install-powershell.ps1' by fully qualified path"
+                }
+                @{
+                    command = '.\?emove-powershell.ps1'
+                    expectedCommand = ".${separator}remove-powershell.ps1"
+                    name = "'.${separator}?emove-powershell.ps1'"
+                }
+                @{
+                    # [] cause the parser to create a new token.
+                    # So, the command must be quoted to tab complete.
+                    command = "'.\[ra]emove-powershell.ps1'"
+                    expectedCommand = "'.${separator}remove-powershell.ps1'"
+                    name = "'.${separator}[ra]emove-powershell.ps1'"
+                }
+            )
+
+            Push-Location ${TestDrive}\
+        }
+
+        it "Input <name> should successfully complete" -TestCases $gcmWithWildcardCases {
+            param($command, $expectedCommand)
+            $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expectedCommand
+        }
     }
 
     Context "File name completion" {
