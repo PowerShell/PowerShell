@@ -279,6 +279,10 @@ Describe "TabCompletion" -Tags CI {
             Push-Location ${TestDrive}\
         }
 
+        AfterAll {
+            Pop-Location
+        }
+
         it "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
             param($command, $expectedCommand)
             $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
