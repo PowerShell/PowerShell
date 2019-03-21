@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell
 #else
                     const int CharactersToRead = 1;
                     Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
-                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out uint _);
+                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
 #if UNIX
