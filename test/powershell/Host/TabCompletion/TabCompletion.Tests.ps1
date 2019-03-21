@@ -545,7 +545,7 @@ Describe "TabCompletion" -Tags CI {
             if ($null -ne $setup) { . $setup }
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+            $res.CompletionMatches.CompletionText | Should -Contain $expected
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
@@ -725,7 +725,7 @@ dir -Recurse `
         It "Test member completion of a static method invocation" {
             $inputStr = '[powershell]::Create().'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 32
+            $res.CompletionMatches | Should -HaveCount 34
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
     }

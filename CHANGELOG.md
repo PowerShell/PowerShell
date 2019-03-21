@@ -1,14 +1,151 @@
 # Changelog
 
+## v6.2.0-rc.1 - 2019-03-05
+
+### Breaking Changes
+
+- Make `Join-String -InputObject 1,2,3` result equal to `1,2,3 | Join-String` result (#8611) (Thanks @sethvs!)
+
+### Engine Updates and Fixes
+
+- Improve check for developer mode by checking minimum required build number (#8749)
+- Simplify the declaration of new experimental features (#8726)
+- Remove AMSI uninitialized assert and replace with call to uninitialized (#8713)
+- Port Security bypass fixes from 6.1.3 (#8915)
+- Enable discovering modules that have names same as a culture (e.g. `Az`) (#8777)
+- Flatten interface hierarchy when generating properties that implement interface properties (#8382) (Thanks @IISResetMe!)
+- Don't use Win32 native APIs on non-Windows for cryptography of secure string over remoting (#8746)
+- Allow `.exe` files to be used as IL binary modules (#7281)
+- Remove unused cached types (#9015)
+
+### Experimental Features
+
+- Add the experimental feature for creating `Temp:\` drive when `FileSystemProvider` initializes (#8696)
+- Move `CommandNotFoundException` suggestion to an experimental feature (#8805)
+
+### General Cmdlet Updates and Fixes
+
+- Correctly Report impact level when `SupportsShouldProcess` is not set to 'true' (#8209) (Thanks @vexx32!)
+- Fix Request Charset Issues in Web Cmdlets (#8742) (Thanks @markekraus!)
+- Refactor `ConvertTo-Json` to expose `JsonObject.ConvertToJson` as a public API (#8682)
+- Add `-CustomPipeName` to `pwsh` and `Enter-PSHostProcess` (#8889)
+- Add configurable maximum depth in `ConvertFrom-Json` with `-Depth` (#8199) (Thanks @louistio!)
+- Enable creating relative symbolic links on Windows with `New-Item` (#8783)
+- Parse numeric strings as numbers again during conversions (#8681) (Thanks @vexx32!)
+- Expose file attributes of `OneDrive` placeholders (#8745) (Thanks @sba923!)
+- Enable `Write-Information` to accept `$null` (#8774)
+- Adding parameter `ReplyTo` to `Send-MailMessage` (#8727) (Thanks @replicaJunction!)
+- Fix `Get-Help` `PSTypeName` issue with `-Parameter` when only one parameter is declared (#8754) (Thanks @pougetat!)
+
+### Code Cleanup
+
+- Use HTTPS in URLs where available (#8622) (Thanks @xtqqczze!)
+- Update code to use single method to check if path is UNC (#8680)
+- Fix typo: `aganist` ➜ `against` (#8943) (Thanks @lupino3!)
+- Use the `OperationCancellationException` to replace the `StoppingException` in `ConvertToJson` (#8920)
+- Fix style issues in CSV cmdlets (#8894) (Thanks @iSazonov!)
+- Fix `LGTM` issues (#8843) (Thanks @iSazonov!)
+- Fix length check in `PSSnapinQualifiedName.GetInstance()` (#8837) (Thanks @hvitved!)
+- Reduce string allocations when formatting file system objects. (#8831) (Thanks @powercode!)
+- Fix many instances of CodeFactor style issue `A single-line comment must not be followed by a blank line` (#8825) (Thanks @RDIL!)
+- Refactor `appveyor.psm1` to `ci.psm1` (#8733, #8854, #8709, #8756, #8867) (Thanks @RDIL!)
+- Refactor `travis.ps1` into `ci.psm1` (#8822, #8888) (Thanks @RDIL!)
+- Fix Markdown lint issues (#8929)
+- Fix code-of-conduct linting (#8896) (Thanks @RDIL!)
+
+### Tools
+
+- Fix broken reference (#8753) (Thanks @RDIL!)
+- Remove `GitKracken` files from `.gitignore` (#8743) (Thanks @RDIL!)
+- Update path of `test\xUnit\xUnit.tests.csproj` in `PowerShell.sln` (#8730) (Thanks @markekraus!)
+- Ignore files added by `SelfSignedCertificate` (#8728) (Thanks @markekraus!)
+- Build Global tool for PowerShell and SDK container (#8984)
+- Add Experimental Features to change log creation (#8827)
+- Remove unneeded `Invoke-Expression` on unvalidated input (#8826)
+- Update CLA pull request labeling info (#8820) (Thanks @RDIL!)
+- Update some info in `md-link-checks` (#8757) (Thanks @RDIL!)
+
+### Tests
+
+- Fix `Enter-PSHostProcess` test to wait until runspace is ready before attempting to enter (#8725)
+- Package validation tests updates (#8714)
+- Make xUnit tests run sequentially to avoid race conditions caused by manipulating `powershell.config.json` in tests (#8945)
+- Use verbatim string literals for paths (#8937) (Thanks @iSazonov!)
+- Parallelize the Windows CI to enable us to run all tests all the time (#8868)
+- Fixes for Scheduled release build (#8887)
+- Remove references to uninitialized variable (#8849)
+- Remove directory causing static analysis failure (#8812)
+- Update Pester version to 4.4.4 (#8739)
+- Change xUnit Runspace tests to run sequentially (#8796)
+- Fix cleanup config files for the csharp xUnit tests (#8761) (Thanks @iSazonov!)
+- Moved `fxdependent-dotnetsdk-latest/Dockerfile` (#8738)
+
+### Build and Packaging Improvements
+
+- Make every `csproj` files have its own folder (#8750)
+- Update packaging script to build reference assembly targeting `netcoreapp2.1` and use actual `.csproj` files (#8729)
+- Generate and deploy reference assembly for `Microsoft.PowerShell.Commands.Utility.dll` (#8716)
+- Make test file result names unique (#8979)
+- Add variable to control the version of the signing task we use (#8982)
+- Publish test and code coverage artifacts for daily builds (#8955)
+- Integrate building NuGet package in the coordinated build (#8947)
+- Support release branches based on the forward slash separator (#8903)
+- Port DotNet fixes from 6.1.3 (#8914)
+- Start tracking release build information in an azure storage table (#8850)
+- Make license a link in the MSI (#8846)
+- Use `-ErrorAction Ignore` instead of `SilentlyContinue` with `Get-Command` in build.psm1 (#8832)
+- Add `binskim` to coordinated build and increase timeout (#8834)
+- Fix daily CI builds to publish tar package as artifacts (#8775)
+- Add instrumentation for `Start-PSPackage` (#8811)
+- Fix passing credential to the `SyncGalleryToAzArtifacts.psm1` script (#8808)
+- Move Final artifacts from coordinated build to `finalResults` folder (#8806)
+- Refactor coordinated release build (#8804)
+- Add compliance to Coordinated build (#8798)
+- Switch to 1.11 of FPM to fix FPM install issue (#8797)
+- Update the coordinated build with framework dependent package for dotnet SDK (#8773)
+- Fix MSI upgrade failure for preview builds (#9013)
+- Build(deps): Bump `Microsoft.ApplicationInsights` from `2.8.1` to `2.9.1` (#8807,#8848)
+- Build(deps): Bump `Microsoft.PowerShell.Native` (#8712)
+- Build(deps): Bump `NJsonSchema` from `9.13.15` to `9.13.19` (#8732, #8747, #8881, #8952)
+- Build(deps): Bump `PackageManagement` from `1.2.4` to `1.3.1` (#8800)
+- Build(deps): Bump `XunitXml.TestLogger` from `2.0.0` to `2.1.26` (#8731)
+- Build(deps): Bump `Markdig.Signed` from `0.15.7` to `0.16.0` (#8981)
+
+### Documentation and Help Content
+
+- Updating README.md for supported openSUSE version and updating link to OS versions supported by CoreFx (#8701) (Thanks @stknohg!)
+- Add complete XML docs for `ConvertToJsonContext` constructors (#8737)
+- Update README.md for ARM to include both 32-bit and 64-bit PS package links (#8677) (Thanks @slide!)
+- Update issue templates with new supported values (#8718) (Thanks @RDIL!)
+- Update maintainer docs about the CLA PR labels (#8734) (Thanks @RDIL!)
+- Add Andrew to the maintainer list (#8722)
+- Update release process template (#8711)
+- Change label in doc issue template (#8895) (Thanks @iSazonov!)
+- Update the `dir -recurse` example (#8939) (Thanks @vmsilvamolina!)
+- Update CHANGELOG for release `6.1.3` (#8918)
+- Update stable version to `6.1.3` (#8902)
+- Fix broken link (#8905)
+- Update Coding Guidelines (#8844) (Thanks @iSazonov!)
+- Update governance documentation (#8776) (Thanks @RDIL!)
+- Fix broken python method (#8821) (Thanks @RDIL!)
+- Changing docs issue template to new docs repo location (#8818)
+- Fix spelling in `releaseTool/README.md` (#8810)
+- Update GitHub templates (#8792) (Thanks @iSazonov!)
+- Fix broken link in `FAQs.md` (#8803)
+- Updated `basics.md` to add a link for showing example for installing git on all package managers (#8735) (Thanks @RDIL!)
+- Update `README.md` for `preview.4` (#8772)
+
 ## v6.2.0-preview.4 - 2019-01-28
 
 ### Breaking Changes
+
 - Add `-Stable` to `Sort-Object` and related tests (#7862) (Thanks @KirkMunro!)
 - Improve `Start-Sleep` cmdlet to accept fractional seconds (#8537) (Thanks @Prototyyppi!)
 - Change hashtable to use `OrdinalIgnoreCase` to be case-insensitive in all Cultures (#8566)
 - Fix `LiteralPath` in `Import-Csv` to bind to `Get-ChildItem` output (#8277) (Thanks @iSazonov!)
 
 ### Engine Updates and Fixes
+
 - Allow user-specified underlying type for enums (#8329) (Thanks @IISResetMe!)
 - Handle case where AppLocker test script fails to delete (#8627)
 - Update `CommandNotFound` fuzzy suggestion to only return unique results (#8640)
@@ -22,9 +159,11 @@
 - Reset output attributes if column had `ESC` char when using `Format-Table`; Replace `...` with unicode ellipsis (#8326)
 
 ### Experimental Features
+
 - Add the experimental feature `PSUseAbbreviationExpansion` to support tab completion on abbreviated command names (#8109)
 
 ### General Cmdlet Updates and Fixes
+
 - Fix code page parsing issue in `Invoke-RestMethod` (#8694) (Thanks @markekraus!)
 - Fix `Expect 100-continue` issue with Web Cmdlets (#8679) (Thanks @markekraus!)
 - Allow 'name' as an alias key for 'label' in `ConvertTo-Html`, allow the 'width' entry to be an integer (#8426) (Thanks @mklement0!)
@@ -44,6 +183,7 @@
 - Add `-UseMinimalHeader` to `Start-Transcript` to minimize transcript header (#8402) (Thanks @lukexjeremy!)
 
 ### Code Cleanup
+
 - Remove the no longer used `RunspaceConfigurationEntry` types (#8424)
 - Remove unneeded catch/throw from `mkdir` and `oss` functions (#8425)
 - Remove comments after closing brackets (#8344) (Thanks @Meir017!)
@@ -88,6 +228,7 @@
 - Style: Remove extra space before colon in named parameters (#8504)
 
 ### Tools
+
 - Recommend Azure DevOps extension inside VS-Code for better `YAML` editing. (#8403) (Thanks @bergmeister!)
 - `-AddToPath` re-implementation in `install-powershell.ps1` (#8081) (Thanks @glachancecmaisonneuve!)
 - Change the feed `URL` to feed name due to changes in `AzDevOps` (#8664)
@@ -103,6 +244,7 @@
 - Enable `install-powershell.ps1` to use `MSI` (#8418)
 
 ### Tests
+
 - Remove broken `HelpUri` from `CimTest` (#8688) (Thanks @xtqqczze!)
 - Remove appveyor environment checks (#8669) (Thanks @RDIL!)
 - Adding tests for `PSDiagnostics Module` (#8431) (Thanks @kvprasoon!)
@@ -117,6 +259,7 @@
 - Remove `dotnet` dependency to start WebListener (#8390)
 
 ### Build and Packaging Improvements
+
 - Update Third Party Notices (#8415)
 - Adding yaml for Windows Release builds (#8374)
 - Bump `NJsonSchema` from `9.13.1` to `9.13.2` (#8422)
@@ -150,6 +293,7 @@
 - Bump `Markdig.Signed` from `0.15.4` to `0.15.5` (#8444)
 
 ### Documentation and Help Content
+
 - Remove unused `AppVeyor` links from `README.md` (#8685) (Thanks @RDIL!)
 - Update `README.md` (#8684)
 - Update Package Management license to MIT (#8676) (Thanks @RDIL!)

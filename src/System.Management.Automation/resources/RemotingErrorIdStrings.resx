@@ -787,8 +787,12 @@ Do you want to continue?</value>
   <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
     <value>The specified authentication mechanism "{0}" is not supported. Only "{1}" is supported for this operation.</value>
   </data>
-  <data name="IPCWowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+  <data name="IPCPwshExecutableNotFound" xml:space="preserve">
+    <value>The pwsh executable cannot be found at "{0}".
+Note that 'Start-Job' is not supported by design in scenarios where PowerShell is being hosted in other applications. Instead, usage of the 'ThreadJob' module is recommended in such scenarios.</value>
+  </data>
+  <data name="RunAs32NotSupported" xml:space="preserve">
+    <value>Cannot start a 32-bit 'pwsh' process from the 64-bit 'pwsh' installation. Install the 32-bit 'pwsh' if you need to run PowerShell in a 32-bit process.</value>
   </data>
   <data name="IPCServerProcessReportedError" xml:space="preserve">
     <value>The background process reported an error with the following message: {0}.</value>
@@ -1422,6 +1426,12 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
     <value>No process was found with Name: {0}.</value>
   </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>No named pipe was found with CustomPipeName: {0}.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+  </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
     <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
   </data>
@@ -1439,6 +1449,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
     <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
     <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>

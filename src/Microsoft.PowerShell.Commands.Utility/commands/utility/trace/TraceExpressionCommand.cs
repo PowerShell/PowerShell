@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                 dollarUnder: InputObject,
                 input: new object[] { InputObject },
                 scriptThis: AutomationNull.Value,
-                args: Utils.EmptyArray<object>());
+                args: Array.Empty<object>());
         }
 
         private object StepCommand()

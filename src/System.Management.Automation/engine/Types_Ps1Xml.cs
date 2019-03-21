@@ -183,18 +183,28 @@ namespace System.Management.Automation.Runspaces
             var td19 = new TypeData(@"System.IO.DirectoryInfo", true);
             td19.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
+            td19.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td19.Members.Add("BaseName",
                 new ScriptPropertyData(@"BaseName", GetScriptBlock(@"$this.Name"), null));
             td19.Members.Add("Target",
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td19.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td19.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td19.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td19.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td19.DefaultDisplayProperty = @"Name";
             yield return td19;
 
             var td20 = new TypeData(@"System.IO.FileInfo", true);
             td20.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
+            td20.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td20.Members.Add("VersionInfo",
                 new ScriptPropertyData(@"VersionInfo", GetScriptBlock(@"[System.Diagnostics.FileVersionInfo]::GetVersionInfo($this.FullName)"), null));
             td20.Members.Add("BaseName",
@@ -203,6 +213,12 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td20.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td20.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td20.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td20.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td20.DefaultDisplayPropertySet =
                 new PropertySetData(new[] { "LastWriteTime", "Length", "Name" }) { Name = "DefaultDisplayPropertySet" };
             yield return td20;

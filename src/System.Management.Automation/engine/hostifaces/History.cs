@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (count == 0 || _countEntriesInBuffer == 0)
             {
-                return Utils.EmptyArray<HistoryInfo>();
+                return Array.Empty<HistoryInfo>();
             }
 
             lock (_syncRoot)
@@ -1114,8 +1114,19 @@ namespace Microsoft.PowerShell.Commands
                 ps.Streams.Verbose.DataAdded += verboseAdded;
                 ps.Streams.Warning.DataAdded += warningAdded;
 
+                LocalRunspace localRunspace = ps.Runspace as LocalRunspace;
+
                 try
                 {
+                    // Indicate to the system that we are in nested prompt mode, since we are emulating running the command at the prompt.
+                    // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
+                    // always forces CommandOrigin to Internal for nested running commands, and Command.CreateCommandProcessor() forces Internal
+                    // commands to always run in FullLanguage mode unless in a nested prompt.
+                    if (localRunspace != null)
+                    {
+                        localRunspace.InInternalNestedPrompt = ps.IsNested;
+                    }
+
                     Collection<PSObject> results = ps.Invoke();
                     if (results.Count > 0)
                     {
@@ -1126,6 +1137,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
+                    if (localRunspace != null)
+                    {
+                        localRunspace.InInternalNestedPrompt = false;
+                    }
+
                     ps.Streams.Debug.DataAdded -= debugAdded;
                     ps.Streams.Error.DataAdded -= errorAdded;
                     ps.Streams.Information.DataAdded -= informationAdded;

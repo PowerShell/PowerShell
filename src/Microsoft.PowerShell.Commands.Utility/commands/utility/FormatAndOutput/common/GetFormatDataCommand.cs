@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_typename == null)
                 {
-                    _filter = Utils.EmptyArray<WildcardPattern>();
+                    _filter = Array.Empty<WildcardPattern>();
                 }
                 else
                 {

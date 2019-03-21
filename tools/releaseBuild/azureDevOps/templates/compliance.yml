@@ -128,6 +128,7 @@ jobs:
     inputs:
       tsaStamp: $(TsaStamp)
       codeBaseName: $(CodeBaseName)
+      tsaVersion: TsaV1
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false

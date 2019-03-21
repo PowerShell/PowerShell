@@ -36,7 +36,7 @@ resources:
   clean: true
 
 jobs:
-- template: templates/windows-build.yml
+- template: templates/ci-build.yml
 
 - template: templates/windows-test.yml
   parameters:
@@ -90,8 +90,8 @@ jobs:
 
   - powershell: |
       Import-Module .\tools\ci.psm1
-      $ParallelXUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\ParallelXUnitTestResults.xml"
+      $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
 
-      Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
+      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     displayName: Test
     condition: succeeded()

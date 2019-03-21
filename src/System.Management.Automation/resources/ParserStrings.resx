@@ -1497,4 +1497,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name = "CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
     <value>Cannot use '&amp;' or '.' operators to invoke a module scope command across language boundaries.</value>
   </data>
+  <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+  </data>
 </root>

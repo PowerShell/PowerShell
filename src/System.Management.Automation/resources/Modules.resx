@@ -426,6 +426,15 @@
   <data name="ReleaseNotes" xml:space="preserve">
     <value>ReleaseNotes of this module</value>
   </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Prerelease string of this module</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Flag to indicate whether the module requires explicit user acceptance for install/update/save</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>External dependent modules of this module</value>
+  </data>
   <data name="EndOfManifestHashTable" xml:space="preserve">
     <value>End of {0} hashtable</value>
   </data>
@@ -623,5 +632,8 @@
   </data>
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
     <value>Cannot export module members from a module that has a different language mode from the running session.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>Cannot create new module while the session is in ConstrainedLanguage mode.</value>
   </data>
 </root>

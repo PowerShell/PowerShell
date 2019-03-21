@@ -104,13 +104,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Exception used for cancellation.
-        /// </summary>
-        private class StoppingException : System.Exception
-        {
-        }
-
         #endregion HelperTypes
 
         #region ConvertFromJson
@@ -483,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
             }
-            catch (StoppingException)
+            catch (OperationCanceledException)
             {
                 return null;
             }
@@ -500,10 +493,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>An object suitable for serializing to JSON.</returns>
         private static object ProcessValue(object obj, int currentDepth, in ConvertToJsonContext context)
         {
-            if (context.CancellationToken.IsCancellationRequested)
-            {
-                throw new StoppingException();
-            }
+            context.CancellationToken.ThrowIfCancellationRequested();
 
             PSObject pso = obj as PSObject;
 
@@ -561,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
-                        if (pso != null && pso.immediateBaseObjectIsEmpty)
+                        if (pso != null && pso.ImmediateBaseObjectIsEmpty)
                         {
                             // The obj is a pure PSObject, we convert the original PSObject to a string,
                             // instead of its base object in this case
@@ -785,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
                         object value;
                         try
                         {
-                            value = getMethod.Invoke(o, new object[0]);
+                            value = getMethod.Invoke(o, Array.Empty<object>());
                         }
                         catch (Exception)
                         {

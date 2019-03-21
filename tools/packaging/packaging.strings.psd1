@@ -147,4 +147,37 @@ open {0}
   </packageSources>
 </configuration>
 '@
+
+    GlobalToolNuSpec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>{0}</id>
+        <version>{1}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell Core global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
+    GlobalToolSettingsFile = @'
+<?xml version="1.0" encoding="utf-8"?>
+<DotNetCliTool Version="1">
+    <Commands>
+        <Command Name="pwsh" EntryPoint="{0}" Runner="dotnet" />
+    </Commands>
+</DotNetCliTool>
+'@
+
 }

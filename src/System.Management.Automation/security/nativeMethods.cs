@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 wtd = Marshal.PtrToStructure<WINTRUST_DATA>(wtdBuffer);
             }
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
             }
             finally
             {
@@ -1475,25 +1475,6 @@ namespace System.Management.Automation.Security
             CRYPT_DECODE_ENABLE_IA5CONVERSION_FLAG = (CRYPT_DECODE_ENABLE_PUNYCODE_FLAG | CRYPT_DECODE_ENABLE_UTF8PERCENT_FLAG),
         }
     }
-
-    #region Check_UI_Allowed
-
-    /// <summary>
-    /// Used in CertificateProvider to detect if UI is allowed.
-    /// </summary>
-    internal static partial class NativeMethods
-    {
-        [DllImport("kernel32.dll")]
-        internal static extern bool ProcessIdToSessionId(uint dwProcessId, out uint pSessionId);
-
-        [DllImport("kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        internal static extern IntPtr GetDesktopWindow();
-    }
-
-    #endregion Check_UI_Allowed
 
     #region SAFER_APIs
 
@@ -1796,11 +1777,13 @@ namespace System.Management.Automation.Security
             IntPtr pSacl);
 
         [DllImport(PinvokeDllNames.ConvertStringSidToSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ConvertStringSidToSid(
             string StringSid,
             out IntPtr Sid);
 
         [DllImport(PinvokeDllNames.IsValidSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool IsValidSid(IntPtr pSid);
 
         [DllImport(PinvokeDllNames.GetLengthSidDllName, CharSet = CharSet.Unicode)]
@@ -1817,6 +1800,7 @@ namespace System.Management.Automation.Security
         internal static extern uint LsaFreeMemory(IntPtr Buffer);
 
         [DllImport(PinvokeDllNames.InitializeAclDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool InitializeAcl(
             IntPtr pAcl,
             uint nAclLength,
@@ -1837,12 +1821,14 @@ namespace System.Management.Automation.Security
         internal static extern IntPtr GetCurrentThread();
 
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenProcessToken(
             IntPtr ProcessHandle,
             uint DesiredAccess,
             out IntPtr TokenHandle);
 
         [DllImport(PinvokeDllNames.OpenThreadTokenDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenThreadToken(
             IntPtr ThreadHandle,
             uint DesiredAccess,
@@ -1850,12 +1836,14 @@ namespace System.Management.Automation.Security
             out IntPtr TokenHandle);
 
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupPrivilegeValue(
             string lpSystemName,
             string lpName,
             ref LUID lpLuid);
 
         [DllImport(PinvokeDllNames.AdjustTokenPrivilegesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AdjustTokenPrivileges(
             IntPtr TokenHandle,
             bool DisableAllPrivileges,
@@ -1887,6 +1875,7 @@ namespace System.Management.Automation.Security
             uint Flags);
 
         [DllImport(PinvokeDllNames.FreeLibrary, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FreeLibrary(
             IntPtr Module);
 
@@ -2045,7 +2034,8 @@ namespace System.Management.Automation.Security
         );
 
         [DllImport("wintrust.dll")]
-        internal static extern BOOL CryptCATCDFClose(
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CryptCATCDFClose(
             IntPtr pCDF
         );
 
@@ -2086,7 +2076,8 @@ namespace System.Management.Automation.Security
          );
 
         [DllImport("wintrust.dll")]
-        internal static extern BOOL CryptCATClose(
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CryptCATClose(
           IntPtr hCatalog
         );
 
@@ -2096,6 +2087,7 @@ namespace System.Management.Automation.Security
         );
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminAcquireContext2(
           ref IntPtr phCatAdmin,
           IntPtr pgSubsystem,
@@ -2106,6 +2098,7 @@ namespace System.Management.Automation.Security
       );
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminReleaseContext(
             IntPtr phCatAdmin,
             DWORD dwFlags
@@ -2123,6 +2116,7 @@ namespace System.Management.Automation.Security
            );
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptCATAdminCalcHashFromFileHandle2(
             IntPtr hCatAdmin,
             IntPtr hFile,

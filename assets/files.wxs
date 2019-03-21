@@ -1564,6 +1564,57 @@
           <Component Id="cmpFB8B96A05278462A97061B8C5FE3C92E" Guid="{a977e452-4f7d-446c-beb3-3e5ace52f9eb}">
             <File Id="fil31F5B43EF5C248EB878EB1D25D292ECC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
           </Component>
+          <Directory Name="DSCResources" Id="dirAB16AE2D3D8B4288AE7576FDEC086E52">
+            <Directory Name="MSFT_PSRepository" Id="dirDD4171A90E3249BAAE0CBA188ACFAEA9">
+              <Component Id="cmp0744A0E2DA694EFB97172A770E654F92" Guid="{05bcef22-d7b0-4ca6-94dd-327356079096}">
+                <File Id="fil5E23072824794507A868A3ADE2251A34" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSRepository\MSFT_PSRepository.schema.mof" />
+              </Component>
+              <Directory Name="en-US" Id="dirB2E345CF157E4ED9BB8BE952ACA7FDA9">
+                <Component Id="cmpFD06F9A229864F5790E63806319F83AD" Guid="{50c4b177-218a-4539-8b41-821fe61265ea}">
+                  <File Id="fil1B0B56F52A114FE897D27BC7B3E41B61" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSRepository\en-US\MSFT_PSRepository.strings.psd1" />
+                </Component>
+              </Directory>
+              <Component Id="cmp15C7696A8C674672B37E17B47362007E" Guid="{2c2531c5-1077-4f14-b264-fcbfc4995363}">
+                <File Id="filD7D5538EF209465DB611148B5295E27A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSRepository\MSFT_PSRepository.psm1" />
+              </Component>
+              <Component Id="cmp7EEE0A4DF02E458C910EF847AA089810" Guid="{70b92456-37fc-4b8d-abd7-42292e495c1a}">
+                <File Id="fil3157374F72BA470EB2449E8012F0DDCD" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSRepository\MSFT_PSRepository.schema.mfl" />
+              </Component>
+            </Directory>
+            <Directory Name="MSFT_PSModule" Id="dir906ECD1469A442A3850AD971ED7DE6C7">
+              <Directory Name="en-US" Id="dir1742395372DB42ED87FA324564C49BB8">
+                <Component Id="cmp8695A6F4923144AA8718508338703A94" Guid="{ac767b37-fd94-4f8e-a64a-b5d64573041d}">
+                  <File Id="fil9C8A5A606E624058B2BC34A01AF49B98" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSModule\en-US\MSFT_PSModule.strings.psd1" />
+                </Component>
+              </Directory>
+              <Component Id="cmpF9D44A0B8AAB46608F02CD2753D456A6" Guid="{68f7f842-df6a-46f4-af06-fa94261a8cd7}">
+                <File Id="filFA4EB3EE779C43D89B40D79F92FEC863" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSModule\MSFT_PSModule.psm1" />
+              </Component>
+              <Component Id="cmpC1D0D334836C4821B04087DDFE167637" Guid="{9a488968-02bc-4a5b-bfae-0e4fff6104e4}">
+                <File Id="filD15EE857653646F69F360A79F2539A88" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSModule\MSFT_PSModule.schema.mof" />
+              </Component>
+              <Component Id="cmp8A4E5A03C2644F199C7395C8EA350F65" Guid="{b8b526e5-d3eb-4629-b038-cff7c8bf8592}">
+                <File Id="filE4A5DC4582CF4743927A38A9261DCA18" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\DSCResources\MSFT_PSModule\MSFT_PSModule.schema.mfl" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Name="Modules" Id="dir4CE087A20269471C9857E1035913C22C">
+            <Directory Name="PowerShellGet.ResourceHelper" Id="dirD20C27FB9850453FAADC804153DB8FD8">
+              <Directory Name="en-US" Id="dir2FB3A08F38A54A418CDB46CAD7DE2832">
+                <Component Id="cmp34E774DA28624BD1A89866B9D80788C2" Guid="{1070f149-cad4-440a-8fc1-62848fa6bfd8}">
+                  <File Id="fil60A79BEC83424ECB98D30D53A6C70FF8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\Modules\PowerShellGet.ResourceHelper\en-US\PowerShellGet.ResourceHelper.strings.psd1" />
+                </Component>
+              </Directory>
+              <Component Id="cmp75D079D2DE8545BB962554C7EFE6A37C" Guid="{d33f07f0-ec86-48b8-bf16-314714f14280}">
+                <File Id="filCD484316E58C40C79D581E4D00B41C09" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1" />
+              </Component>
+            </Directory>
+            <Directory Name="PowerShellGet.LocalizationHelper" Id="dirD76614DCAA9244BB8D1AD7A18F117390">
+              <Component Id="cmp5109AF6E6AEF499CA12097B6ADD80E7D" Guid="{543d7ebc-e05f-463a-9024-acce822ebf24}">
+                <File Id="fil19722ABB729B4FEB96D98CD9BEE711EA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1" />
+              </Component>
+            </Directory>
+          </Directory>
         </Directory>
         <Directory Name="ThreadJob" Id="dir507D08FD3D324A449516FEFAFCC90874">
           <Component Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" Guid="{4ba93428-ae32-4a1d-9f84-0989a2da8eab}">
@@ -2612,6 +2663,17 @@
       <ComponentRef Id="cmpEF2AACF881B044E99FA2FA367B9448FA" />
       <ComponentRef Id="cmpD79A4697843147BAB1BCC02BEF27C9EE" />
       <ComponentRef Id="cmpC047B557E7A04EDEAB97AD47B2EE9615" />
+      <ComponentRef Id="cmp0744A0E2DA694EFB97172A770E654F92" />
+      <ComponentRef Id="cmp8695A6F4923144AA8718508338703A94" />
+      <ComponentRef Id="cmpFD06F9A229864F5790E63806319F83AD" />
+      <ComponentRef Id="cmpF9D44A0B8AAB46608F02CD2753D456A6" />
+      <ComponentRef Id="cmp34E774DA28624BD1A89866B9D80788C2" />
+      <ComponentRef Id="cmp5109AF6E6AEF499CA12097B6ADD80E7D" />
+      <ComponentRef Id="cmp15C7696A8C674672B37E17B47362007E" />
+      <ComponentRef Id="cmp7EEE0A4DF02E458C910EF847AA089810" />
+      <ComponentRef Id="cmpC1D0D334836C4821B04087DDFE167637" />
+      <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
+      <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
     </ComponentGroup>
   </Fragment>
 </Wix>

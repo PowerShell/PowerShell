@@ -7,4 +7,6 @@ Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 Description = 'Creates a new HTTP Listener for testing purposes'
 RootModule = 'HttpListener.psm1'
 FunctionsToExport = @('Start-HttpListener','Stop-HttpListener')
+AliasesToExport = @()
+CmdletsToExport = @()
 }

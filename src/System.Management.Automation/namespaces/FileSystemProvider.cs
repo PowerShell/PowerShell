@@ -367,7 +367,9 @@ namespace Microsoft.PowerShell.Commands
                         providerInfo.Home = homeDirectory;
                     }
                     else
+                    {
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
+                    }
                 }
             }
 
@@ -965,7 +967,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         if (skipDuplicate)
+                        {
                             continue;
+                        }
 
                         // Create a new VirtualDrive for each logical drive
                         PSDriveInfo newPSDriveInfo =
@@ -1101,7 +1105,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
                 else
+                {
                     throw;
+                }
             }
 
             return true;
@@ -1565,7 +1571,9 @@ namespace Microsoft.PowerShell.Commands
                                 false);
                         }
                         else
+                        {
                             WriteItemObject(fsinfo, path, false);
+                        }
                     }
                 }
             }
@@ -1704,9 +1712,13 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     if (filesystemInfo is FileInfo)
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                    }
                                     else
+                                    {
                                         WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                    }
                                 }
                             }
                         }
@@ -1855,29 +1867,99 @@ namespace Microsoft.PowerShell.Commands
         /// Provides a mode property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        public static string Mode(PSObject instance)
+        public static string Mode(PSObject instance) => Mode(instance, excludeHardLink: false);
+
+        /// <summary>
+        /// Provides a ModeWithoutHardLink property for FileSystemInfo, without HardLinks for performance reasons.
+        /// </summary>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>A string representation of the FileAttributes, with one letter per attribute.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
+        public static string ModeWithoutHardLink(PSObject instance) => Mode(instance, excludeHardLink: true);
+
+        private static string Mode(PSObject instance, bool excludeHardLink)
         {
-            if (instance == null)
-                return string.Empty;
+            string ToModeString(FileSystemInfo fileSystemInfo)
+            {
+                FileAttributes fileAttributes = fileSystemInfo.Attributes;
 
-            FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
-            if (fileInfo == null)
-                return string.Empty;
+                bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
+                bool isLink = isReparsePoint || (excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo));
+                if (!isLink)
+                {
+                    // special casing for the common cases - no allocations
+                    switch (fileAttributes)
+                    {
+                        case FileAttributes.Archive:
+                            return "-a---";
+                        case FileAttributes.Directory:
+                            return "d----";
+                        case FileAttributes.Normal:
+                            return "-----";
+                        case FileAttributes.Directory | FileAttributes.ReadOnly:
+                            return "d-r--";
+                        case FileAttributes.Archive | FileAttributes.ReadOnly:
+                            return "-ar--";
+                    }
+                }
 
-            char[] mode = new char[6];
-            mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
-            mode[1] = (fileInfo.Attributes & FileAttributes.Archive) == FileAttributes.Archive ? 'a' : '-';
-            mode[2] = (fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly ? 'r' : '-';
-            mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
-            mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
-            // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
-            // Porting note: these need to be handled specially
-            bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-            bool isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo);
-            mode[5] = isReparsePoint || isHardLink ? 'l' : '-';
+                bool isDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
+                ReadOnlySpan<char> mode = stackalloc char[]
+                {
+                    isLink ? 'l' : isDirectory ? 'd' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Archive)  ? 'a' : '-',
+                    fileAttributes.HasFlag(FileAttributes.ReadOnly) ? 'r' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Hidden)   ? 'h' : '-',
+                    fileAttributes.HasFlag(FileAttributes.System)   ? 's' : '-',
+                };
+                return new string(mode);
+            }
 
-            return new string(mode);
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? ToModeString(fileInfo)
+                : string.Empty;
+        }
+
+        /// <summary>
+        /// Provides a NameString property for FileSystemInfo.
+        /// </summary>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
+        public static string NameString(PSObject instance)
+        {
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo)
+                    ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                    : fileInfo.Name
+                : string.Empty;
+        }
+
+        /// <summary>
+        /// Provides a LengthString property for FileSystemInfo.
+        /// </summary>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>Length as a string.</returns>
+        public static string LengthString(PSObject instance)
+        {
+            return instance?.BaseObject is FileInfo fileInfo
+                ? fileInfo.Attributes.HasFlag(FileAttributes.Offline)
+                    ? $"({fileInfo.Length})"
+                    : fileInfo.Length.ToString()
+                : string.Empty;
+        }
+
+        /// <summary>
+        /// Provides a LastWriteTimeString property for FileSystemInfo.
+        /// </summary>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <returns>LastWriteTime formatted as short date + short time.</returns>
+        public static string LastWriteTimeString(PSObject instance)
+        {
+            return instance?.BaseObject is FileSystemInfo fileInfo
+                ? string.Format(CultureInfo.CurrentCulture, "{0,10:d} {0,8:t}", fileInfo.LastWriteTime)
+                : string.Empty;
         }
 
         #region RenameItem
@@ -1912,7 +1994,6 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             if (string.IsNullOrEmpty(newName))
-
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }
@@ -2127,9 +2208,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 string action = null;
                 if (itemType == ItemType.SymbolicLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionSymbolicLink;
+                }
                 else if (itemType == ItemType.HardLink)
+                {
                     action = FileSystemProviderStrings.NewItemActionHardLink;
+                }
 
                 string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
 
@@ -2223,7 +2308,9 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
                             else
+                            {
                                 throw;
+                            }
                         }
                     }
                     else
@@ -2387,7 +2474,9 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                                 }
                                 else
+                                {
                                     throw;
+                                }
                             }
                         }
                     }
@@ -2435,7 +2524,9 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(exception, "NewItemCreateIOError", ErrorCategory.WriteError, path));
                         }
                         else
+                        {
                             throw;
+                        }
                     }
                 }
             }
@@ -2456,8 +2547,8 @@ namespace Microsoft.PowerShell.Commands
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
 
-            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
-            return (created == 1) ? true : false;
+            var created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
+            return created;
         }
 
         private static bool WinCreateHardLink(string path, string strTargetPath)
@@ -3773,7 +3864,9 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                                 }
                                 else
+                                {
                                     throw;
+                                }
                             }
 
                             file.CopyTo(destinationPath, true);
@@ -3928,7 +4021,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyFromRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -3936,7 +4032,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionsPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyFromSessionHelper -ea SilentlyContinue -Force
@@ -3948,7 +4047,10 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ValidRemoteSessionForScripting(Runspace runspace)
         {
-            if (!(runspace is RemoteRunspace)) { return false; }
+            if (!(runspace is RemoteRunspace))
+            {
+                return false;
+            }
 
             PSLanguageMode languageMode = runspace.SessionStateProxy.LanguageMode;
             if (languageMode == PSLanguageMode.ConstrainedLanguage || languageMode == PSLanguageMode.NoLanguage)
@@ -6977,7 +7079,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
             /// <returns>1 on successful creation.</returns>
             [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
 
             /// <summary>
             /// Flags used when creating a symbolic link.
@@ -6998,7 +7101,7 @@ namespace Microsoft.PowerShell.Commands
                 /// <summary>
                 /// Allow creation of symbolic link without elevation.  Requires Developer mode.
                 /// </summary>
-                AllowUnprivilegedCreate = 2
+                AllowUnprivilegedCreate = 2,
             }
 
             /// <summary>
@@ -7009,14 +7112,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="SecurityAttributes"></param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
-
-            [Flags]
-            internal enum FileAttributes
-            {
-                Hidden = 0x0002,
-                Directory = 0x0010
-            }
 
             // OneDrive placeholder support
 #if !UNIX
@@ -7659,6 +7756,7 @@ namespace Microsoft.PowerShell.Commands
             out int pBytesReturned, IntPtr lpOverlapped);
 
         [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
@@ -7678,7 +7776,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="instance">The object of FileInfo or DirectoryInfo type.</param>
         /// <returns>The target of the reparse point.</returns>
-        public static IEnumerable<string> GetTarget(PSObject instance)
+        public static string GetTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
@@ -7687,13 +7785,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string linkTarget = WinInternalGetTarget(handle);
 
-                    if (linkTarget != null)
-                    {
-                        return (new string[] { linkTarget });
-                    }
+                    return linkTarget;
                 }
+#else
+               return UnixInternalGetTarget(fileSysInfo.FullName);
 #endif
-                return InternalGetTarget(fileSysInfo.FullName);
             }
 
             return null;
@@ -7712,84 +7808,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InternalGetLinkType(fileSysInfo);
             }
-            else
-                return null;
+
+            return null;
         }
 
-        private static List<string> InternalGetTarget(string filePath)
-        {
-            var links = new List<string>();
 #if UNIX
+        private static string UnixInternalGetTarget(string filePath)
+        {
             string link = Platform.NonWindowsInternalGetTarget(filePath);
-            if (!string.IsNullOrEmpty(link))
-            {
-                links.Add(link);
-            }
-            else
+
+            if (string.IsNullOrEmpty(link))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-#elif !CORECLR // FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr
-            UInt32 linkStringLength = 0;
-            var linkName = new StringBuilder();
-
-            // First get the length for the linkName buffer.
-            IntPtr fileHandle = InternalSymbolicLinkLinkCodeMethods.FindFirstFileName(filePath, 0, ref linkStringLength, linkName);
-            int lastError = Marshal.GetLastWin32Error();
-
-            // Return handle is INVALID_HANDLE_VALUE and LastError was ERROR_MORE_DATA
-            if ((fileHandle == (IntPtr)(-1)) && (lastError == 234))
-            {
-                linkName = new StringBuilder((int)linkStringLength);
-                fileHandle = InternalSymbolicLinkLinkCodeMethods.FindFirstFileName(filePath, 0, ref linkStringLength, linkName);
-                lastError = Marshal.GetLastWin32Error();
-            }
-
-            if (fileHandle == (IntPtr)(-1))
-            {
-                throw new Win32Exception(lastError);
-            }
-
-            bool continueFind = false;
-
-            try
-            {
-                do
-                {
-                    StringBuilder fullName = new StringBuilder();
-                    fullName.Append(Path.GetPathRoot(filePath));    // hard link source and target must be on the same drive. So we can use the source for find the path root.
-                    fullName.Append(linkName.ToString());
-                    FileInfo fInfo = new FileInfo(fullName.ToString());
-
-                    // Don't add the target link to the list.
-                    if (string.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
-                        links.Add(fInfo.FullName);
-
-                    continueFind = InternalSymbolicLinkLinkCodeMethods.FindNextFileName(fileHandle, ref linkStringLength, linkName);
-
-                    lastError = Marshal.GetLastWin32Error();
-
-                    if (!continueFind && lastError == 234) // ERROR_MORE_DATA
-                    {
-                        linkName = new StringBuilder((int)linkStringLength);
-                        continueFind = InternalSymbolicLinkLinkCodeMethods.FindNextFileName(fileHandle, ref linkStringLength, linkName);
-                    }
-
-                    if (!continueFind && lastError != 38) // ERROR_HANDLE_EOF. No more links.
-                    {
-                        throw new Win32Exception(lastError);
-                    }
-                }
-                while (continueFind);
-            }
-            finally
-            {
-                InternalSymbolicLinkLinkCodeMethods.FindClose(fileHandle);
-            }
-#endif
-            return links;
+            return link;
         }
+#endif
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
@@ -7878,16 +7913,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-            {
-                // Note that this class also has a enum called FileAttributes, so use fully qualified name
-                return (fileInfo.Attributes & System.IO.FileAttributes.ReparsePoint)
-                       == System.IO.FileAttributes.ReparsePoint;
-            }
-            else
-            {
-                return Platform.NonWindowsIsSymLink(fileInfo);
-            }
+            return Platform.IsWindows
+                ? fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint)
+                : Platform.NonWindowsIsSymLink(fileInfo);
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)
