@@ -2,7 +2,7 @@
     "build_targets": {
         "staging": "PowerShell-CI-static-analysis",
         "windows": "PowerShell-CI-windows",
-        "macos": "PowerShell-CI-macOS",
+        "macos": "PowerShell-CI-macos",
         "linux": "PowerShell-CI-Linux",
         "all": [
             "PowerShell-CI-static-analysis",
