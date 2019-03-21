@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
                 // set the return value to the first drive (should only be one).
 
-                if (!successObjects[0].immediateBaseObjectIsEmpty)
+                if (!successObjects[0].ImmediateBaseObjectIsEmpty)
                 {
                     result = (PSDriveInfo)successObjects[0].BaseObject;
                 }

@@ -342,7 +342,7 @@ namespace System.Management.Automation
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.immediateBaseObjectIsEmpty)
+            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
@@ -367,7 +367,7 @@ namespace System.Management.Automation
             IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.immediateBaseObjectIsEmpty)
+            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
@@ -411,7 +411,7 @@ namespace System.Management.Automation
             // We serialize properties of enumerable and on deserialization mark the object
             // as Deserialized. So if object is marked deserialized, we should write properties.
             // Note: we do not serialize the properties of IEnumerable if depth is zero.
-            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized)))
+            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized)))
             {
                 // Note:Depth is the depth for serialization of baseObject.
                 // Depth for serialization of each property is one less.
@@ -595,7 +595,7 @@ namespace System.Management.Automation
             bool isEnum = false;
             bool isPSObject = false;
 
-            if (!source.immediateBaseObjectIsEmpty)
+            if (!source.ImmediateBaseObjectIsEmpty)
             {
                 isEnum = source.ImmediateBaseObject is Enum;
                 isPSObject = source.ImmediateBaseObject is PSObject;
