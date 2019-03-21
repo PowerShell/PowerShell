@@ -249,30 +249,29 @@ Describe "TabCompletion" -Tags CI {
         BeforeAll {
             setup -f 'install-powershell.ps1' -content ""
             setup -f 'remove-powershell.ps1' -content ""
-            $separator = [system.io.path]::DirectorySeparatorChar
 
             $scriptWithWildcardCases = @(
                 @{
                     command = '.\install-*.ps1'
-                    expectedCommand = ".${separator}install-powershell.ps1"
-                    name = "'.${separator}install-powershell.ps1'"
+                    expectedCommand = Join-Path -Path '.' -ChildPath 'install-powershell.ps1'
+                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')'"
                 }
                 @{
                     command = (Join-Path ${TestDrive}  -ChildPath 'install-*.ps1')
                     expectedCommand = (Join-Path ${TestDrive}  -ChildPath 'install-powershell.ps1')
-                    name = "'.${separator}install-powershell.ps1' by fully qualified path"
+                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')' by fully qualified path"
                 }
                 @{
                     command = '.\?emove-powershell.ps1'
-                    expectedCommand = ".${separator}remove-powershell.ps1"
-                    name = "'.${separator}?emove-powershell.ps1'"
+                    expectedCommand = Join-Path -Path '.' -ChildPath 'remove-powershell.ps1'
+                    name = "'$(Join-Path -Path '.' -ChildPath '?emove-powershell.ps1')'"
                 }
                 @{
                     # [] cause the parser to create a new token.
                     # So, the command must be quoted to tab complete.
                     command = "'.\[ra]emove-powershell.ps1'"
-                    expectedCommand = "'.${separator}remove-powershell.ps1'"
-                    name = "'.${separator}[ra]emove-powershell.ps1'"
+                    expectedCommand = "'$(Join-Path -Path '.' -ChildPath 'remove-powershell.ps1')'"
+                    name = "'$(Join-Path -Path '.' -ChildPath '[ra]emove-powershell.ps1')'"
                 }
             )
 
