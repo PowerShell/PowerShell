@@ -1,4 +1,9 @@
 {
+    "version": "0.1",
+    "azdevops": {
+        "organization": "powershell",
+        "project": "PowerShell"
+    },
     "build_targets": {
         "staging": "PowerShell-CI-static-analysis",
         "windows": "PowerShell-CI-windows",
@@ -11,16 +16,20 @@
             "PowerShell-CI-Linux"
         ]
     },
-    "authorized_users": [
-        "adityapatwardhan",
-        "anmenaga",
-        "daxian-dbw",
-        "iSazonov",
-        "JamesWTruher",
-        "PaulHigin",
-        "rjmholt",
-        "SteveL-MSFT",
-        "TravisEz13",
-        "TylerLeonhardt"
-    ]
+    "authorized_users": {
+        "build_targets": [
+            "adityapatwardhan",
+            "anmenaga",
+            "daxian-dbw",
+            "iSazonov",
+            "JamesWTruher",
+            "PaulHigin",
+            "rjmholt",
+            "SteveL-MSFT",
+            "TravisEz13",
+            "TylerLeonhardt",
+            "markekraus"
+        ],
+        "reminders": "*"
+    }
 }
