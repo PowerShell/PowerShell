@@ -1444,7 +1444,7 @@ function CreateNugetPlatformFolder
 Creates NuGet packages containing linux, osx and Windows runtime assemblies.
 
 .DESCRIPTION
-Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
+Creates a NuGet package of IL assemblies for unix and windows.
 The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
 Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
 Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
@@ -1456,31 +1456,16 @@ Path where the package will be created.
 .PARAMETER PackageVersion
 Version of the created package.
 
-.PARAMETER Winx86BinPath
-Path to folder containing Windows x86 assemblies.
+.PARAMETER WinFxdBinPath
+Path to folder containing Windows framework dependent assemblies.
 
-.PARAMETER Winx64BinPath
-Path to folder containing Windows x64 assemblies.
-
-.PARAMETER WinArm32BinPath
-Path to folder containing Windows arm32 assemblies.
-
-.PARAMETER WinArm64BinPath
-Path to folder containing Windows arm64 assemblies.
-
-.PARAMETER LinuxArm32BinPath
-Path to folder containing linux arm32 assemblies.
-
-.PARAMETER LinuxBinPath
-Path to folder containing linux x64 assemblies.
-
-.PARAMETER OsxBinPath
-Path to folder containing osx assemblies.
+.PARAMETER LinuxFxdBinPath
+Path to folder containing Linux framework dependent assemblies.
 
 .PARAMETER GenAPIToolPath
 Path to the GenAPI.exe tool.
 #>
-function New-UnifiedNugetPackage
+function New-ILNugetPackage
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -1492,28 +1477,10 @@ function New-UnifiedNugetPackage
         [string] $PackageVersion,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx86BinPath,
+        [string] $WinFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm32BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxArm32BinPath,
-
-        [Parameter(Mandatory = $false)]
-        [string] $LinuxAlpineBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $OsxBinPath,
+        [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $GenAPIToolPath
@@ -1521,7 +1488,7 @@ function New-UnifiedNugetPackage
 
     if (-not $Environment.IsWindows)
     {
-        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
+        throw "New-ILNugetPackage can be only executed on Windows platform."
     }
 
     $fileList = @(
@@ -1548,7 +1515,7 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
 
         foreach ($file in $fileList)
         {
@@ -1565,22 +1532,11 @@ function New-UnifiedNugetPackage
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
 
-            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
-            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+            CreateNugetPlatformFolder -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
             if ($linuxExceptionList -notcontains $file )
             {
-                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-
-                if ($linuxAlpineBinPath)
-                {
-                    CreateNugetPlatformFolder -Platform 'alpine-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxAlpineBinPath
-                }
-
-                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
-                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
+                CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
             }
 
             #region nuspec
@@ -1691,7 +1647,7 @@ function New-UnifiedNugetPackage
 
 <#
   Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
-  This is a helper function used by 'New-UnifiedNugetPackage'
+  This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
 {
@@ -1903,7 +1859,7 @@ function New-ReferenceAssembly
             throw "$assemblyName.dll was not found at: $Linux64BinPath"
         }
 
-        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath"
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
         Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
         Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
@@ -1995,6 +1951,26 @@ function CleanupGeneratedSourceCode
             ApplyTo = "Microsoft.PowerShell.Commands.Utility"
             Pattern = "public partial struct ConvertToJsonContext"
             Replacement = "public readonly struct ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
         }
     )
 
