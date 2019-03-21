@@ -65,6 +65,9 @@ src/System.Management.Automation/engine/remoting    @mirichmo @PaulHigin
 # Area: Side-By-Side
 # @mirichmo @charub
 
+# Area: Poshchan automation bot
+.poshchan/* @SteveL-MSFT
+
 # Areas: Build
 # Must be last
 *.config   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
