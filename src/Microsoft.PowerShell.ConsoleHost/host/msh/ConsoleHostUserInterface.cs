@@ -1470,7 +1470,10 @@ namespace Microsoft.PowerShell
             uint keyState = 0;
             string s = string.Empty;
             Span<char> inputBuffer = stackalloc char[MaxInputLineLength + 1];
-            initialContent.AsSpan().CopyTo(inputBuffer);
+            if (initialContent.Length > 0)
+            {
+                initialContent.AsSpan().CopyTo(inputBuffer);
+            }
 
 #endif
                 do
