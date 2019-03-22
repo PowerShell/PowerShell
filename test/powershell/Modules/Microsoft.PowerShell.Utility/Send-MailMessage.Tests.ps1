@@ -115,7 +115,16 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
         }
 
         $user = [Environment]::UserName
-        $inPassword = Select-String "^${user}:" /etc/passwd -ErrorAction SilentlyContinue
+        $powershell = [PowerShell]::Create()
+
+        $null = $powershell.AddCommand("Send-MailMessage").AddParameters($InputObject).AddParameter("ErrorAction","SilentlyContinue")
+
+        $powershell.Invoke()
+
+        $warnings = $powershell.Streams.Warning
+
+        $warnings.count | Should -BeGreaterThan 0
+        $warnings[0].ToString() | Should  -BeLike  "The command 'Send-MailMessage' is obsolete. *"
         if (-not $inPassword)
         {
             $PesterArgs["Pending"] = $true
