@@ -17,7 +17,7 @@ When creating tests, keep the following in mind:
 
 Here's the simplest of tests:
 
-```PowerShell
+```powershell
 Describe "A variable can be assigned and retrieved" {
     It "Creates a variable and makes sure its value is correct" {
        $a = 1
@@ -28,7 +28,7 @@ Describe "A variable can be assigned and retrieved" {
 
 If you need to do type checking, that can be done as well:
 
-```PowerShell
+```powershell
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
@@ -44,7 +44,7 @@ Describe "One is really one" {
 If you are checking for proper errors, use the `Should -Throw -ErrorId` Pester syntax.
 It checks against `FullyQualifiedErrorId` property, which is recommended because it does not change based on culture as an error message might.
 
-```PowerShell
+```powershell
 ...
 It "Get-Item on a nonexisting file should have error PathNotFound" {
     { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
@@ -55,7 +55,7 @@ Note that if `Get-Item` were to succeed, the test will fail.
 
 However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use `-PassThru` parameter:
 
-```PowerShell
+```powershell
 It "InnerException sample" {
    $e = { Invoke-WebRequest https://expired.badssl.com/ } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand" -PassThru
    $e.Exception.InnerException.NativeErrorCode | Should -Be 12175
@@ -66,7 +66,7 @@ It "InnerException sample" {
 
 For creation of PowerShell tests, the `Describe` block is the level of granularity suggested and one of three tags should be used: `CI`, `Feature`, or `Scenario`.
 
-If the tag is not provided, tests in that describe block will be run any time tests are executed.
+If the tag is not provided, the build process will fail.
 
 ### Describe
 
@@ -96,13 +96,13 @@ Tests that require admin privileges **on Windows** must be additionally marked w
 In the Azure DevOps Windows CI, we run two different passes:
 
 - The pass with exclusion of `RequireAdminOnWindows` tagged tests.
-- The pass where only `RequireAdminOnWindows` tagged tests are being tested.
+- The pass where only `RequireAdminOnWindows` tagged tests are being executed.
 
 In each case, tests are executed with appropriate privileges.
 
 Tests that need to be run with sudo **on Unix systems** must be additionally marked with `RequireSudoOnUnix` Pester tag.
 
-`RequireSudoOnUnix` tag is mutually exclusive to all other tags like `CI`, `Feature`, etc. (which are ignored when `RequireSudoOnUnix` is present).
+`RequireSudoOnUnix` tag takes precedence over all other tags like `CI`, `Feature`, etc. (which are ignored when `RequireSudoOnUnix` is present).
 Tests tagged with `RequireSudoOnUnix` will run as a separate pass for any Unix test.
 
 ## Selected Features
@@ -118,7 +118,7 @@ You may use this drive to isolate the file operations of your test to a temporar
 
 The following example illustrates the feature:
 
-```PowerShell
+```powershell
 function Add-Footer($path, $footer) {
    Add-Content $path -Value $footer
 }
@@ -139,7 +139,7 @@ When this test completes, the contents of the `TestDrive:` will be removed.
 
 ### Parameter Generation
 
-```PowerShell
+```powershell
 $testCases = @(
     @{ a = 0; b = 1; ExpectedResult = 1 }
     @{ a = 1; b = 0; ExpectedResult = 1 }
@@ -162,7 +162,7 @@ The function allows you to specify a script block that will become the command's
 
 The following example illustrates simple use:
 
-```PowerShell
+```powershell
 Context "Get-Random is not random" {
     Mock Get-Random { return 3 }
 
@@ -178,7 +178,7 @@ More information may be found [here](https://github.com/pester/Pester/wiki/Mock)
 
 Code execution in Pester can be very subtle and can cause issues when executing test code. The execution of code which lays outside of the usual code blocks may not happen as you expect. Consider the following:
 
-```PowerShell
+```powershell
 Describe it {
     Write-Host -For DarkRed "Before Context"
     Context "subsection" {
@@ -238,14 +238,14 @@ So if some state is set elsewhere in the `Describe` block, that state will not y
 Notice, too, that the `BeforeAll` block in `Context` is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `BeforeAll`, `BeforeEach`, `AfterEach` and/or `AfterAll`, especially if those blocks rely on some state set by free code elsewhere in the block.
 
-### Skipping tests in bulk
+### Skipping Tests in Bulk
 
 Sometimes it is beneficial to skip all the tests in a particular `Describe` block.
 For example, tests which are not applicable to a platform could be skipped, and they would be reported as skipped.
 
 The following is an example of how this may be done:
 
-```PowerShell
+```powershell
 Describe "Should not run these tests on non-Windows platforms" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -313,7 +313,7 @@ This technique uses the `$PSDefaultParameterValues` feature of PowerShell to tem
 
 You may want to have a test like:
 
-```PowerShell
+```powershell
 It 'tests multi-line string' {
     Get-MultiLineString | Should -Be @'
 first line
@@ -335,7 +335,7 @@ That causes problems, because at runtime `Get-MultiLineString` would likely prod
 
 Some workaround could be added, but they are sub-optimal and make reading test code harder.
 
-```PowerShell
+```powershell
 function normalizeEnds([string]$text)
 {
     $text -replace "`r`n?|`n", "`r`n"
@@ -359,7 +359,7 @@ These commands create an array of strings:
 
 ### Do
 
-1. Name your files `<descriptivetestname>.tests.ps1`.
+1. Name your file `<descriptive_test_name>.tests.ps1`.
 2. Keep tests simple:
     - Test only what you need.
     - Reduce dependencies.
