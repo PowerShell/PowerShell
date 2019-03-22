@@ -2304,21 +2304,21 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder builder = new StringBuilder();
             string str = executableFileName.Trim();
-            bool flag = str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal);
+            bool flag = str.StartsWith('"') && str.EndsWith('"');
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             builder.Append(str);
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                builder.Append(" ");
+                builder.Append(' ');
                 builder.Append(arguments);
             }
 
