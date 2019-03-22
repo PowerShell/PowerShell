@@ -3038,7 +3038,7 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern unsafe bool ReadConsole
+            private static extern unsafe bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
                 char* lpBuffer,
