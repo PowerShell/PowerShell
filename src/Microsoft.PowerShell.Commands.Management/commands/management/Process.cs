@@ -1882,14 +1882,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ArgumentList != null)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (string str in ArgumentList)
-                {
-                    sb.Append(str);
-                    sb.Append(' ');
-                }
-
-                startInfo.Arguments = sb.ToString(); ;
+                startInfo.Arguments = string.Join(' ', ArgumentList);
             }
 
             if (WorkingDirectory != null)
