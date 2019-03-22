@@ -115,13 +115,34 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool LookupAccountSid(string lpSystemName,
+        private static extern unsafe bool LookupAccountSid(string lpSystemName,
                                                      IntPtr sid,
-                                                     StringBuilder lpName,
+                                                     char* lpName,
                                                      ref int cchName,
-                                                     StringBuilder referencedDomainName,
+                                                     char* referencedDomainName,
                                                      ref int cchReferencedDomainName,
                                                      out SID_NAME_USE peUse);
+
+        internal static unsafe bool LookupAccountSid(string lpSystemName,
+                                                     IntPtr sid,
+                                                     Span<char> userName,
+                                                     ref int cchName,
+                                                     Span<char> domainName,
+                                                     ref int cchDomainName,
+                                                     out SID_NAME_USE peUse)
+        {
+            fixed (char* userNamePtr = &MemoryMarshal.GetReference(userName))
+            fixed (char* domainNamePtr = &MemoryMarshal.GetReference(domainName))
+            {
+                return LookupAccountSid(lpSystemName,
+                                        sid,
+                                        userNamePtr,
+                                        ref cchName,
+                                        domainNamePtr,
+                                        ref cchDomainName,
+                                        out peUse);
+            }
+        }
 
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [ResourceExposure(ResourceScope.Machine)]
