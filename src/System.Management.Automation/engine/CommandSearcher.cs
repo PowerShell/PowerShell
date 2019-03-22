@@ -460,7 +460,7 @@ namespace System.Management.Automation
                 Collection<string> resolvedPaths = new Collection<string>();
 
                 ProviderInfo provider;
-                if ((_commandResolutionOptions & SearchResolutionOptions.ResolvePathPatterns) != 0 &&
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolvePathPatterns) &&
                     WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
                     try
