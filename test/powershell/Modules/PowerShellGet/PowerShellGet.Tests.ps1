@@ -9,32 +9,14 @@ try {
     # no progress output during these tests
     $ProgressPreference = "SilentlyContinue"
 
-    $RepositoryName = 'INTGallery'
-    $SourceLocation = 'https://www.poshtestgallery.com'
+    $RepositoryName = 'LocalGallery'
+    $SourceLocation = (Join-Path $PSScriptRoot "assets")
     $RegisteredINTRepo = $false
     $ContosoServer = 'ContosoServer'
     $FabrikamServerScript = 'Fabrikam-ServerScript'
     $Initialized = $false
 
-    #region Utility functions
-
-    function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
-    function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
-    function IsCoreCLR { $PSVersionTable.ContainsKey('PSEdition') -and $PSVersionTable.PSEdition -eq 'Core' }
-
-    #endregion
-
     #region Install locations for modules and scripts
-
-    if (IsInbox) {
-        $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
-    } elseif (IsCoreCLR) {
-        if (IsWindows) {
-            $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
-        } else {
-            $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
-        }
-    }
 
     try {
         $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
@@ -42,22 +24,18 @@ try {
         $script:MyDocumentsFolderPath = $null
     }
 
-    if (IsInbox) {
+    if ($IsWindows) {
+        $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
+
         $script:MyDocumentsPSPath = if ($script:MyDocumentsFolderPath) {
-            Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
+            Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath 'PowerShell'
         } else {
-            Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
+            Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath "Documents\PowerShell"
         }
-    } elseif (IsCoreCLR) {
-        if (IsWindows) {
-            $script:MyDocumentsPSPath = if ($script:MyDocumentsFolderPath) {
-                Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath 'PowerShell'
-            } else {
-                Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath "Documents\PowerShell"
-            }
-        } else {
-            $script:MyDocumentsPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('USER_MODULES')) -Parent
-        }
+
+    } else {
+        $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
+        $script:MyDocumentsPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('USER_MODULES')) -Parent
     }
 
     $script:ProgramFilesModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath 'Modules'
@@ -234,7 +212,7 @@ try {
                 InternalWebProxy = @('GetProxy', 'IsBypassed')
             }
 
-            if ((IsWindows)) {
+            if (($IsWindows)) {
                 $PowerShellGetTypeDetails['CERT_CHAIN_POLICY_PARA'] = @('cbSize', 'dwFlags', 'pvExtraPolicyPara')
                 $PowerShellGetTypeDetails['CERT_CHAIN_POLICY_STATUS'] = @('cbSize', 'dwError', 'lChainIndex', 'lElementIndex', 'pvExtraPolicyStatus')
                 $PowerShellGetTypeDetails['InternalSafeHandleZeroOrMinusOneIsInvalid'] = @('IsInvalid')
