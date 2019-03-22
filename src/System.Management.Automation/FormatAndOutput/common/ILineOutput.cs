@@ -110,19 +110,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// Specifies special stream write processing.
-    /// </summary>
-    internal enum WriteStreamType
-    {
-        None,
-        Error,
-        Warning,
-        Verbose,
-        Debug,
-        Information
-    }
-
-    /// <summary>
     /// Base class providing information about the screen device capabilities
     /// and used to write the output strings to the text output device.
     /// Each device supported will have to derive from it.

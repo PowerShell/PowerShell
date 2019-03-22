@@ -481,20 +481,13 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _initScript;
 
         /// <summary>
-        /// Launces the background job as a 32-bit process. This can be used on
+        /// Launches the background job as a 32-bit process. This can be used on
         /// 64-bit systems to launch a 32-bit wow process for the background job.
         /// </summary>
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        public virtual SwitchParameter RunAs32
-        {
-            get { return _shouldRunAs32; }
-
-            set { _shouldRunAs32 = value; }
-        }
-
-        private bool _shouldRunAs32;
+        public virtual SwitchParameter RunAs32 { get; set; }
 
         /// <summary>
         /// Powershell Version to execute the background job.
@@ -574,12 +567,24 @@ namespace Microsoft.PowerShell.Commands
                     RemotingErrorIdStrings.IPCPwshExecutableNotFound,
                     PowerShellProcessInstance.PwshExePath);
 
-                var exception = new PSNotSupportedException(message);
                 var errorRecord = new ErrorRecord(
-                        exception,
-                        "IPCPwshExecutableNotFound",
-                        ErrorCategory.NotInstalled,
-                        PowerShellProcessInstance.PwshExePath);
+                    new PSNotSupportedException(message),
+                    "IPCPwshExecutableNotFound",
+                    ErrorCategory.NotInstalled,
+                    PowerShellProcessInstance.PwshExePath);
+
+                ThrowTerminatingError(errorRecord);
+            }
+
+            if (RunAs32.IsPresent && Environment.Is64BitProcess)
+            {
+                // We cannot start a 32-bit 'pwsh' process from a 64-bit 'pwsh' installation.
+                string message = RemotingErrorIdStrings.RunAs32NotSupported;
+                var errorRecord = new ErrorRecord(
+                    new PSNotSupportedException(message),
+                    "RunAs32NotSupported",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
 
                 ThrowTerminatingError(errorRecord);
             }
@@ -620,7 +625,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
-            connectionInfo.RunAs32 = _shouldRunAs32;
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;

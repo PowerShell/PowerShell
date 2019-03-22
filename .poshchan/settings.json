@@ -1,0 +1,26 @@
+{
+    "build_targets": {
+        "staging": "PowerShell-CI-static-analysis",
+        "windows": "PowerShell-CI-windows",
+        "macos": "PowerShell-CI-macOS",
+        "linux": "PowerShell-CI-Linux",
+        "all": [
+            "PowerShell-CI-static-analysis",
+            "PowerShell-CI-windows",
+            "PowerShell-CI-macOS",
+            "PowerShell-CI-Linux"
+        ]
+    },
+    "authorized_users": [
+        "adityapatwardhan",
+        "anmenaga",
+        "daxian-dbw",
+        "iSazonov",
+        "JamesWTruher",
+        "PaulHigin",
+        "rjmholt",
+        "SteveL-MSFT",
+        "TravisEz13",
+        "TylerLeonhardt"
+    ]
+}

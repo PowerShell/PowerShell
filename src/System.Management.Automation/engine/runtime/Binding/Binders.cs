@@ -5386,7 +5386,7 @@ namespace System.Management.Automation.Language
 
             // If the target value is actually a deserialized PSObject, we should use the original value
             var psobj = value as PSObject;
-            if (psobj != null && psobj != AutomationNull.Value && !psobj.isDeserialized)
+            if (psobj != null && psobj != AutomationNull.Value && !psobj.IsDeserialized)
             {
                 expr = Expression.Call(CachedReflectionInfo.PSObject_Base, expr);
                 value = PSObject.Base(value);
@@ -5650,7 +5650,7 @@ namespace System.Management.Automation.Language
             //
             // - If not, we want to use the base object, so that we might generate optimized code.
             var psobj = target.Value as PSObject;
-            bool isTargetDeserializedObject = (psobj != null) && (psobj.isDeserialized);
+            bool isTargetDeserializedObject = (psobj != null) && (psobj.IsDeserialized);
             object value = isTargetDeserializedObject ? target.Value : PSObject.Base(target.Value);
 
             var adapterSet = PSObject.GetMappedAdapter(value, typeTable);
@@ -5703,7 +5703,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.dotNetInstanceAdapter)
+            if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.DotNetInstanceAdapter)
             {
                 List<MethodBase> candidateMethods = null;
                 foreach (var member in _classScope.GetMembers(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
@@ -5719,7 +5719,7 @@ namespace System.Management.Automation.Language
                             if ((getMethod == null || getMethod.IsFamily || getMethod.IsPublic) &&
                                 (setMethod == null || setMethod.IsFamily || setMethod.IsPublic))
                             {
-                                memberInfo = new PSProperty(this.Name, PSObject.dotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
+                                memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
                             }
                         }
                         else
@@ -5729,7 +5729,7 @@ namespace System.Management.Automation.Language
                             {
                                 if (fieldInfo.IsFamily)
                                 {
-                                    memberInfo = new PSProperty(this.Name, PSObject.dotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
+                                    memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
                                 }
                             }
                             else
@@ -5767,7 +5767,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
-                        memberInfo = PSMethod.Create(this.Name, PSObject.dotNetInstanceAdapter, null, method);
+                        memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
                     }
                 }
             }
@@ -5788,7 +5788,7 @@ namespace System.Management.Automation.Language
             if (isTargetDeserializedObject)
             {
                 restrictions = restrictions.Merge(BindingRestrictions.GetExpressionRestriction(
-                    Expression.Field(target.Expression.Cast(typeof(PSObject)), CachedReflectionInfo.PSObject_isDeserialized)));
+                    Expression.Property(target.Expression.Cast(typeof(PSObject)), CachedReflectionInfo.PSObject_IsDeserialized)));
             }
 
             if (hasTypeTableMember)
@@ -6744,8 +6744,8 @@ namespace System.Management.Automation.Language
             // If the target value is a PSObject and its base object happens to be a Hashtable or ArrayList,
             // we might have three interesting cases here:
             //  (1) the target value could be a regular PSObject that wraps the Hashtable/ArrayList, i.e. $target = [PSObject]::AsPSObject($hash)
-            //  (2) the target value could be a deserialized object (PSObject) with the 'isDeserialized' field to be false, i.e. deserialized Hashtable/ArrayList/Dictionary[string, string]
-            //  (3) the target value could be a deserialized object (PSObject) with the 'isDeserialized' field to be true, i.e. deserialized XmlElement
+            //  (2) the target value could be a deserialized object (PSObject) with the 'IsDeserialized' property to be false, i.e. deserialized Hashtable/ArrayList/Dictionary[string, string]
+            //  (3) the target value could be a deserialized object (PSObject) with the 'IsDeserialized' property to be true, i.e. deserialized XmlElement
             // For the first two cases, it's OK to call a .NET method from the base object, such as $target.Add().
             // For the third case, calling a .NET method from the base object is incorrect, because the original type of the deserialized object doesn't have the method.
             //  example: XmlElement derives from IEnumerable, so it's treated as a container object when powershell does the serialization -- using an ArrayList to hold
@@ -6761,11 +6761,11 @@ namespace System.Management.Automation.Language
                     // If we get here, then the target value should have 'isDeserialized == false', otherwise we cannot get a .NET methodInfo
                     // from _getMemberBinder.GetPSMemberInfo(). This is because when 'isDeserialized' is true, we use the PSObject to find the
                     // corresponding Adapter -- PSObjectAdapter, which cannot be optimized.
-                    Diagnostics.Assert(psObj.isDeserialized == false,
+                    Diagnostics.Assert(psObj.IsDeserialized == false,
                         "isDeserialized should be false, because if not, we cannot get a .NET method/parameterizedProperty from GetPSMemberInfo");
 
                     restrictions = restrictions.Merge(BindingRestrictions.GetExpressionRestriction(
-                        Expression.Not(Expression.Field(target.Expression.Cast(typeof(PSObject)), CachedReflectionInfo.PSObject_isDeserialized))));
+                        Expression.Not(Expression.Property(target.Expression.Cast(typeof(PSObject)), CachedReflectionInfo.PSObject_IsDeserialized))));
                 }
             }
 
@@ -6976,7 +6976,7 @@ namespace System.Management.Automation.Language
         {
             MethodInfo result = null;
 
-            var psMethod = PSObject.dotNetInstanceAdapter.GetDotNetMethod<PSMethod>(PSObject.Base(target.Value), methodName);
+            var psMethod = PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMethod>(PSObject.Base(target.Value), methodName);
             if (psMethod != null)
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
