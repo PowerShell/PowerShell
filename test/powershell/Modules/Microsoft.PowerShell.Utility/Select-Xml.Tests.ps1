@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Select-Xml DRT Unit Tests" -Tags "CI" {
+Describe "Select-Xml DRT Unit Tests" {
 
 	BeforeAll {
 		$testfile = "TestDrive:\testfile.xml"
