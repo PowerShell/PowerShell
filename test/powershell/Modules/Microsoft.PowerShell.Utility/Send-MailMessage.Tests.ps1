@@ -82,7 +82,6 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
 
         $null = $powershell.AddCommand("Send-MailMessage").AddParameters($InputObject).AddParameter("ErrorAction","SilentlyContinue")
 
-        #Send-MailMessage @InputObject -ErrorAction SilentlyContinue
         $powershell.Invoke()
 
         $warnings = $powershell.Streams.Warning
