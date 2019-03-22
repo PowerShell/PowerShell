@@ -13,7 +13,6 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Buffers;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
