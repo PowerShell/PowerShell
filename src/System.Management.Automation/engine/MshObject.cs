@@ -2496,7 +2496,9 @@ namespace Microsoft.PowerShell
         internal static string Type(Type type, bool dropNamespaces = false, string key = null)
         {
             if (type == null)
+            {
                 return string.Empty;
+            }
 
             string result;
             if (type.IsGenericType && !type.IsGenericTypeDefinition)
