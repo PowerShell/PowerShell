@@ -78,7 +78,16 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
 
         $server | Should -Not -Be $null
 
-        Send-MailMessage @InputObject -ErrorAction SilentlyContinue
+        $powershell = [PowerShell]::Create()
+
+        $null = $powershell.AddCommand("Send-MailMessage").AddParameters($InputObject).AddParameter("ErrorAction","SilentlyContinue")
+
+        $powershell.Invoke()
+
+        $warnings = $powershell.Streams.Warning
+
+        $warnings.count | Should -BeGreaterThan 0
+        $warnings[0].ToString() | Should  -BeLike  "The command 'Send-MailMessage' is obsolete. *"
 
         $mail = Read-Mail
 
