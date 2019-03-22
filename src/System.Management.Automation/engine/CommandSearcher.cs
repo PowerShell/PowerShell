@@ -1104,7 +1104,7 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if ((_commandResolutionOptions & SearchResolutionOptions.ResolvePathPatterns) != 0 &&
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolvePathPatterns) &&
                      WildcardPattern.ContainsWildcardCharacters(path))
                 {
                     // Let PowerShell resolve relative path with wildcards.
