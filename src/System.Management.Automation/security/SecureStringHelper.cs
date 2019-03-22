@@ -459,13 +459,13 @@ namespace Microsoft.PowerShell
                 unsafe
                 {
                     if (!CAPI.CryptProtectData(
-                        new IntPtr(&dataIn),
-                        string.Empty,
-                        new IntPtr(&entropy),
-                        IntPtr.Zero,
-                        IntPtr.Zero,
-                        dwFlags,
-                        new IntPtr(&blob)))
+                        pDataIn: new IntPtr(&dataIn),
+                        szDataDescr: string.Empty,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&blob)))
                     {
                         int lastWin32Error = Marshal.GetLastWin32Error();
 
@@ -550,16 +550,16 @@ namespace Microsoft.PowerShell
                 unsafe
                 {
                     if (!CAPI.CryptUnprotectData(
-                        new IntPtr(&dataIn),
-                        IntPtr.Zero,
-                        new IntPtr(&entropy),
-                        IntPtr.Zero,
-                        IntPtr.Zero,
-                        dwFlags,
-                        new IntPtr(&userData)))
-                        {
-                            throw new CryptographicException(Marshal.GetLastWin32Error());
-                        }
+                        pDataIn: new IntPtr(&dataIn),
+                        ppszDataDescr: IntPtr.Zero,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&userData)))
+                    {
+                        throw new CryptographicException(Marshal.GetLastWin32Error());
+                    }
                 }
 
                 // In some cases, the API would fail due to OOM but simply return a null pointer.
