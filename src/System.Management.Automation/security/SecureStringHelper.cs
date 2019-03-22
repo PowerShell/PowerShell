@@ -155,12 +155,17 @@ namespace Microsoft.PowerShell
             byte[] protectedData = null;
 
             data = GetData(input);
+#if UNIX
+            // DPAPI doesn't exist on UNIX so we simply use the string as a byte-array
+            protectedData = data;
+#else
             protectedData = ProtectedData.Protect(data, null,
                                                   DataProtectionScope.CurrentUser);
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] = 0;
             }
+#endif
 
             output = ByteArrayToString(protectedData);
 
@@ -189,9 +194,14 @@ namespace Microsoft.PowerShell
 
             protectedData = ByteArrayFromString(input);
 
+#if UNIX
+            // DPAPI isn't supported in UNIX, so we just translate the byte-array back to a string
+            data = ByteArrayFromString(input);
+#else
             data = ProtectedData.Unprotect(protectedData, null,
                                            DataProtectionScope.CurrentUser);
 
+#endif
             s = New(data);
 
             return s;
@@ -400,7 +410,7 @@ namespace Microsoft.PowerShell
         internal string IV { get; }
     }
 
-#if CORECLR
+#if !UNIX
 
     // The DPAPIs implemented in this section are temporary workaround.
     // CoreCLR team will bring 'ProtectedData' type to Project K eventually.
@@ -499,9 +509,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-#if UNIX
-            throw new PlatformNotSupportedException(Serialization.DeserializeSecureStringNotSupported);
-#else
             if (encryptedData == null)
                 throw new ArgumentNullException("encryptedData");
 
@@ -559,7 +566,6 @@ namespace Microsoft.PowerShell
                     CAPI.LocalFree(userData.pbData);
                 }
             }
-#endif
         }
     }
 
