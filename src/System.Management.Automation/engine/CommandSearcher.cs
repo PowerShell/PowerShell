@@ -509,7 +509,7 @@ namespace System.Management.Automation
                 }
 
                 // Try literal path resolution if wildcards are disable or wildcard search failed
-                if ((resolvedPaths == null))
+                if (resolvedPaths == null)
                 {
                     string path = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
                     resolvedPaths = new System.Collections.ObjectModel.Collection<string>();
@@ -1627,6 +1627,5 @@ namespace System.Management.Automation
         /// Enable resolving wildcard in paths.
         /// </summary>
         ResolvePathPatterns = 0x40,
-
     }
 }
