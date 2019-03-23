@@ -45,6 +45,7 @@ jobs:
 
 - template: templates/nix-test.yml
   parameters:
+    name: Linux
     pool: Hosted Ubuntu 1604
     purpose: UnelevatedPesterTests
     tagSet: CI
@@ -53,6 +54,7 @@ jobs:
 
 - template: templates/nix-test.yml
   parameters:
+    name: Linux
     pool: Hosted Ubuntu 1604
     purpose: ElevatedPesterTests
     tagSet: CI
@@ -61,6 +63,7 @@ jobs:
 
 - template: templates/nix-test.yml
   parameters:
+    name: Linux
     pool: Hosted Ubuntu 1604
     purpose: UnelevatedPesterTests
     tagSet: Others
@@ -69,6 +72,7 @@ jobs:
 
 - template: templates/nix-test.yml
   parameters:
+    name: Linux
     pool: Hosted Ubuntu 1604
     purpose: ElevatedPesterTests
     tagSet: Others
