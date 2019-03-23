@@ -155,12 +155,17 @@ namespace Microsoft.PowerShell
             byte[] protectedData = null;
 
             data = GetData(input);
+#if UNIX
+            // DPAPI doesn't exist on UNIX so we simply use the string as a byte-array
+            protectedData = data;
+#else
             protectedData = ProtectedData.Protect(data, null,
                                                   DataProtectionScope.CurrentUser);
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] = 0;
             }
+#endif
 
             output = ByteArrayToString(protectedData);
 
@@ -189,9 +194,14 @@ namespace Microsoft.PowerShell
 
             protectedData = ByteArrayFromString(input);
 
+#if UNIX
+            // DPAPI isn't supported in UNIX, so we just translate the byte-array back to a string
+            data = protectedData;
+#else
             data = ProtectedData.Unprotect(protectedData, null,
                                            DataProtectionScope.CurrentUser);
 
+#endif
             s = New(data);
 
             return s;
@@ -400,7 +410,7 @@ namespace Microsoft.PowerShell
         internal string IV { get; }
     }
 
-#if CORECLR
+#if !UNIX
 
     // The DPAPIs implemented in this section are temporary workaround.
     // CoreCLR team will bring 'ProtectedData' type to Project K eventually.
@@ -421,7 +431,9 @@ namespace Microsoft.PowerShell
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
             if (userData == null)
+            {
                 throw new ArgumentNullException("userData");
+            }
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -446,13 +458,14 @@ namespace Microsoft.PowerShell
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
                 unsafe
                 {
-                    if (!CAPI.CryptProtectData(new IntPtr(&dataIn),
-                                                string.Empty,
-                                                new IntPtr(&entropy),
-                                                IntPtr.Zero,
-                                                IntPtr.Zero,
-                                                dwFlags,
-                                                new IntPtr(&blob)))
+                    if (!CAPI.CryptProtectData(
+                        pDataIn: new IntPtr(&dataIn),
+                        szDataDescr: string.Empty,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&blob)))
                     {
                         int lastWin32Error = Marshal.GetLastWin32Error();
 
@@ -473,7 +486,9 @@ namespace Microsoft.PowerShell
 
                 // In some cases, the API would fail due to OOM but simply return a null pointer.
                 if (blob.pbData == IntPtr.Zero)
+                {
                     throw new OutOfMemoryException();
+                }
 
                 byte[] encryptedData = new byte[(int)blob.cbData];
                 Marshal.Copy(blob.pbData, encryptedData, 0, encryptedData.Length);
@@ -483,9 +498,13 @@ namespace Microsoft.PowerShell
             finally
             {
                 if (pbDataIn.IsAllocated)
+                {
                     pbDataIn.Free();
+                }
                 if (pOptionalEntropy.IsAllocated)
+                {
                     pOptionalEntropy.Free();
+                }
                 if (blob.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(blob.pbData, blob.cbData);
@@ -499,11 +518,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-#if UNIX
-            throw new PlatformNotSupportedException(Serialization.DeserializeSecureStringNotSupported);
-#else
             if (encryptedData == null)
+            {
                 throw new ArgumentNullException("encryptedData");
+            }
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -525,22 +543,30 @@ namespace Microsoft.PowerShell
 
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
+                {
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
+                }
+
                 unsafe
                 {
-                    if (!CAPI.CryptUnprotectData(new IntPtr(&dataIn),
-                                                 IntPtr.Zero,
-                                                 new IntPtr(&entropy),
-                                                 IntPtr.Zero,
-                                                 IntPtr.Zero,
-                                                 dwFlags,
-                                                 new IntPtr(&userData)))
+                    if (!CAPI.CryptUnprotectData(
+                        pDataIn: new IntPtr(&dataIn),
+                        ppszDataDescr: IntPtr.Zero,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&userData)))
+                    {
                         throw new CryptographicException(Marshal.GetLastWin32Error());
+                    }
                 }
 
                 // In some cases, the API would fail due to OOM but simply return a null pointer.
                 if (userData.pbData == IntPtr.Zero)
+                {
                     throw new OutOfMemoryException();
+                }
 
                 byte[] data = new byte[(int)userData.cbData];
                 Marshal.Copy(userData.pbData, data, 0, data.Length);
@@ -550,16 +576,19 @@ namespace Microsoft.PowerShell
             finally
             {
                 if (pbDataIn.IsAllocated)
+                {
                     pbDataIn.Free();
+                }
                 if (pOptionalEntropy.IsAllocated)
+                {
                     pOptionalEntropy.Free();
+                }
                 if (userData.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(userData.pbData, userData.cbData);
                     CAPI.LocalFree(userData.pbData);
                 }
             }
-#endif
         }
     }
 
