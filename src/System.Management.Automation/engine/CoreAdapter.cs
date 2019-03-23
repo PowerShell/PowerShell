@@ -354,14 +354,16 @@ namespace System.Management.Automation
             {
                 Exception inner = ex.InnerException ?? ex;
                 newParameters[0] = inner.Message;
-                return new ExtendedTypeSystemException(targetErrorId,
+                return new ExtendedTypeSystemException(
+                    targetErrorId,
                     inner,
                     resourceString,
                     newParameters);
             }
 
             newParameters[0] = e.Message;
-            return new ExtendedTypeSystemException(errorId,
+            return new ExtendedTypeSystemException(
+                errorId,
                 e,
                 resourceString,
                 newParameters);
@@ -380,8 +382,11 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseGetTypeNameHierarchy", "CatchFromBaseGetTypeNameHierarchyTI",
-                                   ExtendedTypeSystem.ExceptionRetrievingTypeNameHierarchy);
+                throw NewException(
+                    e,
+                    "CatchFromBaseGetTypeNameHierarchy",
+                    "CatchFromBaseGetTypeNameHierarchyTI",
+                    ExtendedTypeSystem.ExceptionRetrievingTypeNameHierarchy);
             }
         }
 
@@ -394,8 +399,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseGetMember", "CatchFromBaseGetMemberTI",
-                    ExtendedTypeSystem.ExceptionGettingMember, memberName);
+                throw NewException(
+                    e,
+                    "CatchFromBaseGetMember",
+                    "CatchFromBaseGetMemberTI",
+                    ExtendedTypeSystem.ExceptionGettingMember,
+                    memberName);
             }
         }
 
@@ -408,8 +417,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseGetMember", "CatchFromBaseGetMemberTI",
-                    ExtendedTypeSystem.ExceptionGettingMember, nameof(predicate));
+                throw NewException(
+                    e,
+                    "CatchFromBaseGetMember",
+                    "CatchFromBaseGetMemberTI",
+                    ExtendedTypeSystem.ExceptionGettingMember,
+                    nameof(predicate));
             }
         }
 
@@ -422,7 +435,10 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseGetMembers", "CatchFromBaseGetMembersTI",
+                throw NewException(
+                    e,
+                    "CatchFromBaseGetMembers",
+                    "CatchFromBaseGetMembersTI",
                     ExtendedTypeSystem.ExceptionGettingMembers);
             }
         }
@@ -440,7 +456,8 @@ namespace System.Management.Automation
             catch (TargetInvocationException ex)
             {
                 Exception inner = ex.InnerException ?? ex;
-                throw new GetValueInvocationException("CatchFromBaseAdapterGetValueTI",
+                throw new GetValueInvocationException(
+                    "CatchFromBaseAdapterGetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenGetting,
                     property.Name, inner.Message);
@@ -448,7 +465,8 @@ namespace System.Management.Automation
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                throw new GetValueInvocationException("CatchFromBaseAdapterGetValue",
+                throw new GetValueInvocationException(
+                    "CatchFromBaseAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
                     property.Name, e.Message);
@@ -464,7 +482,8 @@ namespace System.Management.Automation
             catch (TargetInvocationException ex)
             {
                 Exception inner = ex.InnerException ?? ex;
-                throw new SetValueInvocationException("CatchFromBaseAdapterSetValueTI",
+                throw new SetValueInvocationException(
+                    "CatchFromBaseAdapterSetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenSetting,
                     property.Name, inner.Message);
@@ -472,7 +491,8 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                throw new SetValueInvocationException("CatchFromBaseAdapterSetValue",
+                throw new SetValueInvocationException(
+                    "CatchFromBaseAdapterSetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,
                     property.Name, e.Message);
@@ -488,8 +508,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBasePropertyIsSettable", "CatchFromBasePropertyIsSettableTI",
-                    ExtendedTypeSystem.ExceptionRetrievingPropertyWriteState, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBasePropertyIsSettable",
+                    "CatchFromBasePropertyIsSettableTI",
+                    ExtendedTypeSystem.ExceptionRetrievingPropertyWriteState,
+                    property.Name);
             }
         }
 
@@ -502,8 +526,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBasePropertyIsGettable", "CatchFromBasePropertyIsGettableTI",
-                    ExtendedTypeSystem.ExceptionRetrievingPropertyReadState, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBasePropertyIsGettable",
+                    "CatchFromBasePropertyIsGettableTI",
+                    ExtendedTypeSystem.ExceptionRetrievingPropertyReadState,
+                    property.Name);
             }
         }
 
@@ -516,8 +544,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBasePropertyType", "CatchFromBasePropertyTypeTI",
-                    ExtendedTypeSystem.ExceptionRetrievingPropertyType, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBasePropertyType",
+                    "CatchFromBasePropertyTypeTI",
+                    ExtendedTypeSystem.ExceptionRetrievingPropertyType,
+                    property.Name);
             }
         }
 
@@ -530,8 +562,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBasePropertyToString", "CatchFromBasePropertyToStringTI",
-                    ExtendedTypeSystem.ExceptionRetrievingPropertyString, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBasePropertyToString",
+                    "CatchFromBasePropertyToStringTI",
+                    ExtendedTypeSystem.ExceptionRetrievingPropertyString,
+                    property.Name);
             }
         }
 
@@ -544,8 +580,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBasePropertyAttributes", "CatchFromBasePropertyAttributesTI",
-                    ExtendedTypeSystem.ExceptionRetrievingPropertyAttributes, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBasePropertyAttributes",
+                    "CatchFromBasePropertyAttributesTI",
+                    ExtendedTypeSystem.ExceptionRetrievingPropertyAttributes,
+                    property.Name);
             }
         }
 
@@ -561,10 +601,13 @@ namespace System.Management.Automation
             catch (TargetInvocationException ex)
             {
                 Exception inner = ex.InnerException ?? ex;
-                throw new MethodInvocationException("CatchFromBaseAdapterMethodInvokeTI",
+                throw new MethodInvocationException(
+                    "CatchFromBaseAdapterMethodInvokeTI",
                     inner,
                     ExtendedTypeSystem.MethodInvocationException,
-                    method.Name, arguments.Length, inner.Message);
+                    method.Name,
+                    arguments.Length,
+                    inner.Message);
             }
             catch (FlowControlException) { throw; }
             catch (ScriptCallDepthException) { throw; }
@@ -580,10 +623,13 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                throw new MethodInvocationException("CatchFromBaseAdapterMethodInvoke",
+                throw new MethodInvocationException(
+                    "CatchFromBaseAdapterMethodInvoke",
                     e,
                     ExtendedTypeSystem.MethodInvocationException,
-                    method.Name, arguments.Length, e.Message);
+                    method.Name,
+                    arguments.Length,
+                    e.Message);
             }
         }
 
@@ -596,8 +642,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseMethodDefinitions", "CatchFromBaseMethodDefinitionsTI",
-                    ExtendedTypeSystem.ExceptionRetrievingMethodDefinitions, method.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseMethodDefinitions",
+                    "CatchFromBaseMethodDefinitionsTI",
+                    ExtendedTypeSystem.ExceptionRetrievingMethodDefinitions,
+                    method.Name);
             }
         }
 
@@ -610,8 +660,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseMethodToString", "CatchFromBaseMethodToStringTI",
-                    ExtendedTypeSystem.ExceptionRetrievingMethodString, method.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseMethodToString",
+                    "CatchFromBaseMethodToStringTI",
+                    ExtendedTypeSystem.ExceptionRetrievingMethodString,
+                    method.Name);
             }
         }
         #endregion method
@@ -626,8 +680,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseParameterizedPropertyType", "CatchFromBaseParameterizedPropertyTypeTI",
-                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertytype, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseParameterizedPropertyType",
+                    "CatchFromBaseParameterizedPropertyTypeTI",
+                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertytype,
+                    property.Name);
             }
         }
 
@@ -640,8 +698,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseParameterizedPropertyIsSettable", "CatchFromBaseParameterizedPropertyIsSettableTI",
-                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyWriteState, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseParameterizedPropertyIsSettable",
+                    "CatchFromBaseParameterizedPropertyIsSettableTI",
+                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyWriteState,
+                    property.Name);
             }
         }
 
@@ -654,8 +716,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseParameterizedPropertyIsGettable", "CatchFromBaseParameterizedPropertyIsGettableTI",
-                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyReadState, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseParameterizedPropertyIsGettable",
+                    "CatchFromBaseParameterizedPropertyIsGettableTI",
+                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyReadState,
+                    property.Name);
             }
         }
 
@@ -668,8 +734,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseParameterizedPropertyDefinitions", "CatchFromBaseParameterizedPropertyDefinitionsTI",
-                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyDefinitions, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseParameterizedPropertyDefinitions",
+                    "CatchFromBaseParameterizedPropertyDefinitionsTI",
+                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyDefinitions,
+                    property.Name);
             }
         }
 
@@ -682,18 +752,22 @@ namespace System.Management.Automation
             catch (TargetInvocationException ex)
             {
                 Exception inner = ex.InnerException ?? ex;
-                throw new GetValueInvocationException("CatchFromBaseAdapterParameterizedPropertyGetValueTI",
+                throw new GetValueInvocationException(
+                    "CatchFromBaseAdapterParameterizedPropertyGetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenGetting,
-                    property.Name, inner.Message);
+                    property.Name,
+                    inner.Message);
             }
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                throw new GetValueInvocationException("CatchFromBaseParameterizedPropertyAdapterGetValue",
+                throw new GetValueInvocationException(
+                    "CatchFromBaseParameterizedPropertyAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
-                    property.Name, e.Message);
+                    property.Name,
+                    e.Message);
             }
         }
 
@@ -706,18 +780,22 @@ namespace System.Management.Automation
             catch (TargetInvocationException ex)
             {
                 Exception inner = ex.InnerException ?? ex;
-                throw new SetValueInvocationException("CatchFromBaseAdapterParameterizedPropertySetValueTI",
+                throw new SetValueInvocationException(
+                    "CatchFromBaseAdapterParameterizedPropertySetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenSetting,
-                    property.Name, inner.Message);
+                    property.Name,
+                    inner.Message);
             }
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                throw new SetValueInvocationException("CatchFromBaseAdapterParameterizedPropertySetValue",
+                throw new SetValueInvocationException(
+                    "CatchFromBaseAdapterParameterizedPropertySetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,
-                    property.Name, e.Message);
+                    property.Name,
+                    e.Message);
             }
         }
 
@@ -730,8 +808,12 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                throw NewException(e, "CatchFromBaseParameterizedPropertyToString", "CatchFromBaseParameterizedPropertyToStringTI",
-                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyString, property.Name);
+                throw NewException(
+                    e,
+                    "CatchFromBaseParameterizedPropertyToString",
+                    "CatchFromBaseParameterizedPropertyToStringTI",
+                    ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyString,
+                    property.Name);
             }
         }
 
