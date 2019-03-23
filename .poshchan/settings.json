@@ -3,9 +3,9 @@
     "azdevops": {
         "build_targets": {
             "staging": "PowerShell-CI-static-analysis",
-            "windows": "PowerShell-CI-windows",
-            "macos": "PowerShell-CI-macos",
-            "linux": "PowerShell-CI-linux",
+            "windows": "PowerShell-CI-Windows",
+            "macos": "PowerShell-CI-macOS",
+            "linux": "PowerShell-CI-Linux",
             "all": [
                 "PowerShell-CI-static-analysis",
                 "PowerShell-CI-windows",
