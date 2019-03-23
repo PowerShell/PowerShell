@@ -9,7 +9,7 @@
             "all": [
                 "PowerShell-CI-static-analysis",
                 "PowerShell-CI-Windows",
-                "PowerShell-CI-macos",
+                "PowerShell-CI-macOS",
                 "PowerShell-CI-linux"
             ]
         },
