@@ -28,41 +28,7 @@ if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    $trueString = 'True'
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule')
-    {
-        return $true
-    }
-
-    # if [feature] is in the commit message,
-    # Run Daily tests
-    $commitMessage = Get-CommitMessage
-    Write-log -message "commitMessage: $commitMessage"
-
-    if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
-    {
-        Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
-        return $true
-    }
-    else
-    {
-        return $false
-    }
-}
-
-# Returns the commit message for the current build
-function Get-CommitMessage
-{
-    if ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
-    {
-        # We are in VSTS and have a commit ID in the Source Version Message
-        $commitId = $Matches[1]
-        return &git log --format=%B -n 1 $commitId
-    }
-    else
-    {
-        Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
-    }
+    return $true
 }
 
 # Sets a build variable
@@ -257,7 +223,7 @@ function Invoke-CITest
             $ExcludeTag = @('CI')
         }
         Default {
-            throw "Unknow TagSet: '$TagSet'"
+            throw "Unknown TagSet: '$TagSet'"
         }
     }
 
