@@ -5,12 +5,12 @@
             "staging": "PowerShell-CI-static-analysis",
             "windows": "PowerShell-CI-windows",
             "macos": "PowerShell-CI-macos",
-            "linux": "PowerShell-CI-Linux",
+            "linux": "PowerShell-CI-linux",
             "all": [
                 "PowerShell-CI-static-analysis",
                 "PowerShell-CI-windows",
                 "PowerShell-CI-macos",
-                "PowerShell-CI-Linux"
+                "PowerShell-CI-linux"
             ]
         },
         "authorized_users": [
