@@ -8,7 +8,7 @@
             "linux": "PowerShell-CI-Linux",
             "all": [
                 "PowerShell-CI-static-analysis",
-                "PowerShell-CI-windows",
+                "PowerShell-CI-Windows",
                 "PowerShell-CI-macos",
                 "PowerShell-CI-linux"
             ]
