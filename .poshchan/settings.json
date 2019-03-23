@@ -10,7 +10,7 @@
                 "PowerShell-CI-static-analysis",
                 "PowerShell-CI-Windows",
                 "PowerShell-CI-macOS",
-                "PowerShell-CI-linux"
+                "PowerShell-CI-Linux"
             ]
         },
         "authorized_users": [
