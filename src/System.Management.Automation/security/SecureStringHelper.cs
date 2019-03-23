@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell
 
 #if UNIX
             // DPAPI isn't supported in UNIX, so we just translate the byte-array back to a string
-            data = ByteArrayFromString(input);
+            data = protectedData;
 #else
             data = ProtectedData.Unprotect(protectedData, null,
                                            DataProtectionScope.CurrentUser);
