@@ -93,7 +93,6 @@ function Invoke-CIBuild
     }
 
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
-
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -131,7 +130,7 @@ function Invoke-CIInstall
     if ($env:TF_BUILD -and !$SkipUser.IsPresent)
     {
         # Generate new credential for CI (only) remoting tests.
-        Write-Log -Message "Creating account for remoting tests in CI."
+        Write-Verbose "Creating account for remoting tests in CI." -Verbose
 
         # Password
         $randomObj = [System.Random]::new()
