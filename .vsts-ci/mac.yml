@@ -32,8 +32,6 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   # Turn off Homebrew analytics
   HOMEBREW_NO_ANALYTICS: 1
-  # Enable VSTS debug mode until stabilitized
-  system.debug: 'true'
 
 resources:
 - repo: self
