@@ -79,7 +79,7 @@ To run the link-checker, follow these steps:
 
 ### Code Editor
 
-You should use the multi-platform [Visual Studio Code (VSCode)][use-vscode-editor].
+You should use the multi-platform [Visual Studio Code (VS Code)][use-vscode-editor].
 
 ### Building and testing
 
