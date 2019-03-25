@@ -196,17 +196,6 @@ namespace System.Management.Automation
         /// <param name="suggestion">The suggestion to convert to string.</param>
         public static implicit operator string(SuggestionInfo suggestion) => suggestion.ToString();
 
-        internal static readonly Dictionary<string, SuggestionInfo> MiscSuggestionLibrary =
-            new Dictionary<string, SuggestionInfo>
-            {
-                {
-                    "Transaction",
-                    new SuggestionInfo(
-                        ScriptBlock.CreateDelayParsedScriptBlock(
-                            SuggestionStrings.Suggestion_StartTransaction, isProductCode: true))
-                }
-            };
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SuggestionInfo" /> class.
         /// </summary>

@@ -841,8 +841,7 @@ namespace System.Management.Automation
                                     TransactionStrings.TransactionTimedOut),
                                 "TRANSACTION_TIMEOUT",
                                 ErrorCategory.InvalidOperation,
-                                e,
-                                SuggestionInfo.MiscSuggestionLibrary["Transaction"]);
+                                e);
                             errorRecord.SetInvocationInfo(Command.MyInvocation);
 
                             e = new CmdletInvocationException(errorRecord);
