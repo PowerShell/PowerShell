@@ -5223,6 +5223,8 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         /// </summary>
         protected override void EndProcessing()
         {
+            WriteWarning(RemotingErrorIdStrings.PSCoreRemotingEnableWarning);
+
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
             bool whatIf = false;
             // confirm is always true to start with
@@ -5426,6 +5428,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         /// </summary>
         protected override void EndProcessing()
         {
+            WriteWarning(RemotingErrorIdStrings.PSCoreRemotingDisableWarning);
             WriteWarning(StringUtil.Format(RemotingErrorIdStrings.DcsWarningMessage));
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, disablePSRemotingFormat));
 
