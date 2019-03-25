@@ -212,6 +212,18 @@ namespace System.Management.Automation
 
             _suggestion = suggestion;
             _args = args;
+
+            var result = _args == null || _args.Length == 0
+                ? _suggestion.Invoke()
+                : _suggestion.Invoke(_args);
+
+            Collection<string> values = new Collection<string>();
+            foreach (var item in result)
+            {
+                values.Add(item.ToString());
+            }
+
+            SuggestionText = string.Join(' ', values);
         }
 
         /// <summary>
@@ -243,40 +255,10 @@ namespace System.Management.Automation
 
         private object[] _args { get; }
 
-        private string _suggestionText;
         /// <summary>
         /// Gets the final suggestion text.
         /// </summary>
-        public string SuggestionText
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_suggestionText))
-                {
-                    try
-                    {
-                        var result = _args == null || _args.Length == 0
-                            ? _suggestion.Invoke()
-                            : _suggestion.Invoke(_args);
-                        Collection<string> values = new Collection<string>();
-                        foreach (var item in result)
-                        {
-                            values.Add(item.ToString());
-                        }
-
-                        _suggestionText = string.Join(' ', values);
-                    }
-                    catch
-                    {
-                        // If any suggestions throw an error generating the string, they should be ignored.
-                        // We give the benefit of the doubt and don't cache a dummy string.
-                        _suggestionText = string.Empty;
-                    }
-                }
-
-                return _suggestionText;
-            }
-        }
+        public string SuggestionText { get; }
 
         /// <summary>
         /// Gets the final suggestion text.
