@@ -682,7 +682,7 @@ namespace System.Management.Automation.Interpreter
     internal class ThreadLocal<T>
     {
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
-        private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
+        private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
 
         public ThreadLocal()

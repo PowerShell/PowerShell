@@ -315,7 +315,7 @@ namespace System.Management.Automation
                     ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
                 }
 
-#pragma warning enable 56515
+#pragma warning restore 56515
 
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
@@ -423,7 +423,7 @@ namespace System.Management.Automation
                         // The COM object is a collection and also a IDispatch interface, so we try to get a
                         // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
                         var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
-                                                        args: Utils.EmptyArray<object>(), byRef: null,
+                                                        args: Array.Empty<object>(), byRef: null,
                                                         invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
                         enumVariant = result as COM.IEnumVARIANT;
                         if (enumVariant != null)

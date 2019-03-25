@@ -14,4 +14,6 @@
         'Start-WebListener'
         'Stop-WebListener'
     )
+    AliasesToExport = @()
+    CmdletsToExport = @()
 }

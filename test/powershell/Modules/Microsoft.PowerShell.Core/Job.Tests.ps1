@@ -32,6 +32,13 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty
             receive-job -id $j.id | Should -Be 2
         }
+        It "-RunAs32 not supported from 64-bit pwsh" -Skip:(-not [System.Environment]::Is64BitProcess) {
+            { Start-Job -ScriptBlock {} -RunAs32 } | Should -Throw -ErrorId "RunAs32NotSupported,Microsoft.PowerShell.Commands.StartJobCommand"
+        }
+        It "-RunAs32 supported in 32-bit pwsh" -Skip:([System.Environment]::Is64BitProcess) {
+            $job = Start-Job -ScriptBlock { 1+1 } -RunAs32
+            Receive-Job $job -Wait | Should -Be 2
+        }
     }
     Context "Jobs with arguments" {
         It "Start-Job accepts arguments" {

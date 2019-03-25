@@ -219,17 +219,17 @@ namespace System.Management.Automation.ComInterop
 
         public FieldInfo[] GetFields(BindingFlags bindingAttr)
         {
-            return Utils.EmptyArray<FieldInfo>();
+            return Array.Empty<FieldInfo>();
         }
 
         public MemberInfo[] GetMember(string name, BindingFlags bindingAttr)
         {
-            return Utils.EmptyArray<MemberInfo>();
+            return Array.Empty<MemberInfo>();
         }
 
         public MemberInfo[] GetMembers(BindingFlags bindingAttr)
         {
-            return Utils.EmptyArray<MemberInfo>();
+            return Array.Empty<MemberInfo>();
         }
 
         public MethodInfo GetMethod(string name, BindingFlags bindingAttr)
@@ -244,7 +244,7 @@ namespace System.Management.Automation.ComInterop
 
         public MethodInfo[] GetMethods(BindingFlags bindingAttr)
         {
-            return Utils.EmptyArray<MethodInfo>();
+            return Array.Empty<MethodInfo>();
         }
 
         public PropertyInfo GetProperty(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
@@ -259,7 +259,7 @@ namespace System.Management.Automation.ComInterop
 
         public PropertyInfo[] GetProperties(BindingFlags bindingAttr)
         {
-            return Utils.EmptyArray<PropertyInfo>();
+            return Array.Empty<PropertyInfo>();
         }
 
         #endregion

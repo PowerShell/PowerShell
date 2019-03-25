@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject[] _eventArguments = new PSObject[0];
+        private PSObject[] _eventArguments = Array.Empty<PSObject>();
 
         /// <summary>
         /// Data relating to this event.
