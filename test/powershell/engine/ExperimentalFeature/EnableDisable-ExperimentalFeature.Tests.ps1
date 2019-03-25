@@ -66,6 +66,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     ) {
         param ($scope, $configPath)
 
+        throw "Failure in elevated test"
         '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $configPath
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "Test config should enable ExpTest.FeatureOne"

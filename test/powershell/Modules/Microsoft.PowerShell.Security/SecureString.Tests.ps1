@@ -19,6 +19,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
     }
 
     It "Can convert to a secure string" {
+        throw "This is a simulated test failure"
         $ss = ConvertTo-SecureString -AsPlainText -Force abcd
         $ss | Should -BeOfType SecureString
     }
