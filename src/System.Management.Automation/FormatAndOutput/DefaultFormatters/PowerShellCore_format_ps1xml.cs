@@ -791,81 +791,70 @@ namespace System.Management.Automation.Runspaces
                                         {
                                             $myinv.InvocationName + "" : ""
                                         }
-
-                                        if ($_.Suggestions.Count > 0) {
-                                            foreach ($item in $_.Suggestions) {
-                                                if (-not [string]::IsNullOrEmpty($item -as [string])) {
-                                                    $item + ""`n""
-                                                }
-                                            }
-                                        }
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
-                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
-                                        $_.Exception.Message
-                                   }
-                                   else
-                                   {
-                                        $myinv = $_.InvocationInfo
-                                        if ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
-                                            $posmsg = $myinv.PositionMessage
-                                        } else {
-                                            $posmsg = """"
+                                    # Whitespace creates newline due to -join on newline at the end
+                                    $NewLine = "" ""
+
+                                    $FormattedErrorStrings = @(
+                                        if ($_.FullyQualifiedErrorId -in ""NativeCommandErrorMessage"", ""NativeCommandError"") {
+                                            $_.Exception.Message
                                         }
+                                        else {
+                                            if ($ErrorView -eq ""CategoryView"") {
+                                                $_.CategoryInfo.GetMessage()
+                                                $NewLine
+                                            }
+                                            else {
+                                                if (-not $_.ErrorDetails -or -not $_.ErrorDetails.Message) {
+                                                    $_.Exception.Message
+                                                }
+                                                else {
+                                                    $_.ErrorDetails.Message
+                                                }
 
-                                        if ($posmsg -ne """")
-                                        {
-                                            $posmsg = ""`n"" + $posmsg
-                                        }
+                                                if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
+                                                    "" : $($_.PSMessageDetails)""
+                                                }
 
-                                        if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
-                                        }
+                                                if ($_.InvocationInfo -and ($_.InvocationInfo.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
+                                                    $_.InvocationInfo.PositionMessage
+                                                }
 
-                                        $indent = 4
+                                                $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+                                                if ($null -ne $errorCategoryMsg) {
+                                                    ""+ CategoryInfo          : $($_.ErrorCategory_Message)""
+                                                }
+                                                else {
+                                                    ""+ CategoryInfo          : $($_.CategoryInfo)""
+                                                }
 
-                                        $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+                                                ""+ FullyQualifiedErrorId : $($_.FullyQualifiedErrorId)""
 
-                                        if ($null -ne $errorCategoryMsg)
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
-                                        }
-                                        else
-                                        {
-                                            $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
-                                        }
-
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
-
-                                        $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
-
-                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
-                                        {
-                                            $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
-                                        }
-
-                                        if ($ErrorView -eq ""CategoryView"") {
-                                            $_.CategoryInfo.GetMessage()
-                                        }
-                                        elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            $_.Exception.Message + $posmsg + ""`n ""
-                                        } else {
-                                            $_.ErrorDetails.Message + $posmsg
-                                        }
-                                    }
-
-                                    if ($_.Suggestions.Count > 0) {
-                                        foreach ($item in $_.Suggestions) {
-                                            if (-not [string]::IsNullOrEmpty($item -as [string])) {
-                                                $item + ""`n""
+                                                $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+                                                if ($originInfo -and $originInfo.PSComputerName) {
+                                                    ""+ PSComputerName        : $($originInfo.PSComputerName)""
+                                                }
                                             }
                                         }
-                                    }
+
+                                        if ($_.Suggestions.Count -gt 0) {
+                                            $Prefix = "" "" * 2
+                                            $NewLine
+                                            ""Suggestions:""
+
+                                            foreach ($Item in $_.Suggestions) {
+                                                if (-not [string]::IsNullOrEmpty($item)) {
+                                                    ""${Prefix}${Item}""
+                                                }
+                                            }
+                                        }
+
+                                        $NewLine
+                                    )
+
+                                    $FormattedErrorStrings -join ""`n""
                                 ")
                     .EndEntry()
                 .EndControl());
