@@ -577,12 +577,6 @@ function Invoke-LinuxTestsCore
     }
     # create packages if it is a full build
     $isFullBuild = Test-DailyBuild
-    if (!$isFullBuild) {
-        $noSudoPesterParam['ThrowOnFailure'] = $true
-    }
-    if ($hasRunFailingTestTag) {
-        $noSudoPesterParam['IncludeFailingTest'] = $true
-    }
 
     # Get the experimental feature names and the tests associated with them
     $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
