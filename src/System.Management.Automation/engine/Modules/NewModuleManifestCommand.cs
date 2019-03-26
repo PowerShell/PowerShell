@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the GUID in the manifest file.
         /// </summary>
         [Parameter]
-        public Guid GUID
+        public Guid Guid
         {
             get { return _guid; }
 
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowNull]
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpInfoURI
+        public string HelpInfoUri
         {
             get { return _helpInfoUri; }
 
@@ -1070,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(CompatiblePSEditions), Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, nameof(GUID), Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.GUID), Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
 
                     BuildModuleManifest(result, nameof(Author), Modules.Author, !string.IsNullOrEmpty(_author), () => QuoteName(Author), streamWriter);
 
@@ -1120,7 +1120,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildPrivateDataInModuleManifest(result, streamWriter);
 
-                    BuildModuleManifest(result, nameof(HelpInfoURI), Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.HelpInfoURI), Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
 
                     BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
