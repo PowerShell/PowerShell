@@ -788,6 +788,7 @@ namespace Microsoft.PowerShell.Commands
                     Span<char> domainNameStr = stackalloc char[domainNameLength];
                     Win32Native.SID_NAME_USE accountType;
 
+                    // userNameLength and domainNameLength will be set to actual lengths.
                     if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
                     {
                         break;
