@@ -10,14 +10,14 @@
 
 - Add PowerShell remoting enable/disable cmdlet warning messages (#9203)
 - Fix for `FormatTable` remote deserialization regression (#9116)
-- Update the task-based async APIs added to PowerShell to return a Task object directly (#9079)
+- Update the task-based `async` APIs added to PowerShell to return a Task object directly (#9079)
 - Add 5 `InvokeAsync` overloads and `StopAsync` to the `PowerShell` type (#8056) (Thanks @KirkMunro!)
 
 ### General Cmdlet Updates and Fixes
 
 - Enable `SecureString` cmdlets for non-Windows by storing the plain text (#9199)
 - Add Obsolete message to `Send-MailMessage` (#9178)
-- Fix `Restart-Computer` to work on localhost when WinRM is not present (#9160)
+- Fix `Restart-Computer` to work on `localhost` when WinRM is not present (#9160)
 - Make `Start-Job` throw terminating error when PowerShell is being hosted (#9128)
 - Update version for `PowerShell.Native` and hosting tests (#8983)
 
