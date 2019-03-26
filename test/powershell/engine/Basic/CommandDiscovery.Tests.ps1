@@ -84,4 +84,33 @@ Describe "Command Discovery tests" -Tags "CI" {
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }
+
+    Context "Get-Command should use globbing for scripts" {
+        BeforeAll {
+            $firstResult = '[first script]'
+            $secondResult = 'alt script'
+            setup -f '[test1].ps1' -content "'$firstResult'"
+            setup -f '1.ps1' -content "'$secondResult'"
+
+            $gcmWithWildcardCases = @(
+                @{command = '.\?[tb]est1?.ps1'; expectedCommand = '[test1].ps1'; expectedCommandCount =1; name = '''.\?[tb]est1?.ps1'''}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '?[tb]est1?.ps1'); expectedCommand = '[test1].ps1'; expectedCommandCount =1 ; name = '''.\?[tb]est1?.ps1'' by fully qualified path'}
+                @{command = '.\[test1].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =1; name = '''.\[test1].ps1'''}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =1 ; name = '''.\[test1].ps1'' by fully qualified path'}
+            )
+
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Get-Command <name> should return <expectedCommandCount> command named '<expectedCommand>'" -TestCases $gcmWithWildcardCases {
+            param($command, $expectedCommand, $expectedCommandCount)
+            $commands = Get-Command -Name $command
+            $commands.Count | Should -Be $expectedCommandCount
+            $commands.Name | Should -BeExactly $expectedCommand
+        }
+    }
 }

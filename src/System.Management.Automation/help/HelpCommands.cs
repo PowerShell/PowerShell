@@ -240,9 +240,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            HelpSystem helpSystem = this.Context.HelpSystem;
             try
             {
-                this.Context.HelpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
 
                 bool failed = false;
                 HelpCategory helpCategory = ToHelpCategory(Category, ref failed);
@@ -268,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
                 // the idea is to use yield statement in the help lookup to speed up
                 // perceived user experience....So HelpSystem.GetHelp returns an
                 // IEnumerable..
-                IEnumerable<HelpInfo> helpInfos = this.Context.HelpSystem.GetHelp(helpRequest);
+                IEnumerable<HelpInfo> helpInfos = helpSystem.GetHelp(helpRequest);
                 // HelpCommand acts differently when there is just one help object and when
                 // there are more than one object...so handling this behavior through
                 // some variables.
@@ -319,13 +320,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // show errors only if there is no wildcard search or VerboseHelpErrors is true.
                 if (((countOfHelpInfos == 0) && (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target)))
-                    || this.Context.HelpSystem.VerboseHelpErrors)
+                    || helpSystem.VerboseHelpErrors)
                 {
                     // Check if there is any error happened. If yes,
                     // pipe out errors.
-                    if (this.Context.HelpSystem.LastErrors.Count > 0)
+                    if (helpSystem.LastErrors.Count > 0)
                     {
-                        foreach (ErrorRecord errorRecord in this.Context.HelpSystem.LastErrors)
+                        foreach (ErrorRecord errorRecord in helpSystem.LastErrors)
                         {
                             WriteError(errorRecord);
                         }
@@ -334,9 +335,11 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                this.Context.HelpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                HelpSystem_OnComplete();
+
                 // finally clear the ScriptBlockAst -> Token[] cache
-                this.Context.HelpSystem.ClearScriptBlockTokenCache();
+                helpSystem.ClearScriptBlockTokenCache();
             }
         }
 
@@ -657,9 +660,20 @@ namespace Microsoft.PowerShell.Commands
 
         private void HelpSystem_OnProgress(object sender, HelpProgressInfo arg)
         {
-            ProgressRecord record = new ProgressRecord(0, this.CommandInfo.Name, arg.Activity);
+            var record = new ProgressRecord(0, this.CommandInfo.Name, arg.Activity)
+            {
+                PercentComplete = arg.PercentComplete
+            };
 
-            record.PercentComplete = arg.PercentComplete;
+            WriteProgress(record);
+        }
+
+        private void HelpSystem_OnComplete()
+        {
+            var record = new ProgressRecord(0, this.CommandInfo.Name, "Completed")
+            {
+                RecordType = ProgressRecordType.Completed
+            };
 
             WriteProgress(record);
         }

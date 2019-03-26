@@ -34,7 +34,7 @@ phases:
     condition: succeededOrFailed()
 
   - powershell: |
-      Install-Module -Name pester -Scope CurrentUser -Force
+      Install-Module pester -Scope CurrentUser -Force
       Install-Module -Name ThreadJob -Scope CurrentUser -Force
     displayName: Install Dependencies
     condition: succeededOrFailed()
@@ -46,7 +46,7 @@ phases:
   # Sometimes this folder is left behind with root permissions and causes many problems
   - bash: |
       sudo rm -rf ~/.npm/_cacache
-    displayName: Remove Old NPM Caches
+    displayName: Remove Old npm Caches
     condition: succeededOrFailed()
 
   - powershell: |

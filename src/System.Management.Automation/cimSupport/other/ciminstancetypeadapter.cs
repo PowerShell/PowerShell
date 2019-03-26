@@ -133,6 +133,44 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
+        /// <inheritdoc />
+        public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
+        {
+            if (predicate == null)
+            {
+                throw new PSArgumentNullException(nameof(predicate));
+            }
+
+            // baseObject should never be null
+            CimInstance cimInstance = baseObject as CimInstance;
+            if (cimInstance == null)
+            {
+                string msg = string.Format(
+                    CultureInfo.InvariantCulture,
+                    CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
+                    "baseObject",
+                    typeof(CimInstance).ToString());
+                throw new PSInvalidOperationException(msg);
+            }
+
+            if (predicate(RemotingConstants.ComputerNameNoteProperty))
+            {
+                PSAdaptedProperty prop = GetPSComputerNameAdapter(cimInstance);
+                return prop;
+            }
+
+            foreach (CimProperty cimProperty in cimInstance.CimInstanceProperties)
+            {
+                if (cimProperty != null && predicate(cimProperty.Name))
+                {
+                    PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
+                    return prop;
+                }
+            }
+
+            return null;
+        }
+
         internal static string CimTypeToTypeNameDisplayString(CimType cimType)
         {
             switch (cimType)

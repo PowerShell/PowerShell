@@ -1882,14 +1882,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ArgumentList != null)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (string str in ArgumentList)
-                {
-                    sb.Append(str);
-                    sb.Append(' ');
-                }
-
-                startInfo.Arguments = sb.ToString(); ;
+                startInfo.Arguments = string.Join(' ', ArgumentList);
             }
 
             if (WorkingDirectory != null)
@@ -2311,21 +2304,21 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder builder = new StringBuilder();
             string str = executableFileName.Trim();
-            bool flag = str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal);
+            bool flag = str.StartsWith('"') && str.EndsWith('"');
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             builder.Append(str);
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                builder.Append(" ");
+                builder.Append(' ');
                 builder.Append(arguments);
             }
 

@@ -95,7 +95,7 @@ namespace System.Management.Automation
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
-            : base(propertyName, Utils.EmptyArray<Attribute>())
+            : base(propertyName, Array.Empty<Attribute>())
         {
             IsReadOnly = isReadOnly;
             Attributes = propertyAttributes;

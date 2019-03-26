@@ -426,6 +426,15 @@
   <data name="ReleaseNotes" xml:space="preserve">
     <value>ReleaseNotes of this module</value>
   </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Prerelease string of this module</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Flag to indicate whether the module requires explicit user acceptance for install/update/save</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>External dependent modules of this module</value>
+  </data>
   <data name="EndOfManifestHashTable" xml:space="preserve">
     <value>End of {0} hashtable</value>
   </data>

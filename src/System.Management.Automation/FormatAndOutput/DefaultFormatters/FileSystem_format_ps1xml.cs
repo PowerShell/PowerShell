@@ -42,28 +42,33 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_FileSystemTypes(CustomControl[] sharedControls)
         {
-            const string LengthScriptBlock =
-@"if ($_ -is [System.IO.DirectoryInfo]) { return '' }
-if ($_.Attributes -band [System.IO.FileAttributes]::Offline)
-{
-    return '({0})' -f $_.Length
-}
-return $_.Length";
-
             yield return new FormatViewDefinition("children",
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .AddHeader(Alignment.Left, label: "Mode", width: 7)
                     .AddHeader(Alignment.Right, label: "LastWriteTime", width: 25)
                     .AddHeader(Alignment.Right, label: "Length", width: 14)
-                    .AddHeader()
+                    .AddHeader(Alignment.Left, label: "Name")
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("ModeWithoutHardLink")
+                        .AddPropertyColumn("LastWriteTimeString")
+                        .AddPropertyColumn("LengthString")
+                        .AddPropertyColumn("NameString")
+                    .EndRowDefinition()
+                .EndTable());
+
+            yield return new FormatViewDefinition("childrenWithHardlink",
+                TableControl.Create()
+                    .GroupByProperty("PSParentPath", customControl: sharedControls[0])
+                    .AddHeader(Alignment.Left, label: "Mode", width: 7)
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 25)
+                    .AddHeader(Alignment.Right, label: "Length", width: 14)
+                    .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("Mode")
-                        .AddScriptBlockColumn(@"
-                                    [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
-                                ")
-                        .AddScriptBlockColumn(LengthScriptBlock)
-                        .AddPropertyColumn("Name")
+                        .AddPropertyColumn("LastWriteTimeString")
+                        .AddPropertyColumn("LengthString")
+                        .AddPropertyColumn("NameString")
                     .EndRowDefinition()
                 .EndTable());
 
@@ -72,7 +77,7 @@ return $_.Length";
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .StartEntry(entrySelectedByType: new[] { "System.IO.FileInfo" })
                         .AddItemProperty(@"Name")
-                        .AddItemScriptBlock(LengthScriptBlock, label: "Length")
+                        .AddItemProperty("LengthString", label: "Length")
                         .AddItemProperty(@"CreationTime")
                         .AddItemProperty(@"LastWriteTime")
                         .AddItemProperty(@"LastAccessTime")

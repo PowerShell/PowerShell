@@ -6,7 +6,7 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         Register-PackageSource -Name nuget.org -Location https://api.nuget.org/v3/index.json -ProviderName NuGet -ErrorAction SilentlyContinue
 
         $nugetPackage = "netDumbster"
-        Install-Package -Name $nugetPackage -ProviderName NuGet -Scope CurrentUser -Force
+        Install-Package -Name $nugetPackage -ProviderName NuGet -Scope CurrentUser -Force -Source 'nuget.org'
 
         $dll = "$(Split-Path (Get-Package $nugetPackage).Source)\lib\netstandard2.0\netDumbster.dll"
         Add-Type -Path $dll
@@ -61,6 +61,16 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
                 SmtpServer = "127.0.0.1"
             }
         }
+        @{
+            Name = "with No Subject"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                ReplyTo = "noreply@example.com"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
     )
 
     It "Can send mail message using named parameters <Name>" -TestCases $testCases {
@@ -68,7 +78,16 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
 
         $server | Should -Not -Be $null
 
-        Send-MailMessage @InputObject -ErrorAction SilentlyContinue
+        $powershell = [PowerShell]::Create()
+
+        $null = $powershell.AddCommand("Send-MailMessage").AddParameters($InputObject).AddParameter("ErrorAction","SilentlyContinue")
+
+        $powershell.Invoke()
+
+        $warnings = $powershell.Streams.Warning
+
+        $warnings.count | Should -BeGreaterThan 0
+        $warnings[0].ToString() | Should  -BeLike  "The command 'Send-MailMessage' is obsolete. *"
 
         $mail = Read-Mail
 
@@ -78,7 +97,9 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
@@ -101,7 +122,9 @@ Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
         $mail.Headers["To"] | Should -BeExactly $InputObject.To
         $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
-        $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
 
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body

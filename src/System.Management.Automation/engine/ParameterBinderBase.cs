@@ -850,7 +850,7 @@ namespace System.Management.Automation
             }
 
             var psobj = parameterValue as PSObject;
-            if (psobj != null && !psobj.immediateBaseObjectIsEmpty)
+            if (psobj != null && !psobj.ImmediateBaseObjectIsEmpty)
             {
                 // See if the base object is of the same type or
                 // as subclass of the parameter

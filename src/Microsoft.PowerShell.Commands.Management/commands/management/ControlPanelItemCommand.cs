@@ -268,7 +268,7 @@ $result
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
                         ps.AddScript(TestHeadlessServerScript);
-                        Collection<PSObject> psObjectCollection = ps.Invoke(new object[0]);
+                        Collection<PSObject> psObjectCollection = ps.Invoke(Array.Empty<object>());
                         Dbg.Assert(psObjectCollection != null && psObjectCollection.Count == 1, "invoke should never return null, there should be only one return item");
                         if (LanguagePrimitives.IsTrue(PSObject.Base(psObjectCollection[0])))
                         {
