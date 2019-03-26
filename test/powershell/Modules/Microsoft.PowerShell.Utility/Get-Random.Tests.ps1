@@ -126,7 +126,7 @@ Describe "Get-Random" -Tags "CI" {
 
     It "Should return a number from 1,2,3,5,8,13 " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13
-        $randomNumber | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
     }
 
     It "Should return an array " {
@@ -138,21 +138,21 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
         $randomNumber.Count | Should -Be 3
-        $randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
         $randomNumber[3] | Should -BeNullOrEmpty
     }
 
     It "Should return all the numbers for array of 1,2,3,5,8,13 in no particular order" {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count ([int]::MaxValue)
         $randomNumber.Count | Should -Be 6
-        $randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[3] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[4] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[5] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[3] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[4] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[5] | Should -BeIn 1, 2, 3, 5, 8, 13
         $randomNumber[6] | Should -BeNullOrEmpty
     }
 
