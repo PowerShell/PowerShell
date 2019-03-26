@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Fix `-NoEnumerate` behavior in `Write-Output` (#9069) (Thanks @vexx32!)
+- Fix `-NoEnumerate` behavior in `Write-Output` to be consistent with Windows PowerShell (#9069) (Thanks @vexx32!)
 
 ### Engine Updates and Fixes
 
@@ -15,7 +15,7 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Enable `SecureString` cmdlets for non-Windows (#9199)
+- Enable `SecureString` cmdlets for non-Windows by storing the plain text (#9199)
 - Add Obsolete message to `Send-MailMessage` (#9178)
 - Fix `Restart-Computer` to work on localhost when WinRM is not present (#9160)
 - Make `Start-Job` throw terminating error when PowerShell is being hosted (#9128)
@@ -28,18 +28,17 @@
 
 ### Tests
 
-- Fix `Enter-PSHostProcess` tests flakiness (#9007) (Thanks @TravisEz13!)
+- Fix `Enter-PSHostProcess` tests flakiness (#9007)
 - Add tests for command globbing (#9180)
 - Add source for `Install-package` to install `netDumbster` (#9081) (Thanks @Geweldig!)
 - Fix tab completion test to handle multiple matches (#8891)
-- Refactor macOS CI so that tests run in parallel (#9056)
+- Refactor macOS and Linux CI so that tests run in parallel (#9056, #9209)
 - Added `RequireSudoOnUnix` tags to `PowerShellGet` tests and remove `-pending` parameter (#8954) (Thanks @RDIL!)
 - Pending `NamedPipeConnectionInfo` test (#9003) (Thanks @iSazonov!)
 - Add test for `-WhatIf` for `New-FileCatalog` (#8966) (Thanks @mjanko5!)
 
 ### Build and Packaging Improvements
 
-- Make Linux CI parallel (#9209)
 - Performance improvements for release build (#9179)
 - Add `tsaVersion` property as `TsaV1` for compliance build phase (#9176)
 - Publish global tool packages to `pwshtool` blob and bug fixes (#9163)
