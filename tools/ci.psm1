@@ -500,17 +500,14 @@ function Invoke-CIFinish
             }
         }
 
-        if (Test-DailyBuild)
-        {
-            # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-            $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
-            $artifacts.Add($arm32Package)
+        # produce win-arm and win-arm64 packages if it is a daily build
+        Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+        $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
+        $artifacts.Add($arm32Package)
 
-            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-            $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
-            $artifacts.Add($arm64Package)
-        }
+        Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+        $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
+        $artifacts.Add($arm64Package)
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object {
