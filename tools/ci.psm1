@@ -28,7 +28,8 @@ if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    return $true
+    $trueString = 'True'
+    return (($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule') == $true
 }
 
 # Sets a build variable
