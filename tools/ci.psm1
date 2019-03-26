@@ -29,7 +29,11 @@ if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    return (($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule') == $true
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule')
+    {
+        return $true
+    }
+    return $false
 }
 
 # Sets a build variable
