@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 _cachedWrite.Append(output);
+                _cachedWrite.Insert(0, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff "));
 
                 _ui.WriteDebugLine(_cachedWrite.ToString());
                 _cachedWrite.Remove(0, _cachedWrite.Length);
