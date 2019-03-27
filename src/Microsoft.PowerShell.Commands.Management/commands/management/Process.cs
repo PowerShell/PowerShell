@@ -779,29 +779,24 @@ namespace Microsoft.PowerShell.Commands
 
                     var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
 
-                    // Set the default length to be 256, so it will be sufficient for most cases.
-                    int userNameLength = 256, domainNameLength = 256;
-                    var userNameStr = new StringBuilder(userNameLength);
-                    var domainNameStr = new StringBuilder(domainNameLength);
+                    // Max username is defined as UNLEN = 256 in lmcons.h
+                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                    // The buffer length must be +1, last position is for a null string terminator.
+                    int userNameLength = 257;
+                    int domainNameLength = 16;
+                    Span<char> userNameStr = stackalloc char[userNameLength];
+                    Span<char> domainNameStr = stackalloc char[domainNameLength];
                     Win32Native.SID_NAME_USE accountType;
 
+                    // userNameLength and domainNameLength will be set to actual lengths.
                     if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
                     {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            userNameStr.EnsureCapacity(userNameLength);
-                            domainNameStr.EnsureCapacity(domainNameLength);
-
-                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
 
-                    userName = domainNameStr + "\\" + userNameStr;
+                    // TODO: Use Concat() from .Net Core 3.0
+                    // public static string Concat(ReadOnlySpan<char> str0, ReadOnlySpan<char> str1, ReadOnlySpan<char> str2)
+                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength).ToString(), "\\", userNameStr.Slice(0, userNameLength).ToString());
                 } while (false);
             }
             catch (NotSupportedException)
