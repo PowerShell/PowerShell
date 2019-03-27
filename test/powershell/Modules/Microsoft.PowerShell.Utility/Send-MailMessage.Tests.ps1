@@ -132,19 +132,18 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         $mail = Read-Mail
 
         $mail.FromAddress | Should -BeExactly $InputObject.From
+        $mail.ToAddresses.Count | Should -BeExactly ($InputObject.To.Count + $InputObject.Cc.Count + $InputObject.Bcc.Count)
         $mail.ToAddresses | Should -BeIn ([array]$InputObject.To + $InputObject.Cc + $InputObject.Bcc)
 
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
+        $mail.Headers["To"] | Should -Not -BeNullOrEmpty
         $mail.Headers["To"].Split(", ") | Should -BeExactly $InputObject.To
-        If($mail.Headers["Cc"])
+        If($InputObject.Cc)
         {
+            $mail.Headers["Cc"] | Should -Not -BeNullOrEmpty
             $mail.Headers["Cc"].Split(", ") | Should -BeExactly $InputObject.Cc
         }
-        If($mail.Headers["Bcc"])
-        {
-            $mail.Headers["Bcc"].Split(", ") | Should -BeExactly $InputObject.Bcc
-        }
-        If($mail.Headers["Reply-To"])
+        If($InputObject.ReplyTo)
         {
             $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
         }
@@ -166,19 +165,18 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         $mail = Read-Mail
 
         $mail.FromAddress | Should -BeExactly $InputObject.From
+        $mail.ToAddresses.Count | Should -BeExactly ($InputObject.To.Count + $InputObject.Cc.Count + $InputObject.Bcc.Count)
         $mail.ToAddresses | Should -BeIn ([array]$InputObject.To + $InputObject.Cc + $InputObject.Bcc)
 
         $mail.Headers["From"] | Should -BeExactly $InputObject.From
+        $mail.Headers["To"] | Should -Not -BeNullOrEmpty
         $mail.Headers["To"].Split(", ") | Should -BeExactly $InputObject.To
-        If($mail.Headers["Cc"])
+        If($InputObject.Cc)
         {
+            $mail.Headers["Cc"] | Should -Not -BeNullOrEmpty
             $mail.Headers["Cc"].Split(", ") | Should -BeExactly $InputObject.Cc
         }
-        If($mail.Headers["Bcc"])
-        {
-            $mail.Headers["Bcc"].Split(", ") | Should -BeExactly $InputObject.Bcc
-        }
-        If($mail.Headers["Reply-To"])
+        If($InputObject.ReplyTo)
         {
             $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
         }
@@ -266,7 +264,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
         $mail.Priority | Should -BeExactly "urgent"
     }
 
-    It "Can send mail with body as HTML" {
+    It "Can send mail with HTML content as body" {
         $server | Should -Not -Be $null
 
         $obj = $InputObject.Clone()
@@ -275,6 +273,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
         Send-MailMessage @obj -BodyAsHtml -Encoding utf8 -ErrorAction SilentlyContinue
 
         $mail = Read-Mail
+        $mail.Headers["content-type"] | Should -BeLike "text/html*"
         $mail.MessageParts.Count | Should -BeExactly 1
         $mail.MessageParts[0].BodyData | Should -Be $obj.Body
     }
