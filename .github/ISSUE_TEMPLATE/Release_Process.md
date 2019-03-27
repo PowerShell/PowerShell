@@ -30,7 +30,8 @@ Please **only** use this template if you are a maintainer.
     - [ ] Stage a PR to master to update other documents and
           scripts to use the new package names, links, and `metadata.json`.
 - [ ] Kick off Release pipeline.
-- [ ] Create the release tag and push the tag to `PowerShell/PowerShell` repository.
+    - *These tasks are orchestrated by the release pipeline but here as status to the community.*
+    - [ ] Create the release tag and push the tag to `PowerShell/PowerShell` repository.
 - [ ] For preview releases,
   merge the release branch to GitHub `master` with a merge commit.
 - [ ] For non-preview releases,
