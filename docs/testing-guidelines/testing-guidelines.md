@@ -56,7 +56,10 @@ One of the following tags must be used:
 
 * `CI` - this tag indicates that the tests in the `Describe` block will be executed as part of the CI/PR process
 * `Scenario` - this tag indicates a larger scale test interacting with multiple areas of functionality and/or remote resources, these tests are also run daily.
-* `Feature` - tests with this tag will not be executed as part of the CI/PR process, but they will be executed on a daily basis as part of a `cron` driven build.
+* `Feature` - tests with this tag will not be executed as part of the CI/PR process,
+  but they will be executed on a daily basis as part of a `cron` driven build.
+  They indicate that the test will be validating more behavior,
+  or will be using remote network resources (ex: package management tests)
 
 Additionally, the tag:
 
