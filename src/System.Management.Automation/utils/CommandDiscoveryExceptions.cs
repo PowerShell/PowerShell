@@ -17,14 +17,14 @@ namespace System.Management.Automation
     public class CommandNotFoundException : RuntimeException
     {
         private static string _getFuzzyMatchedCommands = @"
-            [System.Diagnostics.DebuggerHidden()]
+            [System.Diagnostics.DebuggerHiddenAttribute()]
             param([string] $formatString)
 
             $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
         ";
 
         private static string _createCommandIfExistsInCurrentDirectoryScript = @"
-            [System.Diagnostics.DebuggerHidden()]
+            [System.Diagnostics.DebuggerHiddenAttribute()]
             param([string] $formatString, [string] $commandName)
 
             $foundSuggestion = $false
