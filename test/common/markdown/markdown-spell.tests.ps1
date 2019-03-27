@@ -26,7 +26,6 @@ Describe "Verify Markdown Spelling" {
     # Start all spelling verification in parallel
     Foreach($group in $groups)
     {
-        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object[]] $group)
             foreach($file in $group)
