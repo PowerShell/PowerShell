@@ -85,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Instance Data
         private string _machineName = localMachineName;  // we might need to have cmdlet work on another machine
-        private ProgressRecord _progress = null;
 
         /// <summary>
         /// Collection of property names from the Property parameter,
@@ -225,17 +224,14 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void UpdateProgress(string status)
         {
-            if (_progress != null)
+            status = status ?? ComputerResources.ProgressStatusCompleted;
+            var progress = new ProgressRecord(0, activity, status);
+            if (status == null)
             {
-                _progress.RecordType = ProgressRecordType.Completed;
-                WriteProgress(_progress);
+                progress.RecordType = ProgressRecordType.Completed;
             }
 
-            if (status != null)
-            {
-                _progress = new ProgressRecord(0, activity, status);
-                WriteProgress(_progress);
-            }
+            WriteProgress(progress);
         }
 
         /// <summary>
