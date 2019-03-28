@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.2.0
+## v6.2.0 - 03/28/2019
 
 ### Breaking Changes
 
