@@ -1,0 +1,19 @@
+parameters:
+  pool: 'Hosted VS2017'
+  jobName: 'credscan'
+  displayName: Secret Scan
+
+jobs:
+- job: ${{ parameters.jobName }}
+  pool:
+    name: ${{ parameters.pool }}
+
+  displayName: ${{ parameters.displayName }}
+
+  steps:
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+    displayName: 'Scan for secrets'
+    inputs:
+      suppressionsFile: tools/credScan/suppress.json
+      debugMode: false
+
