@@ -1393,7 +1393,12 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the alternate item separator character for this provider.
         /// </summary>
-        public virtual char AltItemSeparator => Path.AltDirectorySeparatorChar;
+        public virtual char AltItemSeparator =>
+#if UNIX
+            Utils.Separators.Backslash[0];
+#else
+            Path.AltDirectorySeparatorChar;
+#endif
 
         #region IResourceSupplier
         /// <summary>
