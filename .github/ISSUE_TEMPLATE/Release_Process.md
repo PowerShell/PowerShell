@@ -22,7 +22,7 @@ Please **only** use this template if you are a maintainer.
 - [ ] Prepare packages
     - [ ] Kick off coordinated build.
 - [ ] Kick off Release pipeline.
-    - *These tasks are orchestrated by the release pipeline but here as status to the community.*
+    - *These tasks are orchestrated by the release pipeline, but here as status to the community.*
     - [ ] Prepare packages
         - [ ] Sign the RPM package.
         - [ ] Install and verify the packages.
