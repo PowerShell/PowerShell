@@ -456,13 +456,10 @@ namespace System.Management.Automation
                     "Trying to resolve the path as an PSPath");
 
                 // Find the match if it is.
-
-                ProviderInfo provider;
-
                 // Try literal path resolution if it is set to run first
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
-                    string path = GetNextLiteralPathThatExists(_commandName, out provider);
+                    string path = GetNextLiteralPathThatExists(_commandName, out _);
                     return GetInfoFromPath(path);
                 }
 
@@ -470,14 +467,14 @@ namespace System.Management.Automation
                 if (resolvedPaths.Count == 0 &&
                     WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
-                    resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out provider);
+                    resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out _);
                 }
 
                 // Try literal path resolution if wildcards are enable first and wildcard search failed
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
-                    string path = GetNextLiteralPathThatExists(_commandName, out provider);
+                    string path = GetNextLiteralPathThatExists(_commandName, out _);
                     return GetInfoFromPath(path);
                 }
 
