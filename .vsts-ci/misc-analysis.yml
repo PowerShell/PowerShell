@@ -17,13 +17,9 @@ resources:
 - repo: self
   clean: true
 jobs:
-- template: templates/install-ps-phase.yml
-  parameters:
-    scriptName: ./tools/install-powershell.sh
-    jobName: InstallPowerShellCentOS
-    pool: Hosted Ubuntu 1604
-    container: mcr.microsoft.com/powershell:centos-7
-- jobs: Linux_CI
+- template: templates/credscan.yml
+
+- job: Linux_CI
 
   pool:
     name: Hosted Ubuntu 1604
