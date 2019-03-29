@@ -98,7 +98,46 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static string NormalizePath(string path)
         {
-            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
+        }
+
+        /// <summary>
+        /// Get the correct casing for a path.  This method assumes it's being called by NormalizePath()
+        /// so that the path is already normalized.
+        /// </summary>
+        /// <param name="path">
+        /// The path to retrieve.
+        /// </param>
+        /// <returns>
+        /// The path with accurate casing if item exists, otherwise it returns path that was passed in.
+        /// </returns>
+        private static string GetCorrectCasedPath(string path)
+        {
+            string exactPath = string.Empty;
+            if (File.Exists(path) || Directory.Exists(path))
+            {
+                foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
+                {
+                    if (string.IsNullOrEmpty(exactPath))
+                    {
+                        exactPath = item + StringLiterals.DefaultPathSeparator;
+                    }
+                    else if (string.IsNullOrEmpty(item))
+                    {
+                        // This handles the trailing slash case
+                        continue;
+                    }
+                    else
+                    {
+                        exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
+                    }
+                }
+                return exactPath;
+            }
+            else
+            {
+                return path;
+            }
         }
 
         /// <summary>
