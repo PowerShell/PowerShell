@@ -907,7 +907,8 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests'
+        [string]$Title = 'PowerShell Core Tests',
+        [switch]$Wait
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1099,6 +1100,9 @@ function Start-PSPester {
 
         Set-Content -Path $configFile -Value $content -Encoding Ascii -Force
         $PSFlags = @("-settings", $configFile, "-noprofile")
+    }
+    if($Wait.IsPresent){
+        $PSFlags += '-wait'
     }
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
