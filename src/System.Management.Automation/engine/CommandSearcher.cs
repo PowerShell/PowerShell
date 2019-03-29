@@ -505,6 +505,16 @@ namespace System.Management.Automation
             return result;
         }
 
+        /// <summary>
+        /// Gets the next path using WildCards.
+        /// </summary>
+        /// <param name="command">
+        /// The command to search for
+        /// </param>
+        /// <param name="provider">The provider that the command was found in</param>
+        /// <returns>
+        /// A collection of full paths to the commands which were found
+        /// </returns>
         private Collection<string> GetNextFromPathUsingWildcards(string command, out ProviderInfo provider)
         {
             try
@@ -1206,6 +1216,17 @@ namespace System.Management.Automation
             return result;
         }
 
+        /// <summary>
+        /// Gets the next literal path.
+        /// filtering to ones that exist for the filesystem
+        /// </summary>
+        /// <param name="command">
+        /// The command to search for
+        /// </param>
+        /// <param name="provider">The provider that the command was found in</param>
+        /// <returns>
+        /// Full path to the command
+        /// </returns>
         private string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
         {
             string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
