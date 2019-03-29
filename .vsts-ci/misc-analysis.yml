@@ -21,6 +21,8 @@ jobs:
 
 - job: Linux_CI
 
+  displayName: Markdown and Common Tests
+
   pool:
     name: Hosted Ubuntu 1604
   steps:
