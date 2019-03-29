@@ -46,16 +46,32 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 Describe "Import-Alias" -Tags "CI" {
 	$newLine=[Environment]::NewLine
 	$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-    $testAliases        = "pesteralias.txt"
-    $pesteraliasfile       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
+	$testAliases        = "pesteralias.txt"
+
+	# import alias fails for '"abc""def"': it throws an "Illegal characters in path" error
+	$difficultToParseString_1		= '"abc""def"' 	# throws illegal character exception
+	# $difficultToParseString_1		= 'abc""def'	# does not throw exception
+
+	$difficultToParseString_2		= '"aaa"'
+	$difficultToParseString_3		= '"a,b"'
+    $pesteraliasfile    = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
 	BeforeEach {
+		# create default pester testing file
+		# the file assigns "pesterecho" as an alias to "echo"
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
 
 		$pesteraliascontent ='# Alias File'+$newLine
 		$pesteraliascontent+='# Exported by : alex'+$newLine
 		$pesteraliascontent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
-		$pesteraliascontent+='# Computer : archvm'+$newLine+'"pesterecho","echo","","None"'
+		$pesteraliascontent+='# Computer : archvm'#+$newLine+$difficultToParseString+',"echo","","None"'
+
+		# add various aliases for echo which we can then test
+
+		$pesteraliascontent+= $newLine+'pesterecho,"echo","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_1+',"echo","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_2+',"echo","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_3+',"echo","","None"'
 		$pesteraliascontent > $pesteraliasfile
 	}
 
@@ -79,5 +95,29 @@ Describe "Import-Alias" -Tags "CI" {
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
 	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
+	}
+
+	It "Should be able to parse ""abc""""def"" into abc""def " {
+		(Import-Alias $pesteraliasfile)
+		# By setting a breakpoint after we perform get-alias, we can check how the string is parsed
+		# A 'nicer' test would be to check if the parsed string is in the output of get-alias,
+		# however, the way in which get-alias outputs doesn't have a nice contains() method which can check this (as far as I could see) so I therefore chose to leave this for future work.
+		# $allAlias = (get-alias)
+		$callingDifficultString = (abc`"def pestertesting)
+		$callingDifficultString | Should -BeExactly "pestertesting"
+	}
+
+	It "Should be able to parse ""aaa"" into aaa " {
+		(Import-Alias $pesteraliasfile)
+		$allAlias = (get-alias)
+		$callingDifficultString = (aaa pestertesting)
+		$callingDifficultString | Should -BeExactly "pestertesting"
+	}
+
+	It "Should be able to parse ""a,b"" into a,b " {
+		(Import-Alias $pesteraliasfile)
+		# $allAlias = (get-alias)
+		$callingDifficultString = (a`,b pestertesting)
+		$callingDifficultString | Should -BeExactly "pestertesting"
 	}
 }
