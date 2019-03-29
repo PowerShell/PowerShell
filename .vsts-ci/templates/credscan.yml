@@ -18,5 +18,5 @@ jobs:
       debugMode: false
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-    displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    displayName: 'Publish Secret Scan Logs to Build Artifacts'
     continueOnError: true
