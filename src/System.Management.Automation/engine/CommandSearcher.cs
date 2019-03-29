@@ -460,7 +460,7 @@ namespace System.Management.Automation
                 ProviderInfo provider;
 
                 // Try literal path resolution if it is set to run first
-                if(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
                     string path = GetNextLiteralPathThatExists(_commandName, out provider);
                     return GetInfoFromPath(path);
@@ -474,7 +474,7 @@ namespace System.Management.Automation
                 }
 
                 // Try literal path resolution if wildcards are enable first and wildcard search failed
-                if (!(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns)) &&
+                if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
                     string path = GetNextLiteralPathThatExists(_commandName, out provider);
@@ -549,6 +549,7 @@ namespace System.Management.Automation
                     "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
                     command);
             }
+
             provider = null;
             return null;
         }
@@ -1119,15 +1120,9 @@ namespace System.Management.Automation
                 string resolvedPath = null;
 
                 // Try literal path resolution if it is set to run first
-                if(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
-                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
-                    if(provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase)
-                        && !File.Exists(resolvedPath))
-                    {
-                        resolvedPath = null;
-                        provider = null;
-                    }
+                    resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
 
                 if (WildcardPattern.ContainsWildcardCharacters(path) &&
@@ -1159,10 +1154,10 @@ namespace System.Management.Automation
                 }
 
                 // Try literal path resolution if wildcards are enabled first and wildcard search failed
-                if (!(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns)) &&
+                if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     (resolvedPath == null) || (provider == null))
                 {
-                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
+                    resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
 
                 // Verify the path was resolved to a file system path
@@ -1211,17 +1206,18 @@ namespace System.Management.Automation
             return result;
         }
 
-        string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
+        private string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
         {
             string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
 
-            if(System.IO.File.Exists(resolvedPath))
+            if (provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase)
+                && !File.Exists(resolvedPath))
             {
-                return resolvedPath;
+                provider = null;
+                return null;
             }
 
-            provider = null;
-            return null;
+            return resolvedPath;
         }
 
         /// <summary>
@@ -1661,7 +1657,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Enable resolving wildcard in paths.
         /// </summary>
-        //ResolvePathPatterns = 0x40,
         ResolveLiteralThenPathPatterns = 0x40
     }
 }
