@@ -102,10 +102,16 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     Context "QuoteFields parameter" {
         It "QuoteFields" {
-            $result = $testObject | ConvertTo-Csv -QuoteFields FirstColumn -Delimiter ','
+            # Use 'FiRstCoLumn' to test case insensitivity
+            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn -Delimiter ','
 
             $result[0] | Should -BeExactly "`"FirstColumn`",SecondColumn"
             $result[1] | Should -BeExactly "`"Hello`",World"
+
+            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn,SeCondCoLumn -Delimiter ','
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"Hello`",`"World`""
         }
     }
 
