@@ -375,9 +375,11 @@ namespace Microsoft.PowerShell.Commands
             var moduleSpecTable = new Dictionary<string, ModuleSpecification>(StringComparer.OrdinalIgnoreCase);
             if (FullyQualifiedName != null)
             {
-                for (int modSpecIndex = 0; modSpecIndex < FullyQualifiedName.Length; modSpecIndex++) {
+                for (int modSpecIndex = 0; modSpecIndex < FullyQualifiedName.Length; modSpecIndex++)
+                {
                     FullyQualifiedName[modSpecIndex] = FullyQualifiedName[modSpecIndex].WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path);
                 }
+
                 moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
                 strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
             }
