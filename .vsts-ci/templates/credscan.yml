@@ -17,3 +17,6 @@ jobs:
       suppressionsFile: tools/credScan/suppress.json
       debugMode: false
 
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    continueOnError: true
