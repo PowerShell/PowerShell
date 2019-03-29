@@ -460,6 +460,7 @@ namespace System.Management.Automation
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
                     var path = GetNextLiteralPathThatExists(_commandName, out _);
+
                     // This can return null, but that is expected.
                     // The searcher will continue, if it can.
                     return GetInfoFromPath(path);
