@@ -85,7 +85,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         (& 'location').Path | Should -Be (get-location).Path
     }
 
-    Context "Use literal path when executing scripts" {
+    Context "Use literal path first when executing scripts" {
         BeforeAll {
             $firstResult = 'first script'
             $secondResult = 'alt script'
@@ -94,11 +94,11 @@ Describe "Command Discovery tests" -Tags "CI" {
 
             $executionWithWildcardCases = @(
                 @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
+                @{command = '.\[t1].ps1' ; expectedResult = $secondResult; name = '.\[t1].ps1'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
             )
 
             $shouldNotExecuteCases = @(
-                @{command = '.\[12].ps1'; testName = 'relative path with bracket wildcard matctching one file'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching one file'}
             )
 
@@ -120,7 +120,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
     }
 
-    Context "Get-Command should use globbing for scripts" {
+    Context "Get-Command should use globbing first for scripts" {
         BeforeAll {
             $firstResult = '[first script]'
             $secondResult = 'alt script'

@@ -457,62 +457,28 @@ namespace System.Management.Automation
 
                 // Find the match if it is.
 
-                Collection<string> resolvedPaths = new Collection<string>();
-
                 ProviderInfo provider;
-                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolvePathPatterns) &&
-                    WildcardPattern.ContainsWildcardCharacters(_commandName))
+
+                // Try literal path resolution if it is set to run first
+                if(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
-                    try
-                    {
-                        Provider.CmdletProvider providerInstance;
-                        resolvedPaths =
-                            _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
-                    }
-                    catch (ItemNotFoundException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "The path could not be found: {0}",
-                            _commandName);
-                    }
-                    catch (DriveNotFoundException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "A drive could not be found for the path: {0}",
-                            _commandName);
-                    }
-                    catch (ProviderNotFoundException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "A provider could not be found for the path: {0}",
-                            _commandName);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "The path specified a home directory, but the provider home directory was not set. {0}",
-                            _commandName);
-                    }
-                    catch (ProviderInvocationException providerException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "The provider associated with the path '{0}' encountered an error: {1}",
-                            _commandName,
-                            providerException.Message);
-                    }
-                    catch (PSNotSupportedException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                            _commandName);
-                    }
+                    string path = GetNextLiteralPathThatExists(_commandName, out provider);
+                    return GetInfoFromPath(path);
                 }
 
-                // Try literal path resolution if wildcards are disable or wildcard search failed
-                if (resolvedPaths.Count == 0)
+                Collection<string> resolvedPaths = new Collection<string>();
+                if (resolvedPaths.Count == 0 &&
+                    WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
-                    string path = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
-                    resolvedPaths.Add(path);
+                    resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out provider);
+                }
+
+                // Try literal path resolution if wildcards are enable first and wildcard search failed
+                if (!(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns)) &&
+                    resolvedPaths.Count == 0)
+                {
+                    string path = GetNextLiteralPathThatExists(_commandName, out provider);
+                    return GetInfoFromPath(path);
                 }
 
                 if (resolvedPaths.Count > 1)
@@ -537,6 +503,54 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
+        }
+
+        private Collection<string> GetNextFromPathUsingWildcards(string command, out ProviderInfo provider)
+        {
+            try
+            {
+                Provider.CmdletProvider providerInstance;
+                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(command, false, out provider, out providerInstance);
+            }
+            catch (ItemNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path could not be found: {0}",
+                    command);
+            }
+            catch (DriveNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A drive could not be found for the path: {0}",
+                    command);
+            }
+            catch (ProviderNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A provider could not be found for the path: {0}",
+                    command);
+            }
+            catch (InvalidOperationException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path specified a home directory, but the provider home directory was not set. {0}",
+                    command);
+            }
+            catch (ProviderInvocationException providerException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' encountered an error: {1}",
+                    command,
+                    providerException.Message);
+            }
+            catch (PSNotSupportedException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
+                    command);
+            }
+            provider = null;
+            return null;
         }
 
         private static bool checkPath(string path, string commandName)
@@ -1103,16 +1117,24 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolvePathPatterns) &&
-                     WildcardPattern.ContainsWildcardCharacters(path))
+
+                // Try literal path resolution if it is set to run first
+                if(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
+                {
+                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
+                    if(provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase)
+                        && !File.Exists(resolvedPath))
+                    {
+                        resolvedPath = null;
+                        provider = null;
+                    }
+                }
+
+                if (WildcardPattern.ContainsWildcardCharacters(path) &&
+                    ((resolvedPath == null) || (provider == null)))
                 {
                     // Let PowerShell resolve relative path with wildcards.
-                    Provider.CmdletProvider providerInstance;
-                    Collection<string> resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
-                        path,
-                        false,
-                        out provider,
-                        out providerInstance);
+                    Collection<string> resolvedPaths = GetNextFromPathUsingWildcards(path, out provider);
 
                     if (resolvedPaths.Count == 0)
                     {
@@ -1136,8 +1158,9 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Try literal path resolution if wildcards are disable or wildcard search failed
-                if ((resolvedPath == null) || (provider == null))
+                // Try literal path resolution if wildcards are enabled first and wildcard search failed
+                if (!(_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns)) &&
+                    (resolvedPath == null) || (provider == null))
                 {
                     resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
                 }
@@ -1186,6 +1209,19 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
+        {
+            string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
+
+            if(System.IO.File.Exists(resolvedPath))
+            {
+                return resolvedPath;
+            }
+
+            provider = null;
+            return null;
         }
 
         /// <summary>
@@ -1625,6 +1661,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Enable resolving wildcard in paths.
         /// </summary>
-        ResolvePathPatterns = 0x40,
+        //ResolvePathPatterns = 0x40,
+        ResolveLiteralThenPathPatterns = 0x40
     }
 }

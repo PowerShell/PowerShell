@@ -735,7 +735,7 @@ namespace System.Management.Automation
 
         internal static CommandInfo LookupCommandInfo(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
-            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.None, commandOrigin, context);
+            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.ResolveLiteralThenPathPatterns, commandOrigin, context);
         }
 
         internal static CommandInfo LookupCommandInfo(
