@@ -140,3 +140,9 @@ jobs:
        tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-$(Architecture)-package -BuildPath $(Symbols) -SignedFilesPath $(Symbols)\signed
     displayName: 'Build Windows Universal - $(Architecture) Package'
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true
