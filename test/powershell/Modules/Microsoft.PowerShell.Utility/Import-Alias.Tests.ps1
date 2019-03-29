@@ -47,17 +47,19 @@ Describe "Import-Alias" -Tags "CI" {
 	$newLine=[Environment]::NewLine
 	$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
 	$testAliases        = "pesteralias.txt"
+	$aliasFilenameMoreThanFourValues        = "aliasFileMoreThanFourValues.txt"
+	$aliasFilenameLessThanFourValues        = "aliasFileLessThanFourValues.txt"
 
-	# import alias fails for '"abc""def"': it throws an "Illegal characters in path" error
-	$difficultToParseString_1		= '"abc""def"' 	# throws illegal character exception
-	# $difficultToParseString_1		= 'abc""def'	# does not throw exception
-
+	$difficultToParseString_1		= '"abc""def"'
 	$difficultToParseString_2		= '"aaa"'
 	$difficultToParseString_3		= '"a,b"'
     $pesteraliasfile    = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
+    $aliasPathMoreThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameMoreThanFourValues
+    $aliasPathLessThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameLessThanFourValues
 
 	BeforeEach {
 		# create default pester testing file
+		# has three lines of comments, then a few different aliases for the echo command.
 		# the file assigns "pesterecho" as an alias to "echo"
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
 
@@ -73,6 +75,16 @@ Describe "Import-Alias" -Tags "CI" {
 		$pesteraliascontent+= $newLine+$difficultToParseString_2+',"echo","","None"'
 		$pesteraliascontent+= $newLine+$difficultToParseString_3+',"echo","","None"'
 		$pesteraliascontent > $pesteraliasfile
+
+		# create invalid file with more than four values
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3","v_4","v_5"'
+		$pesteraliascontent > $aliasPathMoreThanFourValues
+
+		# create invalid file with less than four values
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3"'
+		$pesteraliascontent > $aliasPathLessThanFourValues
 	}
 
 	AfterEach {
@@ -99,25 +111,29 @@ Describe "Import-Alias" -Tags "CI" {
 
 	It "Should be able to parse ""abc""""def"" into abc""def " {
 		(Import-Alias $pesteraliasfile)
-		# By setting a breakpoint after we perform get-alias, we can check how the string is parsed
-		# A 'nicer' test would be to check if the parsed string is in the output of get-alias,
+		# Note: A 'nicer' test would maybe be to check if the parsed string is in the output of get-alias,
 		# however, the way in which get-alias outputs doesn't have a nice contains() method which can check this (as far as I could see) so I therefore chose to leave this for future work.
-		# $allAlias = (get-alias)
 		$callingDifficultString = (abc`"def pestertesting)
 		$callingDifficultString | Should -BeExactly "pestertesting"
 	}
 
 	It "Should be able to parse ""aaa"" into aaa " {
 		(Import-Alias $pesteraliasfile)
-		$allAlias = (get-alias)
 		$callingDifficultString = (aaa pestertesting)
 		$callingDifficultString | Should -BeExactly "pestertesting"
 	}
 
 	It "Should be able to parse ""a,b"" into a,b " {
 		(Import-Alias $pesteraliasfile)
-		# $allAlias = (get-alias)
 		$callingDifficultString = (a`,b pestertesting)
 		$callingDifficultString | Should -BeExactly "pestertesting"
+	}
+
+	It "Should throw an error when reading more than four values" {
+	    { Import-Alias $aliasPathMoreThanFourValues } | Should -throw
+	}
+
+	It "Should throw an error when reading less than four values" {
+	    { Import-Alias $aliasPathLessThanFourValues } | Should -throw
 	}
 }
