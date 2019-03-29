@@ -459,7 +459,9 @@ namespace System.Management.Automation
                 // Try literal path resolution if it is set to run first
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
-                    string path = GetNextLiteralPathThatExists(_commandName, out _);
+                    var path = GetNextLiteralPathThatExists(_commandName, out _);
+                    // This can return null, but that is expected.
+                    // The searcher will continue, if it can.
                     return GetInfoFromPath(path);
                 }
 
@@ -1128,6 +1130,9 @@ namespace System.Management.Automation
                 // Try literal path resolution if it is set to run first
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
+                    // Cannot return early as this code path only expects
+                    // The file system provider and the final check for that 
+                    // must verify this before we return.
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
 
