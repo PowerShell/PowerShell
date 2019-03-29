@@ -519,8 +519,7 @@ namespace System.Management.Automation
         {
             try
             {
-                Provider.CmdletProvider providerInstance;
-                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(command, false, out provider, out providerInstance);
+                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(command, false, out provider, out _);
             }
             catch (ItemNotFoundException)
             {
