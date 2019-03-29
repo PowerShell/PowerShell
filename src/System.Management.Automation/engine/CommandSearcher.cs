@@ -466,8 +466,7 @@ namespace System.Management.Automation
                 }
 
                 Collection<string> resolvedPaths = new Collection<string>();
-                if (resolvedPaths.Count == 0 &&
-                    WildcardPattern.ContainsWildcardCharacters(_commandName))
+                if (WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
                     resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out _);
                 }
@@ -1131,7 +1130,7 @@ namespace System.Management.Automation
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
                     // Cannot return early as this code path only expects
-                    // The file system provider and the final check for that 
+                    // The file system provider and the final check for that
                     // must verify this before we return.
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
