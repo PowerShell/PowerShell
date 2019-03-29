@@ -20,3 +20,9 @@ jobs:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
     displayName: 'Publish Secret Scan Logs to Build Artifacts'
     continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@1
+    displayName: 'Check for failures'
+    inputs:
+      CredScan: true
+      ToolLogsNotFoundAction: Error
