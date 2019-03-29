@@ -3094,5 +3094,3 @@ function New-NugetConfigFile
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
 }
-
-$buildPaswword = (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)
