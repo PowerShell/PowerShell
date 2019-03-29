@@ -1165,7 +1165,7 @@ namespace System.Management.Automation
 
                 // Try literal path resolution if wildcards are enabled first and wildcard search failed
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
-                    ((resolvedPath == null) || (provider == null))
+                    ((resolvedPath == null) || (provider == null)))
                 {
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
