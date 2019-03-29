@@ -509,11 +509,11 @@ namespace System.Management.Automation
         /// Gets the next path using WildCards.
         /// </summary>
         /// <param name="command">
-        /// The command to search for
+        /// The command to search for.
         /// </param>
-        /// <param name="provider">The provider that the command was found in</param>
+        /// <param name="provider">The provider that the command was found in.</param>
         /// <returns>
-        /// A collection of full paths to the commands which were found
+        /// A collection of full paths to the commands which were found.
         /// </returns>
         private Collection<string> GetNextFromPathUsingWildcards(string command, out ProviderInfo provider)
         {
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation
 
                 // Try literal path resolution if wildcards are enabled first and wildcard search failed
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
-                    (resolvedPath == null) || (provider == null))
+                    ((resolvedPath == null) || (provider == null))
                 {
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
@@ -1218,14 +1218,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the next literal path.
-        /// filtering to ones that exist for the filesystem
+        /// Filtering to ones that exist for the filesystem.
         /// </summary>
         /// <param name="command">
-        /// The command to search for
+        /// The command to search for.
         /// </param>
-        /// <param name="provider">The provider that the command was found in</param>
+        /// <param name="provider">The provider that the command was found in.</param>
         /// <returns>
-        /// Full path to the command
+        /// Full path to the command.
         /// </returns>
         private string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
         {
