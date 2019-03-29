@@ -1228,7 +1228,8 @@ namespace System.Management.Automation
             string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
 
             if (provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase)
-                && !File.Exists(resolvedPath))
+                && !File.Exists(resolvedPath)
+                && !Directory.Exists(resolvedPath))
             {
                 provider = null;
                 return null;
