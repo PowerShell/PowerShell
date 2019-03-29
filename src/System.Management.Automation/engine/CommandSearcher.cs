@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
                 }
 
                 // Verify the path was resolved to a file system path
-                if (provider !=null && provider.NameEquals(_context.ProviderNames.FileSystem))
+                if (provider != null && provider.NameEquals(_context.ProviderNames.FileSystem))
                 {
                     result = resolvedPath;
 
