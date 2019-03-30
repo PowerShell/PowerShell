@@ -461,9 +461,10 @@ namespace System.Management.Automation
                 {
                     var path = GetNextLiteralPathThatExists(_commandName, out _);
 
-                    // This can return null, but that is expected.
-                    // The searcher will continue, if it can.
-                    return GetInfoFromPath(path);
+                    if(path !=null)
+                    {
+                        return GetInfoFromPath(path);
+                    }
                 }
 
                 Collection<string> resolvedPaths = new Collection<string>();
