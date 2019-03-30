@@ -908,7 +908,8 @@ function Start-PSPester {
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
         [string]$Title = 'PowerShell Core Tests',
-		[Parameter(ParameterSetName='Wait',Mandatory=$true,HelpMessage='Wait for the debugger to attach to powershell before pester starts.  Debug builds only!')]
+        [Parameter(ParameterSetName='Wait', Mandatory=$true,
+            HelpMessage='Wait for the debugger to attach to powershell before pester starts.  Debug builds only!')]
         [switch]$Wait
     )
 
@@ -1104,7 +1105,7 @@ function Start-PSPester {
     }
 
 	# -Wait is only available on Debug builds
-	# It is used to allow the debugger to attach before PowerShell 
+	# It is used to allow the debugger to attach before PowerShell
 	# runs pester in this case
     if($Wait.IsPresent){
         $PSFlags += '-wait'
