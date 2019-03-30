@@ -461,7 +461,7 @@ namespace System.Management.Automation
                 {
                     var path = GetNextLiteralPathThatExists(_commandName, out _);
 
-                    if(path !=null)
+                    if (path != null)
                     {
                         return GetInfoFromPath(path);
                     }
@@ -519,7 +519,7 @@ namespace System.Management.Automation
         {
             try
             {
-                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(path: command, allowNonexistingPaths: false, provider: out provider, providerInstance:  out _);
+                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(path: command, allowNonexistingPaths: false, provider: out provider, providerInstance: out _);
             }
             catch (ItemNotFoundException)
             {
