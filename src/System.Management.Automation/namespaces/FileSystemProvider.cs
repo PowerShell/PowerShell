@@ -148,6 +148,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
+                {
+                    return exactPath + StringLiterals.DefaultPathSeparator;
+                }
+
                 return exactPath;
             }
             else
