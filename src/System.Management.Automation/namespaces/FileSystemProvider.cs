@@ -142,6 +142,14 @@ namespace Microsoft.PowerShell.Commands
                         // This handles the trailing slash case
                         continue;
                     }
+#if !UNIX                    
+                    else if (item.Contains(":"))
+                    {
+                        // This handles the NTFS stream name
+                        var streamName = item.Split(":");
+                        exactPath = Directory.GetFileSystemEntries(exactPath, streamName[0]).First() + ":" + streamName[1];
+                    }
+#endif
                     else
                     {
                         exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
