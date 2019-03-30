@@ -87,18 +87,57 @@ Describe "Command Discovery tests" -Tags "CI" {
 
     Context "Use literal path first when executing scripts" {
         BeforeAll {
-            $firstResult = 'first script'
-            $secondResult = 'alt script'
-            $thirdResult = 'bad script'
-            setup -f '[test1].ps1' -content "'$firstResult'"
-            setup -f '1.ps1' -content "'$secondResult'"
-            setup -f '2.ps1' -content "'$thirdResult'"
+            $firstFileName = '[test1].ps1'
+            $secondFileName = '1.ps1'
+            $thirdFileName = '2.ps1'
+            $firstResult = "executing $firstFileName in root"
+            $secondResult = "executing $secondFileName in root"
+            $thirdResult = "executing $thirdFileName in root"
+            setup -f $firstFileName -content "'$firstResult'"
+            setup -f $secondFileName -content "'$secondResult'"
+            setup -f $thirdFileName -content "'$thirdResult'"
+
+            $subFolder = 'subFolder'
+            $firstFileInSubFolder = Join-Path $subFolder -ChildPath $firstFileName
+            $secondFileInSubFolder = Join-Path $subFolder -ChildPath $secondFileName
+            $thirdFileInSubFolder = Join-Path $subFolder -ChildPath $thirdFileName
+            setup -f $firstFileInSubFolder -content "'$firstResult'"
+            setup -f $secondFileInSubFolder -content "'$secondResult'"
+            setup -f $thirdFileInSubFolder -content "'$thirdResult'"
+
+            $secondFileSearchInSubfolder = (Join-Path -Path $subFolder -ChildPath '[t1].ps1')
 
             $executionWithWildcardCases = @(
-                @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
-                @{command = '.\[t1].ps1' ; expectedResult = $secondResult; name = '.\[t1].ps1'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $secondResult; name = '.\1.ps1 by fully qualified path with wildcard'}
+                #Region relative paths with './'
+                    @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
+                    @{command = '.\[t1].ps1' ; expectedResult = $secondResult; name = '.\[t1].ps1'}
+                #endregion
+
+                #Region relative Subfolder paths without './'
+                    @{command = $secondFileInSubFolder ; expectedResult = $secondResult; name = $secondFileInSubFolder}
+
+                    # PowerShell fails if the directory separators are in the wrong direction in this case
+                    # https://github.com/PowerShell/PowerShell/issues/9256
+                    @{command = 'subFolder\[test1].ps1' ; expectedResult = $firstResult; name = 'subFolder\[test1].ps1'; Pending="See directory separator direction in https://github.com/PowerShell/PowerShell/issues/9256"}
+                    @{command = 'subFolder\[t1].ps1' ; expectedResult = $secondResult; name = $secondFileSearchInSubfolder; Pending="See directory separator direction in https://github.com/PowerShell/PowerShell/issues/9256"}
+
+                    # Wildcard search is also not being performed in this scenario before this change.
+                    # I noted this in the above issue and disabling these cases
+                    @{command = $firstFileInSubFolder ; expectedResult = $firstResult; name = $firstFileInSubFolder; Pending="See note about wildcard in https://github.com/PowerShell/PowerShell/issues/9256"}
+                    @{command = $secondFileSearchInSubfolder ; expectedResult = $secondResult; name = $secondFileSearchInSubfolder; Pending="See note about wildcard in https://github.com/PowerShell/PowerShell/issues/9256"}
+                #endregion
+                #Region relative Subfolder paths with '.\'
+                    @{command = '.\' + $secondFileInSubFolder ; expectedResult = $secondResult; name = $secondFileInSubFolder}
+                    @{command = '.\subFolder\[test1].ps1' ; expectedResult = $firstResult; name = '.\subFolder\[test1].ps1'}
+                    @{command = '.\subFolder\[t1].ps1' ; expectedResult = $secondResult; name = '.\' + $secondFileSearchInSubfolder}
+                    @{command = '.\' + $firstFileInSubFolder ; expectedResult = $firstResult; name = '.\' + $firstFileInSubFolder}
+                    @{command = '.\' + $secondFileSearchInSubfolder ; expectedResult = $secondResult; name = '.\' + $secondFileSearchInSubfolder}
+                #endregion
+
+                #region rooted paths
+                    @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
+                    @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $secondResult; name = '.\1.ps1 by fully qualified path with wildcard'}
+                #endregion
             )
 
             $shouldNotExecuteCases = @(
@@ -114,7 +153,13 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Invoking <name> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
-            param($command, $expectedResult)
+            param($command, $expectedResult, [String]$Pending)
+
+            if($Pending)
+            {
+                Set-TestInconclusive -Message $Pending
+            }
+
             & $command | Should -BeExactly $expectedResult
         }
 
