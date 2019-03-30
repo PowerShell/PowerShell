@@ -116,10 +116,25 @@ namespace Microsoft.PowerShell.Commands
             string exactPath = string.Empty;
             if (File.Exists(path) || Directory.Exists(path))
             {
+                int itemsToSkip = 0;
+                if (Utils.PathIsUnc(path))
+                {
+                    // With the Split method, a UNC path like \\server\share, we need to skip
+                    // trying to enumerate the server and share, so skip the first two empty
+                    // strings, then server, and finally share name.
+                    itemsToSkip = 4;
+                }
+
                 foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
                 {
-                    if (string.IsNullOrEmpty(exactPath))
+                    if (itemsToSkip-- > 0)
                     {
+                        exactPath += item + StringLiterals.DefaultPathSeparator;
+                        continue;
+                    }
+                    else if (string.IsNullOrEmpty(exactPath))
+                    {
+                        // This handles the drive letter or / root path start
                         exactPath = item + StringLiterals.DefaultPathSeparator;
                     }
                     else if (string.IsNullOrEmpty(item))
@@ -132,6 +147,7 @@ namespace Microsoft.PowerShell.Commands
                         exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
                     }
                 }
+
                 return exactPath;
             }
             else
