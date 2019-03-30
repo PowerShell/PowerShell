@@ -160,6 +160,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Get-Command should throw CommandNotFoundException when running '<testName>'" -TestCases $shouldNotFindCases {
+            param($command)
             {Get-Command -Name $command} | Should -Throw -ErrorId 'CommandNotFoundException'
         }
     }
