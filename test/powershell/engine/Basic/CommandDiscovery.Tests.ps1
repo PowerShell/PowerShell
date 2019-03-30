@@ -89,17 +89,20 @@ Describe "Command Discovery tests" -Tags "CI" {
         BeforeAll {
             $firstResult = 'first script'
             $secondResult = 'alt script'
+            $thirdResult = 'bad script'
             setup -f '[test1].ps1' -content "'$firstResult'"
             setup -f '1.ps1' -content "'$secondResult'"
+            setup -f '2.ps1' -content "'$thirdResult'"
 
             $executionWithWildcardCases = @(
                 @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
                 @{command = '.\[t1].ps1' ; expectedResult = $secondResult; name = '.\[t1].ps1'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $firstResult; name = '.\1.ps1 by fully qualified path with wildcard'}
             )
 
             $shouldNotExecuteCases = @(
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching one file'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching multiple files'}
             )
 
             Push-Location ${TestDrive}\
