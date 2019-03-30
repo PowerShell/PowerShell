@@ -98,7 +98,7 @@ Describe "Command Discovery tests" -Tags "CI" {
                 @{command = '.\[test1].ps1' ; expectedResult = $firstResult; name = '.\[test1].ps1'}
                 @{command = '.\[t1].ps1' ; expectedResult = $secondResult; name = '.\[t1].ps1'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1') ; expectedResult = $firstResult; name = '.\[test1].ps1 by fully qualified path'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $firstResult; name = '.\1.ps1 by fully qualified path with wildcard'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[t1].ps1') ; expectedResult = $secondResult; name = '.\1.ps1 by fully qualified path with wildcard'}
             )
 
             $shouldNotExecuteCases = @(
