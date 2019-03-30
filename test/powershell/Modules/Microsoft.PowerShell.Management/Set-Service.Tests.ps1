@@ -90,7 +90,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         $Counter      = 0
         $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
 
-        # Selecting the last item in the output array as below command gives plain text output from the native sc.exe.
+        # Selecting the first item in the output array as below command gives plain text output from the native sc.exe.
         $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $TestServiceName1)[1]
 
         $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
