@@ -102,6 +102,7 @@ Describe "Command Discovery tests" -Tags "CI" {
             )
 
             $shouldNotExecuteCases = @(
+                @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching multiple files'}
             )
 
@@ -127,14 +128,21 @@ Describe "Command Discovery tests" -Tags "CI" {
         BeforeAll {
             $firstResult = '[first script]'
             $secondResult = 'alt script'
+            $thirdResult = 'bad script'
             setup -f '[test1].ps1' -content "'$firstResult'"
             setup -f '1.ps1' -content "'$secondResult'"
+            setup -f '2.ps1' -content "'$thirdResult'"
 
             $gcmWithWildcardCases = @(
                 @{command = '.\?[tb]est1?.ps1'; expectedCommand = '[test1].ps1'; expectedCommandCount =1; name = '''.\?[tb]est1?.ps1'''}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '?[tb]est1?.ps1'); expectedCommand = '[test1].ps1'; expectedCommandCount =1 ; name = '''.\?[tb]est1?.ps1'' by fully qualified path'}
                 @{command = '.\[test1].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =1; name = '''.\[test1].ps1'''}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =1 ; name = '''.\[test1].ps1'' by fully qualified path'}
+            )
+
+            $shouldNotFindCases = @(
+                @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching multiple files'}
             )
 
             Push-Location ${TestDrive}\
@@ -149,6 +157,10 @@ Describe "Command Discovery tests" -Tags "CI" {
             $commands = Get-Command -Name $command
             $commands.Count | Should -Be $expectedCommandCount
             $commands.Name | Should -BeExactly $expectedCommand
+        }
+
+        It "Get-Command should throw CommandNotFoundException when running '<testName>'" -TestCases $shouldNotFindCases {
+            {Get-Command -Name $command} | Should -Throw -ErrorId 'CommandNotFoundException'
         }
     }
 }
