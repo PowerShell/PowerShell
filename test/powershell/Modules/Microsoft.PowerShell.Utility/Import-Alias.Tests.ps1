@@ -44,20 +44,32 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Import-Alias" -Tags "CI" {
-	$newLine=[Environment]::NewLine
-	$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-	$testAliases        = "pesteralias.txt"
-	$aliasFilenameMoreThanFourValues        = "aliasFileMoreThanFourValues.txt"
-	$aliasFilenameLessThanFourValues        = "aliasFileLessThanFourValues.txt"
+	$testAliasDirectory
+	$pesteraliasfile
+    $aliasPathMoreThanFourValues
+	$aliasPathLessThanFourValues
+	$commandToAlias
 
-	$difficultToParseString_1		= '"abc""def"'
-	$difficultToParseString_2		= '"aaa"'
-	$difficultToParseString_3		= '"a,b"'
-    $pesteraliasfile    = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
-    $aliasPathMoreThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameMoreThanFourValues
-    $aliasPathLessThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameLessThanFourValues
+	BeforeAll {
+		$newLine=[Environment]::NewLine
+		# set paths and names for the alias files
+		$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
+		$testAliases        = "pesteralias.txt"
+		$aliasFilenameMoreThanFourValues        = "aliasFileMoreThanFourValues.txt"
+		$aliasFilenameLessThanFourValues        = "aliasFileLessThanFourValues.txt"
 
-	BeforeEach {
+		$pesteraliasfile    = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
+		$aliasPathMoreThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameMoreThanFourValues
+		$aliasPathLessThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameLessThanFourValues
+
+		# define command to alias for the tests
+		$commandToAlias = "echo"
+
+		# write the files and content
+		$difficultToParseString_1		= '"abc""def"'
+		$difficultToParseString_2		= '"aaa"'
+		$difficultToParseString_3		= '"a,b"'
+
 		# create default pester testing file
 		# has three lines of comments, then a few different aliases for the echo command.
 		# the file assigns "pesterecho" as an alias to "echo"
@@ -66,14 +78,13 @@ Describe "Import-Alias" -Tags "CI" {
 		$pesteraliascontent ='# Alias File'+$newLine
 		$pesteraliascontent+='# Exported by : alex'+$newLine
 		$pesteraliascontent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
-		$pesteraliascontent+='# Computer : archvm'#+$newLine+$difficultToParseString+',"echo","","None"'
+		$pesteraliascontent+='# Computer : archvm'
 
 		# add various aliases for echo which we can then test
-
-		$pesteraliascontent+= $newLine+'pesterecho,"echo","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_1+',"echo","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_2+',"echo","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_3+',"echo","","None"'
+		$pesteraliascontent+= $newLine+'pesterecho,"'+$commandToAlias+'","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_1+',"'+$commandToAlias+'","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_2+',"'+$commandToAlias+'","","None"'
+		$pesteraliascontent+= $newLine+$difficultToParseString_3+',"'+$commandToAlias+'","","None"'
 		$pesteraliascontent > $pesteraliasfile
 
 		# create invalid file with more than four values
@@ -87,7 +98,7 @@ Describe "Import-Alias" -Tags "CI" {
 		$pesteraliascontent > $aliasPathLessThanFourValues
 	}
 
-	AfterEach {
+	AfterAll {
 		Remove-Item -Path $testAliasDirectory -Recurse -Force
 	}
 
@@ -95,45 +106,40 @@ Describe "Import-Alias" -Tags "CI" {
 	    { Import-Alias $pesteraliasfile } | Should -Not -throw
 	}
 
-	It "Should be able to import file via the Import-Alias alias of ipal" {
-	    { ipal $pesteraliasfile } | Should -Not -throw
+	It "Should classify an alias as non existent when it is not imported yet" {
+		{get-alias pesterecho} | Should --BeExactly null
 	}
 
-	It "Should be able to import an alias file and perform imported aliased echo cmd" {
-	    (Import-Alias $pesteraliasfile)
-	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
-	}
-
-	It "Should be able to use ipal alias to import an alias file and perform cmd" {
-	    (ipal $pesteraliasfile)
-	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
+	It "Should be able to import an alias file and recognize an imported alias" {
+		$aliasToTest = "pesterecho"
+		Import-Alias $pesteraliasfile
+	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""abc""""def"" into abc""def " {
-		(Import-Alias $pesteraliasfile)
-		# Note: A 'nicer' test would maybe be to check if the parsed string is in the output of get-alias,
-		# however, the way in which get-alias outputs doesn't have a nice contains() method which can check this (as far as I could see) so I therefore chose to leave this for future work.
-		$callingDifficultString = (abc`"def pestertesting)
-		$callingDifficultString | Should -BeExactly "pestertesting"
+		$aliasToTest = 'abc"def'
+		Import-Alias $pesteraliasfile
+	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""aaa"" into aaa " {
-		(Import-Alias $pesteraliasfile)
-		$callingDifficultString = (aaa pestertesting)
-		$callingDifficultString | Should -BeExactly "pestertesting"
+		$aliasToTest = "aaa"
+		Import-Alias $pesteraliasfile
+	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+
 	}
 
 	It "Should be able to parse ""a,b"" into a,b " {
-		(Import-Alias $pesteraliasfile)
-		$callingDifficultString = (a`,b pestertesting)
-		$callingDifficultString | Should -BeExactly "pestertesting"
+		$aliasToTest = "a,b"
+		Import-Alias $pesteraliasfile
+	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should throw an error when reading more than four values" {
-	    { Import-Alias $aliasPathMoreThanFourValues } | Should -throw
+	    { Import-Alias $aliasPathMoreThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 
 	It "Should throw an error when reading less than four values" {
-	    { Import-Alias $aliasPathLessThanFourValues } | Should -throw
+	    { Import-Alias $aliasPathLessThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 }
