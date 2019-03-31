@@ -103,9 +103,8 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file and recognize an imported alias" {
-		$aliasToTest = "pesterecho"
 		Import-Alias -Path $aliasfile
-	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+	    (Get-Alias -Name $alias1 -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""abc""""def"" into abc""def " {
@@ -118,7 +117,6 @@ Describe "Import-Alias" -Tags "CI" {
 		$aliasToTest = "aaa"
 		Import-Alias -Path $aliasfile
 	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
-
 	}
 
 	It "Should be able to parse ""a,b"" into a,b " {
