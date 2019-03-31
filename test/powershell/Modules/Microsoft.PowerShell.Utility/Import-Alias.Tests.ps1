@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-    $testAliases        = "TestAliases"
-    $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
+    $aliasFilename        = "aliasFilename"
+    $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $aliasFilename
 
     BeforeEach {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
@@ -47,50 +47,47 @@ Describe "Import-Alias" -Tags "CI" {
 
 	BeforeAll {
 		$newLine=[Environment]::NewLine
-		# set paths and names for the alias files
+
 		$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-		$testAliases        = "pesteralias.txt"
-		$aliasFilenameMoreThanFourValues        = "aliasFileMoreThanFourValues.txt"
-		$aliasFilenameLessThanFourValues        = "aliasFileLessThanFourValues.txt"
+		$aliasFilename = "pesteralias.txt"
+		$aliasFilenameMoreThanFourValues = "aliasFileMoreThanFourValues.txt"
+		$aliasFilenameLessThanFourValues = "aliasFileLessThanFourValues.txt"
 
-		$pesteraliasfile    = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
-		$aliasPathMoreThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameMoreThanFourValues
-		$aliasPathLessThanFourValues    = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameLessThanFourValues
+		$aliasfile = Join-Path -Path $testAliasDirectory -ChildPath $aliasFilename
+		$aliasPathMoreThanFourValues = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameMoreThanFourValues
+		$aliasPathLessThanFourValues = Join-Path -Path $testAliasDirectory -ChildPath $aliasFileNameLessThanFourValues
 
-		# define command to alias for the tests
 		$commandToAlias = "echo"
+		$alias1 = "pesterecho"
+		$alias2	= '"abc""def"'
+		$alias3	= '"aaa"'
+		$alias4	= '"a,b"'
 
-		# write the files and content
-		$difficultToParseString_1		= '"abc""def"'
-		$difficultToParseString_2		= '"aaa"'
-		$difficultToParseString_3		= '"a,b"'
-
-		# create default pester testing file
-		# has three lines of comments, then a few different aliases for the echo command.
-		# the file assigns "pesterecho" as an alias to "echo"
+		# create alias file
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 
-		$pesteraliascontent ='# Alias File'+$newLine
-		$pesteraliascontent+='# Exported by : alex'+$newLine
-		$pesteraliascontent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
-		$pesteraliascontent+='# Computer : archvm'
+		# set header
+		$aliasFileContent ='# Alias File'+$newLine
+		$aliasFileContent+='# Exported by : alex'+$newLine
+		$aliasFileContent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
+		$aliasFileContent+='# Computer : archvm'
 
-		# add various aliases for echo which we can then test
-		$pesteraliascontent+= $newLine+'pesterecho,"'+$commandToAlias+'","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_1+',"'+$commandToAlias+'","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_2+',"'+$commandToAlias+'","","None"'
-		$pesteraliascontent+= $newLine+$difficultToParseString_3+',"'+$commandToAlias+'","","None"'
-		$pesteraliascontent > $pesteraliasfile
+		# add various aliases
+		$aliasFileContent+= $newLine+$alias1+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent+= $newLine+$alias2+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent+= $newLine+$alias3+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent+= $newLine+$alias4+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent > $aliasfile
 
 		# create invalid file with more than four values
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
-		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3","v_4","v_5"'
-		$pesteraliascontent > $aliasPathMoreThanFourValues
+		$aliasFileContent+= $newLine+'"v_1","v_2","v_3","v_4","v_5"'
+		$aliasFileContent > $aliasPathMoreThanFourValues
 
 		# create invalid file with less than four values
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
-		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3"'
-		$pesteraliascontent > $aliasPathLessThanFourValues
+		$aliasFileContent+= $newLine+'"v_1","v_2","v_3"'
+		$aliasFileContent > $aliasPathLessThanFourValues
 	}
 
 	AfterAll {
@@ -98,7 +95,7 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    {Import-Alias -Path $pesteraliasfile} | Should -Not -Throw
+	    {Import-Alias -Path $aliasfile} | Should -Not -Throw
 	}
 
 	It "Should classify an alias as non existent when it is not imported yet" {
@@ -107,26 +104,26 @@ Describe "Import-Alias" -Tags "CI" {
 
 	It "Should be able to import an alias file and recognize an imported alias" {
 		$aliasToTest = "pesterecho"
-		Import-Alias -Path $pesteraliasfile
+		Import-Alias -Path $aliasfile
 	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""abc""""def"" into abc""def " {
 		$aliasToTest = 'abc"def'
-		Import-Alias -Path $pesteraliasfile
+		Import-Alias -Path $aliasfile
 	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""aaa"" into aaa " {
 		$aliasToTest = "aaa"
-		Import-Alias -Path $pesteraliasfile
+		Import-Alias -Path $aliasfile
 	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 
 	}
 
 	It "Should be able to parse ""a,b"" into a,b " {
 		$aliasToTest = "a,b"
-		Import-Alias -Path $pesteraliasfile
+		Import-Alias -Path $aliasfile
 	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
