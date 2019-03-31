@@ -73,7 +73,7 @@ Describe "Import-Alias" -Tags "CI" {
 		# create default pester testing file
 		# has three lines of comments, then a few different aliases for the echo command.
 		# the file assigns "pesterecho" as an alias to "echo"
-		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 
 		$pesteraliascontent ='# Alias File'+$newLine
 		$pesteraliascontent+='# Exported by : alex'+$newLine
@@ -88,12 +88,12 @@ Describe "Import-Alias" -Tags "CI" {
 		$pesteraliascontent > $pesteraliasfile
 
 		# create invalid file with more than four values
-		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3","v_4","v_5"'
 		$pesteraliascontent > $aliasPathMoreThanFourValues
 
 		# create invalid file with less than four values
-		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 		$pesteraliascontent+= $newLine+'"v_1","v_2","v_3"'
 		$pesteraliascontent > $aliasPathLessThanFourValues
 	}
@@ -103,43 +103,43 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    { Import-Alias $pesteraliasfile } | Should -Not -throw
+	    {Import-Alias -Path $pesteraliasfile} | Should -Not -throw
 	}
 
 	It "Should classify an alias as non existent when it is not imported yet" {
-		{get-alias pesterecho} | Should --BeExactly null
+		{Get-Alias -Name pesterecho} | Should -Be null
 	}
 
 	It "Should be able to import an alias file and recognize an imported alias" {
 		$aliasToTest = "pesterecho"
-		Import-Alias $pesteraliasfile
-	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+		Import-Alias -Path $pesteraliasfile
+	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""abc""""def"" into abc""def " {
 		$aliasToTest = 'abc"def'
-		Import-Alias $pesteraliasfile
-	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+		Import-Alias -Path $pesteraliasfile
+	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should be able to parse ""aaa"" into aaa " {
 		$aliasToTest = "aaa"
-		Import-Alias $pesteraliasfile
-	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+		Import-Alias -Path $pesteraliasfile
+	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 
 	}
 
 	It "Should be able to parse ""a,b"" into a,b " {
 		$aliasToTest = "a,b"
-		Import-Alias $pesteraliasfile
-	    (get-alias $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+		Import-Alias -Path $pesteraliasfile
+	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should throw an error when reading more than four values" {
-	    { Import-Alias $aliasPathMoreThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
+	    { Import-Alias -Path $aliasPathMoreThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 
 	It "Should throw an error when reading less than four values" {
-	    { Import-Alias $aliasPathLessThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
+	    { Import-Alias -Path $aliasPathLessThanFourValues } | Should -Throw -ErrorId "ImportAliasFileFormatError,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 }
