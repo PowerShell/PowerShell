@@ -44,11 +44,6 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Import-Alias" -Tags "CI" {
-	$testAliasDirectory
-	$pesteraliasfile
-	$aliasPathMoreThanFourValues
-	$aliasPathLessThanFourValues
-	$commandToAlias
 
 	BeforeAll {
 		$newLine=[Environment]::NewLine
@@ -103,11 +98,11 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    {Import-Alias -Path $pesteraliasfile} | Should -Not -throw
+	    {Import-Alias -Path $pesteraliasfile} | Should -Not -Throw
 	}
 
 	It "Should classify an alias as non existent when it is not imported yet" {
-		{Get-Alias -Name pesterecho} | Should -Be null
+		Get-Alias -Name invalid_alias -ErrorAction SilentlyContinue | Should -BeExactly $null
 	}
 
 	It "Should be able to import an alias file and recognize an imported alias" {
