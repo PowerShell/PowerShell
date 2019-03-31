@@ -46,7 +46,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 Describe "Import-Alias" -Tags "CI" {
 	$testAliasDirectory
 	$pesteraliasfile
-    $aliasPathMoreThanFourValues
+	$aliasPathMoreThanFourValues
 	$aliasPathLessThanFourValues
 	$commandToAlias
 
