@@ -114,7 +114,9 @@ namespace Microsoft.PowerShell.Commands
         private static string GetCorrectCasedPath(string path)
         {
             string exactPath = string.Empty;
-            if (File.Exists(path) || Directory.Exists(path))
+            // Only apply to directories where there are issues with some tools if the casing
+            // doesn't match the source like git
+            if (Directory.Exists(path))
             {
                 int itemsToSkip = 0;
                 if (Utils.PathIsUnc(path))
@@ -142,14 +144,6 @@ namespace Microsoft.PowerShell.Commands
                         // This handles the trailing slash case
                         continue;
                     }
-#if !UNIX                    
-                    else if (item.Contains(":"))
-                    {
-                        // This handles the NTFS stream name
-                        var streamName = item.Split(":");
-                        exactPath = Directory.GetFileSystemEntries(exactPath, streamName[0]).First() + ":" + streamName[1];
-                    }
-#endif
                     else
                     {
                         exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
