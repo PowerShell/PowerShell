@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
                 {
-                    if (itemsToSkip-- > 0 || item.Contains('~'))
+                    if (itemsToSkip-- > 0)
                     {
                         // This handles the UNC server and share and 8.3 short path syntax
                         exactPath += item + StringLiterals.DefaultPathSeparator;
@@ -144,6 +144,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // This handles the trailing slash case
                         continue;
+                    }
+                    else if (item.Contains('~'))
+                    {
+                        // This handles short path names
+                        exactPath += StringLiterals.DefaultPathSeparator + item;
                     }
                     else
                     {
