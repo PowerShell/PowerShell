@@ -478,7 +478,11 @@ namespace System.Management.Automation
                     resolvedPaths.Count == 0)
                 {
                     string path = GetNextLiteralPathThatExists(_commandName, out _);
-                    return GetInfoFromPath(path);
+
+                    if (path != null)
+                    {
+                        return GetInfoFromPath(path);
+                    }
                 }
 
                 if (resolvedPaths.Count > 1)
