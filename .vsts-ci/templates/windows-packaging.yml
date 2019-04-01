@@ -1,6 +1,7 @@
 parameters:
   pool: 'Hosted VS2017'
   jobName: 'win_packaging'
+  parentJobs: []
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -27,5 +28,5 @@ jobs:
   - powershell: |
       Import-Module .\tools\ci.psm1
       Invoke-CIAfterTest
-      Invoke-CIFinish -NuGetKey $(NUGET_KEY)
+      Invoke-CIFinish
     displayName: Build and Test Package

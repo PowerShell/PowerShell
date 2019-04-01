@@ -490,7 +490,7 @@ function Invoke-CIFinish
         }
 
         # only publish assembly nuget packages if it is a daily build and tests passed
-        if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
+        if(Test-DailyBuild)
         {
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
             $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
