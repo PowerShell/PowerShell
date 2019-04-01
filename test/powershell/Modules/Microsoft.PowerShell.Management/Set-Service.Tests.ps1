@@ -15,10 +15,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new(".\$userName", $password)
 
-            $svcbinaryname = New-Item -Path TestDrive:\TestExecutable.exe -ItemType File
             $testservicename1 = "testservice1"
             $testservicename2 = "testservice2"
-            $svccmd = Get-Command $svcbinaryname.FullName
+            $svcbinaryname    = "TestService"
+            $svccmd = Get-Command $svcbinaryname
             $svccmd | Should -Not -BeNullOrEmpty
             $svcfullpath = $svccmd.Path
             $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
