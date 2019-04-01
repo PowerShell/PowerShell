@@ -77,30 +77,7 @@ jobs:
     parentJobs:
       - linux_build
 
-- job: verify_xunit
-  displayName: Verify xUnit Results
-  pool:
-    name: Hosted Ubuntu 1604
-  dependsOn:
-    - linux_build
-  steps:
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download build artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: |
-        xunit/**/*
-      downloadPath: '$(System.ArtifactsDirectory)'
-
-  - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture artifacts directory'
-    continueOnError: true
-
-  - pwsh: |
-      Import-Module .\tools\ci.psm1
-      $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
-
-      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
-    displayName: Test
-    condition: succeeded()
+- template: templates/verify-xunit.yml
+  parameters:
+    pool: Hosted Ubuntu 1604
+    dependsOn: linux_build
