@@ -141,6 +141,7 @@ Describe "Command Discovery tests" -Tags "CI" {
             )
 
             $shouldNotExecuteCases = @(
+                @{command = 'subFolder\[test1].ps1' ; testName = 'Relative path that where module qualified syntax overlaps'; ExpectedErrorId = 'CouldNotAutoLoadModule'}
                 @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matctching multiple files'}
             )
@@ -164,8 +165,13 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "'<testName>' should not execute" -TestCases $shouldNotExecuteCases {
-            param($command)
-            { & $command } | Should -Throw -ErrorId 'CommandNotFoundException'
+            param(
+                [string]
+                $command,
+                [string]
+                $ExpectedErrorId = 'CommandNotFoundException'
+                )
+            { & $command } | Should -Throw -ErrorId $ExpectedErrorId
         }
     }
 
