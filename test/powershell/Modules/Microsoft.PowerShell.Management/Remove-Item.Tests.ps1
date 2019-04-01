@@ -114,10 +114,10 @@ Describe "Remove-Item" -Tags "CI" {
 	}
 
         It "Should be able to remove file when path contains special char" {
-            New-Item -Path $testpath -Name $testfileSpName -ItemType File -Force
+            New-Item -Path $testpath -Name $testfileSpName -ItemType File -Force > $null
             $testfilepathSp | Should -Exist
 
-            Remove-Item -Path $testfilepathSp
+            Remove-Item -Path $testfilepathSp -Force
             $testfilepathSp | Should -Not -Exist
         }
     }

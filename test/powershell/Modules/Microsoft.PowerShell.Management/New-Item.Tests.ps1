@@ -105,14 +105,14 @@ Describe "New-Item" -Tags "CI" {
     }
 
     It "Should create a file with correct name when Name switch is not used and Path contains special char" {
-        New-Item -Path $FullyQualifiedFileSp -ItemType file
+        New-Item -Path $FullyQualifiedFileSp -ItemType file > $null
 
         $FullyQualifiedFileSp | Should -Exist
     }
 
     It "Should be able to create a multiple items in different directories" {
         $FullyQualifiedFile2 = Join-Path -Path $tmpDirectory -ChildPath test2.txt
-        New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2
+        New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2 > $null
 
         Test-Path $FullyQualifiedFile  | Should -BeTrue
         Test-Path $FullyQualifiedFile2 | Should -BeTrue
@@ -263,10 +263,10 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "Should create symbolic link with name contains special char" {
-        $null = New-Item -Path $tmpDirectory -Name $testlinkSrcSpName -ItemType File
+        New-Item -Path $tmpDirectory -Name $testlinkSrcSpName -ItemType File > $null
         $FullyQualifiedLSrcSp | Should -Exist
 
-        $null = New-Item -Path $FullyQualifiedLinkSp -Target $FullyQualifiedLSrcSp -ItemType SymbolicLink
+        New-Item -Path $FullyQualifiedLinkSp -Target $FullyQualifiedLSrcSp -ItemType SymbolicLink > $null
         $FullyQualifiedLinkSp | Should -Exist
 
         $expectedTarget = Join-Path -Path $tmpDirectory -ChildPath $testlinkSrcSpName
