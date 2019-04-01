@@ -113,11 +113,11 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static string GetCorrectCasedPath(string path)
         {
-            string exactPath = string.Empty;
             // Only apply to directories where there are issues with some tools if the casing
             // doesn't match the source like git
             if (Directory.Exists(path))
             {
+                string exactPath = string.Empty;
                 int itemsToSkip = 0;
                 if (Utils.PathIsUnc(path))
                 {
@@ -129,8 +129,9 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
                 {
-                    if (itemsToSkip-- > 0)
+                    if (itemsToSkip-- > 0 || item.Contains('~'))
                     {
+                        // This handles the UNC server and share and 8.3 short path syntax
                         exactPath += item + StringLiterals.DefaultPathSeparator;
                         continue;
                     }
