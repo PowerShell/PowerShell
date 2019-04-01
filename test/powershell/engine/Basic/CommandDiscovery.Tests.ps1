@@ -116,11 +116,6 @@ Describe "Command Discovery tests" -Tags "CI" {
                 #Region relative Subfolder paths without './'
                     @{command = $secondFileInSubFolder ; expectedResult = $secondResult; name = $secondFileInSubFolder}
 
-                    # PowerShell fails if the directory separators are in the wrong direction in this case
-                    # https://github.com/PowerShell/PowerShell/issues/9256
-                    @{command = 'subFolder\[test1].ps1' ; expectedResult = $firstResult; name = 'subFolder\[test1].ps1'; Pending="See directory separator direction in https://github.com/PowerShell/PowerShell/issues/9256"}
-                    @{command = 'subFolder\[t1].ps1' ; expectedResult = $secondResult; name = $secondFileSearchInSubfolder; Pending="See directory separator direction in https://github.com/PowerShell/PowerShell/issues/9256"}
-
                     # Wildcard search is also not being performed in this scenario before this change.
                     # I noted this in the above issue and disabling these cases
                     @{command = $firstFileInSubFolder ; expectedResult = $firstResult; name = $firstFileInSubFolder; Pending="See note about wildcard in https://github.com/PowerShell/PowerShell/issues/9256"}
