@@ -22,29 +22,27 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Command")]
         [Parameter(ParameterSetName = "Line")]
         [Parameter(ParameterSetName = "Variable")]
-        public ScriptBlock Action { get; set; } = null;
+        public ScriptBlock Action { get; set; }
 
         /// <summary>
         /// The column to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 2, ParameterSetName = "Line")]
         [ValidateRange(1, int.MaxValue)]
-        public int Column { get; set; } = 0;
+        public int Column { get; set; }
 
         /// <summary>
         /// The command(s) to set the breakpoint on.
         /// </summary>
         [Alias("C")]
         [Parameter(ParameterSetName = "Command", Mandatory = true)]
-        [ValidateNotNull]
-        public string[] Command { get; set; } = null;
+        public string[] Command { get; set; }
 
         /// <summary>
         /// The line to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Line", Mandatory = true)]
-        [ValidateNotNull]
-        public int[] Line { get; set; } = null;
+        public int[] Line { get; set; }
 
         /// <summary>
         /// The script to set the breakpoint on.
@@ -53,15 +51,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Line", Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Variable", Position = 0)]
         [ValidateNotNull]
-        public string[] Script { get; set; } = null;
+        public string[] Script { get; set; }
 
         /// <summary>
         /// The variables to set the breakpoint(s) on.
         /// </summary>
         [Alias("V")]
         [Parameter(ParameterSetName = "Variable", Mandatory = true)]
-        [ValidateNotNull]
-        public string[] Variable { get; set; } = null;
+        public string[] Variable { get; set; }
 
         /// <summary>
         /// </summary>

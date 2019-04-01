@@ -26,9 +26,7 @@ namespace Microsoft.PowerShell.Commands
             // If there is a script, resolve its path
             Collection<string> scripts = ResolveScriptPaths();
 
-            //
             // If it is a command breakpoint...
-            //
             if (ParameterSetName.Equals("Command", StringComparison.OrdinalIgnoreCase))
             {
                 for (int i = 0; i < Command.Length; i++)
@@ -48,11 +46,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            //
-            // If it is a variable breakpoint...
-            //
             else if (ParameterSetName.Equals("Variable", StringComparison.OrdinalIgnoreCase))
             {
+                // If it is a variable breakpoint...
                 for (int i = 0; i < Variable.Length; i++)
                 {
                     if (scripts.Count > 0)

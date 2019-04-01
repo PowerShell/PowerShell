@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for Enable/Disable/Remove-PSBreakpoint.
     /// </summary>
-    public abstract class PSBreakpointStatusBase : PSCmdlet
+    public abstract class PSBreakpointCommandBase : PSCmdlet
     {
         /// <summary>
         /// The breakpoint to enable.
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113295")]
     [OutputType(typeof(Breakpoint))]
-    public class EnablePSBreakpointCommand : PSBreakpointStatusBase
+    public class EnablePSBreakpointCommand : PSBreakpointCommandBase
     {
         /// <summary>
         /// Gets or sets the parameter -passThru which states whether the

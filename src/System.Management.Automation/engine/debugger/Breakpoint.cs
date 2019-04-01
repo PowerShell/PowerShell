@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -72,7 +73,7 @@ namespace System.Management.Automation
         {
             Enabled = true;
             Script = script;
-            Id = s_lastID++;
+            Id = Interlocked.Increment(ref s_lastID);
             Action = action;
             HitCount = 0;
         }
