@@ -1234,7 +1234,7 @@ function Publish-TestResults
         # so check to be sure we actually have a result file that contains test cases to upload.
         # If the the "test-case" count is greater than 0, then we have results.
         # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
-        if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 ) {
+        if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case") -or $Type -eq 'XUnit').Count -gt 0 ) {
             Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
         }
 
