@@ -28,5 +28,5 @@ jobs:
   - powershell: |
       Import-Module .\tools\ci.psm1
       Invoke-CIAfterTest
-      Invoke-CIFinish
+      Invoke-CIFinish -NuGetKey $(NUGET_KEY)
     displayName: Build and Test Package
