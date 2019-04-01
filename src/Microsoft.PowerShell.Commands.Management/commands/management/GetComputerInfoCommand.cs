@@ -224,12 +224,8 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void UpdateProgress(string status)
         {
-            status = status ?? ComputerResources.ProgressStatusCompleted;
-            var progress = new ProgressRecord(0, activity, status);
-            if (status == null)
-            {
-                progress.RecordType = ProgressRecordType.Completed;
-            }
+            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
+            progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
 
             WriteProgress(progress);
         }
