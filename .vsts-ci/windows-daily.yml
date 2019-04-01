@@ -70,6 +70,8 @@ jobs:
 
 - template: templates/windows-packaging.yml
   parameters:
+  # we wait for all tests to finish as this phase uploads the daily nuget package to MyGet.
+  # we want to upload only if tests have passed.
     dependsOn:
       - win_test_UnelevatedPesterTests_CI
       - win_test_ElevatedPesterTests_CI
