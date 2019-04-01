@@ -909,7 +909,7 @@ function Start-PSPester {
         [Parameter(HelpMessage='Title to publish the results as.')]
         [string]$Title = 'PowerShell Core Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
-            HelpMessage='Wait for the debugger to attach to powershell before pester starts.  Debug builds only!')]
+            HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait
     )
 
