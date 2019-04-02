@@ -71,6 +71,25 @@ if (-not $UseMSI) {
     }
 }
 
+function Expand-ArchiveInternal {
+    [CmdletBinding()]
+    param(
+        $Path,
+        $DestinationPath
+    )
+
+    if((Get-Command -Name Expand-Archive -ErrorAction Ignore))
+    {
+        Expand-Archive -Path $Path -DestinationPath $DestinationPath
+    }
+    else
+    {
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+        $resolvedDestinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DestinationPath)
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath,$resolvedDestinationPath)
+    }
+}
 Function Remove-Destination([string] $Destination) {
     if (Test-Path -Path $Destination) {
         if ($DoNotOverwrite) {
@@ -231,7 +250,7 @@ try {
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-        if ($PSVersionTable.PSEdition -eq "Desktop") {
+        if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
             # On Windows PowerShell, progress can make the download significantly slower
             $oldProgressPreference = $ProgressPreference
             $ProgressPreference = "SilentlyContinue"
@@ -240,7 +259,7 @@ try {
         try {
             Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
         } finally {
-            if ($PSVersionTable.PSEdition -eq "Desktop") {
+            if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
                 $ProgressPreference = $oldProgressPreference
             }
         }
@@ -258,7 +277,7 @@ try {
             } elseif ($UseMSI) {
                 Start-Process $packagePath -Wait
             } else {
-                Expand-Archive -Path $packagePath -DestinationPath $contentPath
+                Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
             }
         } else {
             tar zxf $packagePath -C $contentPath
