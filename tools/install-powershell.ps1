@@ -71,6 +71,8 @@ if (-not $UseMSI) {
     }
 }
 
+# Expand an archive using Expand-archive when available
+# and the DotNet API when it is not
 function Expand-ArchiveInternal {
     [CmdletBinding()]
     param(
@@ -90,6 +92,7 @@ function Expand-ArchiveInternal {
         [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath,$resolvedDestinationPath)
     }
 }
+
 Function Remove-Destination([string] $Destination) {
     if (Test-Path -Path $Destination) {
         if ($DoNotOverwrite) {
