@@ -1567,7 +1567,6 @@ namespace Microsoft.PowerShell.Commands
         internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
 
         /// <summary>
-        /// The following is the definition of the input parameter "SecurityDescriptorSddl".
         /// Sets the SecurityDescriptorSddl of the service using a SDDL string.
         /// </summary>
         [Parameter]
@@ -1886,7 +1885,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // Handle the '-SecurityDescriptorSddl' parameter
                     if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
                         var rawSecurityDescriptor = new RawSecurityDescriptor(SecurityDescriptorSddl);
@@ -2740,6 +2738,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         [DllImport(PinvokeDllNames.SetServiceObjectSecurityDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern
         bool SetServiceObjectSecurity(
             NakedWin32Handle hSCManager,
