@@ -2362,24 +2362,20 @@ namespace System.Management.Automation
             {
                 if (_idToBreakpoint.ContainsKey(breakpoint.Id)) { continue; }
 
-                LineBreakpoint lineBp = breakpoint as LineBreakpoint;
-                if (lineBp != null)
+                switch (breakpoint)
                 {
-                    AddLineBreakpoint(lineBp);
-                    continue;
-                }
-
-                CommandBreakpoint cmdBp = breakpoint as CommandBreakpoint;
-                if (cmdBp != null)
-                {
-                    AddCommandBreakpoint(cmdBp);
-                    continue;
-                }
-
-                VariableBreakpoint variableBp = breakpoint as VariableBreakpoint;
-                if (variableBp != null)
-                {
-                    AddVariableBreakpoint(variableBp);
+                    case LineBreakpoint lineBp:
+                        AddLineBreakpoint(lineBp);
+                        continue;
+                    case CommandBreakpoint cmdBp:
+                        AddCommandBreakpoint(cmdBp);
+                        continue;
+                    case VariableBreakpoint variableBp:
+                        AddVariableBreakpoint(variableBp);
+                        continue;
+                    default:
+                        // Unreachable default block
+                        break;
                 }
             }
         }
@@ -3999,6 +3995,15 @@ namespace System.Management.Automation
             }
 
             return _wrappedDebugger.ProcessCommand(command, output);
+        }
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger?.SetBreakpoints(breakpoints);
         }
 
         /// <summary>

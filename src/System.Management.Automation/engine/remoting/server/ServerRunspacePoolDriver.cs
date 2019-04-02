@@ -1768,6 +1768,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.Value?.SetBreakpoints(breakpoints);
+        }
+
+        /// <summary>
         /// Exits debugger mode with the provided resume action.
         /// </summary>
         /// <param name="resumeAction">DebuggerResumeAction.</param>
