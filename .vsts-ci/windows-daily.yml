@@ -73,6 +73,7 @@ jobs:
 - template: templates/windows-packaging.yml
   parameters:
     parentJobs:
+      - win_dsfsf
       - win_test_UnelevatedPesterTests_CI
       - win_test_ElevatedPesterTests_CI
       - win_test_UnelevatedPesterTests_Others
