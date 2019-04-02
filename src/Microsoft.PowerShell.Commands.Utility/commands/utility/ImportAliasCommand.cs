@@ -8,6 +8,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -290,104 +291,244 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<AliasInfo> result = new Collection<AliasInfo>();
 
-            string filePath = null;
-            using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
+            // it seems like filePath is always null and never defined, so we can remove it as far as I could see
+            // string filePath = null;
+
+            using (StreamReader reader = OpenFile(isLiteralPath))
             {
-                CSVHelper csvHelper = new CSVHelper(',');
+                //CSVHelper csvHelper = new CSVHelper(',');
 
                 Int64 lineNumber = 0;
-                string line = null;
+                string line;// = null;
                 while ((line = reader.ReadLine()) != null)
                 {
                     ++lineNumber;
 
-                    // Ignore blank lines
-                    if (line.Length == 0)
-                    {
+                    if(lineShouldBeSkipped(line)) {
                         continue;
                     }
 
-                    // Ignore lines that only contain whitespace
-                    if (OnlyContainsWhitespace(line))
-                    {
-                        continue;
+                    Collection<string> parsedLine = ParseCsvLine(line);
+
+                    // create options
+                    ScopedItemOptions options = createItemOptions(parsedLine, null, lineNumber);
+
+                    if(isValidParsedLine(parsedLine, options, lineNumber)) {
+                        result.Add(constructAlias(parsedLine, options));
                     }
+                    ////
 
-                    // Ignore comment lines
-                    if (line[0] == '#')
-                    {
-                        continue;
-                    }
+                //     if (parsedLine.Count != 4)
+                //     {
+                //         string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
 
-                    Collection<string> values = csvHelper.ParseCsv(line);
+                //         FormatException formatException =
+                //             new FormatException(message);
 
-                    if (values.Count != 4)
-                    {
-                        string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
+                //         ErrorRecord errorRecord =
+                //             new ErrorRecord(
+                //                 formatException,
+                //                 "ImportAliasFileFormatError",
+                //                 ErrorCategory.ReadError,
+                //                 filePath);
 
-                        FormatException formatException =
-                            new FormatException(message);
+                //         errorRecord.ErrorDetails = new ErrorDetails(message);
 
-                        ErrorRecord errorRecord =
-                            new ErrorRecord(
-                                formatException,
-                                "ImportAliasFileFormatError",
-                                ErrorCategory.ReadError,
-                                filePath);
+                //         ThrowTerminatingError(errorRecord);
+                //     }
 
-                        errorRecord.ErrorDetails = new ErrorDetails(message);
+                //     ScopedItemOptions options = ScopedItemOptions.None;
 
-                        ThrowTerminatingError(errorRecord);
-                    }
+                //     try
+                //     {
+                //         options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), values[3], true);
+                //     }
+                //     catch (ArgumentException argException)
+                //     {
+                //         string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
 
-                    ScopedItemOptions options = ScopedItemOptions.None;
+                //         ErrorRecord errorRecord =
+                //             new ErrorRecord(
+                //                 argException,
+                //                 "ImportAliasOptionsError",
+                //                 ErrorCategory.ReadError,
+                //                 filePath);
 
-                    try
-                    {
-                        options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), values[3], true);
-                    }
-                    catch (ArgumentException argException)
-                    {
-                        string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
+                //         errorRecord.ErrorDetails = new ErrorDetails(message);
+                //         WriteError(errorRecord);
+                //         continue;
+                //     }
 
-                        ErrorRecord errorRecord =
-                            new ErrorRecord(
-                                argException,
-                                "ImportAliasOptionsError",
-                                ErrorCategory.ReadError,
-                                filePath);
+                //     AliasInfo newAlias =
+                //         new AliasInfo(
+                //             values[0],
+                //             values[1],
+                //             Context,
+                //             options);
 
-                        errorRecord.ErrorDetails = new ErrorDetails(message);
-                        WriteError(errorRecord);
-                        continue;
-                    }
+                //     if (!string.IsNullOrEmpty(values[2]))
+                //     {
+                //         newAlias.Description = values[2];
+                //     }
 
-                    AliasInfo newAlias =
-                        new AliasInfo(
-                            values[0],
-                            values[1],
-                            Context,
-                            options);
-
-                    if (!string.IsNullOrEmpty(values[2]))
-                    {
-                        newAlias.Description = values[2];
-                    }
-
-                    result.Add(newAlias);
+                //     result.Add(newAlias);
+                // }
                 }
-
                 reader.Dispose();
             }
-
             return result;
         }
 
-        private StreamReader OpenFile(out string filePath, bool isLiteralPath)
+        private bool lineShouldBeSkipped(string line)
+        {
+            //if line is empty or a comment, return true
+            return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
+        }
+
+        private ScopedItemOptions createItemOptions(Collection<string> parsedLine, string filePath, Int64 lineNumber) {
+            ScopedItemOptions options = ScopedItemOptions.None;
+
+            try
+            {
+                options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), parsedLine[3], true);
+            }
+            catch (ArgumentException argException)
+            {
+                string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
+
+                ErrorRecord errorRecord =
+                    new ErrorRecord(
+                        argException,
+                        "ImportAliasOptionsError",
+                        ErrorCategory.ReadError,
+                        filePath);
+
+                errorRecord.ErrorDetails = new ErrorDetails(message);
+                WriteError(errorRecord);
+            }
+            return options;
+        }
+
+        private AliasInfo constructAlias(Collection<string> parsedLine, ScopedItemOptions options) {
+            AliasInfo newAlias =
+                        new AliasInfo(
+                            parsedLine[0],
+                            parsedLine[1],
+                            Context,
+                            options);
+
+            if (!string.IsNullOrEmpty(parsedLine[2]))
+            {
+                newAlias.Description = parsedLine[2];
+            }
+
+            return newAlias;
+        }
+
+        private bool isValidParsedLine(Collection<string> parsedLine, ScopedItemOptions options, Int64 lineNumber) {
+            // if options object cannot be created
+            if(options == ScopedItemOptions.None) {              
+                return false;
+            }
+
+            if(parsedLine.Count != 4)
+            {
+                // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
+                string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
+
+                FormatException formatException =
+                    new FormatException(message);
+
+                ErrorRecord errorRecord =
+                    new ErrorRecord(
+                        formatException,
+                        "ImportAliasFileFormatError",
+                        ErrorCategory.ReadError,
+                        null);
+
+                errorRecord.ErrorDetails = new ErrorDetails(message);
+
+                ThrowTerminatingError(errorRecord);
+                return false;
+            }
+
+            return true;
+        }
+
+        private Collection<string> ParseCsvLine(string csv)
+        {        
+            csv = csv.Trim();
+            Collection<string> result = new Collection<string>();
+            if (csv.Length == 0 || csv[0] == '#')
+            {
+                return result;
+            }
+
+            var reader = new StringReader(csv);
+            StringBuilder wordBuffer = new StringBuilder();
+
+            while (reader.Peek() != -1) 
+            {
+                char nextChar = (char)reader.Read();
+
+                // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
+                // else if next character was quote, perform reading until next quote and add it to wordBuffer
+                // else read and add it to wordBuffer
+                if (nextChar == ',') 
+                {
+                    result.Add(wordBuffer.ToString());
+                    wordBuffer.Clear();
+                } 
+                else if (nextChar == '"') 
+                {
+                    bool inQuotes = true;
+                    
+                    // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
+                    // if it is a single quote, escape the quote section
+                    // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
+                    while (reader.Peek() != -1 && inQuotes) 
+                    {
+                        nextChar = (char)reader.Read();
+                        
+                        if (nextChar == '"') 
+                        {
+                            if ((char)reader.Peek() == '"')
+                            {
+                                wordBuffer.Append(nextChar);
+                                reader.Read();
+                            } 
+                            else 
+                            {
+                                inQuotes = false;
+                            }
+                        } 
+                        else 
+                        {
+                            wordBuffer.Append(nextChar);
+                        }
+                    }
+                } 
+                else 
+                {
+                    wordBuffer.Append(nextChar);
+                }
+            }
+
+            string lastWord = wordBuffer.ToString();
+            if (lastWord != string.Empty)
+            {
+                result.Add(lastWord);
+            }
+
+            reader.Close();    
+            return result;           
+        }
+
+        private StreamReader OpenFile(bool isLiteralPath)
         {
             StreamReader result = null;
 
-            filePath = null;
+            //filePath = null;
             ProviderInfo provider = null;
             Collection<string> paths = null;
 
@@ -422,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
                         this.Path);
             }
 
-            filePath = paths[0];
+            string filePath = paths[0];
 
             try
             {
@@ -479,4 +620,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
     }
+
+    
 }
