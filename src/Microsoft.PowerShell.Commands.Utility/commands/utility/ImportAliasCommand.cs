@@ -459,10 +459,6 @@ namespace Microsoft.PowerShell.Commands
         {        
             csv = csv.Trim();
             Collection<string> result = new Collection<string>();
-            if (csv.Length == 0 || csv[0] == '#')
-            {
-                return result;
-            }
 
             var reader = new StringReader(csv);
             StringBuilder wordBuffer = new StringBuilder();
