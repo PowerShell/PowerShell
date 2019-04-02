@@ -907,7 +907,10 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests'
+        [string]$Title = 'PowerShell Core Tests',
+        [Parameter(ParameterSetName='Wait', Mandatory=$true,
+            HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
+        [switch]$Wait
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1099,6 +1102,13 @@ function Start-PSPester {
 
         Set-Content -Path $configFile -Value $content -Encoding Ascii -Force
         $PSFlags = @("-settings", $configFile, "-noprofile")
+    }
+
+	# -Wait is only available on Debug builds
+	# It is used to allow the debugger to attach before PowerShell
+	# runs pester in this case
+    if($Wait.IsPresent){
+        $PSFlags += '-wait'
     }
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
