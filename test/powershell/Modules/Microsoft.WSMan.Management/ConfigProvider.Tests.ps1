@@ -439,4 +439,17 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             }
         }
     }
+
+    Context 'ItemSeparator properties' {
+        It 'WSMan provider has ItemSeparator properties' {
+
+            (Get-PSProvider WSMan).ItemSeparator | Should -Be '\'
+            (Get-PSProvider WSMan).AltItemSeparator | Should -Be '/'
+        }
+
+        It 'ItemSeparator properties is read-only in WSMan provider' {
+            { (Get-PSProvider WSMan).ItemSeparator = $null } | Should -Throw
+            { (Get-PSProvider WSMan).AltItemSeparator = $null } | Should -Throw
+        }
+    }
 }
