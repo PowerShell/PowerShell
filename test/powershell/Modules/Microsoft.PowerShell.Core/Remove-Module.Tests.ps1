@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 Describe "Remove-Module -Name" -Tags "CI" {
     BeforeAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
@@ -41,16 +42,16 @@ Describe "Remove-Module -Name" -Tags "CI" {
         )
     }
 
-    AfterAll {
-        Remove-Module -Name "Foo", "Bar", "Baz"
-    }
-
     BeforeEach {
         Import-Module -Name "$testdrive\Modules\Foo\Foo.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Bar\Bar.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Baz\Baz.psd1" -Force
 
         (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo"
+    }
+
+    AfterAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
     }
 
     It "Remove-Module -Name <PatternsToRemove>" -TestCases $removeModuleByNameTestCases {
@@ -84,6 +85,7 @@ Describe "Remove-Module -Name" -Tags "CI" {
 
 Describe "Remove-Module -FullyQualifiedName" -Tags "CI" {
     BeforeAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.0\" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0\" -Force > $null
@@ -163,6 +165,10 @@ Describe "Remove-Module -FullyQualifiedName" -Tags "CI" {
         Import-Module -Name "$testdrive\Modules\Baz\Baz.psd1" -Force
 
         (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
+    }
+
+    AfterAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
     }
 
     It "Remove-Module -FullyQualifiedName <FullyQualifiedName>" -TestCases $removeModuleByFQNTestCases {
