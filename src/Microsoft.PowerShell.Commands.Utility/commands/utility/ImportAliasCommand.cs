@@ -292,14 +292,14 @@ namespace Microsoft.PowerShell.Commands
             Collection<AliasInfo> result = new Collection<AliasInfo>();
 
             // it seems like filePath is always null and never defined, so we can remove it as far as I could see
-            // string filePath = null;
+            string filePath = null;
 
-            using (StreamReader reader = OpenFile(isLiteralPath))
+            using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
             {
                 //CSVHelper csvHelper = new CSVHelper(',');
 
                 Int64 lineNumber = 0;
-                string line;// = null;
+                string line = null;
                 while ((line = reader.ReadLine()) != null)
                 {
                     ++lineNumber;
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
                     Collection<string> parsedLine = ParseCsvLine(line);
 
                     // create options
-                    ScopedItemOptions options = createItemOptions(parsedLine, null, lineNumber);
+                    ScopedItemOptions options = createItemOptions(parsedLine, filePath, lineNumber);
 
                     if(isValidParsedLine(parsedLine, options, lineNumber)) {
                         result.Add(constructAlias(parsedLine, options));
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
             return newAlias;
         }
 
-        private bool isValidParsedLine(Collection<string> parsedLine, ScopedItemOptions options, Int64 lineNumber) {
+        private bool isValidParsedLine(Collection<string> parsedLine, ScopedItemOptions options, Int64 lineNumber, string filePath) {
             // if options object cannot be created
             if(options == ScopedItemOptions.None) {              
                 return false;
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Commands
                         formatException,
                         "ImportAliasFileFormatError",
                         ErrorCategory.ReadError,
-                        null);
+                        filePath);
 
                 errorRecord.ErrorDetails = new ErrorDetails(message);
 
@@ -520,11 +520,12 @@ namespace Microsoft.PowerShell.Commands
             return result;           
         }
 
-        private StreamReader OpenFile(bool isLiteralPath)
+        private StreamReader OpenFile(out string filePath, bool isLiteralPath)
         {
             StreamReader result = null;
 
-            //filePath = null;
+            // so remove this line right
+            filePath = null;
             ProviderInfo provider = null;
             Collection<string> paths = null;
 
@@ -559,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
                         this.Path);
             }
 
-            string filePath = paths[0];
+            filePath = paths[0];
 
             try
             {
