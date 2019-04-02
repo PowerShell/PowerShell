@@ -376,13 +376,26 @@ function Invoke-CIAfterTest
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
-        Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | ForEach-Object {
-            Push-Artifact -Path $_ -Name 'CodeCoverage'
+        $destBasePath = if ($env:TF_BUILD) {
+            $env:BUILD_ARTIFACTSTAGINGDIRECTORY
+        } else {
+            Join-Path (Get-Location).Path "out"
         }
 
-        New-TestPackage -Destination (Get-Location).Path
-        $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
+        if (-not (Test-Path $destBasePath))
+        {
+            $null = New-Item -ItemType Directory -Path $destBasePath
+        }
+
+        Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
+        $codeCoverageArtifacts | ForEach-Object {
+            Copy-Item -Path $_ -Destination $destBasePath
+            $newPath = Join-Path $destBasePath (Split-Path $_ -Leaf)
+            Push-Artifact -Path $newPath -Name 'CodeCoverage'
+        }
+
+        New-TestPackage -Destination $destBasePath
+        $testPackageFullName = Join-Path $destBasePath 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
         Push-Artifact $testPackageFullName -Name 'artifacts'
