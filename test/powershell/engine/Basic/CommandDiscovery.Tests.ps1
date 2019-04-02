@@ -116,7 +116,7 @@ Describe "Command Discovery tests" -Tags "CI" {
                 #Region relative Subfolder paths without './'
                     @{command = $secondFileInSubFolder ; expectedResult = $secondResult; name = $secondFileInSubFolder}
 
-                    # Wildcard search is also not being performed in this scenario before this change.
+                    # Wildcard search is not being performed in this scenario before this change.
                     # I noted the issue in the pending message
                     @{command = $firstFileInSubFolder ; expectedResult = $firstResult; name = $firstFileInSubFolder; Pending="See note about wildcard in https://github.com/PowerShell/PowerShell/issues/9256"}
                     @{command = $secondFileSearchInSubfolder ; expectedResult = $secondResult; name = $secondFileSearchInSubfolder; Pending="See note about wildcard in https://github.com/PowerShell/PowerShell/issues/9256"}
