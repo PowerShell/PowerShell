@@ -5,6 +5,8 @@ parameters:
 
 jobs:
 - job: ${{ parameters.jobName }}
+  dependsOn:
+      ${{ parameters.parentJobs }}
   pool:
     name: ${{ parameters.pool }}
 
