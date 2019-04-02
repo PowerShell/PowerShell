@@ -40,18 +40,6 @@
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
         </Rule>
-        <Rule Name="UseBuiltInTypeAlias">
-          <!-- it's OK to use 'String' for API calls -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-        <Rule Name="CodeMustNotContainMultipleStatementsOnOneLine">
-          <!-- it's OK to have more than one statements on a single line depending on the use -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
       </Rules>
       <AnalyzerSettings />
     </Analyzer>
@@ -174,28 +162,9 @@
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.LayoutRules">
       <Rules>
-        <Rule Name="ClosingCurlyBracketMustBeFollowedByBlankLine">
-          <!-- it's OK to not have a blank line after '}' -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-        <Rule Name="ElementsMustBeSeparatedByBlankLine">
-          <!-- it's OK to not have a blank line between adjacent members.
-               think about the 'Visit*' methods in Ast visitor class. -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
         <Rule Name="ElementMustNotBeOnSingleLine">
           <!-- it's OK to have simple member on a single line.
                think about the 'Visit*' methods in Ast visitor class. -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-        <Rule Name="StatementMustNotBeOnSingleLine">
-          <!-- it's OK to have a statement on a single line. -->
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
