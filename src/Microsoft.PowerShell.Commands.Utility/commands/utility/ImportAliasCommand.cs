@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
                     // create options
                     ScopedItemOptions options = createItemOptions(parsedLine, filePath, lineNumber);
 
-                    if(isValidParsedLine(parsedLine, options, lineNumber)) {
+                    if(isValidParsedLine(parsedLine, options, lineNumber, filePath)) {
                         result.Add(constructAlias(parsedLine, options));
                     }
                     ////
