@@ -292,6 +292,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<AliasInfo> result = new Collection<AliasInfo>();
 
             // it seems like filePath is always null and never defined, so we can remove it as far as I could see
+            // bug keeping it for now because tests are failing
             string filePath = null;
 
             using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
@@ -316,69 +317,13 @@ namespace Microsoft.PowerShell.Commands
                     if(isValidParsedLine(parsedLine, options, lineNumber, filePath)) {
                         result.Add(constructAlias(parsedLine, options));
                     }
-                    ////
-
-                //     if (parsedLine.Count != 4)
-                //     {
-                //         string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
-
-                //         FormatException formatException =
-                //             new FormatException(message);
-
-                //         ErrorRecord errorRecord =
-                //             new ErrorRecord(
-                //                 formatException,
-                //                 "ImportAliasFileFormatError",
-                //                 ErrorCategory.ReadError,
-                //                 filePath);
-
-                //         errorRecord.ErrorDetails = new ErrorDetails(message);
-
-                //         ThrowTerminatingError(errorRecord);
-                //     }
-
-                //     ScopedItemOptions options = ScopedItemOptions.None;
-
-                //     try
-                //     {
-                //         options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), values[3], true);
-                //     }
-                //     catch (ArgumentException argException)
-                //     {
-                //         string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
-
-                //         ErrorRecord errorRecord =
-                //             new ErrorRecord(
-                //                 argException,
-                //                 "ImportAliasOptionsError",
-                //                 ErrorCategory.ReadError,
-                //                 filePath);
-
-                //         errorRecord.ErrorDetails = new ErrorDetails(message);
-                //         WriteError(errorRecord);
-                //         continue;
-                //     }
-
-                //     AliasInfo newAlias =
-                //         new AliasInfo(
-                //             values[0],
-                //             values[1],
-                //             Context,
-                //             options);
-
-                //     if (!string.IsNullOrEmpty(values[2]))
-                //     {
-                //         newAlias.Description = values[2];
-                //     }
-
-                //     result.Add(newAlias);
-                // }
                 }
                 reader.Dispose();
             }
             return result;
         }
 
+        
         private bool lineShouldBeSkipped(string line)
         {
             //if line is empty or a comment, return true
@@ -387,7 +332,6 @@ namespace Microsoft.PowerShell.Commands
 
         private ScopedItemOptions createItemOptions(Collection<string> parsedLine, string filePath, Int64 lineNumber) {
             ScopedItemOptions options = ScopedItemOptions.None;
-
             try
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), parsedLine[3], true);
