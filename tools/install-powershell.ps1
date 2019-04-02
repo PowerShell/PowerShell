@@ -98,50 +98,6 @@ Function Remove-Destination([string] $Destination) {
 
 <#
 .Synopsis
-    Parameter validation for Add-PathTToSettingsToSettings.
-.DESCRIPTION
-    Validates that the parameter being validated:
-    - is not null
-    - is a folder and exists
-    - and that it does not exist in settings where settings is:
-        = the process PATH for Linux/OSX
-        - the registry PATHs for Windows
-#>
-class ValidatePathNotInSettingsAttribute : System.Management.Automation.ValidateArgumentsAttribute {
-    [void] Validate([object] $Arguments, [System.Management.Automation.EngineIntrinsics] $engineIntrinsics) {
-        $Path = $Arguments
-        if ([string]::IsNullOrWhiteSpace($Path)) {
-            Throw [System.ArgumentNullException]::new()
-        }
-
-        # Remove ending DirectorySeparatorChar for comparison purposes
-        $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
-
-        if (-not [System.IO.Directory]::Exists($Path)) {
-            Throw [System.IO.DirectoryNotFoundException]::new()
-        }
-
-        # [System.Environment]::GetEnvironmentVariable automatically expands all variables
-        [System.Array] $InstalledPaths = @()
-        if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)).Split([System.IO.Path]::PathSeparator))
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)).Split([System.IO.Path]::PathSeparator))
-        } else {
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process).Split([System.IO.Path]::PathSeparator))
-        }
-
-        # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
-        $InstalledPaths = $InstalledPaths.ForEach( { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) } )
-
-        # Throw if $InstalledPaths is in setting
-        if ($InstalledPaths -icontains $Path) {
-            Throw [System.ArgumentException]::new("Path already exists.")
-        }
-    }
-}
-
-<#
-.Synopsis
     Adds a Path to settings (Supports Windows Only)
 .DESCRIPTION
     Adds the target path to the target registry.
@@ -183,7 +139,7 @@ Function Add-PathTToSettings {
 
     # $key is null here if it the user was unable to get ReadWriteSubTree access.
     if ($null -eq $Key) {
-        throw [System.Security.SecurityException]::new("Unable to access the target registry")
+        throw (new-object -typeName 'System.Security.SecurityException' -ArgumentList "Unable to access the target registry")
     }
 
     # Get current unexpanded value
