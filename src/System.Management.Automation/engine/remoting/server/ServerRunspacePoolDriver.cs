@@ -1773,7 +1773,7 @@ namespace System.Management.Automation
         /// <param name="breakpoints">Breakpoints.</param>
         public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
         {
-            _wrappedDebugger.Value?.SetBreakpoints(breakpoints);
+            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
         }
 
         /// <summary>
