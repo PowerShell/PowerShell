@@ -1,12 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 try
 {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
-    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))
+    # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
+    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome))
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     #

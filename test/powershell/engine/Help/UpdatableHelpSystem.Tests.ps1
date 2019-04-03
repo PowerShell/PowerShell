@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 # Test Settings:
 # This is the list of PowerShell Core modules for which we test update-help
 $powershellCoreModules = @(
@@ -197,7 +199,7 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" {
+            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
                 if($userscope)
                 {

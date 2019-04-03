@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
@@ -31,7 +33,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
-        if ($systemConfigExists) {
+        if ($systemConfigExists -and (Test-CanWriteToPsHome)) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
 
@@ -43,7 +45,10 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterEach {
-        Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
+        }
+
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
     }
 
@@ -113,7 +118,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     Context "User config takes precedence over system config" {
-        It "Feature is enabled in user config only" {
+        It "Feature is enabled in user config only" -Skip:(!(Test-CanWriteToPsHome)) {
             '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $userConfigPath
             '{"ExperimentalFeatures":["ExpTest.FeatureTwo"]}' > $systemConfigPath
 

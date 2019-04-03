@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
@@ -52,7 +54,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Configuration name should be in the transcript header" {
+    It "Configuration name should be in the transcript header" -Skip:(!(Test-CanWriteToPsHome)) {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
@@ -94,7 +96,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Get-Help should work in JEA sessions" {
+    It "Get-Help should work in JEA sessions" -Skip:(!(Test-CanWriteToPsHome)) {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         try
