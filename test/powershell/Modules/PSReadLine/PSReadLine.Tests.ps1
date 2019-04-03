@@ -16,7 +16,7 @@ Describe "PSReadLine" -tags "CI" {
     }
 
     It "Should be installed to `$PSHOME" {
-        $module = Get-Module (Join-Path $PSHOME "Modules" "PSReadLine") -ListAvailable
+        $module = Get-Module (Join-Path -Path $PSHOME -ChildPath "Modules" -AdditionalChildPath "PSReadLine") -ListAvailable
         $module.Name | Should -BeExactly 'PSReadLine'
         $module.Version | Should -BeExactly '2.0.0'
         $module.Path | Should -Be (Join-Path -Path $PSHOME -ChildPath "Modules/PSReadLine/PSReadLine.psd1")
