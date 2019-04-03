@@ -46,7 +46,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 Describe "Import-Alias" -Tags "CI" {
 
 	BeforeAll {
-		$newLine=[Environment]::NewLine
+		$newLine = [Environment]::NewLine
 
 		$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
 		$aliasFilename = "pesteralias.txt"
