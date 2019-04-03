@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-    $aliasFilename        = "aliasFilename"
+    $aliasFilename      = "aliasFilename"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $aliasFilename
 
     BeforeEach {
@@ -46,7 +46,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 Describe "Import-Alias" -Tags "CI" {
 
 	BeforeAll {
-		$newLine=[Environment]::NewLine
+		$newLine = [Environment]::NewLine
 
 		$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
 		$aliasFilename = "pesteralias.txt"
@@ -67,26 +67,26 @@ Describe "Import-Alias" -Tags "CI" {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 
 		# set header
-		$aliasFileContent ='# Alias File'+$newLine
-		$aliasFileContent+='# Exported by : alex'+$newLine
-		$aliasFileContent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
-		$aliasFileContent+='# Computer : archvm'
+		$aliasFileContent = '# Alias File' + $newLine
+		$aliasFileContent+= '# Exported by : alex' + $newLine
+		$aliasFileContent+= '# Date/Time : Thursday, 12 November 2015 21:55:08' + $newLine
+		$aliasFileContent+= '# Computer : archvm'
 
 		# add various aliases
-		$aliasFileContent+= $newLine+$alias1+',"'+$commandToAlias+'","","None"'
-		$aliasFileContent+= $newLine+$alias2+',"'+$commandToAlias+'","","None"'
-		$aliasFileContent+= $newLine+$alias3+',"'+$commandToAlias+'","","None"'
-		$aliasFileContent+= $newLine+$alias4+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent+= $newLine + $alias1 + ',"' + $commandToAlias + '","","None"'
+		$aliasFileContent += $newLine + $alias2 + ',"' + $commandToAlias + '","","None"'
+		$aliasFileContent += $newLine + $alias3 + ',"' + $commandToAlias + '","","None"'
+		$aliasFileContent += $newLine + $alias4 + ',"' + $commandToAlias + '","","None"'
 		$aliasFileContent > $aliasfile
 
 		# create invalid file with more than four values
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
-		$aliasFileContent = $newLine+'"v_1","v_2","v_3","v_4","v_5"'
+		$aliasFileContent = $newLine + '"v_1","v_2","v_3","v_4","v_5"'
 		$aliasFileContent > $aliasPathMoreThanFourValues
 
 		# create invalid file with less than four values
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
-		$aliasFileContent = $newLine+'"v_1","v_2","v_3"'
+		$aliasFileContent = $newLine + '"v_1","v_2","v_3"'
 		$aliasFileContent > $aliasPathLessThanFourValues
 	}
 
@@ -94,8 +94,8 @@ Describe "Import-Alias" -Tags "CI" {
 	    { Import-Alias -Path $aliasfile } | Should -Not -Throw
 	}
 
-	It "Should throw an exception when the alias is non existent" {
-		( Get-Alias -Name invalid_alias -ErrorAction SilentlyContinue ).Definition | Should -BeExactly $null
+	It "Should classify an alias as non existent when it is not imported yet" {
+		Get-Alias -Name invalid_alias -ErrorAction SilentlyContinue | Should -BeExactly $null
 	}
 
 	It "Should be able to parse <aliasToTest>" -TestCases @(
