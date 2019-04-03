@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
-    $aliasFilename        = "aliasFilename"
+    $aliasFilename      = "aliasFilename"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $aliasFilename
 
     BeforeEach {
