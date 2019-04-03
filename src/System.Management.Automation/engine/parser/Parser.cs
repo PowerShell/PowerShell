@@ -348,7 +348,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines();
+                _tokenizer.SkipNewlines(false);
             }
         }
 
@@ -357,16 +357,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine || _ungotToken.Kind == TokenKind.Semi)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(NewlineSkipOption.SkipSemis);
-            }
-        }
-
-        private void SkipNewlinesBeforePipe()
-        {
-            if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
-            {
-                _ungotToken = null;
-                _tokenizer.SkipNewlines(NewlineSkipOption.BeforePipe);
+                _tokenizer.SkipNewlines(true);
             }
         }
 
@@ -426,7 +417,7 @@ namespace System.Management.Automation.Language
                         break;
 
                     case TokenKind.EndOfInput:
-                        // Never consume <EOF>, but return it so caller
+                        // Never consume <EOF>, but return it to caller
                         UngetToken(token);
                         return;
                 }
@@ -5703,7 +5694,7 @@ namespace System.Management.Automation.Language
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
 
-            Token pipeToken = null;
+            Token nextToken = null;
             bool scanning = true;
             bool background = false;
             while (scanning)
@@ -5809,28 +5800,28 @@ namespace System.Management.Automation.Language
                     // If the first pipe element is null, the position points to the pipe (ideally it would
                     // point before, but the pipe could be the first character), otherwise the empty element
                     // is after the pipe character.
-                    IScriptExtent errorPosition = pipeToken != null ? After(pipeToken) : PeekToken().Extent;
+                    IScriptExtent errorPosition = nextToken != null ? After(nextToken) : PeekToken().Extent;
                     ReportIncompleteInput(errorPosition,
                         nameof(ParserStrings.EmptyPipeElement),
                         ParserStrings.EmptyPipeElement);
                 }
 
-                pipeToken = PeekToken();
+                nextToken = PeekToken();
 
                 // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
                 // tokens start the next line of script
-                if (pipeToken.Kind == TokenKind.NewLine)
+                if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuance(nextToken.Extent))
                 {
-                    SkipNewlinesBeforePipe();
-                    pipeToken = PeekToken();
+                    SkipNewlines();
+                    nextToken = PeekToken();
                 }
 
-                switch (pipeToken.Kind)
+                switch (nextToken.Kind)
                 {
                     case TokenKind.Semi:
-                    case TokenKind.NewLine:
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
+                    case TokenKind.NewLine:
                     case TokenKind.EndOfInput:
                         scanning = false;
                         continue;
@@ -5845,7 +5836,7 @@ namespace System.Management.Automation.Language
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;
-                            ReportIncompleteInput(After(pipeToken),
+                            ReportIncompleteInput(After(nextToken),
                                 nameof(ParserStrings.EmptyPipeElement),
                                 ParserStrings.EmptyPipeElement);
                         }
@@ -5856,10 +5847,10 @@ namespace System.Management.Automation.Language
                         // Parse in a manner similar to a pipe, but issue an error (for now, but should implement this for V3.)
                         SkipToken();
                         SkipNewlines();
-                        ReportError(pipeToken.Extent,
+                        ReportError(nextToken.Extent,
                             nameof(ParserStrings.InvalidEndOfLine),
                             ParserStrings.InvalidEndOfLine,
-                            pipeToken.Text);
+                            nextToken.Text);
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;
@@ -5870,10 +5861,10 @@ namespace System.Management.Automation.Language
                     default:
                         // ErrorRecovery: don't eat the token, assume it belongs to something else.
 
-                        ReportError(pipeToken.Extent,
+                        ReportError(nextToken.Extent,
                             nameof(ParserStrings.UnexpectedToken),
                             ParserStrings.UnexpectedToken,
-                            pipeToken.Text);
+                            nextToken.Text);
                         scanning = false;
                         break;
                 }
