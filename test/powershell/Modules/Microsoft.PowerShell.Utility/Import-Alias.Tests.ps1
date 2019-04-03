@@ -68,7 +68,7 @@ Describe "Import-Alias" -Tags "CI" {
 
 		# set header
 		$aliasFileContent = '# Alias File' + $newLine
-		$aliasFileContent+='# Exported by : alex'+$newLine
+		$aliasFileContent+= '# Exported by : alex' + $newLine
 		$aliasFileContent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
 		$aliasFileContent+='# Computer : archvm'
 
