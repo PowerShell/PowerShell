@@ -50,7 +50,7 @@ PS> Invoke-OpenCover -OutputLog coverage.xml -OpenCoverPath $env:TEMP\OpenCover
 
 `> Set-Location "C:\Path\to\powershell\build\dir"`
 
-make sure there are no spaces in the path, since they are not replaced with escape characters
+Make sure there are no spaces in the path, since they are not replaced with escape characters.
 
 `> Install-OpenCover -TargetDirectory $env:TEMP -Force`
 
