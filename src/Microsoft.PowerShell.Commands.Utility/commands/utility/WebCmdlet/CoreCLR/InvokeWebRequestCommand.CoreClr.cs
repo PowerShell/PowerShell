@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
-using System.IO;
 
 namespace Microsoft.PowerShell.Commands
 {

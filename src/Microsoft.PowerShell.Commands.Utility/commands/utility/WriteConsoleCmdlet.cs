@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections;
+using System.Management.Automation;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands

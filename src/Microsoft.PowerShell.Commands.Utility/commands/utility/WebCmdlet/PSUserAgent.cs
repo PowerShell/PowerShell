@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands

@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.IO;
-using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Management.Automation;
 using System.Net.Http;
 using System.Text;
+using System.Xml;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {

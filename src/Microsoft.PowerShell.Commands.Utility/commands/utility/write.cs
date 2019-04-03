@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {

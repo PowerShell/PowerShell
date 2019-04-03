@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
