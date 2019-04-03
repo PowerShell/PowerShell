@@ -14,7 +14,7 @@ jobs:
   displayName: Windows Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
-  - powershell: |
+  - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
     condition: succeededOrFailed()
@@ -27,19 +27,19 @@ jobs:
         build/**/*
       downloadPath: '$(System.ArtifactsDirectory)'
 
-  - powershell: |
-      dir "$(System.ArtifactsDirectory)\*" -Recurse
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
 
+  # must be run frow Windows PowerShell
   - powershell: |
-      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall
     displayName: Bootstrap
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)

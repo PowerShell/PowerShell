@@ -1,7 +1,7 @@
 # Code coverage analysis for commit [de5f69c](https://codecov.io/gh/PowerShell/PowerShell/tree/de5f69cf942a85839c907f11a29cf9c09f9de8b4/src)
 
 Code coverage runs are enabled on daily Windows builds for PowerShell Core 6.
-The results of the latest build are available at: [CodeCov.io](https://codecov.io/gh/PowerShell/PowerShell)
+The results of the latest build are available at [codecov.io](https://codecov.io/gh/PowerShell/PowerShell)
 
 The goal of this analysis is to find the hot spots of missing coverage.
 The metrics used for selection of these hot spots were: # missing lines and likelihood of code path usage.

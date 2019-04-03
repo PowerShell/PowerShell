@@ -19,4 +19,7 @@ Description = 'Temporary module for language tests'
 FunctionsToExport = 'Get-ParseResults', 'Get-RuntimeError', 'ShouldBeParseError',
                     'Test-ErrorStmt', 'Test-Ast', 'Test-ErrorStmtForSwitchFlag'
 
+AliasesToExport = @()
+
+CmdletsToExport = @()
 }

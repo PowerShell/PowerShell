@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [AllowEmptyCollection]
-        public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
+        public string[] AdditionalChildPath { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Determines if the path should be resolved after being joined.

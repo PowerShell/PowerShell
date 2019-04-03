@@ -1,0 +1,33 @@
+parameters:
+  dependsOn: 'win_build'
+  pool: 'Hosted VS2017'
+  jobName: 'xunit_verify'
+
+jobs:
+- job: verify_xunit
+  displayName: Verify xUnit Results
+  pool:
+    name: ${{ parameters.pool }}
+  dependsOn:
+    - ${{ parameters.dependsOn }}
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        xunit/**/*
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - powershell: |
+      dir "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture artifacts directory'
+    continueOnError: true
+
+  - powershell: |
+      Import-Module .\tools\ci.psm1
+      $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
+
+      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
+    displayName: Test
+    condition: succeeded()

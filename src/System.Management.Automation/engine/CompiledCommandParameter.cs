@@ -89,13 +89,13 @@ namespace System.Management.Automation
             }
 
             this.ValidationAttributes = validationAttributes == null
-                ? Utils.EmptyArray<ValidateArgumentsAttribute>()
+                ? Array.Empty<ValidateArgumentsAttribute>()
                 : validationAttributes.ToArray();
             this.ArgumentTransformationAttributes = argTransformationAttributes == null
-                ? Utils.EmptyArray<ArgumentTransformationAttribute>()
+                ? Array.Empty<ArgumentTransformationAttribute>()
                 : argTransformationAttributes.ToArray();
             this.Aliases = aliases == null
-                ? Utils.EmptyArray<string>()
+                ? Array.Empty<string>()
                 : aliases.ToArray();
         }
 
@@ -180,12 +180,12 @@ namespace System.Management.Automation
             }
 
             this.ValidationAttributes = validationAttributes == null
-                ? Utils.EmptyArray<ValidateArgumentsAttribute>()
+                ? Array.Empty<ValidateArgumentsAttribute>()
                 : validationAttributes.ToArray();
             this.ArgumentTransformationAttributes = argTransformationAttributes == null
-                ? Utils.EmptyArray<ArgumentTransformationAttribute>()
+                ? Array.Empty<ArgumentTransformationAttribute>()
                 : argTransformationAttributes.ToArray();
-            this.Aliases = aliases ?? Utils.EmptyArray<string>();
+            this.Aliases = aliases ?? Array.Empty<string>();
         }
 
         #endregion ctor

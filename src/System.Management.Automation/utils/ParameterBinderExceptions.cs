@@ -487,12 +487,12 @@ namespace System.Management.Automation
         #region private
 
         private string _resourceString;
-        private object[] _args = new object[0];
+        private object[] _args = Array.Empty<object>();
         private string _commandName;
 
         private string BuildMessage()
         {
-            object[] messageArgs = new object[0];
+            object[] messageArgs = Array.Empty<object>();
 
             if (_args != null)
             {

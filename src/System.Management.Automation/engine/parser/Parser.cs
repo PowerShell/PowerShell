@@ -87,7 +87,7 @@ namespace System.Management.Automation.Language
                 var emptyExtent = new EmptyScriptExtent();
                 var errorMsg = string.Format(CultureInfo.CurrentCulture, ParserStrings.FileReadError, e.Message);
                 errors = new[] { new ParseError(emptyExtent, "FileReadError", errorMsg) };
-                tokens = Utils.EmptyArray<Token>();
+                tokens = Array.Empty<Token>();
                 return new ScriptBlockAst(emptyExtent, null, new StatementBlockAst(emptyExtent, null, null), false);
             }
 
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingNamedStatementBlock),
                         ParserStrings.MissingNamedStatementBlock,
                         blockNameToken.Kind.Text());
-                    statementBlock = new StatementBlockAst(blockNameToken.Extent, Utils.EmptyArray<StatementAst>(), null);
+                    statementBlock = new StatementBlockAst(blockNameToken.Extent, Array.Empty<StatementAst>(), null);
                 }
                 else
                 {

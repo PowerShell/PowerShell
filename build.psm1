@@ -907,7 +907,10 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests'
+        [string]$Title = 'PowerShell Core Tests',
+        [Parameter(ParameterSetName='Wait', Mandatory=$true,
+            HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
+        [switch]$Wait
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1101,6 +1104,13 @@ function Start-PSPester {
         $PSFlags = @("-settings", $configFile, "-noprofile")
     }
 
+	# -Wait is only available on Debug builds
+	# It is used to allow the debugger to attach before PowerShell
+	# runs pester in this case
+    if($Wait.IsPresent){
+        $PSFlags += '-wait'
+    }
+
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
@@ -1218,9 +1228,27 @@ function Publish-TestResults
     # In VSTS publish Test Results
     if($env:TF_BUILD)
     {
-        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
-        Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
+        $fileName = Split-Path -Leaf -Path $Path
+        $tempFilePath = Join-Path ([system.io.path]::GetTempPath()) -ChildPath $fileName
 
+        # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
+        # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
+        # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
+        # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+        # So, we will map skipped to the actual value in the NUnit spec and they will ignore all results for tests which were not executed
+        Get-Content $Path | ForEach-Object {
+            $_ -replace 'result="Ignored"', 'result="Skipped"'
+        } | Out-File -FilePath $tempFilePath -Encoding ascii -Force
+
+        # If we attempt to upload a result file which has no test cases in it, then vsts will produce a warning
+        # so check to be sure we actually have a result file that contains test cases to upload.
+        # If the the "test-case" count is greater than 0, then we have results.
+        # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
+        if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 -or $Type -eq 'XUnit' ) {
+            Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
+        }
+
+        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
     }
 }
@@ -1636,9 +1664,6 @@ function Start-PSBootstrap {
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution { brew install $Deps } -IgnoreExitcode
-
-                # Install patched version of curl
-                Start-NativeExecution { brew install curl --with-openssl --with-gssapi } -IgnoreExitcode
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 

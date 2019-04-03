@@ -1,9 +1,12 @@
 parameters:
   pool: 'Hosted VS2017'
   jobName: 'win_packaging'
+  parentJobs: []
 
 jobs:
 - job: ${{ parameters.jobName }}
+  dependsOn:
+      ${{ parameters.parentJobs }}
   pool:
     name: ${{ parameters.pool }}
 

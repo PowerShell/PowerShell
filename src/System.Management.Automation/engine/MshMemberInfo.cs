@@ -1856,7 +1856,7 @@ namespace System.Management.Automation
                     dollarUnder: AutomationNull.Value,
                     input: AutomationNull.Value,
                     scriptThis: scriptThis,
-                    args: Utils.EmptyArray<object>());
+                    args: Array.Empty<object>());
             }
             catch (RuntimeException e)
             {
@@ -3115,6 +3115,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMemberInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMemberInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3125,6 +3126,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSMethodInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSMethodInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3135,6 +3137,7 @@ namespace System.Management.Automation
             returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
+                PSObject.TypeTableGetFirstMemberOrDefaultDelegate<PSPropertyInfo>,
                 true, true, "type table members"));
             return returnValue;
         }
@@ -3329,11 +3332,11 @@ namespace System.Management.Automation
 
         private void GenerateInternalMembersFromBase()
         {
-            if (_psObject.isDeserialized)
+            if (_psObject.IsDeserialized)
             {
-                if (_psObject.clrMembers != null)
+                if (_psObject.ClrMembers != null)
                 {
-                    foreach (PSMemberInfo member in _psObject.clrMembers)
+                    foreach (PSMemberInfo member in _psObject.ClrMembers)
                     {
                         internalMembers.Add(member.Copy());
                     }
@@ -3342,7 +3345,7 @@ namespace System.Management.Automation
             else
             {
                 foreach (PSMemberInfo member in
-                    PSObject.dotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(_psObject.ImmediateBaseObject))
+                    PSObject.DotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(_psObject.ImmediateBaseObject))
                 {
                     internalMembers.Add(member.Copy());
                 }
@@ -3353,11 +3356,11 @@ namespace System.Management.Automation
         {
             PSMemberInfoInternalCollection<PSMemberInfo> retVal = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
-            if (_psObject.isDeserialized)
+            if (_psObject.IsDeserialized)
             {
-                if (_psObject.adaptedMembers != null)
+                if (_psObject.AdaptedMembers != null)
                 {
-                    foreach (PSMemberInfo member in _psObject.adaptedMembers)
+                    foreach (PSMemberInfo member in _psObject.AdaptedMembers)
                     {
                         retVal.Add(member.Copy());
                     }
@@ -3377,7 +3380,7 @@ namespace System.Management.Automation
 
         private void GenerateInternalMembersFromPSObject()
         {
-            PSMemberInfoCollection<PSMemberInfo> members = PSObject.dotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(
+            PSMemberInfoCollection<PSMemberInfo> members = PSObject.DotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(
                 _psObject);
             foreach (PSMemberInfo member in members)
             {
@@ -3683,6 +3686,13 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// A Predicate that determine if a member name matches a criterion.
+    /// </summary>
+    /// <param name="memberName"></param>
+    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    public delegate bool MemberNamePredicate(string memberName);
+
+    /// <summary>
     /// Serves as the collection of members in an PSObject or MemberSet.
     /// </summary>
     public abstract class PSMemberInfoCollection<T> : IEnumerable<T> where T : PSMemberInfo
@@ -3812,6 +3822,8 @@ namespace System.Management.Automation
         public abstract IEnumerator<T> GetEnumerator();
 
         #endregion IEnumerable
+
+        internal abstract T FirstOrDefault(MemberNamePredicate predicate);
     }
 
     /// <summary>
@@ -4261,6 +4273,25 @@ namespace System.Management.Automation
                 return _members.Values.OfType<T>().ToList().GetEnumerator();
             }
         }
+
+        /// <summary>
+        /// Returns the first member that matches the specified <see cref="MemberNamePredicate"/>.
+        /// </summary>
+        internal override T FirstOrDefault(MemberNamePredicate predicate)
+        {
+            lock (_members)
+            {
+                foreach (DictionaryEntry entry in _members)
+                {
+                    if (predicate((string)entry.Key))
+                    {
+                        return entry.Value as T;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 
     #region CollectionEntry
@@ -4271,13 +4302,21 @@ namespace System.Management.Automation
 
         internal delegate T GetMemberDelegate(PSObject obj, string name);
 
-        internal CollectionEntry(GetMembersDelegate getMembers, GetMemberDelegate getMember,
-            bool shouldReplicateWhenReturning, bool shouldCloneWhenReturning, string collectionNameForTracing)
+        internal delegate T GetFirstOrDefaultDelegate(PSObject obj, MemberNamePredicate predicate);
+
+        internal CollectionEntry(
+            GetMembersDelegate getMembers,
+            GetMemberDelegate getMember,
+            GetFirstOrDefaultDelegate getFirstOrDefault,
+            bool shouldReplicateWhenReturning,
+            bool shouldCloneWhenReturning,
+            string collectionNameForTracing)
         {
             GetMembers = getMembers;
             GetMember = getMember;
-            ShouldReplicateWhenReturning = shouldReplicateWhenReturning;
-            ShouldCloneWhenReturning = shouldCloneWhenReturning;
+            GetFirstOrDefault = getFirstOrDefault;
+            _shouldReplicateWhenReturning = shouldReplicateWhenReturning;
+            _shouldCloneWhenReturning = shouldCloneWhenReturning;
             CollectionNameForTracing = collectionNameForTracing;
         }
 
@@ -4285,11 +4324,28 @@ namespace System.Management.Automation
 
         internal GetMemberDelegate GetMember { get; }
 
-        internal bool ShouldReplicateWhenReturning { get; }
-
-        internal bool ShouldCloneWhenReturning { get; }
+        internal GetFirstOrDefaultDelegate GetFirstOrDefault { get; }
 
         internal string CollectionNameForTracing { get; }
+
+        private readonly bool _shouldReplicateWhenReturning;
+
+        private readonly bool _shouldCloneWhenReturning;
+
+        internal T CloneOrReplicateObject(object owner, T member)
+        {
+            if (_shouldCloneWhenReturning)
+            {
+                member = (T)member.Copy();
+            }
+
+            if (_shouldReplicateWhenReturning)
+            {
+                member.ReplicateInstance(owner);
+            }
+
+            return member;
+        }
     }
 
     #endregion CollectionEntry
@@ -4382,9 +4438,9 @@ namespace System.Management.Automation
 
         private void GenerateAllReservedMembers()
         {
-            if (!_mshOwner.hasGeneratedReservedMembers)
+            if (!_mshOwner.HasGeneratedReservedMembers)
             {
-                _mshOwner.hasGeneratedReservedMembers = true;
+                _mshOwner.HasGeneratedReservedMembers = true;
                 ReservedNameMembers.GeneratePSExtendedMemberSet(_mshOwner);
                 ReservedNameMembers.GeneratePSBaseMemberSet(_mshOwner);
                 ReservedNameMembers.GeneratePSObjectMemberSet(_mshOwner);
@@ -4676,7 +4732,7 @@ namespace System.Management.Automation
         {
             get
             {
-                using (PSObject.memberResolution.TraceScope("Lookup"))
+                using (PSObject.MemberResolution.TraceScope("Lookup"))
                 {
                     if (string.IsNullOrEmpty(name))
                     {
@@ -4697,7 +4753,7 @@ namespace System.Management.Automation
                             member = instanceMembers[name];
                             if (member is T memberAsT)
                             {
-                                PSObject.memberResolution.WriteLine("Found PSObject instance member: {0}.", name);
+                                PSObject.MemberResolution.WriteLine("Found PSObject instance member: {0}.", name);
                                 return memberAsT;
                             }
                         }
@@ -4711,7 +4767,7 @@ namespace System.Management.Automation
                             // In membersets we cannot replicate the instance when adding
                             // since the memberset might not yet have an associated PSObject.
                             // We replicate the instance when returning the members of the memberset.
-                            PSObject.memberResolution.WriteLine("Found PSMemberSet member: {0}.", name);
+                            PSObject.MemberResolution.WriteLine("Found PSMemberSet member: {0}.", name);
                             member.ReplicateInstance(delegateOwner);
                             return memberAsT;
                         }
@@ -4727,17 +4783,7 @@ namespace System.Management.Automation
                         T memberAsT = collection.GetMember((PSObject) delegateOwner, name);
                         if (memberAsT != null)
                         {
-                            if (collection.ShouldCloneWhenReturning)
-                            {
-                                memberAsT = (T) memberAsT.Copy();
-                            }
-
-                            if (collection.ShouldReplicateWhenReturning)
-                            {
-                                memberAsT.ReplicateInstance(delegateOwner);
-                            }
-
-                            return memberAsT;
+                            return collection.CloneOrReplicateObject(delegateOwner, memberAsT);
                         }
                     }
 
@@ -4748,7 +4794,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<T> GetIntegratedMembers(MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.memberResolution.TraceScope("Generating the total list of members"))
+            using (PSObject.MemberResolution.TraceScope("Generating the total list of members"))
             {
                 PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
                 object delegateOwner;
@@ -4794,32 +4840,18 @@ namespace System.Management.Automation
                         PSMemberInfo previousMember = returnValue[member.Name];
                         if (previousMember != null)
                         {
-                            PSObject.memberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
+                            PSObject.MemberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
                                 member.Name, member.MemberType, previousMember.MemberType);
                             continue;
                         }
 
                         if (!member.MatchesOptions(matchOptions))
                         {
-                            PSObject.memberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
+                            PSObject.MemberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
                             continue;
                         }
 
-                        T memberToAdd;
-                        if (collection.ShouldCloneWhenReturning)
-                        {
-                            memberToAdd = (T) member.Copy();
-                        }
-                        else
-                        {
-                            memberToAdd = member;
-                        }
-
-                        if (collection.ShouldReplicateWhenReturning)
-                        {
-                            memberToAdd.ReplicateInstance(delegateOwner);
-                        }
-
+                        T memberToAdd = collection.CloneOrReplicateObject(delegateOwner, member);
                         returnValue.Add(memberToAdd);
                     }
                 }
@@ -4871,7 +4903,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.memberResolution.TraceScope("Matching \"{0}\"", name))
+            using (PSObject.MemberResolution.TraceScope("Matching \"{0}\"", name))
             {
                 if (string.IsNullOrEmpty(name))
                 {
@@ -4886,7 +4918,7 @@ namespace System.Management.Automation
                 WildcardPattern nameMatch = MemberMatch.GetNamePattern(name);
                 PSMemberInfoInternalCollection<T> allMembers = GetIntegratedMembers(matchOptions);
                 ReadOnlyPSMemberInfoCollection<T> returnValue = new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(allMembers, name, nameMatch, memberTypes));
-                PSObject.memberResolution.WriteLine("{0} total matches.", returnValue.Count);
+                PSObject.MemberResolution.WriteLine("{0} total matches.", returnValue.Count);
                 return returnValue;
             }
         }
@@ -4900,6 +4932,52 @@ namespace System.Management.Automation
         public override IEnumerator<T> GetEnumerator()
         {
             return new Enumerator<T>(this);
+        }
+
+        internal override T FirstOrDefault(MemberNamePredicate predicate)
+        {
+            object delegateOwner;
+            if (_mshOwner != null)
+            {
+                delegateOwner = _mshOwner;
+                foreach (PSMemberInfo member in _mshOwner.InstanceMembers)
+                {
+                    if (member is T memberAsT && predicate(memberAsT.Name))
+                    {
+                        return memberAsT;
+                    }
+                }
+            }
+            else
+            {
+                delegateOwner = _memberSetOwner.instance;
+                foreach (PSMemberInfo member in _memberSetOwner.InternalMembers)
+                {
+                    if (member is T memberAsT && predicate(memberAsT.Name))
+                    {
+                        memberAsT.ReplicateInstance(delegateOwner);
+                        return memberAsT;
+                    }
+                }
+            }
+
+            if (delegateOwner == null)
+            {
+                return null;
+            }
+
+            var ownerAsPSObj = PSObject.AsPSObject(delegateOwner);
+            for (int i = 0; i < Collections.Count; i++)
+            {
+                var collectionEntry = Collections[i];
+                var member = collectionEntry.GetFirstOrDefault(ownerAsPSObj, predicate);
+                if (member != null)
+                {
+                    return collectionEntry.CloneOrReplicateObject(ownerAsPSObj, member);
+                }
+            }
+
+            return null;
         }
 
         #endregion overrides
@@ -4919,7 +4997,7 @@ namespace System.Management.Automation
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
             {
-                using (PSObject.memberResolution.TraceScope("Enumeration Start"))
+                using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
                 {
                     _currentIndex = -1;
                     _current = null;
@@ -4927,13 +5005,13 @@ namespace System.Management.Automation
                     if (integratingCollection._mshOwner != null)
                     {
                         integratingCollection.GenerateAllReservedMembers();
-                        PSObject.memberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);
-                        PSObject.memberResolution.WriteLine("PSObject instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);
+                        PSObject.MemberResolution.WriteLine("PSObject instance members: {0}", _allMembers.VisibleCount);
                     }
                     else
                     {
-                        PSObject.memberResolution.WriteLine("Enumerating PSMemberSet \"{0}\".", integratingCollection._memberSetOwner.Name);
-                        PSObject.memberResolution.WriteLine("MemberSet instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.WriteLine("Enumerating PSMemberSet \"{0}\".", integratingCollection._memberSetOwner.Name);
+                        PSObject.MemberResolution.WriteLine("MemberSet instance members: {0}", _allMembers.VisibleCount);
                     }
                 }
             }

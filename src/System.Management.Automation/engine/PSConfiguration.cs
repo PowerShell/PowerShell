@@ -459,7 +459,7 @@ namespace System.Management.Automation.Configuration
                 // prevents other processes from reading or writing the file while
                 // the update is in progress. It also locks out readers during write
                 // operations.
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream fs = WaitForFile(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     JObject jsonObject = null;
 

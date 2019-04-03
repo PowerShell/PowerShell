@@ -128,7 +128,7 @@ namespace System.Management.Automation
             //   3. We don't need to decide where/when to read the config file for the enabled experimental features,
             //      instead, it will be done when the type is used for the first time, which is always earlier than
             //      any experimental features take effect.
-            string[] enabledFeatures = Utils.EmptyArray<string>();
+            string[] enabledFeatures = Array.Empty<string>();
             try
             {
                 enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures();

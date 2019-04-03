@@ -26,4 +26,3 @@
     - [ ] N/A or can only be tested interactively
     - **OR**
     - [ ] [Make sure you've added a new test if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
-        - [ ] [Add `[feature]` to your commit messages if the change is significant or affects feature tests](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/testing-guidelines.md#requesting-additional-tests-for-a-pr)

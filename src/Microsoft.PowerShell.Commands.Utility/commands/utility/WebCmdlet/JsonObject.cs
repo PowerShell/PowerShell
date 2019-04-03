@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
-                        if (pso != null && pso.immediateBaseObjectIsEmpty)
+                        if (pso != null && pso.ImmediateBaseObjectIsEmpty)
                         {
                             // The obj is a pure PSObject, we convert the original PSObject to a string,
                             // instead of its base object in this case
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
                         object value;
                         try
                         {
-                            value = getMethod.Invoke(o, new object[0]);
+                            value = getMethod.Invoke(o, Array.Empty<object>());
                         }
                         catch (Exception)
                         {

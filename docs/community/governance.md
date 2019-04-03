@@ -5,6 +5,7 @@
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions,
   approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
+
   Repository Maintainers are the only people with write permissions for the `master` branch.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance).
   Area experts are responsible for code reviews, issue triage, and providing their expertise to others.

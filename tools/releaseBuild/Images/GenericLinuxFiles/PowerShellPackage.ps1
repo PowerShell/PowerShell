@@ -15,7 +15,6 @@ param (
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
-    [switch]$AppImage,
     [switch]$TarX64,
     [switch]$TarArm,
     [switch]$TarArm64,
@@ -61,7 +60,6 @@ try {
         Start-PSPackage @releaseTagParam
     }
 
-    if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
     if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
 
     if ($TarArm) {
@@ -81,7 +79,7 @@ finally
     Pop-Location
 }
 
-$linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.AppImage,*.tar.gz
+$linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.tar.gz
 
 foreach ($linuxPackage in $linuxPackages)
 {

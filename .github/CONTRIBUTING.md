@@ -39,7 +39,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 ### Contributing to documentation related to PowerShell
 
-Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
@@ -244,7 +244,7 @@ Additional references:
    When updating your pull request, please **create new commits** and **don't rewrite the commits history**.
    This way it's very easy for the reviewers to see diff between iterations.
    If you rewrite the history in the pull request, review could be much slower.
-   The PR is likely to be squashed on merge to master by the *assignee*.
+   The PR is likely to be squash-merged to master by the *assignee*.
 1. *Reviewers* are anyone who wants to contribute.
    They are responsible for ensuring the code: addresses the issue being fixed, does not create new issues (functional, performance, reliability, or security), and implements proper design.
    *Reviewers* should use the `Review changes` drop down to indicate they are done with their review.
