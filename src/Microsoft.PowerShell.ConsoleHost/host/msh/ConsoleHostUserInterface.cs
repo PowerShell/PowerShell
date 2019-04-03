@@ -2,16 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
-using System.Management.Automation.Runspaces;
-using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
+using System.Runtime.CompilerServices;
 using System.Security;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 #if !UNIX
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
@@ -542,6 +544,7 @@ namespace Microsoft.PowerShell
 
         #region WriteToConsole
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(char c, bool transcribeResult)
         {
             Span<char> value = stackalloc char[1];
@@ -549,11 +552,13 @@ namespace Microsoft.PowerShell
             WriteToConsole(value, transcribeResult);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult)
         {
             WriteToConsole(value, transcribeResult, newLine: false);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
         {
             WriteToConsole(value, transcribeResult, newLine: true);
@@ -603,6 +608,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
         {
             if (newLine)
@@ -615,6 +621,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
         {
             WriteToConsole(PromptColor, backgroundColor, text, newLine: true);
@@ -643,11 +650,13 @@ namespace Microsoft.PowerShell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole(string text)
         {
             WriteLineToConsole(text, transcribeResult: true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole()
         {
             WriteLineToConsole(string.Empty, transcribeResult: true);
