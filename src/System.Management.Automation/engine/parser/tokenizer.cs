@@ -852,7 +852,6 @@ namespace System.Management.Automation.Language
         {
             // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
             // so we create them when asked to create them.
-
         again:
             char c = GetChar();
             switch (c)

@@ -4254,7 +4254,8 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(After(lCurly),
+                    ReportIncompleteInput(
+                        After(lCurly),
                         rCurly.Extent,
                         nameof(ParserStrings.MissingEndCurlyBrace),
                         ParserStrings.MissingEndCurlyBrace);
