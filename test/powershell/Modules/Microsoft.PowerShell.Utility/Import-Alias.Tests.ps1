@@ -86,7 +86,7 @@ Describe "Import-Alias" -Tags "CI" {
 
 		# create invalid file with less than four values
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
-		$aliasFileContent = $newLine+'"v_1","v_2","v_3"'
+		$aliasFileContent = $newLine + '"v_1","v_2","v_3"'
 		$aliasFileContent > $aliasPathLessThanFourValues
 	}
 
