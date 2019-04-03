@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading;
-    using System.Reflection;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     internal class OutWindowProxy : IDisposable
     {
         private const string OutGridViewWindowClassName = "Microsoft.Management.UI.Internal.OutGridViewWindow";

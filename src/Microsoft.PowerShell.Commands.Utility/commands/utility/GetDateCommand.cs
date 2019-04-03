@@ -3,9 +3,9 @@
 
 using System;
 using System.Globalization;
-using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {

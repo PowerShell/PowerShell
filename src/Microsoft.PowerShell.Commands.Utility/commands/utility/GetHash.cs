@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography;
 using System.IO;
+using System.Management.Automation;
+using System.Security.Cryptography;
 
 namespace Microsoft.PowerShell.Commands
 {
