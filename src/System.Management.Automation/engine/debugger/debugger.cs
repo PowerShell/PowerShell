@@ -627,6 +627,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public virtual Breakpoint GetBreakpoint(int id)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public virtual List<Breakpoint> GetBreakpoints()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Resets the command processor source information so that it is
         /// updated with latest information on the next debug stop.
         /// </summary>
@@ -1351,7 +1368,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
-        internal Breakpoint GetBreakpoint(int id)
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id)
         {
             _idToBreakpoint.TryGetValue(id, out Breakpoint breakpoint);
             return breakpoint;
@@ -1360,7 +1378,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
-        internal List<Breakpoint> GetBreakpoints()
+        public override List<Breakpoint> GetBreakpoints()
         {
             return (from bp in _idToBreakpoint.Values orderby bp.Id select bp).ToList();
         }
@@ -4005,6 +4023,19 @@ namespace System.Management.Automation
         {
             _wrappedDebugger.SetBreakpoints(breakpoints);
         }
+
+        /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id) => 
+            _wrappedDebugger.GetBreakpoint(id);
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints() =>
+            _wrappedDebugger.GetBreakpoints();
 
         /// <summary>
         /// SetDebuggerAction.

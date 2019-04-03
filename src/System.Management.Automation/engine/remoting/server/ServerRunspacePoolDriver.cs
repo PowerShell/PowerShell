@@ -1777,6 +1777,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id) => 
+            _wrappedDebugger.Value.GetBreakpoint(id);
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints() =>
+            _wrappedDebugger.Value.GetBreakpoints();
+
+        /// <summary>
         /// Exits debugger mode with the provided resume action.
         /// </summary>
         /// <param name="resumeAction">DebuggerResumeAction.</param>
