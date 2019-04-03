@@ -34,6 +34,7 @@ dotnet-uninstall-debian-packages.sh
 *.exe
 *.msi
 *.appx
+*.msix
 
 # Ignore binaries and symbols
 *.pdb

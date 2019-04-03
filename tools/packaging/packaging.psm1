@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -254,7 +254,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "nupkg"
+                "msi", "nupkg", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -333,6 +333,24 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
+                }
+            }
+            "msix" {
+                $TargetArchitecture = "x64"
+                if ($Runtime -match "-x86") {
+                    $TargetArchitecture = "x86"
+                }
+
+                $Arguments = @{
+                    ProductNameSuffix = $NameSuffix
+                    ProductSourcePath = $Source
+                    ProductVersion = $Version
+                    ProductTargetArchitecture = $TargetArchitecture
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
+                    New-MSIXPackage @Arguments
                 }
             }
             'nupkg' {
@@ -2724,6 +2742,83 @@ function New-MSIPackage
         }
         throw $errorMessage
     }
+}
+
+<#
+    .Synopsis
+        Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of makeappx.exe.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.1\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
+function New-MSIXPackage
+{
+    [CmdletBinding()]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Source Path to the Product Files - required to package the contents into an MSIX
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
+    if ($null -eq $makeappx) {
+        # Try to find in well known location
+        $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\$ProductTargetArchitecture" -Include makeappx.exe -Recurse | Select-Object -First 1
+        if ($null -eq $makeappx) {
+            throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
+        }
+    }
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion)
+    Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
+    # Necessary image assets need to be in source assets folder
+    $assets = @(
+        'Square150x150Logo.png'
+        'Square44x44Logo.png'
+        'Square44x44Logo.targetsize-48.png'
+        'Square44x44Logo.targetsize-48_altform-unplated.png'
+        'StoreLogo.png'
+    )
+
+    if (!(Test-Path "$ProductSourcePath\assets")) {
+        $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
+    }
+
+    $assets | ForEach-Object {
+        Copy-Item -Path "$RepoRoot\assets\$_" -Destination "$ProductSourcePath\assets\"
+    }
+
+    Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$ProductName-$ProductVersion.$ProductNameSuffix.msix") }
 }
 
 # verify no files have been added or removed
