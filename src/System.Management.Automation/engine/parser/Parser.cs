@@ -5820,9 +5820,9 @@ namespace System.Management.Automation.Language
                 switch (nextToken.Kind)
                 {
                     case TokenKind.Semi:
+                    case TokenKind.NewLine:
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
-                    case TokenKind.NewLine:
                     case TokenKind.EndOfInput:
                         scanning = false;
                         continue;
