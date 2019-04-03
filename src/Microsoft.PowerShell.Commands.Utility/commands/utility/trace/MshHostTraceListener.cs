@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Security.Permissions;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
+using System.Security.Permissions;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {

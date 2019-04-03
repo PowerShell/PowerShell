@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands
