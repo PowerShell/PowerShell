@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell
             WriteToTranscript(text, newLine: true);
         }
 
-        private void WriteToTranscript(ReadOnlySpan<char> text, bool newLine)
+        internal void WriteToTranscript(ReadOnlySpan<char> text, bool newLine)
         {
             lock (_transcriptionStateLock)
             {

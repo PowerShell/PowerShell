@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell
 
             if (transcribeResult)
             {
-                PostWrite(value);
+                PostWrite(value, newLine);
             }
             else
             {
@@ -633,14 +633,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    if (newLine)
-                    {
-                        WriteLineToConsole(text, transcribeResult: true);
-                    }
-                    else
-                    {
-                        WriteToConsole(text, transcribeResult: true);
-                    }
+                    WriteToConsole(text, transcribeResult: true, newLine);
                 }
                 finally
                 {
@@ -707,12 +700,7 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
-                _parent.OutputSerializer.Serialize(value);
-
-                if (newLine)
-                {
-                    _parent.OutputSerializer.Serialize(Crlf);
-                }
+                _parent.OutputSerializer.Serialize(value + Crlf);
             }
             else
             {
@@ -789,14 +777,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    if (newLine)
-                    {
-                        this.WriteLine(value);
-                    }
-                    else
-                    {
-                        this.Write(value);
-                    }
+                    this.WriteHelper(value, newLine);
                 }
                 finally
                 {

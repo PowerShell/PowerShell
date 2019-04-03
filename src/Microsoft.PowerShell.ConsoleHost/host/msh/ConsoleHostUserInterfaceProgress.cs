@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell
 
         private
         void
-        PostWrite(ReadOnlySpan<char> value)
+        PostWrite(ReadOnlySpan<char> value, bool newLine)
         {
             PostWrite();
 
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-                    _parent.WriteToTranscript(value);
+                    _parent.WriteToTranscript(value, newLine);
                 }
                 catch (Exception)
                 {
