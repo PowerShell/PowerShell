@@ -95,7 +95,7 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    {Import-Alias -Path $aliasfile} | Should -Not -Throw
+	    { Import-Alias -Path $aliasfile } | Should -Not -Throw
 	}
 
 	It "Should classify an alias as non existent when it is not imported yet" {
