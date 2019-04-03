@@ -535,9 +535,6 @@ function Invoke-CIFinish
                 Write-Warning "Artifact $_ does not exist."
             }
 
-            Write-Verbose -verbose "NuGetURL == $env:NUGET_URL"
-            Write-Verbose -Verbose "Nuget key: $NuGetKey"
-
             if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
                 Write-Log "pushing $_ to $env:NUGET_URL"
