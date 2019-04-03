@@ -34,10 +34,7 @@ Goodbye
 
         $contents > $scriptFileName1
 
-        # Set up script file 2
-        $scriptFileName2 = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
-
-        "`$var = 1 " > $scriptFileName2
+        $breakpoint1 = New-PSBreakpoint -Line 12 $scriptFileName1
 
         $iss = [initialsessionstate]::CreateDefault2();
         $testRunspace1 = [runspacefactory]::CreateRunspace($iss)
@@ -51,9 +48,7 @@ Goodbye
             return
         }
 
-        # clean up
-        Remove-Item -Path $scriptFileName1 -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $scriptFileName2 -Force -ErrorAction SilentlyContinue
+        # Clean up
         $testRunspace1.Dispose()
     }
 
@@ -61,12 +56,12 @@ Goodbye
         @{
             Name = "Current runspace"
             Runspace = [System.Management.Automation.Runspaces.Runspace]::DefaultRunspace
-            Breakpoints = New-PSBreakpoint -Line 13 -Script $scriptFileName1
+            Breakpoints = $breakpoint1
         },
         @{
             Name = $testRunspace1.Name
             Runspace = $testRunspace1
-            Breakpoints = New-PSBreakpoint -Line 13 -Script $scriptFileName1
+            Breakpoints = $breakpoint1
         }
     ) {
         param($Runspace, $Breakpoints)
