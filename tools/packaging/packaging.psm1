@@ -336,16 +336,10 @@ function Start-PSPackage {
                 }
             }
             "msix" {
-                $TargetArchitecture = "x64"
-                if ($Runtime -match "-x86") {
-                    $TargetArchitecture = "x86"
-                }
-
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix
                     ProductSourcePath = $Source
                     ProductVersion = $Version
-                    ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
 
@@ -2776,23 +2770,17 @@ function New-MSIXPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductSourcePath,
 
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
         # Force overwrite of package
         [Switch] $Force
     )
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
     if ($null -eq $makeappx) {
-        $makeappx = Get-ChildItem "c:\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
+        $makeappx = Get-ChildItem "$($env:SystemDrive):\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
 
         if ($null -eq $makeappx) {
             # Try to find in well known location
-            $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\$ProductTargetArchitecture" -Include makeappx.exe -Recurse | Select-Object -First 1
+            $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64" -Include makeappx.exe -Recurse | Select-Object -First 1
             if ($null -eq $makeappx) {
                 throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
             }
