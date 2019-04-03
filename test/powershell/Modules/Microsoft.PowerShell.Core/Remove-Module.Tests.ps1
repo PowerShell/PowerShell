@@ -83,7 +83,7 @@ Describe "Remove-Module -Name" -Tags "CI" {
     }
 }
 
-Describe "Remove-Module -FullyQualifiedName" -Tags "CI" {
+Describe "Remove-Module -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     BeforeAll {
         Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
 
@@ -197,6 +197,30 @@ Describe "Remove-Module -FullyQualifiedName" -Tags "CI" {
         if ($ShouldBePresent) {
             (Get-Module -Name $ShouldBePresent).Name | Should -BeExactly $ShouldBePresent
         }
+    }
+
+    It "Remove-Module -ModuleInfo <ModuleInfo>" -TestCases $removeModuleByFQNTestCases {
+        param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        $modInfo = Get-Module -FullyQualifiedName $FqnToRemove
+
+        { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
+
+        if ($ShouldBeRemoved) {
+            (Get-Module -Name $ShouldBeRemoved).Name | Should -BeNullOrEmpty
+        }
+
+        if ($ShouldBePresent) {
+            (Get-Module -Name $ShouldBePresent).Name | Should -BeExactly $ShouldBePresent
+        }
+    }
+
+    It "Remove-Module -ModuleInfo (removing twice works)" {
+        $modInfo = Get-Module -Name "Bar"
+
+        # Contrary to -Name and -FullyQualifiedName removing a non imported module works using ModuleInfo
+        { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
+        { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
     }
 }
 
