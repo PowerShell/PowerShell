@@ -46,6 +46,23 @@ PS> Install-OpenCover -TargetDirectory $env:TEMP -Force
 PS> Invoke-OpenCover -OutputLog coverage.xml -OpenCoverPath $env:TEMP\OpenCover
 ```
 
+### Some notes if you are encountering issues
+
+`> Set-Location "C:\Path\to\powershell\build\dir"`
+
+make sure there are no spaces in the path, since they are not replaced with escape characters
+
+`> Install-OpenCover -TargetDirectory $env:TEMP -Force`
+
+If this throws an error: 
+
+`The request was aborted: Could not create SSL/TLS secure channel.` 
+
+try the following:
+
+`PS> [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12` 
+
+
 ## Examining the code coverage data
 
 Once the code coverage test run is done, you'll want to examine the data:
