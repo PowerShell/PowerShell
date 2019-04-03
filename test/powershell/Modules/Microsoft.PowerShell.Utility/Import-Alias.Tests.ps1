@@ -67,7 +67,7 @@ Describe "Import-Alias" -Tags "CI" {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force > $null
 
 		# set header
-		$aliasFileContent ='# Alias File'+$newLine
+		$aliasFileContent = '# Alias File' + $newLine
 		$aliasFileContent+='# Exported by : alex'+$newLine
 		$aliasFileContent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
 		$aliasFileContent+='# Computer : archvm'
