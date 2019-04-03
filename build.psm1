@@ -1745,52 +1745,6 @@ function Start-PSBootstrap {
     }
 }
 
-function Publish-NuGetFeed
-{
-    param(
-        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
-        [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag
-    )
-
-    # Add .NET CLI tools to PATH
-    Find-Dotnet
-
-    ## We update 'project.assets.json' files with new version tag value by 'GetPSCoreVersionFromGit' target.
-    $TopProject = (New-PSOptions).Top
-    if ($ReleaseTag) {
-        $ReleaseTagToUse = $ReleaseTag -Replace '^v'
-        dotnet restore $TopProject "/property:ReleaseTag=$ReleaseTagToUse"
-    } else {
-        dotnet restore $TopProject
-    }
-
-    try {
-        Push-Location $PSScriptRoot
-        @(
-'Microsoft.PowerShell.Commands.Management',
-'Microsoft.PowerShell.Commands.Utility',
-'Microsoft.PowerShell.Commands.Diagnostics',
-'Microsoft.PowerShell.ConsoleHost',
-'Microsoft.PowerShell.Security',
-'System.Management.Automation',
-'Microsoft.PowerShell.CoreCLR.Eventing',
-'Microsoft.WSMan.Management',
-'Microsoft.WSMan.Runtime',
-'Microsoft.PowerShell.SDK'
-        ) | ForEach-Object {
-            if ($ReleaseTag) {
-                dotnet pack "src/$_" --output $OutputPath "/property:IncludeSymbols=true;ReleaseTag=$ReleaseTagToUse"
-            } else {
-                dotnet pack "src/$_" --output $OutputPath
-            }
-        }
-    } finally {
-        Pop-Location
-    }
-}
-
 function Start-DevPowerShell {
     [CmdletBinding(DefaultParameterSetName='ConfigurationParamSet')]
     param(
