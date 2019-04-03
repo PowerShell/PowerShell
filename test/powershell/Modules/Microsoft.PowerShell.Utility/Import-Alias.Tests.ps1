@@ -74,7 +74,7 @@ Describe "Import-Alias" -Tags "CI" {
 
 		# add various aliases
 		$aliasFileContent+= $newLine + $alias1 + ',"' + $commandToAlias + '","","None"'
-		$aliasFileContent+= $newLine+$alias2+',"'+$commandToAlias+'","","None"'
+		$aliasFileContent += $newLine + $alias2 + ',"' + $commandToAlias + '","","None"'
 		$aliasFileContent+= $newLine+$alias3+',"'+$commandToAlias+'","","None"'
 		$aliasFileContent+= $newLine+$alias4+',"'+$commandToAlias+'","","None"'
 		$aliasFileContent > $aliasfile
