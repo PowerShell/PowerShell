@@ -2788,10 +2788,14 @@ function New-MSIXPackage
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
     if ($null -eq $makeappx) {
-        # Try to find in well known location
-        $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\$ProductTargetArchitecture" -Include makeappx.exe -Recurse | Select-Object -First 1
+        $makeappx = Get-ChildItem "c:\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
+
         if ($null -eq $makeappx) {
-            throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
+            # Try to find in well known location
+            $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\$ProductTargetArchitecture" -Include makeappx.exe -Recurse | Select-Object -First 1
+            if ($null -eq $makeappx) {
+                throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
+            }
         }
     }
 
