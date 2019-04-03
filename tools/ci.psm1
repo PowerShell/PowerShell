@@ -505,11 +505,10 @@ function Invoke-CIFinish
         # only publish assembly nuget packages if it is a daily build and tests passed
         if(Test-DailyBuild)
         {
-            Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
-            $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+            $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
             if($nugetArtifacts)
             {
-                $artifacts.AddRange($nugetArtifacts)
+                $artifacts.AddRange(@($nugetArtifacts))
             }
         }
 
@@ -523,6 +522,7 @@ function Invoke-CIFinish
         $artifacts.Add($arm64Package)
 
         $pushedAllArtifacts = $true
+
         $artifacts | ForEach-Object {
             Write-Log -Message "Pushing $_ as CI artifact"
             if(Test-Path $_)
