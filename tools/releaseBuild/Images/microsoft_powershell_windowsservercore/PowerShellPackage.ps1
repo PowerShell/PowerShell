@@ -122,6 +122,13 @@ try{
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm" -and $Runtime -ne 'fxdependent')
+    {
+        $pspackageParams['Type']='msix'
+        Write-Verbose "Starting powershell packaging(msix)..." -verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
+    }
+
     if (!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
     {
         $pspackageParams['Type']='zip'
@@ -131,7 +138,7 @@ try{
 
         Write-Verbose "Exporting packages ..." -verbose
 
-        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb | ForEach-Object {
+        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix | ForEach-Object {
             $file = $_.FullName
             Write-Verbose "Copying $file to $destination" -verbose
             Copy-Item -Path $file -Destination "$destination\" -Force
