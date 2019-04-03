@@ -90,39 +90,22 @@ Describe "Import-Alias" -Tags "CI" {
 		$aliasFileContent > $aliasPathLessThanFourValues
 	}
 
-	AfterAll {
-		Remove-Item -Path $testAliasDirectory -Recurse -Force
-	}
-
 	It "Should be able to import an alias file successfully" {
-	    {Import-Alias -Path $aliasfile} | Should -Not -Throw
+	    { Import-Alias -Path $aliasfile } | Should -Not -Throw
 	}
 
-	It "Should classify an alias as non existent when it is not imported yet" {
-		Get-Alias -Name invalid_alias -ErrorAction SilentlyContinue | Should -BeExactly $null
+	It "Should throw an exception when the alias is non existent" {
+		( Get-Alias -Name invalid_alias -ErrorAction SilentlyContinue ).Definition | Should -BeExactly $null
 	}
 
-	It "Should be able to import an alias file and recognize an imported alias" {
+	It "Should be able to parse <aliasToTest>" -TestCases @(
+		@{ aliasToTest = 'abc"def' }
+		@{ aliasToTest = 'aaa' }
+		@{ aliasToTest = 'a,b' }
+		) {
+		param($aliasToTest)
 		Import-Alias -Path $aliasfile
-	    (Get-Alias -Name $alias1 -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
-	}
-
-	It "Should be able to parse ""abc""""def"" into abc""def " {
-		$aliasToTest = 'abc"def'
-		Import-Alias -Path $aliasfile
-	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
-	}
-
-	It "Should be able to parse ""aaa"" into aaa " {
-		$aliasToTest = "aaa"
-		Import-Alias -Path $aliasfile
-	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
-	}
-
-	It "Should be able to parse ""a,b"" into a,b " {
-		$aliasToTest = "a,b"
-		Import-Alias -Path $aliasfile
-	    (Get-Alias -Name $aliasToTest -ErrorAction SilentlyContinue).Definition | Should -BeExactly $commandToAlias
+		( Get-Alias -Name $aliasToTest ).Definition | Should -BeExactly $commandToAlias
 	}
 
 	It "Should throw an error when reading more than four values" {
