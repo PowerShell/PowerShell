@@ -2776,7 +2776,8 @@ function New-MSIXPackage
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
     if ($null -eq $makeappx) {
-        $makeappx = Get-ChildItem "$($env:SystemDrive):\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
+        # This is location in our dockerfile
+        $makeappx = Get-ChildItem "$($env:SystemDrive)\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
 
         if ($null -eq $makeappx) {
             # Try to find in well known location
