@@ -195,6 +195,117 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     }
 }
 
+Describe "Remove-Module : module is readOnly" -Tags "CI" {
+
+    BeforeAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
+
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_ro.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_rw.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar_rw.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Baz\Baz_ro.psd1"
+
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_ro.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_rw.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar_rw.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Baz\Baz_ro.psm1" > $null
+
+        $removeReadOnlyModulesStopOnErrorTestCases = @(
+            # Simple patterns
+            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+
+            # Regex patterns
+            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Foo_*", "Ba*"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+        )
+
+        $removeReadOnlyModulesContinueOnErrorTestCases = @(
+            # Simple patterns
+            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro"}
+            @{ NamesToRemove = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Baz_ro", "Foo_ro"}
+
+            # Regex patterns
+            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_ro"}
+            @{ NamesToRemove = "Foo_*", "Ba*"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Baz_ro", "Foo_ro"}
+        )
+
+        $removeForceReadOnlyModules = @(
+            # Simple patterns
+            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = "Foo_ro"; ShouldBePresent = "Bar_rw", "Baz_ro", "Foo_rw"}
+            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_ro"}
+            @{ NamesToRemove = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"; ShouldBePresent = ""}
+
+            # Regex patterns
+            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_ro"}
+            @{ NamesToRemove = "Foo_*", "Ba*"; ShouldBeRemoved = "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"; ShouldBePresent = ""}
+        )
+    }
+
+    AfterAll {
+        Remove-Module -Force -Name "Foo_*", "Ba*" -ErrorAction SilentlyContinue
+    }
+
+    BeforeEach {
+        Import-Module -Name "$testdrive\Modules\Foo\Foo_ro.psd1" -Force
+        (Get-Module -Name "Foo_ro").AccessMode = "readOnly"
+        Import-Module -Name "$testdrive\Modules\Foo\Foo_rw.psd1" -Force
+        Import-Module -Name "$testdrive\Modules\Bar\Bar_rw.psd1" -Force
+        Import-Module -Name "$testdrive\Modules\Baz\Baz_ro.psd1" -Force
+        (Get-Module -Name "Baz_ro").AccessMode = "readOnly"
+
+        (Get-Module -Name "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"
+    }
+
+    It "Remove-Module -ErrorAction Stop (ReadOnly modules): <NamesToRemove>" -TestCases $removeReadOnlyModulesStopOnErrorTestCases{
+        param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        { Remove-Module -Name $NamesToRemove -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleIsReadOnly,Microsoft.PowerShell.Commands.RemoveModuleCommand"
+
+        if ($ShouldBeRemoved) {
+            (Get-Module -Name $ShouldBeRemoved).Name | Should -BeNullOrEmpty
+        }
+
+        if ($ShouldBePresent) {
+            (Get-Module -Name $ShouldBePresent).Name | Should -BeExactly $ShouldBePresent
+        }
+    }
+
+    It "Remove-Module -ErrorAction SilentlyContinue (ReadOnly modules): <NamesToRemove>" -TestCases $removeReadOnlyModulesContinueOnErrorTestCases{
+        param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        { Remove-Module -Name $NamesToRemove -ErrorAction SilentlyContinue } | Should -Not -Throw
+
+        if ($ShouldBeRemoved) {
+            (Get-Module -Name $ShouldBeRemoved).Name | Should -BeNullOrEmpty
+        }
+
+        if ($ShouldBePresent) {
+            (Get-Module -Name $ShouldBePresent).Name | Should -BeExactly $ShouldBePresent
+        }
+    }
+
+    It "Remove-Module -Force (ReadOnly modules): <NamesToRemove>" -TestCases $removeForceReadOnlyModules{
+        param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        { Remove-Module -Force -Name $NamesToRemove -ErrorAction Stop } | Should -Not -Throw
+
+        if ($ShouldBeRemoved) {
+            (Get-Module -Name $ShouldBeRemoved).Name | Should -BeNullOrEmpty
+        }
+
+        if ($ShouldBePresent) {
+            (Get-Module -Name $ShouldBePresent).Name | Should -BeExactly $ShouldBePresent
+        }
+    }
+}
+
 Describe "Remove-Module core module on module path by name" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
 
