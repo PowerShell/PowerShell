@@ -106,8 +106,6 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
         Import-Module -Name "$testdrive\Modules\Foo\2.0\Foo.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Bar\Bar.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Baz\Baz.psd1" -Force
-
-        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
     }
 
     AfterAll {
@@ -116,6 +114,8 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
 
     It "Remove-Module -Name <PatternsToRemove>" -TestCases $removeModuleByNameTestCases {
         param([string[]]$PatternsToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
 
         { Remove-Module -Name $PatternsToRemove} | Should -Not -Throw
 
@@ -131,6 +131,8 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     It "Remove-Module -Name <PatternsToRemove> (Error cases)" -TestCases $removeModuleByNameErrorTestCases {
         param([string[]]$PatternsToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
+
         { Remove-Module -Name $PatternsToRemove -ErrorAction Stop } | Should -Throw -ErrorId "Modules_NoModulesRemoved,Microsoft.PowerShell.Commands.RemoveModuleCommand"
 
         if ($ShouldBeRemoved) {
@@ -144,6 +146,8 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
 
     It "Remove-Module -FullyQualifiedName <FullyQualifiedName>" -TestCases $removeModuleByFQNTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
 
         { Remove-Module -FullyQualifiedName $FqnToRemove } | Should -Not -Throw
 
@@ -159,6 +163,8 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     It "Remove-Module -FullyQualifiedName <FullyQualifiedName> (Error cases)" -TestCases $removeModuleByFQNErrorTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
+
         { Remove-Module -FullyQualifiedName $FqnToRemove -ErrorAction Stop } | Should -Throw -ErrorId "Modules_NoModulesRemoved,Microsoft.PowerShell.Commands.RemoveModuleCommand"
 
         if ($ShouldBeRemoved) {
@@ -173,8 +179,9 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     It "Remove-Module -ModuleInfo <ModuleInfo>" -TestCases $removeModuleByFQNTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
-        $modInfo = Get-Module -FullyQualifiedName $FqnToRemove
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
 
+        $modInfo = Get-Module -FullyQualifiedName $FqnToRemove
         { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
 
         if ($ShouldBeRemoved) {
@@ -187,8 +194,9 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     }
 
     It "Remove-Module -ModuleInfo (removing twice works)" {
-        $modInfo = Get-Module -Name "Bar"
+        (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
 
+        $modInfo = Get-Module -Name "Bar"
         # Contrary to -Name and -FullyQualifiedName removing a non imported module works using ModuleInfo
         { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
         { Remove-Module -ModuleInfo $modInfo } | Should -Not -Throw
@@ -259,12 +267,12 @@ Describe "Remove-Module : module is readOnly" -Tags "CI" {
         Import-Module -Name "$testdrive\Modules\Bar\Bar_rw.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Baz\Baz_ro.psd1" -Force
         (Get-Module -Name "Baz_ro").AccessMode = "readOnly"
-
-        (Get-Module -Name "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"
     }
 
     It "Remove-Module -ErrorAction Stop (ReadOnly modules): <NamesToRemove>" -TestCases $removeReadOnlyModulesStopOnErrorTestCases{
         param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        (Get-Module -Name "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"
 
         { Remove-Module -Name $NamesToRemove -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleIsReadOnly,Microsoft.PowerShell.Commands.RemoveModuleCommand"
 
@@ -280,6 +288,8 @@ Describe "Remove-Module : module is readOnly" -Tags "CI" {
     It "Remove-Module -ErrorAction SilentlyContinue (ReadOnly modules): <NamesToRemove>" -TestCases $removeReadOnlyModulesContinueOnErrorTestCases{
         param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
+        (Get-Module -Name "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"
+
         { Remove-Module -Name $NamesToRemove -ErrorAction SilentlyContinue } | Should -Not -Throw
 
         if ($ShouldBeRemoved) {
@@ -293,6 +303,8 @@ Describe "Remove-Module : module is readOnly" -Tags "CI" {
 
     It "Remove-Module -Force (ReadOnly modules): <NamesToRemove>" -TestCases $removeForceReadOnlyModules{
         param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
+
+        (Get-Module -Name "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_ro", "Foo_ro", "Foo_rw"
 
         { Remove-Module -Force -Name $NamesToRemove -ErrorAction Stop } | Should -Not -Throw
 
@@ -311,15 +323,18 @@ Describe "Remove-Module core module on module path by name" -Tags "CI" {
 
     BeforeEach {
         Import-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
     It "should be able to remove a module with using Name switch" {
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
+
         { Remove-Module -Name $moduleName } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
     }
 
     It "should be able to remove a module with using ModuleInfo switch" {
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
+
         $a = Get-Module -Name $moduleName
         { Remove-Module -ModuleInfo $a } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
@@ -350,12 +365,10 @@ Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
             @{ ModPath = "$TestDrive/Modules\$moduleName/$moduleName.psd1" }
         )
 
-        BeforeEach {
-            Get-Module $moduleName | Remove-Module
-        }
-
         It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Pending {
             param([string]$ModPath)
+
+            Get-Module $moduleName | Remove-Module
 
             $m = Import-Module $modulePath -PassThru
 
