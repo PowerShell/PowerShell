@@ -2777,7 +2777,10 @@ function New-MSIXPackage
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
     if ($null -eq $makeappx) {
         # This is location in our dockerfile
-        $makeappx = Get-ChildItem "$($env:SystemDrive)\makeappx" -Include makeappx.exe -Recurse | Select-Object -First 1
+        $dockerPath = Join-Path $env:SystemDrive "makeappx"
+        if (Test-Path $dockerPath) {
+            $makeappx = Get-ChildItem $dockerPath -Include makeappx.exe -Recurse | Select-Object -First 1
+        }
 
         if ($null -eq $makeappx) {
             # Try to find in well known location
@@ -2789,6 +2792,9 @@ function New-MSIXPackage
     }
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
