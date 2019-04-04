@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true, do not omit commands that are incompatible with the
         /// current PowerShell edition from output.
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName=true)]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter SkipEditionCheck { get; set; }
 
         /// <summary>
