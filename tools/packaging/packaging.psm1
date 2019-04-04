@@ -343,7 +343,7 @@ function Start-PSPackage {
                     Force = $Force
                 }
 
-                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
+                if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
                     New-MSIXPackage @Arguments
                 }
             }
