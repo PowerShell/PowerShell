@@ -122,7 +122,7 @@ try{
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm" -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin "win7-x86",'fxdependent')
     {
         $pspackageParams['Type']='msix'
         Write-Verbose "Starting powershell packaging(msix)..." -verbose
