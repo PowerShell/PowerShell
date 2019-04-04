@@ -278,6 +278,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _listImported;
 
         /// <summary>
+        /// If true, do not omit commands that are incompatible with the
+        /// current PowerShell edition from output.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName=true)]
+        public SwitchParameter SkipEditionCheck { get; set; }
+
+        /// <summary>
         /// The parameter that filters commands returned to only include commands that have a parameter with a name that matches one of the ParameterName's arguments.
         /// </summary>
         [Parameter]
@@ -1342,59 +1349,71 @@ namespace Microsoft.PowerShell.Commands
                                         commandName,
                                         WildcardOptions.IgnoreCase);
 
-            // Use ModuleTableKeys list in reverse order
+            // Use ModuleTableKeys list in reverse order (going from most recently used to least recently)
             for (int i = Context.EngineSessionState.ModuleTableKeys.Count - 1; i >= 0; i--)
             {
-                PSModuleInfo module = null;
-
-                if (Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module) == false)
+                // Retrieve the module by path out of the module table
+                if (!Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out PSModuleInfo module))
                 {
                     Dbg.Assert(false, "ModuleTableKeys should be in sync with ModuleTable");
+                    continue;
                 }
-                else
+
+                // If the module is not edition compatible, omit
+                if (!SkipEditionCheck && !module.IsConsideredEditionCompatible)
                 {
-                    bool isModuleMatch = false;
-                    if (!_isFullyQualifiedModuleSpecified)
-                    {
-                        isModuleMatch = SessionStateUtilities.MatchesAnyWildcardPattern(module.Name, _modulePatterns, true);
-                    }
-                    else if (_moduleSpecifications.Any(moduleSpecification => ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification)))
-                    {
-                        isModuleMatch = true;
-                    }
+                    continue;
+                }
 
-                    if (isModuleMatch)
+                // If the module is not properly loaded into the session, omit
+                if (module.SessionState == null)
+                {
+                    continue;
+                }
+
+                // If modules were specified as fully qualified, check the module against the specifications given
+                if (_isFullyQualifiedModuleSpecified)
+                {
+                    if (!_moduleSpecifications.Any(moduleSpecification => ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification)))
                     {
-                        if (module.SessionState != null)
+                        continue;
+                    }
+                }
+                // Otherwise, check the module name against the given module wildcard patterns
+                else if (!SessionStateUtilities.MatchesAnyWildcardPattern(module.Name, _modulePatterns, defaultValue: true))
+                {
+                    continue;
+                }
+
+                // Look in function table
+                if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
+                {
+                    foreach (DictionaryEntry function in module.SessionState.Internal.GetFunctionTable())
+                    {
+                        FunctionInfo func = (FunctionInfo)function.Value;
+
+                        if (matcher.IsMatch((string)function.Key) && func.IsImported)
                         {
-                            // Look in function table
-                            if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
+                            // make sure function doesn't come from the current module's nested module
+                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
-                                foreach (DictionaryEntry function in module.SessionState.Internal.GetFunctionTable())
-                                {
-                                    FunctionInfo func = (FunctionInfo)function.Value;
-
-                                    if (matcher.IsMatch((string)function.Key) && func.IsImported)
-                                    {
-                                        // make sure function doesn't come from the current module's nested module
-                                        if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return (CommandInfo)function.Value;
-                                    }
-                                }
+                                yield return (CommandInfo)function.Value;
                             }
+                        }
+                    }
+                }
 
-                            // Look in alias table
-                            if ((this.CommandType & CommandTypes.Alias) != 0)
+                // Look in alias table
+                if (this.CommandType.HasFlag(CommandTypes.Alias))
+                {
+                    foreach (KeyValuePair<string, AliasInfo> alias in module.SessionState.Internal.GetAliasTable())
+                    {
+                        if (matcher.IsMatch(alias.Key) && alias.Value.IsImported)
+                        {
+                            // make sure alias doesn't come from the current module's nested module
+                            if (alias.Value.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
-                                foreach (var alias in module.SessionState.Internal.GetAliasTable())
-                                {
-                                    if (matcher.IsMatch(alias.Key) && alias.Value.IsImported)
-                                    {
-                                        // make sure alias doesn't come from the current module's nested module
-                                        if (alias.Value.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return alias.Value;
-                                    }
-                                }
+                                yield return alias.Value;
                             }
                         }
                     }
