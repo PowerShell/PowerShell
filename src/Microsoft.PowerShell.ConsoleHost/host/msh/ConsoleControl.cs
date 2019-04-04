@@ -2581,25 +2581,27 @@ namespace Microsoft.PowerShell
                 {
                     outBuffer = output.Slice(cursor, MaxBufferSize);
                     cursor += MaxBufferSize;
+
+                    WriteConsole(consoleHandle, outBuffer);
                 }
                 else
                 {
                     outBuffer = output.Slice(cursor);
                     cursor = output.Length;
-                }
 
-                if (newLine)
-                {
-                    var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
-                    var endOfLineLength = endOfLine.Length;
-                    Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-                    outBuffer.CopyTo(outBufferLine);
-                    endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                    WriteConsole(consoleHandle, outBufferLine);
-                }
-                else
-                {
-                    WriteConsole(consoleHandle, outBuffer);
+                    if (newLine)
+                    {
+                        var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
+                        var endOfLineLength = endOfLine.Length;
+                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+                        outBuffer.CopyTo(outBufferLine);
+                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
+                        WriteConsole(consoleHandle, outBufferLine);
+                    }
+                    else
+                    {
+                        WriteConsole(consoleHandle, outBuffer);
+                    }
                 }
             }
         }
