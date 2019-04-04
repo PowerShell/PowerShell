@@ -62,14 +62,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
         /// </summary>
-        public Breakpoint(string script)
+        protected Breakpoint(string script)
             : this(script, null)
         {}
 
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
         /// </summary>
-        public Breakpoint(string script, ScriptBlock action)
+        protected Breakpoint(string script, ScriptBlock action)
         {
             Enabled = true;
             Script = script;
@@ -81,14 +81,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
         /// </summary>
-        public Breakpoint(string script, int id)
+        protected Breakpoint(string script, int id)
             : this(script, null, id)
         {}
 
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
         /// </summary>
-        public Breakpoint(string script, ScriptBlock action, int id)
+        protected Breakpoint(string script, ScriptBlock action, int id)
         {
             Enabled = true;
             Script = script;
