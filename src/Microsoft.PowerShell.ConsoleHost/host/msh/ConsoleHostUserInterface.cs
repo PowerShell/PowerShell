@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
         {
-            WriteToConsole(PromptColor, backgroundColor, text, newLine: true);
+            WriteToConsole(foregroundColor, backgroundColor, text, newLine: true);
         }
 
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
