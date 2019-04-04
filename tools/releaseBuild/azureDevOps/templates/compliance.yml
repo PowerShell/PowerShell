@@ -97,10 +97,6 @@ jobs:
 
   # FXCop is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-    displayName: 'Publish Security Analysis Logs to Build Artifacts'
-    continueOnError: true
-
   # PreFASt is not applicable
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@1
@@ -111,6 +107,10 @@ jobs:
       softwareVersionNum: '$(ReleaseTagVar)'
       isLargeApp: false
       preserveTempFiles: true
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
