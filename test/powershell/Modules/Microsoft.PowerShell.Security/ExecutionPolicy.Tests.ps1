@@ -1147,7 +1147,7 @@ ZoneId=$FileType
             }
         }
 
-        It '-Scope LocalMachine is Settable, but overridden' -Skip:$ShouldSkipTest {
+        It '-Scope LocalMachine is Settable, but overridden' -Skip:(!(Test-CanWriteToPsHome)) {
             # In this test, we first setup execution policy in the following way:
             # CurrentUser is specified and takes precedence over LocalMachine.
             # That's why we will get an error, when we are setting up LocalMachine policy.
