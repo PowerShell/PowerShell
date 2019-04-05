@@ -34,7 +34,14 @@ jobs:
     continueOnError: true
 
   - powershell: |
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix" -path "$(System.ArtifactsDirectory)\package.xml"
+      $authenticodefiles = @(
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
+      )
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenicodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |
