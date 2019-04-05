@@ -127,7 +127,36 @@
           </RuleSettings>
         </Rule>
       </Rules>
-      <AnalyzerSettings />
+      <AnalyzerSettings>
+        <CollectionProperty Name="Hungarian">
+          <Value>as</Value>
+          <Value>at</Value>
+          <Value>by</Value>
+          <Value>do</Value>
+          <Value>go</Value>
+          <Value>if</Value>
+          <Value>in</Value>
+          <Value>is</Value>
+          <Value>it</Value>
+          <Value>no</Value>
+          <Value>of</Value>
+          <Value>on</Value>
+          <Value>or</Value>
+          <Value>to</Value>
+          <Value>n</Value>
+          <Value>r</Value>
+          <Value>l</Value>
+          <Value>i</Value>
+          <Value>io</Value>
+          <Value>fs</Value>
+          <Value>lp</Value>
+          <Value>dw</Value>
+          <Value>h</Value>
+          <Value>rs</Value>
+          <Value>ps</Value>
+          <Value>op</Value>
+        </CollectionProperty>
+      </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.OrderingRules">
       <Rules>
