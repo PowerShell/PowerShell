@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1') -Force
+Import-Module (Join-Path -Path $PSScriptRoot '..\..\..\Tools\Modules\HelpersCommon\HelpersCommon.psm1') -Force
+
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -8,12 +11,11 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         if ($IsWindows) {
             $userName = "testuserservices"
-            $testPass = "Secret123!"
+            $testPass = New-CertificatePassword
+            $creds = [pscredential]::new(".\$userName", $testPass)
             $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
             $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
-            net user $userName $testPass /add > $null
-            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-            $creds = [pscredential]::new(".\$userName", $password)
+            net user $userName $creds.GetNetworkCredential().Password /add > $null
 
             $testservicename1 = "testservice1"
             $testservicename2 = "testservice2"
@@ -166,12 +168,11 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         try {
             $startUsername = "user1"
             $endUsername = "user2"
-            $testPass = "Secret123!"
+            $testPass = New-CertificatePassword
             $servicename = "testsetcredential"
-            net user $startUsername $testPass /add > $null
-            net user $endUsername $testPass /add > $null
-            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-            $creds = [pscredential]::new(".\$startUsername", $password)
+            $creds = [pscredential]::new(".\$endUsername", $testPass)
+            net user $startUsername $creds.GetNetworkCredential().Password /add > $null
+            net user $endUsername $creds.GetNetworkCredential().Password /add > $null
             $parameters = @{
                 Name           = $servicename;
                 BinaryPathName = "$PSHOME\pwsh.exe";
@@ -183,7 +184,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
             $service.StartName | Should -BeExactly $creds.UserName
 
-            $creds = [pscredential]::new(".\$endUsername", $password)
             Set-Service -Name $servicename -Credential $creds
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
             $service.StartName | Should -BeExactly $creds.UserName
