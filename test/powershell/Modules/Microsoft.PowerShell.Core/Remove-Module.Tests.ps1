@@ -351,9 +351,9 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
         (Get-Module -Name "Foo").Name | Should -BeExactly "Foo"
 
         { Get-Command BarFunc -ErrorAction Stop } | Should -Not -Throw
-        { Remove-Module -Name Foo -ErrorAction Stop } | Should -Not -Throw
+        { Remove-Module -Name "Foo" -ErrorAction Stop } | Should -Not -Throw
         { Get-Command BarFunc -ErrorAction Stop } | Should -Throw
-        (Get-Module -Name Foo).Name | Should -BeNullOrEmpty
+        (Get-Module -Name "Foo").Name | Should -BeNullOrEmpty
     }
 
     It "Remove-Module : module contains nested modules with circular dependencies" {
@@ -366,6 +366,17 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
         { Remove-Module -Name "Bar" -ErrorAction Stop } | Should -Not -Throw
         { Get-Command BarFunc -ErrorAction Stop } | Should -Throw
         (Get-Module -Name "Bar").Name | Should -BeNullOrEmpty
+    }
+
+    It "Remove-Module : modules are required by other modules" {
+        New-ModuleManifest "$testdrive\Modules\Bar\Bar.psd1"
+        New-ModuleManifest "$testdrive\Modules\Foo\Foo.psd1" -RequiredModules "Bar"
+
+        Import-Module "$testdrive\Modules\Bar\Bar.psd1" -Force
+        Import-Module "$testdrive\Modules\Foo\Foo.psd1" -Force
+
+        (Get-Module -Name "Bar").Name | Should -BeExactly "Bar"
+        { Remove-Module "Bar" -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleIsRequired,Microsoft.PowerShell.Commands.RemoveModuleCommand"
     }
 }
 
