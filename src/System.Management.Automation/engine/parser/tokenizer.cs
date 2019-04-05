@@ -1315,9 +1315,28 @@ namespace System.Management.Automation.Language
         {
             // If the first non-newline, non-whitespace, non-comment, non-backtick, non-semi-colon character
             // following the newline is a pipe, we have a pipe continuance.
-            for (int i = extent.EndOffset; i < _script.Length;)
+            for (int i = extent.EndOffset; i < _script.Length - 1;)
             {
-                if (_script[i] == '#')
+                char c = _script[i];
+
+                if (c.IsWhitespace())
+                {
+                    i++;
+                    continue;
+                }
+
+                if (c == '\n')
+                {
+                    i++;
+                    continue;
+                }
+                else if (c == '\r' && _script[i + 1] == '\n')
+                {
+                    i += 2;
+                    continue;
+                }
+
+                if (c == '#')
                 {
                     // SkipLineComment will return the position after the comment end
                     // which is either at the end of the file, or a cr or lf.
@@ -1325,43 +1344,37 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                if (_script[i] == '<' && (i + 1) < _script.Length && _script[i + 1] == '#')
+                if (c == '<' && _script[i + 1] == '#')
                 {
                     i = SkipBlockComment(i + 2);
                     continue;
                 }
 
-                if (_script[i].IsWhitespace())
+                if (c == '`')
                 {
-                    i++;
-                    continue;
-                }
-
-                if (_script[i] == '\n' || _script[i] == '\r')
-                {
-                    i = SkipNewline(i);
-                    continue;
-                }
-
-                if (_script[i] == '`' && (i + 1) < _script.Length)
-                {
-                    if (_script[i + 1] == '\n' || _script[i + 1] == '\r')
+                    char c2 = _script[i + 1];
+                    if (c2 == '\n')
                     {
-                        i = SkipNewline(i + 1);
+                        i += 2;
+                        continue;
+                    }
+                    else if (c2 == '\r' && i + 2 < _script.Length && _script[i + 2] == '\n')
+                    {
+                        i += 3;
                         continue;
                     }
 
-                    if (char.IsWhiteSpace(_script[i + 1]))
+                    if (char.IsWhiteSpace(c2))
                     {
                         i += 2;
                         continue;
                     }
                 }
 
-                return _script[i] == '|';
+                return c == '|';
             }
 
-            return false;
+            return _script[_script.Length - 1] == '|';
         }
 
         private int SkipLineComment(int i)
@@ -1388,25 +1401,6 @@ namespace System.Management.Automation.Language
                 if (c == '#' && (i + 1) < _script.Length && _script[i + 1] == '>')
                 {
                     return i + 2;
-                }
-            }
-
-            return i;
-        }
-
-        private int SkipNewline(int i)
-        {
-            if (i < _script.Length)
-            {
-                char c = _script[i];
-
-                if (c == '\r' && (i + 1) < _script.Length && _script[i + 1] == '\n')
-                {
-                    return i + 2;
-                }
-                else if (c == '\n')
-                {
-                    return i + 1;
                 }
             }
 
