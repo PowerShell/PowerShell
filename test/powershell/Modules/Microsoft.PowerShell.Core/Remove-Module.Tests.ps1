@@ -203,7 +203,7 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     }
 }
 
-Describe "Remove-Module : module is readOnly" -Tags "CI" {
+Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
 
     BeforeAll {
         Remove-Module -Force -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
@@ -323,6 +323,33 @@ Describe "Remove-Module : module provides the PSDrive for current PS Session" -T
 
         $module = Get-Module (Join-Path $PSHome "System.Management.Automation.dll") -ListAvailable
         { Remove-Module $module -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RemoveModuleCommand"
+    }
+}
+
+Describe "Remove-Module : module contains nested modules" -Tags "CI" {
+
+    BeforeAll {
+        Remove-Module -Force -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
+
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo.psd1" -NestedModules "..\Bar\Bar.psd1" -FunctionsToExport "BarFunc"
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -RootModule "Bar.psm1" -FunctionsToExport "BarFunc"
+
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
+        Set-Content -Path "$testdrive\Modules\Bar\Bar.psm1" -Value "function BarFunc {}"
+    }
+
+    It "Remove-Module : module contains nested modules" {
+        Import-Module "$testdrive\Modules\Foo\Foo.psd1" -Force
+        (Get-Module -Name "Foo").Name | Should -BeExactly "Foo"
+
+        { Get-Command BarFunc -ErrorAction Stop } | Should -Not -Throw
+        { Remove-Module -Name Foo -ErrorAction Stop } | Should -Not -Throw
+        { Get-Command BarFunc -ErrorAction Stop } | Should -Throw
+        (Get-Module -Name Foo).Name | Should -BeNullOrEmpty
     }
 }
 
