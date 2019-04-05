@@ -672,53 +672,6 @@ function Invoke-LinuxTestsCore
         $resultError = $_
         $result = "FAIL"
     }
-}
-
-# Build and test script for Linux and macOS:
-function Invoke-LinuxTests
-{
-    param(
-        [switch]
-        $SkipBuild
-    )
-
-    if(!$SkipBuild.IsPresent)
-    {
-        $releaseTag = Get-ReleaseTag
-        Write-Log -Message "Executing ci.psm1 build and test on a Linux based operating system."
-        $originalProgressPreference = $ProgressPreference
-        $ProgressPreference = 'SilentlyContinue'
-        try {
-            # We use CrossGen build to run tests only if it's the daily build.
-            Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
-        }
-        finally
-        {
-            $ProgressPreference = $originalProgressPreference
-        }
-    }
-
-    Invoke-LinuxTestsCore
-
-    try {
-        $xUnitTestResultsFile = "$pwd/xUnitTestResults.xml"
-        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
-        # If there are failures, Test-XUnitTestResults throws
-        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
-    } catch {
-        $result = "FAIL"
-        if (!$resultError)
-        {
-            $resultError = $_
-        }
-    }
-
-    $createPackages = $isFullBuild
-
-    if ($createPackages)
-    {
-        New-LinuxPackage -NugetKey $env:NugetKey
-    }
 
     # If the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" )
