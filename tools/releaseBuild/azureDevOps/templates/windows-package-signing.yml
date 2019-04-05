@@ -41,7 +41,7 @@ jobs:
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
       )
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenicodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |
