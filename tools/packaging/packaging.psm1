@@ -2750,7 +2750,7 @@ function New-MSIPackage
 #>
 function New-MSIXPackage
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact='Low')]
     param (
 
         # Name of the Product
@@ -2826,15 +2826,17 @@ function New-MSIXPackage
         Copy-Item -Path "$RepoRoot\assets\$_" -Destination "$ProductSourcePath\assets\"
     }
 
-    Write-Verbose "Creating priconfig.xml" -Verbose
-    Start-NativeExecution -VerboseOutputOnError { & $makepri createconfig /o /cf (Join-Path $ProductSourcePath "priconfig.xml") /dq en-US }
-    Write-Verbose "Creating resources.pri" -Verbose
-    Push-Location $ProductSourcePath
-    Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
-    Pop-Location
-    Write-Verbose "Creating msix package" -Verbose
-    Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
-    Write-Verbose "Created $packageName.msix" -Verbose
+    if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
+        Write-Verbose "Creating priconfig.xml" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makepri createconfig /o /cf (Join-Path $ProductSourcePath "priconfig.xml") /dq en-US }
+        Write-Verbose "Creating resources.pri" -Verbose
+        Push-Location $ProductSourcePath
+        Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
+        Pop-Location
+        Write-Verbose "Creating msix package" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Write-Verbose "Created $packageName.msix" -Verbose
+    }
 }
 
 # verify no files have been added or removed
