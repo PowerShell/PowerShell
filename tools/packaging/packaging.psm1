@@ -2791,6 +2791,15 @@ function New-MSIXPackage
         }
     }
 
+    $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
     if (([Version]$ProductVersion).Revision -eq -1) {
         $ProductVersion += ".0"
@@ -2817,7 +2826,15 @@ function New-MSIXPackage
         Copy-Item -Path "$RepoRoot\assets\$_" -Destination "$ProductSourcePath\assets\"
     }
 
-    Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$ProductName-$ProductVersion.$ProductNameSuffix.msix") }
+    Write-Verbose "Creating priconfig.xml" -Verbose
+    Start-NativeExecution -VerboseOutputOnError { & $makepri createconfig /o /cf (Join-Path $ProductSourcePath "priconfig.xml") /dq en-US }
+    Write-Verbose "Creating resources.pri" -Verbose
+    Push-Location $ProductSourcePath
+    Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
+    Pop-Location
+    Write-Verbose "Creating msix package" -Verbose
+    Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+    Write-Verbose "Created $packageName.msix" -Verbose
 }
 
 # verify no files have been added or removed
