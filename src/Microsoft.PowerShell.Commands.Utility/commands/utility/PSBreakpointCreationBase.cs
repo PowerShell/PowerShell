@@ -14,20 +14,24 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PSBreakpointCreationBase : PSCmdlet
     {
+        internal const string CommandParameterSetName = "Command";
+        internal const string LineParameterSetName = "Line";
+        internal const string VariableParameterSetName = "Variable";
+
         #region parameters
 
         /// <summary>
         /// The action to take when hitting this breakpoint.
         /// </summary>
-        [Parameter(ParameterSetName = "Command")]
-        [Parameter(ParameterSetName = "Line")]
-        [Parameter(ParameterSetName = "Variable")]
+        [Parameter(ParameterSetName = CommandParameterSetName)]
+        [Parameter(ParameterSetName = LineParameterSetName)]
+        [Parameter(ParameterSetName = VariableParameterSetName)]
         public ScriptBlock Action { get; set; }
 
         /// <summary>
         /// The column to set the breakpoint on.
         /// </summary>
-        [Parameter(Position = 2, ParameterSetName = "Line")]
+        [Parameter(Position = 2, ParameterSetName = LineParameterSetName)]
         [ValidateRange(1, int.MaxValue)]
         public int Column { get; set; }
 
@@ -35,21 +39,21 @@ namespace Microsoft.PowerShell.Commands
         /// The command(s) to set the breakpoint on.
         /// </summary>
         [Alias("C")]
-        [Parameter(ParameterSetName = "Command", Mandatory = true)]
+        [Parameter(ParameterSetName = CommandParameterSetName, Mandatory = true)]
         public string[] Command { get; set; }
 
         /// <summary>
         /// The line to set the breakpoint on.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Line", Mandatory = true)]
+        [Parameter(Position = 1, ParameterSetName = LineParameterSetName, Mandatory = true)]
         public int[] Line { get; set; }
 
         /// <summary>
         /// The script to set the breakpoint on.
         /// </summary>
-        [Parameter(ParameterSetName = "Command", Position = 0)]
-        [Parameter(ParameterSetName = "Line", Mandatory = true, Position = 0)]
-        [Parameter(ParameterSetName = "Variable", Position = 0)]
+        [Parameter(ParameterSetName = CommandParameterSetName, Position = 0)]
+        [Parameter(ParameterSetName = LineParameterSetName, Mandatory = true, Position = 0)]
+        [Parameter(ParameterSetName = VariableParameterSetName, Position = 0)]
         [ValidateNotNull]
         public string[] Script { get; set; }
 
@@ -57,12 +61,12 @@ namespace Microsoft.PowerShell.Commands
         /// The variables to set the breakpoint(s) on.
         /// </summary>
         [Alias("V")]
-        [Parameter(ParameterSetName = "Variable", Mandatory = true)]
+        [Parameter(ParameterSetName = VariableParameterSetName, Mandatory = true)]
         public string[] Variable { get; set; }
 
         /// <summary>
         /// </summary>
-        [Parameter(ParameterSetName = "Variable")]
+        [Parameter(ParameterSetName = VariableParameterSetName)]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;
 
         #endregion parameters

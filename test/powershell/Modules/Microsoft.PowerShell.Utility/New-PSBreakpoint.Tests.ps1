@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-$ps = Join-Path -Path $PsHome -ChildPath "pwsh"
+
 $FeatureEnabled = $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints')
 
 Describe "New-PSBreakpoint Unit Tests - Feature-Enabled" -Tags "CI" {
@@ -42,7 +42,7 @@ return
         $contents > $scriptFileName1
 
         # Set up script file 2
-        $scriptFileName2 = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
+        $scriptFileName2 = Join-Path -Path $TestDrive -ChildPath psbreakpointtestscript.ps1
 
         "`$var = 1 " > $scriptFileName2
     }
@@ -52,10 +52,6 @@ return
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
             return
         }
-
-        # clean up
-        Remove-Item -Path $scriptFileName1 -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $scriptFileName2 -Force -ErrorAction SilentlyContinue
     }
 
     It "Should be able to set psbreakpoints for -Line" {
@@ -100,12 +96,12 @@ return
     }
 
     It "Should throw Exception when missing mandatory parameter -line" -Pending {
-         $output = & $ps -noninteractive -command "nbp -column 1 -script $scriptFileName1"
+         $output = pwsh -noninteractive -command "nbp -column 1 -script $scriptFileName1"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.NewPSBreakpointCommand"
     }
 
     It "Should throw Exception when missing mandatory parameter" -Pending {
-         $output = & $ps -noprofile -noninteractive -command "nbp -line 1"
+         $output = pwsh -noprofile -noninteractive -command "nbp -line 1"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.NewPSBreakpointCommand"
     }
 
@@ -195,28 +191,5 @@ return
         $var = "theVariable"
         $brk = New-PSBreakpoint -Command $var -Script $scriptFileName2
         $brk.Command | Should -Be $var
-    }
-}
-
-Describe "New-PSBreakpoint Unit Tests - Feature-Disabled" -Tags "CI" {
-
-    BeforeAll {
-        if ($FeatureEnabled) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints' to be disabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
-        }
-    }
-
-    AfterAll {
-        if ($FeatureEnabled) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
-        }
-    }
-
-    It "Should not have New-PSBreakpoint available" {
-        { New-PSBreakpoint } | Should -Throw -ErrorId CommandNotFoundException
     }
 }

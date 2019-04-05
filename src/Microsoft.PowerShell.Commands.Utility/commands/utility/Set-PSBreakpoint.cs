@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Set-PSBreakpoint command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = "Line", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
+    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
     [OutputType(typeof(VariableBreakpoint), typeof(CommandBreakpoint), typeof(LineBreakpoint))]
     public class SetPSBreakpointCommand : PSBreakpointCreationBase
     {
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // If it is a command breakpoint...
             //
-            if (ParameterSetName.Equals("Command", StringComparison.OrdinalIgnoreCase))
+            if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 for (int i = 0; i < Command.Length; i++)
                 {
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // If it is a variable breakpoint...
             //
-            else if (ParameterSetName.Equals("Variable", StringComparison.OrdinalIgnoreCase))
+            else if (ParameterSetName.Equals(VariableParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 for (int i = 0; i < Variable.Length; i++)
                 {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
             //
             else
             {
-                Debug.Assert(ParameterSetName.Equals("Line", StringComparison.OrdinalIgnoreCase));
+                Debug.Assert(ParameterSetName.Equals(LineParameterSetName, StringComparison.OrdinalIgnoreCase));
 
                 for (int i = 0; i < Line.Length; i++)
                 {

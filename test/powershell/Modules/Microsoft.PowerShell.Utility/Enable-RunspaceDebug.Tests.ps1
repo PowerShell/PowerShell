@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 $FeatureEnabled = $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints')
 
 Describe "`Enable-RunspaceDebug -Breakpoint` Unit Tests - Feature-Enabled" -Tags "CI" {
@@ -34,7 +35,12 @@ Goodbye
 
         $contents > $scriptFileName1
 
-        $breakpoint1 = New-PSBreakpoint -Line 12 $scriptFileName1
+        # The breakpoints are created here because when the tests are run with the experimental feature off,
+        # this command does not exist and the Pester tests fail to work
+        $breakpointArr = @(
+            New-PSBreakpoint -Line 12 $scriptFileName1
+            New-PSBreakpoint -Line 13 $scriptFileName1
+        )
 
         $iss = [initialsessionstate]::CreateDefault2();
         $testRunspace1 = [runspacefactory]::CreateRunspace($iss)
@@ -56,39 +62,16 @@ Goodbye
         @{
             Name = "Current runspace"
             Runspace = [System.Management.Automation.Runspaces.Runspace]::DefaultRunspace
-            Breakpoints = $breakpoint1
+            Breakpoints = $breakpointArr
         },
         @{
             Name = $testRunspace1.Name
             Runspace = $testRunspace1
-            Breakpoints = $breakpoint1
+            Breakpoints = $breakpointArr
         }
     ) {
         param($Runspace, $Breakpoints)
         Enable-RunspaceDebug -Breakpoint $Breakpoints -Runspace $Runspace
         $Runspace.Debugger.GetBreakpoints() | Should -Be @($Breakpoints)
-    }
-}
-
-Describe "`Enable-RunspaceDebug -Breakpoint` Unit Tests - Feature-Disabled" -Tags "CI" {
-
-    BeforeAll {
-        if ($FeatureEnabled) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints' to be disabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
-        }
-    }
-
-    AfterAll {
-        if ($FeatureEnabled) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
-        }
-    }
-
-    It "Should not have `Enable-RunspaceDebug -Breakpoint` available" {
-        { Enable-RunspaceDebug -Breakpoint } | Should -Throw -ErrorId NamedParameterNotFound
     }
 }
