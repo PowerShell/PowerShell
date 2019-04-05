@@ -122,7 +122,6 @@ function Invoke-CIInstall
     )
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    $releaseTag = Get-ReleaseTag
 
     if(Test-DailyBuild)
     {
@@ -588,8 +587,6 @@ function Invoke-LinuxTestsCore
         'ExcludeTag' = $testExcludeTag
         'OutputFile' = $testResultsNoSudo
     }
-    # create packages if it is a full build
-    $isFullBuild = Test-DailyBuild
 
     # Get the experimental feature names and the tests associated with them
     $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
@@ -662,7 +659,7 @@ function Invoke-LinuxTestsCore
     # Determine whether the build passed
     try {
         $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
-        $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
+        $allTestResultsWithExpFeatures = @($noSudoResultsWithExpFeatures, $sudoResultsWithExpFeatures)
         # This throws if there was an error:
         $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
