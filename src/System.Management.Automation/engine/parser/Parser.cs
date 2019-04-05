@@ -348,7 +348,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(false);
+                _tokenizer.SkipNewlines(skipSemis: false);
             }
         }
 
