@@ -335,21 +335,17 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
         New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
 
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Baz\Baz.psd1"
-
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Baz\Baz.psm1" > $null
+
         Set-Content -Path "$testdrive\Modules\Foo\Foo.psm1" -Value "function FooFunc {}"
         Set-Content -Path "$testdrive\Modules\Bar\Bar.psm1" -Value "function BarFunc {}"
-        Set-Content -Path "$testdrive\Modules\Baz\Baz.psm1" -Value "function BazFunc {}"
     }
 
     It "Remove-Module : module contains nested modules" {
-        Update-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -RootModule "Bar.psm1" -FunctionsToExport "BarFunc"
-        Update-ModuleManifest -Path "$testdrive\Modules\Foo\Foo.psd1" -NestedModules "..\Bar\Bar.psd1" -FunctionsToExport "BarFunc"
+        New-ModuleManifest "$testdrive\Modules\Bar\Bar.psd1" -RootModule "./Bar.psm1" -FunctionsToExport "BarFunc"
+        New-ModuleManifest "$testdrive\Modules\Foo\Foo.psd1" -NestedModules "../Bar/Bar.psd1" -FunctionsToExport "BarFunc"
 
         Import-Module "$testdrive\Modules\Foo\Foo.psd1" -Force
         (Get-Module -Name "Foo").Name | Should -BeExactly "Foo"
@@ -358,6 +354,18 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
         { Remove-Module -Name Foo -ErrorAction Stop } | Should -Not -Throw
         { Get-Command BarFunc -ErrorAction Stop } | Should -Throw
         (Get-Module -Name Foo).Name | Should -BeNullOrEmpty
+    }
+
+    It "Remove-Module : module contains nested modules with circular dependencies" {
+        New-ModuleManifest "$testdrive\Modules\Bar\Bar.psd1" -RootModule "Bar" -FunctionsToExport "BarFunc" -NestedModules "Bar"
+
+        Import-Module "$testdrive\Modules\Bar\Bar.psd1" -Force
+        (Get-Module -Name "Bar").Name | Should -BeExactly "Bar"
+
+        { Get-Command BarFunc -ErrorAction Stop } | Should -Not -Throw
+        { Remove-Module -Name "Bar" -ErrorAction Stop } | Should -Not -Throw
+        { Get-Command BarFunc -ErrorAction Stop } | Should -Throw
+        (Get-Module -Name "Bar").Name | Should -BeNullOrEmpty
     }
 }
 
