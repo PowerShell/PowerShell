@@ -74,7 +74,7 @@ Describe "Get-Command Feature tests" -Tag Feature {
         It "Can return multiple results for cmdlets matching abbreviation" {
             # use mixed casing to validate case insensitivity
             $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Get-Command i-C -UseAbbreviationExpansion"
-            $results | Should -HaveCount 3
+            $results.Count | Should -BeGreaterOrEqual 3
             $results.Name | Should -Contain "Invoke-Command"
             $results.Name | Should -Contain "Import-Clixml"
             $results.Name | Should -Contain "Import-Csv"

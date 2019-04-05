@@ -2,12 +2,13 @@
 # Licensed under the MIT License.
 
 Import-Module HelpersRemoting
+Import-Module HelpersCommon
 
 Describe "Remote runspace pool should expose commands in endpoint configuration" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
-        if ($isWindows)
+        if ($isWindows -and (Test-CanWriteToPsHome))
         {
             $configName = "restrictedV"
             $configPath = Join-Path $TestDrive ($configName + ".pssc")
@@ -22,7 +23,7 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
 
     AfterAll {
 
-        if ($IsWindows)
+        if ($IsWindows -and (Test-CanWriteToPsHome))
         {
             if ($remoteRunspacePool -ne $null)
             {
@@ -33,7 +34,7 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
         }
     }
 
-    It "Verifies that the configured endpoint cmdlet is available in all runspace pool instances" -Skip:(! $IsWindows) {
+    It "Verifies that the configured endpoint cmdlet is available in all runspace pool instances" -Skip:(!$IsWindows -or !(Test-CanWriteToPsHome)) {
 
         [powershell] $ps1 = [powershell]::Create()
         $ps1.RunspacePool = $remoteRunspacePool

@@ -320,3 +320,27 @@ function New-RandomHexString
     return ((1..$Length).ForEach{ '{0:x}' -f $random.Next(0xf) }) -join ''
 }
 
+$script:CanWriteToPsHome = $null
+function Test-CanWriteToPsHome
+{
+    if ($null -ne $script:CanWriteToPsHome) {
+        return $script:CanWriteToPsHome
+    }
+
+    $script:CanWriteToPsHome = $true
+
+    try {
+        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+    }
+    catch [System.UnauthorizedAccessException] {
+        $script:CanWriteToPsHome = $false
+    }
+    finally {
+        if ($script:CanWriteToPsHome) {
+            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
+        }
+    }
+
+    $script:CanWriteToPsHome
+}

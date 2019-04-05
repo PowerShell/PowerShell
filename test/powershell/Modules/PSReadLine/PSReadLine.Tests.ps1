@@ -13,7 +13,13 @@ Describe "PSReadLine" -tags "CI" {
         $module = Get-Module PSReadLine
         $module.Name | Should -BeExactly 'PSReadLine'
         $module.Version | Should -BeExactly '2.0.0'
-        $module.Path | Should -Be (Join-Path -Path $PSHOME -ChildPath "Modules/PSReadLine/PSReadLine.psm1")
+    }
+
+    It "Should be installed to `$PSHOME" {
+        $module = Get-Module (Join-Path -Path $PSHOME -ChildPath "Modules" -AdditionalChildPath "PSReadLine") -ListAvailable
+        $module.Name | Should -BeExactly 'PSReadLine'
+        $module.Version | Should -BeExactly '2.0.0'
+        $module.Path | Should -Be (Join-Path -Path $PSHOME -ChildPath "Modules/PSReadLine/PSReadLine.psd1")
     }
 
     It "Should use Emacs Bindings on Linux and macOS" -skip:$IsWindows {
