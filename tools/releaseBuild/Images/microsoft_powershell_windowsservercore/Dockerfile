@@ -19,8 +19,8 @@ COPY wix.psm1 containerFiles/wix.psm1
 RUN Import-Module ./containerFiles/wix.psm1; `
     Install-WixZip -zipPath \wix.Zip
 
-# Install makeappx
-ADD https://pscoretestdata.blob.core.windows.net/build-files/makeappx/makeappx.zip?sp=r&st=2019-04-04T19:56:37Z&se=2020-04-05T03:56:37Z&spr=https&sv=2018-03-28&sig=yMnRsS1t9mt552qCVH9%2FlpLxsy9LKnwTVr5au2hFZjU%3D&sr=b /makeappx.zip
+# Install makeappx and makepri
+ADD https://pscoretestdata.blob.core.windows.net/build-files/makeappx/makeappx.zip?sp=r&st=2019-04-05T18:02:52Z&se=2020-04-06T02:02:52Z&spr=https&sv=2018-03-28&sig=t07uC1K3uFLtINQsmorHobgPh%2B%2BBgjFnmHEJGNZT6Hk%3D&sr=b /makeappx.zip
 RUN Expand-Archive /makeappx.zip
 
 COPY PowerShellPackage.ps1 /
