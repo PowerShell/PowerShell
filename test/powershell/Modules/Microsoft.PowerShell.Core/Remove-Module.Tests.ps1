@@ -374,8 +374,12 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
 
         Import-Module "$testdrive\Modules\Bar\Bar.psd1" -Force
         Import-Module "$testdrive\Modules\Foo\Foo.psd1" -Force
-
         (Get-Module -Name "Bar").Name | Should -BeExactly "Bar"
+        (Get-Module -Name "Foo").Name | Should -BeExactly "Foo"
+
+        {Remove-Module "Foo" -ErrorAction Stop } | Should -Not -Throw
+        Import-Module "$testdrive\Modules\Foo\Foo.psd1" -Force
+
         { Remove-Module "Bar" -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleIsRequired,Microsoft.PowerShell.Commands.RemoveModuleCommand"
     }
 }
