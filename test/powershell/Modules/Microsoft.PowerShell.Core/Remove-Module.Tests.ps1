@@ -318,6 +318,14 @@ Describe "Remove-Module : module is readOnly" -Tags "CI" {
     }
 }
 
+Describe "Remove-Module : module provides the PSDrive for current PS Session" -Tags "CI" {
+    It "Remove-Module : module provides the PSDrive for current PS Session" {
+
+        $module = Get-Module (Join-Path $PSHome "System.Management.Automation.dll") -ListAvailable
+        { Remove-Module $module -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RemoveModuleCommand"
+    }
+}
+
 Describe "Remove-Module core module on module path by name" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
 
