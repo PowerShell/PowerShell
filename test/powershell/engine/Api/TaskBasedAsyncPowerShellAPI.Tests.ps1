@@ -207,7 +207,7 @@ try {
             try {
                 $ir = $ps.AddScript("Start-Sleep -Seconds 60").InvokeAsync()
                 Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running }
-                $sr = $ps.StopAsync({}, $null)
+                $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $sr.IsCompletedSuccessfully | Should -Be $true
                 $ir.IsFaulted | Should -Be $true
