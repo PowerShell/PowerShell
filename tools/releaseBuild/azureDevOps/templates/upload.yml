@@ -2,7 +2,7 @@ parameters:
   architecture: x86
   version: 6.2.0
   msi: yes
-  msix: no
+  msix: yes
 
 steps:
 - template: upload-final-results.yml
