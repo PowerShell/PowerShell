@@ -40,7 +40,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows )
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -54,7 +54,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Configuration name should be in the transcript header" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Configuration name should be in the transcript header" {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
@@ -82,7 +82,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows )
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -96,7 +96,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Get-Help should work in JEA sessions" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Get-Help should work in JEA sessions" {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         try
