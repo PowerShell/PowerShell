@@ -316,6 +316,7 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
         #endregion protected members
 
     }

@@ -3,6 +3,8 @@
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 
+Import-Module HelpersCommon
+
 $script:cmdletsToSkip = @(
     "Get-PSHostProcessInfo",
     "Out-Default",
@@ -122,14 +124,16 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
     Context "for module : $moduleName" {
 
         BeforeAll {
-            UpdateHelpFromLocalContentPath $moduleName -Scope 'AllUsers'
+            if (Test-CanWriteToPsHome) {
+                UpdateHelpFromLocalContentPath $moduleName -Scope 'AllUsers'
+            }
             $cmdlets = Get-Command -Module $moduleName
         }
 
         $testCases = @()
         $cmdlets | Where-Object { $cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
 
-        It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
+        It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
             $help = get-help -name $cmdletName
             $help.Description | Out-String | Should Match $cmdletName
@@ -214,10 +218,12 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
-        $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
-        New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
-        Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
-        Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        if (Test-CanWriteToPsHome) {
+            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+            New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
+            Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
+            Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        }
 
         $aboutHelpPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
 
@@ -228,12 +234,14 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     AfterAll {
-        Remove-Item $modulePath -Recurse -Force
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $modulePath -Recurse -Force
+        }
         # Remove all the help content.
         Get-ChildItem -Path $aboutHelpPath -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $help = Get-Help about_testhelp
         $help.count | Should -Be 1
@@ -258,10 +266,12 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
             Remove-Item $userHelpRoot -Force -Recurse -ErrorAction Stop
         }
 
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        if (Test-CanWriteToPsHome) {
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        }
     }
 
-    It "Get-Help for about_Variable should return only one help object" {
+    It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
@@ -455,25 +465,27 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         ## Delete help from global scope if it exists.
         $currentCulture = (Get-Culture).Name
 
-        $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
-        if (Test-Path $managementHelpFilePath) {
-            Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+        if (Test-CanWriteToPsHome) {
+            $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
+            if (Test-Path $managementHelpFilePath) {
+                Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
-        if (Test-Path $coreHelpFilePath) {
-            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+            $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+            if (Test-Path $coreHelpFilePath) {
+                Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
-        if (Test-Path $archiveHelpFilePath) {
-            Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+            $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
+            if (Test-Path $archiveHelpFilePath) {
+                Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'AllUsers'
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'AllUsers' -Force
-        UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'AllUsers'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'AllUsers' -Force
+            UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
+        }
 
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
@@ -483,7 +495,7 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         )
     }
 
-    It 'help in user scope be found for <TestName>' -TestCases $TestCases {
+    It 'help in user scope be found for <TestName>' -TestCases $TestCases -Skip:(!(Test-CanWriteToPsHome)) {
         param($CmdletName)
 
         $helpObj = Get-Help -Name $CmdletName -Full

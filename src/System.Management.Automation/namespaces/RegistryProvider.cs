@@ -86,6 +86,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public const string ProviderName = "Registry";
 
+        #region CmdletProvider overrides
+
+        /// <summary>
+        /// Gets the alternate item separator character for this provider.
+        /// </summary>
+        public override char AltItemSeparator => ItemSeparator;
+
+        #endregion
+
         #region DriveCmdletProvider overrides
 
         /// <summary>

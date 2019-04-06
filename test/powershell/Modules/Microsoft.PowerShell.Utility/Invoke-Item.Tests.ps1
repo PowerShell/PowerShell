@@ -129,14 +129,14 @@ Categories=Application;
                 $windows = $shell.Windows()
 
                 $before = $windows.Count
-                Invoke-Item -Path $PSHOME
+                Invoke-Item -Path ~
                 # may take time for explorer to open window
                 Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
                 $before + 1 | Should -Be $after
                 $item = $windows.Item($after - 1)
-                $item.LocationURL | Should -Match ($PSHOME -replace '\\', '/')
+                $item.LocationURL | Should -Match ((Resolve-Path ~) -replace '\\', '/')
                 ## close the windows explorer
                 $item.Quit()
             }

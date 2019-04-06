@@ -6,26 +6,24 @@ trigger:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
 
 pr:
   branches:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
 
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- template: templates/credscan.yml
 
-  queue:
+- job: Linux_CI
+
+  displayName: Markdown and Common Tests
+
+  pool:
     name: Hosted Ubuntu 1604
   steps:
   - powershell: |
