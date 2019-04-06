@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1') -Force
-Import-Module (Join-Path -Path $PSScriptRoot '..\..\..\Tools\Modules\HelpersCommon\HelpersCommon.psm1') -Force
+Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
+Import-Module HelpersCommon
 
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
