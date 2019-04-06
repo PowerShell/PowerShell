@@ -37,6 +37,11 @@ jobs:
     condition: succeededOrFailed()
 
   - bash: |
+      curl -o- -L https://yarnpkg.com/install.sh | bash
+    displayName: Bootstrap Yarn
+    condition: succeededOrFailed()
+
+  - bash: |
       sudo npm install -g markdown-spellcheck@0.11.0
       # Sometimes this folder is left behind with root permissions and is needed by later npm installs which don't need sudo
       sudo rm -rf ~/.npm/_cacache
