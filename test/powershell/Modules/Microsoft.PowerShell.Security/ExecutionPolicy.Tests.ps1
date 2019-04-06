@@ -1147,7 +1147,7 @@ ZoneId=$FileType
             }
         }
 
-        It '-Scope LocalMachine is Settable, but overridden' -Skip:(!(Test-CanWriteToPsHome)) {
+        It '-Scope LocalMachine is Settable, but overridden' -Skip:$ShouldSkipTest {
             # In this test, we first setup execution policy in the following way:
             # CurrentUser is specified and takes precedence over LocalMachine.
             # That's why we will get an error, when we are setting up LocalMachine policy.
@@ -1169,7 +1169,7 @@ ZoneId=$FileType
             Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
 
-        It '-Scope LocalMachine is Settable' -Skip:(!(Test-CanWriteToPsHome)) {
+        It '-Scope LocalMachine is Settable' -Skip:$ShouldSkipTest {
             # We need to make sure that both Process and CurrentUser policies are Undefined
             # before we can set LocalMachine policy without ExecutionPolicyOverride error.
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
