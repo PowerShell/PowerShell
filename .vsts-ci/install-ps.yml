@@ -57,6 +57,15 @@ phases:
     verification: |
       $PSVersionTable
 
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: sudo ./tools/installpsh-amazonlinux.sh
+    jobName: InstallPSHAmazonLinux
+    pool: Hosted Ubuntu 1604
+    container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
+    verification: |
+      $PSVersionTable
+
 # TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
   parameters:
@@ -64,6 +73,7 @@ phases:
     jobName: InstallPowerShellCentOS
     pool: Hosted Ubuntu 1604
     container: mcr.microsoft.com/powershell:centos-7
+
 
 # VSTS could not find pwsh in:
 # mcr.microsoft.com/powershell:opensuse-42.3
