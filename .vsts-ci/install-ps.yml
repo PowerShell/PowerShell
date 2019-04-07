@@ -15,6 +15,7 @@ trigger:
     - /tools/installpsh-redhat.sh
     - /tools/installpsh-suse.sh
     - /tools/install-powershell.ps1
+    - /.vsts-ci/install-ps.yml
 pr:
   branches:
     include:
@@ -29,6 +30,7 @@ pr:
     - /tools/installpsh-redhat.sh
     - /tools/installpsh-suse.sh
     - /tools/install-powershell.ps1
+    - /.vsts-ci/install-ps.yml
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -40,12 +42,18 @@ resources:
 phases:
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: ./tools/install-powershell.sh
+    scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellUbuntu
     pool: Hosted Ubuntu 1604
 
-# amazonlinux was missing adduser
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: sudo ./tools/install-powershell.sh
+    jobName: InstallPowerShellAmazonLinux
+    pool: Hosted Ubuntu 1604
+    container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
 
+# TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
@@ -59,7 +67,7 @@ phases:
 
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: ./tools/install-powershell.sh
+    scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellMacOS
     pool: Hosted macOS
 

@@ -13,7 +13,8 @@ jobs:
   ${{ if ne(parameters.container, '') }}:
     container: ${{ parameters.container }}
 
-    pool: ${{ parameters.pool }}
+  pool:
+    name: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 
