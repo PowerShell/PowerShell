@@ -65,6 +65,8 @@ phases:
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
       $PSVersionTable
+    # ignoring this due to https://github.com/PowerShell/PowerShell/issues/9285
+    continueOnError: true
 
 # TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
