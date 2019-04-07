@@ -4,6 +4,7 @@ parameters:
   scriptName: ''
   container: ''
   verification: ''
+  continueOnError: false
 
 jobs:
 
@@ -33,7 +34,9 @@ jobs:
       $(scriptName)
     displayName: Run Script - $(scriptName)
     condition: succeededOrFailed()
+    continueOnError: ${{ parameters.continueOnError }}
 
   - ${{ if ne(parameters.verification, '') }}:
     - powershell: ${{ parameters.verification }}
       displayName: Verification
+      continueOnError: ${{ parameters.continueOnError }}
