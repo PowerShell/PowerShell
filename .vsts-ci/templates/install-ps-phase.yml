@@ -3,6 +3,7 @@ parameters:
   jobName: 'none'
   scriptName: ''
   container: ''
+  verification: ''
 
 jobs:
 
@@ -32,3 +33,7 @@ jobs:
       $(scriptName)
     displayName: Run Script - $(scriptName)
     condition: succeededOrFailed()
+
+  - ${{ if ne(parameters.verification, '') }}:
+    - powershell: ${{ parameters.verification }}
+      displayName: Verification

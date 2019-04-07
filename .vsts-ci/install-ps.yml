@@ -45,6 +45,8 @@ phases:
     scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellUbuntu
     pool: Hosted Ubuntu 1604
+    verification: |
+      $PSVersionTable
 
 - template: templates/install-ps-phase.yml
   parameters:
@@ -52,6 +54,8 @@ phases:
     jobName: InstallPowerShellAmazonLinux
     pool: Hosted Ubuntu 1604
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
+    verification: |
+      $PSVersionTable
 
 # TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
@@ -65,11 +69,14 @@ phases:
 # mcr.microsoft.com/powershell:opensuse-42.3
 # could not repo locally
 
+# sudo is not needed on macOS
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: sudo ./tools/install-powershell.sh
+    scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellMacOS
     pool: Hosted macOS
+    verification: |
+      $PSVersionTable
 
 - template: templates/install-ps-phase.yml
   parameters:
