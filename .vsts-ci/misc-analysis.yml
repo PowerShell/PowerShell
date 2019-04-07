@@ -37,7 +37,7 @@ jobs:
     condition: succeededOrFailed()
 
   - bash: |
-      curl -o- -L https://yarnpkg.com/install.sh | bash
+      curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
     displayName: Bootstrap Yarn
     condition: succeededOrFailed()
 
