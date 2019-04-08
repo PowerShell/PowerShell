@@ -557,12 +557,6 @@ namespace Microsoft.PowerShell
             WriteToConsole(value, transcribeResult, newLine: false);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
-        {
-            WriteToConsole(value, transcribeResult, newLine: true);
-        }
-
         private void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult, bool newLine)
         {
 #if !UNIX
@@ -607,25 +601,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
-        {
-            if (newLine)
-            {
-                Console.Out.WriteLine(value);
-            }
-            else
-            {
-                Console.Out.Write(value);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
-        {
-            WriteToConsole(foregroundColor, backgroundColor, text, newLine: true);
-        }
-
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
         {
             // Sync access so that we don't race on color settings if called from multiple threads.
@@ -647,6 +622,31 @@ namespace Microsoft.PowerShell
                     RawUI.BackgroundColor = bg;
                 }
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        {
+            if (newLine)
+            {
+                Console.Out.WriteLine(value);
+            }
+            else
+            {
+                Console.Out.Write(value);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        {
+            WriteToConsole(foregroundColor, backgroundColor, text, newLine: true);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
