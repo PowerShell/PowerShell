@@ -69,11 +69,11 @@ namespace Microsoft.PowerShell
         {
             if (b)
             {
-                _ui.WriteToConsole(bool.TrueString.AsSpan(), transcribeResult: true);
+                _ui.WriteToConsole(bool.TrueString, transcribeResult: true);
             }
             else
             {
-                _ui.WriteToConsole(bool.FalseString.AsSpan(), transcribeResult: true);
+                _ui.WriteToConsole(bool.FalseString, transcribeResult: true);
             }
 
         }
