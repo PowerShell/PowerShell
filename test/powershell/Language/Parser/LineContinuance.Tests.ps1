@@ -7,6 +7,8 @@ Describe 'Line Continuance' -Tags 'CI' {
             param ([string]$command)
             [powershell]::Create().AddScript($command).Invoke()
         }
+
+        $whitespace = "`t `f`v$([char]0x00a0)$([char]0x0085)"
     }
 
     Context 'Lines ending with a backtick that parse and execute without error' {
@@ -22,7 +24,7 @@ Describe 'Line Continuance' -Tags 'CI' {
             $script = @'
 # The first line of this command ends with trailing whitespace
 'Hello' + `
-'@ + '    ' + @'
+'@ + $whitespace + @'
 
     ' world'
 '@
@@ -80,7 +82,7 @@ Describe 'Line Continuance' -Tags 'CI' {
             $script = @'
 # The next line ends with trailing whitespace
 'Hello' |
-'@ + '    ' + @'
+'@ + $whitespace + @'
 
     ForEach-Object {"$_ world"}
 '@
@@ -167,16 +169,6 @@ Describe 'Line Continuance' -Tags 'CI' {
             ExecuteCommand $script | Should -Be @(30, 24, 18, 12, 6)
         }
 
-        It 'Line continuance using a pipe at the start of a subsequent line after multiple blank lines' {
-            $script = @'
-'Hello'
-
-
-    | ForEach-Object {"$_ world"}
-'@
-            ExecuteCommand $script | Should -Be 'Hello world'
-        }
-
         It 'Line continuance using a pipe on a line by itself' {
             $script = @'
 'Hello'
@@ -246,6 +238,27 @@ Describe 'Line Continuance' -Tags 'CI' {
 
 '@
             $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
+        }
+
+        It 'Lines starting with a single pipe that have a blank line before it' {
+            $script = @'
+'Hello'
+
+    | ForEach-Object {"$_ world"}
+
+'@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
+        }
+
+        It 'Lines starting with a single pipe that have a line with whitespace before it' {
+            $script = @"
+'Hello'
+$whitespace
+    | ForEach-Object {"`$_ world"}
+"@
+        $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
             $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
         }
     }

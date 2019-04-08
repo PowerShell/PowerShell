@@ -1315,6 +1315,8 @@ namespace System.Management.Automation.Language
         {
             // If the first non-newline, non-whitespace, non-comment, non-backtick, non-semi-colon character
             // following the newline is a pipe, we have a pipe continuance.
+            bool lastNonWhitespaceIsNewline = true;
+
             for (int i = extent.EndOffset; i < _script.Length - 1;)
             {
                 char c = _script[i];
@@ -1327,14 +1329,28 @@ namespace System.Management.Automation.Language
 
                 if (c == '\n')
                 {
+                    if (lastNonWhitespaceIsNewline)
+                    {
+                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        return false;
+                    }
+                    lastNonWhitespaceIsNewline = true;
                     i++;
                     continue;
                 }
                 else if (c == '\r' && _script[i + 1] == '\n')
                 {
+                    if (lastNonWhitespaceIsNewline)
+                    {
+                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        return false;
+                    }
+                    lastNonWhitespaceIsNewline = true;
                     i += 2;
                     continue;
                 }
+
+                lastNonWhitespaceIsNewline = false;
 
                 if (c == '#')
                 {
