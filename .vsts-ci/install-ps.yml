@@ -99,7 +99,8 @@ phases:
     verification: |
       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
       {
-        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+        # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
+        Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
 
 - template: templates/install-ps-phase.yml
