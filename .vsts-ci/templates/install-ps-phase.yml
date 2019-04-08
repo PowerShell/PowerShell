@@ -3,6 +3,8 @@ parameters:
   jobName: 'none'
   scriptName: ''
   container: ''
+  verification: ''
+  continueOnError: false
 
 jobs:
 
@@ -13,7 +15,8 @@ jobs:
   ${{ if ne(parameters.container, '') }}:
     container: ${{ parameters.container }}
 
-    pool: ${{ parameters.pool }}
+  pool:
+    name: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 
@@ -31,3 +34,9 @@ jobs:
       $(scriptName)
     displayName: Run Script - $(scriptName)
     condition: succeededOrFailed()
+    continueOnError: ${{ parameters.continueOnError }}
+
+  - ${{ if ne(parameters.verification, '') }}:
+    - powershell: ${{ parameters.verification }}
+      displayName: Verification
+      continueOnError: ${{ parameters.continueOnError }}
