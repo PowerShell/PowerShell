@@ -108,8 +108,8 @@ namespace PSTests.Sequential
             using (var runspace = RunspaceFactory.CreateRunspace())
             {
                 var expectedBreakpoints = new Breakpoint[] {
-                    new LineBreakpoint("./path/to/some/file.ps1", 1),
-                    new CommandBreakpoint("./path/to/some/file.ps1", new WildcardPattern("Write-Host"), "Write-Host"),
+                    new LineBreakpoint(@"./path/to/some/file.ps1", 1),
+                    new CommandBreakpoint(@"./path/to/some/file.ps1", new WildcardPattern("Write-Host"), "Write-Host"),
                 };
 
                 runspace.Open();

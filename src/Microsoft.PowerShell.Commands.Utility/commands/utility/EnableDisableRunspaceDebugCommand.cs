@@ -391,8 +391,7 @@ namespace Microsoft.PowerShell.Commands
                         new ErrorRecord(new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.RunspaceOptionInvalidRunspaceState, runspace.Name)),
                         "SetRunspaceDebugOptionCommandInvalidRunspaceState",
                         ErrorCategory.InvalidOperation,
-                        this)
-                        );
+                        this));
 
                     continue;
                 }
@@ -421,8 +420,7 @@ namespace Microsoft.PowerShell.Commands
                                 e,
                                 "SetRunspaceDebugOptionCommandCannotEnableDebuggerStepping",
                                 ErrorCategory.InvalidOperation,
-                                this)
-                                );
+                                this));
                         }
                     }
                     else

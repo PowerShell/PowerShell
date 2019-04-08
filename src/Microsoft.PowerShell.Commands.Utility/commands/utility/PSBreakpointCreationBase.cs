@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Variable { get; set; }
 
         /// <summary>
+        /// The access type for variable breakpoints to break on.
         /// </summary>
         [Parameter(ParameterSetName = VariableParameterSetName)]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;

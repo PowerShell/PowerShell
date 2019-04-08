@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// </summary>
         Read,
         /// <summary>
-        /// Break on write access only (default)
+        /// Break on write access only (default).
         /// </summary>
         Write,
         /// <summary>
@@ -280,14 +280,14 @@ namespace System.Management.Automation
     public class VariableBreakpoint : Breakpoint
     {
         /// <summary>
-        /// Creates a new instance of a <see cref="VariableBreakpoint"/>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode)
             : this(script, variable, accessMode, null)
         {}
 
         /// <summary>
-        /// Creates a new instance of a <see cref="VariableBreakpoint"/>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action)
             : base(script, action)
@@ -297,14 +297,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="VariableBreakpoint"/>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, int id)
             : this(script, variable, accessMode, null, id)
         {}
 
         /// <summary>
-        /// Creates a new instance of a <see cref="VariableBreakpoint"/>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action, int id)
             : base(script, action, id)

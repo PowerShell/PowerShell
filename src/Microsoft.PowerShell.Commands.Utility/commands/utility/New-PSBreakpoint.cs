@@ -64,11 +64,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            //
-            // Else it is the default parameter set (Line breakpoint)...
-            //
             else
             {
+                // Else it is the default parameter set (Line breakpoint)...
                 Debug.Assert(ParameterSetName.Equals(LineParameterSetName, StringComparison.OrdinalIgnoreCase));
 
                 for (int i = 0; i < Line.Length; i++)
