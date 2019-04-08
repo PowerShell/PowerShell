@@ -46,7 +46,10 @@ phases:
     jobName: InstallPowerShellUbuntu
     pool: Hosted Ubuntu 1604
     verification: |
-      $PSVersionTable
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
 - template: templates/install-ps-phase.yml
   parameters:
@@ -55,7 +58,10 @@ phases:
     pool: Hosted Ubuntu 1604
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
-      $PSVersionTable
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
 - template: templates/install-ps-phase.yml
   parameters:
@@ -64,7 +70,10 @@ phases:
     pool: Hosted Ubuntu 1604
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
-      $PSVersionTable
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
     # ignoring this due to https://github.com/PowerShell/PowerShell/issues/9285
     continueOnError: true
 
@@ -88,7 +97,10 @@ phases:
     jobName: InstallPowerShellMacOS
     pool: Hosted macOS
     verification: |
-      $PSVersionTable
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
 - template: templates/install-ps-phase.yml
   parameters:
