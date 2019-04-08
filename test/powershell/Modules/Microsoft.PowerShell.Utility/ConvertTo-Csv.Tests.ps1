@@ -90,9 +90,29 @@ Describe "ConvertTo-Csv" -Tags "CI" {
         $result | Should -Not -Match ([regex]::Escape('#TYPE'))
     }
 
+    It "Does not support -UseQuotes and -QuoteFields at the same time" {
+        { $testObject | ConvertTo-Csv -UseQuotes Always -QuoteFields "TestFieldName" } |
+            Should -Throw -ErrorId "CannotSpecifyQuoteFieldsAndUseQuotes,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
+    }
+
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
         { $testObject | ConvertTo-Csv -IncludeTypeInformation -NoTypeInformation } |
             Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
+    }
+
+    Context "QuoteFields parameter" {
+        It "QuoteFields" {
+            # Use 'FiRstCoLumn' to test case insensitivity
+            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn -Delimiter ','
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",SecondColumn"
+            $result[1] | Should -BeExactly "`"Hello`",World"
+
+            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn,SeCondCoLumn -Delimiter ','
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"Hello`",`"World`""
+        }
     }
 
     Context "UseQuotes parameter" {

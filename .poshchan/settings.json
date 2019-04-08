@@ -2,7 +2,7 @@
     "version": "0.1",
     "azdevops": {
         "build_targets": {
-            "staging": "PowerShell-CI-static-analysis",
+            "static": "PowerShell-CI-static-analysis",
             "windows": "PowerShell-CI-Windows",
             "macos": "PowerShell-CI-macOS",
             "linux": "PowerShell-CI-Linux",
@@ -30,14 +30,21 @@
         "authorized_users": [
             "adityapatwardhan",
             "anmenaga",
+            "bergmeister",
             "daxian-dbw",
+            "IISResetMe",
             "iSazonov",
             "JamesWTruher",
+            "KirkMunro",
+            "kwkam",
             "PaulHigin",
+            "powercode",
             "rjmholt",
+            "rkeithhill",
             "SteveL-MSFT",
             "TravisEz13",
-            "TylerLeonhardt"
+            "TylerLeonhardt",
+            "vexx32"
         ]
     },
     "reminders": {

@@ -127,6 +127,9 @@
         Reviewed by TArcher on 2010-06-29.
     </comment>
   </data>
+  <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
+    <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
+  </data>
   <data name="CannotSpecifyIncludeTypeInformationAndNoTypeInformation" xml:space="preserve">
     <value>You must specify either the -IncludeTypeInformation or -NoTypeInformation parameters, but not both.</value>
   </data>
