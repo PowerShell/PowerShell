@@ -547,8 +547,7 @@ namespace Microsoft.PowerShell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(char c, bool transcribeResult)
         {
-            Span<char> value = stackalloc char[1];
-            value[0] = c;
+            Span<char> value = stackalloc char[1] { c };
             WriteToConsole(value, transcribeResult);
         }
 
