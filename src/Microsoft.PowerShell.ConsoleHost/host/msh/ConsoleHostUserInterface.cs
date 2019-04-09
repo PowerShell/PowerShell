@@ -700,12 +700,7 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
-                _parent.OutputSerializer.Serialize(value);
-
-                if (newLine)
-                {
-                    _parent.OutputSerializer.Serialize(Crlf);
-                }
+                _parent.OutputSerializer.Serialize(value + Crlf);
             }
             else
             {
