@@ -268,6 +268,12 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Writes an object enumerated from a collection to the output pipe.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The enumerated object that needs to be written to the pipeline.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -275,7 +281,7 @@ namespace System.Management.Automation
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         private void DoWriteEnumeratedObject(object sendToPipeline)
         {
@@ -2580,8 +2586,12 @@ namespace System.Management.Automation
         #region Write
         internal bool UseSecurityContextRun = true;
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2600,8 +2610,12 @@ namespace System.Management.Automation
             this.OutputPipe.Add(sendToPipeline);
         }
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Enumerates and writes an object to the output pipe, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="sendToPipeline">
+        /// The object to enumerate and write to the output pipe.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2623,7 +2637,9 @@ namespace System.Management.Automation
             foreach (object toConvert in enumerable)
             {
                 if (AutomationNull.Value == toConvert)
+                {
                     continue;
+                }
 
                 object converted = LanguagePrimitives.AsPSObjectOrNull(toConvert);
                 convertedList.Add(converted);
