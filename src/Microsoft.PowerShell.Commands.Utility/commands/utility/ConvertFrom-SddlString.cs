@@ -5,12 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-using System.ComponentModel;
 
 namespace Microsoft.PowerShell.Commands
 {

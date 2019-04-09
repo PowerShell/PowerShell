@@ -8,6 +8,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading.Tasks;
+
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands

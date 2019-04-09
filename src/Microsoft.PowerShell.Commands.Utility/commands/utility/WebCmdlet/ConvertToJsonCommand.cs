@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading;
+
 using Newtonsoft.Json;
 
 namespace Microsoft.PowerShell.Commands
