@@ -633,14 +633,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    if (newLine)
-                    {
-                        WriteLineToConsole(text, transcribeResult: true);
-                    }
-                    else
-                    {
-                        WriteToConsole(text, transcribeResult: true);
-                    }
+                    WriteToConsole(text, transcribeResult: true, newLine);
                 }
                 finally
                 {
