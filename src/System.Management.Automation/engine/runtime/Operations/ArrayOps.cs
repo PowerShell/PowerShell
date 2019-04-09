@@ -31,15 +31,16 @@ namespace System.Management.Automation
                 Array.Copy(result, shortResult, j);
                 return shortResult;
             }
+
             return result;
         }
 
         /// <summary>
-        /// Efficiently multiplies collection by integer
+        /// Efficiently multiplies collection by integer.
         /// </summary>
-        /// <param name="array">collection to multiply</param>
-        /// <param name="times">number of times the collection is to be multiplied/copied</param>
-        /// <returns>collection multiplied by integer</returns>
+        /// <param name="array">Collection to multiply.</param>
+        /// <param name="times">Number of times the collection is to be multiplied/copied.</param>
+        /// <returns>Collection multiplied by integer.</returns>
         internal static T[] Multiply<T>(T[] array, uint times)
         {
             Diagnostics.Assert(array != null, "Caller should verify the arguments for array multiplication");
@@ -111,6 +112,7 @@ namespace System.Management.Automation
                 {
                     indexes[i] = indexes[i] + ub + 1;
                 }
+
                 if (indexes[i] < lb || indexes[i] > ub)
                 {
                     // In strict mode, don't return, fall through and let Array.GetValue raise an exception.
@@ -205,6 +207,7 @@ namespace System.Management.Automation
                 Array.Copy(result, shortResult, j);
                 return shortResult;
             }
+
             return result;
         }
 

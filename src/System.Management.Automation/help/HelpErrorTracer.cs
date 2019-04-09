@@ -137,7 +137,7 @@ namespace System.Management.Automation
         private ArrayList _traceFrames = new ArrayList();
 
         /// <summary>
-        /// This is the API to use for starting a help trace scope
+        /// This is the API to use for starting a help trace scope.
         /// </summary>
         /// <param name="helpFile"></param>
         /// <returns></returns>

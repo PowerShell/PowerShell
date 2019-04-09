@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// Translates a <see cref="WildcardPattern"/> into a like-operand for WQL.
     /// </summary>
     /// <remarks>
-    /// Documentation on MSDN (http://msdn.microsoft.com/library/aa392263(VS.85).aspx) is
+    /// Documentation on MSDN (https://msdn.microsoft.com/library/aa392263(VS.85).aspx) is
     /// 1) rather slim / incomplete
     /// 2) sometimes incorrect (i.e. says that '=' is used for character ranges, when it should have said '-')
     ///
@@ -84,6 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)90;
                 _needClientSideFiltering = true;
             }
+
             if ((91 <= endOfCharacterRange) && (endOfCharacterRange <= 94))
             {
                 endOfCharacterRange = (char)95;
@@ -98,6 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)44;
                 _needClientSideFiltering = true;
             }
+
             if (endOfCharacterRange == 45)
             {
                 endOfCharacterRange = (char)46;

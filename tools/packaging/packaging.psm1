@@ -6,12 +6,12 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
-        # PowerShell packages use Semantic Versioning http://semver.org/
+        # PowerShell packages use Semantic Versioning https://semver.org/
         [Parameter(ParameterSetName = "Version")]
         [string]$Version,
 
@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-musl', 'fxdependent')]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -65,10 +65,12 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
+        } elseif ($Type -eq "tar-alpine") {
+            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-musl") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } elseif ($Type -eq "tar-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -91,6 +93,7 @@ function Start-PSPackage {
         }
 
         $Script:Options = Get-PSOptions
+        $actualParams = @()
 
         $crossGenCorrect = $false
         if ($Runtime -match "arm") {
@@ -98,6 +101,7 @@ function Start-PSPackage {
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
+            $actualParams += '-CrossGen'
             $crossGenCorrect = $true
         }
 
@@ -106,13 +110,17 @@ function Start-PSPackage {
         # Require PSModuleRestore for packaging without symbols
         # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $actualParams += '-PSModuleRestore'
             $PSModuleRestoreCorrect = $true
         }
         elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
             $PSModuleRestoreCorrect = $true
         }
+        else {
+            $actualParams += '-PSModuleRestore'
+        }
 
-        $precheckFailed = if ($Type -eq 'fxdependent') {
+        $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
             ## We do not check for runtime and crossgen for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
@@ -139,6 +147,8 @@ function Start-PSPackage {
             # This check serves as a simple gate to ensure that the user knows what he is doing, and
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
+
+
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
@@ -150,6 +160,8 @@ function Start-PSPackage {
                 $params += '-PSModuleRestore'
             }
 
+            $actualParams += '-Runtime ' + $Script:Options.Runtime
+
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
             } else {
@@ -157,7 +169,9 @@ function Start-PSPackage {
             }
 
             $params += '-Configuration', $Configuration
+            $actualParams += '-Configuration ' + $Script:Options.Configuration
 
+            Write-Warning "Build started with unexpected parameters 'Start-PSBuild $actualParams"
             throw "Please ensure you have run 'Start-PSBuild $params'!"
         }
 
@@ -229,16 +243,16 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb", "nupkg"
+                    "deb", "nupkg", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg"
+                    "rpm", "nupkg", "tar"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg", "nupkg"
+                "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg"
             }
@@ -271,10 +285,10 @@ function Start-PSPackage {
             "fxdependent" {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
                 }
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
                         PackageSourcePath = $Source
@@ -321,22 +335,6 @@ function Start-PSPackage {
                     New-MSIPackage @Arguments
                 }
             }
-            "AppImage" {
-                if ($IncludeSymbols.IsPresent) {
-                    throw "AppImage does not support packaging '-IncludeSymbols'"
-                }
-
-                if ($Environment.IsUbuntu14) {
-                    $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
-                    $appImage = Get-Item powershell-*.AppImage
-                    if ($appImage.Count -gt 1) {
-                        throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
-                    }
-                    Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
-                } else {
-                    Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
-                }
-            }
             'nupkg' {
                 $Arguments = @{
                     PackageNameSuffix = $NameSuffix
@@ -376,13 +374,26 @@ function Start-PSPackage {
                     New-TarballPackage @Arguments
                 }
             }
-            "tar-musl" {
+            "tar-arm64" {
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "musl-x64"
+                    Architecture = "arm64"
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            "tar-alpine" {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    Architecture = "alpine-x64"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -494,7 +505,7 @@ function New-TarballPackage {
 
             if (Test-Path -Path $packagePath) {
                 Write-Log "You can find the tarball package at $packagePath"
-                return $packagePath
+                return (Get-Item $packagePath)
             } else {
                 throw "Failed to create $packageName"
             }
@@ -676,8 +687,6 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
-                } elseif ($Environment.IsDebian8) {
-                    $DebDistro = "debian.8"
                 } elseif ($Environment.IsDebian9) {
                     $DebDistro = "debian.9"
                 } else {
@@ -744,7 +753,7 @@ function New-UnixPackage {
         if ($pscmdlet.ShouldProcess("Create package file system"))
         {
             # refers to executable, does not vary by channel
-            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
+            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" > $null
 
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link
@@ -767,6 +776,7 @@ function New-UnixPackage {
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
+            Write-Log "Setting permissions..."
             Start-NativeExecution {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
@@ -779,6 +789,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
+            Write-Log "Adding macOS launch application..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
@@ -816,10 +827,12 @@ function New-UnixPackage {
         # Build package
         try {
             if ($pscmdlet.ShouldProcess("Create $type package")) {
+                Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
+                Write-Log "Starting Cleanup for mac packaging..."
                 if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
@@ -923,7 +936,7 @@ function New-MacOsDistributionPackage
     try
     {
         # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
     }
     finally
     {
@@ -931,7 +944,7 @@ function New-MacOsDistributionPackage
         Remove-item -Path $tempDir -Recurse -Force
     }
 
-    return $newPackagePath
+    return (Get-Item $newPackagePath)
 }
 function Get-FpmArguments
 {
@@ -1108,7 +1121,6 @@ function Get-PackageDependencies
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
@@ -1136,9 +1148,9 @@ function Test-Dependencies
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
@@ -1167,8 +1179,8 @@ function New-AfterScripts
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
@@ -1185,8 +1197,8 @@ function New-AfterScripts
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
             # symlinks.
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
     }
 
@@ -1203,6 +1215,7 @@ function New-ManGzip
         $IsPreview
     )
 
+    Write-Log "Creating man gz..."
     # run ronn to convert man page to roff
     $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
     if ($IsPreview.IsPresent)
@@ -1215,7 +1228,8 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+    Write-Log "Creating man gz - running ronn..."
+    Start-NativeExecution { ronn --roff $RonnFile }
 
     if ($IsPreview.IsPresent)
     {
@@ -1224,6 +1238,7 @@ function New-ManGzip
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
+    Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
@@ -1413,7 +1428,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp2.1")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1429,7 +1444,7 @@ function CreateNugetPlatformFolder
 Creates NuGet packages containing linux, osx and Windows runtime assemblies.
 
 .DESCRIPTION
-Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
+Creates a NuGet package of IL assemblies for unix and windows.
 The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
 Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
 Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
@@ -1441,31 +1456,16 @@ Path where the package will be created.
 .PARAMETER PackageVersion
 Version of the created package.
 
-.PARAMETER Winx86BinPath
-Path to folder containing Windows x86 assemblies.
+.PARAMETER WinFxdBinPath
+Path to folder containing Windows framework dependent assemblies.
 
-.PARAMETER Winx64BinPath
-Path to folder containing Windows x64 assemblies.
-
-.PARAMETER WinArm32BinPath
-Path to folder containing Windows arm32 assemblies.
-
-.PARAMETER WinArm64BinPath
-Path to folder containing Windows arm64 assemblies.
-
-.PARAMETER LinuxArm32BinPath
-Path to folder containing linux arm32 assemblies.
-
-.PARAMETER LinuxBinPath
-Path to folder containing linux x64 assemblies.
-
-.PARAMETER OsxBinPath
-Path to folder containing osx assemblies.
+.PARAMETER LinuxFxdBinPath
+Path to folder containing Linux framework dependent assemblies.
 
 .PARAMETER GenAPIToolPath
 Path to the GenAPI.exe tool.
 #>
-function New-UnifiedNugetPackage
+function New-ILNugetPackage
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -1477,28 +1477,10 @@ function New-UnifiedNugetPackage
         [string] $PackageVersion,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx86BinPath,
+        [string] $WinFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $Winx64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm32BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $WinArm64BinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxArm32BinPath,
-
-        [Parameter(Mandatory = $false)]
-        [string] $LinuxMuslBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxBinPath,
-
-        [Parameter(Mandatory = $true)]
-        [string] $OsxBinPath,
+        [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $GenAPIToolPath
@@ -1506,7 +1488,7 @@ function New-UnifiedNugetPackage
 
     if (-not $Environment.IsWindows)
     {
-        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
+        throw "New-ILNugetPackage can be only executed on Windows platform."
     }
 
     $fileList = @(
@@ -1533,8 +1515,7 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
-        $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
+        New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
 
         foreach ($file in $fileList)
         {
@@ -1545,29 +1526,17 @@ function New-UnifiedNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
-            Copy-Item $refBinFullName -Destination $refFolder -Force
-            Write-Log "Copied file $refBinFullName to $refFolder"
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp2.1') -ItemType Directory -Force
+            CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
 
-            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
-            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
-            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+            CreateNugetPlatformFolder -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
             if ($linuxExceptionList -notcontains $file )
             {
-                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-
-                if ($linuxMuslBinPath)
-                {
-                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
-                }
-
-                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
-                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
+                CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
             }
 
             #region nuspec
@@ -1672,6 +1641,44 @@ function New-UnifiedNugetPackage
         if (Test-Path $tmpPackageRoot)
         {
             Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+<#
+  Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
+  This is a helper function used by 'New-ILNugetPackage'
+#>
+function CopyReferenceAssemblies
+{
+    param(
+        [string] $assemblyName,
+        [string] $refBinPath,
+        [string] $refNugetPath,
+        [string[]] $assemblyFileList
+    )
+
+    switch ($assemblyName) {
+        "Microsoft.PowerShell.Commands.Utility" {
+            $ref_Utility = Join-Path -Path $refBinPath -ChildPath Microsoft.PowerShell.Commands.Utility.dll
+            Copy-Item $ref_Utility -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_Utility to $refNugetPath"
+        }
+
+        "Microsoft.PowerShell.SDK" {
+            foreach ($asmFileName in $assemblyFileList) {
+                $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
+                if (Test-Path -Path $refFile) {
+                    Copy-Item $refFile -Destination $refNugetPath -Force
+                    Write-Log "Copied file $refFile to $refNugetPath"
+                }
+            }
+        }
+
+        default {
+            $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
+            Copy-Item $ref_SMA -Destination $refNugetPath -Force
+            Write-Log "Copied file $ref_SMA to $refNugetPath"
         }
     }
 }
@@ -1821,15 +1828,6 @@ function New-ReferenceAssembly
         throw "New-ReferenceAssembly can be only executed on Windows platform."
     }
 
-    $genAPIFolder = New-TempFolder
-    $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
-    $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
-    $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
-
-    Write-Log "Working directory: $genAPIFolder."
-
-    #region GenAPI
-
     $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
 
     if (-not (Test-Path $genAPIExe))
@@ -1839,23 +1837,87 @@ function New-ReferenceAssembly
 
     Write-Log "GenAPI nuget package saved and expanded."
 
-    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
+    $genAPIFolder = New-TempFolder
+    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+    Write-Log "Working directory: $genAPIFolder."
 
-    if (-not (Test-Path $linuxSMAPath))
-    {
-        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
+    $SMAReferenceAssembly = $null
+    $assemblyNames = @(
+        "System.Management.Automation",
+        "Microsoft.PowerShell.Commands.Utility"
+    )
+
+    foreach ($assemblyName in $assemblyNames) {
+
+        Write-Log "Building reference assembly for '$assemblyName'"
+        $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
+        $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
+        $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
+
+        $linuxDllPath = Join-Path $Linux64BinPath "$assemblyName.dll"
+        if (-not (Test-Path $linuxDllPath)) {
+            throw "$assemblyName.dll was not found at: $Linux64BinPath"
+        }
+
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+
+        Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
+        Write-Log "Reference assembly file generated at: $generatedSource"
+
+        CleanupGeneratedSourceCode -assemblyName $assemblyName -generatedSource $generatedSource -filteredSource $filteredSource
+
+        try
+        {
+            Push-Location $projectFolder
+
+            $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
+            $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
+            Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
+
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
+            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
+
+            $arguments = GenerateBuildArguments -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
+
+            Write-Log "Running: dotnet $arguments"
+            Start-NativeExecution -sb {dotnet $arguments}
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp2.1/$assemblyName.dll"
+            if ($null -eq $refBinPath) {
+                throw "Reference assembly was not built."
+            }
+
+            Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+            Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            if ($assemblyName -eq "System.Management.Automation") {
+                $SMAReferenceAssembly = $refBinPath
+            }
+        }
+        finally
+        {
+            Pop-Location
+        }
     }
 
-    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
-    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    if (Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
 
-    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
-
-    Write-Log "Reference assembly file generated at: $smaCs"
-
-    #endregion GenAPI
-
-    #region Cleanup SMA.cs
+<#
+  Helper function for New-ReferenceAssembly to further clean up the
+  C# source code generated from GenApi.exe.
+#>
+function CleanupGeneratedSourceCode
+{
+    param(
+        [string] $assemblyName,
+        [string] $generatedSource,
+        [string] $filteredSource
+    )
 
     $patternsToRemove = @(
         '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]'
@@ -1869,78 +1931,114 @@ function New-ReferenceAssembly
         'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)'
         '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
         '[System.Management.Automation.ArgumentEncodingCompletionsAttribute]'
+        '[Microsoft.PowerShell.Commands.AddMemberCommand'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
+        '[System.Management.Automation.OutputTypeAttribute(typeof(Microsoft.PowerShell.MarkdownRender'
+        '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
+        '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
+        '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
+        '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
         )
 
-    $reader = [System.IO.File]::OpenText($smaCs)
-    $writer = [System.IO.File]::CreateText($smaCsFiltered)
+    $patternsToReplace = @(
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+            Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "public partial struct ConvertToJsonContext"
+            Replacement = "public readonly struct ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+        },
+        @{
+            ApplyTo = "System.Management.Automation"
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+        }
+    )
+
+    $reader = [System.IO.File]::OpenText($generatedSource)
+    $writer = [System.IO.File]::CreateText($filteredSource)
 
     while($null -ne ($line = $reader.ReadLine()))
     {
-        $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
+        $lineWasProcessed = $false
+        foreach ($patternToReplace in $patternsToReplace)
+        {
+            if ($assemblyName -eq $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+                $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
+                $lineWasProcessed = $true
+                break
+            }
+        }
 
-        if ($null -ne $match)
-        {
-            $writer.WriteLine("//$line")
+        if (!$lineWasProcessed) {
+            $match = Select-String -InputObject $line -Pattern $patternsToRemove -SimpleMatch
+            if ($null -ne $match)
+            {
+                $line = "//$line"
+            }
         }
-        else
-        {
-            $writer.WriteLine($line)
-        }
+
+        $writer.WriteLine($line)
     }
+
     if ($null -ne $reader)
     {
         $reader.Close()
     }
+
     if ($null -ne $writer)
     {
         $writer.Close()
     }
 
-    Move-Item $smaCsFiltered $smaCs -Force
+    Move-Item $filteredSource $generatedSource -Force
+    Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
+}
 
-    Write-Log "Reference assembly code cleanup complete."
+<#
+  Helper function for New-ReferenceAssembly to get the arguments
+  for building reference assemblies.
+#>
+function GenerateBuildArguments
+{
+    param(
+        [string] $AssemblyName,
+        [string] $RefAssemblyVersion,
+        [string] $SnkFilePath,
+        [string] $SMAReferencePath
+    )
 
-    #endregion Cleanup SMA.cs
+    $arguments = @('build')
+    $arguments += @('-c','Release')
+    $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
+    $arguments += "/p:SnkFile=$SnkFilePath"
 
-    #region Build SMA ref assembly
-
-    try
-    {
-        Push-Location $smaProjectFolder
-
-        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
-
-        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
-
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaProjectFolder/System.Management.Automation.csproj"
-        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaCs"
-
-        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
-
-        Start-NativeExecution { dotnet build -c Release }
-
-        $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
-
-        if ($null -eq $refBinPath)
-        {
-            throw "Reference assembly was not built."
+    switch ($AssemblyName) {
+        "Microsoft.PowerShell.Commands.Utility" {
+            $arguments += "/p:SmaRefFile=$SMAReferencePath"
         }
-
-        Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
-
-        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
-    }
-    finally
-    {
-        Pop-Location
     }
 
-    if (Test-Path $genAPIFolder)
-    {
-        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
-    }
-
-    #endregion Build SMA ref assembly
+    return $arguments
 }
 
 <#
@@ -2089,7 +2187,7 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder
     }
 
-    $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
+    $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)
@@ -2108,7 +2206,7 @@ function New-NugetContentPackage
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
     {
-        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+        Get-Item $nupkgFile
     }
     else
     {
@@ -2265,8 +2363,6 @@ function Get-NugetSemanticVersion
 # Get the paths to various WiX tools
 function Get-WixPath
 {
-    ## AppVeyor base image might update the version for Wix. Hence, we should
-    ## not hard code version numbers.
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
@@ -2539,6 +2635,8 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
+        # The ApplicationProgramsMenuShortcut GUID should be changed when bumping the major version because the installation directory changes
+        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", '6a69de6c-183d-4bf4-a40e-83007d6293bf', "Process")
     }
     else
     {
@@ -2546,6 +2644,7 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
+        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", 'ab727c4f-2311-474c-9ade-f2c6fd7f7322', "Process")
     }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -2580,7 +2679,23 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+
+    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+
+    if ($isPreview)
+    {
+        # Now that we know that the two are functionally the same,
+        # We only need to use $FilesWxsPath for release we want to be able to Path
+        # and two releases shouldn't have the same identifiers,
+        # so we use the generated one for preview
+        $FilesWxsPath = $wixFragmentPath
+
+        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+
+        # cleanup any garbage on the system
+        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    }
 
     Write-Log "running candle..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
@@ -2719,18 +2834,7 @@ function Test-FileWxs
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
         Write-Log -message "Updated xml saved to $newXmlFileName."
         Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
-        if ($env:appveyor)
-        {
-            try
-            {
-                Push-AppveyorArtifact $newXmlFileName
-            }
-            catch
-            {
-                Write-Warning -Message "Pushing MSI File fragment failed."
-            }
-        }
-        elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
+        if ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
         }
@@ -2905,4 +3009,233 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     }
 
     $packageVersion
+}
+
+<#
+.SYNOPSIS
+Create a smaller framework dependent package based off fxdependent package for dotnet-sdk container images.
+
+.PARAMETER Path
+Path to the folder containing the fxdependent package.
+
+.PARAMETER KeepWindowsRuntimes
+Specify this switch if the Windows runtimes are to be kept.
+#>
+function ReduceFxDependentPackage
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $Path,
+        [switch] $KeepWindowsRuntimes
+    )
+
+    if (-not (Test-Path $path))
+    {
+        throw "Path not found: $Path"
+    }
+
+    ## Remove unnecessary files
+    $localeFolderToRemove = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+    Get-ChildItem $Path -Recurse -Directory | Where-Object { $_.Name -in $localeFolderToRemove } | ForEach-Object { Remove-Item $_.FullName -Force -Recurse -Verbose }
+
+    Write-Log -message "Starting to cleanup runtime folders"
+
+    $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
+
+    $runtimeFolderPath = $runtimeFolder | Out-String
+    Write-Log -message $runtimeFolderPath
+
+    if ($runtimeFolder.Count -eq 0)
+    {
+        throw "runtimes folder not found under $Path"
+    }
+
+    Write-Log -message (Get-ChildItem $Path | Out-String)
+
+    # donet SDK container image microsoft/dotnet:2.2-sdk supports the following:
+    # win10-x64 (Nano Server)
+    # win-arm (Nano Server)
+    # win-x64 to get PowerShell.Native components
+    # linux-musl-x64 (Alpine 3.8)
+    # linux-x64 (bionic / stretch)
+    # unix, linux, win for dependencies
+    # linux-arm and linux-arm64 for arm containers
+    # osx to run global tool on macOS
+    $runtimesToKeep = if ($KeepWindowsRuntimes) {
+        'win10-x64', 'win-arm', 'win-x64', 'win'
+    } else {
+        'linux-x64', 'linux-musl-x64', 'unix', 'linux', 'linux-arm', 'linux-arm64', 'osx'
+    }
+
+    $runtimeFolder | ForEach-Object {
+        Get-ChildItem -Path $_.FullName -Directory -Exclude $runtimesToKeep | Remove-Item -Force -Recurse -Verbose
+    }
+
+    ## Remove the shim layer assemblies
+    Get-ChildItem -Path $Path -Filter "Microsoft.PowerShell.GlobalTool.Shim.*" | Remove-Item -Verbose
+}
+
+<#
+.SYNOPSIS
+Create a Global tool nuget package for PowerShell.
+
+.DESCRIPTION
+If the UnifiedPackage switch is present, then create a packag with both Windows and Unix runtimes.
+Else create two packages, one for Windows and other for Linux.
+
+.PARAMETER LinuxBinPath
+Path to the folder containing the fxdependent package for Linux.
+
+.PARAMETER WindowsBinPath
+Path to the folder containing the fxdependent package for Windows.
+
+.PARAMETER PackageVersion
+Version for the NuGet package that will be generated.
+
+.PARAMETER DestinationPath
+Path to the folder where the generated packages will be copied to.
+
+.PARAMETER UnifiedPackage
+Create package with both Windows and Unix runtimes.
+#>
+function New-GlobalToolNupkg
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $LinuxBinPath,
+        [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter(Mandatory)] [string] $DestinationPath,
+        [Parameter(ParameterSetName="UnifiedPackage")] [switch] $UnifiedPackage
+    )
+
+    $packageInfo = @()
+
+    Remove-Item -Path (Join-Path $LinuxBinPath 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
+    Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
+
+    ## Remove unnecessary xml files
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath -Filter *.xml | Remove-Item -Verbose
+
+    if ($UnifiedPackage)
+    {
+        Write-Log "Creating a unified package"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell"; Type = "Unified"}
+        $ShimDllPath = Join-Path $WindowsBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
+    }
+    else
+    {
+        Write-Log "Reducing size of Linux package"
+        ReduceFxDependentPackage -Path $LinuxBinPath
+
+        Write-Log "Reducing size of Windows package"
+        ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
+
+        Write-Log "Creating a Linux and Windows packages"
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.Alpine"; Type = "PowerShell.Linux.Alpine"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.x64"; Type = "PowerShell.Linux.x64"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm32"; Type = "PowerShell.Linux.arm32"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm64"; Type = "PowerShell.Linux.arm64"}
+
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.x64"; Type = "PowerShell.Windows.x64"}
+        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.arm32"; Type = "PowerShell.Windows.arm32"}
+    }
+
+    $packageInfo | ForEach-Object {
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
+
+        $packageType = $_.Type
+
+        switch ($packageType)
+        {
+            "Unified"
+            {
+                $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
+                $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
+
+                Write-Log "Copying runtime assemblies from $WindowsBinPath"
+                Copy-Item "$WindowsBinPath\*" -Destination $winFolder -Recurse
+
+                Write-Log "Copying runtime assemblies from $LinuxBinPath"
+                Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
+
+                Write-Log "Copying shim dll from $ShimDllPath"
+                Copy-Item $ShimDllPath -Destination $ridFolder
+
+                $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
+                Write-Log "Copying shim config file from $shimConfigFile"
+                Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
+
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
+            }
+
+            "PowerShell.Linux.Alpine"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.x64"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Linux.arm64"
+            {
+                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
+                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.x64"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+
+            "PowerShell.Windows.arm32"
+            {
+                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
+                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+                Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
+                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+            }
+        }
+
+        $packageName = $_.PackageName
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
+        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
+        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
+
+        Write-Log "Creating a package: $packageName"
+        New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
+    }
 }

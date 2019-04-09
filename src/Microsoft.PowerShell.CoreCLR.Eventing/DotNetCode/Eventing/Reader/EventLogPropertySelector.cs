@@ -18,9 +18,9 @@ using System.Collections.Generic;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    ///  Encapsulates the information for fast access to Event Values
-    ///  of an EventLogRecord.  An instance of this class is constructed
-    ///  and then passed to EventLogRecord.GetEventPropertyValues.
+    /// Encapsulates the information for fast access to Event Values
+    /// of an EventLogRecord. An instance of this class is constructed
+    /// and then passed to EventLogRecord.GetEventPropertyValues.
     /// </summary>
     public class EventLogPropertySelector : IDisposable
     {

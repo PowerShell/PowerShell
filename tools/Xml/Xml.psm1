@@ -51,7 +51,7 @@ function New-XmlElement
     }
 }
 
-# Removes an XmlElement and it's parent if it is empty
+# Removes an XmlElement and its parent if it is empty
 function Remove-XmlElement
 {
     param(

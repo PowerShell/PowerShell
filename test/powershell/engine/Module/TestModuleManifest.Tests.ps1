@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
     BeforeEach {
@@ -54,7 +57,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
     It "module manifest containing valid unprocessed rootmodule file type succeeds: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.psm1"},
-        @{rootModuleValue = "foo.dll"}
+        @{rootModuleValue = "foo.dll"},
+        @{rootModuleValue = "foo.exe"}
     ) {
 
         param($rootModuleValue)
@@ -64,6 +68,16 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
         $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
         $moduleManifest.RootModule | Should -Be $rootModuleValue
+    }
+
+    It "module manifest containing valid rootmodule without specifying .psm1 extension succeeds" {
+
+        $rootModuleFileName = "bar.psm1";
+        New-Item -ItemType File -Path testdrive:/module/$rootModuleFileName > $null
+        New-ModuleManifest -Path $testModulePath -RootModule "bar"
+        $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
+        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest.RootModule | Should -Be "bar"
     }
 
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
@@ -224,15 +238,17 @@ Describe "Tests for circular references in required modules" -tags "CI" {
 Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     BeforeAll {
         $TestModulesPath = [System.IO.Path]::Combine($PSScriptRoot, 'assets', 'testmodulerunspace')
-        $UserModulesPath = "$pshome\Modules"
+        $PSHomeModulesPath = "$pshome\Modules"
 
         # Install the Test Module
-        Copy-Item $TestModulesPath\* $UserModulesPath -Recurse -Force
+        if (Test-CanWriteToPsHome) {
+            Copy-Item $TestModulesPath\* $PSHomeModulesPath -Recurse -Force -ErrorAction Stop
+        }
     }
 
-    It "Test-ModuleManifest should not load unnessary modules" {
+    It "Test-ModuleManifest should not load unnessary modules" -Skip:(!(Test-CanWriteToPsHome)) {
 
-        $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:UserModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
+        $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
 
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
         # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
@@ -241,8 +257,10 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
 
     AfterAll {
         #clean up the test modules
-        Remove-Item $UserModulesPath\ModuleWithDependencies2 -Recurse -Force -ErrorAction SilentlyContinue
-        Remove-Item $UserModulesPath\NestedRequiredModule1 -Recurse -Force -ErrorAction SilentlyContinue
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $PSHomeModulesPath\ModuleWithDependencies2 -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item $PSHomeModulesPath\NestedRequiredModule1 -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 

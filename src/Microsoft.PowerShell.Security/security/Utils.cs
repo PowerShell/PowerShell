@@ -13,11 +13,10 @@ namespace Microsoft.PowerShell
     internal static class SecurityUtils
     {
         /// <summary>
-        /// gets the size of a file
+        /// Gets the size of a file.
         /// </summary>
-        /// <param name="filePath"> path to file </param>
-        /// <returns> file size  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="filePath">Path to file.</param>
+        /// <returns>File size.</returns>
         internal static long GetFileSize(string filePath)
         {
             long size = 0;
@@ -31,12 +30,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// present a prompt for a SecureString data
+        /// Present a prompt for a SecureString data.
         /// </summary>
-        /// <param name="hostUI"> ref to host ui interface </param>
-        /// <param name="prompt"> prompt text </param>
-        /// <returns> user input as secure string </returns>
-        /// <remarks>  </remarks>
+        /// <param name="hostUI">Ref to host ui interface.</param>
+        /// <param name="prompt">Prompt text.</param>
+        /// <returns> user input as secure string.</returns>
         internal static SecureString PromptForSecureString(PSHostUserInterface hostUI,
                                                            string prompt)
         {
@@ -51,11 +49,10 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// </summary>
-        /// <param name="resourceStr"> resource string </param>
-        /// <param name="errorId"> error identifier </param>
-        /// <param name="args"> replacement params for resource string formatting </param>
-        /// <returns>  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="resourceStr">Resource string.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <param name="args">Replacement params for resource string formatting.</param>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateFileNotFoundErrorRecord(string resourceStr,
                                                   string errorId,
@@ -81,10 +78,9 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// </summary>
-        /// <param name="path"> path that was not found </param>
-        /// <param name="errorId"> error identifier </param>
-        /// <returns> ErrorRecord instance </returns>
-        /// <remarks>  </remarks>
+        /// <param name="path">Path that was not found.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <returns>ErrorRecord instance.</returns>
         internal static
         ErrorRecord CreatePathNotFoundErrorRecord(string path,
                                                   string errorId)
@@ -102,13 +98,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create an error record for 'operation not supported' condition
+        /// Create an error record for 'operation not supported' condition.
         /// </summary>
-        /// <param name="resourceStr"> resource string </param>
-        /// <param name="errorId"> error identifier </param>
-        /// <param name="args"> replacement params for resource string formatting </param>
-        /// <returns>  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="resourceStr">Resource string.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <param name="args">Replacement params for resource string formatting.</param>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateNotSupportedErrorRecord(string resourceStr,
                                                   string errorId,
@@ -129,12 +124,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create an error record for 'operation not supported' condition
+        /// Create an error record for 'operation not supported' condition.
         /// </summary>
-        /// <param name="e"> exception to include in ErrorRecord </param>
-        /// <param name="errorId"> error identifier </param>
-        /// <returns>  </returns>
-        /// <remarks>  </remarks>
+        /// <param name="e">Exception to include in ErrorRecord.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateInvalidArgumentErrorRecord(Exception e,
                                                      string errorId)
@@ -149,19 +143,18 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// convert the specified provider path to a provider path
+        /// Convert the specified provider path to a provider path
         /// and make sure that all of the following is true:
         /// -- it represents a FileSystem path
         /// -- it points to a file
-        /// -- the file exists
+        /// -- the file exists.
         /// </summary>
-        /// <param name="cmdlet"> cmdlet instance </param>
-        /// <param name="path"> provider path </param>
+        /// <param name="cmdlet">Cmdlet instance.</param>
+        /// <param name="path">Provider path.</param>
         /// <returns>
         /// filesystem path if all conditions are true,
         /// null otherwise
         /// </returns>
-        /// <remarks>  </remarks>
         internal static string GetFilePathOfExistingFile(PSCmdlet cmdlet,
                                                          string path)
         {
@@ -177,4 +170,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-

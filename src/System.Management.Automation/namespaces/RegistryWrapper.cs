@@ -31,10 +31,12 @@ namespace Microsoft.PowerShell.Commands
         object GetValue(string name, object defaultValue, RegistryValueOptions options);
         RegistryValueKind GetValueKind(string name);
         object RegistryKey { get; }
+
         void SetAccessControl(ObjectSecurity securityDescriptor);
         ObjectSecurity GetAccessControl(AccessControlSections includeSections);
         void Close();
         string Name { get; }
+
         int SubKeyCount { get; }
     }
 

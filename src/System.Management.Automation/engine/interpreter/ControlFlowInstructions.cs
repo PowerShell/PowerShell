@@ -35,6 +35,7 @@ namespace System.Management.Automation.Interpreter
         protected int _offset = Unknown;
 
         public int Offset { get { return _offset; } }
+
         public abstract Instruction[] Cache { get; }
 
         public Instruction Fixup(int offset)
@@ -132,6 +133,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -159,6 +161,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
                 }
+
                 return s_caches[ConsumedStack][ProducedStack] ?? (s_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
             }
         }
@@ -266,6 +269,7 @@ namespace System.Management.Automation.Interpreter
         // case until the label is emitted. By then the consumed and produced stack information is useless.
         // The important thing here is that the stack balance is 0.
         public override int ConsumedContinuations { get { return 0; } }
+
         public override int ProducedContinuations { get { return 0; } }
 
         public override int ConsumedStack
@@ -292,6 +296,7 @@ namespace System.Management.Automation.Interpreter
                 var index = Variants * labelIndex | (hasResult ? 2 : 0) | (hasValue ? 1 : 0);
                 return s_cache[index] ?? (s_cache[index] = new GotoInstruction(labelIndex, hasResult, hasValue));
             }
+
             return new GotoInstruction(labelIndex, hasResult, hasValue);
         }
 
@@ -328,6 +333,7 @@ namespace System.Management.Automation.Interpreter
         {
             return new EnterTryCatchFinallyInstruction(labelIndex, true);
         }
+
         internal static EnterTryCatchFinallyInstruction CreateTryCatch()
         {
             return new EnterTryCatchFinallyInstruction(UnknownInstrIndex, false);
@@ -342,6 +348,7 @@ namespace System.Management.Automation.Interpreter
                 // Push finally.
                 frame.PushContinuation(_labelIndex);
             }
+
             int prevInstrIndex = frame.InstructionIndex;
             frame.InstructionIndex++;
 
@@ -464,6 +471,7 @@ namespace System.Management.Automation.Interpreter
         private static readonly EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
 
         public override int ProducedStack { get { return 2; } }
+
         public override int ConsumedContinuations { get { return 1; } }
 
         private EnterFinallyInstruction(int labelIndex)
@@ -477,6 +485,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return s_cache[labelIndex] ?? (s_cache[labelIndex] = new EnterFinallyInstruction(labelIndex));
             }
+
             return new EnterFinallyInstruction(labelIndex);
         }
 
@@ -587,6 +596,7 @@ namespace System.Management.Automation.Interpreter
                 int index = (2 * labelIndex) | (hasValue ? 1 : 0);
                 return s_cache[index] ?? (s_cache[index] = new LeaveExceptionHandlerInstruction(labelIndex, hasValue));
             }
+
             return new LeaveExceptionHandlerInstruction(labelIndex, hasValue);
         }
 
@@ -676,6 +686,7 @@ namespace System.Management.Automation.Interpreter
                 // return frame.Interpreter.GotoHandler(frame, ex, out handler);
                 throw new RethrowException();
             }
+
             throw ex;
         }
     }
@@ -691,6 +702,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame)
@@ -748,6 +760,7 @@ namespace System.Management.Automation.Interpreter
                     ThreadPool.QueueUserWorkItem(Compile, frame);
                 }
             }
+
             return 1;
         }
 
@@ -770,7 +783,7 @@ namespace System.Management.Automation.Interpreter
                     return;
                 }
 
-                //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted loop compiled");
+                // PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted loop compiled");
 
                 InterpretedFrame frame = (InterpretedFrame)frameObj;
                 var compiler = new LoopCompiler(_loop, frame.Interpreter.LabelMapping, _variables, _closureVariables, _instructionIndex, _loopEnd);

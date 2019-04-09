@@ -17,7 +17,7 @@ for ($null[0];
 '@
         $for_pipeline_initializer_script = @'
 $test = 1
-for (Test-Path $null;
+for (Test-Path $null -ErrorAction Stop;
      $test -gt 1;) { }
 '@
         $for_expression_condition_script = @'
@@ -27,7 +27,7 @@ for (;$null[0];)
 '@
         $for_pipeline_condition_script = @'
 $test = 1
-for (;Test-Path $null;)
+for (;Test-Path $null -ErrorAction Stop;)
 { }
 '@
         $do_while_expression_condition_script = @'
@@ -38,7 +38,7 @@ while ($null[0])
         $do_while_pipeline_condition_script = @'
 $test = 1
 do {}
-while (Test-Path $null)
+while (Test-Path $null -ErrorAction Stop)
 '@
         $do_until_expression_condition_script = @'
 $test = 1
@@ -48,7 +48,7 @@ until ($null[0])
         $do_until_pipeline_condition_script = @'
 $test = 1
 do {}
-until (Test-Path $null)
+until (Test-Path $null -ErrorAction Stop)
 '@
 
         $testCases = @(

@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell
                     _rawui.CursorPosition = _location;
                 }
 
-                //if the cursor is at the bottom, create screen buffer space by scrolling
+                // if the cursor is at the bottom, create screen buffer space by scrolling
                 int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
                 if (scrollRows > 0)
                 {
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell
                     _savedCursor.Y -= scrollRows;
                 }
 
-                //create cleared region to clear progress bar later
+                // create cleared region to clear progress bar later
                 _savedRegion = tempProgressRegion;
                 for(int row = 0; row < rows; row++)
                 {
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 
-                //put cursor back to where output should be
+                // put cursor back to where output should be
                 _rawui.CursorPosition = _location;
 #else
                 _location = _rawui.WindowPosition;
@@ -225,6 +225,7 @@ namespace Microsoft.PowerShell
                     {
                         Hide();
                     }
+
                     Show();
                 }
                 else

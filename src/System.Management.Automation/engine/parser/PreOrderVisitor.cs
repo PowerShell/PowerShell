@@ -41,6 +41,7 @@ namespace System.Management.Automation.Language
             {
                 postActionHandler.PostVisit(ast);
             }
+
             return action;
         }
 
@@ -161,7 +162,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// AstVisitor for new Ast node types
+    /// AstVisitor for new Ast node types.
     /// </summary>
     public abstract class AstVisitor2 : AstVisitor
     {

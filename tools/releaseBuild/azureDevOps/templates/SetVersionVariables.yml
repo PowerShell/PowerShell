@@ -1,0 +1,22 @@
+parameters:
+  ReleaseTagVar: v6.2.0
+  ReleaseTagVarName: ReleaseTagVar
+
+steps:
+- powershell: |
+    $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}"
+    $version = $releaseTag.Substring(1)
+    $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+
+    $azureVersion = $releaseTag.ToLowerInvariant() -replace '\.', '-'
+    $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
+
+- powershell: |
+    Get-ChildItem -Path env:
+  displayName: Capture environment
+  condition: succeededOrFailed()

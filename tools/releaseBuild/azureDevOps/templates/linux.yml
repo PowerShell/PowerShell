@@ -1,0 +1,114 @@
+parameters:
+  buildName: ''
+
+jobs:
+- job: build_${{ parameters.buildName }}
+  displayName: Build ${{ parameters.buildName }}
+  condition: succeeded()
+  pool: Hosted Ubuntu 1604
+  variables:
+    build: ${{ parameters.buildName }}
+  steps:
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      Write-Verbose -Verbose "$(build)"
+
+      if ('$(build)' -in 'alpine', 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
+      {
+          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]true"
+      }
+      else
+      {
+          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]false"
+      }
+    displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
+
+  - template: insert-nuget-config-azfeed.yml
+
+
+  - powershell: |
+      import-module ./build.psm1
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - powershell: |
+      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+    displayName: 'Build and package'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+- job: upload_${{ parameters.buildName }}
+  displayName: Upload ${{ parameters.buildName }}
+  dependsOn: build_${{ parameters.buildName }}
+  condition: succeeded()
+  pool: Package ES CodeHub Lab E
+  variables:
+    buildName: ${{ parameters.buildName }}
+  steps:
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Deb Artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.deb'
+      downloadPath: '$(System.ArtifactsDirectory)\finished'
+    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download tar.gz Artifacts copy'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.tar.gz'
+      downloadPath: '$(System.ArtifactsDirectory)\finished'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download rpm Artifacts copy'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.rpm'
+      downloadPath: '$(System.ArtifactsDirectory)\rpm'
+    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run Defender Scan'
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload to Azure - DEB and tar.gz'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\finished\release'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\finished\release
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload to Azure - RPM'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-unsigned'
+    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\rpm\release
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

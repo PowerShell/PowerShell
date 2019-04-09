@@ -36,7 +36,7 @@ namespace System.Management.Automation
 
             if (times == 0 || s.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// StringComparison.InvariantCulture is not in CoreCLR, so we need to use
         ///    CultureInfo.InvariantCulture.CompareInfo.Compare(string, string, CompareOptions)
         /// to substitute
-        ///    String.Compare(string, string, StringComparison)
+        ///    string.Compare(string, string, StringComparison)
         /// </summary>
         internal static int Compare(string strA, string strB, CultureInfo culture, CompareOptions option)
         {
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// StringComparison.InvariantCulture is not in CoreCLR, so we need to use
         ///    CultureInfo.InvariantCulture.CompareInfo.Compare(string, string, CompareOptions) == 0
         /// to substitute
-        ///    String.Equals(string, string, StringComparison)
+        ///    string.Equals(string, string, StringComparison)
         /// </summary>
         internal static bool Equals(string strA, string strB, CultureInfo culture, CompareOptions option)
         {

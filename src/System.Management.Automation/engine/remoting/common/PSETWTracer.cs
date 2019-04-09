@@ -6,7 +6,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// Defines enumerations for the keywords
+    /// Defines enumerations for the keywords.
     /// </summary>
     [Flags]
     internal enum PSKeyword : ulong
@@ -25,7 +25,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Define enumerations for levels
+    /// Define enumerations for levels.
     /// </summary>
     internal enum PSLevel : byte
     {
@@ -39,7 +39,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Defines enumerations for op codes
+    /// Defines enumerations for op codes.
     /// </summary>
     internal enum PSOpcode : byte
     {
@@ -64,7 +64,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Defines enumerations for event ids
+    /// Defines enumerations for event ids.
     /// </summary>
     /// <remarks>add an entry for a new event that you
     /// add to the manifest. Set it to the same value
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Defines enumerations for channels
+    /// Defines enumerations for channels.
     /// </summary>
     /// <remarks>
     /// On Windows, PSChannel is the numeric channel id value.
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
 #endif
 
     /// <summary>
-    /// Defines enumerations for tasks
+    /// Defines enumerations for tasks.
     /// </summary>
     internal enum PSTask : int
     {
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Defines enumerations for version
+    /// Defines enumerations for version.
     /// </summary>
     /// <remarks>all messages in V2 timeframe
     /// should be of version 1</remarks>

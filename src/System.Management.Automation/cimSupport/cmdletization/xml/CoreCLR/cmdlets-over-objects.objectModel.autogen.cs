@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._classField;
             }
+
             set
             {
                 this._classField = value;
@@ -51,6 +52,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._enumsField;
             }
+
             set
             {
                 this._enumsField = value;
@@ -88,6 +90,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._versionField;
             }
+
             set
             {
                 this._versionField = value;
@@ -101,6 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._defaultNounField;
             }
+
             set
             {
                 this._defaultNounField = value;
@@ -114,6 +118,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._instanceCmdletsField;
             }
+
             set
             {
                 this._instanceCmdletsField = value;
@@ -128,6 +133,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._staticCmdletsField;
             }
+
             set
             {
                 this._staticCmdletsField = value;
@@ -142,6 +148,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletAdapterPrivateDataField;
             }
+
             set
             {
                 this._cmdletAdapterPrivateDataField = value;
@@ -156,6 +163,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletAdapterField;
             }
+
             set
             {
                 this._cmdletAdapterField = value;
@@ -170,6 +178,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._classNameField;
             }
+
             set
             {
                 this._classNameField = value;
@@ -184,6 +193,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._classVersionField;
             }
+
             set
             {
                 this._classVersionField = value;
@@ -211,6 +221,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._getCmdletParametersField;
             }
+
             set
             {
                 this._getCmdletParametersField = value;
@@ -224,6 +235,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._getCmdletField;
             }
+
             set
             {
                 this._getCmdletField = value;
@@ -238,6 +250,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletField;
             }
+
             set
             {
                 this._cmdletField = value;
@@ -268,6 +281,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._queryablePropertiesField;
             }
+
             set
             {
                 this._queryablePropertiesField = value;
@@ -282,6 +296,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._queryableAssociationsField;
             }
+
             set
             {
                 this._queryableAssociationsField = value;
@@ -296,6 +311,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._queryOptionsField;
             }
+
             set
             {
                 this._queryOptionsField = value;
@@ -310,6 +326,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._defaultCmdletParameterSetField;
             }
+
             set
             {
                 this._defaultCmdletParameterSetField = value;
@@ -339,6 +356,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._typeField;
             }
+
             set
             {
                 this._typeField = value;
@@ -357,6 +375,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._itemsField;
             }
+
             set
             {
                 this._itemsField = value;
@@ -372,6 +391,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._itemsElementNameField;
             }
+
             set
             {
                 this._itemsElementNameField = value;
@@ -386,6 +406,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._propertyNameField;
             }
+
             set
             {
                 this._propertyNameField = value;
@@ -412,6 +433,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._pSTypeField;
             }
+
             set
             {
                 this._pSTypeField = value;
@@ -426,6 +448,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._eTSTypeField;
             }
+
             set
             {
                 this._eTSTypeField = value;
@@ -455,6 +478,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._associatedInstanceField;
             }
+
             set
             {
                 this._associatedInstanceField = value;
@@ -469,6 +493,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._association1Field;
             }
+
             set
             {
                 this._association1Field = value;
@@ -483,6 +508,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._sourceRoleField;
             }
+
             set
             {
                 this._sourceRoleField = value;
@@ -497,6 +523,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._resultRoleField;
             }
+
             set
             {
                 this._resultRoleField = value;
@@ -522,6 +549,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._typeField;
             }
+
             set
             {
                 this._typeField = value;
@@ -535,6 +563,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterMetadataField;
             }
+
             set
             {
                 this._cmdletParameterMetadataField = value;
@@ -561,6 +590,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._errorOnNoMatchField;
             }
+
             set
             {
                 this._errorOnNoMatchField = value;
@@ -575,6 +605,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._errorOnNoMatchFieldSpecified;
             }
+
             set
             {
                 this._errorOnNoMatchFieldSpecified = value;
@@ -608,6 +639,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineField;
             }
+
             set
             {
                 this._valueFromPipelineField = value;
@@ -622,6 +654,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineFieldSpecified;
             }
+
             set
             {
                 this._valueFromPipelineFieldSpecified = value;
@@ -636,6 +669,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameField;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameField = value;
@@ -650,6 +684,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameFieldSpecified;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameFieldSpecified = value;
@@ -664,6 +699,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterSetsField;
             }
+
             set
             {
                 this._cmdletParameterSetsField = value;
@@ -719,6 +755,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._allowEmptyCollectionField;
             }
+
             set
             {
                 this._allowEmptyCollectionField = value;
@@ -732,6 +769,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._allowEmptyStringField;
             }
+
             set
             {
                 this._allowEmptyStringField = value;
@@ -745,6 +783,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._allowNullField;
             }
+
             set
             {
                 this._allowNullField = value;
@@ -758,6 +797,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateNotNullField;
             }
+
             set
             {
                 this._validateNotNullField = value;
@@ -771,6 +811,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateNotNullOrEmptyField;
             }
+
             set
             {
                 this._validateNotNullOrEmptyField = value;
@@ -784,6 +825,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateCountField;
             }
+
             set
             {
                 this._validateCountField = value;
@@ -797,6 +839,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateLengthField;
             }
+
             set
             {
                 this._validateLengthField = value;
@@ -810,6 +853,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateRangeField;
             }
+
             set
             {
                 this._validateRangeField = value;
@@ -824,6 +868,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._validateSetField;
             }
+
             set
             {
                 this._validateSetField = value;
@@ -837,6 +882,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._obsoleteField;
             }
+
             set
             {
                 this._obsoleteField = value;
@@ -851,6 +897,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._isMandatoryField;
             }
+
             set
             {
                 this._isMandatoryField = value;
@@ -865,6 +912,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._isMandatoryFieldSpecified;
             }
+
             set
             {
                 this._isMandatoryFieldSpecified = value;
@@ -879,6 +927,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._aliasesField;
             }
+
             set
             {
                 this._aliasesField = value;
@@ -893,6 +942,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._pSNameField;
             }
+
             set
             {
                 this._pSNameField = value;
@@ -907,6 +957,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._positionField;
             }
+
             set
             {
                 this._positionField = value;
@@ -933,6 +984,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._minField;
             }
+
             set
             {
                 this._minField = value;
@@ -947,6 +999,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._maxField;
             }
+
             set
             {
                 this._maxField = value;
@@ -973,6 +1026,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._minField;
             }
+
             set
             {
                 this._minField = value;
@@ -987,6 +1041,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._maxField;
             }
+
             set
             {
                 this._maxField = value;
@@ -1013,6 +1068,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._minField;
             }
+
             set
             {
                 this._minField = value;
@@ -1027,6 +1083,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._maxField;
             }
+
             set
             {
                 this._maxField = value;
@@ -1051,6 +1108,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._messageField;
             }
+
             set
             {
                 this._messageField = value;
@@ -1077,6 +1135,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameField;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameField = value;
@@ -1091,6 +1150,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameFieldSpecified;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameFieldSpecified = value;
@@ -1121,6 +1181,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineField;
             }
+
             set
             {
                 this._valueFromPipelineField = value;
@@ -1135,6 +1196,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineFieldSpecified;
             }
+
             set
             {
                 this._valueFromPipelineFieldSpecified = value;
@@ -1149,6 +1211,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameField;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameField = value;
@@ -1163,6 +1226,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueFromPipelineByPropertyNameFieldSpecified;
             }
+
             set
             {
                 this._valueFromPipelineByPropertyNameFieldSpecified = value;
@@ -1190,6 +1254,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._typeField;
             }
+
             set
             {
                 this._typeField = value;
@@ -1203,6 +1268,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterMetadataField;
             }
+
             set
             {
                 this._cmdletParameterMetadataField = value;
@@ -1217,6 +1283,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._optionNameField;
             }
+
             set
             {
                 this._optionNameField = value;
@@ -1242,6 +1309,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletMetadataField;
             }
+
             set
             {
                 this._cmdletMetadataField = value;
@@ -1255,6 +1323,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._getCmdletParametersField;
             }
+
             set
             {
                 this._getCmdletParametersField = value;
@@ -1290,6 +1359,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._obsoleteField;
             }
+
             set
             {
                 this._obsoleteField = value;
@@ -1304,6 +1374,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._verbField;
             }
+
             set
             {
                 this._verbField = value;
@@ -1318,6 +1389,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._nounField;
             }
+
             set
             {
                 this._nounField = value;
@@ -1332,6 +1404,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._aliasesField;
             }
+
             set
             {
                 this._aliasesField = value;
@@ -1346,6 +1419,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._confirmImpactField;
             }
+
             set
             {
                 this._confirmImpactField = value;
@@ -1360,6 +1434,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._confirmImpactFieldSpecified;
             }
+
             set
             {
                 this._confirmImpactFieldSpecified = value;
@@ -1374,6 +1449,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._helpUriField;
             }
+
             set
             {
                 this._helpUriField = value;
@@ -1418,6 +1494,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletMetadataField;
             }
+
             set
             {
                 this._cmdletMetadataField = value;
@@ -1432,6 +1509,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._methodField;
             }
+
             set
             {
                 this._methodField = value;
@@ -1456,6 +1534,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._defaultCmdletParameterSetField;
             }
+
             set
             {
                 this._defaultCmdletParameterSetField = value;
@@ -1482,6 +1561,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._parametersField;
             }
+
             set
             {
                 this._parametersField = value;
@@ -1496,6 +1576,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterSetField;
             }
+
             set
             {
                 this._cmdletParameterSetField = value;
@@ -1521,6 +1602,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterMetadataField;
             }
+
             set
             {
                 this._cmdletParameterMetadataField = value;
@@ -1534,6 +1616,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletOutputMetadataField;
             }
+
             set
             {
                 this._cmdletOutputMetadataField = value;
@@ -1559,6 +1642,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._errorCodeField;
             }
+
             set
             {
                 this._errorCodeField = value;
@@ -1573,6 +1657,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._pSNameField;
             }
+
             set
             {
                 this._pSNameField = value;
@@ -1602,6 +1687,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._typeField;
             }
+
             set
             {
                 this._typeField = value;
@@ -1616,6 +1702,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._parameterNameField;
             }
+
             set
             {
                 this._parameterNameField = value;
@@ -1630,6 +1717,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._defaultValueField;
             }
+
             set
             {
                 this._defaultValueField = value;
@@ -1655,6 +1743,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterMetadataField;
             }
+
             set
             {
                 this._cmdletParameterMetadataField = value;
@@ -1668,6 +1757,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletOutputMetadataField;
             }
+
             set
             {
                 this._cmdletOutputMetadataField = value;
@@ -1695,6 +1785,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._returnValueField;
             }
+
             set
             {
                 this._returnValueField = value;
@@ -1709,6 +1800,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._methodNameField;
             }
+
             set
             {
                 this._methodNameField = value;
@@ -1734,6 +1826,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._typeField;
             }
+
             set
             {
                 this._typeField = value;
@@ -1747,6 +1840,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletOutputMetadataField;
             }
+
             set
             {
                 this._cmdletOutputMetadataField = value;
@@ -1771,6 +1865,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._parametersField;
             }
+
             set
             {
                 this._parametersField = value;
@@ -1798,6 +1893,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletMetadataField;
             }
+
             set
             {
                 this._cmdletMetadataField = value;
@@ -1811,6 +1907,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._methodField;
             }
+
             set
             {
                 this._methodField = value;
@@ -1824,6 +1921,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._getCmdletParametersField;
             }
+
             set
             {
                 this._getCmdletParametersField = value;
@@ -1848,6 +1946,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._cmdletParameterMetadataField;
             }
+
             set
             {
                 this._cmdletParameterMetadataField = value;
@@ -1874,6 +1973,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._allowGlobbingField;
             }
+
             set
             {
                 this._allowGlobbingField = value;
@@ -1888,6 +1988,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._allowGlobbingFieldSpecified;
             }
+
             set
             {
                 this._allowGlobbingFieldSpecified = value;
@@ -1933,6 +2034,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._nameField;
             }
+
             set
             {
                 this._nameField = value;
@@ -1947,6 +2049,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueField;
             }
+
             set
             {
                 this._valueField = value;
@@ -1979,6 +2082,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueField;
             }
+
             set
             {
                 this._valueField = value;
@@ -1993,6 +2097,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._enumNameField;
             }
+
             set
             {
                 this._enumNameField = value;
@@ -2007,6 +2112,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._underlyingTypeField;
             }
+
             set
             {
                 this._underlyingTypeField = value;
@@ -2021,6 +2127,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._bitwiseFlagsField;
             }
+
             set
             {
                 this._bitwiseFlagsField = value;
@@ -2035,6 +2142,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._bitwiseFlagsFieldSpecified;
             }
+
             set
             {
                 this._bitwiseFlagsFieldSpecified = value;
@@ -2061,6 +2169,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._nameField;
             }
+
             set
             {
                 this._nameField = value;
@@ -2075,6 +2184,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return this._valueField;
             }
+
             set
             {
                 this._valueField = value;

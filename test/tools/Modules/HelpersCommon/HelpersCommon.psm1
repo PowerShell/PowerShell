@@ -17,7 +17,7 @@ function Wait-UntilTrue
         if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
-        # Sleep for the specified interval
+        # Wait
         Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
@@ -233,11 +233,8 @@ function Send-VstsLogFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    if($env:BUILD_REASON -ne 'PullRequest')
-    {
-        Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-        Write-Verbose "Log file captured as $name" -Verbose
-    }
+    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
+    Write-Verbose "Log file captured as $name" -Verbose
 }
 
 # Tests if the Linux or macOS user is root
@@ -323,3 +320,27 @@ function New-RandomHexString
     return ((1..$Length).ForEach{ '{0:x}' -f $random.Next(0xf) }) -join ''
 }
 
+$script:CanWriteToPsHome = $null
+function Test-CanWriteToPsHome
+{
+    if ($null -ne $script:CanWriteToPsHome) {
+        return $script:CanWriteToPsHome
+    }
+
+    $script:CanWriteToPsHome = $true
+
+    try {
+        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+    }
+    catch [System.UnauthorizedAccessException] {
+        $script:CanWriteToPsHome = $false
+    }
+    finally {
+        if ($script:CanWriteToPsHome) {
+            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
+        }
+    }
+
+    $script:CanWriteToPsHome
+}

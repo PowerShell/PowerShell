@@ -27,7 +27,7 @@ namespace System.Management.Automation
                 {
                     ProgressRecord analysisProgress = new ProgressRecord(0,
                         Modules.ScriptAnalysisPreparing,
-                        String.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
+                        string.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
                     analysisProgress.RecordType = ProgressRecordType.Processing;
 
                     // Write the progress using a static source ID so that all
@@ -179,12 +179,14 @@ namespace System.Management.Automation
             // recorded for command/parameter completion.
 
             // function Foo-Bar { ... }
+
             var functionName = functionDefinitionAst.Name;
             DiscoveredFunctions[functionName] = functionDefinitionAst;
             ModuleIntrinsics.Tracer.WriteLine("Discovered function definition: {0}", functionName);
 
             // Check if they've defined any aliases
             // function Foo-Bar { [Alias("Alias1", "...")] param() ... }
+
             var functionBody = functionDefinitionAst.Body;
             if ((functionBody.ParamBlock != null) && (functionBody.ParamBlock.Attributes != null))
             {
@@ -213,6 +215,7 @@ namespace System.Management.Automation
                 {
                     DiscoveredExports.Add(functionName);
                 }
+
                 return AstVisitAction.Continue;
             }
 
@@ -225,25 +228,34 @@ namespace System.Management.Automation
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
             // $env:PATH += "";$psScriptRoot""
-            if (String.Equals("$env:PATH", assignmentStatementAst.Left.ToString(), StringComparison.OrdinalIgnoreCase) &&
+            if (string.Equals("$env:PATH", assignmentStatementAst.Left.ToString(), StringComparison.OrdinalIgnoreCase) &&
                 Regex.IsMatch(assignmentStatementAst.Right.ToString(), "\\$psScriptRoot", RegexOptions.IgnoreCase))
             {
                 ModuleIntrinsics.Tracer.WriteLine("Module adds itself to the path.");
                 AddsSelfToPath = true;
             }
+
             return AstVisitAction.SkipChildren;
         }
 
         // We skip a bunch of random statements because we can't really be accurate detecting functions/classes etc. that
         // are conditionally defined.
         public override AstVisitAction VisitIfStatement(IfStatementAst ifStmtAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitForStatement(ForStatementAst forStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.SkipChildren; }
 
         // Visit one the other variations:
@@ -274,12 +286,12 @@ namespace System.Management.Automation
             }
 
             // They are setting an alias.
-            if (String.Equals(commandName, "New-Alias", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "Microsoft.PowerShell.Utility\\New-Alias", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "Set-Alias", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "Microsoft.PowerShell.Utility\\Set-Alias", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "nal", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "sal", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(commandName, "New-Alias", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "Microsoft.PowerShell.Utility\\New-Alias", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "Set-Alias", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "Microsoft.PowerShell.Utility\\Set-Alias", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "nal", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "sal", StringComparison.OrdinalIgnoreCase))
             {
                 // Set-Alias Foo-Bar5 Foo-Bar
                 // Set-Alias -Name Foo-Bar6 -Value Foo-Bar
@@ -305,8 +317,8 @@ namespace System.Management.Automation
             }
 
             // They are importing a module
-            if (String.Equals(commandName, "Import-Module", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "ipmo", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(commandName, "Import-Module", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "ipmo", StringComparison.OrdinalIgnoreCase))
             {
                 // Import-Module Module1
                 // Import-Module Module2 -Function Foo-Module2*, Foo-Module2Second* -Cmdlet Foo-Module2Cmdlet,Foo-Module2Cmdlet*
@@ -349,9 +361,9 @@ namespace System.Management.Automation
             }
 
             // They are exporting a module member
-            if (String.Equals(commandName, "Export-ModuleMember", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "Microsoft.PowerShell.Core\\Export-ModuleMember", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(commandName, "$script:ExportModuleMember", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(commandName, "Export-ModuleMember", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "Microsoft.PowerShell.Core\\Export-ModuleMember", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(commandName, "$script:ExportModuleMember", StringComparison.OrdinalIgnoreCase))
             {
                 // Export-ModuleMember *
                 // Export-ModuleMember Exported-UnNamedModuleMember
@@ -397,7 +409,7 @@ namespace System.Management.Automation
 
             // They are exporting a module member using our advanced 'public' function
             // that we've presented in many demos
-            if ((String.Equals(commandName, "public", StringComparison.OrdinalIgnoreCase)) &&
+            if ((string.Equals(commandName, "public", StringComparison.OrdinalIgnoreCase)) &&
                 (commandAst.CommandElements.Count > 2))
             {
                 // public function Publicly-ExportedFunction
@@ -480,6 +492,7 @@ namespace System.Management.Automation
                                 result[parameterInfo.name] =
                                     GetSafeValueVisitor.GetSafeValue(argumentAst, null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis);
                             }
+
                             break;
                         }
                     }
@@ -553,4 +566,4 @@ namespace System.Management.Automation
         internal string Name { get; set; }
         internal List<string> CommandsToPostFilter { get; set; }
     }
-} // System.Management.Automation
+}

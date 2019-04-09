@@ -10,8 +10,8 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to load the XML document into data structures.
-    /// It encapsulates the file format specific code
+    /// Class to load the XML document into data structures.
+    /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (!success)
                 {
-                    //Error at XPath {0} in file {1}: View cannot be loaded.
+                    // Error at XPath {0} in file {1}: View cannot be loaded.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ViewNotLoaded, ComputeCurrentXPath(), FilePath));
                     return null; // fatal error
                 }
@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadTableControl(n);
                     }
@@ -93,6 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadListControl(n);
                     }
@@ -104,6 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadWideControl(n);
                     }
@@ -114,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadComplexControl(n);
                     }
@@ -121,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         secondPassUnprocessedNodes.Add(n);
                     }
-                } // foreach
+                }
 
                 if (view.mainControl == null)
                 {
@@ -137,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (view.outOfBand && (view.groupBy != null))
                 {
                     // we cannot have grouping and out of band at the same time
-                    //Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.
+                    // Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.OutOfBandGroupByConflict, ComputeCurrentXPath(), FilePath));
                     return null; // fatal
                 }
@@ -166,9 +170,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         return false;
                     }
+
                     if (!(view.mainControl is ComplexControlBody) && !(view.mainControl is ListControlBody))
                     {
-                        //Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.
+                        // Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.
                         ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidControlForOutOfBandView, ComputeCurrentXPath(), FilePath));
                         return false;
                     }
@@ -189,6 +194,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ProcessUnknownNode(n);
                 }
             }
+
             return true;
         }
 
@@ -263,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // save for further processing
                     unprocessedNodes.Add(n);
                 }
-            } // for
+            }
 
             if (!nameNodeFound)
             {
@@ -326,9 +332,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         def.name = GetMandatoryInnerText(n);
                         if (def.name == null)
                         {
-                            //Error at XPath {0} in file {1}: Control cannot have a null Name.
+                            // Error at XPath {0} in file {1}: Control cannot have a null Name.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NullControlName, ComputeCurrentXPath(), FilePath));
-                            return null; //fatal error
+                            return null; // fatal error
                         }
                     }
                     else if (MatchNodeName(n, XmlTags.ComplexControlNode))
@@ -337,14 +343,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (controlNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         controlNodeFound = true;
                         def.controlBody = LoadComplexControl(n);
                         if (def.controlBody == null)
                         {
-                            return null; //fatal error
+                            return null; // fatal error
                         }
                     }
                     else
@@ -356,13 +362,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (def.name == null)
                 {
                     this.ReportMissingNode(XmlTags.NameNode);
-                    return null; //fatal
+                    return null; // fatal
                 }
 
                 if (def.controlBody == null)
                 {
                     this.ReportMissingNode(XmlTags.ComplexControlNode);
-                    return null; //fatal
+                    return null; // fatal
                 }
 
                 return def;

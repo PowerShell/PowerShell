@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Construct the class, using an array of patterns.
         /// </summary>
-        /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
+        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
             if (wildcardPatternsStrings == null)
@@ -38,8 +38,8 @@ namespace Microsoft.PowerShell.Commands
         /// Try to match the expression against the array of wildcard patterns.
         /// The first match shortcircuits the search.
         /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against</param>
-        /// <returns>true if there is a match, else false</returns>
+        /// <param name="expression">PSPropertyExpression to test against.</param>
+        /// <returns>True if there is a match, else false.</returns>
         internal bool IsMatch(PSPropertyExpression expression)
         {
             for (int k = 0; k < _wildcardPatterns.Length; k++)
@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_wildcardPatterns[k].IsMatch(expression.ToString()))
                     return true;
             }
+
             return false;
         }
 
@@ -104,8 +105,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Unique
         {
             get { return _unique; }
+
             set { _unique = value; }
         }
+
         private bool _unique;
 
         /// <summary>
@@ -118,8 +121,10 @@ namespace Microsoft.PowerShell.Commands
         public int Last
         {
             get { return _last; }
+
             set { _last = value; _firstOrLastSpecified = true; }
         }
+
         private int _last = 0;
 
         /// <summary>
@@ -132,8 +137,10 @@ namespace Microsoft.PowerShell.Commands
         public int First
         {
             get { return _first; }
+
             set { _first = value; _firstOrLastSpecified = true; }
         }
+
         private int _first = 0;
         private bool _firstOrLastSpecified;
 
@@ -173,6 +180,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
@@ -195,6 +203,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
@@ -241,12 +250,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     base.Dequeue();
                 }
+
                 base.Enqueue(obj);
             }
 
             public PSObject StreamingDequeue()
             {
-                //if skip parameter is not mentioned or there are no more objects to skip
+                // if skip parameter is not mentioned or there are no more objects to skip
                 if (_skip == 0)
                 {
                     if (_skipLast > 0)
@@ -276,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //if last parameter is not mentioned,remove the objects and decrement the skip
+                    // if last parameter is not mentioned,remove the objects and decrement the skip
                     if (_last == 0)
                     {
                         Dequeue();
@@ -316,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 WrittenObject = o;
                 NotePropertyCount = notePropertyCount;
             }
+
             internal readonly PSObject WrittenObject;
             internal int NotePropertyCount { get; }
         }
@@ -330,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             if ((Property != null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
+
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
@@ -349,7 +361,7 @@ namespace Microsoft.PowerShell.Commands
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[] { "*" };
+                    Property = new object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }
@@ -363,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //If property parameter is mentioned
+            // If property parameter is mentioned
             List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
             foreach (MshParameter p in _propertyMshParameterList)
             {
@@ -399,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 FilteredWriteObject(result, matchedProperties);
             }
             else
@@ -467,15 +480,18 @@ namespace Microsoft.PowerShell.Commands
                             "EmptyScriptBlockAndNoName",
                             ErrorCategory.InvalidArgument, null));
                     }
+
                     mshProp = new PSNoteProperty(resolvedExpressionName, r.Result);
                 }
                 else
                 {
                     mshProp = new PSNoteProperty(name, r.Result);
                 }
+
                 result.Add(mshProp);
             }
         }
+
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
@@ -491,6 +507,7 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
+
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
@@ -580,6 +597,7 @@ namespace Microsoft.PowerShell.Commands
                 inputObject);
             WriteError(errorRecord);
         }
+
         private void FilteredWriteObject(PSObject obj, List<PSNoteProperty> addedNoteProperties)
         {
             Diagnostics.Assert(obj != null, "This command should never write null");
@@ -591,9 +609,10 @@ namespace Microsoft.PowerShell.Commands
                     SetPSCustomObject(obj);
                     WriteObject(obj);
                 }
+
                 return;
             }
-            //if only unique is mentioned
+            // if only unique is mentioned
             else if ((_unique))
             {
                 bool isObjUnique = true;
@@ -613,6 +632,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (found)
                         {
                             isObjUnique = false;
@@ -624,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
                 }
+
                 if (isObjUnique)
                 {
                     SetPSCustomObject(obj);

@@ -9,7 +9,7 @@
   <ItemGroup>
   <!-- Source: https://github.com/lunet-io/markdig/ -->
     <ProjectReference Include="../System.Management.Automation/System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.15.4" />
+    <PackageReference Include="Markdig.Signed" Version="0.16.0" />
   </ItemGroup>
 
 </Project>

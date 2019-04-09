@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// Class that encapsulates native crypto provider handles and provides a
-    /// mechanism for resources released by them
+    /// mechanism for resources released by them.
     /// </summary>
     //    [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
     //    [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
@@ -26,14 +26,14 @@ namespace System.Management.Automation.Internal
         /// This safehandle instance "owns" the handle, hence base(true)
         /// is being called. When safehandle is no longer in use it will
         /// call this class's ReleaseHandle method which will release
-        /// the resources
+        /// the resources.
         /// </summary>
         internal PSSafeCryptProvHandle() : base(true) { }
 
         /// <summary>
-        /// Release the crypto handle held by this instance
+        /// Release the crypto handle held by this instance.
         /// </summary>
-        /// <returns>true on success, false otherwise</returns>
+        /// <returns>True on success, false otherwise.</returns>
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
@@ -43,24 +43,24 @@ namespace System.Management.Automation.Internal
 
     /// <summary>
     /// Class the encapsulates native crypto key handles and provides a
-    /// mechanism to release resources used by it
+    /// mechanism to release resources used by it.
     /// </summary>
-    //[SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
-    //[SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
+    // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
+    // [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
     internal class PSSafeCryptKey : SafeHandleZeroOrMinusOneIsInvalid
     {
         /// <summary>
         /// This safehandle instance "owns" the handle, hence base(true)
         /// is being called. When safehandle is no longer in use it will
         /// call this class's ReleaseHandle method which will release the
-        /// resources
+        /// resources.
         /// </summary>
         internal PSSafeCryptKey() : base(true) { }
 
         /// <summary>
-        /// Release the crypto handle held by this instance
+        /// Release the crypto handle held by this instance.
         /// </summary>
-        /// <returns>true on success, false otherwise</returns>
+        /// <returns>True on success, false otherwise.</returns>
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
@@ -68,17 +68,154 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Equivalent of IntPtr.Zero for the safe crypt key
+        /// Equivalent of IntPtr.Zero for the safe crypt key.
         /// </summary>
         internal static PSSafeCryptKey Zero { get; } = new PSSafeCryptKey();
     }
 
     /// <summary>
-    /// This class provides the wrapper for all Native CAPI functions
+    /// This class provides the wrapper for all Native CAPI functions.
     /// </summary>
     internal class PSCryptoNativeUtils
     {
         #region Functions
+
+#if UNIX
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///Algid: ALG_ID->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptGenKey(
+            PSSafeCryptProvHandle hProv,
+            uint Algid,
+            uint dwFlags,
+            ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        public static bool CryptDestroyKey(IntPtr hKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///phProv: HCRYPTPROV*
+        ///szContainer: LPCWSTR->WCHAR*
+        ///szProvider: LPCWSTR->WCHAR*
+        ///dwProvType: DWORD->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        public static bool CryptAcquireContext(ref PSSafeCryptProvHandle phProv,
+            [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string szContainer,
+            [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string szProvider,
+            uint dwProvType,
+            uint dwFlags)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        public static bool CryptReleaseContext(IntPtr hProv, uint dwFlags)
+        {
+            throw new PSCryptoException();
+        }
+
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hHash: HCRYPTHASH->ULONG_PTR->unsigned int
+        ///Final: BOOL->int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        ///dwBufLen: DWORD->unsigned int
+        public static bool CryptEncrypt(PSSafeCryptKey hKey,
+            IntPtr hHash,
+            [MarshalAsAttribute(UnmanagedType.Bool)] bool Final,
+            uint dwFlags,
+            byte[] pbData,
+            ref int pdwDataLen,
+            int dwBufLen)
+        {
+            throw new PSCryptoException();
+        }
+
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hHash: HCRYPTHASH->ULONG_PTR->unsigned int
+        ///Final: BOOL->int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        public static bool CryptDecrypt(PSSafeCryptKey hKey,
+            IntPtr hHash,
+            [MarshalAsAttribute(UnmanagedType.Bool)] bool Final,
+            uint dwFlags,
+            byte[] pbData,
+            ref int pdwDataLen)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///hExpKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///dwBlobType: DWORD->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///pbData: BYTE*
+        ///pdwDataLen: DWORD*
+        public static bool CryptExportKey(PSSafeCryptKey hKey,
+            PSSafeCryptKey hExpKey,
+            uint dwBlobType,
+            uint dwFlags,
+            byte[] pbData,
+            ref uint pdwDataLen)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
+        ///pbData: BYTE*
+        ///dwDataLen: DWORD->unsigned int
+        ///hPubKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptImportKey(PSSafeCryptProvHandle hProv,
+            byte[] pbData,
+            int dwDataLen,
+            PSSafeCryptKey hPubKey,
+            uint dwFlags,
+            ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: BOOL->int
+        ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
+        ///pdwReserved: DWORD*
+        ///dwFlags: DWORD->unsigned int
+        ///phKey: HCRYPTKEY*
+        public static bool CryptDuplicateKey(PSSafeCryptKey hKey,
+                                                    ref uint pdwReserved,
+                                                    uint dwFlags,
+                                                    ref PSSafeCryptKey phKey)
+        {
+            throw new PSCryptoException();
+        }
+
+        /// Return Type: DWORD->unsigned int
+        public static uint GetLastError()
+        {
+            throw new PSCryptoException();
+        }
+#else
 
         /// Return Type: BOOL->int
         ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
@@ -200,57 +337,58 @@ namespace System.Management.Automation.Internal
         /// Return Type: DWORD->unsigned int
         [DllImportAttribute(PinvokeDllNames.GetLastErrorDllName, EntryPoint = "GetLastError")]
         public static extern uint GetLastError();
+#endif
 
         #endregion Functions
 
         #region Constants
 
         /// <summary>
-        /// Do not use persisted private key
+        /// Do not use persisted private key.
         /// </summary>
         public const uint CRYPT_VERIFYCONTEXT = 0xF0000000;
 
         /// <summary>
-        /// Mark the key for export
+        /// Mark the key for export.
         /// </summary>
         public const uint CRYPT_EXPORTABLE = 0x00000001;
 
         /// <summary>
         /// Automatically assign a salt value when creating a
-        /// session key
+        /// session key.
         /// </summary>
         public const int CRYPT_CREATE_SALT = 4;
 
         /// <summary>
-        /// RSA Provider
+        /// RSA Provider.
         /// </summary>
         public const int PROV_RSA_FULL = 1;
 
         /// <summary>
         /// RSA Provider that supports AES
-        /// encryption
+        /// encryption.
         /// </summary>
         public const int PROV_RSA_AES = 24;
 
         /// <summary>
-        /// Public key to be used for encryption
+        /// Public key to be used for encryption.
         /// </summary>
         public const int AT_KEYEXCHANGE = 1;
 
         /// <summary>
-        /// RSA Key
+        /// RSA Key.
         /// </summary>
         public const int CALG_RSA_KEYX =
             (PSCryptoNativeUtils.ALG_CLASS_KEY_EXCHANGE |
             (PSCryptoNativeUtils.ALG_TYPE_RSA | PSCryptoNativeUtils.ALG_SID_RSA_ANY));
 
         /// <summary>
-        /// Create a key for encryption
+        /// Create a key for encryption.
         /// </summary>
         public const int ALG_CLASS_KEY_EXCHANGE = (5) << (13);
 
         /// <summary>
-        /// Create a RSA key pair
+        /// Create a RSA key pair.
         /// </summary>
         public const int ALG_TYPE_RSA = (2) << (9);
 
@@ -259,32 +397,32 @@ namespace System.Management.Automation.Internal
         public const int ALG_SID_RSA_ANY = 0;
 
         /// <summary>
-        /// Option for exporting public key blob
+        /// Option for exporting public key blob.
         /// </summary>
         public const int PUBLICKEYBLOB = 6;
 
         /// <summary>
-        /// Option for exporting a session key
+        /// Option for exporting a session key.
         /// </summary>
         public const int SIMPLEBLOB = 1;
 
         /// <summary>
-        /// AES 256 symmetric key
+        /// AES 256 symmetric key.
         /// </summary>
         public const int CALG_AES_256 = (ALG_CLASS_DATA_ENCRYPT | ALG_TYPE_BLOCK | ALG_SID_AES_256);
 
         /// <summary>
-        /// ALG_CLASS_DATA_ENCRYPT
+        /// ALG_CLASS_DATA_ENCRYPT.
         /// </summary>
         public const int ALG_CLASS_DATA_ENCRYPT = (3) << (13);
 
         /// <summary>
-        /// ALG_TYPE_BLOCK
+        /// ALG_TYPE_BLOCK.
         /// </summary>
         public const int ALG_TYPE_BLOCK = (3) << (9);
 
         /// <summary>
-        /// ALG_SID_AES_256 -> 16
+        /// ALG_SID_AES_256 -> 16.
         /// </summary>
         public const int ALG_SID_AES_256 = 16;
 
@@ -300,7 +438,7 @@ namespace System.Management.Automation.Internal
 
     /// <summary>
     /// Defines a custom exception which is thrown when
-    /// a native CAPI call results in an error
+    /// a native CAPI call results in an error.
     /// </summary>
     /// <remarks>This exception is currently internal as it's not
     /// surfaced to the user. However, if we decide to surface errors
@@ -319,7 +457,7 @@ namespace System.Management.Automation.Internal
         #region Internal Properties
 
         /// <summary>
-        /// Error code returned by the native CAPI call
+        /// Error code returned by the native CAPI call.
         /// </summary>
         internal uint ErrorCode
         {
@@ -334,16 +472,16 @@ namespace System.Management.Automation.Internal
         #region Constructors
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(String.Empty)) { }
+        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
-        /// Constructor that will be used from within CryptoUtils
+        /// Constructor that will be used from within CryptoUtils.
         /// </summary>
         /// <param name="errorCode">error code returned by native
         /// crypto application</param>
-        /// <param name="message">error message associated with this failure</param>
+        /// <param name="message">Error message associated with this failure.</param>
         public PSCryptoException(uint errorCode, StringBuilder message)
             : base(message.ToString())
         {
@@ -351,16 +489,16 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Constructor with just message but no inner exception
+        /// Constructor with just message but no inner exception.
         /// </summary>
-        /// <param name="message">error message associated with this failure</param>
-        public PSCryptoException(String message) : this(message, null) { }
+        /// <param name="message">Error message associated with this failure.</param>
+        public PSCryptoException(string message) : this(message, null) { }
 
         /// <summary>
-        /// Constructor with inner exception
+        /// Constructor with inner exception.
         /// </summary>
-        /// <param name="message">error message</param>
-        /// <param name="innerException">inner exception</param>
+        /// <param name="message">Error message.</param>
+        /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
         public PSCryptoException(string message, Exception innerException) :
@@ -370,10 +508,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Constructor which has type specific serialization logic
+        /// Constructor which has type specific serialization logic.
         /// </summary>
-        /// <param name="info">serialization info</param>
-        /// <param name="context">context in which this constructor is called</param>
+        /// <param name="info">Serialization info.</param>
+        /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
@@ -388,10 +526,10 @@ namespace System.Management.Automation.Internal
 
         #region ISerializable Overrides
         /// <summary>
-        /// Returns base implementation
+        /// Returns base implementation.
         /// </summary>
-        /// <param name="info">serialization info</param>
-        /// <param name="context">context</param>
+        /// <param name="info">Serialization info.</param>
+        /// <param name="context">Context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -433,7 +571,7 @@ namespace System.Management.Automation.Internal
         #region Constructors
 
         /// <summary>
-        /// Private constructor
+        /// Private constructor.
         /// </summary>
         /// <param name="serverMode">indicates if this service
         /// provider is operating in server mode</param>
@@ -455,6 +593,7 @@ namespace System.Management.Automation.Internal
 
                 _hRSAKey = new PSSafeCryptKey();
             }
+
             _hSessionKey = new PSSafeCryptKey();
         }
 
@@ -463,9 +602,9 @@ namespace System.Management.Automation.Internal
         #region Internal Methods
 
         /// <summary>
-        /// Get the public key as a base64 encoded string
+        /// Get the public key as a base64 encoded string.
         /// </summary>
-        /// <returns>public key as base64 encoded string</returns>
+        /// <returns>Public key as base64 encoded string.</returns>
         internal string GetPublicKeyAsBase64EncodedString()
         {
             uint publicKeyLength = 0;
@@ -497,7 +636,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Generates an AEX-256 session key if one is not already generated
+        /// Generates an AEX-256 session key if one is not already generated.
         /// </summary>
         internal void GenerateSessionKey()
         {
@@ -525,13 +664,13 @@ namespace System.Management.Automation.Internal
         /// 1. Generate a AES-256 session key
         /// 2. Encrypt the session key with the Imported
         ///    RSA public key
-        /// 3. Encode result above as base 64 string and export
+        /// 3. Encode result above as base 64 string and export.
         /// </summary>
-        /// <returns>session key encrypted with receivers public key
-        /// and encoded as a base 64 string</returns>
+        /// <returns>Session key encrypted with receivers public key
+        /// and encoded as a base 64 string.</returns>
         internal string SafeExportSessionKey()
         {
-            //generate one if not already done.
+            // generate one if not already done.
             GenerateSessionKey();
 
             uint length = 0;
@@ -564,9 +703,9 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Import a public key into the provider whose context
-        /// has been obtained
+        /// has been obtained.
         /// </summary>
-        /// <param name="publicKey">base64 encoded public key to import</param>
+        /// <param name="publicKey">Base64 encoded public key to import.</param>
         internal void ImportPublicKeyFromBase64EncodedString(string publicKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(publicKey), "key cannot be null or empty");
@@ -585,7 +724,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Import a session key from the remote side into
-        /// the current CSP
+        /// the current CSP.
         /// </summary>
         /// <param name="sessionKey">encrypted session key as a
         /// base64 encoded string</param>
@@ -609,10 +748,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Encrypt the specified byte array
+        /// Encrypt the specified byte array.
         /// </summary>
-        /// <param name="data">data to encrypt</param>
-        /// <returns>encrypted byte array</returns>
+        /// <param name="data">Data to encrypt.</param>
+        /// <returns>Encrypted byte array.</returns>
         internal byte[] EncryptWithSessionKey(byte[] data)
         {
             // first make a copy of the original data.This is needed
@@ -670,10 +809,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Decrypt the specified buffer
+        /// Decrypt the specified buffer.
         /// </summary>
-        /// <param name="data">data to decrypt</param>
-        /// <returns>decrypted buffer</returns>
+        /// <param name="data">Data to decrypt.</param>
+        /// <returns>Decrypted buffer.</returns>
         internal byte[] DecryptWithSessionKey(byte[] data)
         {
             // first make a copy of the original data.This is needed
@@ -727,7 +866,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Generates key pair in a thread safe manner
-        /// the first time when required
+        /// the first time when required.
         /// </summary>
         internal void GenerateKeyPair()
         {
@@ -768,7 +907,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Indicates if a key exchange is complete
-        /// and this provider can encrypt
+        /// and this provider can encrypt.
         /// </summary>
         internal bool CanEncrypt
         {
@@ -776,6 +915,7 @@ namespace System.Management.Automation.Internal
             {
                 return _canEncrypt;
             }
+
             set
             {
                 _canEncrypt = value;
@@ -789,10 +929,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns a crypto service provider for use in the
         /// client. This will reuse the key that has been
-        /// generated
+        /// generated.
         /// </summary>
-        /// <returns>crypto service provider for
-        /// the client side</returns>
+        /// <returns>Crypto service provider for
+        /// the client side.</returns>
         internal static PSRSACryptoServiceProvider GetRSACryptoServiceProviderForClient()
         {
             PSRSACryptoServiceProvider cryptoProvider = new PSRSACryptoServiceProvider(false);
@@ -806,10 +946,10 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Returns a crypto service provider for use in the
-        /// server. This will not generate a key pair
+        /// server. This will not generate a key pair.
         /// </summary>
-        /// <returns>crypto service provider for
-        /// the server side</returns>
+        /// <returns>Crypto service provider for
+        /// the server side.</returns>
         internal static PSRSACryptoServiceProvider GetRSACryptoServiceProviderForServer()
         {
             PSRSACryptoServiceProvider cryptoProvider = new PSRSACryptoServiceProvider(true);
@@ -824,9 +964,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Checks the status of a call, if it had resulted in an error
         /// then obtains the last error, wraps it in an exception and
-        /// throws the same
+        /// throws the same.
         /// </summary>
-        /// <param name="value">value to examine</param>
+        /// <param name="value">Value to examine.</param>
         private void CheckStatus(bool value)
         {
             if (value)
@@ -845,7 +985,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// Dispose resources
+        /// Dispose resources.
         /// </summary>
         public void Dispose()
         {
@@ -853,7 +993,7 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        //[SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
+        // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -864,6 +1004,7 @@ namespace System.Management.Automation.Internal
                     {
                         _hSessionKey.Dispose();
                     }
+
                     _hSessionKey = null;
                 }
 
@@ -880,6 +1021,7 @@ namespace System.Management.Automation.Internal
                         {
                             _hRSAKey.Dispose();
                         }
+
                         _hRSAKey = null;
                     }
                 }
@@ -892,6 +1034,7 @@ namespace System.Management.Automation.Internal
                         {
                             _hProv.Dispose();
                         }
+
                         _hProv = null;
                     }
                 }
@@ -899,7 +1042,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Destructor
+        /// Destructor.
         /// </summary>
         ~PSRSACryptoServiceProvider()
         {
@@ -915,7 +1058,7 @@ namespace System.Management.Automation.Internal
 
     /// <summary>
     /// Helper for exchanging keys and encrypting/decrypting
-    /// secure strings for serialization in remoting
+    /// secure strings for serialization in remoting.
     /// </summary>
     internal abstract class PSRemotingCryptoHelper : IDisposable
     {
@@ -925,18 +1068,18 @@ namespace System.Management.Automation.Internal
         /// Crypto provider which will be used for importing remote
         /// public key as well as generating a session key, exporting
         /// it and performing symmetric key operations using the
-        /// session key
+        /// session key.
         /// </summary>
         protected PSRSACryptoServiceProvider _rsaCryptoProvider;
 
         /// <summary>
         /// Key exchange has been completed and both keys
-        /// available
+        /// available.
         /// </summary>
         protected ManualResetEvent _keyExchangeCompleted = new ManualResetEvent(false);
 
         /// <summary>
-        /// Object for synchronizing key exchange
+        /// Object for synchronizing key exchange.
         /// </summary>
         protected object syncObject = new object();
 
@@ -977,15 +1120,15 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Core logic to encrypt a string. Assumes session key is already generated
+        /// Core logic to encrypt a string. Assumes session key is already generated.
         /// </summary>
         /// <param name="secureString">
         /// secure string to be encrypted
         /// </param>
         /// <returns></returns>
-        protected String EncryptSecureStringCore(SecureString secureString)
+        protected string EncryptSecureStringCore(SecureString secureString)
         {
-            String encryptedDataAsString = null;
+            string encryptedDataAsString = null;
 
             if (_rsaCryptoProvider.CanEncrypt)
             {
@@ -998,6 +1141,7 @@ namespace System.Management.Automation.Internal
                     {
                         data[i] = Marshal.ReadByte(ptr, i);
                     }
+
                     Marshal.ZeroFreeCoTaskMemUnicode(ptr);
 
                     try
@@ -1012,24 +1156,24 @@ namespace System.Management.Automation.Internal
                             data[j] = 0;
                         }
                     }
-                } // if (ptr ...
-            } // if (rsa != null...
+                }
+            }
             else
             {
-                Dbg.Assert(false, "Session key not available to encrypt secure string");
+                throw new PSCryptoException(SecuritySupportStrings.CannotEncryptSecureString);
             }
 
             return encryptedDataAsString;
         }
 
         /// <summary>
-        /// Core logic to decrypt a secure string. Assumes session key is already available
+        /// Core logic to decrypt a secure string. Assumes session key is already available.
         /// </summary>
         /// <param name="encryptedString">
         /// encrypted string to be decrypted
         /// </param>
         /// <returns></returns>
-        protected SecureString DecryptSecureStringCore(String encryptedString)
+        protected SecureString DecryptSecureStringCore(string encryptedString)
         {
             // removing an earlier assert from here. It is
             // possible to encrypt and decrypt empty
@@ -1096,24 +1240,24 @@ namespace System.Management.Automation.Internal
         #region Internal Methods
 
         /// <summary>
-        /// Encrypt a secure string
+        /// Encrypt a secure string.
         /// </summary>
-        /// <param name="secureString">secure string to encrypt</param>
-        /// <returns>encrypted string</returns>
+        /// <param name="secureString">Secure string to encrypt.</param>
+        /// <returns>Encrypted string.</returns>
         /// <remarks>This method zeroes out all interim buffers used</remarks>
-        internal abstract String EncryptSecureString(SecureString secureString);
+        internal abstract string EncryptSecureString(SecureString secureString);
 
         /// <summary>
         /// Decrypt a string and construct a secure string from its
-        /// contents
+        /// contents.
         /// </summary>
-        /// <param name="encryptedString">encrypted string</param>
-        /// <returns>secure string object</returns>
+        /// <param name="encryptedString">Encrypted string.</param>
+        /// <returns>Secure string object.</returns>
         /// <remarks>This method zeroes out any interim buffers used</remarks>
-        internal abstract SecureString DecryptSecureString(String encryptedString);
+        internal abstract SecureString DecryptSecureString(string encryptedString);
 
         /// <summary>
-        /// Represents the session to be used for requesting public key
+        /// Represents the session to be used for requesting public key.
         /// </summary>
         internal abstract RemoteSession Session { get; set; }
 
@@ -1136,6 +1280,7 @@ namespace System.Management.Automation.Internal
                 {
                     _rsaCryptoProvider.Dispose();
                 }
+
                 _rsaCryptoProvider = null;
 
                 _keyExchangeCompleted.Dispose();
@@ -1143,7 +1288,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Resets the wait for key exchange
+        /// Resets the wait for key exchange.
         /// </summary>
         internal void CompleteKeyExchange()
         {
@@ -1155,7 +1300,7 @@ namespace System.Management.Automation.Internal
 
     /// <summary>
     /// Helper for exchanging keys and encrypting/decrypting
-    /// secure strings for serialization in remoting
+    /// secure strings for serialization in remoting.
     /// </summary>
     internal class PSRemotingCryptoHelperServer : PSRemotingCryptoHelper
     {
@@ -1163,7 +1308,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// This is the instance of runspace pool data structure handler
-        /// to use for negotiations
+        /// to use for negotiations.
         /// </summary>
         private RemoteSession _session;
 
@@ -1173,7 +1318,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Creates the encryption provider, but generates no key.
-        /// The key will be imported later
+        /// The key will be imported later.
         /// </summary>
         internal PSRemotingCryptoHelperServer()
         {
@@ -1192,14 +1337,14 @@ namespace System.Management.Automation.Internal
         {
             ServerRemoteSession session = Session as ServerRemoteSession;
 
-            //session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
-            //for newer clients, server will never initiate key exchange.
-            //for server, just the session key is required to encrypt/decrypt anything
+            // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
+            // for newer clients, server will never initiate key exchange.
+            // for server, just the session key is required to encrypt/decrypt anything
             if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
             {
                 _rsaCryptoProvider.GenerateSessionKey();
             }
-            else //older clients
+            else // older clients
             {
                 RunKeyExchangeIfRequired();
             }
@@ -1215,16 +1360,16 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Imports a public key from its base64 encoded string representation
+        /// Imports a public key from its base64 encoded string representation.
         /// </summary>
-        /// <param name="publicKeyAsString">public key in its string representation</param>
-        /// <returns>true on success</returns>
-        internal bool ImportRemotePublicKey(String publicKeyAsString)
+        /// <param name="publicKeyAsString">Public key in its string representation.</param>
+        /// <returns>True on success.</returns>
+        internal bool ImportRemotePublicKey(string publicKeyAsString)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
 
             // generate the crypto provider to use for encryption
-            //_rsaCryptoProvider = GenerateCryptoServiceProvider(false);
+            // _rsaCryptoProvider = GenerateCryptoServiceProvider(false);
 
             try
             {
@@ -1239,7 +1384,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Represents the session to be used for requesting public key
+        /// Represents the session to be used for requesting public key.
         /// </summary>
         internal override RemoteSession Session
         {
@@ -1247,6 +1392,7 @@ namespace System.Management.Automation.Internal
             {
                 return _session;
             }
+
             set
             {
                 _session = value;
@@ -1265,7 +1411,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                encryptedSessionKey = String.Empty;
+                encryptedSessionKey = string.Empty;
                 return false;
             }
 
@@ -1273,9 +1419,9 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets a helper with a test session
+        /// Gets a helper with a test session.
         /// </summary>
-        /// <returns>helper for testing</returns>
+        /// <returns>Helper for testing.</returns>
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperServer GetTestRemotingCryptHelperServer()
         {
@@ -1290,7 +1436,7 @@ namespace System.Management.Automation.Internal
 
     /// <summary>
     /// Helper for exchanging keys and encrypting/decrypting
-    /// secure strings for serialization in remoting
+    /// secure strings for serialization in remoting.
     /// </summary>
     internal class PSRemotingCryptoHelperClient : PSRemotingCryptoHelper
     {
@@ -1302,13 +1448,13 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Creates the encryption provider, but generates no key.
-        /// The key will be imported later
+        /// The key will be imported later.
         /// </summary>
         internal PSRemotingCryptoHelperClient()
         {
             _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForClient();
 
-            //_session = new RemoteSession();
+            // _session = new RemoteSession();
         }
 
         #endregion Constructors
@@ -1334,12 +1480,12 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Export the public key as a base64 encoded string
+        /// Export the public key as a base64 encoded string.
         /// </summary>
         /// <param name="publicKeyAsString">on execution will contain
         /// the public key as string</param>
-        /// <returns>true on success</returns>
-        internal bool ExportLocalPublicKey(out String publicKeyAsString)
+        /// <returns>True on success.</returns>
+        internal bool ExportLocalPublicKey(out string publicKeyAsString)
         {
             // generate keys - the method already takes of creating
             // only when its not already created
@@ -1362,7 +1508,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                publicKeyAsString = String.Empty;
+                publicKeyAsString = string.Empty;
                 return false;
             }
 
@@ -1375,7 +1521,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal bool ImportEncryptedSessionKey(string encryptedSessionKey)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
 
             try
             {
@@ -1390,14 +1536,14 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Represents the session to be used for requesting public key
+        /// Represents the session to be used for requesting public key.
         /// </summary>
         internal override RemoteSession Session { get; set; }
 
         /// <summary>
-        /// Gets a helper with a test session
+        /// Gets a helper with a test session.
         /// </summary>
-        /// <returns>helper for testing</returns>
+        /// <returns>Helper for testing.</returns>
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperClient GetTestRemotingCryptHelperClient()
         {

@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to clear the value of a property of an item at a specified path
+    /// A command to clear the value of a property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113284")]
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -26,16 +26,16 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -45,17 +45,17 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
-        /// The properties to clear from the item
+        /// The properties to clear from the item.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
@@ -63,13 +63,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Name
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -97,11 +97,12 @@ namespace Microsoft.PowerShell.Commands
                     propertyCollection,
                     context);
             }
+
             return InvokeProvider.Property.ClearPropertyDynamicParameters(
                 ".",
                 propertyCollection,
                 context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -117,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Clears the properties of an item at the specified path
+        /// Clears the properties of an item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -165,8 +166,8 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ClearItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

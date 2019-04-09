@@ -57,3 +57,27 @@ Describe "Get-PSDrive" -Tags "CI" {
         $dInfo.Used -ge 0 | Should -BeTrue
     }
 }
+
+Describe "Experimental Feature Temp: drive" -Tag Feature {
+    BeforeAll {
+        $configFilePath = Join-Path $testdrive "experimentalfeature.json"
+
+        @"
+        {
+            "ExperimentalFeatures": [
+              "PSTempDrive"
+            ]
+        }
+"@ > $configFilePath
+    }
+
+    It "TEMP: drive exists if experimental feature is enabled" {
+        $res = pwsh -outputformat xml -settingsfile $configFilePath -command "Get-PSDrive Temp"
+        $res.Name | Should -BeExactly "Temp"
+        $res.Root | Should -BeExactly ([System.IO.Path]::GetTempPath())
+    }
+
+    It "TEMP: drive does not exist if experimental feature is not enabled" {
+        { Get-PSDrive Temp -ErrorAction Stop } | Should -Throw -ErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
+    }
+}

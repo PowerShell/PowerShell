@@ -130,15 +130,15 @@ namespace Microsoft.WSMan.Management
     public enum AuthenticationMechanism
     {
         /// <summary>
-        /// Use no authentication
+        /// Use no authentication.
         /// </summary>
         None = 0x0,
         /// <summary>
-        /// Use Default authentication
+        /// Use Default authentication.
         /// </summary>
         Default = 0x1,
         /// <summary>
-        /// Use digest authentication for a remote operation
+        /// Use digest authentication for a remote operation.
         /// </summary>
         Digest = 0x2,
         /// <summary>
@@ -146,19 +146,19 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         Negotiate = 0x4,
         /// <summary>
-        /// Use basic authentication for a remote operation
+        /// Use basic authentication for a remote operation.
         /// </summary>
         Basic = 0x8,
         /// <summary>
-        /// Use kerberos authentication for a remote operation
+        /// Use kerberos authentication for a remote operation.
         /// </summary>
         Kerberos = 0x10,
         /// <summary>
-        /// Use client certificate authentication for a remote operation
+        /// Use client certificate authentication for a remote operation.
         /// </summary>
         ClientCertificate = 0x20,
         /// <summary>
-        /// Use CredSSP authentication for a remote operation
+        /// Use CredSSP authentication for a remote operation.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Credssp")]
         Credssp = 0x80,
@@ -935,7 +935,7 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         [DispId(5)]
-        String Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
+        string Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
 
         /// <summary><para><c>Enumerate</c> method of <c>IWSManSession</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
@@ -1058,6 +1058,7 @@ namespace Microsoft.WSMan.Management
     public class GPClass
     {
     }
+
     [ComImport, Guid("EA502723-A23D-11d1-A7D3-0000F87571E3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     interface IGroupPolicyObject
@@ -1135,6 +1136,7 @@ namespace Microsoft.WSMan.Management
              [In, MarshalAs(UnmanagedType.Bool)] bool bMachine);
 
         [DllImport("Userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LeaveCriticalPolicySection(
              [In] System.IntPtr hSection);
     }

@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Defines the implementation of the get-pfxcertificate cmdlet
+    /// Defines the implementation of the get-pfxcertificate cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113323")]
     [OutputType(typeof(X509Certificate2))]
@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -60,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the GetPfxCertificateCommand
-        /// class
+        /// class.
         /// </summary>
         public GetPfxCertificateCommand() : base()
         {

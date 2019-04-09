@@ -108,7 +108,7 @@ namespace System.Management.Automation.Runspaces
             td14.SerializationMethod = "SpecificProperties";
             td14.SerializationDepth = 2;
             td14.PropertySerializationSet  =
-                new PropertySetData(new [] { "Breakpoints", "ResumeAction", "SerializedInvocationInfo" }) { Name = "PropertySerializationSet" };
+                new PropertySetData(new[] { "Breakpoints", "ResumeAction", "SerializedInvocationInfo" }) { Name = "PropertySerializationSet" };
             yield return td14;
 
             var td15 = new TypeData(@"Deserialized.System.Management.Automation.DebuggerStopEventArgs", true);

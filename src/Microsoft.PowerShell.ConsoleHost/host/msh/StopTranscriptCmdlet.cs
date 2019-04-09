@@ -8,15 +8,15 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements the stop-transcript cmdlet
+    /// Implements the stop-transcript cmdlet.
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113415")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        /// Starts the transcription
+        /// Starts the transcription.
         /// </summary>
 
         protected override

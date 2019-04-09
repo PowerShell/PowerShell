@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     public enum WebSslProtocol
     {
         /// <summary>
-        ///  No SSL protocol will be set and the system defaults will be used.
+        /// No SSL protocol will be set and the system defaults will be used.
         /// </summary>
         Default = 0,
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         Tls = SslProtocols.Tls,
 
         /// <summary>
-        ///  Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
         /// </summary>
         Tls11 = SslProtocols.Tls11,
 
@@ -225,8 +225,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual int MaximumRedirection
         {
             get { return _maximumRedirection; }
+
             set { _maximumRedirection = value; }
         }
+
         private int _maximumRedirection = -1;
 
         /// <summary>
@@ -255,8 +257,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual WebRequestMethod Method
         {
             get { return _method; }
+
             set { _method = value; }
         }
+
         private WebRequestMethod _method = WebRequestMethod.Default;
 
         /// <summary>
@@ -269,8 +273,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual string CustomMethod
         {
             get { return _customMethod; }
+
             set { _customMethod = value; }
         }
+
         private string _customMethod;
 
         #endregion
@@ -397,30 +403,35 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
+
             if ((Authentication != WebAuthenticationType.None) && (Token != null) && (Credential != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict,
                                                        "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
+
             if ((Authentication == WebAuthenticationType.Basic) && (Credential == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied,
                                                        "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
+
             if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (Token == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied,
                                                        "WebCmdletAuthenticationTokenNotSuppliedException");
                 ThrowTerminatingError(error);
             }
+
             if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None) && (Uri.Scheme != "https"))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
                                                        "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
+
             if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && (Uri.Scheme != "https"))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
@@ -457,12 +468,14 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
+
             if ((Body != null) && (Form != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict,
                                                        "WebCmdletBodyFormConflictException");
                 ThrowTerminatingError(error);
             }
+
             if ((InFile != null) && (Form != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict,
@@ -504,6 +517,7 @@ namespace Microsoft.PowerShell.Commands
                                 errorRecord = GetValidationError(WebCmdletStrings.DirectoryPathSpecified,
                                                                  "WebCmdletInFileNotFilePathException", InFile);
                             }
+
                             _originalFilePath = InFile;
                             InFile = providerPaths[0];
                         }
@@ -592,6 +606,7 @@ namespace Microsoft.PowerShell.Commands
                     CryptographicException ex = new CryptographicException(WebCmdletStrings.ThumbprintNotFound);
                     throw ex;
                 }
+
                 foreach (X509Certificate2 tbCert in tbCollection)
                 {
                     X509Certificate certificate = (X509Certificate)tbCert;
@@ -627,6 +642,7 @@ namespace Microsoft.PowerShell.Commands
                     // UseDefaultCredentials will overwrite the supplied credentials.
                     webProxy.UseDefaultCredentials = true;
                 }
+
                 WebSession.Proxy = webProxy;
             }
 
@@ -705,6 +721,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     uriBuilder.Query = FormatDictionary(bodyAsDictionary);
                 }
+
                 uri = uriBuilder.Uri;
                 // set body to null to prevent later FillRequestStream
                 Body = null;
@@ -721,6 +738,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 uri = new Uri("http://" + uri.OriginalString);
             }
+
             return (uri);
         }
 
@@ -747,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = String.Empty;
+                string encodedValue = string.Empty;
                 if (value != null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
@@ -755,6 +773,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bodyBuilder.AppendFormat("{0}={1}", encodedKey, encodedValue);
             }
+
             return bodyBuilder.ToString();
         }
 
@@ -785,14 +804,14 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string unencoded = String.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
-            Byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return String.Format("Basic {0}", Convert.ToBase64String(bytes));
+            string unencoded = string.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
+            byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
+            return string.Format("Basic {0}", Convert.ToBase64String(bytes));
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
+            return string.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
         }
 
         private void ProcessAuthentication()
@@ -807,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, String.Format("Unrecognized Authentication value: {0}", Authentication));
+                Diagnostics.Assert(false, string.Format("Unrecognized Authentication value: {0}", Authentication));
             }
         }
 
@@ -824,8 +843,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for HttpResponseException.
         /// </summary>
-        /// <param name="message">Message for the exception</param>
-        /// <param name="response">Response from the HTTP server</param>
+        /// <param name="message">Message for the exception.</param>
+        /// <param name="response">Response from the HTTP server.</param>
         public HttpResponseException(string message, HttpResponseMessage response) : base(message)
         {
             Response = response;
@@ -872,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the supplied WebResponse object and push the resulting output into the pipeline.
         /// </summary>
-        /// <param name="response">Instance of a WebResponse object to be processed</param>
+        /// <param name="response">Instance of a WebResponse object to be processed.</param>
         internal abstract void ProcessResponse(HttpResponseMessage response);
 
         #endregion Abstract Methods
@@ -1034,6 +1053,7 @@ namespace Microsoft.PowerShell.Commands
                         // set the method if the parameter was provided
                         httpMethod = new HttpMethod(CustomMethod.ToString().ToUpperInvariant());
                     }
+
                     break;
             }
 
@@ -1122,11 +1142,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
-            // Default behavior is continue to send body content anyway after a short period
-            // Here it send the two part as a whole.
-            request.Headers.ExpectContinue = false;
-
             return (request);
         }
 
@@ -1138,7 +1153,7 @@ namespace Microsoft.PowerShell.Commands
             if (ContentType != null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                //request
+                // request
             }
             // ContentType == null
             else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
@@ -1163,6 +1178,7 @@ namespace Microsoft.PowerShell.Commands
                     // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
                     AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
                 }
+
                 SetRequestContent(request, formData);
             }
             // coerce body into a usable form
@@ -1177,29 +1193,24 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                if (content is FormObject)
+                if (content is FormObject form)
                 {
-                    FormObject form = content as FormObject;
                     SetRequestContent(request, form.Fields);
                 }
-                else if (content is IDictionary && request.Method != HttpMethod.Get)
+                else if (content is IDictionary dictionary && request.Method != HttpMethod.Get)
                 {
-                    IDictionary dictionary = content as IDictionary;
                     SetRequestContent(request, dictionary);
                 }
-                else if (content is XmlNode)
+                else if (content is XmlNode xmlNode)
                 {
-                    XmlNode xmlNode = content as XmlNode;
                     SetRequestContent(request, xmlNode);
                 }
-                else if (content is Stream)
+                else if (content is Stream stream)
                 {
-                    Stream stream = content as Stream;
                     SetRequestContent(request, stream);
                 }
-                else if (content is byte[])
+                else if (content is byte[] bytes)
                 {
-                    byte[] bytes = content as byte[];
                     SetRequestContent(request, bytes);
                 }
                 else if (content is MultipartFormDataContent multipartFormDataContent)
@@ -1209,7 +1220,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    SetRequestContent(request,
+                    SetRequestContent(
+                        request,
                         (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
                 }
             }
@@ -1303,6 +1315,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
             if (client == null) { throw new ArgumentNullException("client"); }
+
             if (request == null) { throw new ArgumentNullException("request"); }
 
             // Add 1 to account for the first request.
@@ -1371,7 +1384,7 @@ namespace Microsoft.PowerShell.Commands
                             requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
                         }
 
-                        string reqVerboseMsg = String.Format(
+                        string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Method,
@@ -1423,7 +1436,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// the main execution method for cmdlets derived from WebRequestPSCmdlet.
+        /// The main execution method for cmdlets derived from WebRequestPSCmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -1466,7 +1479,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (request.Content != null)
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
-                                string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                                string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
                                     request.RequestUri,
@@ -1492,14 +1505,14 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
-                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
+                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
 
                                 if (!_isSuccess)
                                 {
-                                    string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                    string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new HttpResponseException(message, response);
                                     ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -1522,10 +1535,12 @@ namespace Microsoft.PowerShell.Commands
                                             reader.Dispose();
                                         }
                                     }
-                                    if (!String.IsNullOrEmpty(detailMsg))
+
+                                    if (!string.IsNullOrEmpty(detailMsg))
                                     {
                                         er.ErrorDetails = new ErrorDetails(detailMsg);
                                     }
+
                                     ThrowTerminatingError(er);
                                 }
 
@@ -1533,6 +1548,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     ParseLinkHeader(response, uri);
                                 }
+
                                 ProcessResponse(response);
                                 UpdateSession(response);
 
@@ -1559,6 +1575,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
                                 }
+
                                 ThrowTerminatingError(er);
                             }
 
@@ -1568,6 +1585,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return;
                                 }
+
                                 uri = new Uri(_relationLink["next"]);
                                 followedRelLink++;
                             }
@@ -1606,14 +1624,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
+        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Byte[] content)
+        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
                 throw new ArgumentNullException("request");
@@ -1629,9 +1647,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
+        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1652,7 +1670,7 @@ namespace Microsoft.PowerShell.Commands
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    var mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1678,7 +1696,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
+            byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
             var byteArrayContent = new ByteArrayContent(bytes);
             request.Content = byteArrayContent;
 
@@ -1693,7 +1711,7 @@ namespace Microsoft.PowerShell.Commands
             if (xmlNode == null)
                 return 0;
 
-            Byte[] bytes = null;
+            byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
             if (doc != null && (doc.FirstChild as XmlDeclaration) != null)
             {
@@ -1715,9 +1733,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
+        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1738,9 +1756,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
+        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1751,6 +1769,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("request");
             }
+
             if (multipartContent == null)
             {
                 throw new ArgumentNullException("multipartContent");
@@ -1800,7 +1819,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new Uri(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
@@ -1850,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))
+            if (enumerate == false || fieldValue is string || !(fieldValue is IEnumerable))
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
@@ -1870,15 +1889,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
-        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
-        private StringContent GetMultipartStringContent(Object fieldName, Object fieldValue)
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
+        private StringContent GetMultipartStringContent(Object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
-            var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
+            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
             return result;
@@ -1887,13 +1906,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
-        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
+        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
         private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;
@@ -1905,8 +1924,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
-        /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
+        /// <param name="file">The file to use for the <see cref="StreamContent" /></param>
         private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));

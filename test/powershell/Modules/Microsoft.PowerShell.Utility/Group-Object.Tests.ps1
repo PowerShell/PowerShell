@@ -115,13 +115,20 @@ Describe "Group-Object" -Tags "CI" {
 
     It "User's scenario should work (see issue #6933 for link to stackoverflow question)" {
         # Sort numbers into two groups even succeeded, odd failed.
-        $result = 1..9 | foreach {[PSCustomObject]@{ErrorMessage = if ($_ % 2) {'SomeError'} else {''}}} |
+        $result = 1..9 | ForEach-Object {[PSCustomObject]@{ErrorMessage = if ($_ % 2) {'SomeError'} else {''}}} |
             Group-Object -Property {if ($_.ErrorMessage) {'Failed'} else {'Successful'}} -AsHashTable
 
         $result['Failed'].ErrorMessage.Count | Should -Be 5
         $result['Failed'].ErrorMessage[0] | Should -Be 'SomeError'
         $result['Successful'].ErrorMessage.Count | Should -Be 4
         $result['Successful'].ErrorMessage[0] | Should -Be ''
+    }
+
+    It "Should understand empty NoteProperty" {
+        $result = "dummy" | Select-Object -Property @{Name = 'X'; Expression = {}} | Group-Object X
+        $result.Count | Should -Be 1
+        $result[0].Name | Should -Be ""
+        $result[0].Group | Should -Be '@{X=}'
     }
 }
 

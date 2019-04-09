@@ -6,6 +6,7 @@
     <Description>Very tiny windows service to do service testing</Description>
     <AssemblyName>TestService</AssemblyName>
     <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
 

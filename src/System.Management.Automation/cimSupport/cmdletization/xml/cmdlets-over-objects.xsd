@@ -1,0 +1,1050 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- ##################################################################
+Copyright (c) Microsoft Corporation.  All rights reserved.
+Licensed under the MIT License.
+################################################################### -->
+<!DOCTYPE schema [
+  <!ENTITY csharpIdentifierLetterCharacterRegex "\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}">
+  <!ENTITY csharpIdentifierFirstCharacterRegex "&csharpIdentifierLetterCharacterRegex;_">
+  <!ENTITY csharpIdentifierOtherCharacterRegex "&csharpIdentifierLetterCharacterRegex;\p{Nd}_">
+  <!ENTITY csharpIdentifierRegex "[&csharpIdentifierFirstCharacterRegex;][&csharpIdentifierOtherCharacterRegex;]{0,100}">
+  <!ENTITY csharpNamespaceRegex "(&csharpIdentifierRegex;)(\.&csharpIdentifierRegex;){0,10}">
+  
+  <!ENTITY clrTypeSpecialCharacterRegex "\,\=\ \+\&amp;\*\[\]\.\\\-\&quot;">
+  <!ENTITY clrTypeRegex "[&csharpIdentifierOtherCharacterRegex;&clrTypeSpecialCharacterRegex;]{1,1000}">
+  
+  <!ENTITY powerShellVerbCharacterRegex "\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Lm}">
+  <!ENTITY powerShellNounCharacterRegex "&powerShellVerbCharacterRegex;\p{Nd}">
+  <!ENTITY powerShellAliasCharacterRegex "&powerShellNounCharacterRegex;_-">
+  <!ENTITY powerShellCmdletParameterCharacterRegex "&powerShellNounCharacterRegex;_">
+  <!ENTITY powerShellVerbRegex  "[&powerShellVerbCharacterRegex;]{1,100}">
+  <!ENTITY powerShellNounRegex  "[&powerShellNounCharacterRegex;]{1,100}">
+  <!ENTITY powerShellAliasRegex "[&powerShellAliasCharacterRegex;]{1,100}">
+  <!ENTITY powerShellCmdletParameterRegex "[&powerShellCmdletParameterCharacterRegex;]{1,100}">
+  <!ENTITY powerShellParameterSetRegex "[^,;]{1,100}">
+]>
+<!--
+ csharpIdentifierRegex based on C# Language Specification 3.0, section 2.4.2 Idenfifiers
+ - the C# spec allows \p{Pc}\p{Cf}\p{Mn}\{Mc} in csharpIdentifierOtherCharacterRegex, 
+   but those characters classes seem risky wrt code injection attacks, so they were
+   removed above.  
+   - '_' (ASCII 95) is the only character in \p{Pc} class out of the first 0..255 characters
+   - No characters in the first 0..255 characters belong to \p{Cf}, \p{Mn}, \p{Mc}
+ 
+ clrTypeRegex and clrTypeSpecialCharacterRegex are based on https://docs.microsoft.com/dotnet/framework/reflection-and-codedom/specifying-fully-qualified-type-names
+ 
+ clrTypeSpecialCharacterRegex includes the following characters;
+ 
+   - ',' - part of ReflectionDimension and TypeName productions in BNF
+   - '=' - part of AssemblyProperty production in BNF
+   - ' ' - unspecified in the docs, but apparently allowed (i.e. between NamespaceTypeName and AssemblyNameSpec in the TypeName production
+   - '+' - part of NestedTypeName production in BNF
+   - '&amp;' - part of ReferenceTypeSpec production in BNF
+   - '*' - part of ReflectionDimension production in BNF
+   - '[' and ']' - part of ArrayTypeSpec production in BNF
+   - '.' - part of ReflectionDimension and NamespaceTypeName productions in BNF
+   - '\' - an escape character
+   - '-' - required for Culture property of an Assembly.  
+           RFC-1766 defines the format of a culture identifier as:
+              Language-Tag = Primary-tag *( "-" Subtag )
+              Primary-tag = 1*8ALPHA
+              Subtag = 1*8ALPHA
+   - '&quot;' - unspecified in the docs, but used in the examples (i.e. Culture="")
+        
+   
+
+-->
+<xsd:schema 
+    elementFormDefault="qualified"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:cps="http://schemas.microsoft.com/cmdlets-over-objects/2009/11"
+    targetNamespace="http://schemas.microsoft.com/cmdlets-over-objects/2009/11"
+>
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en-us">
+      This schema defines the format of PowerShell CIM Modules.
+      A PowerShell CIM Module defines a set of cmdlets that interact with a CIM class.      
+      
+      A PowerShell CIM Module needs to be saved in a file with ".cdxml" extension.
+      A ".cdxml" file can be imported into a PowerShell session directly by Import-Module cmdlet,
+      or by referring to the ".cdxml" file from NestedModules or RootModule entry of
+      a module manifest (a ".psd1" file) and then importing the ".psd1" file by Import-Module cmdlet.
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:element name="PowerShellMetadata">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Class" type="cps:ClassMetadata" />
+        <xsd:element name="Enums" type="cps:EnumMetadata" minOccurs="0" />
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:key name="UniqueNamesOfEnums">
+      <xsd:selector xpath=".//cps:Enums/cps:Enum" />
+      <xsd:field xpath="@EnumName" />
+    </xsd:key>
+    <xsd:unique name="UniqueCmdletAliases">
+      <xsd:selector xpath=".//cps:CmdletMetadata" />
+      <xsd:field xpath="@Aliases" />
+    </xsd:unique>
+  </xsd:element>
+  
+  <!-- ############################################################ -->
+  <!-- # ENUM ##################################################### -->
+
+  <xsd:complexType name="EnumMetadata">
+    <xsd:sequence>
+      <xsd:element name="Enum" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Value" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="Name" type="cps:EnumValueName" use="required" />
+                <xsd:attribute name="Value" type="xsd:integer" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          
+          <xsd:attribute name="EnumName" type="cps:EnumTypeName" use="required">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en-us">
+                EnumName attribute specifies the name of a .NET enum.
+                This is the name to use in a PSType attribute.
+                
+                The name should include a namespace to avoid naming conflicts 
+                (i.e. the name should be "Networking.MyEnum" rather than "MyEnum").
+                
+                The system will prefix the name of the enum with the following namespace: "Microsoft.PowerShell.Cmdletization.GeneratedTypes"
+                (i.e. "Networking.MyEnum" will become "Microsoft.PowerShell.Cmdletization.GeneratedTypes.Networking.MyEnum").
+                When referring to the enum in types.ps1xml and format.ps1xml files, one has to use the full, prefixed name of the enum.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+          
+          <xsd:attribute name="UnderlyingType" type="cps:PowerShellTypeIdentifier" use="optional">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en-us">
+                Underlying type of the enum.
+                
+                C# Language Specification allows (in section 4.1.9 "Enumeration types") only the following
+                underlying types: 
+                byte (System.Byte), 
+                sbyte (System.SByte), 
+                short (System.Int16), 
+                ushort (System.UInt16), 
+                int (System.Int32), 
+                uint (System.UInt32), 
+                long (System.Int64),
+                ulong (System.UInt64).
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+
+          <xsd:attribute name="BitwiseFlags" type="xsd:boolean" use="optional">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en-us">
+                BitwiseFlags attribute specifies if the .NET enum will be decorated with a System.FlagsAttribute.                
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+        <xsd:key name="UniqueNamesOfEnumValues">
+          <xsd:selector xpath=".//cps:Value" />
+          <xsd:field xpath="@Name" />
+        </xsd:key>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- ############################################################ -->
+  <!-- # CLASS #################################################### -->
+
+  <xsd:complexType name="ClassMetadata">
+
+    <xsd:sequence>
+      <xsd:element name="Version" type="cps:VersionString">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en-us">
+            Version element is semantically equivalent to the ModuleVersion entry in a module manifest (psd1) file.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="DefaultNoun" type="cps:Noun">
+        <xsd:annotation>
+          <xsd:documentation>
+            DefaultNoun element specified the default noun for cmdlets defined in this document.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="InstanceCmdlets" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="GetCmdletParameters" type="cps:GetCmdletParameters">
+              <xsd:unique name="UniqueCmdletParameterNamesUnderGetCmdletParametersElement_1">
+                <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+                <xsd:field xpath="@PSName" />
+              </xsd:unique>
+              <xsd:unique name="UniqueCmdletParameterAliasesUnderGetCmdletParametersElement_1">
+                <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+                <xsd:field xpath="@Aliases" />
+              </xsd:unique>
+            </xsd:element>
+
+            <xsd:element name="GetCmdlet" type="cps:GetCmdletMetadata" minOccurs="0" />
+            <xsd:element name="Cmdlet" type="cps:InstanceCmdletMetadata" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <xsd:element name="StaticCmdlets" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="Cmdlet" type="cps:StaticCmdletMetadata">
+              <xsd:unique name="UniqueParameterSetNamesInStaticCmdlet">
+                <xsd:selector xpath=".//cps:Method" />
+                <xsd:field xpath="@CmdletParameterSet" />
+              </xsd:unique>
+              <xsd:keyref name="DefaultCmdletParameterSetKeyRef" refer="cps:UniqueParameterSetNamesInStaticCmdlet">
+                <xsd:selector xpath=".//cps:CmdletMetadata" />
+                <xsd:field xpath="@DefaultCmdletParameterSet" />
+              </xsd:keyref>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="CmdletAdapterPrivateData" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Data" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                    <xsd:attribute name="Name" type="cps:NonEmptyString" use="required" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+        <xsd:key name="UniqueNamesOfPrivateDataElements">
+          <xsd:selector xpath=".//cps:Data" />
+          <xsd:field xpath="@Name" />
+        </xsd:key>
+      </xsd:element>
+
+    </xsd:sequence>
+
+    <xsd:attribute name="CmdletAdapter" type="cps:PowerShellTypeIdentifier" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          CmdletAdapter attribute specifies which .NET class is responsible for translating
+          cmdlet invocations into queries and method invocations.  
+          
+          If this attribute is ommited, then by default the cmdlets are translated into WMI queries and method invocations. 
+          
+          The class specified here has to be derived from Microsoft.PowerShell.Cmdletization.CmdletAdapter class.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="ClassName" type="cps:NonEmptyString" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          ClassName attribute specified the class that the cmdlets work against.
+          
+          Example: "root/cimv2/Win32_Process"
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="ClassVersion" type="cps:NonEmptyString" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          ClassVersion attribute describes the version of the implementation of the class from the ClassName attribute.
+
+          Contents of the ClassVersion attribute are passed without interpretation inside
+          WMI's custom operation option named "MI_OPERATIONOPTIONS_PROVIDERVERSION".
+          WMI infrastructure will compare this value against the contents of the [ClassVersion] qualifier of the WMI class
+          and provide descriptive error message if it cannot invoke the WMI provider - i.e. if the client attempts to use a non-existant method, property or parameter).
+          If WMI infrastructure can invoke the WMI provider, then the provider is responsible for further versioning decisions.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+  </xsd:complexType>
+
+  <!-- ############################################################ -->
+  <!-- # CMDLETS ################################################## -->
+
+  <xsd:complexType name="InstanceCmdletMetadata">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-us">
+        Cmdlet element under InstanceCmdlets element defines a cmdlet that wraps an instance method.
+        
+        Cmdlet parameters of a cmdlet defined this way are a sum of 
+        1) cmdlet parameters defined through GetCmdletParameters elements
+        2) cmdlet parameters mapped to input parameters of the method defined by Method element
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="CmdletMetadata" type="cps:CommonCmdletMetadata" />
+      <xsd:element name="Method" type="cps:InstanceMethodMetadata">
+        <xsd:unique name="UniqueCmdletParameterNamesUnderMethodElement_1">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@PSName" />
+        </xsd:unique>
+      </xsd:element>
+      <xsd:element name="GetCmdletParameters" type="cps:GetCmdletParameters" minOccurs="0">
+        <xsd:unique name="UniqueCmdletParameterNamesUnderGetCmdletParametersElement_2">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@PSName" />
+        </xsd:unique>
+        <xsd:unique name="UniqueCmdletParameterAliasesUnderGetCmdletParametersElement_2">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@Aliases" />
+        </xsd:unique>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="StaticCmdletMetadata">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-us">
+        Cmdlet element under StaticCmdlets element defines a cmdlet that wraps one or more static methods.
+        
+        Cmdlet parameters of a cmdlet defined this way are mapped to input parameters of methods defined by Method element
+        Each wrapped method corresponds to a parameter set of the cmdlet.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="CmdletMetadata">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="cps:CommonCmdletMetadata">
+              <xsd:attribute name="DefaultCmdletParameterSet" type="cps:ParameterSetName" use="optional" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Method" type="cps:StaticMethodMetadata" maxOccurs="unbounded">
+        <xsd:unique name="UniqueCmdletParameterNamesUnderMethodElement_2">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@PSName" />
+        </xsd:unique>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="GetCmdletMetadata">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-us">
+        GetCmdlet element defines cmdlet metadata for the cmdlet that queries for object instances.
+        
+        If GetCmdlet element is ommited, then the default verb (&quot;Get&quot;) and noun (based on &lt;DefaultNoun&gt; element) are going to be used.
+        
+        GetCmdlet element is typically used for one of the following items:
+        - To allow the Get cmdlet to have different GetCmdletParameters than other cmdlets (for example to make all parameters optional for Get cmdlet, but make some parameters mandatory for other cmdlets)
+        - To change the verb of the cmdlet (for example to use &quot;Find&quot; where appropriate)
+        - To define aliases for the cmdlet
+        - To use obsolete attribute for the cmdlet
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="CmdletMetadata" type="cps:CommonCmdletMetadata" />
+      <xsd:element name="GetCmdletParameters" type="cps:GetCmdletParameters" minOccurs="0">
+        <xsd:unique name="UniqueCmdletParameterNamesUnderGetCmdletParametersElement_3">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@PSName" />
+        </xsd:unique>
+        <xsd:unique name="UniqueCmdletParameterAliasesUnderGetCmdletParametersElement_3">
+          <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+          <xsd:field xpath="@Aliases" />
+        </xsd:unique>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="CommonCmdletMetadata">
+    <xsd:sequence>
+      <xsd:element name="Obsolete" type="cps:ObsoleteAttributeMetadata" minOccurs="0" />
+    </xsd:sequence>
+    
+    <xsd:attribute name="Verb" type="cps:Verb" use="required">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          Verb attribute specifies the verb of the cmdlet.
+          
+          Please refer to Cmdlet Design Guidelines for a list of approved verbs.
+          
+          Verb attribute is equivalent to the verbName parameter of System.Management.Automation.CmdletAttribute constructor.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="Noun" type="cps:Noun" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          Noun attribute specifies the noun of the cmdlet.
+          
+          If the Noun attribute is ommited, then contents of the DefaultNoun element are used.
+          
+          Noun attribute is equivalent to the nounName parameter of System.Management.Automation.CmdletAttribute constructor.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="Aliases" type="cps:NonEmptyListOfAliases" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          Aliases attribute specifies a white-space separated list of aliases for the cmdlet.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="ConfirmImpact" type="cps:ConfirmImpact" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          ConfirmImpact attribute specifies the impact of the cmdlet.
+          
+          ConfirmImpact attribute determines the default -Confirm and -WhatIf behavior.
+          
+          ConfirmImpact attribute is equivalent to the ConfirmImpact property of System.Management.Automation.CmdletAttribute.
+          Presence of the ConfirmImpact attribute is equivalent to setting to true the SupportsShouldProcess property of System.Management.Automation.CmdletAttribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="HelpUri" type="xsd:anyURI" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          HelpUri attribute specifies the URI with the help content.
+          
+          HelpUri attribute is used for the following help experience: Get-Help -Online &lt;cmdlet name&gt;
+          
+          HelpUri attribute is equivalent to the HelpUri property of System.Management.Automation.CmdletAttribute
+          
+          Example: "http://go.microsoft.com/fwlink/?LinkID=113309"
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <!-- ############################################################ -->
+  <!-- # METHODS ################################################## -->
+
+  <xsd:complexType name="StaticMethodMetadata">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CommonMethodMetadata">
+        <xsd:sequence>
+          <xsd:element name="Parameters" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="Parameter" type="cps:StaticMethodParameterMetadata" maxOccurs="unbounded" />
+              </xsd:sequence>
+            </xsd:complexType>
+            <xsd:key name="UniqueParameterNamesWithinStaticMethod">
+              <xsd:selector xpath=".//cps:Parameter" />
+              <xsd:field xpath="@ParameterName" />
+            </xsd:key>
+            <xsd:unique name="UniquePositionWithinStaticMethodParameters">
+              <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+              <xsd:field xpath="@Position" />
+            </xsd:unique>
+          </xsd:element>
+        </xsd:sequence>
+        
+        <xsd:attribute name="CmdletParameterSet" type="cps:ParameterSetName" use="optional">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              CmdletParameterSet attribute specifies the name of a cmdlet parameter set associated with the static method.
+              
+              If CmdletParameterSet is ommited, then the name of the cmdlet parameter set is auto-generated based on the name of the method.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="InstanceMethodMetadata">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CommonMethodMetadata">
+        <xsd:sequence>
+          <xsd:element name="Parameters" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="Parameter" type="cps:InstanceMethodParameterMetadata" maxOccurs="unbounded" />
+              </xsd:sequence>
+            </xsd:complexType>
+            <xsd:key name="UniqueParameterNamesWithinMethod">
+              <xsd:selector xpath=".//cps:Parameter" />
+              <xsd:field xpath="@ParameterName" />
+            </xsd:key>
+            <xsd:unique name="UniquePositionWithinMethodParameters">
+              <xsd:selector xpath=".//cps:CmdletParameterMetadata" />
+              <xsd:field xpath="@Position" />
+            </xsd:unique>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CommonMethodMetadata">
+    <xsd:sequence>
+      <xsd:element name="ReturnValue" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Type" type="cps:TypeMetadata" />
+            <xsd:element name="CmdletOutputMetadata" type="cps:CmdletOutputMetadata" minOccurs="0" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+
+    <xsd:attribute name="MethodName" type="cps:NonEmptyString" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          MethodName attribute specified the name of the method that the cmdlet invocations are mapped to.
+          
+          Some method names are recognized and handled in a special way. 
+          "cim:CreateInstance" is mapped to the WMI's static, intrinsic CreateInstance method.  Names of method parameters have to map to names of properties.
+          "cim:ModifyInstance" is mapped to the WMI's instance, intrinsic ModifyInstance method.  Names of method parameters have to map to names of properties.
+          "cim:DeleteInstance" is mapped to the WMI's instance, intrinsic DeleteInstance method.  All method parameters are ignored.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="StaticMethodParameterMetadata">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CommonMethodParameterMetadata">
+        <xsd:sequence>
+          <xsd:element name="CmdletParameterMetadata" type="cps:CmdletParameterMetadataForStaticMethodParameter" minOccurs="0" />
+          <xsd:element name="CmdletOutputMetadata" type="cps:CmdletOutputMetadata" minOccurs="0" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="InstanceMethodParameterMetadata">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CommonMethodParameterMetadata">
+        <xsd:sequence>
+          <xsd:element name="CmdletParameterMetadata" type="cps:CmdletParameterMetadataForInstanceMethodParameter" minOccurs="0" />
+          <xsd:element name="CmdletOutputMetadata" type="cps:CmdletOutputMetadata" minOccurs="0" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CommonMethodParameterMetadata">
+    <xsd:sequence>
+      <xsd:element name="Type" type="cps:TypeMetadata" />
+    </xsd:sequence>
+    <xsd:attribute name="ParameterName" type="cps:NonEmptyString" use="required" />
+    <xsd:attribute name="DefaultValue" type="xsd:string" use="optional" />
+  </xsd:complexType>
+  
+  <!-- ############################################################ -->
+  <!-- # PROPERTIES METADATA ###################################### -->
+
+  <xsd:complexType name="GetCmdletParameters">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-us">
+        GetCmdletParameters element defines cmdlet parameters used to select object instances.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="QueryableProperties" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Property" type="cps:PropertyMetadata" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+        <xsd:key name="PropertyNameUnderQueryableProperties">
+          <xsd:selector xpath=".//cps:Property" />
+          <xsd:field xpath="@PropertyName" />
+        </xsd:key>
+      </xsd:element>
+      <xsd:element name="QueryableAssociations" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Association" type="cps:Association" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="QueryOptions" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Option" type="cps:QueryOption" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="DefaultCmdletParameterSet" type="cps:ParameterSetName" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="QueryOption">
+    <xsd:sequence>
+      <xsd:element name="Type" type="cps:TypeMetadata" />
+      <xsd:element name="CmdletParameterMetadata" type="cps:CmdletParameterMetadataForGetCmdletParameter" minOccurs="0" />
+    </xsd:sequence>
+    <xsd:attribute name="OptionName" type="cps:NonEmptyString" use="required" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="Association">
+    <xsd:sequence>
+      <xsd:element name="AssociatedInstance">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Type" type="cps:TypeMetadata" />
+            <xsd:element name="CmdletParameterMetadata" type="cps:CmdletParameterMetadataForGetCmdletFilteringParameter" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    
+    <xsd:attribute name="Association" type="cps:NonEmptyString" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Association attribute specifies the name of the association between the cmdlet argument and the instances the cmdlet acts against.
+          
+          Association attribute is equivalent to the associationClassName parameter of EnumerateAssociatedInstances method of Microsoft.Management.Infrastructure.CimSession class.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="SourceRole" type="cps:NonEmptyString" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          SourceRole attribute specifies the role of the cmdlet argument (in the association between the cmdlet argument and the instances the cmdlet acts against).
+
+          SourceRole attribute is equivalent to the sourceRole parameter of EnumerateAssociatedInstances method of Microsoft.Management.Infrastructure.CimSession class.
+          SourceRole should be the name of a property on the class specified in the Association attribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+    <xsd:attribute name="ResultRole" type="cps:NonEmptyString" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          ResultRole attribute specifies the role of the cmdlet argument (in the association between the cmdlet argument and the instances the cmdlet acts against).
+
+          ResultRole attribute is equivalent to the resultRole parameter of EnumerateAssociatedInstances method of Microsoft.Management.Infrastructure.CimSession class.
+          ResultRole should be the name of a property on the class specified in the Association attribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+  </xsd:complexType>
+
+  <xsd:complexType name="PropertyMetadata">
+    <xsd:sequence>
+      <xsd:element name="Type" type="cps:TypeMetadata" />
+
+      <xsd:choice maxOccurs="unbounded">
+        <xsd:element name="RegularQuery" type="cps:WildcardablePropertyQuery">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              RegularQuery element defines a cmdlet parameter that limits which objects will be processed by the cmdlet
+              - only objects with a property value equal to the cmdlet parameter argument will be processed.
+              
+              Comparison of strings and characters is always case-insensitive.
+              
+              Example for &lt;RegularQuery&gt; element that is applied to an ObjectId property:
+                The following cmdlet invocation:
+                  Get-MyObject -ObjectId 123,456
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE ((ObjectId = 123) OR (ObjectId = 456)) 
+                  
+              Example for &lt;RegularQuery AllowGlobbing=&quot;false&quot; &gt; element that is applied to a Name property:
+                The following cmdlet invocation:
+                  Get-MyObject -LiteralName p*,q* 
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE ((Name = &quot;p*&quot;) OR (Name = &quot;q*&quot;)) 
+                  
+              Example for &lt;RegularQuery AllowGlobbing=&quot;true&quot; &gt; element that is applied to a Name property:
+                The following cmdlet invocation:
+                  Get-MyObject -Name p*,q* 
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE ((Name like &quot;p%&quot;) OR (Name like &quot;q%&quot;)) 
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element name="ExcludeQuery" type="cps:WildcardablePropertyQuery">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              ExcludeQuery element defines a cmdlet parameter that limits which objects will be processed by the cmdlet
+              - only objects with a property value *not* equal to the cmdlet parameter argument will be processed.
+              
+              Comparison of strings and characters is always case-insensitive.
+              
+              Example for &lt;ExcludeQuery&gt; element that is applied to an ObjectId property:
+                The following cmdlet invocation:
+                  Get-MyObject -ExcludeObjectId 123,456
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE ((NOT Name = 123) AND (NOT Name = 456)) 
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+
+        <xsd:element name="MinValueQuery" type="cps:PropertyQuery">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              MinValueQuery element defines a cmdlet parameter that limits which objects will be processed by the cmdlet
+              - only objects with a property value greater than or equal to the cmdlet parameter argument will be processed.
+              
+              Example for &lt;MinValueQuery&gt; element that is applied to an WorkingSet property:
+                The following cmdlet invocation:
+                  Get-MyObject -MinWorkingSet 123
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE (WorkingSet &gt;= 123)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+
+        <xsd:element name="MaxValueQuery" type="cps:PropertyQuery">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              MaxValueQuery element defines a cmdlet parameter that limits which objects will be processed by the cmdlet
+              - only objects with a property value less than or equal to the cmdlet parameter argument will be processed.
+
+              Example for &lt;MaxValueQuery&gt; element that is applied to an WorkingSet property:
+                The following cmdlet invocation:
+                  Get-MyObject -MaxWorkingSet 123
+                will be translated into the following WQL query:
+                  SELECT * FROM MyObject WHERE (WorkingSet =&lt; 123)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="PropertyName" type="cps:NonEmptyString" use="required" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="WildcardablePropertyQuery">
+    <xsd:complexContent>
+      <xsd:extension base="cps:PropertyQuery">
+        <xsd:attribute name="AllowGlobbing" type="xsd:boolean" use="optional">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              AllowGlobbing attribute specifies if strings with globbing characters (wildcards) are supported.  
+              
+              Example of a wildcard: "foo*" (matches all strings beginning with "foo")
+              
+              If AllowGlobbing attribute is ommited then its value is based on the type of the filtered property.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="PropertyQuery">
+    <xsd:sequence>
+      <xsd:element name="CmdletParameterMetadata" type="cps:CmdletParameterMetadataForGetCmdletFilteringParameter" minOccurs="0" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- ############################################################ -->
+  <!-- # COMMON PROPERTIES/PARAMETERS METADATA##################### -->
+
+  <xsd:complexType name="CmdletParameterMetadataForStaticMethodParameter">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CmdletParameterMetadata">
+        <xsd:attribute name="ValueFromPipeline" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="ValueFromPipelineByPropertyName" type="xsd:boolean" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CmdletParameterMetadataForInstanceMethodParameter">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CmdletParameterMetadata">
+        <xsd:attribute name="ValueFromPipelineByPropertyName" type="xsd:boolean" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CmdletParameterMetadataForGetCmdletFilteringParameter">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CmdletParameterMetadataForGetCmdletParameter">
+        <xsd:attribute name="ErrorOnNoMatch" type="xsd:boolean" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="CmdletParameterMetadataForGetCmdletParameter">
+    <xsd:complexContent>
+      <xsd:extension base="cps:CmdletParameterMetadata">
+        <xsd:attribute name="ValueFromPipeline" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="ValueFromPipelineByPropertyName" type="xsd:boolean" use="optional" />
+        
+        <xsd:attribute name="CmdletParameterSets" type="cps:NonEmptyListOfParameterSetNames" use="optional">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+              CmdletParameterSets attribute is a whitespace-separated list of names of parameter sets,
+              that the cmdlet parameter should belong to.
+              
+              If this parameter is ommited, then the cmdlet parameter belongs to all parameter sets.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="CmdletParameterMetadata">
+    <xsd:sequence>
+      <xsd:element name="AllowEmptyCollection" minOccurs="0" />
+      <xsd:element name="AllowEmptyString" minOccurs="0" />
+      <xsd:element name="AllowNull" minOccurs="0" />
+      <xsd:element name="ValidateNotNull" minOccurs="0" />
+      <xsd:element name="ValidateNotNullOrEmpty" minOccurs="0" />
+      <xsd:element name="ValidateCount" minOccurs="0">
+        <xsd:complexType>
+          <xsd:attribute name="Min" type="xsd:nonNegativeInteger" use="required" />
+          <xsd:attribute name="Max" type="xsd:nonNegativeInteger" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ValidateLength" minOccurs="0">
+        <xsd:complexType>
+          <xsd:attribute name="Min" type="xsd:nonNegativeInteger" use="required" />
+          <xsd:attribute name="Max" type="xsd:nonNegativeInteger" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+      <!-- ValidatePattern omitted - CDXML does not allow DOS attacks against PS client --> 
+      <xsd:element name="ValidateRange" minOccurs="0">
+        <xsd:complexType>
+          <xsd:attribute name="Min" type="xsd:integer" use="required" />
+          <xsd:attribute name="Max" type="xsd:integer" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+      <!-- ValidateScript omitted - CDXML does not allow execution of arbitrary code in PS client --> 
+      <xsd:element name="ValidateSet" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="AllowedValue" type="xsd:string" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Obsolete" type="cps:ObsoleteAttributeMetadata" minOccurs="0" />
+    </xsd:sequence>
+
+    <xsd:attribute name="IsMandatory" type="xsd:boolean" use="optional" />
+
+    <xsd:attribute name="Aliases" type="cps:NonEmptyListOfAliases" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          Aliases attribute specifies a white-space separated list of aliases for the cmdlet parameter.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+    <xsd:attribute name="PSName" type="cps:CmdletParameterName" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          PSName attribute specifies the name of a cmdlet parameter.
+          
+          If PSName attribute is ommited then it is based on the contents of PropertyName or ParameterName or OptionName attribute (whichever one is applicable).
+          
+          Example:
+            &lt;Property PropertyName=&quot;Name&quot;&gt;
+              ...
+              &lt;!-- &quot;Name&quot; is used as the cmdlet parameter name --&gt;
+              &lt;RegularQuery AllowGlobbing=&quot;true&quot; /&gt;
+              &lt;!-- &quot;LiteralName&quot; is used as the cmdlet parameter name --&gt;
+              &lt;RegularQuery AllowGlobbing=&quot;false&quot;&gt;
+                &lt;CmdletParameterMetadata PSName=&quot;LiteralName&quot; /&gt;
+              &lt;/RegularQuery&gt;
+            &lt;/Property&gt;
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="Position" type="xsd:nonNegativeInteger" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          Position attribute specifies position of the cmdlet parameter.
+          
+          If Position attribute is ommited, then the cmdlet parameter cannot be used positionally - the user always has to explicitly specify the name of the parameter.
+          
+          System may change relative parameter positions to guarantee that cmdlet parameters defined by GetCmdletParameters element are always
+          before cmdlet parameters defined under Method element. 
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="CmdletOutputMetadata">
+    <xsd:sequence>
+      <xsd:element name="ErrorCode" minOccurs="0">
+      </xsd:element>
+    </xsd:sequence>
+    
+    <xsd:attribute name="PSName" type="cps:CmdletOutputName" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="ObsoleteAttributeMetadata">
+    <xsd:attribute name="Message" type="cps:ObsoleteMessage" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="TypeMetadata">
+    <xsd:attribute name="PSType" type="cps:PowerShellTypeIdentifier" use="required">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          PSType attribute specifies the name of the .NET type of the cmdlet parameter.
+          
+          Example: "System.String"
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+    <xsd:attribute name="ETSType" type="cps:NonEmptyString" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+          ETSType attribute specifies the PowerShell type name of the type of the cmdlet parameter.
+          
+          ETSType attribute is equivalent to System.Management.Automation.PSTypeNameAttribute.
+          
+          Example: "Microsoft.Management.Infrastructure.CimInstance#Win32_Process"
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+  </xsd:complexType>
+
+  <!-- ############################################################ -->
+  <!-- # SIMPLE TYPES ############################################# -->
+
+  <xsd:simpleType name="NonEmptyListOfParameterSetNames">
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="cps:ParameterSetName" />
+      </xsd:simpleType>
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="NonEmptyListOfAliases">
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="cps:Alias" />
+      </xsd:simpleType>
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="VersionString">
+    <xsd:annotation>
+      <xsd:documentation>
+        Represents a version number that consist of two to four components: major, minor, build, and revision.
+        String representation of a version is "major.minor[.build[.revision]]" (optional components are shown in square brackets).
+        All defined components MUST be integers greater than or equal to 0.
+        For example, if the major number is 6, the minor number is 2, the build number is 1, and the revision number is 3, then string representation of the version would be "6.2.1.3".
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[12]?[0-9]{1,9}\.[12]?[0-9]{1,9}(\.[12]?[0-9]{1,9}(\.[12]?[0-9]{1,9})?)?" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="EnumValueName">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&csharpIdentifierRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="EnumTypeName">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="200" />
+      <xsd:pattern value="&csharpNamespaceRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="PowerShellTypeIdentifier">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="1000" />
+      <xsd:pattern value="&clrTypeRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="NonEmptyString">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Verb">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellVerbRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Noun">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellNounRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Alias">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellAliasRegex;" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ParameterSetName">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellParameterSetRegex;" /> 
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ObsoleteMessage">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="CmdletParameterName">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellCmdletParameterRegex;" /> 
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="CmdletOutputName">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value="&powerShellCmdletParameterRegex;" /> 
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ConfirmImpact">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="None" />
+      <xsd:enumeration value="Low" />
+      <xsd:enumeration value="Medium" />
+      <xsd:enumeration value="High" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+<Import Project="..\..\PowerShell.Common.props" />
+  <PropertyGroup>
+    <Description>Shim for global tool to select appropriate runtime</Description>
+    <AssemblyName>Microsoft.PowerShell.GlobalTool.Shim</AssemblyName>
+    <OutputType>EXE</OutputType>
+    <RootNamespace>Microsoft.PowerShell.GlobalTool.Shim</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -37,10 +37,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Gets the message resource id for the specified event id
+        /// Gets the message resource id for the specified event id.
         /// </summary>
         /// <param name="eventId">The event id for the message resource to retrieve.</param>
-        /// <param name="parameterCount">The number of parameters required by the message resource</param>
+        /// <param name="parameterCount">The number of parameters required by the message resource.</param>
         /// <returns>The string resource id of the associated event message; otherwise, a null reference if the event id is not valid.</returns>
         public static string GetMessage(int eventId, out int parameterCount)
         {
@@ -617,6 +617,7 @@ namespace System.Management.Automation.Tracing
                     parameterCount = 3;
                     return "PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_DISCONNECT";
             }
+
             parameterCount = 0;
             return null;
         }

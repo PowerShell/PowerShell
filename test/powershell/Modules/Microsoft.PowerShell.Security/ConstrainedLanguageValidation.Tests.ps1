@@ -54,6 +54,28 @@ try
         }
     }
 
+    Describe "Start-Job initialization script should work in system lock down" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies that Start-Job initialization script runs successfully in system lock down" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                $job = Start-Job -InitializationScript { function Hello { "Hello" } } -ScriptBlock { Hello }
+                $result = $job | Wait-Job | Receive-Job
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $result | Should -BeExactly "Hello"
+            $job | Remove-Job
+        }
+    }
+
     # End Describe blocks
 }
 finally

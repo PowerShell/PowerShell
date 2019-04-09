@@ -20,8 +20,10 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject
         {
             get { return _inputObject; }
+
             set { _inputObject = value; }
         }
+
         private PSObject _inputObject;
 
         /// <summary>
@@ -32,8 +34,10 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return _fileName; }
+
             set { _fileName = value; }
         }
+
         private string _fileName;
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _fileName;
             }
+
             set
             {
                 _fileName = value;
@@ -60,8 +65,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Append
         {
             get { return _append; }
+
             set { _append = value; }
         }
+
         private bool _append;
 
         /// <summary>
@@ -71,8 +78,10 @@ namespace Microsoft.PowerShell.Commands
         public string Variable
         {
             get { return _variable; }
+
             set { _variable = value; }
         }
+
         private string _variable;
 
         /// <summary>
@@ -80,13 +89,13 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             _commandWrapper = new CommandWrapper();
-            if (String.Equals(ParameterSetName, "File", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(ParameterSetName, "File", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("filepath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
             }
-            else if (String.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);

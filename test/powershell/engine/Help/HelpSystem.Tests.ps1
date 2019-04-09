@@ -3,6 +3,8 @@
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 
+Import-Module HelpersCommon
+
 $script:cmdletsToSkip = @(
     "Get-PSHostProcessInfo",
     "Out-Default",
@@ -11,7 +13,9 @@ $script:cmdletsToSkip = @(
     "Get-PSSessionCapability",
     "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
     "Enable-PSRemoting",
-    "Get-ExperimentalFeature"
+    "Get-ExperimentalFeature",
+    "Enable-ExperimentalFeature",
+    "Disable-ExperimentalFeature"
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -94,7 +98,20 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
     }
 }
 
-Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature','RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "Testing Get-Help Progress" -Tags @('Feature') {
+    It "Last ProgressRecord should be Completed" {
+        try {
+            $j = Start-Job { Get-Help DoesNotExist }
+            $j | Wait-Job
+            $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+        }
+        finally {
+            $j | Remove-Job
+        }
+    }
+}
+
+Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -107,14 +124,16 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature','Re
     Context "for module : $moduleName" {
 
         BeforeAll {
-            UpdateHelpFromLocalContentPath $moduleName -Scope 'AllUsers'
+            if (Test-CanWriteToPsHome) {
+                UpdateHelpFromLocalContentPath $moduleName -Scope 'AllUsers'
+            }
             $cmdlets = Get-Command -Module $moduleName
         }
 
         $testCases = @()
         $cmdlets | Where-Object { $cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
 
-        It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
+        It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
             $help = get-help -name $cmdletName
             $help.Description | Out-String | Should Match $cmdletName
@@ -199,10 +218,12 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
-        $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
-        New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
-        Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
-        Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        if (Test-CanWriteToPsHome) {
+            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+            New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
+            Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
+            Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        }
 
         $aboutHelpPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
 
@@ -213,12 +234,14 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     AfterAll {
-        Remove-Item $modulePath -Recurse -Force
+        if (Test-CanWriteToPsHome) {
+            Remove-Item $modulePath -Recurse -Force
+        }
         # Remove all the help content.
         Get-ChildItem -Path $aboutHelpPath -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $help = Get-Help about_testhelp
         $help.count | Should -Be 1
@@ -243,10 +266,12 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
             Remove-Item $userHelpRoot -Force -Recurse -ErrorAction Stop
         }
 
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        if (Test-CanWriteToPsHome) {
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+        }
     }
 
-    It "Get-Help for about_Variable should return only one help object" {
+    It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
@@ -337,7 +362,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
 }
 
 Describe "Get-Help should find pattern alias" -Tags "CI" {
-    # Remove test alias
+    BeforeAll {
+        Set-Alias -Name testAlias1 -Value Where-Object
+    }
+
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
     }
@@ -353,10 +381,15 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
     }
 
     It "Get-Help should find alias with * pattern" {
-        Set-Alias -Name testAlias1 -Value Where-Object
         $help = Get-Help testAlias1*
         $help.Category | Should -BeExactly "Alias"
         $help.Synopsis | Should -BeExactly "Where-Object"
+    }
+
+    It "Help alias should be same as Get-Help alias" {
+        $help1 = Get-Help testAlias*
+        $help2 = help testAlias*
+        Compare-Object $help1 $help2 | Should -BeNullOrEmpty
     }
 }
 
@@ -385,7 +418,7 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
         Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'CurrentUser'
-        UpdateHelpFromLocalContentPath -ModuleName 'PSReadLine' -Scope CurrentUser -Force
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'CurrentUser' -Force
         UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope CurrentUser -Force
 
         ## Delete help from global scope if it exists.
@@ -401,15 +434,15 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
-        if (Test-Path $psreadlineHelpFilePath) {
-            Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
+        $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
+        if (Test-Path $archiveHelpFilePath) {
+            Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineOption' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
         )
     }
@@ -432,38 +465,146 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         ## Delete help from global scope if it exists.
         $currentCulture = (Get-Culture).Name
 
-        $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
-        if (Test-Path $managementHelpFilePath) {
-            Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+        if (Test-CanWriteToPsHome) {
+            $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
+            if (Test-Path $managementHelpFilePath) {
+                Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
-        if (Test-Path $coreHelpFilePath) {
-            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+            $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+            if (Test-Path $coreHelpFilePath) {
+                Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
-        if (Test-Path $psreadlineHelpFilePath) {
-            Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
+            $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
+            if (Test-Path $archiveHelpFilePath) {
+                Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
+            }
 
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'AllUsers'
-        UpdateHelpFromLocalContentPath -ModuleName 'PSReadLine' -Scope 'AllUsers' -Force
-        UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'AllUsers'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'AllUsers' -Force
+            UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
+        }
 
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineOption' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
         )
     }
 
-    It 'help in user scope be found for <TestName>' -TestCases $TestCases {
+    It 'help in user scope be found for <TestName>' -TestCases $TestCases -Skip:(!(Test-CanWriteToPsHome)) {
         param($CmdletName)
 
         $helpObj = Get-Help -Name $CmdletName -Full
         $helpObj.description | Out-String | Should -Match $CmdletName
+    }
+}
+
+Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags @('CI') {
+
+    BeforeAll {
+        $userHelpRoot = GetCurrentUserHelpRoot
+
+        ## Clear all help from user scope.
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
+
+        ## Delete help from global scope if it exists.
+        $currentCulture = (Get-Culture).Name
+        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+        if (Test-Path $coreHelpFilePath) {
+            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Should return help objects for two parameters" {
+        $help = Get-Help -Name Get-Command -Parameter Verb, Noun
+        $help | Should -HaveCount 2
+        $help[0].Name | Should -BeExactly 'Verb'
+        $help[1].Name | Should -BeExactly 'Noun'
+    }
+}
+
+Describe "Get-Help for function parameter should be consistent" -Tags 'CI' {
+    BeforeAll {
+        $test1 = @'
+            function test1 {
+                param (
+                    $First
+                )
+            }
+'@
+        $test2 = @'
+            function test2 {
+                param (
+                    $First,
+                    $Second
+                )
+            }
+'@
+        $test1Path = Join-Path $TestDrive "test1.ps1"
+        Set-Content -Path $test1Path -Value $test1
+
+        $test2Path = Join-Path $TestDrive "test2.ps1"
+        Set-Content -Path $test2Path -Value $test2
+
+        Import-Module $test1Path
+        Import-Module $test2Path
+    }
+
+    AfterAll {
+        Remove-Module -Name "test1"
+        Remove-Module -Name "test2"
+    }
+
+    It "Get-Help for function parameter should be consistent" {
+        $test1HelpPSType = (Get-Help test1 -Parameter First).PSTypeNames
+        $test2HelpPSType = (Get-Help test2 -Parameter First).PSTypeNames
+        $test1HelpPSType | Should -BeExactly $test2HelpPSType
+    }
+}
+
+Describe "Help failure cases" -Tags Feature {
+    It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
+        @{ command = "help" },
+        @{ command = "get-help" }
+    ) {
+        param($command)
+
+        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+    }
+}
+
+Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
+    BeforeAll {
+        $fakePager = @'
+        param(
+            [Parameter]
+            $customCommandArgs,
+
+            [Parameter(ValueFromPipelineByPropertyName)]
+            $Name
+        )
+
+        $b = [System.Text.Encoding]::UTF8.GetBytes($Name)
+        return [System.Convert]::ToBase64String($b)
+'@
+        $fakePagerFolder = Join-Path $TestDrive "path with space"
+        $fakePagerPath = Join-Path $fakePagerFolder "fakepager.ps1"
+        New-Item -ItemType File -Path $fakePagerPath -Force > $null
+        Set-Content -Path $fakePagerPath -Value $fakePager
+
+        $SavedEnvPager = $env:PAGER
+        $env:PAGER = $fakePagerPath
+    }
+    AfterAll {
+        $env:PAGER = $SavedEnvPager
+    }
+
+    It 'help renders when using a PAGER with a space in the path' {
+        help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
     }
 }

@@ -1010,6 +1010,18 @@ try {
             $computerInfo = Get-ComputerInfo
             $computerInfo | Should -BeOfType 'Microsoft.PowerShell.Commands.ComputerInfo'
         }
+
+        It "Verify progress records in Get-ComputerInfo" {
+            try {
+                $j = Start-Job { Get-ComputerInfo }
+                $j | Wait-Job
+                $j.ChildJobs[0].Progress | Should -HaveCount 9
+                $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+            }
+            finally {
+                $j | Remove-Job
+            }
+        }
     }
 
     Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
@@ -1019,7 +1031,7 @@ try {
                 $computerInformation = Get-ComputerInfoForTest
                 $propertyNames = Get-PropertyNamesForComputerInfoTest
                 $Expected = New-ExpectedComputerInfo $propertyNames
-                $testCases = $propertyNames | %{ @{ "Property" = $_ } }
+                $testCases = $propertyNames | ForEach-Object { @{ "Property" = $_ } }
             }
 
             #

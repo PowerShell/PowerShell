@@ -7,7 +7,7 @@ using System.Collections;
 namespace Microsoft.PowerShell.Cmdletization
 {
     /// <summary>
-    /// Describes whether to report errors when a given filter doesnt match any objects
+    /// Describes whether to report errors when a given filter doesnt match any objects.
     /// </summary>
     public enum BehaviorOnNoMatch
     {
@@ -26,31 +26,31 @@ namespace Microsoft.PowerShell.Cmdletization
         ///   are treated as wildcards
         /// - Associations
         ///   (<see cref="QueryBuilder.FilterByAssociatedInstance(object,string,string,string,BehaviorOnNoMatch)"/>)
-        ///   are treated as not a wildcard
+        ///   are treated as not a wildcard.
         /// </summary>
         Default = 0,
 
         /// <summary>
-        /// <c>ReportErrors</c> forces reporting of errors that in other circumstances would be reported if no objects matched the filters
+        /// <c>ReportErrors</c> forces reporting of errors that in other circumstances would be reported if no objects matched the filters.
         /// </summary>
         ReportErrors,
 
         /// <summary>
-        /// <c>SilentlyContinue</c> suppresses errors that in other circumstances would be reported if no objects matched the filters
+        /// <c>SilentlyContinue</c> suppresses errors that in other circumstances would be reported if no objects matched the filters.
         /// </summary>
         SilentlyContinue,
     }
 
     /// <summary>
-    /// QueryBuilder supports building of object model queries in an object-model-agnostic way
+    /// QueryBuilder supports building of object model queries in an object-model-agnostic way.
     /// </summary>
     public abstract class QueryBuilder
     {
         /// <summary>
-        /// Modifies the query, so that it only returns objects with a given property value
+        /// Modifies the query, so that it only returns objects with a given property value.
         /// </summary>
-        /// <param name="propertyName">Property name to query on</param>
-        /// <param name="allowedPropertyValues">Property values to accept in the query</param>
+        /// <param name="propertyName">Property name to query on.</param>
+        /// <param name="allowedPropertyValues">Property values to accept in the query.</param>
         /// <param name="wildcardsEnabled">
         /// <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         /// <c>false otherwise</c>
@@ -64,10 +64,10 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Modifies the query, so that it does not return objects with a given property value
+        /// Modifies the query, so that it does not return objects with a given property value.
         /// </summary>
-        /// <param name="propertyName">Property name to query on</param>
-        /// <param name="excludedPropertyValues">Property values to reject in the query</param>
+        /// <param name="propertyName">Property name to query on.</param>
+        /// <param name="excludedPropertyValues">Property values to reject in the query.</param>
         /// <param name="wildcardsEnabled">
         /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         /// <c>false otherwise</c>
@@ -81,10 +81,10 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Modifies the query, so that it returns only objects that have a property value greater than or equal to a <paramref name="minPropertyValue"/> threshold
+        /// Modifies the query, so that it returns only objects that have a property value greater than or equal to a <paramref name="minPropertyValue"/> threshold.
         /// </summary>
-        /// <param name="propertyName">Property name to query on</param>
-        /// <param name="minPropertyValue">Minimum property value</param>
+        /// <param name="propertyName">Property name to query on.</param>
+        /// <param name="minPropertyValue">Minimum property value.</param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects
         /// </param>
@@ -94,10 +94,10 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Modifies the query, so that it returns only objects that have a property value less than or equal to a <paramref name="maxPropertyValue"/> threshold
+        /// Modifies the query, so that it returns only objects that have a property value less than or equal to a <paramref name="maxPropertyValue"/> threshold.
         /// </summary>
-        /// <param name="propertyName">Property name to query on</param>
-        /// <param name="maxPropertyValue">Maximum property value</param>
+        /// <param name="propertyName">Property name to query on.</param>
+        /// <param name="maxPropertyValue">Maximum property value.</param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects
         /// </param>
@@ -109,10 +109,10 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Modifies the query, so that it returns only objects associated with <paramref name="associatedInstance"/>
         /// </summary>
-        /// <param name="associatedInstance">object that query results have to be associated with</param>
-        /// <param name="associationName">name of the association</param>
-        /// <param name="resultRole">name of the role that <paramref name="associatedInstance"/> has in the association</param>
-        /// <param name="sourceRole">name of the role that query results have in the association</param>
+        /// <param name="associatedInstance">Object that query results have to be associated with.</param>
+        /// <param name="associationName">Name of the association.</param>
+        /// <param name="resultRole">Name of the role that <paramref name="associatedInstance"/> has in the association.</param>
+        /// <param name="sourceRole">Name of the role that query results have in the association.</param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects
         /// </param>
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Sets a query option
+        /// Sets a query option.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>

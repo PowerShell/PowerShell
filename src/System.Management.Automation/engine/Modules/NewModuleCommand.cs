@@ -28,8 +28,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
+
         private string _name;
 
         /// <summary>
@@ -41,11 +43,13 @@ namespace Microsoft.PowerShell.Commands
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
+
             set
             {
                 _scriptBlock = value;
             }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -70,9 +74,11 @@ namespace Microsoft.PowerShell.Commands
                     BaseFunctionPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _functionImportList; }
         }
-        private string[] _functionImportList = Utils.EmptyArray<string>();
+
+        private string[] _functionImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the patterns matching the cmdlets to import from the module...
@@ -96,9 +102,11 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _cmdletImportList; }
         }
-        private string[] _cmdletImportList = Utils.EmptyArray<string>();
+
+        private string[] _cmdletImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter causes the session state instance to be written...
@@ -107,8 +115,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ReturnResult
         {
             get { return (SwitchParameter)_returnResult; }
+
             set { _returnResult = value; }
         }
+
         private bool _returnResult;
 
         /// <summary>
@@ -118,12 +128,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsCustomObject
         {
             get { return (SwitchParameter)_asCustomObject; }
+
             set { _asCustomObject = value; }
         }
+
         private bool _asCustomObject;
 
         /// <summary>
-        /// The arguments to pass to the scriptblock used to create the module
+        /// The arguments to pass to the scriptblock used to create the module.
         /// </summary>
         [Parameter(ValueFromRemainingArguments = true)]
         [Alias("Args")]
@@ -131,8 +143,10 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             get { return _arguments; }
+
             set { _arguments = value; }
         }
+
         private object[] _arguments;
 
         /// <summary>
@@ -143,8 +157,21 @@ namespace Microsoft.PowerShell.Commands
             // Create a module from a scriptblock...
             if (_scriptBlock != null)
             {
+                // Check ScriptBlock language mode.  If it is different than the context language mode
+                // then throw error since private trusted script functions may be exposed.
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                    _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
+                {
+                    this.ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
+                            "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
+                            ErrorCategory.SecurityError,
+                            null));
+                }
+
                 string gs = System.Guid.NewGuid().ToString();
-                if (String.IsNullOrEmpty(_name))
+                if (string.IsNullOrEmpty(_name))
                 {
                     _name = PSModuleInfo.DynamicModulePrefixString + gs;
                 }
@@ -203,10 +230,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.Modules.DecrementModuleNestingCount();
                 }
+
                 return;
             }
         }
     }
 
     #endregion
-} // Microsoft.PowerShell.Commands
+}

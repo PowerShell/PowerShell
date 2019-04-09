@@ -8,7 +8,7 @@
 ## Review PRs
 
 - Ask the author to reword the PR title based on guidelines in [Contributing](../../.github/CONTRIBUTING.md).
-- Ask the author to apply `[Feature]` tag to trigger full test builds if it's necessary.
+- Ask the author to apply `[feature]` tag to trigger full test builds if it's necessary.
 - Label the PR with `Breaking-Change`, `Documentation Needed` and `Area-XXX` as appropriate.
 - When labelling a PR with `Review-Committee`, leave a detailed comment to summarize the issue you want the committee to look into.
   It's recommended to include examples to explain/demonstrate behaviors.
@@ -21,7 +21,7 @@
 
 - Use `Create a merge commit` for feature-work PRs **only if** the commit history of the PR is reasonably clean.
   After using this option, GitHub will make it your default option for merging a PR.
-  Do remember to change the default back to `Squash and merge`.
+  Do remember to change the default back to `Squash and merge` as it will be useful next time.
 
   ![Merge Commit Example](./Images/merge-commit.png)&nbsp;&nbsp;&nbsp;&nbsp;![Merge Confirm Example](./Images/merge-commit-confirm.png)
 

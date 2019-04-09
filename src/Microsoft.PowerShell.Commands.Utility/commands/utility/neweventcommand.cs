@@ -26,11 +26,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -44,11 +46,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sender;
             }
+
             set
             {
                 _sender = value;
             }
         }
+
         private PSObject _sender = null;
 
         /// <summary>
@@ -62,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventArguments;
             }
+
             set
             {
                 if (_eventArguments != null)
@@ -70,7 +75,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        private PSObject[] _eventArguments = new PSObject[0];
+
+        private PSObject[] _eventArguments = Array.Empty<PSObject>();
 
         /// <summary>
         /// Data relating to this event.
@@ -82,11 +88,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _messageData;
             }
+
             set
             {
                 _messageData = value;
             }
         }
+
         private PSObject _messageData = null;
 
         #endregion parameters
@@ -112,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Object messageSender = null;
+            object messageSender = null;
             if (_sender != null) { messageSender = _sender.BaseObject; }
 
             // And then generate the event

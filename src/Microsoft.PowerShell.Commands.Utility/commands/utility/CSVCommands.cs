@@ -30,22 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Delimiter")]
         [ValidateNotNull]
-        public char Delimiter
-        {
-            get
-            {
-                return _delimiter;
-            }
-            set
-            {
-                _delimiter = value;
-            }
-        }
-
-        /// <summary>
-        /// Delimiter to be used.
-        /// </summary>
-        private char _delimiter;
+        public char Delimiter { get; set; }
 
         ///<summary>
         ///Culture switch for csv conversion
@@ -58,11 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// Derived as Different Attributes.In ConvertTo-CSV, This is a positional parameter. Export-CSV not a Positional behaviour.
         /// </summary>
 
-        public abstract PSObject InputObject
-        {
-            get;
-            set;
-        }
+        public abstract PSObject InputObject { get; set; }
 
         /// <summary>
         /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
@@ -78,7 +59,42 @@ namespace Microsoft.PowerShell.Commands
         [Alias("NTI")]
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets list of fields to quote in output.
+        /// </summary>
+        [Parameter]
+        [Alias("QF")]
+        public string[] QuoteFields { get; set; }
+
+        /// <summary>
+        /// Gets or sets option to use or suppress quotes in output.
+        /// </summary>
+        [Parameter]
+        [Alias("UQ")]
+        public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
+
         #endregion Command Line Parameters
+
+        /// <summary>
+        /// Kind of output quoting.
+        /// </summary>
+        public enum QuoteKind
+        {
+            /// <summary>
+            /// Never quote output.
+            /// </summary>
+            Never,
+
+            /// <summary>
+            /// Always quote output.
+            /// </summary>
+            Always,
+
+            /// <summary>
+            /// Quote output as needed (a field contains used delimiter).
+            /// </summary>
+            AsNeeded
+        }
 
         /// <summary>
         /// Write the string to a file or pipeline.
@@ -92,17 +108,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(QuoteFields)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(UseQuotes)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyQuoteFieldsAndUseQuotes);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyQuoteFieldsAndUseQuotes", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
             {
                 InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
+
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
             {
                 NoTypeInformation = !IncludeTypeInformation;
             }
-            _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
+
+            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
     }
     #endregion
@@ -110,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
     #region Export-CSV Command
 
     /// <summary>
-    /// Implementation for the export-csv command.
+    /// Implementation for the Export-Csv command.
     /// </summary>
     [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
@@ -137,19 +162,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _specifiedPath = true;
             }
         }
+
         private string _path;
         private bool _specifiedPath = false;
 
         /// <summary>
         /// The literal path of the mandatory file name to write to.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -159,64 +186,46 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Property that sets force parameter.
+        /// Gets or sets property that sets force parameter.
         /// </summary>
-        [Parameter()]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private bool _force;
+        [Parameter]
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// Property that prevents file overwrite.
+        /// Gets or sets property that prevents file overwrite.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
-        public SwitchParameter NoClobber
-        {
-            get
-            {
-                return _noclobber;
-            }
-            set
-            {
-                _noclobber = value;
-            }
-        }
-        private bool _noclobber;
+        public SwitchParameter NoClobber { get; set; }
 
         /// <summary>
-        /// Encoding optional flag.
+        /// Gets or sets encoding optional flag.
         /// </summary>
-        [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// Property that sets append parameter.
+        /// Gets or sets property that sets append parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
-        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
+
+        // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
+        private bool _isActuallyAppending;
 
         #endregion
 
@@ -243,31 +252,36 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _shouldProcess = ShouldProcess(Path);
-            if (!_shouldProcess) return;
+            if (!_shouldProcess)
+            {
+                return;
+            }
 
             CreateFileStream();
 
-            _helper = new ExportCsvHelper(this, base.Delimiter);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes, base.QuoteFields);
         }
 
         /// <summary>
         /// Convert the current input object to Csv and write to file/WriteObject.
         /// </summary>
-        protected override
-        void
-        ProcessRecord()
+        protected override void ProcessRecord()
         {
             if (InputObject == null || _sw == null)
             {
                 return;
             }
 
-            if (!_shouldProcess) return;
-            //Process first object
+            if (!_shouldProcess)
+            {
+                return;
+            }
+
+            // Process first object
             if (_propertyNames == null)
             {
                 // figure out the column names (and lock-in their order)
-                _propertyNames = _helper.BuildPropertyNames(InputObject, _propertyNames);
+                _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
                 if (_isActuallyAppending && _preexistingPropertyNames != null)
                 {
                     this.ReconcilePreexistingPropertyNames();
@@ -278,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (NoTypeInformation == false)
                     {
-                        WriteCsvLine(_helper.GetTypeString(InputObject));
+                        WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                     }
 
                     WriteCsvLine(_helper.ConvertPropertyNamesCSV(_propertyNames));
@@ -357,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
                     this,
                     this.Path,
                     encodingObject,
-                    false, // defaultEncoding
+                    defaultEncoding: false,
                     Append,
                     Force,
                     NoClobber,
@@ -372,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
                     this,
                     this.Path,
                     Encoding,
-                    false, // defaultEncoding
+                    defaultEncoding: false,
                     Append,
                     Force,
                     NoClobber,
@@ -383,9 +397,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private
-        void
-        CleanUp()
+        private void CleanUp()
         {
             if (_fs != null)
             {
@@ -395,12 +407,15 @@ namespace Microsoft.PowerShell.Commands
                     _sw.Dispose();
                     _sw = null;
                 }
+
                 _fs.Dispose();
                 _fs = null;
+
                 // reset the read-only attribute
                 if (_readOnlyFileInfo != null)
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
+
             if (_helper != null)
             {
                 _helper.Dispose();
@@ -450,9 +465,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write the csv line to file.
         /// </summary>
-        /// <param name="line"></param>
-        public override void
-        WriteCsvLine(string line)
+        /// <param name="line">Line to write.</param>
+        public override void WriteCsvLine(string line)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -474,14 +488,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Public dispose method.
         /// </summary>
-        public
-        void
-        Dispose()
+        public void Dispose()
         {
             if (_disposed == false)
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -495,44 +508,47 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
-    public sealed
-    class
-    ImportCsvCommand : PSCmdlet
+    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
+    public sealed class ImportCsvCommand : PSCmdlet
     {
         #region Command Line Parameters
 
         /// <summary>
-        /// Property that sets delimiter.
+        /// Gets or sets property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterLiteralPath")]
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
         /// <summary>
-        /// Mandatory file name to read from.
+        /// Gets or sets mandatory file name to read from.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true)]
+        [Parameter(Position = 0, ParameterSetName = "DelimiterPath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "CulturePath", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public String[] Path
+        public string[] Path
         {
             get
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
                 _specifiedPath = true;
             }
         }
+
         private string[] _paths;
         private bool _specifiedPath = false;
 
         /// <summary>
-        /// The literal path of the mandatory file name to read from.
+        /// Gets or sets the literal path of the mandatory file name to read from.
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "DelimiterLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -542,34 +558,26 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Property that sets UseCulture parameter.
+        /// Gets or sets property that sets UseCulture parameter.
         /// </summary>
-        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
+        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNull]
-        public SwitchParameter UseCulture
-        {
-            get
-            {
-                return _useculture;
-            }
-            set
-            {
-                _useculture = value;
-            }
-        }
-        private bool _useculture;
+        public SwitchParameter UseCulture { get; set; }
 
         ///<summary>
-        /// Header property to customize the names.
+        /// Gets or sets header property to customize the names.
         ///</summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
@@ -577,10 +585,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Header { get; set; }
 
         /// <summary>
-        /// Encoding optional flag.
+        /// Gets or sets encoding optional flag.
         /// </summary>
-        [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
@@ -595,11 +603,13 @@ namespace Microsoft.PowerShell.Commands
         #region Override Methods
 
         /// <summary>
+        /// BeginProcessing override.
         /// </summary>
         protected override void BeginProcessing()
         {
-            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, _useculture);
+            Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
+
         /// <summary>
         /// ProcessRecord overload.
         /// </summary>
@@ -644,9 +654,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertTo-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "Delimiter",
+    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "DelimiterPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class ConvertToCsvCommand : BaseCsvWritingCommand
     {
         #region Parameter
@@ -673,41 +683,40 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// BeginProcessing override.
         /// </summary>
-        protected override
-        void
-        BeginProcessing()
+        protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            _helper = new ExportCsvHelper(this, base.Delimiter);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes, base.QuoteFields);
         }
 
         /// <summary>
         /// Convert the current input object to Csv and write to stream/WriteObject.
         /// </summary>
-        protected override
-        void
-        ProcessRecord()
+        protected override void ProcessRecord()
         {
             if (InputObject == null)
             {
                 return;
             }
-            //Process first object
+
+            // Process first object
             if (_propertyNames == null)
             {
-                _propertyNames = _helper.BuildPropertyNames(InputObject, _propertyNames);
+                _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
                 if (NoTypeInformation == false)
                 {
-                    WriteCsvLine(_helper.GetTypeString(InputObject));
+                    WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                 }
-                //Write property information
+
+                // Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
                 if (!properties.Equals(string.Empty))
                     WriteCsvLine(properties);
             }
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
-            //write to the console
+
+            // write to the console
             if (csv != string.Empty)
                 WriteCsvLine(csv);
         }
@@ -716,10 +725,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region CSV conversion
         /// <summary>
+        /// Write the line to output.
         /// </summary>
-        /// <param name="line"></param>
-        public override void
-        WriteCsvLine(string line)
+        /// <param name="line">Line to write.</param>
+        public override void WriteCsvLine(string line)
         {
             WriteObject(line);
         }
@@ -734,18 +743,16 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertFrom-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "Delimiter",
+    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "DelimiterPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
-    public sealed
-    class
-    ConvertFromCsvCommand : PSCmdlet
+    public sealed class ConvertFromCsvCommand : PSCmdlet
     {
         #region Command Line Parameters
 
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
@@ -753,13 +760,14 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
+        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
-        /// Input Object which is written in Csv format.
+        /// Gets or sets input object which is written in Csv format.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 0)]
         [ValidateNotNull]
@@ -768,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject[] InputObject { get; set; }
 
         ///<summary>
-        /// Header property to customize the names.
+        /// Gets or sets header property to customize the names.
         ///</summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNull]
@@ -788,9 +796,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// BeginProcessing override.
         /// </summary>
-        protected override
-        void
-        BeginProcessing()
+        protected override void BeginProcessing()
         {
             Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
         }
@@ -798,13 +804,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Convert the current input object to Csv and write to stream/WriteObject.
         /// </summary>
-        protected override
-        void
-        ProcessRecord()
+        protected override void ProcessRecord()
         {
-            foreach (PSObject pObject in InputObject)
+            foreach (PSObject inputObject in InputObject)
             {
-                using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(pObject.ToString())))
+                using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(inputObject.ToString())))
                 using (StreamReader streamReader = new StreamReader(memoryStream, System.Text.Encoding.Unicode))
                 {
                     ImportCsvHelper helper = new ImportCsvHelper(this, Delimiter, Header, _typeName, streamReader);
@@ -823,6 +827,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Header = helper.Header.ToArray();
                     }
+
                     if ((_typeName == null) && (helper.TypeName != null))
                     {
                         _typeName = helper.TypeName;
@@ -843,39 +848,35 @@ namespace Microsoft.PowerShell.Commands
     #region ExportHelperConversion
 
     /// <summary>
+    /// Helper class for Export-Csv and ConvertTo-Csv.
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
-        /// <summary>
-        /// </summary>
-        private PSCmdlet _cmdlet;
-
         private char _delimiter;
+        readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
+        readonly private HashSet<string> _quoteFields;
+        readonly private StringBuilder _outputString;
 
         /// <summary>
+        /// Create ExportCsvHelper instance.
         /// </summary>
-        /// <param name="cmdlet"></param>
-        /// <param name="delimiter"></param>
-        /// <exception cref="ArgumentNullException">throw if cmdlet is null</exception>
-        internal
-        ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
+        /// <param name="delimiter">Delimiter char.</param>
+        /// <param name="quoteKind">Kind of quoting.</param>
+        /// <param name="quoteFields">List of fields to quote.</param>
+        internal ExportCsvHelper(char delimiter, BaseCsvWritingCommand.QuoteKind quoteKind, string[] quoteFields)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException("cmdlet");
-            }
-            _cmdlet = cmdlet;
             _delimiter = delimiter;
+            _quoteKind = quoteKind;
+            _quoteFields = quoteFields == null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
+            _outputString = new StringBuilder(128);
         }
 
-        //Name of properties to be written in CSV format
+        // Name of properties to be written in CSV format
 
         /// <summary>
         /// Get the name of properties from source PSObject and add them to _propertyNames.
         /// </summary>
-        internal
-        IList<string>
-        BuildPropertyNames(PSObject source, IList<string> propertyNames)
+        internal static IList<string> BuildPropertyNames(PSObject source, IList<string> propertyNames)
         {
             if (propertyNames != null)
             {
@@ -884,32 +885,33 @@ namespace Microsoft.PowerShell.Commands
 
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
-                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(source,
-                PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
+                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                    source,
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
 
             propertyNames = new Collection<string>();
             foreach (PSPropertyInfo prop in srcPropertiesToSearch)
             {
                 propertyNames.Add(prop.Name);
             }
+
             return propertyNames;
         }
 
         /// <summary>
         /// Converts PropertyNames in to a CSV string.
         /// </summary>
-        /// <returns></returns>
-        internal
-        string
-        ConvertPropertyNamesCSV(IList<string> propertyNames)
+        /// <returns>Converted string.</returns>
+        internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
             if (propertyNames == null)
             {
-                throw new ArgumentNullException("propertyNames");
+                throw new ArgumentNullException(nameof(propertyNames));
             }
 
-            StringBuilder dest = new StringBuilder();
+            _outputString.Clear();
             bool first = true;
+
             foreach (string propertyName in propertyNames)
             {
                 if (first)
@@ -918,29 +920,62 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //changed to delimiter
-                    dest.Append(_delimiter);
+                    _outputString.Append(_delimiter);
                 }
-                EscapeAndAppendString(dest, propertyName);
+
+                if (_quoteFields != null)
+                {
+                    if (_quoteFields.TryGetValue(propertyName, out _))
+                    {
+                        AppendStringWithEscapeAlways(_outputString, propertyName);
+                    }
+                    else
+                    {
+                        _outputString.Append(propertyName);
+                    }
+                }
+                else
+                {
+                    switch (_quoteKind)
+                    {
+                        case BaseCsvWritingCommand.QuoteKind.Always:
+                            AppendStringWithEscapeAlways(_outputString, propertyName);
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                            if (propertyName.Contains(_delimiter))
+                            {
+                                AppendStringWithEscapeAlways(_outputString, propertyName);
+                            }
+                            else
+                            {
+                                _outputString.Append(propertyName);
+                            }
+
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.Never:
+                            _outputString.Append(propertyName);
+                            break;
+                    }
+                }
             }
-            return dest.ToString();
+
+            return _outputString.ToString();
         }
 
         /// <summary>
+        /// Convert PSObject to CSV string.
         /// </summary>
-        /// <param name="mshObject"></param>
-        /// <param name="propertyNames"></param>
+        /// <param name="mshObject">PSObject to convert.</param>
+        /// <param name="propertyNames">Property names.</param>
         /// <returns></returns>
-        internal
-        string
-        ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
+        internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
             if (propertyNames == null)
             {
-                throw new ArgumentNullException("propertyNames");
+                throw new ArgumentNullException(nameof(propertyNames));
             }
 
-            StringBuilder dest = new StringBuilder();
+            _outputString.Clear();
             bool first = true;
 
             foreach (string propertyName in propertyNames)
@@ -951,32 +986,67 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    dest.Append(_delimiter);
+                    _outputString.Append(_delimiter);
                 }
-                PSPropertyInfo property = mshObject.Properties[propertyName] as PSPropertyInfo;
-                string value = null;
-                //If property is not present, assume value is null
-                if (property != null)
+
+                // If property is not present, assume value is null and skip it.
+                if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                 {
-                    value = GetToStringValueForProperty(property);
+                    var value = GetToStringValueForProperty(property);
+
+                    if (_quoteFields != null)
+                    {
+                        if (_quoteFields.TryGetValue(propertyName, out _))
+                        {
+                            AppendStringWithEscapeAlways(_outputString, value);
+                        }
+                        else
+                        {
+                            _outputString.Append(value);
+                        }
+                    }
+                    else
+                    {
+                        switch (_quoteKind)
+                        {
+                            case BaseCsvWritingCommand.QuoteKind.Always:
+                                AppendStringWithEscapeAlways(_outputString, value);
+                                break;
+                            case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                                if (value.Contains(_delimiter))
+                                {
+                                    AppendStringWithEscapeAlways(_outputString, value);
+                                }
+                                else
+                                {
+                                    _outputString.Append(value);
+                                }
+
+                                break;
+                            case BaseCsvWritingCommand.QuoteKind.Never:
+                                _outputString.Append(value);
+                                break;
+                            default:
+                                Diagnostics.Assert(false, "BaseCsvWritingCommand.QuoteKind has new item.");
+                                break;
+                        }
+                    }
                 }
-                EscapeAndAppendString(dest, value);
             }
-            return dest.ToString();
+
+            return _outputString.ToString();
         }
 
         /// <summary>
         /// Get value from property object.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        internal
-        string
-        GetToStringValueForProperty(PSPropertyInfo property)
+        /// <param name="property"> Property to convert.</param>
+        /// <returns>ToString() value.</returns>
+        internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
             if (property == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException(nameof(property));
             }
 
             string value = null;
@@ -988,25 +1058,24 @@ namespace Microsoft.PowerShell.Commands
                     value = temp.ToString();
                 }
             }
-            //If we cannot read some value, treat it as null.
             catch (Exception)
             {
+                // If we cannot read some value, treat it as null.
             }
+
             return value;
         }
 
         /// <summary>
         /// Prepares string for writing type information.
         /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        internal
-        string
-        GetTypeString(PSObject source)
+        /// <param name="source">PSObject whose type to determine.</param>
+        /// <returns>String with type information.</returns>
+        internal static string GetTypeString(PSObject source)
         {
             string type = null;
 
-            //get type of source
+            // get type of source
             Collection<string> tnh = source.TypeNames;
             if (tnh == null || tnh.Count == 0)
             {
@@ -1020,12 +1089,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 string temp = tnh[0];
-                //If type starts with CSV: remove it. This would happen when you export
-                //an imported object. import-csv adds CSV. prefix to the type.
+
+                // If type starts with CSV: remove it. This would happen when you export
+                // an imported object. import-csv adds CSV. prefix to the type.
                 if (temp.StartsWith(ImportExportCSVHelper.CSVTypePrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     temp = temp.Substring(4);
                 }
+
                 type = string.Format(System.Globalization.CultureInfo.InvariantCulture, "#TYPE {0}", temp);
             }
 
@@ -1036,29 +1107,31 @@ namespace Microsoft.PowerShell.Commands
         /// Escapes the " in string if necessary.
         /// Encloses the string in double quotes if necessary.
         /// </summary>
-        /// <returns></returns>
-        internal static
-        void
-        EscapeAndAppendString(StringBuilder dest, string source)
+        internal static void AppendStringWithEscapeAlways(StringBuilder dest, string source)
         {
             if (source == null)
             {
                 return;
             }
-            //Adding Double quote to all strings
+
+            // Adding Double quote to all strings
             dest.Append('"');
             for (int i = 0; i < source.Length; i++)
             {
                 char c = source[i];
-                //Double quote in the string is escaped with double quote
-                if ((c == '"'))
+
+                // Double quote in the string is escaped with double quote
+                if (c == '"')
                 {
                     dest.Append('"');
                 }
+
                 dest.Append(c);
             }
+
             dest.Append('"');
         }
+
         #region IDisposable Members
 
         /// <summary>
@@ -1069,14 +1142,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Public dispose method.
         /// </summary>
-        public
-        void
-        Dispose()
+        public void Dispose()
         {
             if (_disposed == false)
             {
                 GC.SuppressFinalize(this);
             }
+
             _disposed = true;
         }
 
@@ -1115,12 +1187,12 @@ namespace Microsoft.PowerShell.Commands
         private bool _alreadyWarnedUnspecifiedName = false;
 
         /// <summary>
-        /// Reference to header values.
+        /// Gets reference to header values.
         /// </summary>
         internal IList<string> Header { get; private set; }
 
         /// <summary>
-        /// ETS type name from the first line / comment in the CSV.
+        /// Gets ETS type name from the first line / comment in the CSV.
         /// </summary>
         internal string TypeName { get; private set; }
 
@@ -1139,12 +1211,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (cmdlet == null)
             {
-                throw new ArgumentNullException("cmdlet");
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
             if (streamReader == null)
             {
-                throw new ArgumentNullException("streamReader");
+                throw new ArgumentNullException(nameof(streamReader));
             }
 
             _cmdlet = cmdlet;
@@ -1161,18 +1233,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This is set to true when end of file is reached.
         /// </summary>
-        private
-        bool EOF
-        {
-            get
-            {
-                return _sr.EndOfStream;
-            }
-        }
+        private bool EOF => _sr.EndOfStream;
 
-        private
-        char
-        ReadChar()
+        private char ReadChar()
         {
             if (EOF)
             {
@@ -1188,34 +1251,29 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        private
-        bool
-        PeekNextChar(char c)
+        private bool PeekNextChar(char c)
         {
             int i = _sr.Peek();
             if (i == -1)
             {
                 return false;
             }
-            return (c == (char)i);
+
+            return c == (char)i;
         }
 
         /// <summary>
         /// Reads a line from file. This consumes the end of line.
         /// Only use it when end of line chars are not important.
         /// </summary>
-        /// <returns></returns>
-        private string
-        ReadLine()
-        {
-            return _sr.ReadLine();
-        }
+        /// <returns>Line from file.</returns>
+        private string ReadLine() => _sr.ReadLine();
 
         #endregion reading helpers
 
         internal void ReadHeader()
         {
-            //Read #Type record if available
+            // Read #Type record if available
             if ((TypeName == null) && (!this.EOF))
             {
                 TypeName = ReadTypeInformation();
@@ -1260,9 +1318,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal
-        void
-        Import(ref bool alreadyWriteOutWarning)
+        internal void Import(ref bool alreadyWriteOutWarning)
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
@@ -1275,7 +1331,7 @@ namespace Microsoft.PowerShell.Commands
                 if (values.Count == 0)
                     break;
 
-                if (values.Count == 1 && String.IsNullOrEmpty(values[0]))
+                if (values.Count == 1 && string.IsNullOrEmpty(values[0]))
                 {
                     // skip the blank lines
                     continue;
@@ -1285,6 +1341,7 @@ namespace Microsoft.PowerShell.Commands
                 prevalidated = true;
                 _cmdlet.WriteObject(result);
             }
+
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
         }
 
@@ -1298,14 +1355,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (names.Count == 0)
                 {
-                    //If there are no names, it is an error
+                    // If there are no names, it is an error
                 }
                 else
                 {
                     HashSet<string> headers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string currentHeader in names)
                     {
-                        if (!String.IsNullOrEmpty(currentHeader))
+                        if (!string.IsNullOrEmpty(currentHeader))
                         {
                             if (!headers.Contains(currentHeader))
                             {
@@ -1315,9 +1372,10 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =
-                                    String.Format(CultureInfo.InvariantCulture,
-                                    ExtendedTypeSystem.MemberAlreadyPresent,
-                                    currentHeader);
+                                    string.Format(
+                                        CultureInfo.InvariantCulture,
+                                        ExtendedTypeSystem.MemberAlreadyPresent,
+                                        currentHeader);
 
                                 ExtendedTypeSystemException exception = new ExtendedTypeSystemException(memberAlreadyPresentMsg);
                                 throw exception;
@@ -1327,12 +1385,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         /// <summary>
         /// Read the type information, if present.
         /// </summary>
-        /// <returns>Type string if present else null</returns>
-        private string
-        ReadTypeInformation()
+        /// <returns>Type string if present else null.</returns>
+        private string ReadTypeInformation()
         {
             string type = null;
             if (PeekNextChar('#'))
@@ -1348,6 +1406,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return type;
         }
 
@@ -1357,71 +1416,69 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
-        private void
-        ParseNextRecord(List<string> result, StringBuilder current)
+        private void ParseNextRecord(List<string> result, StringBuilder current)
         {
             result.Clear();
+
             // current string
             current.Clear();
 
             bool seenBeginQuote = false;
-            // int i = 0;
+
             while (!EOF)
             {
-                //Read the next character
+                // Read the next character
                 char ch = ReadChar();
 
-                if ((ch == _delimiter))
+                if (ch == _delimiter)
                 {
                     if (seenBeginQuote)
                     {
-                        //Delimiter inside double quotes is part of string.
-                        //Ex:
-                        //"foo, bar"
-                        //is parsed as
-                        //->foo, bar<-
+                        // Delimiter inside double quotes is part of string.
+                        // Ex:
+                        // "foo, bar"
+                        // is parsed as
+                        // ->foo, bar<-
                         current.Append(ch);
                     }
                     else
                     {
-                        //Delimiter outside quotes is end of current word.
+                        // Delimiter outside quotes is end of current word.
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                     }
                 }
-
                 else if (ch == '"')
                 {
                     if (seenBeginQuote)
                     {
                         if (PeekNextChar('"'))
                         {
-                            //"" inside double quote are single quote
-                            //ex: "foo""bar"
-                            //is read as
-                            //->foo"bar<-
+                            // "" inside double quote are single quote
+                            // ex: "foo""bar"
+                            // is read as
+                            // ->foo"bar<-
 
-                            //PeekNextChar only peeks. Read the next char.
-
+                            // PeekNextChar only peeks. Read the next char.
                             ReadChar();
                             current.Append('"');
                         }
                         else
                         {
-                            //We have seen a matching end quote.
+                            // We have seen a matching end quote.
                             seenBeginQuote = false;
 
-                            //Read
-                            //everything till we hit next delimiter.
-                            //In correct CSV,1) end quote is followed by delimiter
-                            //2)end quote is followed some whitespaces and
-                            //then delimiter.
-                            //We eat the whitespaces seen after the ending quote.
-                            //However if there are other characters, we add all of them
-                            //to string.
-                            //Ex: ->"foo bar"<- is read as ->foo bar<-
-                            //->"foo bar"  <- is read as ->foo bar<-
-                            //->"foo bar" ab <- is read as ->"foo bar" ab <-
+                            // Read
+                            // everything till we hit next delimiter.
+                            // In correct CSV,1) end quote is followed by delimiter
+                            // 2)end quote is followed some whitespaces and
+                            // then delimiter.
+                            // We eat the whitespaces seen after the ending quote.
+                            // However if there are other characters, we add all of them
+                            // to string.
+                            // Ex: ->"foo bar"<- is read as ->foo bar<-
+                            // ->"foo bar"  <- is read as ->foo bar<-
+                            // ->"foo bar" ab <- is read as ->"foo bar" ab <-
                             bool endofRecord = false;
                             ReadTillNextDelimiter(current, ref endofRecord, true);
                             result.Add(current.ToString());
@@ -1432,18 +1489,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (current.Length == 0)
                     {
-                        //We are at the beginning of a new word.
-                        //This quote is the first quote.
+                        // We are at the beginning of a new word.
+                        // This quote is the first quote.
                         seenBeginQuote = true;
                     }
                     else
                     {
-                        //We are seeing a quote after the start of
-                        //the word. This is error, however we will be
-                        //lenient here and do what excel does:
-                        //Ex: foo "ba,r"
-                        //In above example word read is ->foo "ba<-
-                        //Basically we read till next delimiter
+                        // We are seeing a quote after the start of
+                        // the word. This is error, however we will be
+                        // lenient here and do what excel does:
+                        // Ex: foo "ba,r"
+                        // In above example word read is ->foo "ba<-
+                        // Basically we read till next delimiter
                         bool endOfRecord = false;
                         current.Append(ch);
                         ReadTillNextDelimiter(current, ref endOfRecord, false);
@@ -1457,25 +1514,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (seenBeginQuote)
                     {
-                        //Spaces in side quote are valid
+                        // Spaces in side quote are valid
                         current.Append(ch);
                     }
                     else if (current.Length == 0)
                     {
-                        //ignore leading spaces
+                        // ignore leading spaces
                         continue;
                     }
                     else
                     {
-                        //We are not in quote and we are not at the
-                        //beginning of a word. We should not be seeing
-                        //spaces here. This is an error condition, however
-                        //we will be lenient here and do what excel does,
-                        //that is read till next delimiter.
-                        //Ex: ->foo <- is read as ->foo<-
-                        //Ex: ->foo bar<- is read as ->foo bar<-
-                        //Ex: ->foo bar <- is read as ->foo bar <-
-                        //Ex: ->foo bar "er,ror"<- is read as ->foo bar "er<-
+                        // We are not in quote and we are not at the
+                        // beginning of a word. We should not be seeing
+                        // spaces here. This is an error condition, however
+                        // we will be lenient here and do what excel does,
+                        // that is read till next delimiter.
+                        // Ex: ->foo <- is read as ->foo<-
+                        // Ex: ->foo bar<- is read as ->foo bar<-
+                        // Ex: ->foo bar <- is read as ->foo bar <-
+                        // Ex: ->foo bar "er,ror"<- is read as ->foo bar "er<-
                         bool endOfRecord = false;
                         current.Append(ch);
                         ReadTillNextDelimiter(current, ref endOfRecord, true);
@@ -1483,21 +1540,24 @@ namespace Microsoft.PowerShell.Commands
                         current.Remove(0, current.Length);
 
                         if (endOfRecord)
+                        {
                             break;
+                        }
                     }
                 }
                 else if (IsNewLine(ch, out string newLine))
                 {
                     if (seenBeginQuote)
                     {
-                        //newline inside quote are valid
+                        // newline inside quote are valid
                         current.Append(newLine);
                     }
                     else
                     {
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
-                        //New line outside quote is end of word and end of record
+
+                        // New line outside quote is end of word and end of record
                         break;
                     }
                 }
@@ -1506,6 +1566,7 @@ namespace Microsoft.PowerShell.Commands
                     current.Append(ch);
                 }
             }
+
             if (current.Length != 0)
             {
                 result.Add(current.ToString());
@@ -1513,9 +1574,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
-        private
-        bool
-        IsNewLine(char ch, out string newLine)
+        private bool IsNewLine(char ch, out string newLine)
         {
             newLine = string.Empty;
             if (ch == '\r')
@@ -1550,11 +1609,10 @@ namespace Microsoft.PowerShell.Commands
         /// If this is true, eat the trailing blanks. Note:if there are non
         /// whitespace characters present, then trailing blanks are not consumed.
         /// </param>
-        private
-        void
-        ReadTillNextDelimiter(StringBuilder current, ref bool endOfRecord, bool eatTrailingBlanks)
+        private void ReadTillNextDelimiter(StringBuilder current, ref bool endOfRecord, bool eatTrailingBlanks)
         {
             StringBuilder temp = new StringBuilder();
+
             // Did we see any non-whitespace character
             bool nonWhiteSpace = false;
 
@@ -1586,6 +1644,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             if (eatTrailingBlanks && !nonWhiteSpace)
             {
                 string s = temp.ToString();
@@ -1598,11 +1657,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private
-        PSObject
-        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
+        private PSObject BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
         {
-            //string[] namesarray = null;
             PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
@@ -1610,19 +1666,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 string name = names[i];
                 string value = null;
-                ////if name is null and delimiter is '"', use a default property name 'UnspecifiedName'
+
+                // if name is null and delimiter is '"', use a default property name 'UnspecifiedName'
                 if (name.Length == 0 && delimiterlocal == '"')
                 {
                     name = UnspecifiedName + unspecifiedNameIndex;
                     unspecifiedNameIndex++;
                 }
-                ////if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
+
+                // if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
                 if (string.IsNullOrEmpty(name))
                 {
                     name = UnspecifiedName + unspecifiedNameIndex;
                     unspecifiedNameIndex++;
                 }
-                //If no value was present in CSV file, we write null.
+
+                // If no value was present in CSV file, we write null.
                 if (i < values.Count)
                 {
                     value = values[i];
@@ -1660,33 +1719,42 @@ namespace Microsoft.PowerShell.Commands
         internal const char CSVDelimiter = ',';
         internal const string CSVTypePrefix = "CSV:";
 
-        internal static char SetDelimiter(PSCmdlet Cmdlet, string ParameterSetName, char Delimiter, bool UseCulture)
+        internal static char SetDelimiter(PSCmdlet cmdlet, string parameterSetName, char explicitDelimiter, bool useCulture)
         {
-            switch (ParameterSetName)
+            char delimiter = explicitDelimiter;
+            switch (parameterSetName)
             {
                 case "Delimiter":
-                    //if delimiter is not given, it should take , as value
-                    if (Delimiter == '\0')
+                case "DelimiterPath":
+                case "DelimiterLiteralPath":
+
+                    // if delimiter is not given, it should take , as value
+                    if (explicitDelimiter == '\0')
                     {
-                        Delimiter = ImportExportCSVHelper.CSVDelimiter;
+                        delimiter = ImportExportCSVHelper.CSVDelimiter;
                     }
 
                     break;
                 case "UseCulture":
-                    if (UseCulture == true)
+                case "CulturePath":
+                case "CultureLiteralPath":
+                    if (useCulture == true)
                     {
                         // ListSeparator is apparently always a character even though the property returns a string, checked via:
                         // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
-                        Delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
+                        delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
                     }
+
                     break;
                 default:
                     {
-                        Delimiter = ImportExportCSVHelper.CSVDelimiter;
+                        delimiter = ImportExportCSVHelper.CSVDelimiter;
                     }
+
                     break;
             }
-            return Delimiter;
+
+            return delimiter;
         }
     }
 

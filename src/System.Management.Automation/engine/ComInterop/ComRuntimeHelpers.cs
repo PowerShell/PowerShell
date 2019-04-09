@@ -38,7 +38,7 @@ namespace System.Management.Automation.ComInterop
                     break;
 
                 case ComHresults.DISP_E_BADVARTYPE:
-                    //One of the arguments in rgvarg is not a valid variant type.
+                    // One of the arguments in rgvarg is not a valid variant type.
                     break;
 
                 case ComHresults.DISP_E_EXCEPTION:
@@ -68,7 +68,7 @@ namespace System.Management.Automation.ComInterop
                     //
                     // But: Arguments are stored in pDispParams->rgvarg in reverse order, so the first
                     // parameter is the one with the highest index in the array
-                    // http://msdn.microsoft.com/library/aa912367.aspx
+                    // https://msdn.microsoft.com/library/aa912367.aspx
                     argErr = ((uint)args.Length) - argErr - 2;
 
                     // One or more of the arguments could not be coerced.
@@ -82,6 +82,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         destinationType = method.ParameterInformation[argErr].parameterType;
                     }
+
                     object originalValue = args[argErr + 1];
 
                     // If this is a put, use the InputType and the last argument
@@ -181,7 +182,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Look for typeinfo using IDispatch.GetTypeInfo
+        /// Look for typeinfo using IDispatch.GetTypeInfo.
         /// </summary>
         /// <param name="dispatch"></param>
         /// <param name="throwIfMissingExpectedTypeInfo">
@@ -217,12 +218,14 @@ namespace System.Management.Automation.ComInterop
                 CheckIfMissingTypeInfoIsExpected(hresult, throwIfMissingExpectedTypeInfo);
                 return null;
             }
+
             if (typeInfoPtr == IntPtr.Zero)
             { // be defensive against components that return IntPtr.Zero
                 if (throwIfMissingExpectedTypeInfo)
                 {
                     Marshal.ThrowExceptionForHR(ComHresults.E_FAIL);
                 }
+
                 return null;
             }
 
@@ -404,28 +407,40 @@ namespace System.Management.Automation.ComInterop
 
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertSByteByrefToPtr(ref SByte value) { return s_convertSByteByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertInt16ByrefToPtr(ref Int16 value) { return s_convertInt16ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertInt32ByrefToPtr(ref Int32 value) { return s_convertInt32ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertInt64ByrefToPtr(ref Int64 value) { return s_convertInt64ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertByteByrefToPtr(ref Byte value) { return s_convertByteByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertUInt16ByrefToPtr(ref UInt16 value) { return s_convertUInt16ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertUInt32ByrefToPtr(ref UInt32 value) { return s_convertUInt32ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertUInt64ByrefToPtr(ref UInt64 value) { return s_convertUInt64ByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertIntPtrByrefToPtr(ref IntPtr value) { return s_convertIntPtrByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertUIntPtrByrefToPtr(ref UIntPtr value) { return s_convertUIntPtrByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertSingleByrefToPtr(ref Single value) { return s_convertSingleByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertDoubleByrefToPtr(ref Double value) { return s_convertDoubleByrefToPtr(ref value); }
+
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public static IntPtr ConvertDecimalByrefToPtr(ref Decimal value) { return s_convertDecimalByrefToPtr(ref value); }
 
@@ -443,6 +458,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return variant;
             }
+
             InitVariantForObject(obj, ref variant);
             return variant;
         }
@@ -522,6 +538,7 @@ namespace System.Management.Automation.ComInterop
                     out excepInfo,
                     out argErr);
             }
+
             return hresult;
         }
 
@@ -582,6 +599,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         il.Emit(OpCodes.Ldarg, index);
                     }
+
                     break;
             }
         }
@@ -599,6 +617,7 @@ namespace System.Management.Automation.ComInterop
                 // Prevent recursion
                 return;
             }
+
             int dummy = _dummyMarker;
             IntPtr ptrToLocal = ConvertInt32ByrefToPtr(ref dummy);
             Debug.Assert(ptrToLocal.ToInt64() < ptr.ToInt64());
@@ -616,16 +635,17 @@ namespace System.Management.Automation.ComInterop
                 {
                     return s_dynamicModule;
                 }
+
                 lock (s_lock)
                 {
                     if (s_dynamicModule == null)
                     {
                         var attributes = new[] {
-                            new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>()),
-                            //PermissionSet(SecurityAction.Demand, Unrestricted = true)
-                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[]{typeof(SecurityAction)}),
-                                new object[]{SecurityAction.Demand},
-                                new PropertyInfo[]{typeof(PermissionSetAttribute).GetProperty("Unrestricted")},
+                            new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()),
+                            // PermissionSet(SecurityAction.Demand, Unrestricted = true)
+                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[] { typeof(SecurityAction) }),
+                                new object[] { SecurityAction.Demand },
+                                new PropertyInfo[] { typeof(PermissionSetAttribute).GetProperty("Unrestricted") },
                                 new object[] {true})
                         };
 
@@ -634,6 +654,7 @@ namespace System.Management.Automation.ComInterop
                         assembly.DefineVersionInfoResource();
                         s_dynamicModule = assembly.DefineDynamicModule(name);
                     }
+
                     return s_dynamicModule;
                 }
             }
@@ -686,6 +707,7 @@ namespace System.Management.Automation.ComInterop
             {
                 Marshal.WriteByte(ptr, i, 0);
             }
+
             return ptr;
         }
 
@@ -725,6 +747,7 @@ namespace System.Management.Automation.ComInterop
                         }
                     }
                 }
+
                 return s_IDispatchInvokeNoResultImpl;
             }
         }
@@ -769,6 +792,7 @@ namespace System.Management.Automation.ComInterop
             {
                 method.Emit(OpCodes.Ldc_I8, UnsafeMethods.NullInterfaceId.ToInt64()); // riid
             }
+
             method.Emit(OpCodes.Conv_I);
 
             method.Emit(OpCodes.Ldc_I4_0); // lcid
@@ -784,6 +808,7 @@ namespace System.Management.Automation.ComInterop
             {
                 method.Emit(OpCodes.Ldsfld, typeof(IntPtr).GetField("Zero"));
             }
+
             EmitLoadArg(method, exceptInfoIndex);
             EmitLoadArg(method, argErrIndex);
 

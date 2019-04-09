@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
             IRegistryWrapper key = null;
 
             // Validate input first.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
@@ -71,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
                     return;
                 }
+
                 WriteSecurityDescriptorObject(sd, path);
             }
         }
@@ -90,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         {
             IRegistryWrapper key = null;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -150,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteSecurityDescriptorObject(sd, path);
             }
-        } // SetSecurityDescriptor
+        }
 
         /// <summary>
         /// Creates a new empty security descriptor.
@@ -176,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 
@@ -202,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 

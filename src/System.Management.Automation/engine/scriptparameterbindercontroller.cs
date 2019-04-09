@@ -17,7 +17,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes the cmdlet parameter binder controller for
-        /// the specified cmdlet and engine context
+        /// the specified cmdlet and engine context.
         /// </summary>
         /// <param name="script">
         /// The script that contains the parameter metadata.
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         internal List<object> DollarArgs { get; private set; }
 
         /// <summary>
-        /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks
+        /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks.
         /// </summary>
         /// <param name="arguments">
         ///     The arguments to be bound.
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the specified parameters to the shell function
+        /// Binds the specified parameters to the shell function.
         /// </summary>
         /// <param name="arguments">
         /// The arguments to bind.
@@ -186,6 +186,7 @@ namespace System.Management.Automation
 
                         throw bindingException;
                     }
+
                     BindParameter(uint.MaxValue, argument, parameter, ParameterBindingFlags.ShouldCoerceType);
                 }
                 else if (argument.ParameterName.Equals(Language.Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
@@ -200,12 +201,13 @@ namespace System.Management.Automation
                     result.Add(argument);
                 }
             }
+
             return result;
         }
 
         /// <summary>
         /// Takes the remaining arguments that haven't been bound, and binds
-        /// them to $args
+        /// them to $args.
         /// </summary>
         /// <param name="arguments">
         ///     The remaining unbound arguments.
@@ -261,6 +263,7 @@ namespace System.Management.Automation
                     {
                         args.Add(argValue);
                     }
+
                     continue;
                 }
 
@@ -279,6 +282,7 @@ namespace System.Management.Automation
                         { IsHidden = true };
                         parameterText.Properties.Add(noteProperty);
                     }
+
                     args.Add(parameterText);
                 }
 

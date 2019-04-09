@@ -36,7 +36,7 @@ markComment: >
 
 # Comment to post when closing a stale Issue or Pull Request.
 closeComment: >
-  This PR has be automatically close because it is stale.
+  This PR has been automatically closed because it is stale.
   If you wish to continue working on the PR, please first update the PR, then reopen it.
 
   Thanks again for your contribution.

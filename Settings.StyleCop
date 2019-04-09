@@ -12,6 +12,19 @@
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
         </Rule>
+        <Rule Name="FieldsMustBePrivate">
+          <!-- it's OK to have internal or public fields -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="CodeAnalysisSuppressionMustHaveJustification">
+          <!-- code analysis SuppressMessage attributes are from legacy code,
+               it's OK to not include a justification. -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
       </Rules>
       <AnalyzerSettings />
     </Analyzer>
@@ -83,7 +96,10 @@
           </RuleSettings>
         </Rule>
       </Rules>
-      <AnalyzerSettings />
+      <AnalyzerSettings>
+        <BooleanProperty Name="IgnorePrivates">True</BooleanProperty>
+        <BooleanProperty Name="IgnoreInternals">True</BooleanProperty>
+      </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.NamingRules">
       <Rules>
@@ -92,8 +108,55 @@
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
         </Rule>
+        <Rule Name="VariableNamesMustNotBePrefixed">
+          <!-- this rule disallows the prefix 's_' to static fields -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="StaticReadonlyFieldsMustBeginWithUpperCaseLetter">
+          <!-- this rule requires first letter upper-case even for private fields -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FieldNamesMustNotContainUnderscore">
+          <!-- this rule disallows '_' in field name -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
       </Rules>
-      <AnalyzerSettings />
+      <AnalyzerSettings>
+        <CollectionProperty Name="Hungarian">
+          <Value>as</Value>
+          <Value>at</Value>
+          <Value>by</Value>
+          <Value>do</Value>
+          <Value>go</Value>
+          <Value>if</Value>
+          <Value>in</Value>
+          <Value>is</Value>
+          <Value>it</Value>
+          <Value>no</Value>
+          <Value>of</Value>
+          <Value>on</Value>
+          <Value>or</Value>
+          <Value>to</Value>
+          <Value>n</Value>
+          <Value>r</Value>
+          <Value>l</Value>
+          <Value>i</Value>
+          <Value>io</Value>
+          <Value>fs</Value>
+          <Value>lp</Value>
+          <Value>dw</Value>
+          <Value>h</Value>
+          <Value>rs</Value>
+          <Value>ps</Value>
+          <Value>op</Value>
+        </CollectionProperty>
+      </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.OrderingRules">
       <Rules>
@@ -113,6 +176,31 @@
           </RuleSettings>
         </Rule>
         <Rule Name="ConstantsMustAppearBeforeFields">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="StaticElementsMustAppearBeforeInstanceElements">
+          <!-- it's OK to have static members after instance members -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+    <Analyzer AnalyzerId="StyleCop.CSharp.LayoutRules">
+      <Rules>
+        <Rule Name="ElementMustNotBeOnSingleLine">
+          <!-- it's OK to have simple member on a single line.
+               think about the 'Visit*' methods in Ast visitor class. -->
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="AllAccessorsMustBeSingleLineOrMultiLine">
+          <!-- it's OK to have the getter be on a single line and the
+               setter be on multiple lines, or vice versa -->
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>

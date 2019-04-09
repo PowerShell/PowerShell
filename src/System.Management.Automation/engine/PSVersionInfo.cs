@@ -62,7 +62,7 @@ namespace System.Management.Automation
         private static SemanticVersion s_psV6Version;
 
         /// <summary>
-        /// A constant to track current PowerShell Edition
+        /// A constant to track current PowerShell Edition.
         /// </summary>
         internal const string PSEditionValue = "Core";
 
@@ -264,7 +264,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}.{1}", PSVersionInfo.PSVersion.Major, PSVersionInfo.PSVersion.Minor);
+                return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}.{1}", PSVersionInfo.PSVersion.Major, PSVersionInfo.PSVersion.Minor);
             }
         }
 
@@ -274,10 +274,12 @@ namespace System.Management.Automation
             {
                 return version.Minor == s_psV6Version.Minor;
             }
+
             if (version.Major == s_psV5Version.Major)
             {
                 return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
             }
+
             if (version.Major == s_psV4Version.Major)
             {
                 return (version.Minor == s_psV4Version.Minor);
@@ -337,7 +339,7 @@ namespace System.Management.Automation
         /// We want see special order:
         ///     1. PSVersionName
         ///     2. PSEditionName
-        ///     3. Remaining properties in alphabetical order
+        ///     3. Remaining properties in alphabetical order.
         /// </summary>
         public override ICollection Keys
         {
@@ -373,7 +375,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return String.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
+                    return string.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -392,7 +394,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// An implementation of semantic versioning (http://semver.org)
+    /// An implementation of semantic versioning (https://semver.org)
     /// that can be converted to/from <see cref="System.Version"/>.
     ///
     /// When converting to <see cref="Version"/>, a PSNoteProperty is
@@ -412,7 +414,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion from a string.
         /// </summary>
-        /// <param name="version">The version to parse</param>
+        /// <param name="version">The version to parse.</param>
         /// <exception cref="FormatException"></exception>
         /// <exception cref="OverflowException"></exception>
         public SemanticVersion(string version)
@@ -429,11 +431,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The patch version</param>
-        /// <param name="preReleaseLabel">The pre-release label for the version</param>
-        /// <param name="buildLabel">The build metadata for the version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The patch version.</param>
+        /// <param name="preReleaseLabel">The pre-release label for the version.</param>
+        /// <param name="buildLabel">The build metadata for the version.</param>
         /// <exception cref="FormatException">
         /// If <paramref name="preReleaseLabel"/> don't match 'LabelUnitRegEx'.
         /// If <paramref name="buildLabel"/> don't match 'LabelUnitRegEx'.
@@ -459,10 +461,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The minor version</param>
-        /// <param name="label">The label for the version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The minor version.</param>
+        /// <param name="label">The label for the version.</param>
         /// <exception cref="PSArgumentException">
         /// <exception cref="FormatException">
         /// If <paramref name="label"/> don't match 'LabelRegEx'.
@@ -486,9 +488,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The minor version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The minor version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/>, <paramref name="minor"/>, or <paramref name="patch"/> is less than 0.
         /// </exception>
@@ -509,8 +511,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> or <paramref name="minor"/> is less than 0.
         /// </exception>
@@ -519,7 +521,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
+        /// <param name="major">The major version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> is less than 0.
         /// </exception>
@@ -550,6 +552,7 @@ namespace System.Management.Automation
             {
                 PreReleaseLabel = preLabelNote.Value as string;
             }
+
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
             if (buildLabelNote != null)
             {
@@ -618,7 +621,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse <paramref name="version"/> and return the result if it is a valid <see cref="SemanticVersion"/>, otherwise throws an exception.
         /// </summary>
-        /// <param name="version">The string to parse</param>
+        /// <param name="version">The string to parse.</param>
         /// <returns></returns>
         /// <exception cref="PSArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
@@ -626,7 +629,7 @@ namespace System.Management.Automation
         public static SemanticVersion Parse(string version)
         {
             if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
-            if (version == String.Empty) throw new FormatException(nameof(version));
+            if (version == string.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
             r.Init(true);
@@ -639,7 +642,7 @@ namespace System.Management.Automation
         /// Parse <paramref name="version"/> and return true if it is a valid <see cref="SemanticVersion"/>, otherwise return false.
         /// No exceptions are raised.
         /// </summary>
-        /// <param name="version">The string to parse</param>
+        /// <param name="version">The string to parse.</param>
         /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
         public static bool TryParse(string version, out SemanticVersion result)
         {
@@ -716,9 +719,9 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((dashIndex != - 1 && String.IsNullOrEmpty(preLabel))   ||
-                (plusIndex != - 1 && String.IsNullOrEmpty(buildLabel)) ||
-                String.IsNullOrEmpty(versionSansLabel))
+            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != -1 && string.IsNullOrEmpty(buildLabel)) ||
+                string.IsNullOrEmpty(versionSansLabel))
             {
                 // We have dash and no preReleaseLabel  or
                 // we have plus and no buildLabel or
@@ -829,7 +832,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implement <see cref="IComparable{T}.CompareTo"/>.
-        /// Meets SymVer 2.0 p.11 http://semver.org/
+        /// Meets SymVer 2.0 p.11 https://semver.org/
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
@@ -877,7 +880,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded == operator
+        /// Overloaded == operator.
         /// </summary>
         public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
         {
@@ -890,7 +893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded != operator
+        /// Overloaded != operator.
         /// </summary>
         public static bool operator !=(SemanticVersion v1, SemanticVersion v2)
         {
@@ -898,7 +901,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &lt; operator
+        /// Overloaded &lt; operator.
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
@@ -906,7 +909,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &lt;= operator
+        /// Overloaded &lt;= operator.
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
@@ -914,7 +917,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &gt; operator
+        /// Overloaded &gt; operator.
         /// </summary>
         public static bool operator >(SemanticVersion v1, SemanticVersion v2)
         {
@@ -922,7 +925,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &gt;= operator
+        /// Overloaded &gt;= operator.
         /// </summary>
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {
@@ -940,8 +943,9 @@ namespace System.Management.Automation
             // Numeric identifiers always have lower precedence than non-numeric identifiers.
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
-            if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
-            if (String.IsNullOrEmpty(preLabel2)) { return -1; }
+            if (string.IsNullOrEmpty(preLabel1)) { return string.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+
+            if (string.IsNullOrEmpty(preLabel2)) { return -1; }
 
             var units1 = preLabel1.Split('.');
             var units2 = preLabel2.Split('.');
@@ -963,9 +967,10 @@ namespace System.Management.Automation
                 else
                 {
                     if (isNumber1) { return -1; }
+
                     if (isNumber2) { return 1; }
 
-                    int result = String.CompareOrdinal(ac, bc);
+                    int result = string.CompareOrdinal(ac, bc);
                     if (result != 0) { return result; }
                 }
             }
@@ -994,7 +999,7 @@ namespace System.Management.Automation
 
             internal void SetFailure(ParseFailureKind failure)
             {
-                SetFailure(failure, String.Empty);
+                SetFailure(failure, string.Empty);
             }
 
             internal void SetFailure(ParseFailureKind failure, string argument)
@@ -1031,8 +1036,10 @@ namespace System.Management.Automation
                         {
                             return e;
                         }
+
                         break;
                 }
+
                 return PSTraceSource.NewArgumentException("version");
             }
         }

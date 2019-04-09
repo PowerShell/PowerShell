@@ -10,19 +10,19 @@ using System.Management.Automation.Language;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the information for a given breakpoint
+    /// Holds the information for a given breakpoint.
     /// </summary>
     public abstract class Breakpoint
     {
         #region properties
 
         /// <summary>
-        /// The action to take when the breakpoint is hit
+        /// The action to take when the breakpoint is hit.
         /// </summary>
         public ScriptBlock Action { get; private set; }
 
         /// <summary>
-        /// Gets whether this breakpoint is enabled
+        /// Gets whether this breakpoint is enabled.
         /// </summary>
         public bool Enabled { get; private set; }
 
@@ -32,17 +32,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Records how many times this breakpoint has been triggered
+        /// Records how many times this breakpoint has been triggered.
         /// </summary>
         public int HitCount { get; private set; }
 
         /// <summary>
-        /// This breakpoint's Id
+        /// This breakpoint's Id.
         /// </summary>
         public int Id { get; private set; }
 
         /// <summary>
-        /// True if breakpoint is set on a script, false if the breakpoint is not scoped
+        /// True if breakpoint is set on a script, false if the breakpoint is not scoped.
         /// </summary>
         internal bool IsScriptBreakpoint
         {
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The script this breakpoint is on, or null if the breakpoint is not scoped
+        /// The script this breakpoint is on, or null if the breakpoint is not scoped.
         /// </summary>
         public string Script { get; private set; }
 
@@ -94,7 +94,7 @@ namespace System.Management.Automation
                 // implement a "trigger once" breakpoint that disables itself after first hit.
                 // One could also share an action across many breakpoints - and hence needs
                 // to know something about the breakpoint that is hit, e.g. in a poor mans code coverage tool.
-                Action.DoInvoke(dollarUnder: this, input: null, args: Utils.EmptyArray<object>());
+                Action.DoInvoke(dollarUnder: this, input: null, args: Array.Empty<object>());
             }
             catch (BreakException)
             {
@@ -131,7 +131,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A breakpoint on a command
+    /// A breakpoint on a command.
     /// </summary>
     public class CommandBreakpoint : Breakpoint
     {
@@ -150,7 +150,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Which command this breakpoint is on
+        /// Which command this breakpoint is on.
         /// </summary>
         public string Command { get; private set; }
 
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a string representation of this breakpoint.
         /// </summary>
-        /// <returns>A string representation of this breakpoint</returns>
+        /// <returns>A string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return IsScriptBreakpoint
@@ -209,17 +209,18 @@ namespace System.Management.Automation
             {
                 return (Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
             }
+
             return false;
         }
     }
 
     /// <summary>
-    /// The access type for variable breakpoints to break on
+    /// The access type for variable breakpoints to break on.
     /// </summary>
     public enum VariableAccessMode
     {
         /// <summary>
-        /// Break on read access only
+        /// Break on read access only.
         /// </summary>
         Read,
         /// <summary>
@@ -227,13 +228,13 @@ namespace System.Management.Automation
         /// </summary>
         Write,
         /// <summary>
-        /// Breakon read or write access
+        /// Breakon read or write access.
         /// </summary>
         ReadWrite
     }
 
     /// <summary>
-    /// A breakpoint on a variable
+    /// A breakpoint on a variable.
     /// </summary>
     public class VariableBreakpoint : Breakpoint
     {
@@ -252,19 +253,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The access mode to trigger this variable breakpoint on
+        /// The access mode to trigger this variable breakpoint on.
         /// </summary>
         public VariableAccessMode AccessMode { get; private set; }
 
         /// <summary>
-        /// Which variable this breakpoint is on
+        /// Which variable this breakpoint is on.
         /// </summary>
         public string Variable { get; private set; }
 
         /// <summary>
-        /// Gets the string representation of this breakpoint
+        /// Gets the string representation of this breakpoint.
         /// </summary>
-        /// <returns>The string representation of this breakpoint</returns>
+        /// <returns>The string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return IsScriptBreakpoint
@@ -295,7 +296,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A breakpoint on a line or statement
+    /// A breakpoint on a line or statement.
     /// </summary>
     public class LineBreakpoint : Breakpoint
     {
@@ -327,7 +328,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Which column this breakpoint is on
+        /// Which column this breakpoint is on.
         /// </summary>
         public int Column { get; private set; }
 
@@ -339,7 +340,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a string representation of this breakpoint.
         /// </summary>
-        /// <returns>A string representation of this breakpoint</returns>
+        /// <returns>A string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return Column == 0
@@ -519,6 +520,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             debugger.RemoveLineBreakpoint(this);
         }
     }

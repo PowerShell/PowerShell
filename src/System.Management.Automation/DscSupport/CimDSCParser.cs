@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     public static class DscRemoteOperationsClass
     {
         /// <summary>
-        /// Convert Cim Instance representing Resource desired state to Powershell Class Object
+        /// Convert Cim Instance representing Resource desired state to Powershell Class Object.
         /// </summary>
         public static object ConvertCimInstanceToObject(Type targetType, CimInstance instance, string moduleName)
         {
@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         innerException = powerShell.Streams.Error[0].Exception;
                     }
+
                     errorMessage = string.Format(CultureInfo.CurrentCulture, ParserStrings.InstantiatePSClassObjectFailed, className);
                     var invalidOperationException = new InvalidOperationException(errorMessage, innerException);
                     throw invalidOperationException;
@@ -92,7 +93,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 if (cimPropertyInstance != null &&
                                     cimPropertyInstance.CimClass != null &&
                                     cimPropertyInstance.CimClass.CimSystemProperties != null &&
-                                    String.Equals(
+                                    string.Equals(
                                         cimPropertyInstance.CimClass.CimSystemProperties.ClassName,
                                         "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -102,11 +103,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 {
                                     targetValue = ConvertCimInstanceToObject(memberType, cimPropertyInstance, moduleName);
                                 }
+
                                 if (targetValue == null)
                                 {
                                     return null;
                                 }
                             }
+
                             break;
                         case CimType.InstanceArray:
                             {
@@ -133,11 +136,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                         {
                                             return null;
                                         }
+
                                         targetArray.SetValue(obj, i);
                                     }
+
                                     targetValue = targetArray;
                                 }
                             }
+
                             break;
                         default:
                             targetValue = LanguagePrimitives.ConvertTo(property.Value, memberType, CultureInfo.InvariantCulture);
@@ -155,17 +161,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         ((FieldInfo)member).SetValue(targetObject, targetValue);
                     }
+
                     if (member is PropertyInfo)
                     {
                         ((PropertyInfo)member).SetValue(targetObject, targetValue);
                     }
                 }
             }
+
             return targetObject;
         }
 
         /// <summary>
-        /// Convert hashtable from Ciminstance to hashtable primitive type
+        /// Convert hashtable from Ciminstance to hashtable primitive type.
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="arrayInstance"></param>
@@ -188,6 +196,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         var invalidOperationException = new InvalidOperationException(errorMessage);
                         throw invalidOperationException;
                     }
+
                     result.Add(LanguagePrimitives.ConvertTo<string>(key.Value), LanguagePrimitives.ConvertTo<string>(value.Value));
                 }
             }
@@ -201,7 +210,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return result;
         }
         /// <summary>
-        /// Convert CIM instance to PS Credential
+        /// Convert CIM instance to PS Credential.
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="propertyInstance"></param>
@@ -273,7 +282,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     public sealed class ArgumentToConfigurationDataTransformationAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
-        /// convert a file of ConfigurationData into a hashtable
+        /// Convert a file of ConfigurationData into a hashtable.
         /// </summary>
         /// <param name="engineIntrinsics"></param>
         /// <param name="inputData"></param>
@@ -354,7 +363,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         }
 
         /// <summary>
-        /// Read file content to byte array
+        /// Read file content to byte array.
         /// </summary>
         /// <param name="fullFilePath"></param>
         /// <returns></returns>
@@ -404,6 +413,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                 {
                     fileNameDefiningClass = fileNameDefiningClass.Substring(0, dotIndex);
                 }
+
                 var result = new List<CimClass>(_deserializer.DeserializeClasses(buffer, ref offset, null, null, null, _onClassNeeded, null));
                 foreach (CimClass c in result)
                 {
@@ -411,7 +421,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                     string className = c.CimSystemProperties.ClassName;
                     if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
                     {
-                        //Get the name of the file without schema.mof extension
+                        // Get the name of the file without schema.mof extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -476,7 +486,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private const int IndexModuleVersion = 1;
         private const int IndexClassName = 2;
 
-        //Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
+        // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
         private static readonly string[] s_hiddenResourceList =
     {
         "MSFT_BaseConfigurationProviderRegistration",
@@ -484,12 +494,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         "MSFT_PSConfigurationProviderRegistration",
     };
 
-        //Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
+        // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
         private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
             StringComparer.OrdinalIgnoreCase);
 
-        //a collection to hold current importing script based resource file
-        //this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
+        // a collection to hold current importing script based resource file
+        // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
         private static readonly HashSet<string> s_currentImportingScriptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -504,6 +514,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     t_classCache = new Dictionary<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
                 }
+
                 return t_classCache;
             }
         }
@@ -512,7 +523,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> t_classCache;
 
         /// <summary>
-        /// DSC classname to source module mapper
+        /// DSC classname to source module mapper.
         /// </summary>
         private static Dictionary<string, Tuple<string, Version>> ByClassModuleCache
         {
@@ -522,6 +533,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     t_byClassModuleCache = new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
                 }
+
                 return t_byClassModuleCache;
             }
         }
@@ -530,7 +542,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, Tuple<string, Version>> t_byClassModuleCache;
 
         /// <summary>
-        /// DSC filename to defined class mapper
+        /// DSC filename to defined class mapper.
         /// </summary>
         private static Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>> ByFileClassCache
         {
@@ -540,6 +552,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     t_byFileClassCache = new Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
                 }
+
                 return t_byFileClassCache;
             }
         }
@@ -548,7 +561,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>> t_byFileClassCache;
 
         /// <summary>
-        /// Filenames from which we have imported script dynamic keywords
+        /// Filenames from which we have imported script dynamic keywords.
         /// </summary>
         private static HashSet<string> ScriptKeywordFileCache
         {
@@ -558,6 +571,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     t_scriptKeywordFileCache = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 }
+
                 return t_scriptKeywordFileCache;
             }
         }
@@ -566,12 +580,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static HashSet<string> t_scriptKeywordFileCache;
 
         /// <summary>
-        /// Default ModuleName and ModuleVersion to use
+        /// Default ModuleName and ModuleVersion to use.
         /// </summary>
         private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version("1.1"));
 
         /// <summary>
-        /// Default ModuleName and ModuleVersion to use for meta configuration resources
+        /// Default ModuleName and ModuleVersion to use for meta configuration resources.
         /// </summary>
         internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new Tuple<string, Version>("PSDesiredStateConfigurationEngine", new Version("2.0"));
 
@@ -595,6 +609,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 return t_cacheResourcesFromMultipleModuleVersions;
             }
+
             set
             {
                 t_cacheResourcesFromMultipleModuleVersions = value;
@@ -613,7 +628,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
         /// </summary>
         /// <param name="errors">Collection of any errors encountered during initialization.</param>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
             s_tracer.WriteLine("Initializing DSC class cache force={0}");
@@ -651,6 +666,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         continue;
                     }
+
                     foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
@@ -702,6 +718,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         continue;
                     }
+
                     foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
@@ -740,7 +757,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Load DSC resources into Cache from moduleFolderPath.
         /// </summary>
         /// <param name="errors">Collection of any errors encountered during initialization.</param>
-        /// <param name="modulePathList">Module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">Module path from where DSC PS modules will be loaded.</param>
         /// <param name="isInboxResource">
         /// if module is inbox.
         /// </param>
@@ -777,7 +794,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Get the module name and module version
+        /// Get the module name and module version.
         /// </summary>
         /// <param name="moduleFolderPath">
         /// Path to the module folder
@@ -796,6 +813,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 moduleName = Path.GetFileName(moduleFolderPath);
             }
+
             string manifestPath = Path.Combine(moduleFolderPath, moduleName + ".psd1");
             s_tracer.WriteLine("DSC GetModuleVersion: Try retrieving module version information from file: {0}.", manifestPath);
 
@@ -853,7 +871,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return null;
         }
 
-        //Callback implementation...
+        // Callback implementation...
         private static CimClass MyClassCallback(string serverName, string namespaceName, string className)
         {
             foreach (KeyValuePair<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> cimClass in ClassCache)
@@ -869,7 +887,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Import CIM classes from the given file
+        /// Import CIM classes from the given file.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="moduleInfo"></param>
@@ -928,10 +946,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             }
                         }
                     }
+
                     if (s_hiddenResourceCache.Contains(className))
                     {
                         continue;
                     }
+
                     if (!CacheResourcesFromMultipleModuleVersions)
                     {
                         // Find & remove the previous version of the resource.
@@ -941,6 +961,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             ClassCache.Remove(resourceList[0].Key);
                         }
                     }
+
                     ClassCache[moduleQualifiedResourceName] = new Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>(DSCResourceRunAsCredential.Default, c);
                     ByClassModuleCache[className] = moduleInfo;
                 }
@@ -964,13 +985,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// get text from SecureString
+        /// Get text from SecureString.
         /// </summary>
-        /// <param name="value">value of SecureString</param>
-        /// <returns>decoded string</returns>
+        /// <param name="value">Value of SecureString.</param>
+        /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
-            string passwordValueToAdd = String.Empty;
+            string passwordValueToAdd = string.Empty;
 
             if (value != null)
             {
@@ -1004,14 +1025,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
         }
 
         /// <summary>
         /// Finds resources in the that which matches the specified class and module name.
         /// </summary>
-        /// <param name="moduleName">Module name</param>
-        /// <param name="className">Resource type name</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="className">Resource type name.</param>
         /// <returns>List of found resources in the form of Dictionary{moduleQualifiedName, cimClass}, otherwise empty list.</returns>
         private static List<KeyValuePair<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>>> FindResourceInCache(string moduleName, string className)
         {
@@ -1033,14 +1054,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Find cached cim classes defined under specified module
+        /// Find cached cim classes defined under specified module.
         /// </summary>
         /// <param name="module"></param>
-        /// <returns>List of cached cim classes</returns>
+        /// <returns>List of cached cim classes.</returns>
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
-            var moduleQualifiedName = String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var pair in ClassCache)
             {
                 if (pair.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
@@ -1048,6 +1069,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     cachedClasses.Add(pair.Value.Item2);
                 }
             }
+
             return cachedClasses;
         }
 
@@ -1147,6 +1169,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException("path");
                 throw new ArgumentNullException("path");
             }
+
             if (schemaValidationOption < (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Default ||
                 schemaValidationOption > (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Ignore)
             {
@@ -1194,8 +1217,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             catch (Microsoft.Management.Infrastructure.CimException)
             {
-                //exception means no DSCAlias
+                // exception means no DSCAlias
             }
+
             return null;
         }
 
@@ -1218,6 +1242,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     keywords.Add(keyword);
                 }
             }
+
             return keywords;
         }
 
@@ -1228,7 +1253,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior"> To Specify RunAsBehavior of the class</param>
+        /// <param name="runAsBehavior">To Specify RunAsBehavior of the class.</param>
         private static void CreateAndRegisterKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, functionsToDefine, runAsBehavior);
@@ -1266,7 +1291,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior"> To specify RunAs behavior of the class </param>
+        /// <param name="runAsBehavior">To specify RunAs behavior of the class.</param>
         private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var resourceName = cimClass.CimSystemProperties.ClassName;
@@ -1280,6 +1305,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 return null;
             }
+
             var keyword = new DynamicKeyword()
             {
                 BodyMode = DynamicKeywordBodyMode.Hashtable,
@@ -1342,7 +1368,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
                 {
-                    if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                     {
                         // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
                         continue;
@@ -1407,7 +1433,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // set the property to mandatory is specified for the resource.
                     if (runAsBehavior == DSCResourceRunAsCredential.Mandatory)
                     {
-                        if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                         {
                             keyProp.Mandatory = true;
                         }
@@ -1451,10 +1477,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// update range restriction for meta configuration keywords
+        /// Update range restriction for meta configuration keywords
         /// the restrictions are for
         /// ConfigurationModeFrequency: 15-44640
-        /// RefreshFrequency: 30-44640
+        /// RefreshFrequency: 30-44640.
         /// </summary>
         /// <param name="keyword"></param>
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
@@ -1495,7 +1521,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
         /// </summary>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void LoadDefaultCimKeywords(List<string> modulePathList)
         {
             LoadDefaultCimKeywords(null, null, modulePathList, false);
@@ -1512,7 +1538,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null</param>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
@@ -1532,10 +1558,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
         /// </summary>
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null</param>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
-        /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
+        /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules.</param>
         private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
                                                    List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
         {
@@ -1796,6 +1822,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                          string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
                     break;
                 }
+
                 keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(keywordAst.Parent);
             }
 
@@ -1880,10 +1907,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load DSC resources from specified module.
         /// </summary>
-        /// <param name="scriptExtent">Script statement loading the module, can be null</param>
+        /// <param name="scriptExtent">Script statement loading the module, can be null.</param>
         /// <param name="moduleSpecifications">Module information, can be null.</param>
-        /// <param name="resourceNames">Name of the resource to be loaded from module</param>
-        /// <param name="errorList">List of errors reported by the method</param>
+        /// <param name="resourceNames">Name of the resource to be loaded from module.</param>
+        /// <param name="errorList">List of errors reported by the method.</param>
         public static void LoadResourcesFromModule(IScriptExtent scriptExtent,
                                                            ModuleSpecification[] moduleSpecifications,
                                                            string[] resourceNames,
@@ -1937,6 +1964,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
                         }
+
                         return;
                     }
                 }
@@ -1967,7 +1995,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 var dscResourcesPath = Path.Combine(moduleInfo.ModuleBase, "DscResources");
 
-                var resourcesFound = new List<String>();
+                var resourcesFound = new List<string>();
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, errorList, null, true, scriptExtent);
 
                 if (Directory.Exists(dscResourcesPath))
@@ -2142,6 +2170,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     scriptPath = moduleInfo.Path;
                 }
+
                 ImportKeywordsFromScriptFile(scriptPath, primaryModuleInfo, resourcesToImport, resourcesFound, functionsToDefine, errorList, extent);
             }
 
@@ -2161,7 +2190,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (moduleInfo != null && !string.IsNullOrEmpty(moduleInfo.Path))
             {
-                String asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
+                string asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
                 if (File.Exists(asmToCheck))
                 {
                     return Assembly.ReflectionOnlyLoadFrom(asmToCheck);
@@ -2257,6 +2286,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 sb.Append(" : OMI_BaseResource");
             }
+
             sb.Append("\n{\n");
 
             ProcessMembers(sb, embeddedInstanceTypes, typeAst, className);
@@ -2286,6 +2316,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 bases.Enqueue(b1);
                             }
                         }
+
                         continue;
                     }
                 }
@@ -2306,7 +2337,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
         /// </summary>
         /// <param name="typeDefinitionAst"></param>
         /// <param name="methodsLinePosition"></param>
@@ -2342,7 +2373,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
         /// </summary>
         /// <param name="moduleInfo"></param>
         /// <param name="resourceName"></param>
@@ -2363,6 +2394,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 moduleFiles.Add(moduleInfo.Path);
             }
+
             if (moduleInfo.NestedModules != null)
             {
                 foreach (var nestedModule in moduleInfo.NestedModules.Where(m => !string.IsNullOrEmpty(m.Path)))
@@ -2440,7 +2472,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out isArrayType,
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
@@ -2481,7 +2514,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            //BUGBUG - need to fix up how the module gets set.
+            // BUGBUG - need to fix up how the module gets set.
             Token[] tokens;
             ParseError[] errors;
             var ast = Parser.ParseFile(fileName, out tokens, out errors);
@@ -2490,14 +2523,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (errorList != null && extent != null)
                 {
-                    List<String> errorMessages = new List<string>();
+                    List<string> errorMessages = new List<string>();
                     foreach (var error in errors)
                     {
                         errorMessages.Add(error.ToString());
                     }
+
                     errorList.Add(new ParseError(extent, "FailToParseModuleScriptFile",
                         string.Format(CultureInfo.CurrentCulture, ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages))));
                 }
+
                 return false;
             }
 
@@ -2512,6 +2547,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
                     }
                 }
+
                 return false;
             }, false);
 
@@ -2626,11 +2662,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     return false;
                 }
+
                 if ((qual.CimType != newQual.CimType) ||
                     (qual.Flags != newQual.Flags))
                 {
                     return false;
                 }
+
                 if ((qual.Value == null && newQual.Value != null) ||
                     (qual.Value != null && newQual.Value == null) ||
                     (qual.Value != null && newQual.Value != null &&
@@ -2641,8 +2679,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     return false;
                 }
             }
+
             return true;
         }
+
         private static bool ArePropertiesSame(CimReadOnlyKeyedCollection<CimPropertyDeclaration> oldProperties, CimReadOnlyKeyedCollection<CimPropertyDeclaration> newProperties)
         {
             if (oldProperties.Count != newProperties.Count)
@@ -2664,13 +2704,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     return false;
                 }
+
                 if (!AreQualifiersSame(prop.Qualifiers, newProp.Qualifiers))
                 {
                     return false;
                 }
             }
+
             return true;
         }
+
         private static bool IsSameNestedObject(CimClass oldClass, CimClass newClass)
         {
             // #1 both the classes should be nested class and not DSC resource
@@ -2694,7 +2737,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return true;
         }
 
-        internal static string MapTypeToMofType(Type type, String memberName, String className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
+        internal static string MapTypeToMofType(Type type, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
         {
             isArrayType = false;
             if (type.IsValueType)
@@ -2754,7 +2797,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             else if (!type.IsAbstract)
             {
                 // Must have default constructor, at least 1 public property/field, and no base classes
-                if (type.GetConstructor(PSTypeExtensions.EmptyTypes) == null)
+                if (type.GetConstructor(Type.EmptyTypes) == null)
                 {
                     missingDefaultConstructor = true;
                 }
@@ -2813,16 +2856,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
+
                     if (dscProperty.Mandatory)
                     {
                         sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
+
                     if (dscProperty.NotConfigurable)
                     {
                         sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
+
                     continue;
                 }
 
@@ -2840,6 +2886,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
                         valueMapComma = true;
                     }
+
                     sb.Append("}");
                     sb.Append(sbValues);
                     sb.Append("}");
@@ -2862,6 +2909,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
+
                 sb.Append("}, Values{");
                 needComma = false;
                 foreach (var name in enumNames)
@@ -2869,12 +2917,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
+
                 sb.Append("}");
             }
             else if (embeddedInstanceType != null)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
+
             sb.Append("]");
             return sb.ToString();
         }
@@ -2926,6 +2976,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         GenerateMofForAst((TypeDefinitionAst)batchedTypes[i], nestedSb, embeddedInstanceTypes);
                     }
+
                     nestedSb.Append('\n');
                 }
 
@@ -2943,6 +2994,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 sb.Append(" : OMI_BaseResource");
             }
+
             sb.Append("\n{\n");
 
             ProcessMembers(type, sb, embeddedInstanceTypes, className);
@@ -2971,6 +3023,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         continue;
                     }
+
                     memberType = propertyInfo.PropertyType;
                 }
 
@@ -2979,7 +3032,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string embeddedInstanceType;
                 string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
                     embeddedInstanceTypes);
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
@@ -3047,6 +3100,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         ClassCache.Remove(resourceList[0].Key);
                     }
                 }
+
                 var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className);
                 ClassCache[moduleQualifiedResourceName] = new Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>(runAsBehavior, c);
                 ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
@@ -3087,7 +3141,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
-        /// <param name="errors">error reported during deserialization</param>
+        /// <param name="errors">Error reported during deserialization.</param>
         /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
@@ -3118,6 +3172,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
                     }
                 }
+
                 return true;
             }
             else if (Directory.Exists(dscResourcesPath))
@@ -3145,7 +3200,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
-                                    if (String.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
                                         return true;
@@ -3205,8 +3260,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (!ScriptKeywordFileCache.Contains(schemaFilePath))
                 {
                     // Parsing the file is all that needs to be done to add the keywords
-                    //BUGBUG - need to fix up how the module gets set.
-                    //BUGBUG - should fail somehow if errors is not empty
+                    // BUGBUG - need to fix up how the module gets set.
+                    // BUGBUG - should fail somehow if errors is not empty
                     Token[] tokens; ParseError[] errors;
                     s_currentImportingScriptFiles.Add(schemaFilePath);
                     Parser.ParseFile(schemaFilePath, out tokens, out errors);
@@ -3221,10 +3276,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
-        /// <param name="badDependsOnReference">the malformed resource</param>
-        /// <param name="definingResource">The referencing resource instance</param>
+        /// <param name="badDependsOnReference">The malformed resource.</param>
+        /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
         {
@@ -3236,10 +3291,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list
+        /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list.
         /// </summary>
-        /// <param name="badExclusiveResourcereference">the malformed resource</param>
-        /// <param name="definingResource">The referencing resource instance</param>
+        /// <param name="badExclusiveResourcereference">The malformed resource.</param>
+        /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
         {
@@ -3251,7 +3306,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// if a partial configuration is in 'Pull' Mode, it needs a configuration source
+        /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
         /// <param name="resourceId"></param>
         /// <returns></returns>
@@ -3279,10 +3334,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
-        /// <param name="duplicateResourceId">The duplicate resource identifier</param>
-        /// <param name="nodeName">the node being defined.</param>
+        /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
+        /// <param name="nodeName">The node being defined.</param>
         /// <returns>The error record to use.</returns>
         public static ErrorRecord DuplicateResourceIdInNodeStatementErrorRecord(string duplicateResourceId, string nodeName)
         {
@@ -3294,7 +3349,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of a configuration name is invalid
+        /// Returns an error record to use in the case of a configuration name is invalid.
         /// </summary>
         /// <param name="configurationName"></param>
         /// <returns></returns>
@@ -3308,7 +3363,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of the given value for a property is invalid
+        /// Returns an error record to use in the case of the given value for a property is invalid.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
@@ -3325,7 +3380,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in case the given property is not valid LocalConfigurationManager property
+        /// Returns an error record to use in case the given property is not valid LocalConfigurationManager property.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="validProperties"></param>
@@ -3340,7 +3395,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of the given value for a property is not supported
+        /// Returns an error record to use in the case of the given value for a property is not supported.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
@@ -3357,7 +3412,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of no value is provided for a mandatory property
+        /// Returns an error record to use in the case of no value is provided for a mandatory property.
         /// </summary>
         /// <param name="keywordName"></param>
         /// <param name="typeName"></param>
@@ -3373,7 +3428,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use in the case of more than one values are provided for DebugMode property
+        /// Returns an error record to use in the case of more than one values are provided for DebugMode property.
         /// </summary>
         /// <returns></returns>
         public static ErrorRecord DebugModeShouldHaveOneValue()
@@ -3386,7 +3441,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Return an error to indicate a value is out of range for a dynamic keyword property
+        /// Return an error to indicate a value is out of range for a dynamic keyword property.
         /// </summary>
         /// <param name="property"></param>
         /// <param name="name"></param>
@@ -3404,9 +3459,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value
+        /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value.
         /// </summary>
-        /// <param name="resourceId">resourceId of resource</param>
+        /// <param name="resourceId">ResourceId of resource.</param>
         /// <returns></returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {
@@ -3565,6 +3620,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                        (s_cimKeywordImplementationFunction = ScriptBlock.Create(CimKeywordImplementationFunctionText));
             }
         }
+
         private static ScriptBlock s_cimKeywordImplementationFunction;
         private const string CimKeywordImplementationFunctionText = @"
     param (
@@ -3615,6 +3671,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 $DependsOnVar
             }
         }
+
         $value['DependsOn']= $updatedDependsOn
 
         if($null -ne $DependsOn)

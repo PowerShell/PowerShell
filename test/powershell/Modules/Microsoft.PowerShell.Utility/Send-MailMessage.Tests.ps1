@@ -1,171 +1,132 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Basic Send-MailMessage tests" -Tags CI {
+
+Describe "Send-MailMessage" -Tags CI, RequireSudoOnUnix {
     BeforeAll {
-        function test-smtpserver
-        {
-            $rv = $false
+        Register-PackageSource -Name nuget.org -Location https://api.nuget.org/v3/index.json -ProviderName NuGet -ErrorAction SilentlyContinue
 
-            try
+        $nugetPackage = "netDumbster"
+        Install-Package -Name $nugetPackage -ProviderName NuGet -Scope CurrentUser -Force -Source 'nuget.org'
+
+        $dll = "$(Split-Path (Get-Package $nugetPackage).Source)\lib\netstandard2.0\netDumbster.dll"
+        Add-Type -Path $dll
+
+        $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
+
+        function Read-Mail
+        {
+            param()
+
+            if($server)
             {
-                $tc = New-Object -TypeName System.Net.Sockets.TcpClient -ArgumentList "localhost", 25
-                $rv = $tc.Connected
-                $tc.Close()
+                return $server.ReceivedEmail[0]
             }
-            catch
-            {
-                $rv = false
-            }
-
-            return $rv
+            return $null
         }
-
-        function read-mail
-        {
-            Param(
-                [parameter(Mandatory=$true)]
-                [String]
-                $mailBox
-            )
-
-            $state = "init"
-            $mail = Get-Content $mailBox
-            $rv = @{}
-            foreach ($line in $mail)
-            {
-                switch ($state)
-                {
-                    "init"
-                    {
-                        if ($line.Length -gt 0)
-                        {
-                            $state = "headers"
-                        }
-                    }
-                    "headers"
-                    {
-                        if ($line.StartsWith("From: "))
-                        {
-                            $rv.From = $line.Substring(6)
-                        }
-                        elseif ($line.StartsWith("To: "))
-                        {
-                            if ($null -eq $rv.To)
-                            {
-                                $rv.To = @()
-                            }
-
-                            $rv.To += $line.Substring(4)
-                        }
-                        elseif ($line.StartsWith("Subject: "))
-                        {
-                            $rv.Subject = $line.Substring(9);
-                        }
-                        elseif ($line.Length -eq 0)
-                        {
-                            $state = "body"
-                        }
-                    }
-                    "body"
-                    {
-                        if ($line.Length -eq 0)
-                        {
-                            $state = "done"
-                            continue
-                        }
-
-                        if ($null -eq $rv.Body)
-                        {
-                            $rv.Body = @()
-                        }
-
-                        $rv.Body += $line
-                    }
-                }
-            }
-
-            return $rv
-        }
-
-        $PesterArgs = @{Name = ""}
-        $alreadyHasMail = $true
-
-        if (-not $IsLinux)
-        {
-            $PesterArgs["Skip"] = $true
-            $PesterArgs["Name"] += " (skipped: not Linux)"
-            return
-        }
-
-        $domain = [Environment]::MachineName
-        if (-not (test-smtpserver))
-        {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: no mail server detected)"
-            return
-        }
-
-        $user = [Environment]::UserName
-        $inPassword = Select-String "^${user}:" /etc/passwd -ErrorAction SilentlyContinue
-        if (-not $inPassword)
-        {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: user not in /etc/passwd)"
-            return
-        }
-
-        $address = "$user@$domain"
-        $mailStore = "/var/mail"
-        $mailBox = Join-Path $mailStore $user
-        $mailBoxFile = Get-Item $mailBox -ErrorAction SilentlyContinue
-        if ($null -ne $mailBoxFile -and $mailBoxFile.Length -gt 2)
-        {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: mailbox not empty)"
-            return
-        }
-        $alreadyHasMail = $false
     }
 
     AfterEach {
-       if (-not $alreadyHasMail)
-       {
-           Set-Content -Value "" -Path $mailBox -Force -ErrorAction SilentlyContinue
-       }
+        if($server)
+        {
+            $server.ClearReceivedEmail()
+        }
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
-
-    It @ItArgs {
-        $body = "Greetings from me."
-        $subject = "Test message"
-        Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
-        Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+    AfterAll {
+        if($server)
+        {
+            $server.Stop()
+        }
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
+    $testCases = @(
+        @{
+            Name = "with mandatory parameters"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                Subject = "Subject $(Get-Date)"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
+        @{
+            Name = "with ReplyTo"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                ReplyTo = "noreply@example.com"
+                Subject = "Subject $(Get-Date)"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
+        @{
+            Name = "with No Subject"
+            InputObject = @{
+                From = "user01@example.com"
+                To = "user02@example.com"
+                ReplyTo = "noreply@example.com"
+                Body = "Body $(Get-Date)"
+                SmtpServer = "127.0.0.1"
+            }
+        }
+    )
 
-    It @ItArgs {
-        $body = "Greetings from me again."
-        $subject = "Second test message"
-        $object = [PSCustomObject]@{To = $address; From = $address; Subject = $subject; Body = $body; SmtpServer = '127.0.0.1'}
-        $object | Send-MailMessage
-        Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+    It "Can send mail message using named parameters <Name>" -TestCases $testCases {
+        param($InputObject)
+
+        $server | Should -Not -Be $null
+
+        $powershell = [PowerShell]::Create()
+
+        $null = $powershell.AddCommand("Send-MailMessage").AddParameters($InputObject).AddParameter("ErrorAction","SilentlyContinue")
+
+        $powershell.Invoke()
+
+        $warnings = $powershell.Streams.Warning
+
+        $warnings.count | Should -BeGreaterThan 0
+        $warnings[0].ToString() | Should  -BeLike  "The command 'Send-MailMessage' is obsolete. *"
+
+        $mail = Read-Mail
+
+        $mail.FromAddress | Should -BeExactly $InputObject.From
+        $mail.ToAddresses | Should -BeExactly $InputObject.To
+
+        $mail.Headers["From"] | Should -BeExactly $InputObject.From
+        $mail.Headers["To"] | Should -BeExactly $InputObject.To
+        $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
+
+        $mail.MessageParts.Count | Should -BeExactly 1
+        $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
+    }
+
+    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases -Pending {
+        param($InputObject)
+
+        Set-TestInconclusive "As of right now the Send-MailMessage cmdlet does not support piping named parameters (see issue 7591)"
+
+        $server | Should -Not -Be $null
+
+        [PsCustomObject]$InputObject | Send-MailMessage -ErrorAction SilentlyContinue
+
+        $mail = Read-Mail
+
+        $mail.FromAddress | Should -BeExactly $InputObject.From
+        $mail.ToAddresses | Should -BeExactly $InputObject.To
+
+        $mail.Headers["From"] | Should -BeExactly $InputObject.From
+        $mail.Headers["To"] | Should -BeExactly $InputObject.To
+        $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
+        If ($InputObject.Subject -ne $null) {
+            $mail.Headers["Subject"] | Should -BeExactly $InputObject.Subject
+        }
+
+        $mail.MessageParts.Count | Should -BeExactly 1
+        $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
     }
 }

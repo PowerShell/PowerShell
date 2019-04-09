@@ -171,7 +171,7 @@
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
     <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
   </data>
-  <data name="TypeNotSupported" xml:space="preserve">
-    <value>'{0}' is not supported in this system.</value>
+  <data name="InvalidSDDL" xml:space="preserve">
+    <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
   </data>
 </root>

@@ -97,6 +97,7 @@ namespace System.Management.Automation
                     moduleInfo.AddToTags(tag);
                 }
             }
+
             moduleInfo.ReleaseNotes = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "ReleaseNotes", rehydrationFlags);
             moduleInfo.ProjectUri = DeserializingTypeConverter.GetPropertyValue<Uri>(deserializedModuleInfo, "ProjectUri", rehydrationFlags);
             moduleInfo.LicenseUri = DeserializingTypeConverter.GetPropertyValue<Uri>(deserializedModuleInfo, "LicenseUri", rehydrationFlags);
@@ -299,6 +300,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 command.Parameters.Add(commandParameter);
             }
         }
@@ -403,6 +405,7 @@ namespace System.Management.Automation
             {
                 exceptionHandler(e);
             }
+
             if (enumerator != null)
                 using (enumerator)
                 {
@@ -532,6 +535,7 @@ namespace System.Management.Automation
                         {
                             Array.Reverse(lengthBytes);
                         }
+
                         return (T)(object)(lengthBytes.Concat(contentBytes).ToArray());
                     }
                 }
@@ -563,23 +567,28 @@ namespace System.Management.Automation
                     {
                         return CimFileCode.PsdV1;
                     }
+
                     if (this.FileName.EndsWith(".cdxml", StringComparison.OrdinalIgnoreCase))
                     {
                         return CimFileCode.CmdletizationV1;
                     }
+
                     if (this.FileName.EndsWith(".types.ps1xml", StringComparison.OrdinalIgnoreCase))
                     {
                         return CimFileCode.TypesV1;
                     }
+
                     if (this.FileName.EndsWith(".format.ps1xml", StringComparison.OrdinalIgnoreCase))
                     {
                         return CimFileCode.FormatV1;
                     }
+
                     return CimFileCode.Unknown;
                 }
             }
 
             public abstract string FileName { get; }
+
             internal abstract byte[] RawFileDataCore { get; }
 
             public byte[] RawFileData
@@ -599,9 +608,11 @@ namespace System.Management.Automation
                             _fileData = sr.ReadToEnd();
                         }
                     }
+
                     return _fileData;
                 }
             }
+
             private string _fileData;
         }
 
@@ -649,7 +660,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    byte[] rawFileData = GetPropertyValue<byte[]>(_baseObject, "moduleManifestFileData", Utils.EmptyArray<byte>());
+                    byte[] rawFileData = GetPropertyValue<byte[]>(_baseObject, "moduleManifestFileData", Array.Empty<byte>());
                     return new CimModuleManifestFile(this.ModuleName + ".psd1", rawFileData);
                 }
             }
@@ -717,7 +728,7 @@ namespace System.Management.Automation
 
                 internal override byte[] RawFileDataCore
                 {
-                    get { return GetPropertyValue<byte[]>(_baseObject, "FileData", Utils.EmptyArray<byte>()); }
+                    get { return GetPropertyValue<byte[]>(_baseObject, "FileData", Array.Empty<byte>()); }
                 }
             }
         }
@@ -809,6 +820,7 @@ namespace System.Management.Automation
                             cmdlet.ThrowTerminatingError(errorRecord);
                         }
                     }
+
                     cmdlet.WriteError(errorRecord);
                 });
         }
@@ -839,9 +851,9 @@ namespace System.Management.Automation
             IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
-            nestedModules = nestedModules ?? Utils.EmptyArray<string>();
-            typesToProcess = typesToProcess ?? Utils.EmptyArray<string>();
-            formatsToProcess = formatsToProcess ?? Utils.EmptyArray<string>();
+            nestedModules = nestedModules ?? Array.Empty<string>();
+            typesToProcess = typesToProcess ?? Array.Empty<string>();
+            formatsToProcess = formatsToProcess ?? Array.Empty<string>();
 
             var newManifest = new Hashtable(StringComparer.OrdinalIgnoreCase);
             newManifest["NestedModules"] = nestedModules;
@@ -894,6 +906,7 @@ namespace System.Management.Automation
                     return GetCimCredentials(PasswordAuthenticationMechanism.Default, credential);
                 }
             }
+
             if (authentication.Equals("Basic", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
@@ -905,6 +918,7 @@ namespace System.Management.Automation
                     return GetCimCredentials(PasswordAuthenticationMechanism.Basic, credential);
                 }
             }
+
             if (authentication.Equals("Negotiate", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
@@ -916,6 +930,7 @@ namespace System.Management.Automation
                     return GetCimCredentials(PasswordAuthenticationMechanism.Negotiate, credential);
                 }
             }
+
             if (authentication.Equals("CredSSP", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
@@ -927,6 +942,7 @@ namespace System.Management.Automation
                     return GetCimCredentials(PasswordAuthenticationMechanism.CredSsp, credential);
                 }
             }
+
             if (authentication.Equals("Digest", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
@@ -938,6 +954,7 @@ namespace System.Management.Automation
                     return GetCimCredentials(PasswordAuthenticationMechanism.Digest, credential);
                 }
             }
+
             if (authentication.Equals("Kerberos", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
@@ -958,9 +975,15 @@ namespace System.Management.Automation
             string computerName,
             PSCredential credential,
             string authentication,
+            bool isLocalHost,
             CancellationToken cancellationToken,
             PSCmdlet cmdlet)
         {
+            if (isLocalHost)
+            {
+                return CimSession.Create(null);
+            }
+
             var sessionOptions = new CimSessionOptions();
 
             CimCredential cimCredentials = GetCimCredentials(authentication, credential);

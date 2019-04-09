@@ -35,7 +35,7 @@ namespace System.Management.Automation.Provider
         {
             // verify parameters
 
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw PSTraceSource.NewArgumentNullException("providerName");
             }
@@ -50,14 +50,14 @@ namespace System.Management.Automation.Provider
 
             ProviderName = providerName;
             ProviderCapabilities = providerCapabilities;
-        } // constructor
+        }
 
         private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
 
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public string ProviderName { get; } = String.Empty;
+        public string ProviderName { get; } = string.Empty;
 
         /// <summary>
         /// Gets the flags that represent the capabilities of the provider.
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Provider
         #region private data
 
         #endregion private data
-    } // class CmdletProviderAttribute
+    }
 
     /// <summary>
     /// This enumeration defines the capabilities that the provider implements.
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// The provider supports ShouldProcess. When this capability is specified, the
         /// -Whatif and -Confirm parameters become available to the user when using
-        /// this provider
+        /// this provider.
         /// </summary>
         ShouldProcess = 0x10,
 
@@ -150,5 +150,5 @@ namespace System.Management.Automation.Provider
         /// transaction to it, an exception is thrown.
         /// </summary>
         Transactions = 0x40,
-    } // ProviderCapabilities
-} // namespace System.Management.Automation
+    }
+}

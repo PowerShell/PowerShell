@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobTrigger[] InputObject
         {
             get { return _triggers; }
+
             set { _triggers = value; }
         }
 
@@ -45,8 +46,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
+
         private SwitchParameter _passThru;
 
         private ScheduledJobTrigger[] _triggers;

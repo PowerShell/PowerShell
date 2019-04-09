@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell
                     Debug.Fail($"Creating ICustomDestinationList failed with HResult '{hResult}'.");
                     return;
                 }
+
                 var pCustDestList = (ICustomDestinationList)pCustDestListobj;
                 hResult = pCustDestList.BeginList(out uint uMaxSlots, new Guid(@"92CA9DCD-5622-4BBA-A805-5E9F541BD8C9"), out object pRemovedItems);
                 if (hResult < 0)
@@ -59,6 +60,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult}'.");
                         return;
                     }
+
                     hResult = nativePropertyStore.Commit();
                     if (hResult < 0)
                     {
@@ -79,6 +81,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"Creating IObjectCollection failed with HResult '{hResult}'.");
                         return;
                     }
+
                     var pShortCutCollection = (IObjectCollection)instance;
                     pShortCutCollection.AddObject((IShellLinkW)nativePropertyStore);
 
@@ -90,6 +93,7 @@ namespace Microsoft.PowerShell
                         Debug.Fail($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult}'.");
                         return;
                     }
+
                     pCustDestList.CommitList();
                 }
             }

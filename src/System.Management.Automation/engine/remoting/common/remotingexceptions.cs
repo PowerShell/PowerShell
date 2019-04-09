@@ -127,6 +127,7 @@ namespace System.Management.Automation.Remoting
         CannotSetStdOutHandle = 822,
         CannotSetStdErrHandle = 823,
         InvalidConfigurationName = 824,
+        ConnectSkipCheckFailed = 825,
         // Error codes added to support new WSMan Fan-In Model API
         CreateSessionFailed = 851,
         CreateExFailed = 853,
@@ -487,8 +488,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -521,6 +522,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _errorCode;
             }
+
             set
             {
                 _errorCode = value;
@@ -536,6 +538,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _transportMessage;
             }
+
             set
             {
                 _transportMessage = value;
@@ -650,8 +653,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

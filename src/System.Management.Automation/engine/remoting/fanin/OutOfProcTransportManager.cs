@@ -123,7 +123,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Common method to create a packet that contains only a PS Guid
-        /// with element name changing
+        /// with element name changing.
         /// </summary>
         /// <param name="element"></param>
         /// <param name="psGuid"></param>
@@ -232,6 +232,7 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
                         }
+
                         string stream = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE);
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
@@ -267,12 +268,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.DataAckPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG:
                     {
@@ -283,12 +286,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG:
                     {
@@ -299,11 +304,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationAckReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG:
                     {
@@ -314,12 +321,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE received, psGuid : " + psGuid.ToString());
                         callbacks.ClosePacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG:
                     {
@@ -330,11 +339,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CloseAckPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG:
                     {
@@ -345,12 +356,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL received, psGuid : " + psGuid.ToString());
                         callbacks.SignalPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG:
                     {
@@ -361,11 +374,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.SignalAckPacketReceived(psGuid);
                     }
+
                     break;
                 default:
                     throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
@@ -380,7 +395,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// A wrapper around TextWriter to allow for synchronized writing to a stream.
     /// Synchronization is required to avoid collision when multiple TransportManager's
-    /// write data at the same time to the same writer
+    /// write data at the same time to the same writer.
     /// </summary>
     internal class OutOfProcessTextWriter
     {
@@ -395,7 +410,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Constructs the wrapper
+        /// Constructs the wrapper.
         /// </summary>
         /// <param name="writerToWrap"></param>
         internal OutOfProcessTextWriter(TextWriter writerToWrap)
@@ -565,7 +580,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Create a transport manager for command
+        /// Create a transport manager for command.
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="cmd"></param>
@@ -586,7 +601,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources
+        /// Kills the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)
@@ -646,7 +661,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnCloseSessionCompleted()
         {
-            //stop timer
+            // stop timer
             _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
             RaiseCloseCompleted();
             CleanupConnection();
@@ -1019,14 +1034,15 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     stdInWriter = _processInstance.StdInWriter;
-                    //if (stdInWriter == null)
+                    // if (stdInWriter == null)
                     {
                         _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
                         _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
                     }
+
                     _serverProcess.Exited += new EventHandler(OnExited);
 
-                    //serverProcess.Start();
+                    // serverProcess.Start();
                     _processInstance.Start();
 
                     if (stdInWriter != null)
@@ -1067,7 +1083,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources
+        /// Kills the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)
@@ -1397,7 +1413,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_targetGuid, false, true);
-            if (!_client.Connect(null, String.Empty, false))
+            if (!_client.Connect(null, string.Empty, false))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1821,7 +1837,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (e is ArgumentOutOfRangeException)
                 {
-                    Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
+                    Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
                 string errorMsg = (e.Message != null) ? e.Message : string.Empty;
@@ -1868,7 +1884,9 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal override void CreateAsync()
         {
-            _clientPipe = new RemoteSessionNamedPipeClient(_connectionInfo.ProcessId, _connectionInfo.AppDomainName);
+            _clientPipe = string.IsNullOrEmpty(_connectionInfo.CustomPipeName) ?
+                new RemoteSessionNamedPipeClient(_connectionInfo.ProcessId, _connectionInfo.AppDomainName) :
+                new RemoteSessionNamedPipeClient(_connectionInfo.CustomPipeName);
 
             // Wait for named pipe to connect.
             _clientPipe.Connect(_connectionInfo.OpenTimeout);
@@ -2158,7 +2176,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal void OnSignalTimeOutTimerElapsed(object source)
         {
-            //Signal timer is triggered only once
+            // Signal timer is triggered only once
 
             if (isClosed)
             {
@@ -2315,7 +2333,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void ReportExecutionStatusAsRunning()
         {
-            //No-OP for outofProc TMs
+            // No-OP for outofProc TMs
         }
 
         internal void CreateCommandTransportManager(Guid powerShellCmdId)
@@ -2421,7 +2439,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void ReportExecutionStatusAsRunning()
         {
-            //No-OP for outofProc TMs
+            // No-OP for outofProc TMs
         }
 
         protected override void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary)

@@ -15,4 +15,6 @@
         'Clear-PSEventLog'
         'Wait-PSWinEvent'
     )
+    AliasesToExport = @()
+    CmdletsToExport = @()
 }

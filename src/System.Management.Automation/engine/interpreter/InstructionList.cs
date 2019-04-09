@@ -63,7 +63,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionList.DebugView.InstructionView[]/*!*/ A0
+            public InstructionList.DebugView.InstructionView[] A0
             {
                 get
                 {
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionView[]/*!*/ A0
+            public InstructionView[] A0
             {
                 get
                 {
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter
                 int stackDepth = 0;
                 int continuationsDepth = 0;
 
-                var cookieEnumerator = (debugCookies ?? Automation.Utils.EmptyArray<KeyValuePair<int, object>>()).GetEnumerator();
+                var cookieEnumerator = (debugCookies ?? Array.Empty<KeyValuePair<int, object>>()).GetEnumerator();
                 var hasCookie = cookieEnumerator.MoveNext();
 
                 for (int i = 0; i < instructions.Count; i++)
@@ -151,6 +151,7 @@ namespace System.Management.Automation.Interpreter
                     stackDepth += stackDiff;
                     continuationsDepth += contDiff;
                 }
+
                 return result.ToArray();
             }
 
@@ -302,6 +303,7 @@ namespace System.Management.Automation.Interpreter
                     if (!_instances.TryGetValue(name, out dict)) {
                         _instances[name] = dict = new Dictionary<object, bool>();
                     }
+
                     dict[instr] = true;
                 });
             }
@@ -372,6 +374,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             s_ints = new Instruction[PushIntMaxCachedValue - PushIntMinCachedValue + 1];
                         }
+
                         i -= PushIntMinCachedValue;
                         Emit(s_ints[i] ?? (s_ints[i] = new LoadObjectInstruction(value)));
                         return;
@@ -937,8 +940,10 @@ namespace System.Management.Automation.Interpreter
                     {
                         instruction = new LoadFieldInstruction(field);
                     }
+
                     s_loadFields.Add(field, instruction);
                 }
+
                 return instruction;
             }
         }
@@ -1088,6 +1093,7 @@ namespace System.Management.Automation.Interpreter
                     s_factories[delegateType] = factory;
                 }
             }
+
             return factory(binder);
         }
 

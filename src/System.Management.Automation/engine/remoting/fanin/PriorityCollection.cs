@@ -88,6 +88,7 @@ namespace System.Management.Automation.Remoting
         internal Fragmentor Fragmentor
         {
             get { return _fragmentor; }
+
             set
             {
                 Dbg.Assert(value != null, "Fragmentor cannot be null.");
@@ -307,7 +308,7 @@ namespace System.Management.Automation.Remoting
         private long _currentObjectId;
         private long _currentFrgId;
         // max deserialized object size in bytes
-        private Nullable<int> _maxReceivedObjectSize;
+        private int? _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
         private bool _isCreateByClientTM;
 
@@ -374,7 +375,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set { _maxReceivedObjectSize = value; }
         }
@@ -394,7 +395,7 @@ namespace System.Management.Automation.Remoting
         /// Prepares the collection for a stream connect
         ///     When reconnecting from same client, its possible that fragment stream get interrupted if server is dropping data
         ///     When connecting from a new client, its possible to get trailing fragments of a previously partially transmitted object
-        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing
+        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing.
         /// </summary>
         internal void PrepareForStreamConnect()
         {
@@ -573,7 +574,7 @@ namespace System.Management.Automation.Remoting
 
                     if (sFlag)
                     {
-                        _canIgnoreOffSyncFragments = false; //reset this upon receiving a start fragment of a fresh object
+                        _canIgnoreOffSyncFragments = false; // reset this upon receiving a start fragment of a fresh object
                         _currentObjectId = objectId;
                         // Memory streams created with an unsigned byte array provide a non-resizable stream view
                         // of the data, and can only be written to. When using a byte array, you can neither append
@@ -588,7 +589,7 @@ namespace System.Management.Automation.Remoting
                         if (objectId != _currentObjectId)
                         {
                             s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
-                            //TODO - drop an ETW event
+                            // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
@@ -605,7 +606,7 @@ namespace System.Management.Automation.Remoting
                         if (fragmentId != (_currentFrgId + 1))
                         {
                             s_baseTracer.WriteLine("Fragment Id is not in sequence.");
-                            //TODO - drop an ETW event
+                            // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
@@ -659,6 +660,7 @@ namespace System.Management.Automation.Remoting
                     {
                         ReleaseResources();
                     }
+
                     _numberOfThreadsProcessing--;
                 }
             }
@@ -674,6 +676,7 @@ namespace System.Management.Automation.Remoting
             {
                 _dataToProcessStream.Dispose();
             }
+
             _currentObjectId = 0;
             _currentFrgId = 0;
             _totalReceivedObjectSizeSoFar = 0;
@@ -743,7 +746,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// Construct a priority receive data collection
+        /// Construct a priority receive data collection.
         /// </summary>
         /// <param name="defragmentor">Defragmentor used to deserialize an object.</param>
         /// <param name="createdByClientTM">
@@ -759,6 +762,7 @@ namespace System.Management.Automation.Remoting
             {
                 _recvdData[index] = new ReceiveDataCollection(defragmentor, createdByClientTM);
             }
+
             _isCreateByClientTM = createdByClientTM;
         }
         #endregion
@@ -768,7 +772,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the total data received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedDataSize
+        internal int? MaximumReceivedDataSize
         {
             set
             {
@@ -779,7 +783,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set
             {
@@ -791,7 +795,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Prepares receive data streams for a reconnection
+        /// Prepares receive data streams for a reconnection.
         /// </summary>
         internal void PrepareForStreamConnect()
         {

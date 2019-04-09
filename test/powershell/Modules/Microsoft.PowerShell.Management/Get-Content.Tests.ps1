@@ -343,7 +343,7 @@ baz
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should -BeNullOrEmpty
         }
         It "A warning should be emitted if both -AsByteStream and -Encoding are used together" {
-            [byte[]][char[]]"test" | Set-Content -Encoding Unicode -AsByteStream "${TESTDRIVE}\bfile.txt" -WarningVariable contentWarning *>$null
+            [byte[]][char[]]"test" | Set-Content -Encoding Unicode -AsByteStream "${TESTDRIVE}\bfile.txt" -WarningVariable contentWarning *> $null
             $contentWarning.Message | Should -Match "-AsByteStream"
         }
     }

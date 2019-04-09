@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we did not get any properties:
-            //try to get properties from the default property set of the object
+            // try to get properties from the default property set of the object
             this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
             if (this.activeAssociationList.Count > 0)
             {
@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
                         new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
+
                 return;
             }
 
@@ -156,6 +157,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool dummy;
             List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out dummy);
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
             int col = 0;
             foreach (TableRowItemDefinition rowItem in activeRowItemDefinitionList)
@@ -208,6 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 thi.tableColumnInfoList.Add(ci);
                 col++;
             }
+
             return thi;
         }
 
@@ -229,6 +232,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (key != AutomationNull.Value)
                         ci.propertyName = (string)key;
                 }
+
                 if (ci.propertyName == null)
                 {
                     ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
@@ -268,6 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 thi.tableColumnInfoList.Add(ci);
             }
+
             return thi;
         }
 
@@ -289,6 +294,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _tableBody.header.hideHeader;
                 }
+
+                return false;
+            }
+        }
+
+        private bool RepeatHeaders
+        {
+            get
+            {
+                if (this.parameters != null)
+                {
+                    return this.parameters.repeatHeader;
+                }
+
                 return false;
             }
         }
@@ -331,6 +350,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the global setting for multiline
                 tre.multiLine = this.dataBaseInfo.db.defaultSettingsSection.MultilineTables;
             }
+
             fed.formatEntryInfo = tre;
 
             // override from command line, if there
@@ -342,6 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     tre.multiLine = tableSpecific.multiLine.Value;
                 }
             }
+
             return fed;
         }
 
@@ -369,6 +390,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
             }
+
             if (matchingRowDefinition == null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -389,6 +411,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             break;
                         }
                     }
+
                     if (matchingRowDefinition == null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -422,6 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // use the override
                     activeRowItemDefinitionList.Add(rowItem);
                 }
+
                 col++;
             }
 
@@ -458,9 +482,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
+
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
+
             return tre;
         }
     }

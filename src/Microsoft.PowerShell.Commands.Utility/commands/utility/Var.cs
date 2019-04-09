@@ -42,12 +42,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
+
                 _include = value;
             }
         }
-        private string[] _include = new string[0];
+
+        private string[] _include = Array.Empty<string>();
 
         /// <summary>
         /// The Exclude parameter for all the variable commands.
@@ -63,12 +65,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
+
                 _exclude = value;
             }
         }
-        private string[] _exclude = new string[0];
+
+        private string[] _exclude = Array.Empty<string>();
 
         #region helpers
 
@@ -99,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
             List<PSVariable> result = new List<PSVariable>();
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 name = "*";
             }
@@ -153,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
             // view.
 
             IDictionary<string, PSVariable> variableTable = null;
-            if (String.IsNullOrEmpty(lookupScope))
+            if (string.IsNullOrEmpty(lookupScope))
             {
                 variableTable = SessionState.Internal.GetVariableTable();
             }
@@ -210,6 +214,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+
                         result.Add(entry.Value);
                     }
                     else
@@ -225,6 +230,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
         #endregion helpers
@@ -258,9 +264,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[] { "*" };
                 }
+
                 _name = value;
             }
         }
+
         private string[] _name = new string[] { "*" };
 
         /// <summary>
@@ -273,11 +281,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _valueOnly;
             }
+
             set
             {
                 _valueOnly = value;
             }
         }
+
         private bool _valueOnly;
 
         /// <summary>
@@ -367,7 +377,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class implementing new-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
+    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -413,6 +424,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibility = value;
             }
         }
+
         private SessionStateEntryVisibility? _visibility;
 
         /// <summary>
@@ -431,6 +443,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -443,11 +456,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         #endregion parameters
@@ -466,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 PSVariable varFound = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     varFound =
                         SessionState.PSVariable.GetAtScope(Name, "local");
@@ -518,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         SessionState.Internal.NewVariable(newVariable, Force);
                     }
@@ -624,12 +639,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (ScopedItemOptions)_options;
             }
+
             set
             {
                 _options = value;
             }
         }
-        private Nullable<ScopedItemOptions> _options;
+
+        private ScopedItemOptions? _options;
 
         /// <summary>
         /// Force the operation to make the best attempt at setting the variable.
@@ -647,6 +664,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -665,6 +683,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibility = value;
             }
         }
+
         private SessionStateEntryVisibility? _visibility;
 
         /// <summary>
@@ -677,11 +696,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         private bool _nameIsFormalParameter;
@@ -728,6 +749,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _valueList = new ArrayList();
                     }
+
                     _valueList.Add(Value);
                 }
             }
@@ -736,6 +758,7 @@ namespace Microsoft.PowerShell.Commands
                 SetVariable(Name, Value);
             }
         }
+
         private ArrayList _valueList;
 
         /// <summary>
@@ -796,7 +819,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool wasFiltered = false;
 
-                if (!String.IsNullOrEmpty(Scope))
+                if (!string.IsNullOrEmpty(Scope))
                 {
                     // We really only need to find matches if the scope was specified.
                     // If the scope wasn't specified then we need to create the
@@ -829,8 +852,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ScopedItemOptions newOptions = ScopedItemOptions.None;
 
-                        if (!String.IsNullOrEmpty(Scope) &&
-                            String.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(Scope) &&
+                            string.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
                         {
                             newOptions = ScopedItemOptions.Private;
                         }
@@ -854,8 +877,9 @@ namespace Microsoft.PowerShell.Commands
 
                         if (Description == null)
                         {
-                            Description = String.Empty;
+                            Description = string.Empty;
                         }
+
                         varToSet.Description = Description;
 
                         // If visibility was specified, set it on the variable
@@ -872,7 +896,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             object result = null;
 
-                            if (String.IsNullOrEmpty(Scope))
+                            if (string.IsNullOrEmpty(Scope))
                             {
                                 result =
                                     SessionState.Internal.SetVariable(varToSet, Force, origin);
@@ -1064,11 +1088,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         #endregion parameters
@@ -1126,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            if (String.IsNullOrEmpty(Scope))
+                            if (string.IsNullOrEmpty(Scope))
                             {
                                 SessionState.Internal.RemoveVariable(matchingVariable, _force);
                             }
@@ -1220,6 +1246,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -1232,11 +1259,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         #endregion parameters
@@ -1348,6 +1377,7 @@ namespace Microsoft.PowerShell.Commands
                 SessionState.PSVariable.Set(matchingVariable.Name, null);
                 result = SessionState.PSVariable.Get(matchingVariable.Name);
             }
+
             return result;
         }
     }

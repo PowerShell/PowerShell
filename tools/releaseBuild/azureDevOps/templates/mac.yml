@@ -1,0 +1,58 @@
+parameters:
+  jobName: 'build_macOS'
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Build macOS
+  condition: succeeded()
+  pool: Hosted Mac Internal
+  variables:
+    # Turn off Homebrew analytics
+    HOMEBREW_NO_ANALYTICS: 1
+  steps:
+  #- task: <task type name>@<version>
+  #  inputs:
+  #    <task specific inputs>
+  #  displayName: '<display name of task>'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      # create folder
+      sudo mkdir /PowerShell
+
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
+    displayName: 'Create /PowerShell'
+
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
+      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
+    displayName: Clone PowerShell Repo to /PowerShell
+
+  - powershell: |
+      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+    displayName: 'Bootstrap VM'
+
+  - powershell: |
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)/src/Modules"
+
+      if(-not (Test-Path "$(PowerShellRoot)/src/Modules/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+
+  - powershell: |
+      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(PowerShellRoot) -Build
+      $env:AZDEVOPSFEEDPAT = $null
+    displayName: 'Build and Package'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

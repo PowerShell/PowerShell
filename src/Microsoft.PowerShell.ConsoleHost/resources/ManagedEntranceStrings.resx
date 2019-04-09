@@ -128,7 +128,8 @@ Type 'help' to get help.</value>
     <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
-                  [-ConfigurationName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
+                  [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
@@ -173,6 +174,17 @@ All parameters are case-insensitive.</value>
     remoting endpoints or a custom endpoint having specific user role capabilities.
 
     Example: pwsh -ConfigurationName AdminRoles
+
+-CustomPipeName
+    Specifies the name to use for an additional IPC server (named pipe) used for debugging 
+    and other cross-process communication. This offers a predictable mechanism for connecting
+    to other PowerShell instances. Typically used with the CustomPipeName parameter on Enter-PSHostProcess.
+
+    Example: 
+    # PowerShell instance 1
+    pwsh -CustomPipeName mydebugpipe
+    # PowerShell instance 2
+    Enter-PSHostProcess -CustomPipeName mydebugpipe
 
 -EncodedCommand | -e | -ec
     Accepts a base64 encoded string version of a command. Use this parameter to submit

@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     #region Get-HotFix
 
     /// <summary>
-    /// Cmdlet for Get-Hotfix Proxy
+    /// Cmdlet for Get-Hotfix Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "HotFix", DefaultParameterSetName = "Default",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// To search on description of Hotfixes
+        /// To search on description of Hotfixes.
         /// </summary>
         [Parameter(ParameterSetName = "Description")]
         [ValidateNotNullOrEmpty]
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Description { get; set; }
 
         /// <summary>
-        /// Parameter to pass the Computer Name
+        /// Parameter to pass the Computer Name.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -103,6 +103,7 @@ namespace Microsoft.PowerShell.Commands
                         if (i < Id.Length - 1)
                             QueryString.Append(" Or ");
                     }
+
                     QueryString.Append(")");
                 }
                 else
@@ -110,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                     QueryString.Append("Select * from Win32_QuickFixEngineering");
                     foundRecord = true;
                 }
+
                 _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
@@ -126,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
                     // try to translate the SID to a more friendly username
                     // just stick with the SID if anything goes wrong
                     string installed = (string)obj["InstalledBy"];
-                    if (!String.IsNullOrEmpty(installed))
+                    if (!string.IsNullOrEmpty(installed))
                     {
                         try
                         {
@@ -139,34 +141,36 @@ namespace Microsoft.PowerShell.Commands
                         catch (SystemException) // thrown by SecurityIdentifier.constr
                         {
                         }
-                        //catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
+                        // catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
+                        // { catch not needed - this is already caught as SystemException
+                        // }
+                        // catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
+                        // { catch not needed - this is already caught as SystemException
+                        // }
+                        // catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
+                        // { catch not needed - this is already caught as SystemException
+                        // }
                     }
 
                     WriteObject(obj);
                     foundRecord = true;
                 }
+
                 if (!foundRecord && !_inputContainsWildcard)
                 {
                     Exception Ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
                     WriteError(new ErrorRecord(Ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
+
                 if (_searchProcess != null)
                 {
                     this.Dispose();
                 }
             }
-        }//end of BeginProcessing method
+        }
 
         /// <summary>
-        /// to implement ^C
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -190,6 +194,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     if (WildcardPattern.ContainsWildcardCharacters(desc))
                     {
                         _inputContainsWildcard = true;
@@ -200,6 +205,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+
             return false;
         }
 
@@ -208,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method
+        /// Dispose Method.
         /// </summary>
         public void Dispose()
         {
@@ -234,6 +240,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion "IDisposable Members"
-    }//end class
+    }
     #endregion
-}//Microsoft.Powershell.commands
+}

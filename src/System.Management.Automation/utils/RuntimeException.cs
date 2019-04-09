@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException()
             : base()
         {
@@ -39,9 +39,9 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected RuntimeException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)
@@ -53,8 +53,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -65,15 +65,15 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
             info.AddValue("ErrorId", _errorId);
-            info.AddValue("ErrorCategory", (Int32)_errorCategory);
+            info.AddValue("ErrorCategory", (int)_errorCategory);
         }
         #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message)
             : base(message)
         {
@@ -82,9 +82,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message,
                                 Exception innerException)
                 : base(message, innerException)
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         /// <param name="errorRecord"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message,
             Exception innerException,
             ErrorRecord errorRecord)
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         // will clean the cached ErrorRecord and erase any other changes,
         // so the ErrorId etc. should be set first.
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -161,9 +161,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _targetObject);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "RuntimeException";
         private ErrorCategory _errorCategory = ErrorCategory.NotSpecified;
@@ -175,7 +177,7 @@ namespace System.Management.Automation
         /// to change this before writing to ErrorRecord.ErrorDetails
         /// or the like.
         /// </summary>
-        /// <param name="errorId">per ErrorRecord constructors</param>
+        /// <param name="errorId">Per ErrorRecord constructors.</param>
         internal void SetErrorId(string errorId)
         {
             if (_errorId != errorId)
@@ -225,10 +227,11 @@ namespace System.Management.Automation
             if (errorRecord == null)
                 return string.Empty;
             if (null != errorRecord.ErrorDetails &&
-                !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
+                !string.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;
             }
+
             if (errorRecord.Exception == null)
                 return string.Empty;
             return errorRecord.Exception.Message;
@@ -249,7 +252,7 @@ namespace System.Management.Automation
             if (ed == null)
                 return e.Message;
             string detailsMessage = ed.Message;
-            return (String.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
+            return (string.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
         }
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)
@@ -264,6 +267,7 @@ namespace System.Management.Automation
         public bool WasThrownFromThrowStatement
         {
             get { return _thrownByThrowStatement; }
+
             set
             {
                 _thrownByThrowStatement = value;
@@ -277,10 +281,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _thrownByThrowStatement;
 
         /// <summary>
-        /// fix for BUG: Windows Out Of Band Releases: 906263 and 906264
+        /// Fix for BUG: Windows Out Of Band Releases: 906263 and 906264
         /// The interpreter prompt CommandBaseStrings:InquireHalt
         /// should be suppressed when this flag is set.  This will be set
         /// when this prompt has already occurred and Break was chosen,
@@ -289,8 +294,10 @@ namespace System.Management.Automation
         internal bool SuppressPromptInInterpreter
         {
             get { return _suppressPromptInInterpreter; }
+
             set { _suppressPromptInInterpreter = value; }
         }
+
         private bool _suppressPromptInInterpreter;
 
         #endregion Internal
@@ -302,10 +309,11 @@ namespace System.Management.Automation
             {
                 return _errorToken;
             }
+
             set
             {
                 _errorToken = value;
             }
         }
-    } // RuntimeException
-} // System.Management.Automation
+    }
+}

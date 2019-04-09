@@ -89,6 +89,7 @@ namespace System.Diagnostics.Eventing
                 return _channel;
             }
         }
+
         public byte Level
         {
             get

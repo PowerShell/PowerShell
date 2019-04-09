@@ -14,21 +14,21 @@ namespace System.Management.Automation.Internal
         string
         Format(string formatSpec, object o)
         {
-            return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
 
         internal static
         string
         Format(string formatSpec, object o1, object o2)
         {
-            return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o1, o2);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o1, o2);
         }
 
         internal static
         string
         Format(string formatSpec, params object[] o)
         {
-            return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
 
         internal static
@@ -100,5 +100,5 @@ namespace System.Management.Automation.Internal
             return result;
         }
     }
-}   // namespace
+}
 

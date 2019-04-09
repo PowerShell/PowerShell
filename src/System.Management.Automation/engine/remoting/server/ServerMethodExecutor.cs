@@ -80,7 +80,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void ExecuteVoidMethod(RemoteHostMethodId methodId)
         {
-            ExecuteVoidMethod(methodId, Utils.EmptyArray<object>());
+            ExecuteVoidMethod(methodId, Array.Empty<object>());
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal T ExecuteMethod<T>(RemoteHostMethodId methodId)
         {
-            return ExecuteMethod<T>(methodId, Utils.EmptyArray<object>());
+            return ExecuteMethod<T>(methodId, Array.Empty<object>());
         }
 
         /// <summary>

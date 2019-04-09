@@ -108,6 +108,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Certificates = new X509CertificateCollection();
             }
+
             Certificates.Add(certificate);
         }
     }

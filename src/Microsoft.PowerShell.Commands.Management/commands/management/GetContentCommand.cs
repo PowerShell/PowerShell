@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get the content of an item at a specified path
+    /// A command to get the content of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Content", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113310")]
     public class GetContentCommand : ContentCommandBase
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The number of content items to retrieve. By default this
-        /// value is -1 which means read all the content
+        /// value is -1 which means read all the content.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("First", "Head")]
@@ -40,14 +40,15 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _totalCount;
-            } // get
+            }
 
             set
             {
                 _totalCount = value;
                 _totalCountSpecified = true;
             }
-        } // TotalCount
+        }
+
         private bool _totalCountSpecified = false;
 
         /// <summary>
@@ -62,8 +63,10 @@ namespace Microsoft.PowerShell.Commands
                 _backCount = value;
                 _tailSpecified = true;
             }
+
             get { return _backCount; }
         }
+
         private int _backCount = -1;
         private bool _tailSpecified = false;
 
@@ -85,8 +88,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Content.GetContentReaderDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentReaderDynamicParameters(".", context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -102,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Gets the content of an item at the specified path
+        /// Gets the content of an item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -250,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
                     }
-                } // foreach holder in contentStreams
+                }
             }
             finally
             {
@@ -261,10 +265,10 @@ namespace Microsoft.PowerShell.Commands
                 // Empty the content holder array
                 contentStreams = new List<ContentHolder>();
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
-        /// Scan forwards to get the tail content
+        /// Scan forwards to get the tail content.
         /// </summary>
         /// <param name="holder"></param>
         /// <param name="currentContext"></param>
@@ -380,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Seek position to the right place
+        /// Seek position to the right place.
         /// </summary>
         /// <param name="reader">
         /// reader should be able to be casted to FileSystemContentReader
@@ -408,7 +412,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Be sure to clean up
+        /// Be sure to clean up.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -416,6 +420,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
 
-    } // GetContentCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

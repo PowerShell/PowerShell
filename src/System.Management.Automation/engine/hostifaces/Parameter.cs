@@ -18,9 +18,9 @@ namespace System.Management.Automation.Runspaces
         #region Public constructors
 
         /// <summary>
-        /// Create a named parameter with a null value
+        /// Create a named parameter with a null value.
         /// </summary>
-        /// <param name="name">parameter name</param>
+        /// <param name="name">Parameter name.</param>
         /// <exception cref="ArgumentNullException">
         /// name is null.
         /// </exception>
@@ -37,10 +37,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Create a named parameter
+        /// Create a named parameter.
         /// </summary>
-        /// <param name="name">parameter name</param>
-        /// <param name="value">parameter value</param>
+        /// <param name="name">Parameter name.</param>
+        /// <param name="value">Parameter value.</param>
         /// <exception cref="ArgumentException">
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
@@ -59,6 +59,7 @@ namespace System.Management.Automation.Runspaces
             {
                 Name = null;
             }
+
             Value = value;
         }
 
@@ -67,12 +68,12 @@ namespace System.Management.Automation.Runspaces
         #region Public properties
 
         /// <summary>
-        /// gets the parameter name
+        /// Gets the parameter name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// gets the value of the parameter
+        /// Gets the value of the parameter.
         /// </summary>
         public object Value { get; }
 
@@ -110,6 +111,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return new CommandParameter(name, internalParameter.ArgumentValue);
             }
+
             if (name != null) // either a switch parameter or first part of parameter+argument
             {
                 return new CommandParameter(name);
@@ -156,6 +158,7 @@ namespace System.Management.Automation.Runspaces
                 spaceAfterParameter = true;
                 endPosition--;
             }
+
             Debug.Assert(endPosition > 0, "parameter name should have some non-whitespace characters in it");
 
             // now make sure that parameterText doesn't have whitespace at the end,
@@ -193,7 +196,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a CommandParameter object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="parameterAsPSObject">PSObject to rehydrate</param>
+        /// <param name="parameterAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// CommandParameter rehydrated from a PSObject property bag
         /// </returns>
@@ -219,7 +222,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject parameterAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -264,19 +267,19 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class CommandParameterCollection : Collection<CommandParameter>
     {
-        //TODO: this class needs a mechanism to lock further changes
+        // TODO: this class needs a mechanism to lock further changes
 
         /// <summary>
-        /// Create a new empty instance of this collection type
+        /// Create a new empty instance of this collection type.
         /// </summary>
         public CommandParameterCollection()
         {
         }
 
         /// <summary>
-        /// Add a parameter with given name and default null value
+        /// Add a parameter with given name and default null value.
         /// </summary>
-        /// <param name="name">name of the parameter</param>
+        /// <param name="name">Name of the parameter.</param>
         /// <exception cref="ArgumentNullException">
         /// name is null.
         /// </exception>
@@ -289,10 +292,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Add a parameter with given name and value
+        /// Add a parameter with given name and value.
         /// </summary>
-        /// <param name="name">name of the parameter</param>
-        /// <param name="value">value of the parameter</param>
+        /// <param name="name">Name of the parameter.</param>
+        /// <param name="value">Value of the parameter.</param>
         /// <exception cref="ArgumentNullException">
         /// Both name and value are null. One of these must be non-null.
         /// </exception>

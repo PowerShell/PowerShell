@@ -55,7 +55,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
-        internal static readonly IList<CompletionResult> EmptyCompletionResult = Utils.EmptyArray<CompletionResult>();
+        internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 
@@ -86,9 +86,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="input">The input to complete</param>
-        /// <param name="cursorIndex">The index of the cursor in the input</param>
-        /// <param name="options">Optional options to configure how completion is performed</param>
+        /// <param name="input">The input to complete.</param>
+        /// <param name="cursorIndex">The index of the cursor in the input.</param>
+        /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <returns></returns>
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
         {
@@ -103,10 +103,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="ast">Ast for pre-parsed input</param>
-        /// <param name="tokens">Tokens for pre-parsed input</param>
+        /// <param name="ast">Ast for pre-parsed input.</param>
+        /// <param name="tokens">Tokens for pre-parsed input.</param>
         /// <param name="positionOfCursor"></param>
-        /// <param name="options">Optional options to configure how completion is performed</param>
+        /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <returns></returns>
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
@@ -132,10 +132,10 @@ namespace System.Management.Automation
         /// Invokes the script function TabExpansion2.
         /// For legacy support, TabExpansion2 will indirectly call TabExpansion if it exists.
         /// </summary>
-        /// <param name="input">The input script to complete</param>
-        /// <param name="cursorIndex">The offset in <paramref name="input"/> where completion is requested</param>
+        /// <param name="input">The input script to complete.</param>
+        /// <param name="cursorIndex">The offset in <paramref name="input"/> where completion is requested.</param>
         /// <param name="options">Optional parameter that specifies configurable options for completion.</param>
-        /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2</param>
+        /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2.</param>
         /// <returns>A collection of completions with the replacement start and length.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options, PowerShell powershell)
@@ -205,11 +205,11 @@ namespace System.Management.Automation
         /// Invokes the script function TabExpansion2.
         /// For legacy support, TabExpansion2 will indirectly call TabExpansion if it exists.
         /// </summary>
-        /// <param name="ast">The ast for pre-parsed input</param>
+        /// <param name="ast">The ast for pre-parsed input.</param>
         /// <param name="tokens"></param>
         /// <param name="cursorPosition"></param>
-        /// <param name="options">Optional options to configure how completion is performed</param>
-        /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2</param>
+        /// <param name="options">Optional options to configure how completion is performed.</param>
+        /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2.</param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
@@ -353,12 +353,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Command completion while in debug break mode.
         /// </summary>
-        /// <param name="ast">The ast for pre-parsed input</param>
+        /// <param name="ast">The ast for pre-parsed input.</param>
         /// <param name="tokens"></param>
         /// <param name="cursorPosition"></param>
-        /// <param name="options">Optional options to configure how completion is performed</param>
-        /// <param name="debugger">Current debugger</param>
-        /// <returns>Command completion</returns>
+        /// <param name="options">Optional options to configure how completion is performed.</param>
+        /// <param name="debugger">Current debugger.</param>
+        /// <returns>Command completion.</returns>
         internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, Debugger debugger)
         {
             if (ast == null)
@@ -554,6 +554,7 @@ namespace System.Management.Automation
                                 break;
                             }
                         }
+
                         SessionStateScope scopeToRestore = null;
                         if (tupleForFrameToSkipPast != null)
                         {
@@ -564,11 +565,13 @@ namespace System.Management.Automation
                             {
                                 scope = scope.Parent;
                             }
+
                             if (scope != null)
                             {
                                 context.EngineSessionState.CurrentScope = scope.Parent;
                             }
                         }
+
                         try
                         {
                         */
@@ -664,8 +667,10 @@ namespace System.Management.Automation
                                 oldResultStr = quote + oldResultStr + quote;
                             }
                         }
+
                         completionResult = new CompletionResult(oldResultStr);
                     }
+
                     results.Add(completionResult);
                 }
             }
@@ -702,7 +707,7 @@ namespace System.Management.Automation
             #region "Handle Command"
 
             /// <summary>
-            /// Used when remoting from a win8 machine to a win7 machine
+            /// Used when remoting from a win8 machine to a win7 machine.
             /// </summary>
             /// <param name="lastWord"></param>
             /// <param name="isSnapinSpecified"></param>
@@ -716,6 +721,7 @@ namespace System.Management.Automation
                 {
                     return s_cmdletTabRegex.IsMatch(lastWord);
                 }
+
                 if (cmdletParts.Length == 2)
                 {
                     isSnapinSpecified = PSSnapInInfo.IsPSSnapinIdValid(cmdletParts[0]);
@@ -724,6 +730,7 @@ namespace System.Management.Automation
                         return s_cmdletTabRegex.IsMatch(cmdletParts[1]);
                     }
                 }
+
                 return false;
             }
 
@@ -854,6 +861,7 @@ namespace System.Management.Automation
                         AddCommandResult(commandAndName, previousMatched, completingAtStartOfLine, quote, results);
                         previousMatched = false;
                     }
+
                     i++;
                 }
             }
@@ -878,7 +886,7 @@ namespace System.Management.Automation
                 // Determine if we need to quote the paths we parse
 
                 lastWord = lastWord ?? string.Empty;
-                bool isLastWordEmpty = String.IsNullOrEmpty(lastWord);
+                bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
@@ -984,11 +992,12 @@ namespace System.Management.Automation
                 result.AddRange(s1);
                 for (int i = 0, j = 0; i < s2.Count; ++i)
                 {
-                    if (j < s1.Count && String.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (j < s1.Count && string.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
                     {
                         ++j;
                         continue;
                     }
+
                     result.Add(s2[i]);
                 }
 
@@ -1068,7 +1077,7 @@ namespace System.Management.Automation
 
             private static List<PathItemAndConvertedPath> PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
             {
-                Diagnostics.Assert(!String.IsNullOrEmpty(path), "path should have a value");
+                Diagnostics.Assert(!string.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
 
                 Exception exceptionThrown;
@@ -1077,14 +1086,14 @@ namespace System.Management.Automation
                 // It's OK to use script, since tab completion is useless when the remote Win7 machine is in nolanguage mode
                 if (!shouldFullyQualifyPaths)
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
                 else
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
@@ -1287,6 +1296,7 @@ namespace System.Management.Automation
             private int ReplacementIndex
             {
                 get { return _replacementIndex; }
+
                 set
                 {
                     Diagnostics.Assert(value >= 0 && value < _sentence.Length + 1, "value out of range");

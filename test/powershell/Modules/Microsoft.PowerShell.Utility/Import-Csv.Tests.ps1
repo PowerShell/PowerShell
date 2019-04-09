@@ -41,16 +41,50 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
     }
 
 
-    It "Should handle <name>" -TestCases @(
+    It "Should handle <name> and bind to LiteralPath from pipeline" -TestCases @(
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
         ){
         param($expectedHeader, $file, $content, $delimiter)
-        Set-Content testdrive:/$file -Value $content
-        $returnObject = Import-Csv -Path testdrive:/$file -Delimiter $delimiter
+
+        $testPath = Join-Path $TestDrive $file
+        Set-Content $testPath -Value $content
+
+        $returnObject = Get-ChildItem -Path $testPath | Import-Csv -Delimiter $delimiter
         $actualHeader = $returnObject[0].psobject.Properties.name -join ','
-        $actualHeader | Should -Be $expectedHeader
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = [pscustomobject]@{ LiteralPath = $testPath } | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+    }
+
+    It "Should handle <name> and bind to Path from pipeline" -TestCases @(
+        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
+        @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
+        @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
+        ){
+        param($expectedHeader, $file, $content, $delimiter)
+
+        $testPath = Join-Path $TestDrive $file
+        Set-Content $testPath -Value $content
+
+        $returnObject = Get-ChildItem -Path $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = $testPath | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
+
+        $returnObject = [pscustomobject]@{ Path = $testPath } | Import-Csv -Delimiter $delimiter
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -BeExactly $expectedHeader
     }
 }
 
@@ -69,7 +103,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
     }
     # Test set is the same for all file formats
     foreach ($testCsv in $testCSVfiles) {
-       $FileName = (dir $testCsv).Name
+       $FileName = (Get-ChildItem $testCsv).Name
         Context "Next test file: $FileName" {
             BeforeAll {
                 $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}

@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Help show-command create WPF object and invoke WPF windows with the
-    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll
+    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll.
     /// </summary>
     internal class ShowCommandProxy
     {

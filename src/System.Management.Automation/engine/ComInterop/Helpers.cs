@@ -18,6 +18,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return expression;
             }
+
             return Expression.Convert(expression, type);
         }
     }

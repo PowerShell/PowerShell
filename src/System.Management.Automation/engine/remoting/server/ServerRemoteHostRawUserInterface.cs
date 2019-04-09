@@ -346,6 +346,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw new ArgumentNullException("source");
             }
+
             return source.Length;
         }
 

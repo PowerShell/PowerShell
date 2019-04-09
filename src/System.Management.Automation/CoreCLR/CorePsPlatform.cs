@@ -11,7 +11,7 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// These are platform abstractions and platform specific implementations
+    /// These are platform abstractions and platform specific implementations.
     /// </summary>
     public static class Platform
     {
@@ -122,32 +122,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if it is the inbox powershell for NanoServer or IoT.
-        /// </summary>
-        internal static bool IsInbox
-        {
-            get
-            {
-#if UNIX
-                return false;
-#else
-                if (_isInbox.HasValue) { return _isInbox.Value; }
-
-                _isInbox = false;
-                if (IsNanoServer || IsIoT)
-                {
-                    _isInbox = string.Equals(
-                        Utils.DefaultPowerShellAppBase,
-                        Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
-                        StringComparison.OrdinalIgnoreCase);
-                }
-
-                return _isInbox.Value;
-#endif
-            }
-        }
-
-        /// <summary>
         /// True if underlying system is Windows Desktop.
         /// </summary>
         public static bool IsWindowsDesktop
@@ -168,7 +142,6 @@ namespace System.Management.Automation
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
-        private static bool? _isInbox = null;
         private static bool? _isWindowsDesktop = null;
 #endif
 
@@ -190,7 +163,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Some common environment variables used in PS have different
-        /// names in different OS platforms
+        /// names in different OS platforms.
         /// </summary>
         internal static class CommonEnvVariableNames
         {
@@ -202,7 +175,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the temporary directory created for the current process
+        /// Remove the temporary directory created for the current process.
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
@@ -219,11 +192,12 @@ namespace System.Management.Automation
             {
                 // ignore if there is a failure
             }
+
             _tempDirectory = null;
         }
 
         /// <summary>
-        /// Get a temporary directory to use for the current process
+        /// Get a temporary directory to use for the current process.
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
@@ -257,11 +231,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// function for choosing directory location of PowerShell for profile loading
+        /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
         public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
-            //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
+            // TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
@@ -271,6 +245,7 @@ namespace System.Management.Automation
             {
                 envHome = GetTemporaryDirectory();
             }
+
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
@@ -279,10 +254,10 @@ namespace System.Management.Automation
             switch (dirpath)
             {
                 case Platform.XDG_Type.CONFIG:
-                    //the user has set XDG_CONFIG_HOME corresponding to profile path
-                    if (String.IsNullOrEmpty(xdgconfighome))
+                    // the user has set XDG_CONFIG_HOME corresponding to profile path
+                    if (string.IsNullOrEmpty(xdgconfighome))
                     {
-                        //xdg values have not been set
+                        // xdg values have not been set
                         return xdgConfigHomeDefault;
                     }
 
@@ -292,8 +267,8 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DATA:
-                    //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    // the user has set XDG_DATA_HOME corresponding to module path
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
@@ -304,10 +279,11 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgDataHomeDefault;
                     }
                     else
@@ -316,11 +292,11 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.USER_MODULES:
-                    //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    // the user has set XDG_DATA_HOME corresponding to module path
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgModuleDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -328,10 +304,11 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgModuleDefault;
                     }
                     else
@@ -343,11 +320,11 @@ namespace System.Management.Automation
                     return "/usr/local/share/powershell/Modules";
 
                 case Platform.XDG_Type.CACHE:
-                    //the user has set XDG_CACHE_HOME
-                    if (String.IsNullOrEmpty(xdgcachehome))
+                    // the user has set XDG_CACHE_HOME
+                    if (string.IsNullOrEmpty(xdgcachehome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgCacheDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -355,7 +332,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -373,7 +350,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -382,12 +359,12 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DEFAULT:
-                    //default for profile location
+                    // default for profile location
                     return xdgConfigHomeDefault;
 
                 default:
-                    //xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
-                    //This folder is the default in the event of all other failures for data storage
+                    // xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
+                    // This folder is the default in the event of all other failures for data storage
                     if (!Directory.Exists(xdgConfigHomeDefault))
                     {
                         try
@@ -430,20 +407,24 @@ namespace System.Management.Automation
             {
                 envHome = Platform.GetTemporaryDirectory();
             }
+
             switch (folder)
             {
                 case System.Environment.SpecialFolder.ProgramFiles:
                     folderPath = "/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.ProgramFilesX86:
                     folderPath = "/usr/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.System:
                 case System.Environment.SpecialFolder.SystemX86:
                     folderPath = "/sbin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.Personal:
                     folderPath = envHome;
@@ -459,9 +440,10 @@ namespace System.Management.Automation
                         catch (UnauthorizedAccessException)
                         {
                             // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
-                            folderPath = String.Empty;
+                            folderPath = string.Empty;
                         }
                     }
+
                     break;
                 default:
                     throw new NotSupportedException();
@@ -599,6 +581,7 @@ namespace System.Management.Automation
                     {
                         s_userName = NativeMethods.GetUserName();
                     }
+
                     return s_userName ?? string.Empty;
                 }
             }
@@ -618,6 +601,7 @@ namespace System.Management.Automation
                             return dir;
                         }
                     }
+
                     return "/tmp";
                 }
             }
@@ -664,6 +648,7 @@ namespace System.Management.Automation
                     {
                         return invalidPid;
                     }
+
                     return Int32.Parse(parts[3]);
                 }
                 catch (Exception)
@@ -768,4 +753,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // namespace System.Management.Automation
+}

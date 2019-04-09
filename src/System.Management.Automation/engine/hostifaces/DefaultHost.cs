@@ -19,10 +19,10 @@ namespace Microsoft.PowerShell
         #region ctor
 
         /// <summary>
-        /// Creates an instance based on the current culture and current UI culture
+        /// Creates an instance based on the current culture and current UI culture.
         /// </summary>
-        /// <param name="currentCulture">Current culture for this host</param>
-        /// <param name="currentUICulture">Current UI culture for this host</param>
+        /// <param name="currentCulture">Current culture for this host.</param>
+        /// <param name="currentUICulture">Current UI culture for this host.</param>
         /// <exception/>
 
         internal DefaultHost(CultureInfo currentCulture, CultureInfo currentUICulture)
@@ -46,17 +46,17 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        /// This property is not supported
+        /// This property is not supported.
         /// </summary>
         public override PSHostUserInterface UI { get { return null; } }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override CultureInfo CurrentCulture { get; } = null;
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override CultureInfo CurrentUICulture { get; } = null;
 
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
         #region methods
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>

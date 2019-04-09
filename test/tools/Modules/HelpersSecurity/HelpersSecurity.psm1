@@ -10,14 +10,6 @@ if ($IsWindows)
     #region Using directives
 
     using System;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Security;
-    using System.Runtime.InteropServices;
-    using System.Threading;
     using System.Management.Automation;
 
     #endregion
@@ -27,42 +19,27 @@ if ($IsWindows)
     public sealed class InvokeLanguageModeTestingSupportCmdlet : PSCmdlet
     {
         [Parameter()]
-        public SwitchParameter EnableFullLanguageMode
-        {
-            get { return enableFullLanguageMode; }
-            set { enableFullLanguageMode = value; }
-        }
-        private SwitchParameter enableFullLanguageMode;
+        public SwitchParameter EnableFullLanguageMode { get; set; }
 
         [Parameter()]
-        public SwitchParameter SetLockdownMode
-        {
-            get { return setLockdownMode; }
-            set { setLockdownMode = value; }
-        }
-        private SwitchParameter setLockdownMode;
+        public SwitchParameter SetLockdownMode { get; set; }
 
         [Parameter()]
-        public SwitchParameter RevertLockdownMode
-        {
-            get { return revertLockdownMode; }
-            set { revertLockdownMode = value; }
-        }
-        private SwitchParameter revertLockdownMode;
+        public SwitchParameter RevertLockdownMode { get; set; }
 
         protected override void BeginProcessing()
         {
-            if (enableFullLanguageMode)
+            if (EnableFullLanguageMode)
             {
                 SessionState.LanguageMode = PSLanguageMode.FullLanguage;
             }
 
-            if (setLockdownMode)
+            if (SetLockdownMode)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", "0x80000007", EnvironmentVariableTarget.Machine);
             }
 
-            if (revertLockdownMode)
+            if (RevertLockdownMode)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", null, EnvironmentVariableTarget.Machine);
             }

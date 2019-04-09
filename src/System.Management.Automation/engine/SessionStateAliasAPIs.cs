@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a new alias entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "script", "local", or "private, or a numeric ID of a relative scope
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the alias table
+        /// Gets an IEnumerable for the alias table.
         /// </summary>
         internal IDictionary<string, AliasInfo> GetAliasTable()
         {
@@ -66,10 +66,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasTable
+        }
 
         /// <summary>
-        /// Gets an IEnumerable for the alias table for a given scope
+        /// Gets an IEnumerable for the alias table for a given scope.
         /// </summary>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasTableAtScope
+        }
 
         /// <summary>
         /// List of aliases to export from this session state object...
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         internal AliasInfo GetAlias(string aliasName, CommandOrigin origin)
         {
             AliasInfo result = null;
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 return null;
             }
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAlias
+        }
 
         /// <summary>
         /// Gets the value of the specified alias from the alias table.
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         internal AliasInfo GetAliasAtScope(string aliasName, string scopeID)
         {
             AliasInfo result = null;
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 return null;
             }
@@ -222,7 +222,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasAtScope
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -250,12 +250,12 @@ namespace System.Management.Automation
         /// </exception>
         internal AliasInfo SetAliasValue(string aliasName, string value, bool force, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 throw PSTraceSource.NewArgumentException("value");
             }
@@ -263,7 +263,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, this.ExecutionContext, force, origin);
 
             return info;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -327,12 +327,12 @@ namespace System.Management.Automation
             bool force,
             CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 throw PSTraceSource.NewArgumentException("value");
             }
@@ -340,7 +340,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, options, this.ExecutionContext, force, origin);
 
             return info;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -408,7 +408,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasItem(alias, force, origin);
 
             return info;
-        } // SetAliasItem
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -455,7 +455,7 @@ namespace System.Management.Automation
             // If the "private" scope was specified, make sure the options contain
             // the Private flag
 
-            if (String.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
             {
                 alias.Options |= ScopedItemOptions.Private;
             }
@@ -465,7 +465,7 @@ namespace System.Management.Automation
             AliasInfo info = scope.SetAliasItem(alias, force, origin);
 
             return info;
-        } // SetAliasItemAtScope
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveAlias(string aliasName, bool force)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }
@@ -554,7 +554,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveAlias
+        }
 
         /// <summary>
         /// Gets the aliases by command name (used by metadata-driven help)
@@ -578,6 +578,6 @@ namespace System.Management.Automation
         }
 
         #endregion aliases
-    } // SessionStateInternal class
+    }
 }
 

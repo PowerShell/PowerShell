@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return _isLiteralPath ? Path : null; }
+
             set { _isLiteralPath = true; Path = value; }
         }
 
@@ -79,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var errorId = "PathNotFound";
             var errorCategory = ErrorCategory.InvalidArgument;
-            var errorMessage = string.Format(UtilityResources.PathDoesNotExist, path);
+            var errorMessage = string.Format(UtilityCommonStrings.PathDoesNotExist, path);
             var exception = new ArgumentException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, path);
             WriteError(errorRecord);
@@ -88,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         private void WriteInvalidDataFileError(string resolvedPath, string errorId)
         {
             var errorCategory = ErrorCategory.InvalidData;
-            var errorMessage = string.Format(UtilityResources.CouldNotParseAsPowerShellDataFile, resolvedPath);
+            var errorMessage = string.Format(UtilityCommonStrings.CouldNotParseAsPowerShellDataFile, resolvedPath);
             var exception = new InvalidOperationException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, resolvedPath);
             WriteError(errorRecord);

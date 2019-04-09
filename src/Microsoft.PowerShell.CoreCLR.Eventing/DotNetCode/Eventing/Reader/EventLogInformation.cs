@@ -47,12 +47,19 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         public DateTime? CreationTime { get { return _creationTime; } }
+
         public DateTime? LastAccessTime { get { return _lastAccessTime; } }
+
         public DateTime? LastWriteTime { get { return _lastWriteTime; } }
+
         public long? FileSize { get { return _fileSize; } }
+
         public int? Attributes { get { return _fileAttributes; } }
+
         public long? RecordCount { get { return _recordCount; } }
+
         public long? OldestRecordNumber { get { return _oldestRecordNumber; } }
+
         public bool? IsLogFull { get { return _isLogFull; } }
     }
 }

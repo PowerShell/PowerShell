@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -11,12 +12,19 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {
-    internal enum ConfigScope
+    /// <summary>
+    /// The scope of the configuration file.
+    /// </summary>
+    public enum ConfigScope
     {
-        // SystemWide configuration applies to all users.
-        SystemWide = 0,
+        /// <summary>
+        /// AllUsers configuration applies to all users.
+        /// </summary>
+        AllUsers = 0,
 
-        // CurrentUser configuration applies to the current user.
+        /// <summary>
+        /// CurrentUser configuration applies to the current user.
+        /// </summary>
         CurrentUser = 1
     }
 
@@ -82,6 +90,7 @@ namespace System.Management.Automation.Configuration
             {
                 throw new FileNotFoundException(value);
             }
+
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
@@ -101,6 +110,7 @@ namespace System.Management.Automation.Configuration
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
             }
+
             return modulePath;
         }
 
@@ -116,7 +126,7 @@ namespace System.Management.Automation.Configuration
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
-        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
+        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell".</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
@@ -125,10 +135,11 @@ namespace System.Management.Automation.Configuration
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             string rawExecPolicy = ReadValueFromFile<string>(scope, valueName);
 
-            if (!String.IsNullOrEmpty(rawExecPolicy))
+            if (!string.IsNullOrEmpty(rawExecPolicy))
             {
                 execPolicy = rawExecPolicy;
             }
+
             return execPolicy;
         }
 
@@ -140,15 +151,6 @@ namespace System.Management.Automation.Configuration
 
         internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
-            // Defaults to system wide.
-            if (ConfigScope.CurrentUser == scope)
-            {
-                // Exceptions are not caught so that they will propagate to the
-                // host for display to the user.
-                // CreateDirectory will succeed if the directory already exists
-                // so there is no reason to check Directory.Exists().
-                Directory.CreateDirectory(perUserConfigDirectory);
-            }
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             WriteValueToFile<string>(scope, valueName, executionPolicy);
         }
@@ -165,12 +167,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
         internal bool GetConsolePrompting()
         {
-            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "ConsolePrompting");
+            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "ConsolePrompting");
         }
 
         internal void SetConsolePrompting(bool shouldPrompt)
         {
-            WriteValueToFile<bool>(ConfigScope.SystemWide, "ConsolePrompting", shouldPrompt);
+            WriteValueToFile<bool>(ConfigScope.AllUsers, "ConsolePrompting", shouldPrompt);
         }
 
         /// <summary>
@@ -185,12 +187,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
         internal bool GetDisablePromptToUpdateHelp()
         {
-            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp");
+            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp");
         }
 
         internal void SetDisablePromptToUpdateHelp(bool prompt)
         {
-            WriteValueToFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp", prompt);
+            WriteValueToFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp", prompt);
         }
 
         /// <summary>
@@ -198,11 +200,44 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.SystemWide, "ExperimentalFeatures", Utils.EmptyArray<string>());
+            string[] features = Array.Empty<string>();
+            if (File.Exists(perUserConfigFile))
+            {
+                features = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
+            }
+
+            if (features.Length == 0)
+            {
+                features = ReadValueFromFile<string[]>(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
+            }
+
+            return features;
         }
 
         /// <summary>
-        /// Corresponding settings of the original Group Policies
+        /// Set the enabled list of experimental features in the config file.
+        /// </summary>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
+        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
+        internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
+        {
+            var features = new List<string>(GetExperimentalFeatures());
+            bool containsFeature = features.Contains(featureName);
+            if (setEnabled && !containsFeature)
+            {
+                features.Add(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
+            else if (!setEnabled && containsFeature)
+            {
+                features.Remove(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Corresponding settings of the original Group Policies.
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
         {
@@ -218,13 +253,14 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal string GetSysLogIdentity()
         {
-            string identity = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogIdentity");
+            string identity = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogIdentity");
 
             if (string.IsNullOrEmpty(identity) ||
                 identity.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
             {
                 identity = "powershell";
             }
+
             return identity;
         }
 
@@ -236,7 +272,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSLevel GetLogLevel()
         {
-            string levelName = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogLevel");
+            string levelName = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogLevel");
             PSLevel level;
 
             if (string.IsNullOrEmpty(levelName) ||
@@ -245,6 +281,7 @@ namespace System.Management.Automation.Configuration
             {
                 level = PSLevel.Informational;
             }
+
             return level;
         }
 
@@ -266,7 +303,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSChannel GetLogChannels()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogChannels");
+            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogChannels");
 
             PSChannel result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -305,7 +342,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSKeyword GetLogKeywords()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogKeywords");
+            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogKeywords");
 
             PSKeyword result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -355,7 +392,10 @@ namespace System.Management.Automation.Configuration
             fileLock.EnterReadLock();
             try
             {
-                using (var streamReader = new StreamReader(fileName))
+                // The config file can be locked by another process
+                // so we wait some milliseconds in 'WaitForFile()' for recovery before stop current process.
+                using (var readerStream = WaitForFile(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var streamReader = new StreamReader(readerStream))
                 using (var jsonReader = new JsonTextReader(streamReader))
                 {
                     var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 };
@@ -376,6 +416,29 @@ namespace System.Management.Automation.Configuration
             return defaultValue;
         }
 
+        private FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        {
+            const int MaxTries = 5;
+            for (int numTries = 0; numTries < MaxTries; numTries++)
+            {
+                try
+                {
+                    return new FileStream(fullPath, mode, access, share);
+                }
+                catch (IOException)
+                {
+                    if (numTries == (MaxTries - 1))
+                    {
+                        throw;
+                    }
+
+                    Thread.Sleep(50);
+                }
+            }
+
+            throw new IOException(nameof(WaitForFile));
+        }
+
         /// <summary>
         /// Update a value in the configuration file.
         /// </summary>
@@ -383,7 +446,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
-        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
+        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
         private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
         {
             string fileName = GetConfigFilePath(scope);
@@ -396,7 +459,7 @@ namespace System.Management.Automation.Configuration
                 // prevents other processes from reading or writing the file while
                 // the update is in progress. It also locks out readers during write
                 // operations.
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream fs = WaitForFile(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     JObject jsonObject = null;
 
@@ -490,6 +553,16 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
+            // Defaults to system wide.
+            if (ConfigScope.CurrentUser == scope)
+            {
+                // Exceptions are not caught so that they will propagate to the
+                // host for display to the user.
+                // CreateDirectory will succeed if the directory already exists
+                // so there is no reason to check Directory.Exists().
+                Directory.CreateDirectory(perUserConfigDirectory);
+            }
+
             UpdateValueInFile<T>(scope, key, value, true);
         }
 
@@ -570,7 +643,7 @@ namespace System.Management.Automation.Configuration
     internal abstract class PolicyBase { }
 
     /// <summary>
-    /// Setting about ScriptExecution
+    /// Setting about ScriptExecution.
     /// </summary>
     internal sealed class ScriptExecution : PolicyBase
     {
@@ -579,7 +652,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ScriptBlockLogging
+    /// Setting about ScriptBlockLogging.
     /// </summary>
     internal sealed class ScriptBlockLogging : PolicyBase
     {
@@ -588,7 +661,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ModuleLogging
+    /// Setting about ModuleLogging.
     /// </summary>
     internal sealed class ModuleLogging : PolicyBase
     {
@@ -597,7 +670,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about Transcription
+    /// Setting about Transcription.
     /// </summary>
     internal sealed class Transcription : PolicyBase
     {
@@ -607,7 +680,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about UpdatableHelp
+    /// Setting about UpdatableHelp.
     /// </summary>
     internal sealed class UpdatableHelp : PolicyBase
     {
@@ -616,7 +689,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ConsoleSessionConfiguration
+    /// Setting about ConsoleSessionConfiguration.
     /// </summary>
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
@@ -625,7 +698,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ProtectedEventLogging
+    /// Setting about ProtectedEventLogging.
     /// </summary>
     internal sealed class ProtectedEventLogging : PolicyBase
     {

@@ -65,11 +65,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return new SwitchParameter(_force);
             }
+
             set
             {
                 _force = value.IsPresent;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -247,6 +249,7 @@ namespace Microsoft.PowerShell.Commands
         public new string Prefix
         {
             set { base.Prefix = value; }
+
             get { return base.Prefix; }
         }
 
@@ -259,6 +262,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DisableNameChecking
         {
             get { return _disableNameChecking; }
+
             set { _disableNameChecking = value; }
         }
 
@@ -303,6 +307,7 @@ namespace Microsoft.PowerShell.Commands
                     manifestFile = file;
                 }
             }
+
             Dbg.Assert(manifestFile != null, "A psd1 file should always be generated");
 
             PSModuleInfo moduleInfo = this.CreateModule(manifestFile);
@@ -350,6 +355,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandNameParameter;
             }
+
             set
             {
                 _commandNameParameter = value;
@@ -359,6 +365,7 @@ namespace Microsoft.PowerShell.Commands
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
             }
         }
+
         private string[] _commandNameParameter;
         private Collection<WildcardPattern> _commandNamePatterns; // initialized to default value in the constructor
 
@@ -383,12 +390,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandArgs;
             }
+
             set
             {
                 _commandArgs = value;
                 _commandParameterSpecified = true;
             }
         }
+
         private object[] _commandArgs;
 
         /// <summary>
@@ -402,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandType;
             }
+
             set
             {
                 _commandType = value;
@@ -430,14 +440,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
+
                 _PSSnapins = value;
                 _commandParameterSpecified = true;
                 IsModuleSpecified = true;
             }
         }
-        private string[] _PSSnapins = new string[0];
+
+        private string[] _PSSnapins = Array.Empty<string>();
         internal bool IsModuleSpecified = false;
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
@@ -458,10 +470,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _moduleSpecifications = value;
                 }
+
                 _commandParameterSpecified = true;
                 IsFullyQualifiedModuleSpecified = true;
             }
         }
+
         private ModuleSpecification[] _moduleSpecifications = new ModuleSpecification[0];
         internal bool IsFullyQualifiedModuleSpecified = false;
 
@@ -482,6 +496,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _formatTypeNameParameter;
             }
+
             set
             {
                 _formatTypeNameParameter = value;
@@ -491,6 +506,7 @@ namespace Microsoft.PowerShell.Commands
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
             }
         }
+
         private string[] _formatTypeNameParameter; // initialized to default value in the constructor
         private Collection<WildcardPattern> _formatTypeNamePatterns;
         private bool _formatTypeNamesSpecified; // initialized to default value in the constructor
@@ -666,10 +682,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("commandName");
             }
+
             if (string.IsNullOrEmpty(nameType))
             {
                 throw PSTraceSource.NewArgumentNullException("nameType");
             }
+
             Dbg.Assert(nameType.Equals("Alias") || nameType.Equals("ParameterSet") || nameType.Equals("Parameter"), "nameType matches resource names");
             if (string.IsNullOrEmpty(name))
             {
@@ -696,6 +714,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("commandName");
             }
+
             if (runtimeException == null)
             {
                 throw PSTraceSource.NewArgumentNullException("runtimeException");
@@ -834,6 +853,7 @@ namespace Microsoft.PowerShell.Commands
                         _existingCommands[commandInfo.Name] = null;
                     }
                 }
+
                 return _existingCommands;
             }
         }
@@ -1000,6 +1020,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
             }
+
             return ConvertTo<T>(commandName, property.Value, nullOk);
         }
 
@@ -1081,8 +1102,8 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a name or identifier is safe to use in generated code
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
-        /// <param name="name">name to validate</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
+        /// <param name="name">Name to validate.</param>
+        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeNameOrIdentifier(string name)
         {
             // '.' is needed for stuff like net.exe
@@ -1099,8 +1120,8 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a parameter name is safe to use in generated code
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
-        /// <param name="parameterName">parameter name to validate</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
+        /// <param name="parameterName">Parameter name to validate.</param>
+        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
             return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
@@ -1110,8 +1131,8 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a type can be safely used as a type constraint
         /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
-        /// <param name="type">type to validate</param>
-        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise</returns>
+        /// <param name="type">Type to validate.</param>
+        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
             if (type == null)
@@ -1153,8 +1174,8 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that command metadata returned from the (potentially malicious) server is safe.
         /// Writes error messages if necessary.  Modifies command metadata to make it safe if necessary.
         /// </summary>
-        /// <param name="commandMetadata">command metadata to verify</param>
-        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise</returns>
+        /// <param name="commandMetadata">Command metadata to verify.</param>
+        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise.</returns>
         private bool IsSafeCommandMetadata(CommandMetadata commandMetadata)
         {
             if (!IsCommandNameMatchingParameters(commandMetadata.Name))
@@ -1371,10 +1392,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Converts remote (deserialized) CommandInfo objects into CommandMetadata equivalents.
         /// </summary>
-        /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored</param>
-        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names</param>
-        /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object</param>
-        /// <returns>CommandMetadata equivalents</returns>
+        /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored.</param>
+        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names.</param>
+        /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object.</param>
+        /// <returns>CommandMetadata equivalents.</returns>
         private void AddRemoteCommandMetadata(
             Dictionary<string, CommandMetadata> name2commandMetadata,
             Dictionary<string, string> alias2resolvedCommandName,
@@ -1390,15 +1411,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             if (resolvedCommandName != null && !IsSafeNameOrIdentifier(commandMetadata.Name))
             {
                 this.WriteError(this.GetErrorSkippedUnsafeCommandName(resolvedCommandName));
                 return;
             }
+
             if (IsCommandSkippedByServerDeclaration(commandMetadata.Name))
             {
                 return;
             }
+
             if (!IsCommandNameAllowedForImport(commandMetadata.Name))
             {
                 return;
@@ -1568,7 +1592,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
-        /// <returns>(rehydrated) CommandMetadata objects</returns>
+        /// <returns>(rehydrated) CommandMetadata objects.</returns>
         internal List<ExtendedTypeDefinition> GetRemoteFormatData()
         {
             if ((this.FormatTypeName == null) || (this.FormatTypeName.Length == 0) ||
@@ -1607,6 +1631,7 @@ namespace Microsoft.PowerShell.Commands
                             this.DuplicatePowerShellStreams(powerShell);
                             this.WriteProgress(startTime, ++numberOfReceivedObjects, expectedCount, ImplicitRemotingStrings.ProgressStatusGetFormatDataProgress);
                         }
+
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
@@ -1614,6 +1639,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-FormatData"));
                         }
+
                         return result;
                     }
                 }
@@ -1643,11 +1669,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 powerShell.AddParameter("Name", this.CommandName);
             }
+
             powerShell.AddParameter(nameof(Module), this.Module);
             if (IsFullyQualifiedModuleSpecified)
             {
                 powerShell.AddParameter(nameof(FullyQualifiedModule), this.FullyQualifiedModule);
             }
+
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
             powerShell.Runspace = Session.Runspace;
@@ -1667,7 +1695,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
-        /// <returns>(rehydrated) CommandMetadata objects</returns>
+        /// <returns>(rehydrated) CommandMetadata objects.</returns>
         internal List<CommandMetadata> GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName)
         {
             bool isReleaseCandidateBackcompatibilityMode =
@@ -1729,6 +1757,7 @@ namespace Microsoft.PowerShell.Commands
                             this.DuplicatePowerShellStreams(powerShell);
                             this.WriteProgress(startTime, ++numberOfReceivedObjects, expectedCount, ImplicitRemotingStrings.ProgressStatusGetCommandProgress);
                         }
+
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
@@ -1736,6 +1765,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-Command"));
                         }
+
                         return new List<CommandMetadata>(name2commandMetadata.Values);
                     }
                 }
@@ -1778,6 +1808,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
+
             _lastTimeProgressWasWritten = DateTime.UtcNow;
 
             string activityDescription = StringUtil.Format(ImplicitRemotingStrings.ProgressActivity);
@@ -1828,17 +1859,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a proxy module in the given directory.
         /// </summary>
-        /// <param name="moduleRootDirectory">base directory for the module</param>
-        /// <param name="moduleNamePrefix">fileName prefix for module files</param>
-        /// <param name="encoding">encoding of generated files</param>
-        /// <param name="force">whether to overwrite files</param>
-        /// <param name="listOfCommandMetadata">remote commands to generate proxies for</param>
-        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
-        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
-        /// <returns>Paths to generated files</returns>
+        /// <param name="moduleRootDirectory">Base directory for the module.</param>
+        /// <param name="moduleNamePrefix">FileName prefix for module files.</param>
+        /// <param name="encoding">Encoding of generated files.</param>
+        /// <param name="force">Whether to overwrite files.</param>
+        /// <param name="listOfCommandMetadata">Remote commands to generate proxies for.</param>
+        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names.</param>
+        /// <param name="listOfFormatData">Remote format data to generate format.ps1xml for.</param>
+        /// <returns>Paths to generated files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
-            String moduleNamePrefix,
+            string moduleNamePrefix,
             Encoding encoding,
             bool force,
             List<CommandMetadata> listOfCommandMetadata,
@@ -1910,7 +1941,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a connection URI associated with the remote runspace.
         /// </summary>
-        /// <returns>Connection URI associated with the remote runspace</returns>
+        /// <returns>Connection URI associated with the remote runspace.</returns>
         private string GetConnectionString()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
@@ -1958,6 +1989,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(c);
                 }
             }
+
             return result.ToString();
         }
 
@@ -2227,12 +2259,17 @@ function Get-PSImplicitRemotingSessionOption
             if (wsmanConnectionInfo != null)
             {
                 if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
+
                 if (wsmanConnectionInfo.NoEncryption) { result.Append("-NoEncryption "); }
+
                 if (wsmanConnectionInfo.NoMachineProfile) { result.Append("-NoMachineProfile "); }
+
                 if (wsmanConnectionInfo.UseUTF16) { result.Append("-UseUTF16 "); }
 
                 if (wsmanConnectionInfo.SkipCACheck) { result.Append("-SkipCACheck "); }
+
                 if (wsmanConnectionInfo.SkipCNCheck) { result.Append("-SkipCNCheck "); }
+
                 if (wsmanConnectionInfo.SkipRevocationCheck) { result.Append("-SkipRevocationCheck "); }
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
@@ -2242,6 +2279,7 @@ function Get-PSImplicitRemotingSessionOption
                         "-MaximumReceivedDataSizePerCommand {0} ",
                         wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value);
                 }
+
                 if (wsmanConnectionInfo.MaximumReceivedObjectSize.HasValue)
                 {
                     result.AppendFormat(
@@ -2249,6 +2287,7 @@ function Get-PSImplicitRemotingSessionOption
                         "-MaximumReceivedObjectSize {0} ",
                         wsmanConnectionInfo.MaximumReceivedObjectSize.Value);
                 }
+
                 result.AppendFormat(
                     CultureInfo.InvariantCulture,
                     "-MaximumRedirection {0} ",
@@ -2333,6 +2372,7 @@ function Get-PSImplicitRemotingSession
                 -InstanceId {0} `
                 -ErrorAction SilentlyContinue )
     }}
+
     if (($null -ne $script:PSSession) -and ($script:PSSession.Runspace.RunspaceStateInfo.State -eq 'Disconnected'))
     {{
         # If we are handed a disconnected session, try re-connecting it before creating a new session.
@@ -2341,6 +2381,7 @@ function Get-PSImplicitRemotingSession
                 -Session $script:PSSession `
                 -ErrorAction SilentlyContinue)
     }}
+
     if (($null -eq $script:PSSession) -or ($script:PSSession.Runspace.RunspaceStateInfo.State -ne 'Opened'))
     {{
         Write-PSImplicitRemotingMessage ('{1}' -f $commandName)
@@ -2360,10 +2401,12 @@ function Get-PSImplicitRemotingSession
 
         {8}
     }}
+
     if (($null -eq $script:PSSession) -or ($script:PSSession.Runspace.RunspaceStateInfo.State -ne 'Opened'))
     {{
         throw '{3}'
     }}
+
     return [Management.Automation.Runspaces.PSSession]$script:PSSession
 }}
 ";
@@ -2480,7 +2523,7 @@ function Get-PSImplicitRemotingSession
                     NewVMRunspaceTemplate,
                     /* 0 */ this.GenerateConnectionStringForNewRunspace(),
                     /* 1 */ this.GenerateCredentialParameter(),
-                    /* 2 */ String.IsNullOrEmpty(vmConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", vmConfigurationName));
+                    /* 2 */ string.IsNullOrEmpty(vmConfigurationName) ? string.Empty : string.Concat("-ConfigurationName ", vmConfigurationName));
             }
             else
             {
@@ -2493,7 +2536,7 @@ function Get-PSImplicitRemotingSession
                         NewContainerRunspaceTemplate,
                         /* 0 */ this.GenerateConnectionStringForNewRunspace(),
                         /* 1 */ containerConnectionInfo.ContainerProc.RunAsAdmin ? "-RunAsAdministrator" : string.Empty,
-                        /* 2 */ String.IsNullOrEmpty(containerConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", containerConfigurationName));
+                        /* 2 */ string.IsNullOrEmpty(containerConfigurationName) ? string.Empty : string.Concat("-ConfigurationName ", containerConfigurationName));
                 }
                 else
                 {
@@ -2695,6 +2738,7 @@ function Get-PSImplicitRemotingClientSideParameters
         $proxyForCmdlet)
 
     $clientSideParameters = @{}
+
     $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'InformationAction'
 
     Modify-PSImplicitRemotingParameters $clientSideParameters $PSBoundParameters 'AsJob'
@@ -2765,6 +2809,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 $null = $positionalArguments.Add( $PSBoundParameters[$parameterName] )
                 $null = $PSBoundParameters.Remove($parameterName)
             }}
+
             $positionalArguments.AddRange($args)
 
             $clientSideParameters = Get-PSImplicitRemotingClientSideParameters $PSBoundParameters ${8}
@@ -2783,7 +2828,9 @@ function Get-PSImplicitRemotingClientSideParameters
             throw
         }}
     }}
+
     Process {{ {6} }}
+
     End {{ {7} }}
 
     # .ForwardHelpTargetName {1}
@@ -2820,6 +2867,7 @@ function Get-PSImplicitRemotingClientSideParameters
             {
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
+
             if (listOfCommandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("listOfCommandMetadata");
@@ -2846,6 +2894,7 @@ function Get-PSImplicitRemotingClientSideParameters
             {
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
+
             if (listOfCommandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("listOfCommandMetadata");
@@ -2870,6 +2919,7 @@ function Get-PSImplicitRemotingClientSideParameters
             {
                 listOfCommandNames.Add(commandMetadata.Name);
             }
+
             return listOfCommandNames;
         }
 
@@ -2887,6 +2937,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 {
                     arrayString.Append(", ");
                 }
+
                 arrayString.Append('\'');
                 arrayString.Append(CodeGeneration.EscapeSingleQuotedStringContent(s));
                 arrayString.Append('\'');
@@ -2939,6 +2990,7 @@ function Get-PSImplicitRemotingClientSideParameters
             {
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
+
             if (listOfFormatData == null)
             {
                 throw PSTraceSource.NewArgumentNullException("listOfFormatData");
@@ -2960,18 +3012,18 @@ function Get-PSImplicitRemotingClientSideParameters
         /// <summary>
         /// Generates a proxy module in the given directory.
         /// </summary>
-        /// <param name="moduleRootDirectory">base directory for the module</param>
-        /// <param name="fileNamePrefix">filename prefix for module files</param>
-        /// <param name="encoding">encoding of generated files</param>
-        /// <param name="force">whether to overwrite files</param>
-        /// <param name="listOfCommandMetadata">remote commands to generate proxies for</param>
-        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
-        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
-        /// <param name="certificate">certificate with which to sign the format files</param>
-        /// <returns>Path to the created files</returns>
+        /// <param name="moduleRootDirectory">Base directory for the module.</param>
+        /// <param name="fileNamePrefix">Filename prefix for module files.</param>
+        /// <param name="encoding">Encoding of generated files.</param>
+        /// <param name="force">Whether to overwrite files.</param>
+        /// <param name="listOfCommandMetadata">Remote commands to generate proxies for.</param>
+        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names.</param>
+        /// <param name="listOfFormatData">Remote format data to generate format.ps1xml for.</param>
+        /// <param name="certificate">Certificate with which to sign the format files.</param>
+        /// <returns>Path to the created files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
-            String fileNamePrefix,
+            string fileNamePrefix,
             Encoding encoding,
             bool force,
             List<CommandMetadata> listOfCommandMetadata,
@@ -3039,7 +3091,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 }
                 else
                 {
-                    String currentFile = baseName + ".psm1";
+                    string currentFile = baseName + ".psm1";
                     try
                     {
                         SignatureHelper.SignFile(SigningOption.Default, currentFile, certificate, string.Empty, null);

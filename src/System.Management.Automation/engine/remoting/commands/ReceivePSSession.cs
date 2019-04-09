@@ -59,11 +59,12 @@ namespace Microsoft.PowerShell.Commands
     /// > Receive-PSSession $session.Name
     ///
     /// Receive a running command from a computer.
-    /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job
+    /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
-    [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
-         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
+    [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037",
+        RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class ReceivePSSessionCommand : PSRemotingCmdlet
     {
         #region Parameters
@@ -94,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
                    ParameterSetName = ReceivePSSessionCommand.IdParameterSet)]
-        public Int32 Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Computer name to receive session data from.
@@ -109,27 +110,29 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public String ComputerName { get; set; }
+        public string ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
-        /// not specified as well, then "WSMAN" will be used
+        /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
+
             set
             {
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+
+        private string _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -144,15 +147,17 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public String ConfigurationName
+        public string ConfigurationName
         {
             get { return _shell; }
+
             set
             {
                 _shell = ResolveShell(value);
             }
         }
-        private String _shell;
+
+        private string _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -176,8 +181,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -250,6 +257,7 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _psCredential; }
+
             set
             {
                 _psCredential = value;
@@ -257,6 +265,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private PSCredential _psCredential;
 
         /// <summary>
@@ -269,6 +278,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationMechanism Authentication
         {
             get { return _authentication; }
+
             set
             {
                 _authentication = value;
@@ -276,6 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authentication;
 
         /// <summary>
@@ -289,6 +300,7 @@ namespace Microsoft.PowerShell.Commands
         public string CertificateThumbprint
         {
             get { return _thumbprint; }
+
             set
             {
                 _thumbprint = value;
@@ -296,6 +308,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbprint;
 
         /// <summary>
@@ -311,8 +324,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port { get; set; }
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public int Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -525,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            String message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, newSession.Name);
+                            string message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, newSession.Name);
                             WriteError(new ErrorRecord(new ArgumentException(message, ex), "ReceivePSSessionCannotConnectSession",
                                        ErrorCategory.InvalidOperation, newSession));
                         }
@@ -559,6 +572,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     connectionInfo.Credential = Credential;
                 }
+
                 connectionInfo.AuthenticationMechanism = Authentication;
                 UpdateConnectionInfo(connectionInfo);
             }
@@ -574,6 +588,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     connectionInfo.Credential = Credential;
                 }
+
                 connectionInfo.AuthenticationMechanism = Authentication;
                 UpdateConnectionInfo(connectionInfo);
             }
@@ -686,7 +701,7 @@ namespace Microsoft.PowerShell.Commands
                     if (session == null)
                     {
                         // No luck.  Return error.
-                        String message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, oldSession.Name);
+                        string message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, oldSession.Name);
                         WriteError(new ErrorRecord(new ArgumentException(message, ex), "ReceivePSSessionCannotConnectSession",
                                    ErrorCategory.InvalidOperation, oldSession));
 
@@ -827,12 +842,14 @@ namespace Microsoft.PowerShell.Commands
 
                 // Reconnect the job object and stream data to host.
                 lock (_syncObject) { _job = job; _stopPipelineReceive = new ManualResetEvent(false); }
+
                 using (_stopPipelineReceive)
                 using (job)
                 {
                     Job childJob = job.ChildJobs[0];
                     job.ConnectJobs();
                     if (CheckForDebugMode(session, true)) { return; }
+
                     do
                     {
                         // Retrieve and display results from child job as they become
@@ -857,6 +874,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     while (!job.IsFinishedState(job.JobStateInfo.State));
                 }
+
                 lock (_syncObject) { _job = null; _stopPipelineReceive = null; }
 
                 return;
@@ -878,6 +896,7 @@ namespace Microsoft.PowerShell.Commands
                 _remotePipeline = (RemotePipeline)session.Runspace.CreateDisconnectedPipeline();
                 _stopPipelineReceive = new ManualResetEvent(false);
             }
+
             using (_stopPipelineReceive)
             {
                 using (_remotePipeline)
@@ -899,6 +918,7 @@ namespace Microsoft.PowerShell.Commands
                         _remotePipeline.ConnectAsync();
                         pipelineConnectedEvent.WaitOne();
                     }
+
                     pipelineConnectedEvent = null;
 
                     if (CheckForDebugMode(session, true)) { return; }
@@ -997,6 +1017,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             lock (_syncObject) { _remotePipeline = null; _stopPipelineReceive = null; }
         }
 
@@ -1004,8 +1025,8 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to append computer name and session GUID
         /// note properties to the PSObject before it is written.
         /// </summary>
-        /// <param name="psObject">PSObject</param>
-        /// <param name="session">PSSession</param>
+        /// <param name="psObject">PSObject.</param>
+        /// <param name="session">PSSession.</param>
         private void WriteRemoteObject(
             PSObject psObject,
             PSSession session)
@@ -1020,10 +1041,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty, session.ComputerName));
             }
+
             if (psObject.Properties[RemotingConstants.RunspaceIdNoteProperty] == null)
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.RunspaceIdNoteProperty, session.InstanceId));
             }
+
             if (psObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, true));
@@ -1130,8 +1153,8 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to attempt to retrieve a disconnected runspace object
         /// from the server, based on the provided session object.
         /// </summary>
-        /// <param name="session">PSSession</param>
-        /// <returns>PSSession</returns>
+        /// <param name="session">PSSession session object.</param>
+        /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
             RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
@@ -1210,7 +1233,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="id">Id to match.</param>
         /// <returns>PSSession object.</returns>
-        private PSSession GetSessionById(Int32 id)
+        private PSSession GetSessionById(int id)
         {
             foreach (PSSession session in this.RunspaceRepository.Runspaces)
             {
@@ -1265,7 +1288,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteInvalidArgumentError(PSRemotingErrorId errorId, string resourceString, object errorArgument)
         {
-            String message = GetMessage(resourceString, errorArgument);
+            string message = GetMessage(resourceString, errorArgument);
 
             WriteError(new ErrorRecord(new ArgumentException(message), errorId.ToString(),
                        ErrorCategory.InvalidArgument, errorArgument));
@@ -1292,7 +1315,7 @@ namespace Microsoft.PowerShell.Commands
     public enum OutTarget
     {
         /// <summary>
-        /// Default mode.  If
+        /// Default mode.  If.
         /// </summary>
         Default = 0,
 

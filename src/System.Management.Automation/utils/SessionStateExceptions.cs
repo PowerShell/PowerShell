@@ -18,14 +18,14 @@ namespace System.Management.Automation
     {
         #region Constructors
         /// <summary>
-        /// Constructs a ProviderInvocationException
+        /// Constructs a ProviderInvocationException.
         /// </summary>
         public ProviderInvocationException() : base()
         {
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException using serialized data
+        /// Constructs a ProviderInvocationException using serialized data.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -41,7 +41,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException with a message
+        /// Constructs a ProviderInvocationException with a message.
         /// </summary>
         /// <param name="message">
         /// The message for the exception.
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderInvocationException
+        /// Constructs a ProviderInvocationException.
         /// </summary>
         /// <param name="errorId">
         /// This string will be used to construct the FullyQualifiedErrorId,
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor to make it easy to wrap a provider exception
+        /// Constructor to make it easy to wrap a provider exception.
         /// </summary>
         /// <param name="errorId">
         /// This string will be used to construct the FullyQualifiedErrorId,
@@ -224,6 +224,7 @@ namespace System.Management.Automation
         /// Gets the provider information of the provider that threw an exception.
         /// </summary>
         public ProviderInfo ProviderInfo { get { return _providerInfo; } }
+
         [NonSerialized]
         internal ProviderInfo _providerInfo;
 
@@ -242,9 +243,11 @@ namespace System.Management.Automation
                         ErrorCategory.NotSpecified,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         [NonSerialized]
         private ErrorRecord _errorRecord;
         #endregion Properties
@@ -263,12 +266,14 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage needs innerException");
                 return string.Empty;
             }
-            if (String.IsNullOrEmpty(errorId))
+
+            if (string.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
                 return RuntimeException.RetrieveMessage(innerException);
             }
+
             if (provider == null)
             {
                 Diagnostics.Assert(false,
@@ -277,18 +282,19 @@ namespace System.Management.Automation
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
                 return RuntimeException.RetrieveMessage(innerException);
             }
+
             string result = null;
 
             if (path == null)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -297,23 +303,25 @@ namespace System.Management.Automation
             else
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
                         path,
                         RuntimeException.RetrieveMessage(innerException));
             }
+
             return result;
         }
 
         /// <summary>
-        /// Gets the exception message
+        /// Gets the exception message.
         /// </summary>
         public override string Message
         {
-            get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
+
         [NonSerialized]
         private string _message /* = null */;
 
@@ -321,7 +329,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Categories of session state objects, used by SessionStateException
+    /// Categories of session state objects, used by SessionStateException.
     /// </summary>
     public enum SessionStateCategory
     {
@@ -386,17 +394,17 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
-        /// <param name="itemName"> name of session state object </param>
-        /// <param name="sessionStateCategory"> category of session state object </param>
+        /// <param name="itemName">Name of session state object.</param>
+        /// <param name="sessionStateCategory">Category of session state object.</param>
         /// <param name="resourceStr">This string is the message template string.</param>
         /// <param name="errorIdAndResourceId">
         /// This string is the ErrorId passed to the ErrorRecord, and is also
         /// the resourceId used to look up the message template string in
         /// SessionStateStrings.txt.
         /// </param>
-        /// <param name="errorCategory"> ErrorRecord.CategoryInfo.Category </param>
+        /// <param name="errorCategory">ErrorRecord.CategoryInfo.Category.</param>
         /// <param name="messageArgs">
         /// Additional insertion strings used to construct the message.
         /// Note that itemName is always the first insertion string.
@@ -417,7 +425,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         public SessionStateException()
             : base()
@@ -425,7 +433,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -436,7 +444,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateException
+        /// Constructs a SessionStateException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -455,8 +463,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a SessionStateException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected SessionStateException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)
@@ -467,8 +475,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -479,7 +487,7 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("SessionStateCategory", (Int32)_sessionStateCategory);
+            info.AddValue("SessionStateCategory", (int)_sessionStateCategory);
         }
         #endregion Serialization
 
@@ -499,9 +507,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _itemName);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
 
         /// <summary>
@@ -511,7 +521,8 @@ namespace System.Management.Automation
         {
             get { return _itemName; }
         }
-        private string _itemName = String.Empty;
+
+        private string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -520,6 +531,7 @@ namespace System.Management.Automation
         {
             get { return _sessionStateCategory; }
         }
+
         private SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
         #endregion Properties
 
@@ -544,10 +556,11 @@ namespace System.Management.Automation
                 a = new object[1];
                 a[0] = itemName;
             }
+
             return StringUtil.Format(resourceStr, a);
         }
         #endregion Private
-    } // SessionStateException
+    }
 
     /// <summary>
     /// SessionStateUnauthorizedAccessException occurs when
@@ -561,7 +574,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="itemName">
         /// The name of the session state object the error occurred on.
@@ -591,7 +604,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         public SessionStateUnauthorizedAccessException()
             : base()
@@ -599,7 +612,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -610,7 +623,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException
+        /// Constructs a SessionStateUnauthorizedAccessException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -629,8 +642,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a SessionStateUnauthorizedAccessException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected SessionStateUnauthorizedAccessException(
             SerializationInfo info,
             StreamingContext context)
@@ -638,7 +651,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // SessionStateUnauthorizedAccessException
+    }
 
     /// <summary>
     /// ProviderNotFoundException occurs when no provider can be found
@@ -649,7 +662,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="itemName">
         /// The name of provider that could not be found.
@@ -685,7 +698,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         public ProviderNotFoundException()
             : base()
@@ -693,7 +706,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The messaged used by the exception.
@@ -704,7 +717,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNotFoundException
+        /// Constructs a ProviderNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -723,8 +736,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ProviderNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ProviderNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -732,7 +745,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // ProviderNotFoundException
+    }
 
     /// <summary>
     /// ProviderNameAmbiguousException occurs when more than one provider exists
@@ -743,7 +756,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="providerName">
         /// The name of provider that was ambiguous.
@@ -780,7 +793,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         public ProviderNameAmbiguousException()
             : base()
@@ -788,7 +801,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="message">
         /// The messaged used by the exception.
@@ -799,7 +812,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ProviderNameAmbiguousException
+        /// Constructs a ProviderNameAmbiguousException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -818,8 +831,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ProviderNameAmbiguousException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ProviderNameAmbiguousException(
             SerializationInfo info,
             StreamingContext context)
@@ -841,10 +854,11 @@ namespace System.Management.Automation
                 return _possibleMatches;
             }
         }
+
         private ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties
-    } // ProviderNameAmbiguousException
+    }
 
     /// <summary>
     /// DriveNotFoundException occurs when no drive can be found
@@ -855,7 +869,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="itemName">
         /// The name of the drive that could not be found.
@@ -879,7 +893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         public DriveNotFoundException()
             : base()
@@ -887,7 +901,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message that will be used by the exception.
@@ -898,7 +912,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a DriveNotFoundException
+        /// Constructs a DriveNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message that will be used by the exception.
@@ -917,8 +931,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a DriveNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected DriveNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -926,7 +940,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // DriveNotFoundException
+    }
 
     /// <summary>
     /// ItemNotFoundException occurs when the path contained no wildcard characters
@@ -937,7 +951,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="path">
         /// The path that was not found.
@@ -963,7 +977,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         public ItemNotFoundException()
             : base()
@@ -971,7 +985,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -982,7 +996,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ItemNotFoundException
+        /// Constructs a ItemNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used by the exception.
@@ -1001,8 +1015,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ItemNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ItemNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -1010,6 +1024,6 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // ItemNotFoundException
-} // namespace System.Management.Automation
+    }
+}
 

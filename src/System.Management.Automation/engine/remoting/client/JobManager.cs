@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <returns>Whether the type is registered already.</returns>
         public bool IsRegistered(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return false;
             }
@@ -87,10 +87,10 @@ namespace System.Management.Automation
             }
             else
             {
-                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
                 if (!constructor.IsPublic)
                 {
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
                                                    jobSourceAdapterType.FullName);
                     throw new InvalidOperationException(message);
@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns a token that allows a job to be constructed with a specific id and instanceId.
-        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter
+        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter.
         /// </summary>
         /// <param name="instanceId">The instance id desired.</param>
         /// <param name="typeName">The requesting type name for JobSourceAdapter implementation.</param>
@@ -264,14 +264,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Saves the job to a persisted store.
         /// </summary>
-        /// <param name="job">Job2 type job to persist</param>
-        /// <param name="definition">Job definition containing source adapter information</param>
+        /// <param name="job">Job2 type job to persist.</param>
+        /// <param name="definition">Job definition containing source adapter information.</param>
         public void PersistJob(Job2 job, JobDefinition definition)
         {
             if (job == null)
             {
                 throw new PSArgumentNullException("job");
             }
+
             if (definition == null)
             {
                 throw new PSArgumentNullException("definition");
@@ -325,7 +326,7 @@ namespace System.Management.Automation
         /// otherwise load the associated module and the requested source adapter.
         /// </summary>
         /// <param name="definition">JobDefinition supplies the JobSourceAdapter information.</param>
-        /// <returns>JobSourceAdapter</returns>
+        /// <returns>JobSourceAdapter.</returns>
         private JobSourceAdapter GetJobSourceAdapter(JobDefinition definition)
         {
             string adapterTypeName;
@@ -348,6 +349,7 @@ namespace System.Management.Automation
             {
                 adapterFound = _sourceAdapters.TryGetValue(adapterTypeName, out adapter);
             }
+
             if (!adapterFound)
             {
                 if (!string.IsNullOrEmpty(definition.ModuleName))
@@ -418,7 +420,7 @@ namespace System.Management.Automation
         /// <param name="cmdlet">Cmdlet requesting this, for error processing.</param>
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
@@ -440,7 +442,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -464,7 +466,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -488,7 +490,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs with the specified
         /// state.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -526,8 +528,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a filtered list of jobs based on adapter name.
         /// </summary>
-        /// <param name="id">job id</param>
-        /// <param name="name">adapter name</param>
+        /// <param name="id">Job id.</param>
+        /// <param name="name">Adapter name.</param>
         /// <returns></returns>
         internal bool IsJobFromAdapter(Guid id, string name)
         {
@@ -555,7 +557,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Filtered list of jobs.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
@@ -773,6 +775,7 @@ namespace System.Management.Automation
                     {
                         cmdlet.WriteObject(job);
                     }
+
                     return job;
                 }
             }
@@ -790,7 +793,7 @@ namespace System.Management.Automation
         /// <param name="definitionType">JobSourceAdapter type that contains the job definition.</param>
         /// <param name="cmdlet">Cmdlet making call.</param>
         /// <param name="writeErrorOnException">Whether to write jobsourceadapter errors.</param>
-        /// <returns>List of matching Job2 objects</returns>
+        /// <returns>List of matching Job2 objects.</returns>
         internal List<Job2> GetJobToStart(
             string definitionName,
             string definitionPath,
@@ -857,7 +860,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Write a warning
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobSourceAdapterError,
                                                    exception.Message,
                                                    sourceAdapter.Name);
@@ -875,8 +878,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a List of adapter names currently loaded.
         /// </summary>
-        /// <param name="adapterTypeNames">Adapter names to filter on</param>
-        /// <returns>List of names</returns>
+        /// <param name="adapterTypeNames">Adapter names to filter on.</param>
+        /// <returns>List of names.</returns>
         internal List<string> GetLoadedAdapterNames(string[] adapterTypeNames)
         {
             List<string> adapterNames = new List<string>();

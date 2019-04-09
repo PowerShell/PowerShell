@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool StartIfOnBatteries
         {
             get { return _startIfOnBatteries; }
+
             set { _startIfOnBatteries = value; }
         }
 
@@ -62,6 +63,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool StopIfGoingOnBatteries
         {
             get { return _stopIfGoingOnBatteries; }
+
             set { _stopIfGoingOnBatteries = value; }
         }
 
@@ -71,6 +73,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool WakeToRun
         {
             get { return _wakeToRun; }
+
             set { _wakeToRun = value; }
         }
 
@@ -80,6 +83,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool StartIfNotIdle
         {
             get { return _startIfNotIdle; }
+
             set { _startIfNotIdle = value; }
         }
 
@@ -89,6 +93,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool StopIfGoingOffIdle
         {
             get { return _stopIfGoingOffIdle; }
+
             set { _stopIfGoingOffIdle = value; }
         }
         /// <summary>
@@ -97,6 +102,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool RestartOnIdleResume
         {
             get { return _restartOnIdleResume; }
+
             set { _restartOnIdleResume = value; }
         }
 
@@ -106,6 +112,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan IdleDuration
         {
             get { return _idleDuration; }
+
             set { _idleDuration = value; }
         }
 
@@ -115,6 +122,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan IdleTimeout
         {
             get { return _idleTimeout; }
+
             set { _idleTimeout = value; }
         }
 
@@ -124,6 +132,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool ShowInTaskScheduler
         {
             get { return _showInTaskScheduler; }
+
             set { _showInTaskScheduler = value; }
         }
 
@@ -133,6 +142,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool RunElevated
         {
             get { return _runElevated; }
+
             set { _runElevated = value; }
         }
 
@@ -142,6 +152,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool RunWithoutNetwork
         {
             get { return _runWithoutNetwork; }
+
             set { _runWithoutNetwork = value; }
         }
 
@@ -151,6 +162,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool DoNotAllowDemandStart
         {
             get { return _donotAllowDemandStart; }
+
             set { _donotAllowDemandStart = value; }
         }
 
@@ -160,6 +172,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TaskMultipleInstancePolicy MultipleInstancePolicy
         {
             get { return _multipleInstancePolicy; }
+
             set { _multipleInstancePolicy = value; }
         }
 
@@ -169,6 +182,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition JobDefinition
         {
             get { return _jobDefAssociation; }
+
             internal set { _jobDefAssociation = value; }
         }
 
@@ -245,7 +259,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Copy Constructor.
         /// </summary>
-        /// <param name="copyOptions">Copy from</param>
+        /// <param name="copyOptions">Copy from.</param>
         internal ScheduledJobOptions(
             ScheduledJobOptions copyOptions)
         {
@@ -278,8 +292,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobOptions(
             SerializationInfo info,
@@ -311,8 +325,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// GetObjectData for ISerializable implementation.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -368,7 +382,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     public enum TaskMultipleInstancePolicy
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
         /// <summary>
@@ -384,7 +398,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         Queue = 3,
         /// <summary>
-        /// Stop currently running task (job) and start a new one
+        /// Stop currently running task (job) and start a new one.
         /// </summary>
         StopExisting = 4
     }

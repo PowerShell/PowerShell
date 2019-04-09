@@ -10,98 +10,98 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This class holds the integer constants used in Session State
+    /// This class holds the integer constants used in Session State.
     /// </summary>
     internal static class SessionStateConstants
     {
         /// <summary>
-        /// The default maximum for the number of variables
+        /// The default maximum for the number of variables.
         /// </summary>
         internal const int DefaultVariableCapacity = 4096;
 
         /// <summary>
-        /// Max # of variables allowed in a scope in Session State
+        /// Max # of variables allowed in a scope in Session State.
         /// </summary>
         internal const int MaxVariablesCapacity = 32768;
 
         /// <summary>
-        /// Min # of variables allows in a scope in Session State
+        /// Min # of variables allows in a scope in Session State.
         /// </summary>
         internal const int MinVariablesCapacity = 1024;
 
         /// <summary>
-        /// The default maximum for the number of aliases
+        /// The default maximum for the number of aliases.
         /// </summary>
         internal const int DefaultAliasCapacity = 4096;
 
         /// <summary>
-        /// Max # of aliases allowed in a scope in Session State
+        /// Max # of aliases allowed in a scope in Session State.
         /// </summary>
         internal const int MaxAliasCapacity = 32768;
 
         /// <summary>
-        /// Min # of aliases allowed in a scope in Session State
+        /// Min # of aliases allowed in a scope in Session State.
         /// </summary>
         internal const int MinAliasCapacity = 1024;
 
         /// <summary>
-        /// The default maximum for the number of functions
+        /// The default maximum for the number of functions.
         /// </summary>
         internal const int DefaultFunctionCapacity = 4096;
 
         /// <summary>
-        /// Max # of functions allowed in a scope in Session State
+        /// Max # of functions allowed in a scope in Session State.
         /// </summary>
         internal const int MaxFunctionCapacity = 32768;
 
         /// <summary>
-        /// Min # of functions allowed in a scope in Session State
+        /// Min # of functions allowed in a scope in Session State.
         /// </summary>
         internal const int MinFunctionCapacity = 1024;
 
         /// <summary>
-        /// The default maximum for the number of drives
+        /// The default maximum for the number of drives.
         /// </summary>
         internal const int DefaultDriveCapacity = 4096;
 
         /// <summary>
-        /// Max # of drives allowed in a scope in Session State
+        /// Max # of drives allowed in a scope in Session State.
         /// </summary>
         internal const int MaxDriveCapacity = 32768;
 
         /// <summary>
-        /// Min # of drives allowed in a scope in Session State
+        /// Min # of drives allowed in a scope in Session State.
         /// </summary>
         internal const int MinDriveCapacity = 1024;
 
         /// <summary>
-        /// The default maximum for the number of errors
+        /// The default maximum for the number of errors.
         /// </summary>
         internal const int DefaultErrorCapacity = 256;
 
         /// <summary>
-        /// Max # of errors allowed in a scope in Session State
+        /// Max # of errors allowed in a scope in Session State.
         /// </summary>
         internal const int MaxErrorCapacity = 32768;
 
         /// <summary>
-        /// Min # of errors allowed in a scope in Session State
+        /// Min # of errors allowed in a scope in Session State.
         /// </summary>
         internal const int MinErrorCapacity = 256;
 
         /// <summary>
-        /// The default capacity for a Dictionary store
+        /// The default capacity for a Dictionary store.
         /// </summary>
         internal const int DefaultDictionaryCapacity = 100;
 
         /// <summary>
-        /// default load factor on a hash table
+        /// Default load factor on a hash table.
         /// </summary>
         internal const float DefaultHashTableLoadFactor = 0.25F;
     }
 
     /// <summary>
-    /// This class has static methods that are used in Session State
+    /// This class has static methods that are used in Session State.
     /// </summary>
     internal static class SessionStateUtilities
     {
@@ -124,6 +124,7 @@ namespace System.Management.Automation
                     result.Add(element);
                 }
             }
+
             return result;
         }
 
@@ -175,6 +176,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -202,9 +204,9 @@ namespace System.Management.Automation
             {
                 // Loop through the patterns and construct a wildcard pattern for each one
 
-                foreach (String pattern in globPatterns)
+                foreach (string pattern in globPatterns)
                 {
-                    if (!String.IsNullOrEmpty(pattern))
+                    if (!string.IsNullOrEmpty(pattern))
                     {
                         result.Add(
                             WildcardPattern.Get(
@@ -215,10 +217,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // CreateWildcardsFromStrings
+        }
 
         /// <summary>
-        /// Determines if the specified text matches any of the patterns
+        /// Determines if the specified text matches any of the patterns.
         /// </summary>
         /// <param name="text">
         /// The text to check against the wildcard pattern.
@@ -263,10 +265,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // MatchesAnyWildcardPattern
+        }
 
         /// <summary>
-        /// Converts an OpenMode enum value to a FileMode
+        /// Converts an OpenMode enum value to a FileMode.
         /// </summary>
         /// <param name="openMode">
         /// The OpenMode value to be converted.

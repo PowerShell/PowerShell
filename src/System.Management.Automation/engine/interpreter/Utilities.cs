@@ -20,6 +20,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return type.GetGenericArguments()[0];
             }
+
             return type;
         }
 
@@ -30,6 +31,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return typeof(Nullable<>).MakeGenericType(type);
             }
+
             return type;
         }
 
@@ -64,6 +66,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
 
@@ -84,6 +87,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.UInt64:
                     return true;
             }
+
             return false;
         }
 
@@ -105,6 +109,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
     }
@@ -144,7 +149,7 @@ namespace System.Management.Automation.Interpreter
             if (types.Length > MaximumArity || types.Any(t => t.IsByRef))
             {
                 throw Assert.Unreachable;
-                //return MakeCustomDelegate(types);
+                // return MakeCustomDelegate(types);
             }
 
             Type returnType = types[types.Length - 1];
@@ -213,6 +218,7 @@ namespace System.Management.Automation.Interpreter
                         #endregion
                 }
             }
+
             throw Assert.Unreachable;
         }
     }
@@ -286,7 +292,7 @@ namespace System.Management.Automation.Interpreter
 
         public object GetArgument(int index)
         {
-            //ContractUtils.RequiresArrayIndex(_arguments, index, "index");
+            // ContractUtils.RequiresArrayIndex(_arguments, index, "index");
             return _arguments[_first + index];
         }
 
@@ -302,7 +308,7 @@ namespace System.Management.Automation.Interpreter
             );
         }
 
-        //[CLSCompliant(false)]
+        // [CLSCompliant(false)]
         public static object GetArg(ArgumentArray array, int index)
         {
             return array._arguments[array._first + index];
@@ -340,7 +346,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns all the stack traces associates with an exception
+        /// Returns all the stack traces associates with an exception.
         /// </summary>
         public static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
         {
@@ -405,6 +411,7 @@ namespace System.Management.Automation.Interpreter
                     }
                 }
             }
+
             value = default(TValue);
             return false;
         }
@@ -463,6 +470,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return _dict.Count;
                 }
+
                 return _count;
             }
         }
@@ -505,6 +513,7 @@ namespace System.Management.Automation.Interpreter
 
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Debug.Assert(key != null);
@@ -550,6 +559,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             _dict[_keysAndValues[i].Key] = _keysAndValues[i].Value;
                         }
+
                         _keysAndValues = null;
 
                         _dict[key] = value;
@@ -646,8 +656,10 @@ namespace System.Management.Automation.Interpreter
                 {
                     return res;
                 }
+
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Add(key, value);
@@ -670,7 +682,7 @@ namespace System.Management.Automation.Interpreter
     internal class ThreadLocal<T>
     {
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
-        private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
+        private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
 
         public ThreadLocal()
@@ -703,6 +715,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return GetStorageInfo().Value;
             }
+
             set
             {
                 GetStorageInfo().Value = value;
@@ -841,6 +854,7 @@ namespace System.Management.Automation.Interpreter
                             newStorage[i] = curStorage[i];
                         }
                     }
+
                     curStorage = newStorage;
                 }
 
@@ -925,7 +939,7 @@ namespace System.Management.Automation.Interpreter
         [Conditional("DEBUG")]
         public static void NotEmpty(string str)
         {
-            Debug.Assert(!String.IsNullOrEmpty(str));
+            Debug.Assert(!string.IsNullOrEmpty(str));
         }
     }
 
@@ -954,11 +968,12 @@ namespace System.Management.Automation.Interpreter
 
         public static Expression Void(Expression expression)
         {
-            //ContractUtils.RequiresNotNull(expression, "expression");
+            // ContractUtils.RequiresNotNull(expression, "expression");
             if (expression.Type == typeof(void))
             {
                 return expression;
             }
+
             return Expression.Block(expression, Utils.Empty());
         }
 
@@ -968,12 +983,13 @@ namespace System.Management.Automation.Interpreter
             {
                 return Empty();
             }
+
             return Expression.Default(type);
         }
 
         public static Expression Convert(Expression expression, Type type)
         {
-            //ContractUtils.RequiresNotNull(expression, "expression");
+            // ContractUtils.RequiresNotNull(expression, "expression");
 
             if (expression.Type == type)
             {
@@ -1046,6 +1062,7 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.SubtractAssignChecked:
                     return true;
             }
+
             return false;
         }
     }
@@ -1054,8 +1071,8 @@ namespace System.Management.Automation.Interpreter
     {
         internal static bool TrueForAll<T>(this IEnumerable<T> collection, Predicate<T> predicate)
         {
-            //ContractUtils.RequiresNotNull(collection, "collection");
-            //ContractUtils.RequiresNotNull(predicate, "predicate");
+            // ContractUtils.RequiresNotNull(collection, "collection");
+            // ContractUtils.RequiresNotNull(predicate, "predicate");
 
             foreach (T item in collection)
             {
@@ -1074,6 +1091,7 @@ namespace System.Management.Automation.Interpreter
             {
                 result[count++] = select(t);
             }
+
             return result;
         }
 
@@ -1086,6 +1104,7 @@ namespace System.Management.Automation.Interpreter
             {
                 h ^= (h << 5) ^ cmp.GetHashCode(t);
             }
+
             return h;
         }
 
@@ -1095,6 +1114,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return false;
             }
+
             var cmp = EqualityComparer<T>.Default;
             var f = first.GetEnumerator();
             var s = second.GetEnumerator();
@@ -1107,6 +1127,7 @@ namespace System.Management.Automation.Interpreter
                     return false;
                 }
             }
+
             return true;
         }
     }

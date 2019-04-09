@@ -1,11 +1,12 @@
-Debugging in PowerShell Command-line
-=====
+# Debugging in PowerShell Command-line
 
-As we know, we can debug PowerShell code via GUI tools like [Visual Studio Code](./using-vscode.md#debugging-with-vs-code). In addition, we can directly perform debugging within the PowerShell command-line session by using the PowerShell debugger cmdlets. This document demonstrates how to use the cmdlets for the PowerShell command-line debugging. We will cover the following topics: setting a debug breakpoint on a line of code and on a variable.
+As we know, we can debug PowerShell code via GUI tools like [Visual Studio Code](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6#debugging-with-visual-studio-code). In addition, we can
+directly perform debugging within the PowerShell command-line session by using the PowerShell debugger cmdlets. This document demonstrates how to use the cmdlets for the PowerShell command-line debugging. We will cover the following topics:
+setting a debug breakpoint on a line of code and on a variable.
 
 Let's use the following code snippet as our sample script.
 
-```PowerShell
+```powershell
 # Convert Fahrenheit to Celsius
 function ConvertFahrenheitToCelsius([double] $fahrenheit)
 {
@@ -17,32 +18,32 @@ $celsius
 $fahrenheit = Read-Host 'Input a temperature in Fahrenheit'
 $result =[int](ConvertFahrenheitToCelsius($fahrenheit))
 Write-Host "$result Celsius"
-
 ```
 
-
- **1. Setting a Breakpoint on a Line**
+ 1. **Setting a Breakpoint on a Line**
 
 - Open a [PowerShell editor](README.md#powershell-editor)
 - Save the above code snippet to a file. For example, "test.ps1"
 - Go to your command-line PowerShell
 - Clear existing breakpoints if any
 
-```PowerShell
+```powershell
  PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
- ```
+```
+
 - Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint. In this case, we will set it to line 5
 
-```PowerShell
+```powershell
 PS /home/jen/debug>Set-PSBreakpoint -Line 5 -Script ./test.ps1
 
 ID Script             Line       Command          Variable          Action
 -- ------             ----       -------          --------          ------
  0 test.ps1              5
 ```
+
 - Run the script "test.ps1". As we have set a breakpoint, it is expected the program will break into the debugger at the line 5.
 
-```PowerShell
+```powershell
 
 PS /home/jen/debug> ./test.ps1
 Input a temperature in Fahrenheit: 80
@@ -102,16 +103,16 @@ PS /home/jen/debug>
 
 ```
 
-
-**2. Setting a Breakpoint on a Variable**
+1. **Setting a Breakpoint on a Variable**
 - Clear existing breakpoints if there are any
 
-```PowerShell
+```powershell
  PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
  ```
+
 - Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint. In this case, we set it to line 5
 
-```PowerShell
+```powershell
 
  PS /home/jen/debug>Set-PSBreakpoint -Variable "celsius" -Mode write -Script ./test.ps1
 
@@ -122,9 +123,8 @@ PS /home/jen/debug>
   Once hit the debug breakpoint, we can type **l** to list the source code that debugger is currently executing. As we can see line 3 has an asterisk at the front, meaning that's the line the program is currently executing and broke into the debugger as illustrated below.
 - Type **q** to exit from the debugging mode. The following is an example of debugging output.
 
-```PowerShell
-
-PS /home/jen/debug> ./test.ps1
+```powershell
+./test.ps1
 Input a temperature in Fahrenheit: 80
 Hit Variable breakpoint on '/home/jen/debug/test.ps1:$celsius' (Write access)
 
@@ -167,8 +167,7 @@ PS /home/jen/debug>
 
 Now you know the basics of the PowerShell debugging from PowerShell command-line. For further learning, read the following articles.
 
+## More Reading
 
-More Reading
-=====
 - [about_Debuggers](https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_debuggers?view=powershell-6)
 - [PowerShell Debugging](https://blogs.technet.microsoft.com/heyscriptingguy/tag/debugging/)

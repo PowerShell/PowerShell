@@ -49,6 +49,7 @@ arm64
 asp.net
 assemblyloadcontext
 authenticodesignature
+azdevops
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -139,6 +140,7 @@ cron
 crontab
 crossgen
 crossgen'ing
+crossplatform
 csharp
 csmacnz
 csphysicallyinstalledmemory
@@ -151,6 +153,7 @@ dchristian3188
 ddwr
 debughandler
 dee-see
+deps
 deserialization
 deserialize
 dest
@@ -275,9 +278,11 @@ gitcommitid
 github
 githug
 gitter
+glachancecmaisonneuve
 globbing
 GoogleTest
 gzip
+hackathons
 hashtable
 helloworld.ps1
 helpproviderwithcache
@@ -335,6 +340,7 @@ json
 jsonconfigfileaccessor
 judgement
 jumplist
+jwmoss
 kanjibates
 kasper3
 katacoda
@@ -358,6 +364,7 @@ lee303
 libpsl
 libpsl-native
 libunwind8
+linux
 locationglobber
 loopback
 lossless
@@ -369,6 +376,7 @@ macos
 maertendmsft
 mahawar
 markekraus
+marktiedemann
 mcbobke
 md
 meir017
@@ -378,6 +386,7 @@ metadata
 miaromero
 microsoft
 microsoft.com
+microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
 microsoft.powershell.archive
 microsoft.powershell.commands.diagnostics
@@ -390,6 +399,7 @@ microsoft.powershell.coreclr.eventing
 microsoft.powershell.diagnostics
 microsoft.powershell.localaccounts
 microsoft.powershell.management
+microsoft.powershell.markdownrender
 microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.powershell.utility
@@ -443,6 +453,7 @@ non-r2
 noresume
 notcontains
 nuget
+nugetfeed
 nuget.exe
 numberbytes
 nupkg
@@ -476,6 +487,7 @@ plaintext
 pluggable
 pluralsight
 poshcode
+pougetat
 powerbi
 powercode
 powershell
@@ -507,10 +519,12 @@ preview.4
 preview1-24530-04
 productversion
 program.cs
+prototyyppi
 providername
 proxycommand
 ps1
 ps1xml
+pscore
 pscredential
 psd1
 psdrive
@@ -600,6 +614,7 @@ savehelp
 sazonov
 schvartzman
 schwartzmeyer
+scriptblock
 securestring
 seemethere
 select-xml
@@ -652,6 +667,7 @@ sudo
 superproject
 swarfegagit
 sxs
+sydneyhsmith
 symlink
 symlinks
 syscall
@@ -694,6 +710,8 @@ typecataloggen
 typeconversion
 typegen
 typematch
+ubuntu
+unicode
 unregister-event
 unregister-packagesource
 unregister-psrepository
@@ -704,6 +722,7 @@ update-modulemanifest
 update-scriptfileinfo
 update-typedata
 uri
+urls
 userdata
 uservoice
 utf8
@@ -726,7 +745,10 @@ v6.0.
 v6.0.0
 v6.0.1
 v6.0.2
+v6.0.4
+v6.0.5
 v6.1.0
+v6.1.1
 v6.2.0
 validatenotnullorempty
 versioned
@@ -765,7 +787,9 @@ www.github.com
 x64
 x86
 xpath
+xtqqczze
 xunit
+yaml
 youtube
 zackjknight
 vexx32
@@ -779,17 +803,50 @@ jellyfrog
 tommymaynard
 vmsilvamolina
 fbehrens
+lockdown
+lukexjeremy
+deserializing
+kiazhi
+v6.1.2
+Menagarishvili
+anmenaga
+fxdependent
+sba923
+replicaJunction
+lupino3
+hvitved
+unvalidated
+Geweldig
+mjanko5
  - CHANGELOG.md
+aavdberg
+azkarmoulana
 chucklu
+Claustn
+CVE-2018-8256
+CVE-2018-8415
+daviddreher2
 honour
+iGotenz
+jeis2497052
+Jocapear
+lassehastrup
+markwragg
+nycjan
+paalbra
 SeeminglyScience
+StingyJack
+ThreeFive-O
+tobvil
+uninstallation
+vongrippen
 yurko7
 zhenggu
-Claustn
-ThreeFive-O
-uninstallation
+analytics
  - docs/debugging/README.md
 corehost
+ - docs/testing-guidelines/CodeCoverageAnalysis.md
+de5f69c
  - docs/testing-guidelines/TestRoadmap.md
 _no_
  - docs/testing-guidelines/WritingPesterTests.md

@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of a ModifyInstance intrinsic CIM method
+    /// Job wrapping invocation of a ModifyInstance intrinsic CIM method.
     /// </summary>
     internal class ModifyInstanceJob : PropertySettingJob<CimInstance>
     {
@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     PSObject pso = PSObject.AsPSObject(_resultFromModifyInstance);
                     AddShowComputerNameMarker(pso);
                 }
+
                 _resultFromModifyInstanceHasBeenPassedThru = true;
                 return _resultFromModifyInstance;
             }

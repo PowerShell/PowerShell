@@ -158,10 +158,10 @@ Describe "Select-String" -Tags "CI" {
 	It "Should return the fourth line in testfile1 when a relative path is used" {
 	    $expected = "testfile1.txt:5:No matches"
 
-	    pushd $testDirectory
+	    Push-Location $testDirectory
 
 	    Select-String matches (Join-Path -Path $testDirectory -ChildPath testfile1.txt)  | Should -Match $expected
-	    popd
+	    Pop-Location
 	}
 
 	It "Should return the fourth line in testfile1 when a regular expression is used" {

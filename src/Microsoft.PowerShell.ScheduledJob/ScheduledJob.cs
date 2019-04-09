@@ -51,6 +51,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition Definition
         {
             get { return _jobDefinition; }
+
             internal set { _jobDefinition = value; }
         }
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         internal bool AllowSetShouldExit
         {
             get { return _allowSetShouldExit; }
+
             set { _allowSetShouldExit = value; }
         }
 
@@ -125,9 +127,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="command">Job command string for display</param>
-        /// <param name="name">Name of job</param>
-        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run</param>
+        /// <param name="command">Job command string for display.</param>
+        /// <param name="name">Name of job.</param>
+        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run.</param>
         public ScheduledJob(
             string command,
             string name,
@@ -138,10 +140,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentNullException("command");
             }
+
             if (name == null)
             {
                 throw new PSArgumentNullException("name");
             }
+
             if (jobDefinition == null)
             {
                 throw new PSArgumentNullException("jobDefinition");
@@ -210,7 +214,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 // Add this job to the local repository.
                 ScheduledJobSourceAdapter.AddToRepository(this);
-            } // lock
+            }
         }
 
         /// <summary>
@@ -218,7 +222,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         public override void StartJobAsync()
         {
-            //StartJob();
+            // StartJob();
             throw new PSNotSupportedException();
         }
 
@@ -336,7 +340,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// StopJob
+        /// StopJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -346,7 +350,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// StopJobAsync
+        /// StopJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -355,7 +359,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
         /// <summary>
-        /// SuspendJob
+        /// SuspendJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -365,7 +369,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// SuspendJobAsync
+        /// SuspendJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -381,8 +385,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Deserialize constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJob(
             SerializationInfo info,
@@ -401,8 +405,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialize method.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
@@ -737,10 +741,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         _runspace = null;
                     }
                 }
+
                 if (disposePowerShell != null)
                 {
                     disposePowerShell.Dispose();
                 }
+
                 if (disposeRunspace != null)
                 {
                     disposeRunspace.Dispose();
@@ -1011,26 +1017,32 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     throw new PSArgumentNullException("output");
                 }
+
                 if (error == null)
                 {
                     throw new PSArgumentNullException("error");
                 }
+
                 if (warning == null)
                 {
                     throw new PSArgumentNullException("warning");
                 }
+
                 if (verbose == null)
                 {
                     throw new PSArgumentNullException("verbose");
                 }
+
                 if (progress == null)
                 {
                     throw new PSArgumentNullException("progress");
                 }
+
                 if (debug == null)
                 {
                     throw new PSArgumentNullException("debug");
                 }
+
                 if (information == null)
                 {
                     throw new PSArgumentNullException("information");
@@ -1224,6 +1236,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 _startTime = null;
             }
+
             DateTime stopTime = info.GetDateTime("Status_StopTime");
             if (stopTime != DateTime.MinValue)
             {
@@ -1262,6 +1275,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 info.AddValue("Status_StartTime", DateTime.MinValue);
             }
+
             if (_stopTime != null)
             {
                 info.AddValue("Status_StopTime", _stopTime);

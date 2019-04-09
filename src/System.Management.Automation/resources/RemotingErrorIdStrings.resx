@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -655,7 +655,7 @@
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
     <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
-</data>
+  </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
     <value>Session configuration "{0}" is a PowerShell Core-based shell. Please use PowerShell Core to modify it.</value>
   </data>
@@ -787,8 +787,12 @@ Do you want to continue?</value>
   <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
     <value>The specified authentication mechanism "{0}" is not supported. Only "{1}" is supported for this operation.</value>
   </data>
-  <data name="IPCWowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+  <data name="IPCPwshExecutableNotFound" xml:space="preserve">
+    <value>The pwsh executable cannot be found at "{0}".
+Note that 'Start-Job' is not supported by design in scenarios where PowerShell is being hosted in other applications. Instead, usage of the 'ThreadJob' module is recommended in such scenarios.</value>
+  </data>
+  <data name="RunAs32NotSupported" xml:space="preserve">
+    <value>Cannot start a 32-bit 'pwsh' process from the 64-bit 'pwsh' installation. Install the 32-bit 'pwsh' if you need to run PowerShell in a 32-bit process.</value>
   </data>
   <data name="IPCServerProcessReportedError" xml:space="preserve">
     <value>The background process reported an error with the following message: {0}.</value>
@@ -1110,8 +1114,8 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
     <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
   </data>
-  <data name="BasicAuthOverHttpNotSupported">
-   <value>Basic authentication is not supported over HTTP on Unix.</value>
+  <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
+    <value>Basic authentication is not supported over HTTP on Unix.</value>
   </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
     <value>Cannot find a scheduled job with name {0}.</value>
@@ -1422,6 +1426,12 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
     <value>No process was found with Name: {0}.</value>
   </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>No named pipe was found with CustomPipeName: {0}.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Cannot process the command because the pipeName specified is too long. Pipe names on this platform can be up to {0} characters long. Your pipe name '{1}' is {2} characters.</value>
+  </data>
   <data name="HostDoesNotSupportIASession" xml:space="preserve">
     <value>The current host does not support the Enter-PSHostProcess cmdlet.</value>
   </data>
@@ -1439,6 +1449,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
     <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>Unable to connect to pipe with name {0}.  Error: {1}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
     <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
@@ -1649,10 +1662,10 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>PowerShell Core does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
-      <value>Unable to install plugin {0} to directory {1}.</value>
+    <value>Unable to install plugin {0} to directory {1}.</value>
   </data>
   <data name="PluginDllMissing" xml:space="preserve">
-      <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
+    <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
     <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
@@ -1669,5 +1682,15 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="CannotGetHostInteropTypes" xml:space="preserve">
     <value>Host system does not have the correct version of Hyper-V schema.</value>
+  </data>
+  <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
+    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
+  </data>
+  <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
+    <value>PowerShell remoting has been disabled only for PowerShell Core configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+</value>
+  </data>
+  <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
+    <value>PowerShell remoting has been enabled only for PowerShell Core configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
   </data>
 </root>

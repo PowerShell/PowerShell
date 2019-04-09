@@ -1,0 +1,90 @@
+parameters:
+  parentJobs: []
+
+jobs:
+- job: WinPackageSigningJob
+  displayName: Windows Package signing and upload
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  condition: succeeded()
+  pool:
+    name: Package ES CodeHub Lab E
+  variables:
+    BuildConfiguration: release
+    BuildPlatform: any cpu
+
+  steps:
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download artifacts'
+    inputs:
+      buildType: current
+      downloadType: single
+      artifactName: signed
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - powershell: |
+      dir "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - powershell: |
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi" -path "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Generate Package Signing Xml'
+
+  - powershell: |
+      Get-Content "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Capture signing xml'
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
+      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - template: upload.yml
+    parameters:
+      architecture: x86
+      version: $(version)
+
+  - template: upload.yml
+    parameters:
+      architecture: x64
+      version: $(version)
+
+  - template: upload.yml
+    parameters:
+      architecture: arm32
+      version: $(version)
+      msi: no
+
+  - template: upload.yml
+    parameters:
+      architecture: arm64
+      version: $(version)
+      msi: no
+
+  - template: upload.yml
+    parameters:
+      architecture: fxdependent
+      version: $(version)
+      msi: no
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run Defender Scan'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

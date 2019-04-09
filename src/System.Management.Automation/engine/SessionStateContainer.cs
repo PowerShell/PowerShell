@@ -16,7 +16,7 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -71,7 +71,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if the monad virtual namespace path exists.
@@ -137,11 +137,12 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
-        } // Exists
+        }
 
         /// <summary>
-        /// Determines if the item at the specified path exists
+        /// Determines if the item at the specified path exists.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -209,8 +210,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // Exists
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the test-path cmdlet.
@@ -276,8 +278,9 @@ namespace System.Management.Automation
 
                 return ItemExistsDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
-        } // ItemExistsDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the test-path cmdlet.
@@ -351,8 +354,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // ITemExistsDynamicParameters
+        }
 
         #endregion Exists
 
@@ -397,7 +401,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // IsValidPath
+        }
 
         /// <summary>
         /// Determines if the MSH path is a syntactically and semantically valid path for the provider.
@@ -449,7 +453,7 @@ namespace System.Management.Automation
             ItemCmdletProvider providerInstance = GetItemProviderInstance(provider);
 
             return IsValidPath(providerInstance, providerPath, context);
-        } // IsValidPath
+        }
 
         /// <summary>
         /// Determines if the specified path is valid.
@@ -520,8 +524,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // IsValidPath
+        }
 
         #endregion IsValidPath
 
@@ -566,7 +571,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Determines if the monad virtual namespace path is a container.
@@ -634,7 +639,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a container.
@@ -742,14 +747,14 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsItemContainer
+        }
 
         #endregion IsItemContainer
 
         #region RemoveItem
 
         /// <summary>
-        /// Deletes the specified object
+        /// Deletes the specified object.
         /// </summary>
         /// <param name="paths">
         /// A relative or absolute path to the object to be deleted.
@@ -793,10 +798,10 @@ namespace System.Management.Automation
             RemoveItem(paths, recurse, context);
 
             context.ThrowFirstErrorOrDoNothing();
-        } // RemoveItem
+        }
 
         /// <summary>
-        /// Deletes the specified object
+        /// Deletes the specified object.
         /// </summary>
         /// <param name="paths">
         /// A relative or absolute path to the object to be deleted.
@@ -860,7 +865,7 @@ namespace System.Management.Automation
                     RemoveItem(providerInstance, providerPath, recurse, context);
                 }
             }
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Internal remove item method that just calls the provider directly without globbing.
@@ -1005,7 +1010,7 @@ namespace System.Management.Automation
                                 }
                             }
                         }
-                    } // IsItemContainer
+                    }
                 }
                 else
                 {
@@ -1033,7 +1038,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
@@ -1102,8 +1107,9 @@ namespace System.Management.Automation
 
                 return RemoveItemDynamicParameters(providerInstance, providerPaths[0], recurse, newContext);
             }
+
             return null;
-        } // RemoveItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
@@ -1181,8 +1187,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // RemoveItemDynamicParameters
+        }
 
         #endregion RemoveItem
 
@@ -1252,7 +1259,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return context.GetAccumulatedObjects();
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the children of the specified item.
@@ -1320,7 +1327,7 @@ namespace System.Management.Automation
                     if (recurse)
                     {
                         string childName = GetChildName(path, context);
-                            
+
                         // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
 
                         bool isFileOrDirectoryPresent = false;
@@ -1330,7 +1337,7 @@ namespace System.Management.Automation
                             isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
                         }
 
-                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                        if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
                         {
                             string parentName = path.Substring(0, path.Length - childName.Length);
                             path = parentName;
@@ -1345,9 +1352,9 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-                            if (!String.IsNullOrEmpty(path) && !IsItemContainer(path))
+                            if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
-                                if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (context.Include != null)
                                     {
@@ -1497,7 +1504,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        context.SuppressWildcardExpansion = true;       
+                        context.SuppressWildcardExpansion = true;
                     }
                 }
                 else if (path != null && this.ItemExists(providerInstance, path, context))
@@ -1521,7 +1528,7 @@ namespace System.Management.Automation
                     throw pathNotFound;
                 }
             }
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the child items of the item at the specified path.
@@ -1598,7 +1605,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a container.
@@ -1639,9 +1646,10 @@ namespace System.Management.Automation
                     throw;
                 }
            }
+
            return itemContainer;
 
-        } // IsPathContainer
+        }
 
         /// <summary>
         /// Since we can't do include and exclude filtering on items we have to
@@ -1664,8 +1672,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">A hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1690,7 +1698,7 @@ namespace System.Management.Automation
         {
             // Call ProcessPathItems with 'depth' set to maximum value for infinite recursion when needed.
             ProcessPathItems(providerInstance, path, recurse, uint.MaxValue, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck);
-        } // ProcessPathItems
+        }
 
         /// <summary>
         /// Since we can't do include and exclude filtering on items we have to
@@ -1716,8 +1724,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">A hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1903,7 +1911,7 @@ namespace System.Management.Automation
                         // The item is a container so recurse into it.
                         ProcessPathItems(providerInstance, qualifiedPath, recurse, depth - 1, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
                     }
-                } // for each childName
+                }
             }
             else
             {
@@ -1941,7 +1949,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // ProcessPathItems
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem cmdlet.
@@ -2052,7 +2060,7 @@ namespace System.Management.Automation
             }
 
             return null;
-        } // GetChildItemsDynamicParameters
+        }
 
         // Detect if the GetChildItemDynamicParameters has been overridden.
         private bool HasGetChildItemDynamicParameters(ProviderInfo providerInfo)
@@ -2152,8 +2160,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetChildItemsDynamicParameters
+        }
 
         #endregion GetChildItems
 
@@ -2249,7 +2258,7 @@ namespace System.Management.Automation
             }
 
             return results;
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets names of the children of the specified path.
@@ -2376,7 +2385,7 @@ namespace System.Management.Automation
                         DoGetChildNamesManually(
                             providerInstance,
                             providerPath,
-                            String.Empty,
+                            string.Empty,
                             returnContainers,
                             includeMatcher,
                             excludeMatcher,
@@ -2462,7 +2471,7 @@ namespace System.Management.Automation
                     DoGetChildNamesManually(
                         providerInstance,
                         providerPath,
-                        String.Empty,
+                        string.Empty,
                         returnContainers,
                         includeMatcher,
                         excludeMatcher,
@@ -2482,7 +2491,7 @@ namespace System.Management.Automation
                         context);
                 }
             }
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the child names of the item at the specified path by
@@ -2671,15 +2680,15 @@ namespace System.Management.Automation
                                     true,
                                     depth - 1);
                             }
-                        } // foreach
-                    } // if
-                } // recurse
+                        }
+                    }
+                }
             }
             finally
             {
                 childNamesContext.RemoveStopReferral();
             }
-        } // DoGetChildNamesRecurseManually
+        }
 
         /// <summary>
         /// Gets the names of the children of the item at the specified path.
@@ -2753,7 +2762,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem -name cmdlet.
@@ -2849,8 +2858,9 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
-        } // GetChildNamesDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem -names cmdlet.
@@ -2925,8 +2935,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // GetChildNamesDynamicParameters
+        }
 
         #endregion GetChildNames
 
@@ -2981,7 +2992,7 @@ namespace System.Management.Automation
             // Since there was no errors return the accumulated objects
 
             return context.GetAccumulatedObjects();
-        } // RenameItem
+        }
 
         /// <summary>
         /// Renames the item at the specified path to the new name provided.
@@ -3061,7 +3072,7 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidArgument,
                         providerPaths));
             }
-        } // RenameItem
+        }
 
         /// <summary>
         /// Renames the item at the specified path.
@@ -3134,7 +3145,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // RenameItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
@@ -3204,8 +3215,9 @@ namespace System.Management.Automation
 
                 return RenameItemDynamicParameters(providerInstance, providerPaths[0], newName, newContext);
             }
+
             return null;
-        } // RenameItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
@@ -3284,8 +3296,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // RenameItemDynamicParameters
+        }
 
         #endregion RenameItem
 
@@ -3344,7 +3357,7 @@ namespace System.Management.Automation
             // Since there was no errors return the accumulated objects
 
             return context.GetAccumulatedObjects();
-        } // NewItem
+        }
 
         /// <summary>
         /// Creates a new item at the specified path.
@@ -3427,7 +3440,7 @@ namespace System.Management.Automation
 
                 // Only glob the path if the name is specified
 
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     string providerPath =
                         Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
@@ -3452,7 +3465,7 @@ namespace System.Management.Automation
                     // to pass on to the provider.
 
                     string composedPath = providerPath;
-                    if (!String.IsNullOrEmpty(name))
+                    if (!string.IsNullOrEmpty(name))
                     {
                         composedPath = MakePath(providerInstance, providerPath, name, context);
                     }
@@ -3462,7 +3475,7 @@ namespace System.Management.Automation
                     // function can be abused
                     if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
                         (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
-                        (String.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
+                        (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
                     {
                         throw
                             PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -3492,7 +3505,7 @@ namespace System.Management.Automation
 
                         string targetPath = content.ToString();
 
-                        if (String.IsNullOrEmpty(targetPath))
+                        if (string.IsNullOrEmpty(targetPath))
                         {
                             throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
                         }
@@ -3507,7 +3520,7 @@ namespace System.Management.Automation
                             out targetProvider,
                             out targetProviderInstance);
 
-                        if (String.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
                         }
@@ -3522,13 +3535,18 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
                         }
 
-                        content = globbedTarget[0];
+                        // If the original target was a relative path, we want to leave it as relative if it did not require
+                        // globbing to resolve.
+                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
+                        {
+                            content = globbedTarget[0];
+                        }
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, content, context);
                 }
             }
-        } // NewItem
+        }
 
         /// <summary>
         /// Creates a new item at the specified path.
@@ -3601,7 +3619,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // NewItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
@@ -3674,8 +3692,9 @@ namespace System.Management.Automation
 
                 return NewItemDynamicParameters(providerInstance, providerPaths[0], type, newItemValue, newContext);
             }
+
             return null;
-        } // NewItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
@@ -3757,8 +3776,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // NewItemDynamicParameters
+        }
 
         #endregion NewItem
 
@@ -3811,7 +3831,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Determines if the item at the specified path has children.
@@ -3876,7 +3896,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Determines if the item at the specified path has children.
@@ -3902,7 +3922,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(providerId))
+            if (string.IsNullOrEmpty(providerId))
             {
                 throw PSTraceSource.NewArgumentException("providerId");
             }
@@ -4022,7 +4042,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // HasChildItems
+        }
 
         #endregion HasChildItems
 
@@ -4082,7 +4102,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -4094,7 +4114,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return context.GetAccumulatedObjects();
-        } // CopyItem
+        }
 
         /// <summary>
         /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
@@ -4148,7 +4168,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             // Get the provider specific path for the destination
@@ -4168,6 +4188,7 @@ namespace System.Management.Automation
                     sourceIsRemote = true;
                     session = dynamicParams.FromSession;
                 }
+
                 if (dynamicParams.ToSession != null)
                 {
                     destinationIsRemote = true;
@@ -4179,7 +4200,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                            new ArgumentException(
-                               String.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
+                               string.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
                                "InvalidInput",
                                 ErrorCategory.InvalidArgument,
                                 dynamicParams));
@@ -4209,11 +4230,11 @@ namespace System.Management.Automation
             {
                 // Validate remote destination path
                 providerDestinationPath = copyPath;
-                if (String.IsNullOrEmpty(providerDestinationPath))
+                if (string.IsNullOrEmpty(providerDestinationPath))
                 {
                     context.WriteError(new ErrorRecord(
                                             new ArgumentNullException(
-                                                    String.Format(
+                                                    string.Format(
                                                     System.Globalization.CultureInfo.InvariantCulture,
                                                     SessionStateStrings.CopyItemRemotelyPathIsNullOrEmpty,
                                                     "Destination")),
@@ -4416,10 +4437,10 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // CopyItem
+        }
 
         /// <summary>
-        /// Copies the specified item(s) to the specified destination
+        /// Copies the specified item(s) to the specified destination.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -4493,10 +4514,10 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // CopyItem
+        }
 
         /// <summary>
-        /// Recursively copies many items to a single container
+        /// Recursively copies many items to a single container.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -4530,11 +4551,11 @@ namespace System.Management.Automation
                 "The providerInstance should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(sourcePath),
+                !string.IsNullOrEmpty(sourcePath),
                 "The sourcePath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destinationPath),
+                !string.IsNullOrEmpty(destinationPath),
                 "The destinationPath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
@@ -4569,7 +4590,7 @@ namespace System.Management.Automation
 
                 CopyItem(containerProviderInstance, childPath, destinationPath, false, context);
             }
-        } // CopyRecurseToSingleContainer
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
@@ -4643,7 +4664,6 @@ namespace System.Management.Automation
                 if (providerPaths.Count > 0)
                     providerPath = providerPaths[0];
             }
-
             catch (DriveNotFoundException)
             {
                 // This exception is expected for remote sessions where drives exist in a remote session but not
@@ -4679,7 +4699,7 @@ namespace System.Management.Automation
             }
 
             return null;
-        } // CopyItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
@@ -4761,8 +4781,9 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
-        } // CopyItemDynamicParameters
+        }
 
         // This function validates a remote path, and if it exists, it returns the root path.
         //
@@ -4789,7 +4810,7 @@ namespace System.Management.Automation
                     {
                         context.WriteError(new ErrorRecord(
                             new InvalidOperationException(
-                                String.Format(
+                                string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture,
                                     SessionStateStrings.CopyItemSessionProperties,
                                     "LanguageMode",
@@ -4828,7 +4849,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                 new InvalidOperationException(
-                                    String.Format(
+                                    string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemValidateRemotePath, path)),
                                     "FailedToValidateRemotePath",
                                     ErrorCategory.InvalidOperation,
@@ -4844,7 +4865,7 @@ namespace System.Management.Automation
                 {
                     context.WriteError(new ErrorRecord(
                                         new ArgumentException(
-                                            String.Format(
+                                            string.Format(
                                             System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemRemotelyPathIsNotAbsolute, path)),
                                             "RemotePathIsNotAbsolute",
                                             ErrorCategory.InvalidArgument,
@@ -4873,7 +4894,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                             new ArgumentException(
-                                                String.Format(
+                                                string.Format(
                                                 System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, path)),
                                                 "RemotePathNotFound",
                                                 ErrorCategory.InvalidArgument,
@@ -4891,7 +4912,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                     new InvalidOperationException(
-                                        String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                                        string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                             SessionStateStrings.CopyItemSessionProperties,
                                             "Availability", session.Availability)),
                                             "SessionIsNotAvailable",
@@ -4910,20 +4931,20 @@ namespace System.Management.Automation
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 
     /// <summary>
-    /// Defines the action to be taken for Navigation cmdlets
+    /// Defines the action to be taken for Navigation cmdlets.
     /// </summary>
     internal enum ProcessMode
     {
         /// <summary>
-        /// Write out the details
+        /// Write out the details.
         /// </summary>
         Enumerate = 1,
 
         /// <summary>
-        /// Delete the item
+        /// Delete the item.
         /// </summary>
         Delete = 2
     }

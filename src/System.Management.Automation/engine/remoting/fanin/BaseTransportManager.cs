@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Management.Automation.Internal;
-#if !CORECLR
+#if !UNIX
 using System.Security.Principal;
 #endif
 
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Remoting
     internal class TransportErrorOccuredEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="e">
         /// Error occurred.
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Remoting
     };
 
     /// <summary>
-    /// ConnectionStatusEventArgs
+    /// ConnectionStatusEventArgs.
     /// </summary>
     internal class ConnectionStatusEventArgs : EventArgs
     {
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Remoting
     #region CreateCompleteEventArgs
 
     /// <summary>
-    /// CreateCompleteEventArgs
+    /// CreateCompleteEventArgs.
     /// </summary>
     internal class CreateCompleteEventArgs : EventArgs
     {
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// Contains implementation that is common to both client and server
-    /// transport managers
+    /// transport managers.
     /// </summary>
     internal abstract class BaseTransportManager : IDisposable
     {
@@ -234,11 +234,12 @@ namespace System.Management.Automation.Remoting
         internal TypeTable TypeTable
         {
             get { return Fragmentor.TypeTable; }
+
             set { Fragmentor.TypeTable = value; }
         }
 
         /// <summary>
-        /// Uses the "OnDataAvailableCallback" to handle Deserialized objects
+        /// Uses the "OnDataAvailableCallback" to handle Deserialized objects.
         /// </summary>
         /// <param name="data">
         /// data to process
@@ -345,7 +346,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// copy the DataReceived event handlers to the supplied transport Manager
+        /// Copy the DataReceived event handlers to the supplied transport Manager.
         /// </summary>
         /// <param name="transportManager"></param>
         public void MigrateDataReadyEventHandlers(BaseTransportManager transportManager)
@@ -357,7 +358,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Raise the error handlers
+        /// Raise the error handlers.
         /// </summary>
         /// <param name="eventArgs"></param>
         internal virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
@@ -367,7 +368,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Crypto handler to be used for encrypting/decrypting
-        /// secure strings
+        /// secure strings.
         /// </summary>
         internal PSRemotingCryptoHelper CryptoHelper { get; set; }
 
@@ -427,7 +428,7 @@ namespace System.Management.Automation.Remoting.Client
 
         // this is used log crimson messages.
 
-        //keeps track of whether a receive request has been placed on transport
+        // keeps track of whether a receive request has been placed on transport
         protected bool receiveDataInitiated;
 
         #endregion
@@ -512,7 +513,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Indicates successful processing of a delay stream request on a receive operation
         ///
-        /// this event is useful when PS wants to invoke a pipeline in disconnected mode
+        /// this event is useful when PS wants to invoke a pipeline in disconnected mode.
         /// </summary>
         internal event EventHandler<EventArgs> DelayStreamRequestProcessed;
 
@@ -530,12 +531,12 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Used to log crimson messages
+        /// Used to log crimson messages.
         /// </summary>
         internal Guid RunspacePoolInstanceId { get; }
 
         /// <summary>
-        /// Raise the Connect completed handler
+        /// Raise the Connect completed handler.
         /// </summary>
         internal void RaiseCreateCompleted(CreateCompleteEventArgs eventArgs)
         {
@@ -558,7 +559,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Raise the close completed handler
+        /// Raise the close completed handler.
         /// </summary>
         internal void RaiseCloseCompleted()
         {
@@ -576,7 +577,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Queue the robust connection notification event.
         /// </summary>
-        /// <param name="flags">Determines what kind of notification</param>
+        /// <param name="flags">Determines what kind of notification.</param>
         internal void QueueRobustConnectionNotification(int flags)
         {
             ConnectionStatusEventArgs args = null;
@@ -615,7 +616,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Raise the Robust Connection notification event.
         /// </summary>
-        /// <param name="args">ConnectionStatusEventArgs</param>
+        /// <param name="args">ConnectionStatusEventArgs.</param>
         internal void RaiseRobustConnectionNotification(ConnectionStatusEventArgs args)
         {
             RobustConnectionNotification.SafeInvoke(this, args);
@@ -735,11 +736,9 @@ namespace System.Management.Automation.Remoting.Client
                     _isServicingCallbacks = true;
 
                     // Start a thread pool thread to process callbacks.
-#if !CORECLR
-                    // Flow thread impersonation as needed.
-                    WindowsIdentity identityToImpersonate = WindowsIdentity.GetCurrent();
-                    identityToImpersonate = (identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation) ?
-                        identityToImpersonate : null;
+#if !UNIX
+                    WindowsIdentity identityToImpersonate;
+                    Utils.TryGetWindowsImpersonatedIdentity(out identityToImpersonate);
 
                     Utils.QueueWorkItemWithImpersonation(
                         identityToImpersonate,
@@ -756,8 +755,8 @@ namespace System.Management.Automation.Remoting.Client
         /// Helper method to check RemoteDataObject for a host call requiring user
         /// interaction.
         /// </summary>
-        /// <param name="remoteObject">Remote data object</param>
-        /// <returns>True if remote data object requires a user response</returns>
+        /// <param name="remoteObject">Remote data object.</param>
+        /// <returns>True if remote data object requires a user response.</returns>
         private bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
         {
             bool interactiveHostCall = false;
@@ -973,7 +972,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Clean up
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~BaseClientTransportManager()
         {
@@ -1061,7 +1060,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Temporarily disconnect an active session
+        /// Temporarily disconnect an active session.
         /// </summary>
         internal virtual void DisconnectAsync()
         {
@@ -1139,6 +1138,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdText.Append(cmd.CommandText);
                 cmdText.Append(" | ");
             }
+
             cmdText.Remove(cmdText.Length - 3, 3); // remove ending " | "
 
             RemoteDataObject message;
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Used by powershell/pipeline to send a stop message to the server command
+        /// Used by powershell/pipeline to send a stop message to the server command.
         /// </summary>
         internal virtual void SendStopSignal()
         {
@@ -1509,10 +1509,10 @@ namespace System.Management.Automation.Remoting.Server
         /// <param name="xmlBuffer">The input buffer to search. It must be base-64 encoded XML.</param>
         /// <param name="xmlTag">The XML tag used to identify the value to extract.</param>
         /// <returns>The extracted tag converted from a base-64 string.</returns>
-        internal static System.Byte[] ExtractEncodedXmlElement(String xmlBuffer, String xmlTag)
+        internal static byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
         {
             if (xmlBuffer == null || xmlTag == null)
-                return new System.Byte[1];
+                return new byte[1];
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.
             // Retrieve the string (Base64 encoded) we are interested in.
@@ -1520,22 +1520,20 @@ namespace System.Management.Automation.Remoting.Server
             readerSettings.CheckCharacters = false;
             readerSettings.IgnoreComments = true;
             readerSettings.IgnoreProcessingInstructions = true;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
             readerSettings.XmlResolver = null;
-#endif
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
             readerSettings.MaxCharactersFromEntities = 1024;
             readerSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
-            String additionalData;
+            string additionalData;
             if (XmlNodeType.Element == reader.MoveToContent())
             {
                 additionalData = reader.ReadElementContentAsString(xmlTag, reader.NamespaceURI);
             }
             else // No element found, so return a default value
             {
-                return new System.Byte[1];
+                return new byte[1];
             }
 
             return Convert.FromBase64String(additionalData);

@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
             propertyToAdd.baseObject = baseObject;
-            //propertyToAdd.adapter = this;
+            // propertyToAdd.adapter = this;
             return propertyToAdd;
         }
 
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
-            //psComputerNameProperty.adapter = this;
+            // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
         }
 
@@ -128,6 +128,44 @@ namespace Microsoft.PowerShell.Cim
             {
                 PSAdaptedProperty prop = GetPSComputerNameAdapter(cimInstance);
                 return prop;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc />
+        public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
+        {
+            if (predicate == null)
+            {
+                throw new PSArgumentNullException(nameof(predicate));
+            }
+
+            // baseObject should never be null
+            CimInstance cimInstance = baseObject as CimInstance;
+            if (cimInstance == null)
+            {
+                string msg = string.Format(
+                    CultureInfo.InvariantCulture,
+                    CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
+                    "baseObject",
+                    typeof(CimInstance).ToString());
+                throw new PSInvalidOperationException(msg);
+            }
+
+            if (predicate(RemotingConstants.ComputerNameNoteProperty))
+            {
+                PSAdaptedProperty prop = GetPSComputerNameAdapter(cimInstance);
+                return prop;
+            }
+
+            foreach (CimProperty cimProperty in cimInstance.CimInstanceProperties)
+            {
+                if (cimProperty != null && predicate(cimProperty.Name))
+                {
+                    PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
+                    return prop;
+                }
             }
 
             return null;
@@ -235,6 +273,7 @@ namespace Microsoft.PowerShell.Cim
                     break;
                 }
             }
+
             return inheritanceChain;
         }
 
@@ -370,6 +409,7 @@ namespace Microsoft.PowerShell.Cim
                         Dbg.Assert(paramType != null, "'default' case should only be used for well-defined CimType->DotNetType conversions");
                         break;
                 }
+
                 valueToSet = Adapter.PropertySetAndMethodArgumentConvertTo(
                     value, paramType, CultureInfo.InvariantCulture);
             }

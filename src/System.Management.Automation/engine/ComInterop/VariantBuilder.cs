@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke
+    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke.
     /// </summary>
     internal class VariantBuilder
     {
@@ -36,9 +36,9 @@ namespace System.Management.Automation.ComInterop
 
         internal Expression InitializeArgumentVariant(MemberExpression variant, Expression parameter)
         {
-            //NOTE: we must remember our variant
-            //the reason is that argument order does not map exactly to the order of variants for invoke
-            //and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
+            // NOTE: we must remember our variant
+            // the reason is that argument order does not map exactly to the order of variants for invoke
+            // and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
 
             _variant = variant;
 
@@ -134,6 +134,7 @@ namespace System.Management.Automation.ComInterop
                     Debug.Assert(TempVariable != null);
                     return Expression.Call(TempVariable, typeof(Variant).GetMethod("Clear"));
                 }
+
                 return null;
             }
 
@@ -164,6 +165,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return null;
             }
+
             return Expression.Assign(
                 parameter,
                 Helpers.Convert(

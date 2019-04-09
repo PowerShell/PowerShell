@@ -20,6 +20,7 @@ namespace System.Diagnostics.Eventing.Reader
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
         }

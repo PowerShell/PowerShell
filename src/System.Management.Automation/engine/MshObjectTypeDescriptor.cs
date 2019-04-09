@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of <see cref="SettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
         /// </summary>
-        /// <param name="exception">Exception that triggered the associated event</param>
+        /// <param name="exception">Exception that triggered the associated event.</param>
         internal SettingValueExceptionEventArgs(Exception exception)
         {
             Exception = exception;
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of <see cref="GettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
         /// </summary>
-        /// <param name="exception">Exception that triggered the associated event</param>
+        /// <param name="exception">Exception that triggered the associated event.</param>
         internal GettingValueExceptionEventArgs(Exception exception)
         {
             Exception = exception;
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
-            : base(propertyName, Utils.EmptyArray<Attribute>())
+            : base(propertyName, Array.Empty<Attribute>())
         {
             IsReadOnly = isReadOnly;
             Attributes = propertyAttributes;
@@ -122,15 +122,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns false to indicate that ResetValue has no effect.
         /// </summary>
-        /// <param name="component">The component to test for reset capability. </param>
-        /// <returns>false</returns>
+        /// <param name="component">The component to test for reset capability.</param>
+        /// <returns>False.</returns>
         public override bool CanResetValue(object component) { return false; }
 
         /// <summary>
         /// Returns true to indicate that the value of this property needs to be persisted.
         /// </summary>
         /// <param name="component">The component with the property to be examined for persistence.</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public override bool ShouldSerializeValue(object component)
         {
             return true;
@@ -153,7 +153,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current value of the property on a component.
         /// </summary>
-        /// <param name="component">The component with the property for which to retrieve the value. </param>
+        /// <param name="component">The component with the property for which to retrieve the value.</param>
         /// <returns>The value of a property for a given component.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// If the property has not been found in the component or an exception has
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not
+        /// <exception cref="PSArgumentException">If <paramref name="component"/> is not
         /// an <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.</exception>
         public override object GetValue(object component)
         {
@@ -191,8 +191,10 @@ namespace System.Management.Automation
                     {
                         throw e;
                     }
+
                     return returnValue;
                 }
+
                 return property.Value;
             }
             catch (ExtendedTypeSystemException e)
@@ -204,6 +206,7 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
+
                 return returnValue;
             }
         }
@@ -223,8 +226,10 @@ namespace System.Management.Automation
                                                              typeof(PSObject).Name,
                                                              typeof(PSObjectTypeDescriptor).Name);
                 }
+
                 mshObj = descriptor.Instance;
             }
+
             return mshObj;
         }
 
@@ -238,6 +243,7 @@ namespace System.Management.Automation
                     "GettingValueException event has been triggered resulting in ValueReplacement:\"{0}\".",
                     eventArgs.ValueReplacement);
             }
+
             shouldThrow = eventArgs.ShouldThrow;
             return eventArgs.ValueReplacement;
         }
@@ -245,7 +251,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of the component to a different value.
         /// </summary>
-        /// <param name="component">The component with the property value that is to be set. </param>
+        /// <param name="component">The component with the property value that is to be set.</param>
         /// <param name="value">The new value.</param>
         /// <exception cref="ExtendedTypeSystemException">
         /// If the property has not been found in the component or an exception has
@@ -257,7 +263,7 @@ namespace System.Management.Automation
         /// from its default value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not an
+        /// <exception cref="PSArgumentException">If <paramref name="component"/> is not an
         /// <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.
         /// </exception>
         public override void SetValue(object component, object value)
@@ -283,8 +289,10 @@ namespace System.Management.Automation
                     {
                         throw e;
                     }
+
                     return;
                 }
+
                 property.Value = value;
             }
             catch (ExtendedTypeSystemException e)
@@ -297,6 +305,7 @@ namespace System.Management.Automation
                     throw;
                 }
             }
+
             OnValueChanged(component, EventArgs.Empty);
         }
 
@@ -310,6 +319,7 @@ namespace System.Management.Automation
                     "SettingValueException event has been triggered resulting in ShouldThrow:\"{0}\".",
                     eventArgs.ShouldThrow);
             }
+
             shouldThrow = eventArgs.ShouldThrow;
             return;
         }
@@ -365,6 +375,7 @@ namespace System.Management.Automation
                     typeDescriptor.WriteLine("Property \"{0}\" is write-only so it has been skipped.", propertyInfo.Name);
                     return;
                 }
+
                 AttributeCollection propertyAttributes = null;
                 Type propertyType = typeof(object);
                 if (attributes != null && attributes.Length != 0)
@@ -444,6 +455,7 @@ namespace System.Management.Automation
                 {
                     CheckAndAddProperty(property, attributes, ref returnValue);
                 }
+
                 return returnValue;
             }
         }
@@ -452,7 +464,7 @@ namespace System.Management.Automation
         /// Determines whether the Instance property of <paramref name="obj"/> is equal to the current Instance.
         /// </summary>
         /// <param name="obj">The Object to compare with the current Object.</param>
-        /// <returns>true if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
+        /// <returns>True if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
@@ -460,36 +472,40 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             if (this.Instance == null || other.Instance == null)
             {
                 return ReferenceEquals(this, other);
             }
+
             return other.Instance.Equals(this.Instance);
         }
 
         /// <summary>
         /// Provides a value for hashing algorithms.
         /// </summary>
-        /// <returns>A hash code for the current object</returns>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             if (this.Instance == null)
             {
                 return base.GetHashCode();
             }
+
             return this.Instance.GetHashCode();
         }
 
         /// <summary>
         /// Returns the default property for this object.
         /// </summary>
-        /// <returns>An <see cref="PSObjectPropertyDescriptor"/> that represents the default property for this object, or a null reference (Nothing in Visual Basic) if this object does not have properties</returns>
+        /// <returns>An <see cref="PSObjectPropertyDescriptor"/> that represents the default property for this object, or a null reference (Nothing in Visual Basic) if this object does not have properties.</returns>
         public override PropertyDescriptor GetDefaultProperty()
         {
             if (this.Instance == null)
             {
                 return null;
             }
+
             string defaultProperty = null;
             PSMemberSet standardMembers = this.Instance.PSStandardMembers;
             if (standardMembers != null)
@@ -513,6 +529,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             PropertyDescriptorCollection properties = this.GetProperties();
 
             if (defaultProperty != null)
@@ -521,7 +538,7 @@ namespace System.Management.Automation
                 // returning in GetProperties
                 foreach (PropertyDescriptor descriptor in properties)
                 {
-                    if (String.Equals(descriptor.Name, defaultProperty, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(descriptor.Name, defaultProperty, StringComparison.OrdinalIgnoreCase))
                     {
                         return descriptor;
                     }
@@ -543,6 +560,7 @@ namespace System.Management.Automation
                 // GetConverter returned an illegal value
                 return new TypeConverter();
             }
+
             object baseObject = this.Instance.BaseObject;
             TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter ??
                                      TypeDescriptor.GetConverter(baseObject);
@@ -584,6 +602,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetDefaultEvent(this.Instance.BaseObject);
         }
 
@@ -597,13 +616,14 @@ namespace System.Management.Automation
             {
                 return new EventDescriptorCollection(null);
             }
+
             return TypeDescriptor.GetEvents(this.Instance.BaseObject);
         }
 
         /// <summary>
         /// Returns the events for this instance of a component using the attribute array as a filter.
         /// </summary>
-        /// <param name="attributes">An array of type <see cref="Attribute"/> that is used as a filter. </param>
+        /// <param name="attributes">An array of type <see cref="Attribute"/> that is used as a filter.</param>
         /// <returns>An <see cref="EventDescriptorCollection"/> that represents the events for this component instance that match the given set of attributes.</returns>
         public override EventDescriptorCollection GetEvents(Attribute[] attributes)
         {
@@ -611,6 +631,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetEvents(this.Instance.BaseObject, attributes);
         }
 
@@ -624,6 +645,7 @@ namespace System.Management.Automation
             {
                 return new AttributeCollection();
             }
+
             return TypeDescriptor.GetAttributes(this.Instance.BaseObject);
         }
 
@@ -637,6 +659,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetClassName(this.Instance.BaseObject);
         }
 
@@ -650,6 +673,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetComponentName(this.Instance.BaseObject);
         }
 
@@ -664,6 +688,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetEditor(this.Instance.BaseObject, editorBaseType);
         }
         #endregion Forwarded To BaseObject

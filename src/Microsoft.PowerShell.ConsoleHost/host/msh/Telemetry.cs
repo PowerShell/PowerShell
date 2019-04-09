@@ -15,7 +15,7 @@ using System.IO;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// send up telemetry for startup
+    /// Send up telemetry for startup.
     /// </summary>
     internal static class ApplicationInsightsTelemetry
     {
@@ -60,9 +60,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Send the telemetry
+        /// Send the telemetry.
         /// </summary>
-        private static void SendTelemetry(string eventName, Dictionary<string,string>payload)
+        private static void SendTelemetry(string eventName, Dictionary<string,string> payload)
         {
             try
             {
@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell
                 {
                     _telemetryClient = new TelemetryClient();
                 }
+
                 _telemetryClient.TrackEvent(eventName, payload, null);
             }
             catch (Exception)
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create the startup payload and send it up
+        /// Create the startup payload and send it up.
         /// </summary>
         internal static void SendPSCoreStartupTelemetry()
         {

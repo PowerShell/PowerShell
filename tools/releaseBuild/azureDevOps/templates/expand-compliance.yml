@@ -1,0 +1,12 @@
+parameters:
+  architecture: x86
+  version: 6.2.0
+
+steps:
+  - powershell: |
+      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-${{ parameters.version }}-symbols-win-${{ parameters.architecture }}.zip" -Destination "$(Build.StagingDirectory)\symbols\${{ parameters.architecture }}"
+    displayName: Expand symbols zip - ${{ parameters.architecture }}
+
+  - powershell: |
+      tools/releaseBuild/createComplianceFolder.ps1 -ArtifactFolder "$(Build.StagingDirectory)\symbols\${{ parameters.architecture }}" -VSTSVariableName 'CompliancePath'
+    displayName: Expand Compliance file - ${{ parameters.architecture }}

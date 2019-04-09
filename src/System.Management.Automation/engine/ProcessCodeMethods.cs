@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell {
     /// <summary>
-    /// Helper functions for process info
+    /// Helper functions for process info.
     /// </summary>
     public static class ProcessCodeMethods
     {
@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell {
                 {
                     return null;
                 }
+
                 var candidate = Process.GetProcessById(pid);
 
                 // if the candidate was started later than process, the pid has been recycled
@@ -34,10 +35,10 @@ namespace Microsoft.PowerShell {
         }
 
         /// <summary>
-        /// CodeMethod for getting the parent process of a process
+        /// CodeMethod for getting the parent process of a process.
         /// </summary>
         /// <param name="obj"></param>
-        /// <returns>the parent process, or null if the parent is no longer running</returns>
+        /// <returns>The parent process, or null if the parent is no longer running.</returns>
         public static object GetParentProcess(PSObject obj)
         {
             var process = PSObject.Base(obj) as Process;
@@ -45,10 +46,10 @@ namespace Microsoft.PowerShell {
         }
 
         /// <summary>
-        /// Returns the parent id of a process or -1 if it fails
+        /// Returns the parent id of a process or -1 if it fails.
         /// </summary>
         /// <param name="process"></param>
-        /// <returns>the pid of the parent process</returns>
+        /// <returns>The pid of the parent process.</returns>
 #if UNIX
         internal static int GetParentPid(Process process)
         {

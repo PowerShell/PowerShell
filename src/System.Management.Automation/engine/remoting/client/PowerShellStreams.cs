@@ -151,6 +151,7 @@ namespace System.Management.Automation
         public PSDataCollection<TInput> InputStream
         {
             get { return _inputStream; }
+
             set { _inputStream = value; }
         }
 
@@ -161,6 +162,7 @@ namespace System.Management.Automation
         public PSDataCollection<TOutput> OutputStream
         {
             get { return _outputStream; }
+
             set { _outputStream = value; }
         }
 
@@ -171,6 +173,7 @@ namespace System.Management.Automation
         public PSDataCollection<ErrorRecord> ErrorStream
         {
             get { return _errorStream; }
+
             set { _errorStream = value; }
         }
 
@@ -181,6 +184,7 @@ namespace System.Management.Automation
         public PSDataCollection<WarningRecord> WarningStream
         {
             get { return _warningStream; }
+
             set { _warningStream = value; }
         }
 
@@ -191,6 +195,7 @@ namespace System.Management.Automation
         public PSDataCollection<ProgressRecord> ProgressStream
         {
             get { return _progressStream; }
+
             set { _progressStream = value; }
         }
 
@@ -201,6 +206,7 @@ namespace System.Management.Automation
         public PSDataCollection<VerboseRecord> VerboseStream
         {
             get { return _verboseStream; }
+
             set { _verboseStream = value; }
         }
 
@@ -211,6 +217,7 @@ namespace System.Management.Automation
         public PSDataCollection<DebugRecord> DebugStream
         {
             get { return _debugStream; }
+
             set { _debugStream = value; }
         }
 
@@ -221,6 +228,7 @@ namespace System.Management.Automation
         public PSDataCollection<InformationRecord> InformationStream
         {
             get { return _informationStream; }
+
             set { _informationStream = value; }
         }
 

@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
@@ -15,14 +14,22 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Globalization;
+using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
     internal enum SuggestionMatchType
     {
+        /// <summary>Match on a command.</summary>
         Command = 0,
+        /// <summary>Match based on exception message.</summary>
         Error = 1,
-        Dynamic = 2
+        /// <summary>Match by running a script block.</summary>
+        Dynamic = 2,
+
+        /// <summary>Match by fully qualified ErrorId.</summary>
+        ErrorId = 3
     }
 
     #region Public HostUtilities Class
@@ -57,19 +64,59 @@ namespace System.Management.Automation
             $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
         ";
 
-        private static ArrayList s_suggestions = new ArrayList(
-            new Hashtable[] {
-                NewSuggestion(1, "Transactions", SuggestionMatchType.Command, "^Start-Transaction",
-                    SuggestionStrings.Suggestion_StartTransaction, true),
-                NewSuggestion(2, "Transactions", SuggestionMatchType.Command, "^Use-Transaction",
-                    SuggestionStrings.Suggestion_UseTransaction, true),
-                NewSuggestion(3, "General", SuggestionMatchType.Dynamic,
-                    ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
-                    ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
-                    new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
-                    true)
+        private static string s_getFuzzyMatchedCommands = @"
+            [System.Diagnostics.DebuggerHidden()]
+            param([string] $formatString)
+
+            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
+        ";
+
+        private static ArrayList s_suggestions = InitializeSuggestions();
+
+        private static ArrayList InitializeSuggestions()
+        {
+            ArrayList suggestions = new ArrayList(
+                new Hashtable[]
+                {
+                    NewSuggestion(
+                        id: 1,
+                        category: "Transactions",
+                        matchType: SuggestionMatchType.Command,
+                        rule: "^Start-Transaction",
+                        suggestion: SuggestionStrings.Suggestion_StartTransaction,
+                        enabled: true),
+                    NewSuggestion(
+                        id: 2,
+                        category: "Transactions",
+                        matchType: SuggestionMatchType.Command,
+                        rule: "^Use-Transaction",
+                        suggestion: SuggestionStrings.Suggestion_UseTransaction,
+                        enabled: true),
+                    NewSuggestion(
+                        id: 3,
+                        category: "General",
+                        matchType: SuggestionMatchType.Dynamic,
+                        rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
+                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
+                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
+                        enabled: true)
+                });
+
+            if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
+            {
+                suggestions.Add(
+                    NewSuggestion(
+                        id: 4,
+                        category: "General",
+                        matchType: SuggestionMatchType.ErrorId,
+                        rule: "CommandNotFoundException",
+                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
+                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
+                        enabled: true));
             }
-        );
+
+            return suggestions;
+        }
 
         #region GetProfileCommands
         /// <summary>
@@ -101,15 +148,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object that serves as a value to $profile and the paths on it
+        /// Gets the object that serves as a value to $profile and the paths on it.
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes</param>
-        /// <param name="allUsersAllHosts">path for all users and all hosts</param>
-        /// <param name="currentUserAllHosts">path for current user and all hosts</param>
-        /// <param name="allUsersCurrentHost">path for all users current host</param>
-        /// <param name="currentUserCurrentHost">path for current user and current host</param>
-        /// <param name="dollarProfile">the object that serves as a value to $profile</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
+        /// <param name="allUsersAllHosts">Path for all users and all hosts.</param>
+        /// <param name="currentUserAllHosts">Path for current user and all hosts.</param>
+        /// <param name="allUsersCurrentHost">Path for all users current host.</param>
+        /// <param name="currentUserCurrentHost">Path for current user and current host.</param>
+        /// <param name="dollarProfile">The object that serves as a value to $profile.</param>
         /// <returns></returns>
         internal static void GetProfileObjectData(string shellId, bool useTestProfile, out string allUsersAllHosts, out string allUsersCurrentHost, out string currentUserAllHosts, out string currentUserCurrentHost, out PSObject dollarProfile)
         {
@@ -124,7 +171,7 @@ namespace System.Management.Automation
         /// Gets an array of commands that can be run sequentially to set $profile and run the profile commands.
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
         /// <returns></returns>
         internal static PSCommand[] GetProfileCommands(string shellId, bool useTestProfile)
         {
@@ -147,6 +194,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 command = new PSCommand();
                 command.AddCommand(profilePath, false);
                 commands.Add(command);
@@ -158,8 +206,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to get all profile file names for the current or all hosts and for the current or all users.
         /// </summary>
-        /// <param name="shellId">null for all hosts, not null for the specified host</param>
-        /// <param name="forCurrentUser">false for all users, true for the current user.</param>
+        /// <param name="shellId">Null for all hosts, not null for the specified host.</param>
+        /// <param name="forCurrentUser">False for all users, true for the current user.</param>
         /// <returns>The profile file name matching the parameters.</returns>
         internal static string GetFullProfileFileName(string shellId, bool forCurrentUser)
         {
@@ -169,9 +217,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to get all profile file names for the current or all hosts and for the current or all users.
         /// </summary>
-        /// <param name="shellId">null for all hosts, not null for the specified host</param>
-        /// <param name="forCurrentUser">false for all users, true for the current user.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes</param>
+        /// <param name="shellId">Null for all hosts, not null for the specified host.</param>
+        /// <param name="forCurrentUser">False for all users, true for the current user.</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
         /// <returns>The profile file name matching the parameters.</returns>
         internal static string GetFullProfileFileName(string shellId, bool forCurrentUser, bool useTestProfile)
         {
@@ -206,7 +254,7 @@ namespace System.Management.Automation
         /// Used internally in GetFullProfileFileName to get the base path for all users profiles.
         /// </summary>
         /// <param name="shellId">The shellId to use.</param>
-        /// <returns>the base path for all users profiles.</returns>
+        /// <returns>The base path for all users profiles.</returns>
         private static string GetAllUsersFolderPath(string shellId)
         {
             string folderPath = string.Empty;
@@ -225,14 +273,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the first <paramref name="maxLines"/> lines of <paramref name="source"/>.
         /// </summary>
-        /// <param name="source">string we want to limit the number of lines</param>
-        /// <param name="maxLines"> maximum number of lines to be returned</param>
+        /// <param name="source">String we want to limit the number of lines.</param>
+        /// <param name="maxLines">Maximum number of lines to be returned.</param>
         /// <returns>The first lines of <paramref name="source"/>.</returns>
         internal static string GetMaxLines(string source, int maxLines)
         {
-            if (String.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(source))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder returnValue = new StringBuilder();
@@ -250,7 +298,7 @@ namespace System.Management.Automation
 
                 if (lineCount == maxLines)
                 {
-                    returnValue.Append("...");
+                    returnValue.Append(PSObjectHelper.Ellipsis);
                     break;
                 }
             }
@@ -277,7 +325,7 @@ namespace System.Management.Automation
 
             // Get the last error
             ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
-            Object lastError = null;
+            object lastError = null;
 
             if (errorList.Count > 0)
             {
@@ -334,7 +382,7 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, Object lastError, ArrayList errorList)
+        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
         {
             ArrayList returnSuggestions = new ArrayList();
 
@@ -388,9 +436,9 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -403,7 +451,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    string matchText = String.Empty;
+                    string matchText = string.Empty;
 
                     // Otherwise, this is a Regex match against the
                     // command or error
@@ -426,6 +474,13 @@ namespace System.Management.Automation
                             }
                         }
                     }
+                    else if (matchType == SuggestionMatchType.ErrorId)
+                    {
+                        if (lastError != null && lastError is ErrorRecord errorRecord)
+                        {
+                            matchText = errorRecord.FullyQualifiedErrorId;
+                        }
+                    }
                     else
                     {
                         suggestion["Enabled"] = false;
@@ -440,9 +495,9 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -465,7 +520,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the GUID from the message if the message is in the pre-defined format
+        /// Remove the GUID from the message if the message is in the pre-defined format.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="matchPattern"></param>
@@ -473,7 +528,7 @@ namespace System.Management.Automation
         internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
@@ -484,13 +539,14 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
         internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
@@ -501,12 +557,20 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
         /// <summary>
         /// Create suggestion with string rule and suggestion.
         /// </summary>
+        /// <param name="id">Identifier for the suggestion.</param>
+        /// <param name="category">Category for the suggestion.</param>
+        /// <param name="matchType">Suggestion match type.</param>
+        /// <param name="rule">Rule to match.</param>
+        /// <param name="suggestion">Suggestion to return.</param>
+        /// <param name="enabled">True if the suggestion is enabled.</param>
+        /// <returns>Hashtable representing the suggestion.</returns>
         private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, string suggestion, bool enabled)
         {
             Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
@@ -516,6 +580,32 @@ namespace System.Management.Automation
             result["MatchType"] = matchType;
             result["Rule"] = rule;
             result["Suggestion"] = suggestion;
+            result["Enabled"] = enabled;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Create suggestion with string rule and scriptblock suggestion.
+        /// </summary>
+        /// <param name="id">Identifier for the suggestion.</param>
+        /// <param name="category">Category for the suggestion.</param>
+        /// <param name="matchType">Suggestion match type.</param>
+        /// <param name="rule">Rule to match.</param>
+        /// <param name="suggestion">Scriptblock to run that returns the suggestion.</param>
+        /// <param name="suggestionArgs">Arguments to pass to suggestion scriptblock.</param>
+        /// <param name="enabled">True if the suggestion is enabled.</param>
+        /// <returns>Hashtable representing the suggestion.</returns>
+        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
+        {
+            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+
+            result["Id"] = id;
+            result["Category"] = category;
+            result["MatchType"] = matchType;
+            result["Rule"] = rule;
+            result["Suggestion"] = suggestion;
+            result["SuggestionArgs"] = suggestionArgs;
             result["Enabled"] = enabled;
 
             return result;
@@ -550,7 +640,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get suggestion text from suggestion scriptblock
+        /// Get suggestion text from suggestion scriptblock.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Need to keep this for legacy reflection based use")]
         private static string GetSuggestionText(Object suggestion, PSModuleInfo invocationModule)
@@ -575,7 +665,7 @@ namespace System.Management.Automation
                 catch (Exception)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);
@@ -584,180 +674,6 @@ namespace System.Management.Automation
             {
                 return (string)LanguagePrimitives.ConvertTo(suggestion, typeof(string), CultureInfo.CurrentCulture);
             }
-        }
-
-        internal static PSCredential CredUIPromptForCredential(
-            string caption,
-            string message,
-            string userName,
-            string targetName,
-            PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options,
-            IntPtr parentHWND)
-        {
-            PSCredential cred = null;
-
-            // From WinCred.h
-            const int CRED_MAX_USERNAME_LENGTH = (256 + 1 + 256);
-            const int CRED_MAX_CREDENTIAL_BLOB_SIZE = 512;
-            const int CRED_MAX_PASSWORD_LENGTH = CRED_MAX_CREDENTIAL_BLOB_SIZE / 2;
-            const int CREDUI_MAX_MESSAGE_LENGTH = 1024;
-            const int CREDUI_MAX_CAPTION_LENGTH = 128;
-
-            // Populate the UI text with defaults, if required
-            if (string.IsNullOrEmpty(caption))
-            {
-                caption = CredUI.PromptForCredential_DefaultCaption;
-            }
-
-            if (string.IsNullOrEmpty(message))
-            {
-                message = CredUI.PromptForCredential_DefaultMessage;
-            }
-
-            if (caption.Length > CREDUI_MAX_CAPTION_LENGTH)
-            {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
-            }
-
-            if (message.Length > CREDUI_MAX_MESSAGE_LENGTH)
-            {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
-            }
-
-            if (userName != null && userName.Length > CRED_MAX_USERNAME_LENGTH)
-            {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
-            }
-
-            CREDUI_INFO credUiInfo = new CREDUI_INFO();
-            credUiInfo.pszCaptionText = caption;
-            credUiInfo.pszMessageText = message;
-
-            StringBuilder usernameBuilder = new StringBuilder(userName, CRED_MAX_USERNAME_LENGTH);
-            StringBuilder passwordBuilder = new StringBuilder(CRED_MAX_PASSWORD_LENGTH);
-
-            bool save = false;
-            int saveCredentials = Convert.ToInt32(save);
-            credUiInfo.cbSize = Marshal.SizeOf(credUiInfo);
-            credUiInfo.hwndParent = parentHWND;
-
-            CREDUI_FLAGS flags = CREDUI_FLAGS.DO_NOT_PERSIST;
-
-            // Set some of the flags if they have not requested a domain credential
-            if ((allowedCredentialTypes & PSCredentialTypes.Domain) != PSCredentialTypes.Domain)
-            {
-                flags |= CREDUI_FLAGS.GENERIC_CREDENTIALS;
-
-                // If they've asked to always prompt, do so.
-                if ((options & PSCredentialUIOptions.AlwaysPrompt) == PSCredentialUIOptions.AlwaysPrompt)
-                    flags |= CREDUI_FLAGS.ALWAYS_SHOW_UI;
-            }
-
-            // To prevent buffer overrun attack, only attempt call if buffer lengths are within bounds.
-            CredUIReturnCodes result = CredUIReturnCodes.ERROR_INVALID_PARAMETER;
-            if (usernameBuilder.Length <= CRED_MAX_USERNAME_LENGTH && passwordBuilder.Length <= CRED_MAX_PASSWORD_LENGTH)
-            {
-                result = CredUIPromptForCredentials(
-                    ref credUiInfo,
-                    targetName,
-                    IntPtr.Zero,
-                    0,
-                    usernameBuilder,
-                    CRED_MAX_USERNAME_LENGTH,
-                    passwordBuilder,
-                    CRED_MAX_PASSWORD_LENGTH,
-                    ref saveCredentials,
-                    flags);
-            }
-
-            if (result == CredUIReturnCodes.NO_ERROR)
-            {
-                // Extract the username
-                string credentialUsername = null;
-                if (usernameBuilder != null)
-                    credentialUsername = usernameBuilder.ToString();
-
-                // Trim the leading '\' from the username, which CredUI automatically adds
-                // if you don't specify a domain.
-                // This is a really common bug in V1 and V2, causing everybody to have to do
-                // it themselves.
-                // This could be a breaking change for hosts that do hard-coded hacking:
-                // $cred.UserName.SubString(1, $cred.Username.Length - 1)
-                // But that's OK, because they would have an even worse bug when you've
-                // set the host (ConsolePrompting = true) configuration (which does not do this).
-                credentialUsername = credentialUsername.TrimStart('\\');
-
-                // Extract the password into a SecureString, zeroing out the memory
-                // as soon as possible.
-                SecureString password = new SecureString();
-                for (int counter = 0; counter < passwordBuilder.Length; counter++)
-                {
-                    password.AppendChar(passwordBuilder[counter]);
-                    passwordBuilder[counter] = (char)0;
-                }
-
-                if (!String.IsNullOrEmpty(credentialUsername))
-                    cred = new PSCredential(credentialUsername, password);
-                else
-                    cred = null;
-            }
-            else // result is not CredUIReturnCodes.NO_ERROR
-            {
-                cred = null;
-            }
-
-            return cred;
-        }
-
-        [DllImport("credui", EntryPoint = "CredUIPromptForCredentialsW", CharSet = CharSet.Unicode)]
-        private static extern CredUIReturnCodes CredUIPromptForCredentials(ref CREDUI_INFO pUiInfo,
-                  string pszTargetName, IntPtr Reserved, int dwAuthError, StringBuilder pszUserName,
-                  int ulUserNameMaxChars, StringBuilder pszPassword, int ulPasswordMaxChars, ref int pfSave, CREDUI_FLAGS dwFlags);
-
-        [Flags]
-        private enum CREDUI_FLAGS
-        {
-            INCORRECT_PASSWORD = 0x1,
-            DO_NOT_PERSIST = 0x2,
-            REQUEST_ADMINISTRATOR = 0x4,
-            EXCLUDE_CERTIFICATES = 0x8,
-            REQUIRE_CERTIFICATE = 0x10,
-            SHOW_SAVE_CHECK_BOX = 0x40,
-            ALWAYS_SHOW_UI = 0x80,
-            REQUIRE_SMARTCARD = 0x100,
-            PASSWORD_ONLY_OK = 0x200,
-            VALIDATE_USERNAME = 0x400,
-            COMPLETE_USERNAME = 0x800,
-            PERSIST = 0x1000,
-            SERVER_CREDENTIAL = 0x4000,
-            EXPECT_CONFIRMATION = 0x20000,
-            GENERIC_CREDENTIALS = 0x40000,
-            USERNAME_TARGET_CREDENTIALS = 0x80000,
-            KEEP_USERNAME = 0x100000,
-        }
-
-        private struct CREDUI_INFO
-        {
-            public int cbSize;
-            public IntPtr hwndParent;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszMessageText;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszCaptionText;
-            public IntPtr hbmBanner;
-        }
-
-        private enum CredUIReturnCodes
-        {
-            NO_ERROR = 0,
-            ERROR_CANCELLED = 1223,
-            ERROR_NO_SUCH_LOGON_SESSION = 1312,
-            ERROR_NOT_FOUND = 1168,
-            ERROR_INVALID_ACCOUNT_NAME = 1315,
-            ERROR_INSUFFICIENT_BUFFER = 122,
-            ERROR_INVALID_PARAMETER = 87,
-            ERROR_INVALID_FLAGS = 1004,
         }
 
         /// <summary>
@@ -876,9 +792,9 @@ namespace System.Management.Automation
         /// provided runspace.  It assumes the thread invoking this method is the same that runs all other
         /// commands on the provided runspace.
         /// </summary>
-        /// <param name="runspace">Runspace to invoke the command on</param>
-        /// <param name="command">Command to invoke</param>
-        /// <returns>Collection of command output result objects</returns>
+        /// <param name="runspace">Runspace to invoke the command on.</param>
+        /// <param name="command">Command to invoke.</param>
+        /// <returns>Collection of command output result objects.</returns>
         public static Collection<PSObject> InvokeOnRunspace(PSCommand command, Runspace runspace)
         {
             if (command == null)
@@ -911,6 +827,7 @@ namespace System.Management.Automation
                 // Local runspace.  Make a nested PowerShell object as needed.
                 ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);
             }
+
             using (ps)
             {
                 ps.Commands = command;
@@ -927,7 +844,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string PSEditFunction = @"
             param (
-                [Parameter(Mandatory=$true)] [String[]] $FileName
+                [Parameter(Mandatory=$true)] [string[]] $FileName
             )
 
             foreach ($file in $FileName)

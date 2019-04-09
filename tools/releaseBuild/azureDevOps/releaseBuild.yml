@@ -1,0 +1,111 @@
+name: UnifiedPackageBuild-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+# Set AzDevOps Agent to clean the machine after the end of the build
+resources:
+- repo: self
+  clean: true
+
+jobs:
+- template: templates/linux.yml
+  parameters:
+    buildName: deb
+
+- template: templates/linux.yml
+  parameters:
+    buildName: rpm
+
+- template: templates/linux.yml
+  parameters:
+    buildName: fxdependent
+
+- template: templates/linux.yml
+  parameters:
+    buildName: alpine
+
+- template: templates/mac.yml
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: x64
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: x86
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: arm
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: arm64
+
+- template: templates/windows-build.yml
+  parameters:
+    Architecture: fxdependent
+
+- template: templates/windows-component-governance.yml
+
+- template: templates/windows-package-signing.yml
+  parameters:
+    parentJobs:
+      - build_windows_x64
+      - build_windows_x86
+      - build_windows_arm
+      - build_windows_arm64
+      - build_windows_fxdependent
+
+- template: templates/mac-package-signing.yml
+
+- template: templates/compliance.yml
+  parameters:
+    parentJobs:
+      - build_windows_x64
+      - build_windows_x86
+      - build_windows_fxdependent
+
+- template: templates/nuget.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
+      - build_macOS
+
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: windows
+    pool: Hosted VS2017
+
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: linux
+    pool: Hosted Ubuntu 1604
+
+- job: release_json
+  displayName: Create and Upload release.json
+  steps:
+  - template: templates/SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      @{ ReleaseVersion = "$(Version)" } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      Get-Content "$(Build.StagingDirectory)\release.json"
+      Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+    displayName: Create and upload release.json file to build artifact

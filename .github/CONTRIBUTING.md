@@ -31,12 +31,15 @@ Please read the rest of this document to ensure a smooth contribution process.
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell Maintainers are looking for help with the issue.
+* Issues marked as [`First-Time-Issue`][first-time-issue],
+  are identified as being easy and a great way to learn about this project and making
+  contributions.
 
 ## Contributing to Documentation
 
 ### Contributing to documentation related to PowerShell
 
-Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
@@ -46,18 +49,31 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
 
 #### Spellchecking documentation
 
-Documentation are spellchecked. We make use of the
+Documentation is spellchecked. We use the
 [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
 which can be run in interactive mode to correct typos or add words to the ignore list
 (`.spelling` at the repository root).
 
-To run the spellchecker, follow the steps as follows:
+To run the spellchecker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms`
+* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
 * if the `.spelling` file is updated, commit and push it
+
+#### Checking links in documentation
+
+Documentation is link-checked. We make use of the
+markdown-link-check command line tool,
+which can be run to see if any links are dead.
+
+To run the link-checker, follow these steps:
+
+* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install markdown-link-check by
+  `npm install -g markdown-link-check@3.7.2` (v3.7.2 **only**)
+* run `find . \*.md -exec markdown-link-check {} \;`
 
 ## Contributing to Code
 
@@ -175,6 +191,8 @@ Additional references:
   Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
   ```
 
+  is at the top.
+
 ### Pull Request - Work in Progress
 
 * If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
@@ -187,9 +205,9 @@ Additional references:
 * Make sure you follow the [Common Engineering Practices](#common-engineering-practices)
   and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md).
 * After submitting your pull request,
-  our [CI system (Travis CI and AppVeyor)][ci-system]
+  our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking. If there is any false-positive,
+* Our CI contains automated spellchecking and link checking for markdown files. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
@@ -226,7 +244,7 @@ Additional references:
    When updating your pull request, please **create new commits** and **don't rewrite the commits history**.
    This way it's very easy for the reviewers to see diff between iterations.
    If you rewrite the history in the pull request, review could be much slower.
-   The PR is likely to be squashed on merge to master by the *assignee*.
+   The PR is likely to be squash-merged to master by the *assignee*.
 1. *Reviewers* are anyone who wants to contribute.
    They are responsible for ensuring the code: addresses the issue being fixed, does not create new issues (functional, performance, reliability, or security), and implements proper design.
    *Reviewers* should use the `Review changes` drop down to indicate they are done with their review.
@@ -307,7 +325,7 @@ Using semantic line feeds (breaks that separate ideas)
 is also appropriate, as is using Markdown syntax.
 ```
 
-* These are based on Tim Pope's [guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
+* These are based on Tim Pope's [guidelines](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
   Git SCM [submitting patches](https://git.kernel.org/cgit/git/git.git/tree/Documentation/SubmittingPatches),
   Brandon Rhodes' [semantic linefeeds][],
   and John Gruber's [Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
@@ -324,16 +342,16 @@ is also appropriate, as is using Markdown syntax.
 ## Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
-you could [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
-If you've already contributed to PowerShell repositories in the past, congratulations!
+you should to [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
+If you've already contributed to PowerShell or Microsoft repositories in the past, congratulations!
 You've already completed this step.
 This a one-time requirement for the PowerShell project.
 Signing the CLA process is simple and can be done in less than a minute.
 You don't have to do this up-front.
 You can simply clone, fork, and submit your pull request as usual.
-When your pull request is created, it is classified by a CLA bot.
-If the change is trivial, it's classified as `cla-required`.
-Once you sign a CLA, all your existing and future pull requests will be labeled as `cla-signed`.
+When your pull request is created, it is checked by the CLA bot.
+If you have signed the CLA, the status check will be set to `passing`.  Otherwise, it will stay at `pending`.
+Once you sign a CLA, all your existing and future pull requests will have the status check automatically set at `passing`.
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
@@ -349,9 +367,10 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [contribute-issues]: #contributing-to-issues
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
-[semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
+[semantic linefeeds]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
 [area-expert]: ../docs/community/governance.md#area-experts
 [ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system
+[first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue

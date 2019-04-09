@@ -1,0 +1,148 @@
+parameters:
+  BuildConfiguration: release
+  BuildPlatform: any cpu
+  Architecture: x64
+
+jobs:
+- job: build_windows_${{ parameters.Architecture }}
+  displayName: Build Windows - ${{ parameters.Architecture }}
+  condition: succeeded()
+  pool:
+    name: PowerShell
+  variables:
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+    BuildPlatform: ${{ parameters.BuildPlatform }}
+    Architecture: ${{ parameters.Architecture }}
+
+  steps:
+
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - task: PkgESSetupBuild@10
+    displayName: 'Initialize build'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      useDfs: false
+      productName: PowerShellCore
+      branchVersion: true
+      disableWorkspace: true
+      disableBuildTools: true
+      disableNugetPack: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+       Write-Verbose -Verbose "$(Architecture)"
+
+       if ('$(Architecture)' -eq 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
+       {
+           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"
+       }
+       else
+       {
+           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]false"
+       }
+
+       Write-Verbose -Message "$vstsCommandString " -Verbose
+       Write-Host -Object "##$vstsCommandString"
+    displayName: 'Skip FxDependent for PS v6.0.*'
+
+  - template: insert-nuget-config-azfeed.yml
+
+  - powershell: |
+       docker container prune --force
+       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | ForEach-Object {docker container rm --force --volumes $_}
+    displayName: 'Remove all containers  [Port to PSRelease]'
+    # Cleanup is not critical it passes every time it runs
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       docker image ls --format '{{ json .}}'|ConvertFrom-Json| ForEach-Object {
+           if($_.tag -eq '<none>')
+           {
+               $formatString = 'yyyy-MM-dd HH:mm:ss zz00'
+               $createdAtString = $_.CreatedAt.substring(0,$_.CreatedAt.Length -4)
+               $createdAt = [DateTime]::ParseExact($createdAtString, $formatString,[System.Globalization.CultureInfo]::InvariantCulture)
+               if($createdAt -lt (Get-Date).adddays(-1))
+               {
+                    docker image rm $_.ID
+               }
+           }
+       }
+       exit 0
+    displayName: 'Remove old images [Port to PSRelease]'
+    # Cleanup is not critical it passes every time it runs
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       Write-verbose "--docker info---" -verbose
+       docker info
+       Write-verbose "--docker image ls---" -verbose
+       docker image ls
+       Write-verbose "--docker container ls --all---" -verbose
+       docker container ls --all
+       exit 0
+    displayName: 'Capture docker info'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-$(Architecture)-symbols
+    displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       if ("$env:Architecture" -eq 'fxdependent')
+       {
+           $(Build.SourcesDirectory)\tools\releaseBuild\updateSigning.ps1 -SkipPwshExe
+       }
+       else
+       {
+           $(Build.SourcesDirectory)\tools\releaseBuild\updateSigning.ps1
+       }
+    displayName: 'Update Signing Xml'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       $vstsCommandString = "vso[task.setvariable variable=Symbols]${env:Symbols_$(Architecture)}"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+    displayName: 'Get Symbols path [Update build.json]'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign $(Architecture)'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
+      inPathRoot: '$(Symbols)'
+      outPathRoot: '$(Symbols)\signed'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       New-Item -ItemType Directory -Path $(Symbols)\signed -Force
+    displayName: 'Create empty signed folder'
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name win-$(Architecture)-package -BuildPath $(Symbols) -SignedFilesPath $(Symbols)\signed
+    displayName: 'Build Windows Universal - $(Architecture) Package'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

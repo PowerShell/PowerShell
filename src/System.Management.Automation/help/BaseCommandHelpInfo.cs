@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
         /// Cmdlet help info looks for pattern in Synopsis and
-        /// DetailedDescription
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
@@ -370,10 +370,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern.
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <param name="pattern">Pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...
@@ -393,8 +393,19 @@ namespace System.Management.Automation
                 return base.GetParameter(pattern);
             }
 
+            // The Maml format simplifies array fields containing only one object
+            // by transforming them into the objects themselves. To ensure the consistency
+            // of the help command result we change it back into an array.
+            var param = prmts.Properties["parameter"].Value;
+            PSObject[] paramAsPSObjArray = new PSObject[1];
+
+            if (param is PSObject paramPSObj)
+            {
+                paramAsPSObjArray[0] = paramPSObj;
+            }
+
             PSObject[] prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
-                prmts.Properties["parameter"].Value,
+                paramAsPSObjArray[0] != null ? paramAsPSObjArray : param,
                 typeof(PSObject[]),
                 CultureInfo.InvariantCulture);
 

@@ -2785,7 +2785,7 @@
         </maps>
         <templates>
           <!--
-            see http://msdn.microsoft.com/library/aa382747(VS.85).aspx
+            see https://msdn.microsoft.com/library/aa382747(VS.85).aspx
             for definitions of different data types
           -->
           <template tid="T_CorrelationEvent">

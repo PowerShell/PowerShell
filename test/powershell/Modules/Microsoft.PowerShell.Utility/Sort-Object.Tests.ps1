@@ -225,6 +225,80 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 }
 
+Describe 'Sort-Object Stable Unit Tests' -Tags 'CI' {
+
+	Context 'Modulo stable sort' {
+
+		$unsortedData = 1..20
+
+		It 'Return each value in an ordered set, sorted by the value modulo 3, with items having the same result appearing in the same order' {
+			$results = $unsortedData | Sort-Object {$_ % 3} -Stable
+
+			$results[0]  | Should -Be 3
+			$results[1]  | Should -Be 6
+			$results[2]  | Should -Be 9
+			$results[3]  | Should -Be 12
+			$results[4]  | Should -Be 15
+			$results[5]  | Should -Be 18
+			$results[6]  | Should -Be 1
+			$results[7]  | Should -Be 4
+			$results[8]  | Should -Be 7
+			$results[9]  | Should -Be 10
+			$results[10] | Should -Be 13
+			$results[11] | Should -Be 16
+			$results[12] | Should -Be 19
+			$results[13] | Should -Be 2
+			$results[14] | Should -Be 5
+			$results[15] | Should -Be 8
+			$results[16] | Should -Be 11
+			$results[17] | Should -Be 14
+			$results[18] | Should -Be 17
+			$results[19] | Should -Be 20
+		}
+
+		It 'Return each value in an ordered set, sorted by the value modulo 3 (descending), with items having the same result appearing in the same order' {
+			$results = $unsortedData | Sort-Object {$_ % 3} -Stable -Descending
+
+			$results[0]  | Should -Be 2
+			$results[1]  | Should -Be 5
+			$results[2]  | Should -Be 8
+			$results[3]  | Should -Be 11
+			$results[4]  | Should -Be 14
+			$results[5]  | Should -Be 17
+			$results[6]  | Should -Be 20
+			$results[7]  | Should -Be 1
+			$results[8]  | Should -Be 4
+			$results[9]  | Should -Be 7
+			$results[10] | Should -Be 10
+			$results[11] | Should -Be 13
+			$results[12] | Should -Be 16
+			$results[13] | Should -Be 19
+			$results[14] | Should -Be 3
+			$results[15] | Should -Be 6
+			$results[16] | Should -Be 9
+			$results[17] | Should -Be 12
+			$results[18] | Should -Be 15
+			$results[19] | Should -Be 18
+		}
+
+		It 'Return each value in an ordered set, sorted by the value modulo 3, discarding duplicates' {
+			$results = $unsortedData | Sort-Object {$_ % 3} -Stable -Unique
+
+			$results[0]  | Should -Be 3
+			$results[1]  | Should -Be 1
+			$results[2]  | Should -Be 2
+		}
+
+		It 'Return each value in an ordered set, sorted by the value modulo 3 (descending), discarding duplicates' {
+			$results = $unsortedData | Sort-Object {$_ % 3} -Stable -Unique -Descending
+
+			$results[0]  | Should -Be 2
+			$results[1]  | Should -Be 1
+			$results[2]  | Should -Be 3
+		}
+	}
+}
+
 Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 
 	# Helper function to compare two sort entries

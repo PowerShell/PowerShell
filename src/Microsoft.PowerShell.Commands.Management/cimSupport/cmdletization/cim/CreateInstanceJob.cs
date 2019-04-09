@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of a CreateInstance intrinsic CIM method
+    /// Job wrapping invocation of a CreateInstance intrinsic CIM method.
     /// </summary>
     internal class CreateInstanceJob : PropertySettingJob<CimInstance>
     {

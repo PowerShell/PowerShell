@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-runtime-stretch-slim
+FROM microsoft/dotnet:2.1.7-runtime-stretch-slim
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION

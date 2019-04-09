@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             else
             {
-                underlyingType = typeof(Int32);
+                underlyingType = typeof(int);
             }
 
             ModuleBuilder mb = s_moduleBuilder.Value;
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             if (enumMetadata.BitwiseFlagsSpecified && enumMetadata.BitwiseFlags)
             {
-                var cab = new CustomAttributeBuilder(typeof(FlagsAttribute).GetConstructor(PSTypeExtensions.EmptyTypes), new object[0]);
+                var cab = new CustomAttributeBuilder(typeof(FlagsAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
                 eb.SetCustomAttribute(cab);
             }
 

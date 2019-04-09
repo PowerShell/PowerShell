@@ -90,12 +90,12 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It 'should return correct error for non-numeric input' {
-            $gmi = "abc",[Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc",[Datetime]::Now | Measure-Object -sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $err | ForEach-Object { $_.FullyQualifiedErrorId | Should -Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
         }
 
         It 'should have the correct count' {
-            $gmi = "abc",[Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc",[Datetime]::Now | Measure-Object -sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $gmi.Count | Should -Be 2
         }
     }

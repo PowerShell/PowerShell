@@ -46,7 +46,7 @@ try
         Context "Stop-Computer Error Conditions" {
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $stopTesthookResultName -Value 0x300000
-                Stop-Computer -ErrorVariable StopError 2>$null
+                Stop-Computer -ErrorVariable StopError 2> $null
                 $StopError.Exception.Message | Should -Match 0x300000
             }
         }

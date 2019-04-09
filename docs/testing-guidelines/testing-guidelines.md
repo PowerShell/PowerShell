@@ -13,35 +13,21 @@ When adding new tests, place them in the directories as [outlined below](#test-l
 
 ## CI System
 
-We use [AppVeyor](http://www.appveyor.com/) as a continuous integration (CI) system for Windows
-and [Travis CI](http://www.travis-ci.com) for non-Windows platforms.
+We use [Azure DevOps](https://azure.microsoft.com/en-us/solutions/devops) as a continuous integration (CI) system for Windows
+and non-Windows platforms.
 
-### AppVeyor
-
-In the `README.md` at the top of the repo, you can see AppVeyor badge.
+In the `README.md` at the top of the repository, you can see Azure CI badge.
 It indicates the last build status of `master` branch.
 Hopefully, it's green:
 
-![AppVeyor-Badge-Green.png](Images/AppVeyor-Badge-Green.png)
-
-This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
-From there you can easily navigate to the build history.
-
-### Travis CI
-
-Travis CI works similarly to AppVeyor.
-For Travis CI there will be multiple badges.
-The badges indicate the last build status of `master` branch for different platforms.
-Hopefully, it's green:
-
-![Travis-CI-Badge-Green.png](Images/Travis-CI-Badge-Green.png)
+![AzDevOps-Success.png](Images/AzDevOps-Success.png)
 
 This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
 From there you can easily navigate to the build history.
 
 ### Getting CI Results
 
-CI System builds (AppVeyor and Travis CI) and runs tests on every pull request and provides quick feedback about it.
+CI System builds and runs tests on every pull request and provides quick feedback about it.
 
 ![AppVeyor-Github](Images/AppVeyor-Github.png)
 
@@ -69,9 +55,11 @@ The Pester framework allows `Describe` blocks to be tagged, and our CI system re
 One of the following tags must be used:
 
 * `CI` - this tag indicates that the tests in the `Describe` block will be executed as part of the CI/PR process
-* `Feature` - tests with this tag will not be executed as part of the CI/PR process, but they will be executed on a daily basis as part of a `cron` driven build.
-  They indicate that the test will be validating more behavior, or will be using remote network resources (ex: package management tests)
 * `Scenario` - this tag indicates a larger scale test interacting with multiple areas of functionality and/or remote resources, these tests are also run daily.
+* `Feature` - tests with this tag will not be executed as part of the CI/PR process,
+  but they will be executed on a daily basis as part of a `cron` driven build.
+  They indicate that the test will be validating more behavior,
+  or will be using remote network resources (ex: package management tests)
 
 Additionally, the tag:
 

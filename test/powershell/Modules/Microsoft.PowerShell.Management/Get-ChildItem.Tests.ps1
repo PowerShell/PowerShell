@@ -181,12 +181,60 @@ Describe "Get-ChildItem" -Tags "CI" {
 
                 $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | measure).Count | Should -Be $count
+                ($foobar | Measure-Object).Count | Should -Be $count
             }
             catch
             {
                 Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
+    }
+}
+
+Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
+
+    BeforeAll {
+        $modeTestDir = New-Item -Path "$TestDrive/testmodedirectory" -ItemType Directory -Force
+        $targetFile1 = New-Item -Path "$TestDrive/targetFile1" -ItemType File -Force
+        $targetFile2 = New-Item -Path "$TestDrive/targetFile2" -ItemType File -Force
+        $targetDir1 = New-Item -Path "$TestDrive/targetDir1" -ItemType Directory -Force
+        $targetDir2 = New-Item -Path "$TestDrive/targetDir2" -ItemType Directory -Force
+
+        $testcases = @(
+            @{ expectedMode = "d----"; expectedModeWithoutHardlink = "d----"; itemType = "Directory"; itemName = "Directory"; fileAttributes = [System.IO.FileAttributes] "Directory"; target = $null }
+            @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "SymbolicLink"; itemName = "SymbolicLink-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir2.FullName }
+        )
+
+        if ($IsWindows)
+        {
+            $testcases += @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir1.FullName }
+            $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }
+        }
+    }
+
+    It 'Validate Mode property - <itemName>' -TestCases $testcases {
+
+        param($expectedMode, $expectedModeWithoutHardlink, $itemType, $itemName, $fileAttributes, $target)
+
+        $item = if ($target)
+        {
+            New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType -Target $target
+        }
+        else
+        {
+            New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType
+        }
+
+        $item | Should -BeOfType "System.IO.FileSystemInfo"
+
+        $actualMode = [Microsoft.PowerShell.Commands.FileSystemProvider]::Mode($item)
+        $actualMode | Should -BeExactly $expectedMode
+
+        $actualModeWithoutHardlink = [Microsoft.PowerShell.Commands.FileSystemProvider]::ModeWithoutHardlink($item)
+        $actualModeWithoutHardlink | Should -BeExactly $expectedModeWithoutHardlink
+
+        $item.Attributes | Should -Be $fileAttributes
     }
 }

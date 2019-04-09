@@ -50,6 +50,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return Path; }
+
             set { Path = value; }
         }
 

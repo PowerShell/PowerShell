@@ -87,7 +87,7 @@ property of their respective owners.
  # provided under other licenses, as set forth below.
  #
  #  The BSD License
- #  http://opensource.org/licenses/bsd-license.php
+ #  https://opensource.org/licenses/bsd-license.php
  #  Copyright (C) 2006-2008, Google Inc.
  #
  #  All rights reserved.
@@ -289,7 +289,7 @@ property of their respective owners.
  #  Copyright (c) 2013 International Business Machines Corporation
  #  and others. All Rights Reserved.
  #
- # Project: http://code.google.com/p/lao-dictionary/
+ # Project: https://code.google.com/p/lao-dictionary/
  # Dictionary: http://lao-dictionary.googlecode.com/git/Lao-Dictionary.txt
  # License: http://lao-dictionary.googlecode.com/git/Lao-Dictionary-LICENSE.txt
  #              (copied below)
@@ -440,7 +440,7 @@ XZ Utils Licensing
     naturally it is not legally required. Here is an example of a good
     notice to put into "about box" or into documentation:
 
-        This software includes code from XZ Utils <http://tukaani.org/xz/>.
+        This software includes code from XZ Utils <https://tukaani.org/xz/>.
 
     The following license texts are included in the following files:
       - COPYING.LGPLv2.1: GNU Lesser General Public License version 2.1

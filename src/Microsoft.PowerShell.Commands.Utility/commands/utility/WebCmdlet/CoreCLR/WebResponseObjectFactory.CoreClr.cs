@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 output = new WebResponseObject(response, responseStream);
             }
+
             return (output);
         }
     }

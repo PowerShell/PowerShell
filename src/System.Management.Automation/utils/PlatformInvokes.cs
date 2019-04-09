@@ -11,12 +11,6 @@ namespace System.Management.Automation
 {
     internal class PlatformInvokes
     {
-        [DllImport(PinvokeDllNames.GetFileAttributesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern int GetFileAttributes(string lpFileName);
-
-        internal const int MAX_PATH = 260;
-        internal const int MAX_ALTERNATE = 14;
-
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME
         {
@@ -41,34 +35,8 @@ namespace System.Management.Automation
             }
         };
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct WIN32_FIND_DATA
-        {
-            internal FileAttributes dwFileAttributes;
-            internal FILETIME ftCreationTime;
-            internal FILETIME ftLastAccessTime;
-            internal FILETIME ftLastWriteTime;
-            internal uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-            internal uint nFileSizeLow;  //|
-            internal uint dwReserved0;   //|
-            internal uint dwReserved1;   //v
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-            internal string cFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
-            internal string cAlternate;
-        }
-
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, CharSet = CharSet.Unicode)]
-        internal static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport(PinvokeDllNames.FindNextFileDllName, CharSet = CharSet.Unicode)]
-        internal static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport(PinvokeDllNames.FindCloseDllName, CharSet = CharSet.Unicode)]
-        internal static extern bool FindClose(IntPtr hFindFile);
-
         [Flags]
-        //dwDesiredAccess of CreateFile
+        // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
             GenericRead = 0x80000000,
@@ -78,7 +46,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwShareMode of CreateFile
+        // dwShareMode of CreateFile
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
@@ -87,7 +55,7 @@ namespace System.Management.Automation
             Delete = 0x00000004,
         }
 
-        //dwCreationDisposition of CreateFile
+        // dwCreationDisposition of CreateFile
         internal enum FileCreationDisposition : uint
         {
             New = 1,
@@ -98,7 +66,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwFlagsAndAttributes
+        // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
             ReadOnly = 0x00000001,
@@ -267,21 +235,24 @@ namespace System.Management.Automation
         /// </returns>
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        //[SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
+        // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
 
         [DllImport(PinvokeDllNames.DosDateTimeToFileTimeDllName, SetLastError = false)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool DosDateTimeToFileTime(
             short wFatDate, // _In_   WORD
             short wFatTime, // _In_   WORD
             FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.LocalFileTimeToFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LocalFileTimeToFileTime(
             FILETIME lpLocalFileTime, // _In_   const FILETIME *
             FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.SetFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetFileTime(
             IntPtr hFile, // _In_      HANDLE
             FILETIME lpCreationTime, // _In_opt_ const FILETIME *
@@ -289,6 +260,7 @@ namespace System.Management.Automation
             FILETIME lpLastWriteTime); // _In_opt_ const FILETIME *
 
         [DllImport(PinvokeDllNames.SetFileAttributesWDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetFileAttributesW(
             [MarshalAs(UnmanagedType.LPWStr)] string lpFileName, // _In_ LPCTSTR
             FileAttributes dwFileAttributes); // _In_ DWORD
@@ -367,6 +339,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -375,7 +348,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Restore the previous privilege state
+        /// Restore the previous privilege state.
         /// </summary>
         /// <param name="privilegeName"></param>
         /// <param name="previousPrivilegeState"></param>
@@ -422,6 +395,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -504,7 +478,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the pseudo handler of the current process
+        /// Get the pseudo handler of the current process.
         /// </summary>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
@@ -515,9 +489,9 @@ namespace System.Management.Automation
         /// Retrieves the current process token.
         /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
-        /// <param name="processHandle">process handle</param>
-        /// <param name="desiredAccess">token access</param>
-        /// <param name="tokenHandle">process token</param>
+        /// <param name="processHandle">Process handle.</param>
+        /// <param name="desiredAccess">Token access.</param>
+        /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
@@ -576,7 +550,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             public void Dispose()
             {
@@ -584,7 +558,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             /// <param name="disposing"></param>
             private void Dispose(bool disposing)
@@ -649,11 +623,13 @@ namespace System.Management.Automation
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
+
                     if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
+
                     if ((this.hStdError != null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
@@ -682,10 +658,8 @@ namespace System.Management.Automation
             }
         }
 
-        // Methods
-        //
-
         [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcess(
             [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
             [MarshalAs(UnmanagedType.LPWStr)] string lpCommandLine,
@@ -729,68 +703,6 @@ namespace System.Management.Automation
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr GetStdHandle(uint handleId);
-
-#endif
-
-        #endregion
-
-        #region CreateToolhelp32Snapshot
-
-#if !UNIX
-
-        [DllImport(PinvokeDllNames.CreateToolhelp32SnapshotDllName, SetLastError = true)]
-        internal static extern SafeSnapshotHandle CreateToolhelp32Snapshot(SnapshotFlags flags, uint id);
-        [DllImport(PinvokeDllNames.Process32FirstDllName, SetLastError = true)]
-        internal static extern bool Process32First(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
-        [DllImport(PinvokeDllNames.Process32NextDllName, SetLastError = true)]
-        internal static extern bool Process32Next(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
-
-        internal sealed class SafeSnapshotHandle : SafeHandleMinusOneIsInvalid
-        {
-            internal SafeSnapshotHandle() : base(true)
-            {
-            }
-
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-            internal SafeSnapshotHandle(IntPtr handle) : base(true)
-            {
-                base.SetHandle(handle);
-            }
-
-            protected override bool ReleaseHandle()
-            {
-                return CloseHandle(base.handle);
-            }
-        }
-
-        [Flags]
-        internal enum SnapshotFlags : uint
-        {
-            HeapList = 0x00000001,
-            Process = 0x00000002,
-            Thread = 0x00000004,
-            Module = 0x00000008,
-            Module32 = 0x00000010,
-            All = (HeapList | Process | Thread | Module),
-            Inherit = 0x80000000,
-            NoHeaps = 0x40000000
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct PROCESSENTRY32
-        {
-            public uint dwSize;
-            public uint cntUsage;
-            public uint th32ProcessID;
-            public IntPtr th32DefaultHeapID;
-            public uint th32ModuleID;
-            public uint cntThreads;
-            public uint th32ParentProcessID;
-            public int pcPriClassBase;
-            public uint dwFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szExeFile;
-        };
-
-        internal const int ERROR_NO_MORE_FILES = 0x12;
 
 #endif
 

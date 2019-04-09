@@ -35,6 +35,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _protocolVersion;
             }
+
             set
             {
                 _protocolVersion = value;
@@ -42,7 +43,9 @@ namespace System.Management.Automation.Remoting
         }
 
         internal Version PSVersion { get { return _psversion; } }
+
         internal Version SerializationVersion { get { return _serversion; } }
+
         internal RemotingDestination RemotingDestination { get { return _remotingDestination; } }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace System.Management.Automation.Remoting
             // PS Version 3 is fully backward compatible with Version 2
             // In the remoting protocol sense, nothing is changing between PS3 and PS2
             // For negotiation to succeed with old client/servers we have to use 2.
-            _psversion = new Version(2,0); //PSVersionInfo.PSVersion;
+            _psversion = new Version(2,0); // PSVersionInfo.PSVersion;
             _serversion = PSVersionInfo.SerializationVersion;
             _remotingDestination = remotingDestination;
         }
@@ -127,7 +130,7 @@ namespace System.Management.Automation.Remoting
                 // ignore it and dont try to serialize again.
                 if (e != null)
                 {
-                    _timeZoneInByteFormat = Utils.EmptyArray<byte>();
+                    _timeZoneInByteFormat = Array.Empty<byte>();
                 }
             }
 
@@ -135,11 +138,12 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Gets the TimeZone of the destination machine. This may be null
+        /// Gets the TimeZone of the destination machine. This may be null.
         /// </summary>
         internal TimeZoneInfo TimeZone
         {
             get { return _timeZone; }
+
             set { _timeZone = value; }
         }
     }
@@ -397,6 +401,7 @@ namespace System.Management.Automation.Remoting
         internal bool UseRunspaceHost
         {
             get { return _useRunspaceHost; }
+
             set { _useRunspaceHost = value; }
         }
 
@@ -442,10 +447,12 @@ namespace System.Management.Automation.Remoting
 
             // Verify that the UI is not null.
             if (host.UI == null) { return; }
+
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
             if (host.UI.RawUI == null) { return; }
+
             isHostRawUINull = false;
         }
     }

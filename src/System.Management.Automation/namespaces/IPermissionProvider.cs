@@ -103,7 +103,7 @@ namespace System.Management.Automation.Provider
         ObjectSecurity NewSecurityDescriptorOfType(
             string type,
             AccessControlSections includeSections);
-    } // ISecurityDescriptorCmdletProvider
+    }
 
     #endregion ISecurityDescriptorCmdletProvider
-} // namespace System.Management.Automation
+}

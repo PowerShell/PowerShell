@@ -624,6 +624,9 @@
   <data name="VariableDriveDescription" xml:space="preserve">
     <value>Drive that contains a view of those variables stored in a session state</value>
   </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Drive that maps to the temporary directory path for the current user</value>
+  </data>
   <data name="ProviderProviderPathFormatException" xml:space="preserve">
     <value>The path is not in the correct format. Paths can contain only provider and drive names separated by slashes or backslashes.</value>
   </data>

@@ -10,187 +10,187 @@ namespace System.Management.Automation
     public static class ProviderCmdlet
     {
         /// <summary>
-        /// Add-Content cmdlet
+        /// Add-Content cmdlet.
         /// </summary>
         public const string AddContent = "Add-Content";
 
         /// <summary>
-        /// Clear-Content cmdlet
+        /// Clear-Content cmdlet.
         /// </summary>
         public const string ClearContent = "Clear-Content";
 
         /// <summary>
-        /// Clear-Item cmdlet
+        /// Clear-Item cmdlet.
         /// </summary>
         public const string ClearItem = "Clear-Item";
 
         /// <summary>
-        /// Clear-ItemProperty cmdlet
+        /// Clear-ItemProperty cmdlet.
         /// </summary>
         public const string ClearItemProperty = "Clear-ItemProperty";
 
         /// <summary>
-        /// Convert-Path cmdlet
+        /// Convert-Path cmdlet.
         /// </summary>
         public const string ConvertPath = "Convert-Path";
 
         /// <summary>
-        /// Copy-Item cmdlet
+        /// Copy-Item cmdlet.
         /// </summary>
         public const string CopyItem = "Copy-Item";
 
         /// <summary>
-        /// Copy-ItemProperty cmdlet
+        /// Copy-ItemProperty cmdlet.
         /// </summary>
         public const string CopyItemProperty = "Copy-ItemProperty";
 
         /// <summary>
-        /// Get-Acl cmdlet
+        /// Get-Acl cmdlet.
         /// </summary>
         public const string GetAcl = "Get-Acl";
 
         /// <summary>
-        /// Get-ChildItem cmdlet
+        /// Get-ChildItem cmdlet.
         /// </summary>
         public const string GetChildItem = "Get-ChildItem";
 
         /// <summary>
-        /// Get-Content cmdlet
+        /// Get-Content cmdlet.
         /// </summary>
         public const string GetContent = "Get-Content";
 
         /// <summary>
-        /// Get-Item cmdlet
+        /// Get-Item cmdlet.
         /// </summary>
         public const string GetItem = "Get-Item";
 
         /// <summary>
-        /// Get-ItemProperty cmdlet
+        /// Get-ItemProperty cmdlet.
         /// </summary>
         public const string GetItemProperty = "Get-ItemProperty";
 
         /// <summary>
-        /// Get-Location cmdlet
+        /// Get-Location cmdlet.
         /// </summary>
         public const string GetLocation = "Get-Location";
 
         /// <summary>
-        /// Get-PSDrive cmdlet
+        /// Get-PSDrive cmdlet.
         /// </summary>
         public const string GetPSDrive = "Get-PSDrive";
 
         /// <summary>
-        /// Get-PSProvider cmdlet
+        /// Get-PSProvider cmdlet.
         /// </summary>
         public const string GetPSProvider = "Get-PSProvider";
 
         /// <summary>
-        /// Invoke-Item cmdlet
+        /// Invoke-Item cmdlet.
         /// </summary>
         public const string InvokeItem = "Invoke-Item";
 
         /// <summary>
-        /// Join-Path cmdlet
+        /// Join-Path cmdlet.
         /// </summary>
         public const string JoinPath = "Join-Path";
 
         /// <summary>
-        /// Move-Item cmdlet
+        /// Move-Item cmdlet.
         /// </summary>
         public const string MoveItem = "Move-Item";
 
         /// <summary>
-        /// Move-ItemProperty cmdlet
+        /// Move-ItemProperty cmdlet.
         /// </summary>
         public const string MoveItemProperty = "Move-ItemProperty";
 
         /// <summary>
-        /// New-Item cmdlet
+        /// New-Item cmdlet.
         /// </summary>
         public const string NewItem = "New-Item";
 
         /// <summary>
-        /// New-ItemProperty cmdlet
+        /// New-ItemProperty cmdlet.
         /// </summary>
         public const string NewItemProperty = "New-ItemProperty";
 
         /// <summary>
-        /// New-PSDrive cmdlet
+        /// New-PSDrive cmdlet.
         /// </summary>
         public const string NewPSDrive = "New-PSDrive";
 
         /// <summary>
-        /// Pop-Location cmdlet
+        /// Pop-Location cmdlet.
         /// </summary>
         public const string PopLocation = "Pop-Location";
 
         /// <summary>
-        /// Push-Location cmdlet
+        /// Push-Location cmdlet.
         /// </summary>
         public const string PushLocation = "Push-Location";
 
         /// <summary>
-        /// Remove-Item cmdlet
+        /// Remove-Item cmdlet.
         /// </summary>
         public const string RemoveItem = "Remove-Item";
 
         /// <summary>
-        /// Remove-ItemProperty cmdlet
+        /// Remove-ItemProperty cmdlet.
         /// </summary>
         public const string RemoveItemProperty = "Remove-ItemProperty";
 
         /// <summary>
-        /// Remove-PSDrive cmdlet
+        /// Remove-PSDrive cmdlet.
         /// </summary>
         public const string RemovePSDrive = "Remove-PSDrive";
 
         /// <summary>
-        /// Rename-Item cmdlet
+        /// Rename-Item cmdlet.
         /// </summary>
         public const string RenameItem = "Rename-Item";
 
         /// <summary>
-        /// Rename-ItemProperty cmdlet
+        /// Rename-ItemProperty cmdlet.
         /// </summary>
         public const string RenameItemProperty = "Rename-ItemProperty";
 
         /// <summary>
-        /// Resolve-Path cmdlet
+        /// Resolve-Path cmdlet.
         /// </summary>
         public const string ResolvePath = "Resolve-Path";
 
         /// <summary>
-        /// Set-Acl cmdlet
+        /// Set-Acl cmdlet.
         /// </summary>
         public const string SetAcl = "Set-Acl";
 
         /// <summary>
-        /// Set-Content cmdlet
+        /// Set-Content cmdlet.
         /// </summary>
         public const string SetContent = "Set-Content";
 
         /// <summary>
-        /// Set-Item cmdlet
+        /// Set-Item cmdlet.
         /// </summary>
         public const string SetItem = "Set-Item";
 
         /// <summary>
-        /// Set-ItemProperty cmdlet
+        /// Set-ItemProperty cmdlet.
         /// </summary>
         public const string SetItemProperty = "Set-ItemProperty";
 
         /// <summary>
-        /// Set-Location cmdlet
+        /// Set-Location cmdlet.
         /// </summary>
         public const string SetLocation = "Set-Location";
 
         /// <summary>
-        /// Split-Path cmdlet
+        /// Split-Path cmdlet.
         /// </summary>
         public const string SplitPath = "Split-Path";
 
         /// <summary>
-        /// Test-Path cmdlet
+        /// Test-Path cmdlet.
         /// </summary>
         public const string TestPath = "Test-Path";
     }

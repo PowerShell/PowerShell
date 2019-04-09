@@ -41,7 +41,7 @@ namespace System.Management.Automation
         internal ExternalScriptInfo(string name, string path, ExecutionContext context)
             : base(name, CommandTypes.ExternalScript, context)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates an instance of ExternalScriptInfo that has no ExecutionContext.
-        /// This is used exclusively to pass it to the AuthorizationManager that just uses the path parameter
+        /// This is used exclusively to pass it to the AuthorizationManager that just uses the path parameter.
         /// </summary>
         /// <param name="name">
         /// The name of the script.
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ExternalScriptInfo(string name, string path) : base(name, CommandTypes.ExternalScript)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Common initialization for all constructors
+        /// Common initialization for all constructors.
         /// </summary>
         private void CommonInitialization()
         {
@@ -138,7 +138,8 @@ namespace System.Management.Automation
         {
             get { return _path; }
         }
-        private readonly string _path = String.Empty;
+
+        private readonly string _path = string.Empty;
 
         /// <summary>
         /// Gets the path to the script file.
@@ -149,7 +150,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source of this command
+        /// Gets the source of this command.
         /// </summary>
         public override string Source
         {
@@ -157,7 +158,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the syntax of a command
+        /// Returns the syntax of a command.
         /// </summary>
         internal override string Syntax
         {
@@ -168,7 +169,7 @@ namespace System.Management.Automation
                 foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                 {
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
@@ -190,11 +191,12 @@ namespace System.Management.Automation
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
+
             set { throw PSTraceSource.NewNotImplementedException(); }
         }
 
         /// <summary>
-        /// The script block that represents the external script
+        /// The script block that represents the external script.
         /// </summary>
         public ScriptBlock ScriptBlock
         {
@@ -217,6 +219,7 @@ namespace System.Management.Automation
 
                 return _scriptBlock;
             }
+
             private set
             {
                 _scriptBlock = value;
@@ -226,6 +229,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScriptBlock _scriptBlock;
         private ScriptBlockAst _scriptBlockAst;
 
@@ -261,10 +265,12 @@ namespace System.Management.Automation
             {
                 this.ScriptBlock = ScriptBlock.TryGetCachedScriptBlock(_path, scriptContents);
             }
+
             if (_scriptBlock != null)
             {
                 return (ScriptBlockAst)_scriptBlock.Ast;
             }
+
             if (_scriptBlockAst == null)
             {
                 ParseError[] errors;
@@ -272,7 +278,7 @@ namespace System.Management.Automation
 
                 // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
                 // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
-                // such as "Configuration keyword not allowed".
+                // such as "Configuration or Class keyword not allowed".
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
                     DefiningLanguageMode == PSLanguageMode.FullLanguage)
@@ -298,11 +304,12 @@ namespace System.Management.Automation
                     ScriptBlock.CacheScriptBlock(_scriptBlock.Clone(), _path, scriptContents);
                 }
             }
+
             return _scriptBlockAst;
         }
 
         /// <summary>
-        /// Validates the external script info
+        /// Validates the external script info.
         /// </summary>
         /// <param name="host"></param>
         public void ValidateScriptInfo(Host.PSHost host)
@@ -327,7 +334,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {
@@ -338,6 +345,7 @@ namespace System.Management.Automation
         {
             set { _signatureChecked = value; }
         }
+
         private bool _signatureChecked;
 
         #region Internal
@@ -354,6 +362,7 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
 
         /// <summary>
@@ -467,6 +476,7 @@ namespace System.Management.Automation
                 return _scriptContents;
             }
         }
+
         private string _scriptContents;
 
         /// <summary>
@@ -484,6 +494,7 @@ namespace System.Management.Automation
                 return _originalEncoding;
             }
         }
+
         private Encoding _originalEncoding;
 
         private void ReadScriptContents()
@@ -559,7 +570,7 @@ namespace System.Management.Automation
             CommandNotFoundException cmdE = new CommandNotFoundException(innerException.Message, innerException);
             throw cmdE;
         }
-    } // ExternalScriptInfo
+    }
 
     /// <summary>
     /// Thrown when fail to parse #requires statements. Caught by CommandDiscovery.
@@ -573,7 +584,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the name and version tuple of a PSSnapin
+    /// Defines the name and version tuple of a PSSnapin.
     /// </summary>
     [Serializable]
     public class PSSnapInSpecification
@@ -595,5 +606,5 @@ namespace System.Management.Automation
         /// </summary>
         public Version Version { get; internal set; }
     }
-} // namespace System.Management.Automation
+}
 

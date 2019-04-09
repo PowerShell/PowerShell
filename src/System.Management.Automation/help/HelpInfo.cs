@@ -24,14 +24,14 @@ namespace System.Management.Automation
     internal abstract class HelpInfo
     {
         /// <summary>
-        /// Constructor for HelpInfo
+        /// Constructor for HelpInfo.
         /// </summary>
         internal HelpInfo()
         {
         }
 
         /// <summary>
-        /// Name for help info
+        /// Name for help info.
         /// </summary>
         /// <value>Name for help info</value>
         internal abstract string Name
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Synopsis for help info
+        /// Synopsis for help info.
         /// </summary>
         /// <value>Synopsis for help info</value>
         internal abstract string Synopsis
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category for help info
+        /// Help category for help info.
         /// </summary>
         /// <value>Help category for help info</value>
         internal abstract HelpCategory HelpCategory
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forward help category for this help info
+        /// Forward help category for this help info.
         /// </summary>
         /// <remarks>
         /// If this is not HelpCategory.None, then some other help provider
@@ -137,16 +137,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern.
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <param name="pattern">Pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         /// <remarks>
         /// The base method returns an empty list.
         /// </remarks>
         internal virtual PSObject[] GetParameter(string pattern)
         {
-            return new PSObject[0];
+            return Array.Empty<PSObject>();
         }
 
         /// <summary>

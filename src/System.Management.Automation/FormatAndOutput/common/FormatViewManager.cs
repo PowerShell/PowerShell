@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if the type is derived from a System.Enum
             // e.g. in C#
             // enum Foo { Red, Black, Green}
+
             if (PSObjectHelper.PSObjectIsEnum(typeNames))
                 return true;
 
@@ -61,8 +62,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to manage the selection of a desired view type and
-    /// manage state associated to the selected view
+    /// Class to manage the selection of a desired view type and
+    /// manage state associated to the selected view.
     /// </summary>
     internal sealed class FormatViewManager
     {
@@ -111,6 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }
+
                     if (view != null)
                     {
                         // we got a matching view from the database
@@ -151,6 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
+
                     if (view != null)
                     {
                         _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -162,6 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         s_formatViewBindingTracer.WriteLine(viewFound);
                         return;
                     }
+
                     s_formatViewBindingTracer.WriteLine(viewNotFound);
                     // illegal input, we have to terminate
                     ProcessUnknownViewName(errorContext, parameters.viewName, so, db, shape);
@@ -172,6 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }
+
                 if (view != null)
                 {
                     _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -185,6 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     return;
                 }
+
                 s_formatViewBindingTracer.WriteLine(viewNotFound);
                 // we just select properties out of the object itself
                 _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
@@ -269,14 +275,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             foreach (TypeOrGroupReference currentTypeOrGroupReference in currentViewDefinition.appliesTo.referenceList)
                             {
                                 if (!string.IsNullOrEmpty(currentTypeOrGroupReference.name) &&
-                                    String.Equals(currentObjectTypeName, currentTypeOrGroupReference.name, StringComparison.OrdinalIgnoreCase))
+                                    string.Equals(currentObjectTypeName, currentTypeOrGroupReference.name, StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (currentViewDefinition.mainControl.GetType() == formatType)
                                     {
                                         validViews.Append(currentViewDefinition.name);
                                         validViews.Append(separator);
                                     }
-                                    else if (String.Equals(viewName, currentViewDefinition.name, StringComparison.OrdinalIgnoreCase))
+                                    else if (string.Equals(viewName, currentViewDefinition.name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         string cmdletFormatName = null;
                                         if (currentViewDefinition.mainControl is TableControlBody)
@@ -327,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StringBuilder unKnowViewFormatStringBuilder = new StringBuilder();
                 if (validViewFormats.Length > 0)
                 {
-                    //unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
+                    // unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameErrorSuffix, viewName, formatTypeName));
                     unKnowViewFormatStringBuilder.Append(validViewFormats.ToString());
                 }
@@ -439,6 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 viewGenerator = new ComplexViewGenerator();
             }
+
             Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
 
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
@@ -446,73 +453,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// the view generator that produced data for a selected shape
+        /// The view generator that produced data for a selected shape.
         /// </summary>
         private ViewGenerator _viewGenerator = null;
     }
 
     /// <summary>
-    /// class to manage the selection of a desired view type
-    /// for out of band objects
+    /// Class to manage the selection of a desired view type
+    /// for out of band objects.
     /// </summary>
     internal static class OutOfBandFormatViewManager
     {
-        internal static bool IsPropertyLessObject(PSObject so)
+        private static bool IsNotRemotingProperty(string name)
         {
-            List<MshResolvedExpressionParameterAssociation> allProperties = AssociationManager.ExpandAll(so);
-
-            if (allProperties.Count == 0)
-            {
-                return true;
-            }
-            if (allProperties.Count == 3)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            if (allProperties.Count == 4)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
-                        && !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            if (allProperties.Count == 5)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceLength, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
+            var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.SourceLength, StringComparison.OrdinalIgnoreCase);
+            return !isRemotingPropertyName;
         }
+
+        private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
+
+        private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
@@ -534,12 +498,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     outOfBandViewGenerator = new ListViewGenerator();
                 }
+
                 outOfBandViewGenerator.Initialize(errorContext, expressionFactory, db, view, null);
             }
             else
             {
-                if (DefaultScalarTypes.IsTypeInList(typeNames) ||
-                    IsPropertyLessObject(so))
+                if (DefaultScalarTypes.IsTypeInList(typeNames)
+                    || !HasNonRemotingProperties(so))
                 {
                     // we force a ToString() on well known types
                     return GenerateOutOfBandObjectAsToString(so);
@@ -564,7 +529,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
             fed.outOfBand = true;
-            fed.SetStreamTypeFromPSObject(so);
+            fed.writeStream = so.WriteStream;
 
             errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList();
 
@@ -590,7 +555,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     ///
     /// Depending on settings, it queues the failing PSPropertyExpressionResult
     /// instances and generates a list of out-of-band FormatEntryData
-    /// objects to be sent to the output pipeline
+    /// objects to be sent to the output pipeline.
     /// </summary>
     internal sealed class FormatErrorManager
     {
@@ -600,10 +565,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// log a failed evaluation of an PSPropertyExpression
+        /// Log a failed evaluation of an PSPropertyExpression.
         /// </summary>
-        /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data</param>
-        /// <param name="sourceObject">object used to evaluate the PSPropertyExpression</param>
+        /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data.</param>
+        /// <param name="sourceObject">Object used to evaluate the PSPropertyExpression.</param>
         internal void LogPSPropertyExpressionFailedResult(PSPropertyExpressionResult result, object sourceObject)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -615,9 +580,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// log a failed formatting operation
+        /// Log a failed formatting operation.
         /// </summary>
-        /// <param name="error">string format error object </param>
+        /// <param name="error">String format error object.</param>
         internal void LogStringFormatError(StringFormatError error)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -650,11 +615,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// provide a list of ErrorRecord entries
+        /// Provide a list of ErrorRecord entries
         /// to be written to the error pipeline and clear the list of pending
-        /// errors
+        /// errors.
         /// </summary>
-        /// <returns>list of ErrorRecord objects</returns>
+        /// <returns>List of ErrorRecord objects.</returns>
         internal List<ErrorRecord> DrainFailedResultList()
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -667,15 +632,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (errorRecord != null)
                     retVal.Add(errorRecord);
             }
+
             _formattingErrorList.Clear();
             return retVal;
         }
 
         /// <summary>
-        /// Conversion between an error internal representation and ErrorRecord
+        /// Conversion between an error internal representation and ErrorRecord.
         /// </summary>
-        /// <param name="error">internal error object</param>
-        /// <returns>corresponding ErrorRecord instance</returns>
+        /// <param name="error">Internal error object.</param>
+        /// <returns>Corresponding ErrorRecord instance.</returns>
         private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {
             ErrorRecord errorRecord = null;
@@ -707,13 +673,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formattingError.formatString);
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
+
             return errorRecord;
         }
 
         private FormatErrorPolicy _formatErrorPolicy;
 
         /// <summary>
-        /// current list of failed PSPropertyExpression evaluations
+        /// Current list of failed PSPropertyExpression evaluations.
         /// </summary>
         private List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }

@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Event handler argument
+    /// Event handler argument.
     /// </summary>
     internal class ServerSteppablePipelineDriverEventArg : EventArgs
     {
@@ -23,7 +23,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Steppable pipeline driver event handler class
+    /// Steppable pipeline driver event handler class.
     /// </summary>
     internal class ServerSteppablePipelineSubscriber
     {
@@ -53,6 +53,7 @@ namespace System.Management.Automation
                         _processSubscriber = _eventManager.SubscribeEvent(this, "RunProcessRecord", Guid.NewGuid().ToString(), null,
                             new PSEventReceivedEventHandler(this.HandleProcessRecord), true, false, true);
                     }
+
                     _initialized = true;
                 }
             }
@@ -64,7 +65,7 @@ namespace System.Management.Automation
         public event EventHandler<EventArgs> RunProcessRecord;
 
         /// <summary>
-        /// Handles the start pipeline event, this is called by the event manager
+        /// Handles the start pipeline event, this is called by the event manager.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -108,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles process record event
+        /// Handles process record event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -130,6 +131,7 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 driver.ProcessingInput = true;
                 driver.Pulsed = false;
             }
@@ -174,6 +176,7 @@ namespace System.Management.Automation
                         {
                             output = driver.SteppablePipeline.Process(driver.InputEnumerator.Current);
                         }
+
                         foreach (object o in output)
                         {
                             if (driver.PipelineState != PSInvocationState.Running)
@@ -263,9 +266,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Fires the start event
+        /// Fires the start event.
         /// </summary>
-        /// <param name="driver">steppable pipeline driver</param>
+        /// <param name="driver">Steppable pipeline driver.</param>
         internal void FireStartSteppablePipeline(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)
@@ -279,9 +282,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Fires the process record event
+        /// Fires the process record event.
         /// </summary>
-        /// <param name="driver">steppable pipeline driver</param>
+        /// <param name="driver">Steppable pipeline driver.</param>
         internal void FireHandleProcessRecord(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)

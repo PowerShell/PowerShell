@@ -99,7 +99,7 @@ Describe "Out-File" -Tags "CI" {
         $actual[0] | Should -BeNullOrEmpty
         $actual[1] | Should -BeExactly "text"
         $actual[2] | Should -BeExactly "----"
-        $actual[3] | Should -BeExactly "some te..."
+        $actual[3] | Should -BeExactly "some test`u{2026}" # ellipsis
     }
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {

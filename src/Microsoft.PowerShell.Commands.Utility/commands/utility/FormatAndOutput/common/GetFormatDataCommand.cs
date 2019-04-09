@@ -29,19 +29,20 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public String[] TypeName
+        public string[] TypeName
         {
             get
             {
                 return _typename;
             }
+
             set
             {
                 _typename = value;
 
                 if (_typename == null)
                 {
-                    _filter = Utils.EmptyArray<WildcardPattern>();
+                    _filter = Array.Empty<WildcardPattern>();
                 }
                 else
                 {
@@ -166,8 +167,9 @@ namespace Microsoft.PowerShell.Commands
                     viewList = new List<FormatViewDefinition>();
                     typedefs.Add(consolidatedTypeName, viewList);
                 }
+
                 viewList.Add(formatdef);
-            }// foreach(ViewDefinition...
+            }
 
             // write out all the available type definitions
             foreach (var pair in typedefs)
@@ -189,6 +191,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         etd.TypeNames.Add(typeNames[i]);
                     }
+
                     WriteObject(etd);
                 }
             }
@@ -219,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
                     consolidatedTypeName.Add(item.name);
                 }
             }
+
             return consolidatedTypeName;
         }
 
@@ -234,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return false;
         }
     }

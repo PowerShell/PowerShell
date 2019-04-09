@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPingCount, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
     [OutputType(typeof(PingReport), ParameterSetName = new string[] { ParameterSetPingCount })]
     [OutputType(typeof(PingReply), ParameterSetName = new string[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
-    [OutputType(typeof(Boolean), ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
+    [OutputType(typeof(bool), ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(Int32), ParameterSetName = new string[] { ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { ParameterSetTraceRoute })]
     public class TestConnectionCommand : PSCmdlet
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(String targetNameOrAddress)
         {
-            String resolvedTargetName = null;
+            string resolvedTargetName = null;
             IPAddress targetAddress = null;
 
             if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 Task connectionTask = client.ConnectAsync(targetAddress, TCPPort);
-                String targetString = targetAddress.ToString();
+                string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         #region TracerouteTest
         private void ProcessTraceroute(String targetNameOrAddress)
         {
-            String resolvedTargetName = null;
+            string resolvedTargetName = null;
             IPAddress targetAddress = null;
             byte[] buffer = GetSendBuffer(BufferSize);
 
@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
-            String msg = String.Empty;
+            string msg = string.Empty;
 
             if (traceRouteReply.PingReplies[2].Status == IPStatus.TtlExpired || traceRouteReply.PingReplies[2].Status == IPStatus.Success)
             {
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Resolved router name.
             /// </summary>
-            public String ReplyRouterName;
+            public string ReplyRouterName;
         }
 
         /// <summary>
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
         {
             PingReply reply, replyResult = null;
 
-            String resolvedTargetName = null;
+            string resolvedTargetName = null;
             IPAddress targetAddress = null;
 
             if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(String targetNameOrAddress)
         {
-            String resolvedTargetName = null;
+            string resolvedTargetName = null;
             IPAddress targetAddress = null;
 
             if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingProgress(PingReply reply)
         {
-            String msg = String.Empty;
+            string msg = string.Empty;
             if (reply.Status != IPStatus.Success)
             {
                 msg = TestConnectionResources.PingTimeOut;
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool InitProcessPing(String targetNameOrAddress, out String resolvedTargetName, out IPAddress targetAddress)
+        private bool InitProcessPing(String targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
         {
             IPHostEntry hostEntry = null;
 

@@ -1,0 +1,36 @@
+parameters:
+  architecture: x86
+  version: 6.2.0
+  msi: yes
+
+steps:
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(Build.StagingDirectory)\signedPackages
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
+    condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
+
+- task: AzureFileCopy@1
+  displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))
+
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(System.ArtifactsDirectory)\signed
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
+
+- task: AzureFileCopy@1
+  displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

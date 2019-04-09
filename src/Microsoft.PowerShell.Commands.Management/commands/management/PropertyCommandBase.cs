@@ -1,20 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The base class for the */property commands
+    /// The base class for the */property commands.
     /// </summary>
     public class ItemPropertyCommandBase : CoreCommandWithCredentialsBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the filter parameter
+        /// Gets or sets the filter parameter.
         /// </summary>
         [Parameter]
         public override string Filter
@@ -22,16 +23,16 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Filter;
-            } // get
+            }
 
             set
             {
                 base.Filter = value;
-            } // set
-        } // Filter
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
@@ -39,16 +40,16 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Include;
-            } // get
+            }
 
             set
             {
                 base.Include = value;
-            } // set
-        } // Include
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
@@ -56,22 +57,22 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Exclude;
-            } // get
+            }
 
             set
             {
                 base.Exclude = value;
-            } // set
-        } // Exclude
+            }
+        }
         #endregion Parameters
 
         #region parameter data
 
         /// <summary>
-        /// The path to the item
+        /// The path to the item.
         /// </summary>
-        internal string[] paths = new string[0];
+        internal string[] paths = Array.Empty<string>();
 
         #endregion parameter data
-    } // ItemPropertyCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

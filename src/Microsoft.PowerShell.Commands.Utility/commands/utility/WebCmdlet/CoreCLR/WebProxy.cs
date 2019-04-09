@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         public ICredentials Credentials
         {
             get { return _credentials; }
+
             set { _credentials = value; }
         }
 
@@ -38,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _credentials == CredentialCache.DefaultCredentials;
             }
+
             set
             {
                 _credentials = value ? CredentialCache.DefaultCredentials : null;

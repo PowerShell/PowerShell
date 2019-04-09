@@ -27,39 +27,64 @@ namespace System.Management.Automation.Language
     [Flags]
     internal enum CharTraits
     {
+        /// <summary>
+        /// No specific character traits.
+        /// </summary>
         None = 0x0000,
 
-        // For identifiers, is the character a letter?
+        /// <summary>
+        /// For identifiers, the first character must be a letter or underscore.
+        /// </summary>
         IdentifierStart = 0x0002,
 
-        // The character is a valid first character of a multiplier
+        /// <summary>
+        /// The character is a valid first character of a multiplier.
+        /// </summary>
         MultiplierStart = 0x0004,
 
-        // The character is a valid type suffix for numeric literals
+        /// <summary>
+        /// The character is a valid type suffix for numeric literals.
+        /// </summary>
         TypeSuffix = 0x0008,
 
-        // The character is a whitespace character
+        /// <summary>
+        /// The character is a whitespace character.
+        /// </summary>
         Whitespace = 0x0010,
 
-        // The character terminates a line.
+        /// <summary>
+        /// The character terminates a line.
+        /// </summary>
         Newline = 0x0020,
 
-        // The character is a hexadecimal digit.
+        /// <summary>
+        /// The character is a hexadecimal digit.
+        /// </summary>
         HexDigit = 0x0040,
 
-        // The character is a decimal digit.
+        /// <summary>
+        /// The character is a decimal digit.
+        /// </summary>
         Digit = 0x0080,
 
-        // The character is allowed as the first character in an unbraced variable name.
+        /// <summary>
+        /// The character is allowed as the first character in an unbraced variable name.
+        /// </summary>
         VarNameFirst = 0x0100,
 
-        // The character is not part of the token being scanned.
+        /// <summary>
+        /// The character is not part of the token being scanned.
+        /// </summary>
         ForceStartNewToken = 0x0200,
 
-        // The character is not part of the token being scanned, when the token is known to be part of an assembly name.
+        /// <summary>
+        /// The character is not part of the token being scanned, when the token is known to be part of an assembly name.
+        /// </summary>
         ForceStartNewAssemblyNameSpecToken = 0x0400,
 
-        // The character is the first character of some operator (and hence is not part of a token that starts a number)
+        /// <summary>
+        /// The character is the first character of some operator (and hence is not part of a token that starts a number).
+        /// </summary>
         ForceStartNewTokenAfterNumber = 0x0800,
     }
 
@@ -150,7 +175,7 @@ namespace System.Management.Automation.Language
 /*        K */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        L */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
 /*        M */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
-/*        N */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
+/*        N */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
 /*        O */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
 /*        P */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        Q */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
@@ -182,7 +207,7 @@ namespace System.Management.Automation.Language
 /*        k */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        l */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
 /*        m */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
-/*        n */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
+/*        n */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
 /*        o */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
 /*        p */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        q */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
@@ -259,6 +284,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.VarNameFirst) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -270,6 +296,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.IdentifierStart) != 0;
             }
+
             return char.IsLetter(c);
         }
 
@@ -281,6 +308,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & (CharTraits.IdentifierStart | CharTraits.Digit)) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -291,26 +319,28 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.HexDigit) != 0;
             }
+
             return false;
         }
 
-        // Return true if the character is a decimal digit.
-        internal static bool IsDecimalDigit(this char c)
-        {
-            if (c < 128)
-            {
-                return (s_traits[c] & CharTraits.Digit) != 0;
-            }
-            return false;
-        }
+        // Returns true if the character is a decimal digit.
+        internal static bool IsDecimalDigit(this char c) => (uint)(c - '0') <= 9;
 
-        // Return true if the character is a type suffix character.
+        // These decimal/binary checking methods are more performant than the alternatives due to requiring
+        // less overall operations than a more readable check such as {(this char c) => c == 0 | c == 1},
+        // especially in the case of IsDecimalDigit().
+
+        // Returns true if the character is a binary digit.
+        internal static bool IsBinaryDigit(this char c) => (uint)(c - '0') <= 1;
+
+        // Returns true if the character is a type suffix character.
         internal static bool IsTypeSuffix(this char c)
         {
             if (c < 128)
             {
                 return (s_traits[c] & CharTraits.TypeSuffix) != 0;
             }
+
             return false;
         }
 
@@ -321,6 +351,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.MultiplierStart) != 0;
             }
+
             return false;
         }
 

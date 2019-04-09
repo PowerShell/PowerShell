@@ -67,20 +67,20 @@ set-psbreakpoint -command foo
     }
 
     It "-script and -line can take multiple items" {
-        $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
+        $brk = Set-PSBreakpoint -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
         $brk.Line | Should -BeIn 11,12,13
         $brk.Column | Should -BeIn 1
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-script and -line are positional" {
-        $brk = sbp $scriptFileName 13
+        $brk = Set-PSBreakpoint $scriptFileName 13
         $brk.Line | Should -Be 13
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-script, -line and -column are positional" {
-        $brk = sbp $scriptFileName 13 1
+        $brk = Set-PSBreakpoint $scriptFileName 13 1
         $brk.Line | Should -Be 13
         $brk.Column | Should -Be 1
         Remove-PSBreakPoint -Id $brk.Id

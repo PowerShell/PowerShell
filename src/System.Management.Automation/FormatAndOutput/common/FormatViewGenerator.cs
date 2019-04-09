@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// base class for the various types of formatting shapes
+    /// Base class for the various types of formatting shapes.
     /// </summary>
     internal abstract class ViewGenerator
     {
@@ -63,6 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             InitializeFormatErrorManager();
             InitializeGroupBy();
             InitializeAutoSize();
+            InitializeRepeatHeader();
         }
 
         private void InitializeFormatErrorManager()
@@ -76,6 +77,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 formatErrorPolicy.ShowErrorsAsMessages = this.dataBaseInfo.db.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
             }
+
             if (parameters != null && parameters.showErrorsInFormattedOutput.HasValue)
             {
                 formatErrorPolicy.ShowErrorsInFormattedOutput = parameters.showErrorsInFormattedOutput.Value;
@@ -103,6 +105,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     label = labelKey as string;
                 }
+
                 _groupingManager = new GroupingInfoManager();
                 _groupingManager.Initialize(groupingKeyExpression, label);
                 return;
@@ -116,6 +119,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return;
                 }
+
                 if (gb.startGroup == null || gb.startGroup.expression == null)
                 {
                     return;
@@ -147,6 +151,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
+        private void InitializeRepeatHeader()
+        {
+            if (parameters != null)
+            {
+                _repeatHeader = parameters.repeatHeader;
+            }
+        }
+
         internal virtual FormatStartData GenerateStartData(PSObject so)
         {
             FormatStartData startFormat = new FormatStartData();
@@ -155,6 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 startFormat.autosizeInfo = new AutosizeInfo();
             }
+
             return startFormat;
         }
 
@@ -254,14 +267,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 controlGenerator.GenerateFormatEntries(maxTreeDepth,
                     control, firstObjectInGroup, startGroup.groupingEntry.formatValueList);
             }
+
             return startGroup;
         }
 
         /// <summary>
-        /// update the current value of the grouping key
+        /// Update the current value of the grouping key.
         /// </summary>
-        /// <param name="so">object to use for the update</param>
-        /// <returns>true if the value of the key changed</returns>
+        /// <param name="so">Object to use for the update.</param>
+        /// <returns>True if the value of the key changed.</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {
             if (_groupingManager == null)
@@ -301,6 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     result = IsObjectApplicable(typesWithoutPrefix);
                 }
             }
+
             return result;
         }
 
@@ -310,7 +325,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get { return _autosize; }
         }
+
         private bool _autosize = false;
+
+        protected bool RepeatHeader
+        {
+            get { return _repeatHeader; }
+        }
+
+        private bool _repeatHeader = false;
 
         protected class DataBaseInfo
         {
@@ -373,6 +396,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
             }
+
             return retVal;
         }
 
@@ -389,6 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
+
             return retVal;
         }
 
@@ -431,6 +456,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 fpf.propertyValue = string.Empty;
             }
+
             return fpf;
         }
 

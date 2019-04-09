@@ -8,9 +8,10 @@ param(
 
 if ($SkipPwshExe) {
     ## This is required for fxdependent package as no .exe is generated.
-    $xmlContent = Get-Content $SigningXmlPath | Where-Object { $_ -notmatch '__INPATHROOT__\\pwsh.exe'}
+    $xmlContent = Get-Content $SigningXmlPath | Where-Object { $_ -notmatch '__INPATHROOT__\\pwsh.exe' }
 } else {
-    $xmlContent = Get-Content $signingXmlPath
+    ## We skip the global tool shim assembly for regular builds.
+    $xmlContent = Get-Content $signingXmlPath | Where-Object { $_ -notmatch '__INPATHROOT__\\Microsoft.PowerShell.GlobalTool.Shim.dll' }
 }
 
 # Parse the signing xml

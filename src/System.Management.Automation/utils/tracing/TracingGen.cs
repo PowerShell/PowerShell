@@ -7,32 +7,32 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// Tracer
+    /// Tracer.
     /// </summary>
     public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity
     {
         /// <summary>
-        /// Critical level
+        /// Critical level.
         /// </summary>
         public const byte LevelCritical = 1;
         /// <summary>
-        /// Error level
+        /// Error level.
         /// </summary>
         public const byte LevelError = 2;
         /// <summary>
-        /// Warning level
+        /// Warning level.
         /// </summary>
         public const byte LevelWarning = 3;
         /// <summary>
-        /// Informational level
+        /// Informational level.
         /// </summary>
         public const byte LevelInformational = 4;
         /// <summary>
-        /// Verbose level
+        /// Verbose level.
         /// </summary>
         public const byte LevelVerbose = 5;
         /// <summary>
-        /// Keyword all
+        /// Keyword all.
         /// </summary>
         public const long KeywordAll = 0xFFFFFFFF;
         private static Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Tracing
         private static EventDescriptor M3PWorkflowValidationStartedEvent;
 
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static Tracer()
         {
@@ -212,12 +212,12 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public Tracer() : base() { }
 
         /// <summary>
-        /// Provider Guid
+        /// Provider Guid.
         /// </summary>
         protected override Guid ProviderId
         {
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Transfer Event
+        /// Transfer Event.
         /// </summary>
         protected override EventDescriptor TransferEvent
         {

@@ -36,12 +36,19 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter AsHashtable { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum depth the JSON input is allowed to have. By default, it is 1024.
+        /// </summary>
+        [Parameter()]
+        [ValidateRange(ValidateRangeKind.Positive)]
+        public int Depth { get; set; } = 1024;
+
         #endregion parameters
 
         #region overrides
 
         /// <summary>
-        ///  Buffers InputObjet contents available in the pipeline.
+        /// Buffers InputObjet contents available in the pipeline.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -95,12 +102,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ConvertFromJsonHelper is a helper method to convert to Json input to .Net Type.
         /// </summary>
-        /// <param name="input">Input String.</param>
+        /// <param name="input">Input string.</param>
         /// <returns>True if successfully converted, else returns false.</returns>
         private bool ConvertFromJsonHelper(string input)
         {
             ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
 
             if (error != null)
             {

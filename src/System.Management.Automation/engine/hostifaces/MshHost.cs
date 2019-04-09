@@ -44,7 +44,7 @@ namespace System.Management.Automation.Host
         internal static bool IsStdOutputRedirected;
 
         /// <summary>
-        /// Protected constructor which does nothing.  Provided per .Net design guidelines section 4.3.1
+        /// Protected constructor which does nothing.  Provided per .Net design guidelines section 4.3.1.
         /// </summary>
 
         protected PSHost()
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets the host's culture: the culture that the runspace should use to set the CurrentCulture on new threads
+        /// Gets the host's culture: the culture that the runspace should use to set the CurrentCulture on new threads.
         /// </summary>
         /// <value>
         /// A CultureInfo object representing the host's current culture.  Returning null is not allowed.
@@ -244,7 +244,7 @@ namespace System.Management.Automation.Host
         /// . reads from stdin
         /// . writes to stdout
         /// . writes to stderr
-        /// . uses any of the win32 console APIs
+        /// . uses any of the win32 console APIs.
         /// </summary>
         /// <remarks>
         /// Notifying the host allows the host to do such things as save off any state that might need to be restored when the
@@ -294,6 +294,7 @@ namespace System.Management.Automation.Host
         public virtual bool DebuggerEnabled
         {
             get { return false; }
+
             set { throw new PSNotImplementedException(); }
         }
     }
@@ -331,4 +332,4 @@ namespace System.Management.Automation.Host
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         Runspace Runspace { get; }
     }
-}   // namespace System.Management.Automation.Host
+}

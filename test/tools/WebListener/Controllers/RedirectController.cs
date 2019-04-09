@@ -38,7 +38,7 @@ namespace mvc.Controllers
                 url = $"{url}?type={type.FirstOrDefault()}";
                 Response.Headers.Add("Location", url);
             }
-            else if (typeIsPresent && String.Equals(type.FirstOrDefault(), "relative", StringComparison.InvariantCultureIgnoreCase))
+            else if (typeIsPresent && string.Equals(type.FirstOrDefault(), "relative", StringComparison.InvariantCultureIgnoreCase))
             {
                 url = new Uri($"{url}?type={type.FirstOrDefault()}").PathAndQuery;
                 Response.Redirect(url, false);
@@ -52,6 +52,7 @@ namespace mvc.Controllers
 
             return View();
         }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

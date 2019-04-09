@@ -95,6 +95,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Static
         {
             set { _staticParameter = value; }
+
             get { return _staticParameter; }
         }
 
@@ -114,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (_matchOptions == MshMemberMatchOptions.IncludeHidden);
             }
+
             set
             {
                 if (value)
@@ -127,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
         private HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
@@ -147,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             Adapter staticAdapter = null;
             if (this.Static == true)
             {
-                staticAdapter = PSObject.dotNetStaticAdapter;
+                staticAdapter = PSObject.DotNetStaticAdapter;
                 object baseObject = this.InputObject.BaseObject;
                 baseObjectAsType = baseObject as System.Type ?? baseObject.GetType();
                 typeName = baseObjectAsType.FullName;
@@ -161,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //This is never used for display.  It is used only as a key to typesAlreadyDisplayed
+                    // This is never used for display.  It is used only as a key to typesAlreadyDisplayed
                     typeName = "<null>";
                 }
             }
@@ -234,9 +237,11 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
                     }
+
                     members[resultCount] = new MemberDefinition(typeName, member.Name, member.MemberType, member.ToString());
                     resultCount++;
                 }
+
                 Array.Sort<MemberDefinition>(members, 0, resultCount, new MemberComparer());
                 for (int index = 0; index < resultCount; index++)
                 {
@@ -249,13 +254,14 @@ namespace Microsoft.PowerShell.Commands
         {
             public int Compare(MemberDefinition first, MemberDefinition second)
             {
-                int result = String.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
+                int result = string.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
                     StringComparison.OrdinalIgnoreCase);
                 if (result != 0)
                 {
                     return result;
                 }
-                return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
+
+                return string.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
 

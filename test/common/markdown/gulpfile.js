@@ -37,7 +37,7 @@ function RunTest() {
         var rootJsonFile = rootpath + "/.markdownlint.json"
         var fs = require('fs');
         fs.appendFileSync('markdownissues.txt', '--EMPTY--\r\n');
-        gulp.src(paths, { "read": false })
+        return gulp.src(paths, { "read": false })
             .pipe(through2.obj(function obj(file, enc, next) {
                 markdownlint(
                     {

@@ -5,12 +5,6 @@ Describe "SecureString conversion tests" -Tags "CI" {
         $string = "ABCD"
         $secureString = [System.Security.SecureString]::New()
         $string.ToCharArray() | foreach-object { $securestring.AppendChar($_) }
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
-        $PSdefaultParameterValues = @{}
-        if ( ! $IsWindows ) { $PSdefaultParameterValues["it:pending"] = $true }
-    }
-    AfterAll {
-        $global:PSdefaultParameterValues = $defaultParamValues
     }
 
     It "using null arguments to ConvertFrom-SecureString produces an exception" {

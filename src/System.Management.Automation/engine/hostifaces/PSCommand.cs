@@ -31,7 +31,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal copy constructor
+        /// Internal copy constructor.
         /// </summary>
         /// <param name="commandToClone"></param>
         internal PSCommand(PSCommand commandToClone)
@@ -47,9 +47,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a PSCommand from the specified command
+        /// Creates a PSCommand from the specified command.
         /// </summary>
-        /// <param name="command">Command object to use</param>
+        /// <param name="command">Command object to use.</param>
         internal PSCommand(Command command)
         {
             _currentCommand = command;
@@ -90,6 +90,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
@@ -133,6 +134,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
@@ -174,6 +176,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
@@ -218,6 +221,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
@@ -255,6 +259,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("command");
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
@@ -301,10 +306,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
             }
+
             _currentCommand.Parameters.Add(parameterName, value);
             return this;
         }
@@ -341,10 +348,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
             }
+
             _currentCommand.Parameters.Add(parameterName, true);
             return this;
         }
@@ -381,10 +390,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });
             }
+
             if (_owner != null)
             {
                 _owner.AssertChangesAreAccepted();
             }
+
             _currentCommand.Parameters.Add(null, value);
             return this;
         }
@@ -435,7 +446,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The PowerShell instance this PSCommand is associated to, or null if it is an standalone command
+        /// The PowerShell instance this PSCommand is associated to, or null if it is an standalone command.
         /// </summary>
         internal PowerShell Owner
         {
@@ -443,6 +454,7 @@ namespace System.Management.Automation
             {
                 return _owner;
             }
+
             set
             {
                 _owner = value;

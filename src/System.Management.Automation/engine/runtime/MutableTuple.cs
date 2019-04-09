@@ -52,6 +52,7 @@ namespace System.Management.Automation
             {
                 nestedTuple = (MutableTuple)nestedTuple.GetValueImpl(accessPath[i]);
             }
+
             return nestedTuple._valuesSet[accessPath[length-1]];
         }
 
@@ -61,12 +62,15 @@ namespace System.Management.Automation
             {
                 context.Debugger.CheckVariableWrite(SpecialVariables.AutomaticVariables[(int)auto]);
             }
+
             SetValue((int)auto, value);
         }
+
         internal object GetAutomaticVariable(AutomaticVariable auto)
         {
             return GetValue((int)auto);
         }
+
         internal void SetPreferenceVariable(PreferenceVariable pref, object value)
         {
             SetValue((int)pref, value);
@@ -81,6 +85,7 @@ namespace System.Management.Automation
                 result = new LocalVariable(name, this, index);
                 return true;
             }
+
             result = null;
             return false;
         }
@@ -94,6 +99,7 @@ namespace System.Management.Automation
                 SetValue(index, value);
                 return true;
             }
+
             return false;
         }
 
@@ -106,6 +112,7 @@ namespace System.Management.Automation
                 SetValue(index, value);
                 return new LocalVariable(name, this, index);
             }
+
             return null;
         }
 
@@ -165,8 +172,10 @@ namespace System.Management.Automation
                     {
                         res = (MutableTuple)res.GetValueImpl(lastAccess);
                     }
+
                     lastAccess = i;
                 }
+
                 res.SetValueImpl(lastAccess, value);
             }
         }
@@ -190,6 +199,7 @@ namespace System.Management.Automation
                 {
                     res = ((MutableTuple)res).GetValueImpl(i);
                 }
+
                 return res;
             }
         }
@@ -256,7 +266,7 @@ namespace System.Management.Automation
         /// </summary>
         public static Type MakeTupleType(params Type[] types)
         {
-            //ContractUtils.RequiresNotNull(types, "types");
+            // ContractUtils.RequiresNotNull(types, "types");
 
             return MakeTupleType(types, 0, types.Length);
         }
@@ -266,7 +276,7 @@ namespace System.Management.Automation
         /// </summary>
         public static int GetSize(Type tupleType)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
             lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
@@ -282,6 +292,7 @@ namespace System.Management.Automation
                     {
                         types.Push(subtype);
                     }
+
                     continue;
                 }
 
@@ -312,8 +323,8 @@ namespace System.Management.Automation
         /// </summary>
         public static MutableTuple MakeTuple(Type tupleType, Dictionary<string, int> nameToIndexMap, Func<MutableTuple> creator = null)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
-            //ContractUtils.RequiresNotNull(args, "args");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(args, "args");
 
             int size = GetSize(tupleType);
             var bitArray = new BitArray(size);
@@ -327,7 +338,7 @@ namespace System.Management.Automation
         /// </summary>
         public static object[] GetTupleValues(MutableTuple tuple)
         {
-            //ContractUtils.RequiresNotNull(tuple, "tuple");
+            // ContractUtils.RequiresNotNull(tuple, "tuple");
 
             List<object> res = new List<object>();
 
@@ -349,13 +360,13 @@ namespace System.Management.Automation
         /// </summary>
         internal static IEnumerable<PropertyInfo> GetAccessProperties(Type tupleType, int size, int index)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             if (index < 0 || index >= size) throw new ArgumentException("index");
 
             foreach (int curIndex in GetAccessPath(size, index))
             {
-                PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
+                PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
                 Diagnostics.Assert(pi != null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
@@ -423,9 +434,10 @@ namespace System.Management.Automation
                 {
                     size = (size + MutableTuple.MaxSize - 1) / MutableTuple.MaxSize;
                 }
+
                 for (int i = 0; i < size; i++)
                 {
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
                     res.SetValueImpl(i, MakeTuple(pi.PropertyType, null, null));
                 }
             }
@@ -450,6 +462,7 @@ namespace System.Management.Automation
                 {
                     typeArr[index++] = typeof(DynamicNull);
                 }
+
                 return type.MakeGenericType(typeArr);
             }
 
@@ -469,6 +482,7 @@ namespace System.Management.Automation
                 int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
                 nestedTypes[i] = MakeTupleType(types, newStart, newEnd);
             }
+
             for (int i = size; i < nestedTypes.Length; i++)
             {
                 nestedTypes[i] = typeof(DynamicNull);
@@ -516,13 +530,14 @@ namespace System.Management.Automation
                     size = (size + MutableTuple.MaxSize - 1) / MutableTuple.MaxSize;
                     multiplier *= MutableTuple.MaxSize;
                 }
+
                 newValues = new Expression[PowerOfTwoRound(size)];
                 for (int i = 0; i < size; i++)
                 {
                     int newStart = start + (i * multiplier);
                     int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
 
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
 
                     newValues[i] = CreateNew(pi.PropertyType, newStart, newEnd, values);
                 }
@@ -571,6 +586,7 @@ namespace System.Management.Automation
         public T0 Item000
         {
             get { return _item0; }
+
             set { _item0 = value; _valuesSet[0] = true; }
         }
 
@@ -591,6 +607,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -599,6 +616,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1> : MutableTuple<T0>
     {
@@ -615,6 +633,7 @@ namespace System.Management.Automation
         public T1 Item001
         {
             get { return _item1; }
+
             set { _item1 = value; _valuesSet[1] = true; }
         }
 
@@ -637,6 +656,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -645,6 +665,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3> : MutableTuple<T0, T1>
     {
@@ -663,11 +684,14 @@ namespace System.Management.Automation
         public T2 Item002
         {
             get { return _item2; }
+
             set { _item2 = value; _valuesSet[2] = true; }
         }
+
         public T3 Item003
         {
             get { return _item3; }
+
             set { _item3 = value; _valuesSet[3] = true; }
         }
 
@@ -694,6 +718,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -702,6 +727,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7> : MutableTuple<T0, T1, T2, T3>
     {
@@ -724,21 +750,28 @@ namespace System.Management.Automation
         public T4 Item004
         {
             get { return _item4; }
+
             set { _item4 = value; _valuesSet[4] = true; }
         }
+
         public T5 Item005
         {
             get { return _item5; }
+
             set { _item5 = value; _valuesSet[5] = true; }
         }
+
         public T6 Item006
         {
             get { return _item6; }
+
             set { _item6 = value; _valuesSet[6] = true; }
         }
+
         public T7 Item007
         {
             get { return _item7; }
+
             set { _item7 = value; _valuesSet[7] = true; }
         }
 
@@ -773,6 +806,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -781,6 +815,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> : MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7>
     {
@@ -811,41 +846,56 @@ namespace System.Management.Automation
         public T8 Item008
         {
             get { return _item8; }
+
             set { _item8 = value; _valuesSet[8] = true; }
         }
+
         public T9 Item009
         {
             get { return _item9; }
+
             set { _item9 = value; _valuesSet[9] = true; }
         }
+
         public T10 Item010
         {
             get { return _item10; }
+
             set { _item10 = value; _valuesSet[10] = true; }
         }
+
         public T11 Item011
         {
             get { return _item11; }
+
             set { _item11 = value; _valuesSet[11] = true; }
         }
+
         public T12 Item012
         {
             get { return _item12; }
+
             set { _item12 = value; _valuesSet[12] = true; }
         }
+
         public T13 Item013
         {
             get { return _item13; }
+
             set { _item13 = value; _valuesSet[13] = true; }
         }
+
         public T14 Item014
         {
             get { return _item14; }
+
             set { _item14 = value; _valuesSet[14] = true; }
         }
+
         public T15 Item015
         {
             get { return _item15; }
+
             set { _item15 = value; _valuesSet[15] = true; }
         }
 
@@ -896,6 +946,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -904,6 +955,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31> : MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
     {
@@ -950,81 +1002,112 @@ namespace System.Management.Automation
         public T16 Item016
         {
             get { return _item16; }
+
             set { _item16 = value; _valuesSet[16] = true; }
         }
+
         public T17 Item017
         {
             get { return _item17; }
+
             set { _item17 = value; _valuesSet[17] = true; }
         }
+
         public T18 Item018
         {
             get { return _item18; }
+
             set { _item18 = value; _valuesSet[18] = true; }
         }
+
         public T19 Item019
         {
             get { return _item19; }
+
             set { _item19 = value; _valuesSet[19] = true; }
         }
+
         public T20 Item020
         {
             get { return _item20; }
+
             set { _item20 = value; _valuesSet[20] = true; }
         }
+
         public T21 Item021
         {
             get { return _item21; }
+
             set { _item21 = value; _valuesSet[21] = true; }
         }
+
         public T22 Item022
         {
             get { return _item22; }
+
             set { _item22 = value; _valuesSet[22] = true; }
         }
+
         public T23 Item023
         {
             get { return _item23; }
+
             set { _item23 = value; _valuesSet[23] = true; }
         }
+
         public T24 Item024
         {
             get { return _item24; }
+
             set { _item24 = value; _valuesSet[24] = true; }
         }
+
         public T25 Item025
         {
             get { return _item25; }
+
             set { _item25 = value; _valuesSet[25] = true; }
         }
+
         public T26 Item026
         {
             get { return _item26; }
+
             set { _item26 = value; _valuesSet[26] = true; }
         }
+
         public T27 Item027
         {
             get { return _item27; }
+
             set { _item27 = value; _valuesSet[27] = true; }
         }
+
         public T28 Item028
         {
             get { return _item28; }
+
             set { _item28 = value; _valuesSet[28] = true; }
         }
+
         public T29 Item029
         {
             get { return _item29; }
+
             set { _item29 = value; _valuesSet[29] = true; }
         }
+
         public T30 Item030
         {
             get { return _item30; }
+
             set { _item30 = value; _valuesSet[30] = true; }
         }
+
         public T31 Item031
         {
             get { return _item31; }
+
             set { _item31 = value; _valuesSet[31] = true; }
         }
 
@@ -1107,6 +1190,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -1115,6 +1199,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40, T41, T42, T43, T44, T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63> : MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31>
     {
@@ -1193,161 +1278,224 @@ namespace System.Management.Automation
         public T32 Item032
         {
             get { return _item32; }
+
             set { _item32 = value; _valuesSet[32] = true; }
         }
+
         public T33 Item033
         {
             get { return _item33; }
+
             set { _item33 = value; _valuesSet[33] = true; }
         }
+
         public T34 Item034
         {
             get { return _item34; }
+
             set { _item34 = value; _valuesSet[34] = true; }
         }
+
         public T35 Item035
         {
             get { return _item35; }
+
             set { _item35 = value; _valuesSet[35] = true; }
         }
+
         public T36 Item036
         {
             get { return _item36; }
+
             set { _item36 = value; _valuesSet[36] = true; }
         }
+
         public T37 Item037
         {
             get { return _item37; }
+
             set { _item37 = value; _valuesSet[37] = true; }
         }
+
         public T38 Item038
         {
             get { return _item38; }
+
             set { _item38 = value; _valuesSet[38] = true; }
         }
+
         public T39 Item039
         {
             get { return _item39; }
+
             set { _item39 = value; _valuesSet[39] = true; }
         }
+
         public T40 Item040
         {
             get { return _item40; }
+
             set { _item40 = value; _valuesSet[40] = true; }
         }
+
         public T41 Item041
         {
             get { return _item41; }
+
             set { _item41 = value; _valuesSet[41] = true; }
         }
+
         public T42 Item042
         {
             get { return _item42; }
+
             set { _item42 = value; _valuesSet[42] = true; }
         }
+
         public T43 Item043
         {
             get { return _item43; }
+
             set { _item43 = value; _valuesSet[43] = true; }
         }
+
         public T44 Item044
         {
             get { return _item44; }
+
             set { _item44 = value; _valuesSet[44] = true; }
         }
+
         public T45 Item045
         {
             get { return _item45; }
+
             set { _item45 = value; _valuesSet[45] = true; }
         }
+
         public T46 Item046
         {
             get { return _item46; }
+
             set { _item46 = value; _valuesSet[46] = true; }
         }
+
         public T47 Item047
         {
             get { return _item47; }
+
             set { _item47 = value; _valuesSet[47] = true; }
         }
+
         public T48 Item048
         {
             get { return _item48; }
+
             set { _item48 = value; _valuesSet[48] = true; }
         }
+
         public T49 Item049
         {
             get { return _item49; }
+
             set { _item49 = value; _valuesSet[49] = true; }
         }
+
         public T50 Item050
         {
             get { return _item50; }
+
             set { _item50 = value; _valuesSet[50] = true; }
         }
+
         public T51 Item051
         {
             get { return _item51; }
+
             set { _item51 = value; _valuesSet[51] = true; }
         }
+
         public T52 Item052
         {
             get { return _item52; }
+
             set { _item52 = value; _valuesSet[52] = true; }
         }
+
         public T53 Item053
         {
             get { return _item53; }
+
             set { _item53 = value; _valuesSet[53] = true; }
         }
+
         public T54 Item054
         {
             get { return _item54; }
+
             set { _item54 = value; _valuesSet[54] = true; }
         }
+
         public T55 Item055
         {
             get { return _item55; }
+
             set { _item55 = value; _valuesSet[55] = true; }
         }
+
         public T56 Item056
         {
             get { return _item56; }
+
             set { _item56 = value; _valuesSet[56] = true; }
         }
+
         public T57 Item057
         {
             get { return _item57; }
+
             set { _item57 = value; _valuesSet[57] = true; }
         }
+
         public T58 Item058
         {
             get { return _item58; }
+
             set { _item58 = value; _valuesSet[58] = true; }
         }
+
         public T59 Item059
         {
             get { return _item59; }
+
             set { _item59 = value; _valuesSet[59] = true; }
         }
+
         public T60 Item060
         {
             get { return _item60; }
+
             set { _item60 = value; _valuesSet[60] = true; }
         }
+
         public T61 Item061
         {
             get { return _item61; }
+
             set { _item61 = value; _valuesSet[61] = true; }
         }
+
         public T62 Item062
         {
             get { return _item62; }
+
             set { _item62 = value; _valuesSet[62] = true; }
         }
+
         public T63 Item063
         {
             get { return _item63; }
+
             set { _item63 = value; _valuesSet[63] = true; }
         }
 
@@ -1494,6 +1642,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get
@@ -1502,6 +1651,7 @@ namespace System.Management.Automation
             }
         }
     }
+
     [GeneratedCode("DLR", "2.0")]
     internal class MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40, T41, T42, T43, T44, T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77, T78, T79, T80, T81, T82, T83, T84, T85, T86, T87, T88, T89, T90, T91, T92, T93, T94, T95, T96, T97, T98, T99, T100, T101, T102, T103, T104, T105, T106, T107, T108, T109, T110, T111, T112, T113, T114, T115, T116, T117, T118, T119, T120, T121, T122, T123, T124, T125, T126, T127> : MutableTuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40, T41, T42, T43, T44, T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63>
     {
@@ -1644,321 +1794,448 @@ namespace System.Management.Automation
         public T64 Item064
         {
             get { return _item64; }
+
             set { _item64 = value; _valuesSet[64] = true; }
         }
+
         public T65 Item065
         {
             get { return _item65; }
+
             set { _item65 = value; _valuesSet[65] = true; }
         }
+
         public T66 Item066
         {
             get { return _item66; }
+
             set { _item66 = value; _valuesSet[66] = true; }
         }
+
         public T67 Item067
         {
             get { return _item67; }
+
             set { _item67 = value; _valuesSet[67] = true; }
         }
+
         public T68 Item068
         {
             get { return _item68; }
+
             set { _item68 = value; _valuesSet[68] = true; }
         }
+
         public T69 Item069
         {
             get { return _item69; }
+
             set { _item69 = value; _valuesSet[69] = true; }
         }
+
         public T70 Item070
         {
             get { return _item70; }
+
             set { _item70 = value; _valuesSet[70] = true; }
         }
+
         public T71 Item071
         {
             get { return _item71; }
+
             set { _item71 = value; _valuesSet[71] = true; }
         }
+
         public T72 Item072
         {
             get { return _item72; }
+
             set { _item72 = value; _valuesSet[72] = true; }
         }
+
         public T73 Item073
         {
             get { return _item73; }
+
             set { _item73 = value; _valuesSet[73] = true; }
         }
+
         public T74 Item074
         {
             get { return _item74; }
+
             set { _item74 = value; _valuesSet[74] = true; }
         }
+
         public T75 Item075
         {
             get { return _item75; }
+
             set { _item75 = value; _valuesSet[75] = true; }
         }
+
         public T76 Item076
         {
             get { return _item76; }
+
             set { _item76 = value; _valuesSet[76] = true; }
         }
+
         public T77 Item077
         {
             get { return _item77; }
+
             set { _item77 = value; _valuesSet[77] = true; }
         }
+
         public T78 Item078
         {
             get { return _item78; }
+
             set { _item78 = value; _valuesSet[78] = true; }
         }
+
         public T79 Item079
         {
             get { return _item79; }
+
             set { _item79 = value; _valuesSet[79] = true; }
         }
+
         public T80 Item080
         {
             get { return _item80; }
+
             set { _item80 = value; _valuesSet[80] = true; }
         }
+
         public T81 Item081
         {
             get { return _item81; }
+
             set { _item81 = value; _valuesSet[81] = true; }
         }
+
         public T82 Item082
         {
             get { return _item82; }
+
             set { _item82 = value; _valuesSet[82] = true; }
         }
+
         public T83 Item083
         {
             get { return _item83; }
+
             set { _item83 = value; _valuesSet[83] = true; }
         }
+
         public T84 Item084
         {
             get { return _item84; }
+
             set { _item84 = value; _valuesSet[84] = true; }
         }
+
         public T85 Item085
         {
             get { return _item85; }
+
             set { _item85 = value; _valuesSet[85] = true; }
         }
+
         public T86 Item086
         {
             get { return _item86; }
+
             set { _item86 = value; _valuesSet[86] = true; }
         }
+
         public T87 Item087
         {
             get { return _item87; }
+
             set { _item87 = value; _valuesSet[87] = true; }
         }
+
         public T88 Item088
         {
             get { return _item88; }
+
             set { _item88 = value; _valuesSet[88] = true; }
         }
+
         public T89 Item089
         {
             get { return _item89; }
+
             set { _item89 = value; _valuesSet[89] = true; }
         }
+
         public T90 Item090
         {
             get { return _item90; }
+
             set { _item90 = value; _valuesSet[90] = true; }
         }
+
         public T91 Item091
         {
             get { return _item91; }
+
             set { _item91 = value; _valuesSet[91] = true; }
         }
+
         public T92 Item092
         {
             get { return _item92; }
+
             set { _item92 = value; _valuesSet[92] = true; }
         }
+
         public T93 Item093
         {
             get { return _item93; }
+
             set { _item93 = value; _valuesSet[93] = true; }
         }
+
         public T94 Item094
         {
             get { return _item94; }
+
             set { _item94 = value; _valuesSet[94] = true; }
         }
+
         public T95 Item095
         {
             get { return _item95; }
+
             set { _item95 = value; _valuesSet[95] = true; }
         }
+
         public T96 Item096
         {
             get { return _item96; }
+
             set { _item96 = value; _valuesSet[96] = true; }
         }
+
         public T97 Item097
         {
             get { return _item97; }
+
             set { _item97 = value; _valuesSet[97] = true; }
         }
+
         public T98 Item098
         {
             get { return _item98; }
+
             set { _item98 = value; _valuesSet[98] = true; }
         }
+
         public T99 Item099
         {
             get { return _item99; }
+
             set { _item99 = value; _valuesSet[99] = true; }
         }
+
         public T100 Item100
         {
             get { return _item100; }
+
             set { _item100 = value; _valuesSet[100] = true; }
         }
+
         public T101 Item101
         {
             get { return _item101; }
+
             set { _item101 = value; _valuesSet[101] = true; }
         }
+
         public T102 Item102
         {
             get { return _item102; }
+
             set { _item102 = value; _valuesSet[102] = true; }
         }
+
         public T103 Item103
         {
             get { return _item103; }
+
             set { _item103 = value; _valuesSet[103] = true; }
         }
+
         public T104 Item104
         {
             get { return _item104; }
+
             set { _item104 = value; _valuesSet[104] = true; }
         }
+
         public T105 Item105
         {
             get { return _item105; }
+
             set { _item105 = value; _valuesSet[105] = true; }
         }
+
         public T106 Item106
         {
             get { return _item106; }
+
             set { _item106 = value; _valuesSet[106] = true; }
         }
+
         public T107 Item107
         {
             get { return _item107; }
+
             set { _item107 = value; _valuesSet[107] = true; }
         }
+
         public T108 Item108
         {
             get { return _item108; }
+
             set { _item108 = value; _valuesSet[108] = true; }
         }
+
         public T109 Item109
         {
             get { return _item109; }
+
             set { _item109 = value; _valuesSet[109] = true; }
         }
+
         public T110 Item110
         {
             get { return _item110; }
+
             set { _item110 = value; _valuesSet[110] = true; }
         }
+
         public T111 Item111
         {
             get { return _item111; }
+
             set { _item111 = value; _valuesSet[111] = true; }
         }
+
         public T112 Item112
         {
             get { return _item112; }
+
             set { _item112 = value; _valuesSet[112] = true; }
         }
+
         public T113 Item113
         {
             get { return _item113; }
+
             set { _item113 = value; _valuesSet[113] = true; }
         }
+
         public T114 Item114
         {
             get { return _item114; }
+
             set { _item114 = value; _valuesSet[114] = true; }
         }
+
         public T115 Item115
         {
             get { return _item115; }
+
             set { _item115 = value; _valuesSet[115] = true; }
         }
+
         public T116 Item116
         {
             get { return _item116; }
+
             set { _item116 = value; _valuesSet[116] = true; }
         }
+
         public T117 Item117
         {
             get { return _item117; }
+
             set { _item117 = value; _valuesSet[117] = true; }
         }
+
         public T118 Item118
         {
             get { return _item118; }
+
             set { _item118 = value; _valuesSet[118] = true; }
         }
+
         public T119 Item119
         {
             get { return _item119; }
+
             set { _item119 = value; _valuesSet[119] = true; }
         }
+
         public T120 Item120
         {
             get { return _item120; }
+
             set { _item120 = value; _valuesSet[120] = true; }
         }
+
         public T121 Item121
         {
             get { return _item121; }
+
             set { _item121 = value; _valuesSet[121] = true; }
         }
+
         public T122 Item122
         {
             get { return _item122; }
+
             set { _item122 = value; _valuesSet[122] = true; }
         }
+
         public T123 Item123
         {
             get { return _item123; }
+
             set { _item123 = value; _valuesSet[123] = true; }
         }
+
         public T124 Item124
         {
             get { return _item124; }
+
             set { _item124 = value; _valuesSet[124] = true; }
         }
+
         public T125 Item125
         {
             get { return _item125; }
+
             set { _item125 = value; _valuesSet[125] = true; }
         }
+
         public T126 Item126
         {
             get { return _item126; }
+
             set { _item126 = value; _valuesSet[126] = true; }
         }
+
         public T127 Item127
         {
             get { return _item127; }
+
             set { _item127 = value; _valuesSet[127] = true; }
         }
 
@@ -2233,6 +2510,7 @@ namespace System.Management.Automation
                 default: throw new ArgumentOutOfRangeException("index");
             }
         }
+
         public override int Capacity
         {
             get

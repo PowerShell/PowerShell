@@ -54,7 +54,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             public string PropertyName { get; private set; }
+
             public object PropertyValue { get; private set; }
+
             public Func<string, string, string> ErrorMessageGenerator { get; private set; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
@@ -151,6 +153,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
+
             protected void AddPropertyValueFilter(PropertyValueFilter propertyValueFilter)
             {
                 _propertyValueFilters.Add(propertyValueFilter);
@@ -170,6 +173,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         }
                     }
                 }
+
                 return isMatch;
             }
         }
@@ -345,9 +349,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     {
                         _behaviorOnNoMatch = this.GetDefaultBehaviorWhenNoMatchesFound(this.CimTypedExpectedPropertyValue);
                     }
+
                     return _behaviorOnNoMatch;
                 }
             }
+
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
@@ -371,6 +377,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return false;
                 }
+
                 object actualPropertyValue = propertyInfo.Value;
 
                 if (CimTypedExpectedPropertyValue == null)
@@ -422,6 +429,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return true;
                 }
+
                 if (expectedPropertyValue == null)
                 {
                     return true;
@@ -491,6 +499,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     expectedPropertyValue = expectedPropertyValue.ToString();
                     actualPropertyValue = actualPropertyValue.ToString();
                 }
+
                 var expectedPropertyValueAsString = expectedPropertyValue as string;
                 if (expectedPropertyValueAsString != null)
                 {
@@ -510,10 +519,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return false;
                 }
+
                 if (!LanguagePrimitives.TryConvertTo(expectedPropertyValue, out expectedPropertyValueAsString))
                 {
                     return false;
                 }
+
                 return WildcardPattern.Get(expectedPropertyValueAsString, WildcardOptions.IgnoreCase).IsMatch(actualPropertyValueAsString);
             }
         }

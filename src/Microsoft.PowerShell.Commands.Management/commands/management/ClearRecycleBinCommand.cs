@@ -33,6 +33,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] DriveLetter
         {
             get { return _drivesList; }
+
             set { _drivesList = value; }
         }
 
@@ -46,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
@@ -75,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.InvalidDriveNameFormat, "C", "C:", "C:\\")),
+                                string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.InvalidDriveNameFormat, "C", "C:", "C:\\")),
                                 "InvalidDriveNameFormat",
                                  ErrorCategory.InvalidArgument,
                                  drive));
@@ -109,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (DriveInfo drive in _availableDrives)
                 {
-                    if (String.Compare(drive.Name, drivePath, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(drive.Name, drivePath, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         actualDrive = drive;
                         break;
@@ -122,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(
                             new System.IO.DriveNotFoundException(
-                                String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.DriveNotFound, drivePath, "Get-Volume")),
+                                string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.DriveNotFound, drivePath, "Get-Volume")),
                                 "DriveNotFound",
                                 ErrorCategory.InvalidArgument,
                                 drivePath));
@@ -134,13 +136,15 @@ namespace Microsoft.PowerShell.Commands
                     // The drive path exists, and the drive is 'fixed'.
                     return true;
                 }
+
                 WriteError(new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.InvalidDriveType, drivePath, "Get-Volume")),
+                                string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.InvalidDriveType, drivePath, "Get-Volume")),
                                 "InvalidDriveType",
                                 ErrorCategory.InvalidArgument,
                                 drivePath));
             }
+
             return false;
         }
 
@@ -175,6 +179,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 drivePath = driveName + ":\\";
             }
+
             return drivePath;
         }
 
@@ -202,16 +207,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified driveName.
 
-                string activity = String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinProgressActivity);
+                string activity = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinProgressActivity);
                 string statusDescription;
 
                 if (drivePath == null)
                 {
-                    statusDescription = String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionForAllDrives);
+                    statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionForAllDrives);
                 }
                 else
                 {
-                    statusDescription = String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionByDrive, drivePath);
+                    statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionByDrive, drivePath);
                 }
 
                 ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
@@ -251,6 +256,7 @@ namespace Microsoft.PowerShell.Commands
             SHERB_NOPROGRESSUI = 0x00000002,
             SHERB_NOSOUND = 0x00000004
         }
+
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
         internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }

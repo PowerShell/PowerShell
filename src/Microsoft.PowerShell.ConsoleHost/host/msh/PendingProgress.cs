@@ -72,6 +72,7 @@ namespace Microsoft.PowerShell
                         RemoveNodeAndPromoteChildren(listWhereFound, indexWhereFound);
                         break;
                     }
+
                     if (record.ParentActivityId == foundNode.ParentActivityId)
                     {
                         // record is an update to an existing activity. Copy the record data into the found node, and
@@ -387,6 +388,7 @@ namespace Microsoft.PowerShell
                     this.IndexWhereFound = indexWhereFound;
                     return false;
                 }
+
                 return true;
             }
 
@@ -741,6 +743,7 @@ namespace Microsoft.PowerShell
                 {
                     return false;
                 }
+
                 if (node.Children != null)
                 {
                     if (!AllNodesHaveGivenStyle(node.Children, style))

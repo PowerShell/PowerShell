@@ -100,9 +100,11 @@ namespace System.Management.Automation.Runspaces
                             .AddScriptBlockExpressionBinding(@"function GetParam
 {
     if(-not $_.Parameters) { return $null }
+
     $_.Parameters.Parameter | ForEach-Object {
         if($_.type) { $param = ""[$($_.type.name)] `$$($_.name), "" }
         else { $param = ""[object] `$$($_.name), "" }
+
         $params += $param
     }
 

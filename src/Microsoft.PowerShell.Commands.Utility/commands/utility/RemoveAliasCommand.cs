@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string aliasName in Name)
             {
                 AliasInfo existingAlias = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(aliasName);
                 }

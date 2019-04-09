@@ -44,11 +44,13 @@ namespace System.Management.Automation
 
                 throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
-            if (String.IsNullOrEmpty(activity))
+
+            if (string.IsNullOrEmpty(activity))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
-            if (String.IsNullOrEmpty(statusDescription))
+
+            if (string.IsNullOrEmpty(statusDescription))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
@@ -113,12 +115,14 @@ namespace System.Management.Automation
             {
                 return parentId;
             }
+
             set
             {
                 if (value == ActivityId)
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ParentActivityIdCantBeActivityId);
                 }
+
                 parentId = value;
             }
         }
@@ -139,12 +143,14 @@ namespace System.Management.Automation
             {
                 return activity;
             }
+
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
+
                 activity = value;
             }
         }
@@ -161,12 +167,14 @@ namespace System.Management.Automation
             {
                 return status;
             }
+
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
+
                 status = value;
             }
         }
@@ -185,6 +193,7 @@ namespace System.Management.Automation
             {
                 return currentOperation;
             }
+
             set
             {
                 // null or empty string is allowed
@@ -206,6 +215,7 @@ namespace System.Management.Automation
             {
                 return percent;
             }
+
             set
             {
                 // negative values are allowed
@@ -239,6 +249,7 @@ namespace System.Management.Automation
             {
                 return secondsRemaining;
             }
+
             set
             {
                 // negative values are allowed
@@ -259,6 +270,7 @@ namespace System.Management.Automation
             {
                 return type;
             }
+
             set
             {
                 if (value != ProgressRecordType.Completed && value != ProgressRecordType.Processing)
@@ -284,7 +296,7 @@ namespace System.Management.Automation
         ToString()
         {
             return
-                String.Format(
+                string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     "parent = {0} id = {1} act = {2} stat = {3} cur = {4} pct = {5} sec = {6} type = {7}",
                     parentId,
@@ -331,6 +343,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             TimeSpan remainingTime = totalTime - elapsedTime;
 
             return (int)(remainingTime.TotalSeconds);
@@ -341,9 +354,9 @@ namespace System.Management.Automation
         /// The percentage complete will slowly converge toward 100%.
         /// At the <paramref name="expectedDuration"/> the percentage complete will be 90%.
         /// </summary>
-        /// <param name="startTime">When did the operation start</param>
-        /// <param name="expectedDuration">How long does the operation usually take</param>
-        /// <returns>Estimated percentage complete of the operation (always between 0 and 99% - never returns 100%)</returns>
+        /// <param name="startTime">When did the operation start.</param>
+        /// <param name="expectedDuration">How long does the operation usually take.</param>
+        /// <returns>Estimated percentage complete of the operation (always between 0 and 99% - never returns 100%).</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when
         /// 1) <paramref name="startTime"/> is in the future
@@ -361,6 +374,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentOutOfRangeException("startTime");
             }
+
             if (expectedDuration <= TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException("expectedDuration");
@@ -445,7 +459,7 @@ namespace System.Management.Automation
         /// Creates a ProgressRecord object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="progressAsPSObject">PSObject to rehydrate</param>
+        /// <param name="progressAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// ProgressRecord rehydrated from a PSObject property bag
         /// </returns>
@@ -481,7 +495,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -500,7 +514,7 @@ namespace System.Management.Automation
         }
 
         #endregion
-    } //ProgressRecord
+    }
 
     /// <summary>
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.
@@ -510,7 +524,7 @@ namespace System.Management.Automation
     enum ProgressRecordType
     {
         ///<summary>
-        /// Operation just started or is not yet complete
+        /// Operation just started or is not yet complete.
         /// </summary>
         /// <remarks>
         /// A cmdlet can call WriteProgress with ProgressRecordType.Processing
@@ -528,7 +542,7 @@ namespace System.Management.Automation
         Processing,
 
         /// <summary>
-        /// Operation is complete
+        /// Operation is complete.
         /// </summary>
         /// <remarks>
         /// If a cmdlet uses WriteProgress, it should use

@@ -32,13 +32,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _content;
-            } // get
+            }
 
             set
             {
                 _content = value;
             }
-        } // Value
+        }
 
         #endregion Parameters
 
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Determines if the paths are specified on the command line
-        /// or being piped in
+        /// or being piped in.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_content == null)
             {
-                _content = new object[0];
+                _content = Array.Empty<object>();
             }
 
             if (_pipingPaths)
@@ -184,15 +184,15 @@ namespace Microsoft.PowerShell.Commands
                     contentStreams = new List<ContentHolder>();
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
-        /// Closes all the content writers
+        /// Closes all the content writers.
         /// </summary>
         protected override void EndProcessing()
         {
             Dispose(true);
-        } // EndProcessing
+        }
 
         #endregion Command code
 
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void SeekContentPosition(List<ContentHolder> contentHolders)
         {
             // default does nothing.
-        } // SeekContentPosition
+        }
 
         /// <summary>
         /// Called by the base class before the streams are open for the path.
@@ -239,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Content.GetContentWriterDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentWriterDynamicParameters(".", context);
         }
 
@@ -316,17 +317,17 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentWriters
+        }
 
         /// <summary>
-        /// Gets the list of paths accepted by the user
+        /// Gets the list of paths accepted by the user.
         /// </summary>
-        /// <param name="unfilteredPaths">The list of unfiltered paths</param>
-        /// <param name="currentContext">The current context</param>
-        /// <returns>The list of paths accepted by the user</returns>
+        /// <param name="unfilteredPaths">The list of unfiltered paths.</param>
+        /// <param name="currentContext">The current context.</param>
+        /// <returns>The list of paths accepted by the user.</returns>
         private string[] GetAcceptedPaths(string[] unfilteredPaths, CmdletProviderContext currentContext)
         {
             Collection<PathInfo> pathInfos = ResolvePaths(unfilteredPaths, true, false, currentContext);
@@ -341,9 +342,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (string[])paths.ToArray(typeof(String));
+            return (string[])paths.ToArray(typeof(string));
         }
 
         #endregion protected members
-    } // WriteContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

@@ -25,6 +25,6 @@ namespace Microsoft.PowerShell.Commands
                 this.Context.TransactionManager.Rollback();
             }
         }
-    } // RollbackTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

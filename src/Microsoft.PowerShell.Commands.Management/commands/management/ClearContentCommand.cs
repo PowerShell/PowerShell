@@ -61,11 +61,11 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return InvokeProvider.Content.ClearContentDynamicParameters(".", context);
-        } // GetDynamicParameters
-    } // ClearContentCommand
-} // namespace Microsoft.PowerShell.Commands
+        }
+    }
+}
 

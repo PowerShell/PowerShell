@@ -8,6 +8,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Collections;
+using System.Collections.Generic;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -43,12 +44,14 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string _path;
 
         /// <summary>
-        /// Implements the record processing for this cmdlet
+        /// Implements the record processing for this cmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -128,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
-                        //Validate file existence
+                        // Validate file existence
                         if (module.RequiredAssemblies != null)
                         {
                             foreach (string requiredAssembliespath in module.RequiredAssemblies)
@@ -143,22 +146,12 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        //RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
-                        if (module.RootModule != null && module.RootModule != string.Empty)
+                        if (!HasValidRootModule(module))
                         {
-                            string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
-                            if ((!IsValidFilePath(module.RootModule, module, true) && !IsValidGacAssembly(module.RootModule)) ||
-                                (!rootModuleExt.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".cdxml", StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".xaml", StringComparison.OrdinalIgnoreCase))
-                            )
-                            {
-                                string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
-                                var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidRootModuleInModuleManifest",
-                                        ErrorCategory.InvalidArgument, _path);
-                                WriteError(errorRecord);
-                            }
+                            string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
+                            var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidRootModuleInModuleManifest",
+                                    ErrorCategory.InvalidArgument, _path);
+                            WriteError(errorRecord);
                         }
 
                         Hashtable data = null;
@@ -174,6 +167,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!IsValidFilePath(nestedModule.Name, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellILAssemblyExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellILExecutableExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true)
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {
@@ -258,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.ModuleBeingProcessed = _origModuleBeingProcessed;
                 }
+
                 DirectoryInfo parent = null;
                 try
                 {
@@ -297,6 +292,60 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        // All module extensions except ".psd1" are valid RootModule extensions
+        private static readonly IReadOnlyList<string> s_validRootModuleExtensions = ModuleIntrinsics.PSModuleExtensions
+            .Where(ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        /// <summary>
+        /// Checks whether the RootModule field of a module is valid or not.
+        /// Valid root modules are:
+        ///  - null
+        ///  - Empty string
+        ///  - A valid non-psd1 module file (psm1, cdxml, xaml, dll), as name with extension, name without extension, or path.
+        /// </summary>
+        /// <param name="module">The module for which we want to check the validity of the root module.</param>
+        /// <returns>True if the root module is valid, false otherwise.</returns>
+        private bool HasValidRootModule(PSModuleInfo module)
+        {
+            // Empty/null root modules are allowed
+            if (string.IsNullOrEmpty(module.RootModule))
+            {
+                return true;
+            }
+
+            // GAC assemblies are allowed
+            if (IsValidGacAssembly(module.RootModule))
+            {
+                return true;
+            }
+
+            // Check for extensions
+            string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
+            if (!string.IsNullOrEmpty(rootModuleExt))
+            {
+                // Check that the root module's extension is an allowed one
+                if (!s_validRootModuleExtensions.Contains(rootModuleExt, StringComparer.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                // Check the file path of the full root module
+                return IsValidFilePath(module.RootModule, module, verifyPathScope: true);
+            }
+
+            // We have no extension, so we need to check all of them
+            foreach (string extension in s_validRootModuleExtensions)
+            {
+                if (IsValidFilePath(module.RootModule + extension, module, verifyPathScope: true))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Check if the given path is valid.
         /// </summary>
@@ -324,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
                     ThrowTerminatingError(er);
                 }
+
                 path = pathInfos[0].Path;
 
                 // First, we validate if the path does exist.
@@ -332,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                //Then, we validate if the path is under module scope
+                // Then, we validate if the path is under module scope
                 if (verifyPathScope && !System.IO.Path.GetFullPath(path).StartsWith(System.IO.Path.GetFullPath(module.ModuleBase), StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
@@ -367,6 +417,7 @@ namespace Microsoft.PowerShell.Commands
                 assemblyFile = assemblyName + StringLiterals.PowerShellILAssemblyExtension;
                 ngenAssemblyFile = assemblyName + StringLiterals.PowerShellNgenAssemblyExtension;
             }
+
             try
             {
                 var allFiles = Directory.GetFiles(gacPath, assemblyFile, SearchOption.AllDirectories);
@@ -391,4 +442,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
-} // Microsoft.PowerShell.Commands
+}

@@ -29,26 +29,14 @@ param (
     [switch] $Build
 )
 
-# We must build in /PowerShell
-$repoRoot = '/PowerShell'
-if ($BootStrap.IsPresent) {
-    $repoRoot = $location
-}
+$repoRoot = $location
 
 if ($Build.IsPresent) {
-    # cleanup the folder but don't delete it or the build agent will loose ownership of the folder
-    Write-Verbose -Message "cleaning /PowerShell" -Verbose
-    Get-ChildItem -Path /PowerShell/* -Attributes Hidden, Normal, Directory | Remove-Item -Recurse -Force
-
-    # clone the repository to the location we must build from
-    Write-Verbose -Message "cloning to /PowerShell" -Verbose
-    git clone $location /PowerShell
     $releaseTagParam = @{}
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
     }
 }
-
 
 Push-Location
 try {
@@ -81,7 +69,7 @@ if ($Build.IsPresent) {
         $name = split-path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
-        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$filePath"
+        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
         Copy-Item -Path $filePath -Destination $destination -force
     }

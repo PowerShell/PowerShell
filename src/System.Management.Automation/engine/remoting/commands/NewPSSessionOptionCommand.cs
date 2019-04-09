@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This class implements New-PSSessionOption cmdlet.
-    /// Spec: TBD
+    /// Spec: TBD.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144305", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(PSSessionOption))]
@@ -20,17 +20,20 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters (specific to PSSessionOption)
 
+#if !UNIX
         /// <summary>
         /// The MaximumRedirection parameter enables the implicit redirection functionality
         /// -1 = no limit
-        ///  0 = no redirection
+        ///  0 = no redirection.
         /// </summary>
         [Parameter]
         public int MaximumRedirection
         {
             get { return _maximumRedirection.Value; }
+
             set { _maximumRedirection = value; }
         }
+
         private int? _maximumRedirection;
 
         /// <summary>
@@ -53,14 +56,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoMachineProfile { get; set; }
 
         /// <summary>
-        /// Culture that the remote session should use
+        /// Culture that the remote session should use.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
         public CultureInfo Culture { get; set; }
 
         /// <summary>
-        /// UI culture that the remote session should use
+        /// UI culture that the remote session should use.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -75,9 +78,11 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumReceivedDataSizePerCommand
         {
             get { return _maxRecvdDataSizePerCommand.Value; }
+
             set { _maxRecvdDataSizePerCommand = value; }
         }
-        private Nullable<int> _maxRecvdDataSizePerCommand;
+
+        private int? _maxRecvdDataSizePerCommand;
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
@@ -87,9 +92,11 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumReceivedObjectSize
         {
             get { return _maxRecvdObjectSize.Value; }
+
             set { _maxRecvdObjectSize = value; }
         }
-        private Nullable<int> _maxRecvdObjectSize;
+
+        private int? _maxRecvdObjectSize;
 
         /// <summary>
         /// Specifies the output mode on the server when it is in Disconnected mode
@@ -132,8 +139,10 @@ namespace Microsoft.PowerShell.Commands
                 return _openTimeout.HasValue ? _openTimeout.Value :
                     RunspaceConnectionInfo.DefaultOpenTimeout;
             }
+
             set { _openTimeout = value; }
         }
+
         private int? _openTimeout;
 
         /// <summary>
@@ -155,8 +164,10 @@ namespace Microsoft.PowerShell.Commands
                 return _cancelTimeout.HasValue ? _cancelTimeout.Value :
                     BaseTransportManager.ClientCloseTimeoutMs;
             }
+
             set { _cancelTimeout = value; }
         }
+
         private int? _cancelTimeout;
 
         /// <summary>
@@ -175,14 +186,18 @@ namespace Microsoft.PowerShell.Commands
                 return _idleTimeout.HasValue ? _idleTimeout.Value
                     : RunspaceConnectionInfo.DefaultIdleTimeout;
             }
+
             set { _idleTimeout = value; }
         }
+
         private int? _idleTimeout;
+#endif
 
         #endregion Parameters
 
         #region Parameters copied from New-WSManSessionOption
 
+#if !UNIX
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
@@ -198,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         /// - Negotiate: Use the default authentication (as defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
-        /// - Digest: Use Digest authentication for establishing a remote connection
+        /// - Digest: Use Digest authentication for establishing a remote connection.
         /// </summary>
         [Parameter]
         public AuthenticationMechanism ProxyAuthentication { get; set; } = AuthenticationMechanism.Negotiate;
@@ -210,6 +225,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Credential]
         public PSCredential ProxyCredential { get; set; }
+#endif
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
@@ -217,77 +233,89 @@ namespace Microsoft.PowerShell.Commands
         /// certificate is signed by a trusted certificate authority (CA). Use only when
         /// the remote computer is trusted by other means, for example, if the remote
         /// computer is part of a network that is physically secure and isolated or the
-        /// remote computer is listed as a trusted host in WinRM configuration
+        /// remote computer is listed as a trusted host in WinRM configuration.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipCACheck
         {
             get { return _skipcacheck; }
+
             set { _skipcacheck = value; }
         }
+
         private bool _skipcacheck;
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCNCheck".
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
-        /// option should only be used for trusted machines
+        /// option should only be used for trusted machines.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipCNCheck
         {
             get { return _skipcncheck; }
+
             set { _skipcncheck = value; }
         }
+
         private bool _skipcncheck;
+
+#if !UNIX
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipRevocation".
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
-        /// option should only be used for trusted machines
+        /// option should only be used for trusted machines.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipRevocationCheck
         {
             get { return _skiprevocationcheck; }
+
             set { _skiprevocationcheck = value; }
         }
+
         private bool _skiprevocationcheck;
 
         /// <summary>
         /// The following is the definition of the input parameter "Timeout".
-        /// Defines the timeout in milliseconds for the wsman operation
+        /// Defines the timeout in milliseconds for the wsman operation.
         /// </summary>
         [Parameter]
         [Alias("OperationTimeoutMSec")]
         [ValidateRange(0, Int32.MaxValue)]
-        public Int32 OperationTimeout
+        public int OperationTimeout
         {
             get
             {
                 return (_operationtimeout.HasValue ? _operationtimeout.Value :
                     BaseTransportManager.ClientDefaultOperationTimeoutMs);
             }
+
             set { _operationtimeout = value; }
         }
-        private Int32? _operationtimeout;
+
+        private int? _operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
         /// Specifies that no encryption will be used when doing remote operations over
         /// http. Unencrypted traffic is not allowed by default and must be enabled in
-        /// the local configuration
+        /// the local configuration.
         /// </summary>
         [Parameter]
         public SwitchParameter NoEncryption
         {
             get { return _noencryption; }
+
             set
             {
                 _noencryption = value;
             }
         }
+
         private bool _noencryption;
 
         /// <summary>
@@ -300,11 +328,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseUTF16
         {
             get { return _useutf16; }
+
             set
             {
                 _useutf16 = value;
             }
         }
+
         private bool _useutf16;
 
         /// <summary>
@@ -315,9 +345,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IncludePortInSPN
         {
             get { return _includePortInSPN; }
+
             set { _includePortInSPN = value; }
         }
+
         private bool _includePortInSPN;
+
+#endif
 
         #endregion
 
@@ -330,16 +364,20 @@ namespace Microsoft.PowerShell.Commands
         {
             PSSessionOption result = new PSSessionOption();
             // Begin: WSMan specific options
+#if !UNIX
             result.ProxyAccessType = this.ProxyAccessType;
             result.ProxyAuthentication = this.ProxyAuthentication;
             result.ProxyCredential = this.ProxyCredential;
+#endif
             result.SkipCACheck = this.SkipCACheck;
             result.SkipCNCheck = this.SkipCNCheck;
+#if !UNIX
             result.SkipRevocationCheck = this.SkipRevocationCheck;
             if (_operationtimeout.HasValue)
             {
                 result.OperationTimeout = TimeSpan.FromMilliseconds(_operationtimeout.Value);
             }
+
             result.NoEncryption = this.NoEncryption;
             result.UseUTF16 = this.UseUTF16;
             result.IncludePortInSPN = this.IncludePortInSPN;
@@ -359,6 +397,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.Culture = this.Culture;
             }
+
             if (this.UICulture != null)
             {
                 result.UICulture = this.UICulture;
@@ -368,10 +407,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.OpenTimeout = TimeSpan.FromMilliseconds(_openTimeout.Value);
             }
+
             if (_cancelTimeout.HasValue)
             {
                 result.CancelTimeout = TimeSpan.FromMilliseconds(_cancelTimeout.Value);
             }
+
             if (_idleTimeout.HasValue)
             {
                 result.IdleTimeout = TimeSpan.FromMilliseconds(_idleTimeout.Value);
@@ -385,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.ApplicationArguments = this.ApplicationArguments;
             }
+#endif
 
             this.WriteObject(result);
         }

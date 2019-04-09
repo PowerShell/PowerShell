@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of an extrinsic CIM method
+    /// Job wrapping invocation of an extrinsic CIM method.
     /// </summary>
     internal abstract class MethodInvocationJobBase<T> : CimChildJobBase<T>
     {
@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     IsValuePresent = inputParameter.IsValuePresent
                 });
             }
+
             return result;
         }
 

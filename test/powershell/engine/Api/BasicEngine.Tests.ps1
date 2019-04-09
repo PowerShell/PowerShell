@@ -6,6 +6,19 @@ Describe 'Basic engine APIs' -Tags "CI" {
             [powershell]::Create() | Should -Not -BeNullOrEmpty
         }
 
+        It 'can create instance with runspace' {
+            $rs = [runspacefactory]::CreateRunspace()
+            $ps = [powershell]::Create($rs)
+            $ps | Should -Not -BeNullOrEmpty
+            $ps.Runspace | Should -Be $rs
+            $ps.Dispose()
+            $rs.Dispose()
+        }
+
+        It 'cannot create instance with null runspace' {
+            { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
+        }
+
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
             $ps = [powershell]::Create()
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null

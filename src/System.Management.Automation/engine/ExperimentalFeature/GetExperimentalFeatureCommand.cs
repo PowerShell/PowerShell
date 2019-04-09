@@ -20,14 +20,9 @@ namespace Microsoft.PowerShell.Commands
         /// Get and set the feature names.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Position = 0)]
+        [ArgumentCompleter(typeof(ExperimentalFeatureNameCompleter))]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
-
-        /// <summary>
-        /// Get and set the switch flag to search module paths to find all available experimental features.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter ListAvailable { get; set; }
 
         /// <summary>
         /// ProcessRecord method of this cmdlet.
@@ -37,19 +32,9 @@ namespace Microsoft.PowerShell.Commands
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(Name, wildcardOptions);
 
-            if (ListAvailable)
+            foreach (ExperimentalFeature feature in GetAvailableExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
             {
-                foreach (ExperimentalFeature feature in GetAvailableExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
-                {
-                    WriteObject(feature);
-                }
-            }
-            else if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
-            {
-                foreach (ExperimentalFeature feature in GetEnabledExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
-                {
-                    WriteObject(feature);
-                }
+                WriteObject(feature);
             }
         }
 
@@ -68,60 +53,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get enabled experimental features based on the specified name patterns.
-        /// </summary>
-        private IEnumerable<ExperimentalFeature> GetEnabledExperimentalFeatures(IEnumerable<WildcardPattern> namePatterns)
-        {
-            var moduleFeatures = new List<string>();
-            var moduleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
-            {
-                // Only process the feature names that matches any name patterns.
-                if (SessionStateUtilities.MatchesAnyWildcardPattern(featureName, namePatterns, defaultValue: true))
-                {
-                    if (ExperimentalFeature.EngineExperimentalFeatureMap.TryGetValue(featureName, out ExperimentalFeature feature))
-                    {
-                        yield return feature;
-                    }
-                    else
-                    {
-                        moduleFeatures.Add(featureName);
-                        int lastDotIndex = featureName.LastIndexOf('.');
-                        moduleNames.Add(featureName.Substring(0, lastDotIndex));
-                    }
-                }
-            }
-
-            if (moduleFeatures.Count > 0)
-            {
-                var featuresFromGivenModules = new Dictionary<string, ExperimentalFeature>(StringComparer.OrdinalIgnoreCase);
-                foreach (string moduleFile in GetValidModuleFiles(moduleNames))
-                {
-                    foreach (var feature in ModuleIntrinsics.GetExperimentalFeature(moduleFile))
-                    {
-                        featuresFromGivenModules.TryAdd(feature.Name, feature);
-                    }
-                }
-
-                foreach (string featureName in moduleFeatures)
-                {
-                    if (featuresFromGivenModules.TryGetValue(featureName, out ExperimentalFeature feature))
-                    {
-                        yield return feature;
-                    }
-                    else
-                    {
-                        yield return new ExperimentalFeature(featureName, description: null, source: null, isEnabled: true);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Get available experimental features based on the specified name patterns.
         /// </summary>
-        private IEnumerable<ExperimentalFeature> GetAvailableExperimentalFeatures(IEnumerable<WildcardPattern> namePatterns)
+        internal IEnumerable<ExperimentalFeature> GetAvailableExperimentalFeatures(IEnumerable<WildcardPattern> namePatterns)
         {
             foreach (ExperimentalFeature feature in ExperimentalFeature.EngineExperimentalFeatures)
             {

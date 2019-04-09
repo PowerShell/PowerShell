@@ -65,7 +65,7 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Json $validJson | Should -BeTrue
     }
 
-    It "Json is valid aganist a valid schema" {
+    It "Json is valid against a valid schema" {
         Test-Json -Json $validJson -Schema $validSchemaJson | Should -BeTrue
     }
 
@@ -73,7 +73,7 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -BeFalse
     }
 
-    It "Json is invalid aganist a valid schema" {
+    It "Json is invalid against a valid schema" {
         Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
         Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
     }
@@ -82,7 +82,7 @@ Describe "Test-Json" -Tags "CI" {
         { Test-Json -Json $validJson -Schema $invalidSchemaJson -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
-    It "Test-Json write an error on invalid (<name>) Json aganist a valid schema" -TestCases @(
+    It "Test-Json write an error on invalid (<name>) Json against a valid schema" -TestCases @(
         @{ name = "type"; json = $invalidTypeInJson; error = "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
         @{ name = "node"; json = $invalidNodeInJson; error = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
         ) {
@@ -94,7 +94,7 @@ Describe "Test-Json" -Tags "CI" {
             $errorVar.FullyQualifiedErrorId | Should -BeExactly $error
     }
 
-    It "Test-Json return all errors when check invalid Json aganist a valid schema" {
+    It "Test-Json return all errors when check invalid Json against a valid schema" {
         $errorVar = $null
         Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 

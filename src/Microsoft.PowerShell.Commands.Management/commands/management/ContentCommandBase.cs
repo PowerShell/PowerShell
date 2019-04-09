@@ -12,21 +12,21 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The base class for the */content commands
+    /// The base class for the */content commands.
     /// </summary>
     public class ContentCommandBase : CoreCommandWithCredentialsBase, IDisposable
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -34,6 +34,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return Path; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -42,37 +43,40 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
@@ -87,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter Force
         {
             get { return base.Force; }
+
             set { base.Force = value; }
         }
 
@@ -105,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<ContentHolder> contentStreams = new List<ContentHolder>();
 
         /// <summary>
-        /// Wraps the content into a PSObject and adds context information as notes
+        /// Wraps the content into a PSObject and adds context information as notes.
         /// </summary>
         /// <param name="content">
         /// The content being written out.
@@ -145,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
                  (
-                    String.Compare(
+                    string.Compare(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -179,8 +184,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, String.Empty, context);
+                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
                     }
+
                     note = new PSNoteProperty("PSParentPath", parentPath);
                     result.Properties.Add(note, true);
                     tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
@@ -224,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             result.Properties.Add(note, true);
 
             WriteObject(result);
-        } // WriteContentObject
+        }
 
         /// <summary>
         /// A cache of the notes that get added to the content items as they are written
@@ -258,12 +264,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
-            public String PSPath { get; set; }
+            public string PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
-            public String ParentPath { get; set; }
+            public string ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
@@ -278,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
-            public String ChildName { get; set; }
+            public string ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
@@ -325,8 +331,8 @@ namespace Microsoft.PowerShell.Commands
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", Provider);
 
                 return content;
-            } // AttachNotes
-        } // ContentPathsCache
+            }
+        }
 
         /// <summary>
         /// A struct to hold the path information and the content readers/writers
@@ -347,17 +353,17 @@ namespace Microsoft.PowerShell.Commands
                 PathInfo = pathInfo;
                 Reader = reader;
                 Writer = writer;
-            } // constructor
+            }
 
             internal PathInfo PathInfo { get; }
 
             internal IContentReader Reader { get; }
 
             internal IContentWriter Writer { get; }
-        } // struct ContentHolder
+        }
 
         /// <summary>
-        /// Closes the content readers and writers in the content holder array
+        /// Closes the content readers and writers in the content holder array.
         /// </summary>
         internal void CloseContent(List<ContentHolder> contentHolders, bool disposing)
         {
@@ -442,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // CloseContent
+        }
 
         /// <summary>
         /// Overridden by derived classes to support ShouldProcess with
@@ -539,13 +545,13 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentReaders
+        }
 
         /// <summary>
-        /// Resolves the specified paths to PathInfo objects
+        /// Resolves the specified paths to PathInfo objects.
         /// </summary>
         /// <param name="pathsToResolve">
         /// The paths to be resolved. Each path may contain glob characters.
@@ -661,7 +667,7 @@ namespace Microsoft.PowerShell.Commands
                         if (pathNotFoundErrorRecord == null)
                         {
                             // Detect if the path resolution failed to resolve to a file.
-                            String error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
+                            string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
                             Exception e = new Exception(error);
 
                             pathNotFoundErrorRecord = new ErrorRecord(
@@ -677,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return results;
-        } // ResolvePaths
+        }
 
         #endregion protected members
 
@@ -693,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -702,7 +708,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~ContentCommandBase()
         {
@@ -710,5 +716,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion IDisposable
 
-    } // ContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Ellipsize" xml:space="preserve">
-    <value>{0}...{1}</value>
+    <value>{0}\u2026{1}</value>
   </data>
   <data name="ErrorDetailsEmptyTemplate" xml:space="preserve">
     <value>Error text is empty for error "{0}" : "{1}"</value>

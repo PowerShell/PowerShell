@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to Set WMI Instance
+    /// A command to Set WMI Instance.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WmiInstance", DefaultParameterSetName = "class", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113402", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -24,25 +24,25 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// The WMI Object to use
+        /// The WMI Object to use.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject { get; set; } = null;
 
         /// <summary>
-        /// The WMI Path to use
+        /// The WMI Path to use.
         /// </summary>
         [Parameter(ParameterSetName = "path", Mandatory = true)]
         public string Path { get; set; } = null;
 
         /// <summary>
-        /// The WMI class to use
+        /// The WMI class to use.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class { get; set; } = null;
 
         /// <summary>
-        /// The property name /value pair
+        /// The property name /value pair.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(Position = 2, ParameterSetName = "class")]
@@ -52,12 +52,13 @@ namespace Microsoft.PowerShell.Commands
         public Hashtable Arguments { get; set; } = null;
 
         /// <summary>
-        /// The Flag to use
+        /// The Flag to use.
         /// </summary>
         [Parameter]
         public PutType PutType
         {
             get { return _putType; }
+
             set { _putType = value; flagSpecified = true; }
         }
 
@@ -79,6 +80,7 @@ namespace Microsoft.PowerShell.Commands
                 RunAsJob("Set-WMIInstance");
                 return;
             }
+
             if (InputObject != null)
             {
                 object result = null;
@@ -94,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return;
                         }
+
                         mObj.Put(pOptions);
                     }
                     else
@@ -101,6 +104,7 @@ namespace Microsoft.PowerShell.Commands
                         InvalidOperationException exp = new InvalidOperationException();
                         throw exp;
                     }
+
                     result = mObj;
                 }
                 catch (ManagementException e)
@@ -113,14 +117,15 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "SetWMICOMException", ErrorCategory.InvalidOperation, null);
                     WriteError(errorRecord);
                 }
+
                 WriteObject(result);
             }
             else
             {
                 ManagementPath mPath = null;
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 mPath = this.SetWmiInstanceBuildManagementPath();
-                //If server name is specified loop through it.
+                // If server name is specified loop through it.
                 if (mPath != null)
                 {
                     if (!(mPath.Server == "." && serverNameSpecified))
@@ -129,6 +134,7 @@ namespace Microsoft.PowerShell.Commands
                         ComputerName = serverName;
                     }
                 }
+
                 ConnectionOptions options = GetConnectionOption();
                 object result = null;
                 ManagementObject mObject = null;
@@ -146,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 continue;
                             }
+
                             mObject.Put(pOptions);
                         }
                         else
@@ -153,6 +160,7 @@ namespace Microsoft.PowerShell.Commands
                             InvalidOperationException exp = new InvalidOperationException();
                             throw exp;
                         }
+
                         result = mObject;
                     }
                     catch (ManagementException e)
@@ -165,6 +173,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorRecord errorRecord = new ErrorRecord(e, "SetWMICOMException", ErrorCategory.InvalidOperation, null);
                         WriteError(errorRecord);
                     }
+
                     if (result != null)
                     {
                         WriteObject(result);

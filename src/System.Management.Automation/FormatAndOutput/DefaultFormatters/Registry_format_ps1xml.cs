@@ -45,7 +45,8 @@ namespace System.Management.Automation.Runspaces
                                       Select * -Exclude PSPath,PSParentPath,PSChildName,PSDrive,PsProvider |
                                       Format-List | Out-String | Sort).Trim()
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 5000) )
-                                  if($result.Length -eq 5000) { $result += ""..."" }
+                                  if($result.Length -eq 5000) { $result += ""`u{2026}"" }
+
                                   $result
                                 ")
                     .EndRowDefinition()

@@ -32,6 +32,7 @@ namespace System.Management.Automation
                 {
                     powerShell.AddParameter("Category", remoteHelpCategory);
                 }
+
                 powerShell.Runspace = remoteRunspace;
 
                 Collection<PSObject> helpResults;
@@ -57,6 +58,7 @@ namespace System.Management.Automation
                 {
                     nameInfo.Value = localCommandName;
                 }
+
                 PSObject commandDetails = this.Details;
                 if (commandDetails != null)
                 {

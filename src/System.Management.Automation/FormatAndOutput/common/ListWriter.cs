@@ -9,31 +9,31 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// class to write object properties in list form by using
-    /// the host screen interfaces
+    /// Class to write object properties in list form by using
+    /// the host screen interfaces.
     /// </summary>
     internal class ListWriter
     {
         /// <summary>
-        /// labels already padded with blanks, separator characters, etc.
+        /// Labels already padded with blanks, separator characters, etc.
         /// </summary>
         private string[] _propertyLabels;
 
         /// <summary>
-        /// display length of the property labels in the array (all the same length)
+        /// Display length of the property labels in the array (all the same length)
         /// </summary>
         private int _propertyLabelsDisplayLength = 0;
 
         /// <summary>
-        /// column width of the screen
+        /// Column width of the screen.
         /// </summary>
         private int _columnWidth = 0;
 
         /// <summary>
         /// </summary>
-        /// <param name="propertyNames">names of the properties to display</param>
-        /// <param name="screenColumnWidth">column width of the screen</param>
-        /// <param name="dc">instance of the DisplayCells helper object</param>
+        /// <param name="propertyNames">Names of the properties to display.</param>
+        /// <param name="screenColumnWidth">Column width of the screen.</param>
+        /// <param name="dc">Instance of the DisplayCells helper object.</param>
         internal void Initialize(string[] propertyNames, int screenColumnWidth, DisplayCells dc)
         {
             _columnWidth = screenColumnWidth;
@@ -100,14 +100,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 _propertyLabels[k] += Separator;
             }
+
             _propertyLabelsDisplayLength += Separator.Length;
         }
 
         /// <summary>
-        /// write the values of the properties of an object
+        /// Write the values of the properties of an object.
         /// </summary>
-        /// <param name="values">array with the values in form of formatted strings</param>
-        /// <param name="lo">LineOutput interface to write to</param>
+        /// <param name="values">Array with the values in form of formatted strings.</param>
+        /// <param name="lo">LineOutput interface to write to.</param>
         internal void WriteProperties(string[] values, LineOutput lo)
         {
             if (_disabled)
@@ -155,12 +156,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper, writing a single property to the screen.
-        /// It wraps the value of the property if it is tool long to fit
+        /// Helper, writing a single property to the screen.
+        /// It wraps the value of the property if it is tool long to fit.
         /// </summary>
-        /// <param name="k">index of property to write</param>
-        /// <param name="propertyValue">string value of the property to write</param>
-        /// <param name="lo">LineOutput interface to write to</param>
+        /// <param name="k">Index of property to write.</param>
+        /// <param name="propertyValue">String value of the property to write.</param>
+        /// <param name="lo">LineOutput interface to write to.</param>
         private void WriteProperty(int k, string propertyValue, LineOutput lo)
         {
             if (propertyValue == null)
@@ -191,12 +192,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper to split a line that is too long to fit and pad it to the left
-        /// with a given string
+        /// Internal helper to split a line that is too long to fit and pad it to the left
+        /// with a given string.
         /// </summary>
-        /// <param name="prependString">string to add to the left</param>
-        /// <param name="line">line to print</param>
-        /// <param name="lo">LineOuput to write to</param>
+        /// <param name="prependString">String to add to the left.</param>
+        /// <param name="line">Line to print.</param>
+        /// <param name="lo">LineOuput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
             if (line == null)
@@ -226,19 +227,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// set to true when the width of the screen is too small to do anything useful
+        /// Set to true when the width of the screen is too small to do anything useful.
         /// </summary>
         private bool _disabled = false;
 
         private const string Separator = " : ";
 
         /// <summary>
-        /// minimum width for the property label field
+        /// Minimum width for the property label field.
         /// </summary>
         private const int MinLabelWidth = 1;
 
         /// <summary>
-        /// minimum width for the property value field
+        /// Minimum width for the property value field.
         /// </summary>
         private const int MinFieldWidth = 1;
     }

@@ -65,7 +65,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             GetChildItems(path, recurse, depth);
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return GetChildItemsDynamicParameters(path, recurse);
-        } // GetChildItemsDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the GetChildNames protected method. It is called instead
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Provider
 
             // Call virtual method
             GetChildNames(path, returnContainers);
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets a new provider-specific path and filter (if any) that corresponds to the given
@@ -211,7 +211,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return GetChildNamesDynamicParameters(path);
-        } // GetChildItemsNamesDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the RenameItem protected method. It is called instead
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             RenameItem(path, newName);
-        } // RenameItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -270,7 +270,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return RenameItemDynamicParameters(path, newName);
-        } // RenameItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the New protected method. It is called instead
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             NewItem(path, type, newItemValue);
-        } // NewItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -337,7 +337,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return NewItemDynamicParameters(path, type, newItemValue);
-        } // NewItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the Remove protected method. It is called instead
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             RemoveItem(path, recurse);
-        } // Remove
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -394,7 +394,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return RemoveItemDynamicParameters(path, recurse);
-        } // RemoveItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the HasChildItems protected method. It is called instead
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return HasChildItems(path);
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Internal wrapper for the Copy protected method. It is called instead
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             CopyItem(path, copyPath, recurse);
-        } // CopyItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return CopyItemDynamicParameters(path, destination, recurse);
-        } // CopyItemDynamicParameters
+        }
 
         #endregion Internal members
 
@@ -619,7 +619,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // GetChildItemsDynamicParameters
+        }
 
         /// <summary>
         /// Gets names of the children of the specified path.
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // GetChildNamesDynamicParameters
+        }
 
         /// <summary>
         /// Renames the item at the specified path to the new name provided.
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // RenameItemDynamicParameters
+        }
 
         /// <summary>
         /// Creates a new item at the specified path.
@@ -889,10 +889,10 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // NewItemDynamicParameters
+        }
 
         /// <summary>
-        /// Removes (deletes) the item at the specified path
+        /// Removes (deletes) the item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to remove.
@@ -963,7 +963,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // RemoveItemDynamicParameters
+        }
 
         /// <summary>
         /// Determines if the item at the specified path has children.
@@ -1077,11 +1077,11 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // CopyItemDynamicParameters
+        }
 
         #endregion Protected members
-    } // ContainerCmdletProvider
+    }
 
     #endregion ContainerCmdletProvider
-} // namespace System.Management.Automation
+}
 

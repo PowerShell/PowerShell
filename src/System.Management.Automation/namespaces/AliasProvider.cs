@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class AliasProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Alias";
 
@@ -36,14 +36,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public AliasProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the alias drive
+        /// Initializes the alias drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
@@ -56,21 +56,21 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.AliasDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(aliasDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
         #region Dynamic Parameters
 
         /// <summary>
-        /// Gets the dynamic parameters for the NewItem cmdlet
+        /// Gets the dynamic parameters for the NewItem cmdlet.
         /// </summary>
         /// <param name="path">
         /// Ignored.
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the dynamic parameters for the NewItem cmdlet
+        /// Gets the dynamic parameters for the NewItem cmdlet.
         /// </summary>
         /// <param name="path">
         /// Ignored.
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a alias from session state
+        /// Gets a alias from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the alias to retrieve.
@@ -124,17 +124,17 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             AliasInfo value = SessionState.Internal.GetAlias(name, Context.Origin);
 
             return value;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Since items are often more than their value, this method should
-        /// be overridden to provide the value for an item
+        /// be overridden to provide the value for an item.
         /// </summary>
         /// <param name="item">
         /// The item to extract the value from.
@@ -159,11 +159,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = aliasInfo.Definition;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
-        /// Sets the alias of the specified name to the specified value
+        /// Sets the alias of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the alias to set.
@@ -178,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             AliasProviderDynamicParameters dynamicParameters =
@@ -219,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = SessionState.Internal.SetAliasValue(name, stringValue, Force, Context.Origin);
                         }
+
                         break;
                     }
 
@@ -236,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             newAliasInfo.SetOptions(dynamicParameters.Options, Force);
                         }
+
                         item = SessionState.Internal.SetAliasItem(newAliasInfo, Force, Context.Origin);
                         break;
                     }
@@ -248,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 #pragma warning restore 0162
 
         /// <summary>
@@ -260,14 +263,14 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveAlias(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
-        /// Gets a flattened view of the alias in session state
+        /// Gets a flattened view of the alias in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the aliases in
@@ -276,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetAliasTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -313,28 +316,31 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
         #endregion protected members
 
-    } // AliasProvider
+    }
 
     /// <summary>
-    /// The dynamic parameter object for the AliasProvider SetItem and NewItem commands
+    /// The dynamic parameter object for the AliasProvider SetItem and NewItem commands.
     /// </summary>
     public class AliasProviderDynamicParameters
     {
         /// <summary>
-        /// Gets or sets the option parameter for the alias
+        /// Gets or sets the option parameter for the alias.
         /// </summary>
         [Parameter]
         public ScopedItemOptions Options
         {
             get { return _options; }
+
             set
             {
                 _optionsSet = true;
                 _options = value;
             }
         }
+
         private ScopedItemOptions _options;
 
         /// <summary>
@@ -345,6 +351,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _optionsSet; }
         }
+
         private bool _optionsSet = false;
     }
 }

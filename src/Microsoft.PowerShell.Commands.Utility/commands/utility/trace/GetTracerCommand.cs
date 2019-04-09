@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
                 _names = value;
             }
         }
+
         private string[] _names = new string[] { "*" };
 
         #endregion Parameters

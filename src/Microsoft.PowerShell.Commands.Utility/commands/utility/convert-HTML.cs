@@ -32,11 +32,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _inputObject;
             }
+
             set
             {
                 _inputObject = value;
             }
         }
+
         private PSObject _inputObject;
 
         /// <summary>
@@ -51,11 +53,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _property;
             }
+
             set
             {
                 _property = value;
             }
         }
+
         private object[] _property;
 
         /// <summary>
@@ -69,11 +73,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _body;
             }
+
             set
             {
                 _body = value;
             }
         }
+
         private string[] _body;
 
         /// <summary>
@@ -87,11 +93,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _head;
             }
+
             set
             {
                 _head = value;
             }
         }
+
         private string[] _head;
 
         /// <summary>
@@ -110,17 +118,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _title;
             }
+
             set
             {
                 _title = value;
             }
         }
+
         private string _title = "HTML TABLE";
 
         /// <summary>
         /// This specifies whether the objects should
         /// be rendered as an HTML TABLE or
-        /// HTML LIST
+        /// HTML LIST.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -132,11 +142,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _as;
             }
+
             set
             {
                 _as = value;
             }
         }
+
         private string _as = "Table";
 
         /// <summary>
@@ -153,12 +165,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _cssuri;
             }
+
             set
             {
                 _cssuri = value;
                 _cssuriSpecified = true;
             }
         }
+
         private Uri _cssuri;
         private bool _cssuriSpecified;
 
@@ -175,11 +189,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _fragment;
             }
+
             set
             {
                 _fragment = value;
             }
         }
+
         private SwitchParameter _fragment;
 
         /// <summary>
@@ -194,11 +210,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _postContent;
             }
+
             set
             {
                 _postContent = value;
             }
         }
+
         private string[] _postContent;
 
         /// <summary>
@@ -213,11 +231,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _preContent;
             }
+
             set
             {
                 _preContent = value;
             }
         }
+
         private string[] _preContent;
 
         /// <summary>
@@ -232,12 +252,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _meta;
             }
+
             set
             {
                 _meta = value;
                 _metaSpecified = true;
             }
         }
+
         private Hashtable _meta;
         private bool _metaSpecified = false;
 
@@ -253,12 +275,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _charset;
             }
+
             set
             {
                 _charset = value;
                 _charsetSpecified = true;
             }
         }
+
         private string _charset;
         private bool _charsetSpecified = false;
 
@@ -275,11 +299,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _transitional;
             }
+
             set
             {
                 _transitional = true;
             }
         }
+
         private bool _transitional = false;
 
         /// <summary>
@@ -300,16 +326,18 @@ namespace Microsoft.PowerShell.Commands
             protected override void SetEntries()
             {
                 this.hashEntries.Add(new ExpressionEntryDefinition());
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, new Type[] { typeof(string) }));
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new Type[] { typeof(string) }));
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new Type[] { typeof(string) }));
+                this.hashEntries.Add(new LabelEntryDefinition());
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new[] { typeof(string) }));
+
+                // Note: We accept "width" as either string or int.
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new[] { typeof(string), typeof(int) }));
             }
         }
 
         /// <summary>
         /// Create a list of MshParameter from properties.
         /// </summary>
-        /// <param name="properties">can be a string, ScriptBlock, or Hashtable</param>
+        /// <param name="properties">Can be a string, ScriptBlock, or Hashtable.</param>
         /// <returns></returns>
         private List<MshParameter> ProcessParameter(object[] properties)
         {
@@ -320,6 +348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 properties = new object[] { "*" };
             }
+
             return processor.ProcessParameters(properties, invocationContext);
         }
 
@@ -335,16 +364,29 @@ namespace Microsoft.PowerShell.Commands
             {
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+
+                // Accept the width both as a string and as an int.
+                string width;
+                int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
+                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                    ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    if (resolvedName.Script != null)
+                    {
+                        // The argument is a calculated property whose value is calculated by a script block.
+                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.Script);
+                    }
+                    else
+                    {
+                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    }
                     resolvedNameProperty.Add(ht);
                 }
             }
+
             _resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
         }
 
@@ -358,14 +400,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
             }
+
             if (alignment != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, alignment);
             }
+
             if (width != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, width);
             }
+
             return ht;
         }
 
@@ -380,6 +425,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return string.Empty;
             }
+
             try
             {
                 return obj.ToString();
@@ -388,6 +434,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // eats exception if safe
             }
+
             return string.Empty;
         }
 
@@ -395,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            //ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
+            // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
             if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
                 ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
@@ -405,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
 
             _propertyMshParameterList = ProcessParameter(_property);
 
-            if (!String.IsNullOrEmpty(_title))
+            if (!string.IsNullOrEmpty(_title))
             {
                 WebUtility.HtmlEncode(_title);
             }
@@ -424,12 +471,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
                 }
+
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
                 WriteObject("<head>");
                 if (_charsetSpecified)
                 {
                     WriteObject("<meta charset=\"" + _charset + "\">");
                 }
+
                 if (_metaSpecified)
                 {
                     List<string> useditems = new List<string>();
@@ -462,32 +511,37 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         record.SetInvocationInfo(invocationInfo);
                                     }
+
                                     mshCommandRuntime.WriteWarning(record);
                                     WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
                                     break;
                             }
+
                             useditems.Add(s);
                         }
                     }
                 }
+
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
                 {
                     WriteObject("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _cssuri + "\" />");
                 }
+
                 WriteObject("</head><body>");
                 if (_body != null)
                 {
                     WriteObject(_body, true);
                 }
             }
+
             if (_preContent != null)
             {
                 WriteObject(_preContent, true);
             }
+
             WriteObject("<table>");
             _isTHWritten = false;
-            _propertyCollector = new StringCollection();
         }
 
         /// <summary>
@@ -509,6 +563,7 @@ namespace Microsoft.PowerShell.Commands
                     COLTag.Append(width);
                     COLTag.Append("\"");
                 }
+
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
                 if (alignment != null)
                 {
@@ -516,6 +571,7 @@ namespace Microsoft.PowerShell.Commands
                     COLTag.Append(alignment);
                     COLTag.Append("\"");
                 }
+
                 COLTag.Append("/>");
             }
 
@@ -535,12 +591,12 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder Listtag = new StringBuilder();
                 Listtag.Append("<tr><td>");
 
-                //for writing the property name
+                // for writing the property name
                 WritePropertyName(Listtag, p);
                 Listtag.Append(":");
                 Listtag.Append("</td>");
 
-                //for writing the property value
+                // for writing the property value
                 Listtag.Append("<td>");
                 WritePropertyValue(Listtag, p);
                 Listtag.Append("</td></tr>");
@@ -554,7 +610,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
-            //for writing the property name
+            // for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
             if (label != null)
             {
@@ -584,8 +640,10 @@ namespace Microsoft.PowerShell.Commands
                     string htmlEncodedResult = WebUtility.HtmlEncode(SafeToString(result.Result));
                     Listtag.Append(htmlEncodedResult);
                 }
+
                 Listtag.Append(", ");
             }
+
             if (Listtag.ToString().EndsWith(", ", StringComparison.Ordinal))
             {
                 Listtag.Remove(Listtag.Length - 2, 2);
@@ -597,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
         {
-            //write the property names
+            // write the property names
             foreach (MshParameter p in resolvedNameMshParameters)
             {
                 THtag.Append("<th>");
@@ -611,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteTableRow(StringBuilder TRtag, List<MshParameter> resolvedNameMshParameters)
         {
-            //write the property values
+            // write the property values
             foreach (MshParameter p in resolvedNameMshParameters)
             {
                 TRtag.Append("<td>");
@@ -620,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        //count of the objects
+        // count of the objects
         private int _numberObjects = 0;
 
         /// <summary>
@@ -634,6 +692,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             _numberObjects++;
             if (!_isTHWritten)
             {
@@ -643,21 +702,21 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                //if the As parameter is given as List
+                // if the As parameter is given as List
                 if (_as.Equals("List", StringComparison.OrdinalIgnoreCase))
                 {
-                    //if more than one object,write the horizontal rule to put visual separator
+                    // if more than one object,write the horizontal rule to put visual separator
                     if (_numberObjects > 1)
                         WriteObject("<tr><td><hr></td></tr>");
                     WriteListEntry();
                 }
-                else //if the As parameter is Table, first we have to write the property names
+                else // if the As parameter is Table, first we have to write the property names
                 {
                     WriteColumns(_resolvedNameMshParameters);
 
                     StringBuilder THtag = new StringBuilder("<tr>");
 
-                    //write the table header
+                    // write the table header
                     WriteTableHeader(THtag, _resolvedNameMshParameters);
 
                     THtag.Append("</tr>");
@@ -665,12 +724,12 @@ namespace Microsoft.PowerShell.Commands
                     _isTHWritten = true;
                 }
             }
-            //if the As parameter is Table, write the property values
+            // if the As parameter is Table, write the property values
             if (_as.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {
                 StringBuilder TRtag = new StringBuilder("<tr>");
 
-                //write the table row
+                // write the table row
                 WriteTableRow(TRtag, _resolvedNameMshParameters);
 
                 TRtag.Append("</tr>");
@@ -682,12 +741,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            //if fragment,end with table
+            // if fragment,end with table
             WriteObject("</table>");
             if (_postContent != null)
                 WriteObject(_postContent, true);
 
-            //if not fragment end with body and html also
+            // if not fragment end with body and html also
             if (!_fragment)
             {
                 WriteObject("</body></html>");
@@ -697,13 +756,12 @@ namespace Microsoft.PowerShell.Commands
         #region private
 
         /// <summary>
-        /// list of incoming objects to compare.
+        /// List of incoming objects to compare.
         /// </summary>
         private bool _isTHWritten;
-        private StringCollection _propertyCollector;
         private List<MshParameter> _propertyMshParameterList;
         private List<MshParameter> _resolvedNameMshParameters;
-        //private string ResourcesBaseName = "ConvertHTMLStrings";
+        // private string ResourcesBaseName = "ConvertHTMLStrings";
 
         #endregion private
     }

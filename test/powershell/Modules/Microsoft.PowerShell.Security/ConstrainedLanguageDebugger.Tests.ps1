@@ -141,13 +141,12 @@ try
             # script debugger command processor.
             $script = @'
                 Import-Module -Name HelpersSecurity
-                Import-Module -Name {0} -Force
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                Import-Module -Name {1} -Force
+                Import-Module -Name {0} -Force
                 Set-PSBreakpoint -Command PublicFn
                 PublicFn
-'@ -f "$languageModuleDirectory\TestCmdletForConstrainedLanguage.dll", $trustedManifestFilePath
+'@ -f $trustedManifestFilePath
 
             [powershell] $ps = [powershell]::Create()
             $ps.Runspace = $runspace

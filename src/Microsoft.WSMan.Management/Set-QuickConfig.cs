@@ -27,7 +27,7 @@ namespace Microsoft.WSMan.Management
     /// 2. Set the WinRM service type to auto start
     /// 3. Create a listener to accept request on any IP address. By default
     /// transport is http
-    /// 4. Enable firewall exception for WS-Management traffic
+    /// 4. Enable firewall exception for WS-Management traffic.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141463")]
     public class SetWSManQuickConfigCommand : PSCmdlet, IDisposable
@@ -35,18 +35,20 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
         /// Indicates a https listener to be created. If this switch is not specified
-        /// then by default a http listener will be created
+        /// then by default a http listener will be created.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
-        //helper variable
+        // helper variable
         private WSManHelper helper;
 
         /// <summary>
@@ -57,8 +59,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter Force
         {
             get { return force; }
+
             set { force = value; }
         }
+
         private bool force = false;
 
         /// <summary>
@@ -68,8 +72,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return skipNetworkProfileCheck; }
+
             set { skipNetworkProfileCheck = value; }
         }
+
         private bool skipNetworkProfileCheck = false;
 
         /// <summary>
@@ -77,18 +83,19 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
-            String query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
-            String caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
+            string query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
+            string caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
             }
+
             QuickConfigRemoting(true);
             QuickConfigRemoting(false);
-        }//End BeginProcessing()
+        }
 
         #region private
 
@@ -124,7 +131,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : String.Empty;
+                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : string.Empty;
                     analysisInputXml = @"<Analyze_INPUT xmlns=""http://schemas.microsoft.com/wbem/wsman/1/config/service""><Transport>" + transport + "</Transport>" + openAllProfiles + "</Analyze_INPUT>";
                     action = "Analyze";
                 }
@@ -155,6 +162,7 @@ namespace Microsoft.WSMan.Management
                 {
                     source = sourceAttribute.Value;
                 }
+
                 string rxml = string.Empty;
                 if (enabled.Equals("true"))
                 {
@@ -173,6 +181,7 @@ namespace Microsoft.WSMan.Management
                     WriteObject(Err_Msg);
                     return;
                 }
+
                 if (!enabled.Equals("false"))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_QuickConfig_InvalidBool_0_ErrorMessage"));
@@ -184,7 +193,7 @@ namespace Microsoft.WSMan.Management
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
                 if ( source != null && source.Equals("GPO"))
                 {
-                    String Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
+                    string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
                     ArgumentException e = new ArgumentException(Info_Msg);
                     WriteError(new ErrorRecord(e, "NotSpecified", ErrorCategory.NotSpecified, null));
@@ -208,6 +217,7 @@ namespace Microsoft.WSMan.Management
                 {
                     action = "EnableRemoting";
                 }
+
                 rxml = m_SessionObj.Invoke(action, "winrm/config/service", inputXml, 0);
                 XmlDocument finalxml = new XmlDocument();
                 finalxml.LoadXml(rxml);
@@ -222,6 +232,7 @@ namespace Microsoft.WSMan.Management
                     xpathStatus = "/cfg:EnableRemoting_OUTPUT/cfg:Status";
                     xpathResult = "/cfg:EnableRemoting_OUTPUT/cfg:Results";
                 }
+
                 if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.ToString().Equals("succeeded"))
                 {
                     if (serviceonly)
@@ -232,6 +243,7 @@ namespace Microsoft.WSMan.Management
                     {
                         WriteObject(WSManResourceLoader.GetResourceString("L_QuickConfigUpdated_Message"));
                     }
+
                     WriteObject(finalxml.SelectSingleNode(xpathResult, nsmgr).InnerText);
                 }
                 else
@@ -241,10 +253,11 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
+
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
 
@@ -255,17 +268,17 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -277,6 +290,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion Set-WsManQuickConfig
 }

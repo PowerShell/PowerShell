@@ -175,6 +175,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 return _decodeName;
             }
+
             set
             {
                 _decodeName = value;
@@ -189,6 +190,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     _d = new XmlDocument(_r.NameTable);
                 }
+
                 return _d;
             }
         }
@@ -303,6 +305,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 if (isNullable) return null;
                 return Array.CreateInstance(elementType, 0);
             }
+
             if (a.Length == length) return a;
             Array b = Array.CreateInstance(elementType, length);
             Array.Copy(a, b, length);
@@ -413,9 +416,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 prefix = XmlConvert.DecodeName(prefix);
                 localName = XmlConvert.DecodeName(localName);
             }
+
             if (prefix == null || prefix.Length == 0)
             {
-                return new XmlQualifiedName(_r.NameTable.Add(value), _r.LookupNamespace(String.Empty));
+                return new XmlQualifiedName(_r.NameTable.Add(value), _r.LookupNamespace(string.Empty));
             }
             else
             {
@@ -425,6 +429,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     // Namespace prefix '{0}' is not defined.
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "XmlUndefinedAlias. Prefix: {0}", prefix));
                 }
+
                 return new XmlQualifiedName(_r.NameTable.Add(localName), ns);
             }
         }
@@ -448,6 +453,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                         return null;
                 }
             }
+
             return ToXmlQualifiedName(type, false);
         }
 
@@ -462,6 +468,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 if (isNull == null)
                     isNull = _r.GetAttribute(_nullID, _instanceNs1999ID);
             }
+
             if (isNull == null || !XmlConvert.ToBoolean(isNull)) return false;
             return true;
         }
@@ -474,6 +481,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 _r.Skip();
                 return true;
             }
+
             _r.ReadStartElement();
             int whileIterations = 0;
             int readerCount = ReaderCount;
@@ -482,6 +490,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 UnknownNode(null);
                 CheckReaderCount(ref whileIterations, ref readerCount);
             }
+
             ReadEndElement();
             return true;
         }
@@ -552,6 +561,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:PowerShellMetadata");
             }
+
             return (object)o;
         }
 
@@ -574,6 +584,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ClassMetadata");
             }
+
             return (object)o;
         }
 
@@ -596,6 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ClassMetadataInstanceCmdlets");
             }
+
             return (object)o;
         }
 
@@ -618,6 +630,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":GetCmdletParameters");
             }
+
             return (object)o;
         }
 
@@ -640,6 +653,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":PropertyMetadata");
             }
+
             return (object)o;
         }
 
@@ -662,6 +676,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":TypeMetadata");
             }
+
             return (object)o;
         }
 
@@ -684,6 +699,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":Association");
             }
+
             return (object)o;
         }
 
@@ -706,6 +722,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":AssociationAssociatedInstance");
             }
+
             return (object)o;
         }
 
@@ -728,6 +745,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadata");
             }
+
             return (object)o;
         }
 
@@ -750,6 +768,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataForGetCmdletParameter");
             }
+
             return (object)o;
         }
 
@@ -772,6 +791,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataForGetCmdletFilteringParameter");
             }
+
             return (object)o;
         }
 
@@ -794,6 +814,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataValidateCount");
             }
+
             return (object)o;
         }
 
@@ -816,6 +837,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataValidateLength");
             }
+
             return (object)o;
         }
 
@@ -838,6 +860,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataValidateRange");
             }
+
             return (object)o;
         }
 
@@ -860,6 +883,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ObsoleteAttributeMetadata");
             }
+
             return (object)o;
         }
 
@@ -882,6 +906,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataForInstanceMethodParameter");
             }
+
             return (object)o;
         }
 
@@ -904,6 +929,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletParameterMetadataForStaticMethodParameter");
             }
+
             return (object)o;
         }
 
@@ -926,6 +952,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":QueryOption");
             }
+
             return (object)o;
         }
 
@@ -948,6 +975,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":GetCmdletMetadata");
             }
+
             return (object)o;
         }
 
@@ -970,6 +998,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CommonCmdletMetadata");
             }
+
             return (object)o;
         }
 
@@ -994,6 +1023,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ConfirmImpact");
             }
+
             return (object)o;
         }
 
@@ -1016,6 +1046,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":StaticCmdletMetadata");
             }
+
             return (object)o;
         }
 
@@ -1038,6 +1069,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":StaticCmdletMetadataCmdletMetadata");
             }
+
             return (object)o;
         }
 
@@ -1060,6 +1092,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CommonMethodMetadata");
             }
+
             return (object)o;
         }
 
@@ -1082,6 +1115,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":StaticMethodMetadata");
             }
+
             return (object)o;
         }
 
@@ -1104,6 +1138,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CommonMethodParameterMetadata");
             }
+
             return (object)o;
         }
 
@@ -1126,6 +1161,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":StaticMethodParameterMetadata");
             }
+
             return (object)o;
         }
 
@@ -1148,6 +1184,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CmdletOutputMetadata");
             }
+
             return (object)o;
         }
 
@@ -1170,6 +1207,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":InstanceMethodParameterMetadata");
             }
+
             return (object)o;
         }
 
@@ -1192,6 +1230,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":CommonMethodMetadataReturnValue");
             }
+
             return (object)o;
         }
 
@@ -1214,6 +1253,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":InstanceMethodMetadata");
             }
+
             return (object)o;
         }
 
@@ -1236,6 +1276,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":InstanceCmdletMetadata");
             }
+
             return (object)o;
         }
 
@@ -1258,6 +1299,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":PropertyQuery");
             }
+
             return (object)o;
         }
 
@@ -1280,6 +1322,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":WildcardablePropertyQuery");
             }
+
             return (object)o;
         }
 
@@ -1304,6 +1347,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ItemsChoiceType");
             }
+
             return (object)o;
         }
 
@@ -1326,6 +1370,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":ClassMetadataData");
             }
+
             return (object)o;
         }
 
@@ -1348,6 +1393,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":EnumMetadataEnum");
             }
+
             return (object)o;
         }
 
@@ -1370,6 +1416,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 UnknownNode(null, @":EnumMetadataEnumValue");
             }
+
             return (object)o;
         }
 
@@ -1386,6 +1433,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue();
@@ -1407,12 +1455,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Name, :Value");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations0 = 0;
@@ -1427,9 +1477,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations0, ref readerCount0);
             }
+
             ReadEndElement();
             return o;
         }
@@ -1447,6 +1499,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum();
@@ -1476,6 +1529,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":EnumName, :UnderlyingType, :BitwiseFlags");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -1483,6 +1537,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations1 = 0;
@@ -1504,9 +1559,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations1, ref readerCount1);
             }
+
             o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
             ReadEndElement();
             return o;
@@ -1525,6 +1582,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue();
@@ -1546,12 +1604,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Name, :Value");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations2 = 0;
@@ -1566,9 +1626,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations2, ref readerCount2);
             }
+
             ReadEndElement();
             return o;
         }
@@ -1586,6 +1648,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData();
@@ -1602,12 +1665,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Name");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations3 = 0;
@@ -1631,9 +1696,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations3, ref readerCount3);
             }
+
             ReadEndElement();
             return o;
         }
@@ -1663,6 +1730,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery();
@@ -1680,12 +1748,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":AllowGlobbing");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations4 = 0;
@@ -1708,9 +1778,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations4, ref readerCount4);
             }
+
             ReadEndElement();
             return o;
         }
@@ -1728,6 +1800,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter();
@@ -1797,6 +1870,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName, :CmdletParameterSets, :ErrorOnNoMatch");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -1805,6 +1879,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations5 = 0;
@@ -1888,11 +1963,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations6, ref readerCount6);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
@@ -1910,9 +1988,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations5, ref readerCount5);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
             o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
             ReadEndElement();
@@ -1932,6 +2012,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata();
@@ -1948,12 +2029,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Message");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations7 = 0;
@@ -1968,9 +2051,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations7, ref readerCount7);
             }
+
             ReadEndElement();
             return o;
         }
@@ -1988,6 +2073,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange();
@@ -2009,12 +2095,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations8 = 0;
@@ -2029,9 +2117,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations8, ref readerCount8);
             }
+
             ReadEndElement();
             return o;
         }
@@ -2049,6 +2139,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength();
@@ -2070,12 +2161,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations9 = 0;
@@ -2090,9 +2183,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations9, ref readerCount9);
             }
+
             ReadEndElement();
             return o;
         }
@@ -2110,6 +2205,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount();
@@ -2131,12 +2227,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations10 = 0;
@@ -2151,9 +2249,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations10, ref readerCount10);
             }
+
             ReadEndElement();
             return o;
         }
@@ -2170,6 +2270,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     if (xsiType != null) return (global::System.Object)ReadTypedNull(xsiType);
                     else return null;
                 }
+
                 if (xsiType == null)
                 {
                     return ReadTypedPrimitive(new System.Xml.XmlQualifiedName("anyType", "http://www.w3.org/2001/XMLSchema"));
@@ -2287,13 +2388,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations11, ref readerCount11);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::System.String[])ShrinkArray(z_0_0, cz_0_0, typeof(global::System.String), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id70_ArrayOfPropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2330,13 +2435,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations12, ref readerCount12);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id72_ArrayOfAssociation && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2373,13 +2482,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations13, ref readerCount13);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id73_ArrayOfQueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2416,13 +2529,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations14, ref readerCount14);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id23_ConfirmImpact && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2466,13 +2583,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations15, ref readerCount15);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id77_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2509,13 +2630,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations16, ref readerCount16);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id78_ArrayOfStaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2552,13 +2677,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations17, ref readerCount17);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id80_ArrayOfClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2595,13 +2724,17 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations18, ref readerCount18);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData), false);
                     }
+
                     return a;
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id82_ArrayOfEnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -2638,22 +2771,27 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                 {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
                                 }
+
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations19, ref readerCount19);
                             }
+
                             ReadEndElement();
                         }
+
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum), false);
                     }
+
                     return a;
                 }
                 else
                     return ReadTypedPrimitive((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::System.Object o;
             o = new global::System.Object();
-            bool[] paramsRead = new bool[0];
+            bool[] paramsRead = Array.Empty<bool>();
             while (Reader.MoveToNextAttribute())
             {
                 if (!IsXmlnsAttribute(Reader.Name))
@@ -2661,12 +2799,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations20 = 0;
@@ -2681,9 +2821,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations20, ref readerCount20);
             }
+
             ReadEndElement();
             return o;
         }
@@ -2701,6 +2843,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum();
@@ -2730,6 +2873,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":EnumName, :UnderlyingType, :BitwiseFlags");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -2737,6 +2881,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations21 = 0;
@@ -2758,9 +2903,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations21, ref readerCount21);
             }
+
             o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
             ReadEndElement();
             return o;
@@ -2779,6 +2926,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData();
@@ -2795,12 +2943,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Name");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations22 = 0;
@@ -2824,9 +2974,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations22, ref readerCount22);
             }
+
             ReadEndElement();
             return o;
         }
@@ -2844,6 +2996,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata();
@@ -2857,6 +3010,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -2864,6 +3018,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations23 = 0;
@@ -2890,9 +3045,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations23, ref readerCount23);
             }
+
             o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
             ReadEndElement();
             return o;
@@ -2911,6 +3068,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata();
@@ -2934,12 +3092,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":MethodName, :CmdletParameterSet");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations24 = 0;
@@ -2986,11 +3146,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations25, ref readerCount25);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata), false);
                         }
                     }
@@ -3003,9 +3166,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations24, ref readerCount24);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3023,6 +3188,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata();
@@ -3044,12 +3210,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":ParameterName, :DefaultValue");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations26 = 0;
@@ -3082,9 +3250,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations26, ref readerCount26);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3102,6 +3272,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata();
@@ -3118,12 +3289,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":PSName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations27 = 0;
@@ -3146,9 +3319,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ErrorCode");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations27, ref readerCount27);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3166,6 +3341,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter();
@@ -3218,6 +3394,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -3225,6 +3402,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations28 = 0;
@@ -3308,11 +3486,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations29, ref readerCount29);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
@@ -3330,9 +3511,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations28, ref readerCount28);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -3351,6 +3534,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata();
@@ -3372,12 +3556,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":PSType, :ETSType");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations30 = 0;
@@ -3392,9 +3578,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations30, ref readerCount30);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3412,6 +3600,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
@@ -3423,12 +3612,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations31 = 0;
@@ -3456,9 +3647,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations31, ref readerCount31);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3476,6 +3669,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
@@ -3524,6 +3718,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -3531,6 +3726,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations32 = 0;
@@ -3553,9 +3749,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations32, ref readerCount32);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -3586,6 +3784,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata();
@@ -3607,12 +3806,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":ParameterName, :DefaultValue");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations33 = 0;
@@ -3645,9 +3846,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations33, ref readerCount33);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3665,6 +3868,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter();
@@ -3711,6 +3915,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipelineByPropertyName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -3718,6 +3923,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations34 = 0;
@@ -3801,11 +4007,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations35, ref readerCount35);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
@@ -3823,9 +4032,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations34, ref readerCount34);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -3844,6 +4055,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption();
@@ -3860,12 +4072,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":OptionName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations36 = 0;
@@ -3893,9 +4107,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations36, ref readerCount36);
             }
+
             ReadEndElement();
             return o;
         }
@@ -3915,6 +4131,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter();
@@ -3978,6 +4195,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName, :CmdletParameterSets");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -3986,6 +4204,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations37 = 0;
@@ -4069,11 +4288,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations38, ref readerCount38);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
@@ -4091,9 +4313,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations37, ref readerCount37);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
             o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
             ReadEndElement();
@@ -4113,6 +4337,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.Association o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.Association();
@@ -4139,12 +4364,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Association, :SourceRole, :ResultRole");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations39 = 0;
@@ -4167,9 +4394,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AssociatedInstance");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations39, ref readerCount39);
             }
+
             ReadEndElement();
             return o;
         }
@@ -4187,6 +4416,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
@@ -4198,12 +4428,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations40 = 0;
@@ -4231,9 +4463,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations40, ref readerCount40);
             }
+
             ReadEndElement();
             return o;
         }
@@ -4251,6 +4485,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata();
@@ -4271,6 +4506,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":PropertyName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -4279,6 +4515,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@ItemsElementName = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])ShrinkArray(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations41 = 0;
@@ -4321,9 +4558,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MaxValueQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:RegularQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ExcludeQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MinValueQuery");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations41, ref readerCount41);
             }
+
             o.@Items = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery), true);
             o.@ItemsElementName = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])ShrinkArray(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType), true);
             ReadEndElement();
@@ -4345,6 +4584,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery();
@@ -4356,12 +4596,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations42 = 0;
@@ -4384,9 +4626,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations42, ref readerCount42);
             }
+
             ReadEndElement();
             return o;
         }
@@ -4412,6 +4656,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata();
@@ -4452,6 +4697,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -4459,6 +4705,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations43 = 0;
@@ -4542,11 +4789,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations44, ref readerCount44);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
@@ -4564,9 +4814,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations43, ref readerCount43);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -4585,6 +4837,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters();
@@ -4607,12 +4860,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":DefaultCmdletParameterSet");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations45 = 0;
@@ -4654,11 +4909,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations46, ref readerCount46);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@QueryableProperties = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])ShrinkArray(a_0_0, ca_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata), false);
                         }
                     }
@@ -4695,11 +4953,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations47, ref readerCount47);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@QueryableAssociations = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association), false);
                         }
                     }
@@ -4736,11 +4997,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations48, ref readerCount48);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@QueryOptions = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption), false);
                         }
                     }
@@ -4753,9 +5017,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableProperties, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableAssociations, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryOptions");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations45, ref readerCount45);
             }
+
             ReadEndElement();
             return o;
         }
@@ -4773,6 +5039,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
@@ -4821,6 +5088,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -4828,6 +5096,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations49 = 0;
@@ -4850,9 +5119,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations49, ref readerCount49);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -4873,6 +5144,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata();
@@ -4916,6 +5188,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -4923,6 +5196,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations50 = 0;
@@ -4945,9 +5219,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations50, ref readerCount50);
             }
+
             o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
             ReadEndElement();
             return o;
@@ -4966,6 +5242,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata();
@@ -4977,12 +5254,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations51 = 0;
@@ -5010,9 +5289,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations51, ref readerCount51);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5030,6 +5311,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata();
@@ -5048,12 +5330,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":MethodName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations52 = 0;
@@ -5100,11 +5384,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations53, ref readerCount53);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata), false);
                         }
                     }
@@ -5117,9 +5404,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations52, ref readerCount52);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5141,6 +5430,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata();
@@ -5157,12 +5447,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":MethodName");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations54 = 0;
@@ -5185,9 +5477,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations54, ref readerCount54);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5209,6 +5503,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata();
@@ -5230,12 +5525,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":ParameterName, :DefaultValue");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations55 = 0;
@@ -5258,9 +5555,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations55, ref readerCount55);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5278,6 +5577,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata();
@@ -5289,12 +5589,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations56 = 0;
@@ -5327,9 +5629,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations56, ref readerCount56);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5347,6 +5651,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata();
@@ -5377,12 +5682,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":CmdletAdapter, :ClassName, :ClassVersion");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations57 = 0;
@@ -5396,6 +5703,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                         {
                             o.@Version = Reader.ReadElementContentAsString();
                         }
+
                         paramsRead[0] = true;
                     }
                     else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id116_DefaultNoun && (object)Reader.NamespaceURI == (object)_id2_Item))
@@ -5403,6 +5711,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                         {
                             o.@DefaultNoun = Reader.ReadElementContentAsString();
                         }
+
                         paramsRead[1] = true;
                     }
                     else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id117_InstanceCmdlets && (object)Reader.NamespaceURI == (object)_id2_Item))
@@ -5443,11 +5752,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations58, ref readerCount58);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@StaticCmdlets = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])ShrinkArray(a_3_0, ca_3_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata), false);
                         }
                     }
@@ -5484,11 +5796,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations59, ref readerCount59);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@CmdletAdapterPrivateData = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])ShrinkArray(a_4_0, ca_4_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData), false);
                         }
                     }
@@ -5501,9 +5816,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Version, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:DefaultNoun, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:InstanceCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:StaticCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletAdapterPrivateData");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations57, ref readerCount57);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5521,6 +5838,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
@@ -5534,6 +5852,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -5541,6 +5860,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations60 = 0;
@@ -5572,9 +5892,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations60, ref readerCount60);
             }
+
             o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
             ReadEndElement();
             return o;
@@ -5593,6 +5915,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
@@ -5606,6 +5929,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
@@ -5613,6 +5937,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations61 = 0;
@@ -5644,9 +5969,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations61, ref readerCount61);
             }
+
             o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
             ReadEndElement();
             return o;
@@ -5665,6 +5992,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
@@ -5676,12 +6004,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations62 = 0;
@@ -5709,9 +6039,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations62, ref readerCount62);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5729,6 +6061,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount();
@@ -5750,12 +6083,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations63 = 0;
@@ -5770,9 +6105,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations63, ref readerCount63);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5790,6 +6127,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength();
@@ -5811,12 +6149,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations64 = 0;
@@ -5831,9 +6171,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations64, ref readerCount64);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5851,6 +6193,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange();
@@ -5872,12 +6215,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations65 = 0;
@@ -5892,9 +6237,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, string.Empty);
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations65, ref readerCount65);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5912,6 +6259,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
@@ -5923,12 +6271,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations66 = 0;
@@ -5956,9 +6306,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations66, ref readerCount66);
             }
+
             ReadEndElement();
             return o;
         }
@@ -5976,6 +6328,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
+
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata();
@@ -5989,12 +6342,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     UnknownNode((object)o);
                 }
             }
+
             Reader.MoveToElement();
             if (Reader.IsEmptyElement)
             {
                 Reader.Skip();
                 return o;
             }
+
             Reader.ReadStartElement();
             Reader.MoveToContent();
             int whileIterations67 = 0;
@@ -6041,11 +6396,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                                     {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
                                     }
+
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations68, ref readerCount68);
                                 }
+
                                 ReadEndElement();
                             }
+
                             o.@Enums = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum), false);
                         }
                     }
@@ -6058,9 +6416,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Class, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enums");
                 }
+
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations67, ref readerCount67);
             }
+
             ReadEndElement();
             return o;
         }

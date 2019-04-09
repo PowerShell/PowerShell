@@ -57,7 +57,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Validates the username, but not its existence.
-        /// or correctness
+        /// or correctness.
         /// </summary>
         ValidateUserNameSyntax,
 
@@ -97,15 +97,17 @@ namespace System.Management.Automation
             {
                 return s_delegate;
             }
+
             set
             {
                 s_delegate = value;
             }
         }
+
         private static GetSymmetricEncryptionKey s_delegate = null;
 
         /// <summary>
-        /// GetObjectData
+        /// GetObjectData.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -143,7 +145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// PSCredential
+        /// PSCredential.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -198,8 +200,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of the PSCredential class with a
         /// username and password.
         /// </summary>
-        /// <param name="userName"> User's name. </param>
-        /// <param name="password"> User's password. </param>
+        /// <param name="userName">User's name.</param>
+        /// <param name="password">User's password.</param>
         public PSCredential(string userName, SecureString password)
         {
             Utils.CheckArgForNullOrEmpty(userName, "userName");
@@ -272,7 +274,7 @@ namespace System.Management.Automation
         /// Provides an explicit cast to get a NetworkCredential
         /// from this PSCredential.
         /// </summary>
-        /// <param name="credential"> PSCredential to convert. </param>
+        /// <param name="credential">PSCredential to convert.</param>
         /// <returns>
         ///     null if the current object has not been initialized.
         ///     null if the current credentials are incompatible with
@@ -321,7 +323,7 @@ namespace System.Management.Automation
                                             out string user,
                                             out string domain)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
             {
                 user = domain = null;
                 return false;
@@ -333,9 +335,9 @@ namespace System.Management.Automation
                 (domain == null) ||
                 (user.Length == 0))
             {
-                //UserName is the public property of Credential object. Use this as
-                //parameter name in error
-                //See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
+                // UserName is the public property of Credential object. Use this as
+                // parameter name in error
+                // See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
                 throw PSTraceSource.NewArgumentException("UserName", Credential.InvalidUserNameFormat);
             }
 

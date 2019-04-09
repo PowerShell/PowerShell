@@ -12,7 +12,7 @@ using System.Management.Automation.Language;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Describes how and where this command was invoked
+    /// Describes how and where this command was invoked.
     /// </summary>
     [DebuggerDisplay("Command = {MyCommand}")]
     public class InvocationInfo
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for InvocationInfo object
+        /// Constructor for InvocationInfo object.
         /// </summary>
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for InvocationInfo object
+        /// Constructor for InvocationInfo object.
         /// </summary>
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
@@ -112,6 +112,7 @@ namespace System.Management.Automation
             {
                 scriptEndPosition = scriptPosition;
             }
+
             _scriptPosition = new ScriptExtent(scriptPosition, scriptEndPosition);
 
             MyCommand = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
@@ -123,11 +124,11 @@ namespace System.Management.Automation
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
             if (list != null)
             {
-                PipelineIterationInfo = (int[])list.ToArray(typeof(Int32));
+                PipelineIterationInfo = (int[])list.ToArray(typeof(int));
             }
             else
             {
-                PipelineIterationInfo = Utils.EmptyArray<int>();
+                PipelineIterationInfo = Array.Empty<int>();
             }
 
             //
@@ -187,7 +188,7 @@ namespace System.Management.Automation
         #region Public Members
 
         /// <summary>
-        /// Provide basic information about the command
+        /// Provide basic information about the command.
         /// </summary>
         /// <value>may be null</value>
         public CommandInfo MyCommand { get; }
@@ -202,20 +203,22 @@ namespace System.Management.Automation
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
+
             internal set { _boundParameters = value; }
         }
 
         /// <summary>
-        /// This member provides a list of the arguments that were not bound to any parameter
+        /// This member provides a list of the arguments that were not bound to any parameter.
         /// </summary>
         public List<object> UnboundArguments
         {
             get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+
             internal set { _unboundArguments = value; }
         }
 
         /// <summary>
-        ///  The line number in the executing script that contained this cmdlet.
+        /// The line number in the executing script that contained this cmdlet.
         /// </summary>
         /// <value>The script line number or -1 if not executing in a script.</value>
         public int ScriptLineNumber
@@ -267,7 +270,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Formatted message indicating where the cmdlet appeared
-        /// in the line
+        /// in the line.
         /// </summary>
         /// <value>Formatted string indicating the command's position in the line</value>
         public string PositionMessage
@@ -276,25 +279,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This property tells you the directory from where you were being invoked
+        /// This property tells you the directory from where you were being invoked.
         /// </summary>
         public string PSScriptRoot
         {
             get
             {
-                if (!String.IsNullOrEmpty(ScriptPosition.File))
+                if (!string.IsNullOrEmpty(ScriptPosition.File))
                 {
                     return Path.GetDirectoryName(ScriptPosition.File);
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }
 
         /// <summary>
-        /// This property tells you the full path to the command from where you were being invoked
+        /// This property tells you the full path to the command from where you were being invoked.
         /// </summary>
         public string PSCommandPath
         {
@@ -309,17 +312,18 @@ namespace System.Management.Automation
         public string InvocationName
         {
             get { return _invocationName ?? string.Empty; }
+
             internal set { _invocationName = value; }
         }
 
         /// <summary>
-        /// How many elements are in the containing pipeline
+        /// How many elements are in the containing pipeline.
         /// </summary>
         /// <value>number of elements in the containing pipeline</value>
         public int PipelineLength { get; internal set; }
 
         /// <summary>
-        /// which element this command was in the containing pipeline
+        /// Which element this command was in the containing pipeline.
         /// </summary>
         /// <value>which element this command was in the containing pipeline</value>
         public int PipelinePosition { get; internal set; }
@@ -341,7 +345,7 @@ namespace System.Management.Automation
         public IScriptExtent DisplayScriptPosition { get; set; }
 
         /// <summary>
-        /// Create
+        /// Create.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="scriptPosition"></param>
@@ -376,6 +380,7 @@ namespace System.Management.Automation
                     return _scriptPosition;
                 }
             }
+
             set { _scriptPosition = value; }
         }
 
@@ -394,7 +399,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// All the commands in a given pipeline share the same PipelinePositionInfo.
         /// </remarks>
-        internal int[] PipelineIterationInfo { get; set; } = Utils.EmptyArray<int>();
+        internal int[] PipelineIterationInfo { get; set; } = Array.Empty<int>();
 
         /// <summary>
         /// Adds the information about this informational record to a PSObject as note properties.
@@ -478,6 +483,7 @@ namespace System.Management.Automation
                 commandInfo._definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
                 commandInfo.Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility");
             }
+
             return commandInfo;
         }
 
@@ -501,7 +507,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// NYI
+        /// NYI.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {

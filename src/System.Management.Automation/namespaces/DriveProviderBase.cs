@@ -54,7 +54,7 @@ namespace System.Management.Automation.Provider
             }
 
             return NewDrive(drive);
-        } // NewDrive
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return NewDriveDynamicParameters();
-        } // NewDriveDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the RemoveDrive protected method. It is called instead
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return RemoveDrive(drive);
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Internal wrapper for the InitializeDefaultDrives protected method. It is called instead
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Provider
             Context.Drive = null;
 
             return InitializeDefaultDrives();
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider method wrappers
 
@@ -154,8 +154,8 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 return drive;
-            } // TraceMethod
-        } // NewDrive
+            }
+        }
 
         /// <summary>
         /// Gives the provider an opportunity to attach additional parameters to
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // NewDriveDynamicParameters
+        }
 
         /// <summary>
         /// Gives the provider an opportunity to clean up any provider specific data
@@ -199,8 +199,8 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 return drive;
-            } // TraceMethod
-        } // RemoveDrive
+            }
+        }
 
         /// <summary>
         /// Gives the provider the ability to map drives after initialization.
@@ -229,12 +229,12 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 return new Collection<PSDriveInfo>();
-            } // TraceMethod
-        } // InitializeDefaultDrives
+            }
+        }
 
         #endregion Public methods
-    } // DriveCmdletProvider
+    }
 
     #endregion DriveCmdletProvider
-} // namespace System.Management.Automation
+}
 

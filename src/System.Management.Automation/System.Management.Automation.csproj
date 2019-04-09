@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
@@ -18,12 +18,12 @@
     <PackageReference Include="System.Management" Version="4.5.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.2" />
     <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0-preview.1" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -33,7 +33,6 @@
   <ItemGroup>
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\CodeMethods.cs" />
     <Compile Remove="engine\ComInterop\ArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoolArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoundDispEvent.cs" />
@@ -92,13 +91,6 @@
     <Compile Remove="engine\ComInterop\VariantArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\VariantArray.cs" />
     <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
-    <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
-    <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
-    <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
-    <Compile Remove="engine\PSMI\Serialization\KnownMITypes.cs" />
-    <Compile Remove="engine\PSMI\Serialization\MISerializer.cs" />
-    <Compile Remove="engine\PSMI\Serialization\MITypeSerializationInfo.cs" />
-    <Compile Remove="engine\PSMI\Serialization\PSMISerializer.cs" />
     <Compile Remove="engine\TransactedString.cs" />
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
@@ -111,14 +103,6 @@
     <Compile Remove="namespaces\TransactedRegistry.cs" />
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="singleshell\Commands\ConsoleCommands.cs" />
-    <Compile Remove="singleshell\Commands\MshSnapinCommands.cs" />
-    <Compile Remove="singleshell\config\RegistryStringResourceIndirect.cs" />
-    <Compile Remove="singleshell\installer\CustomMshSnapin.cs" />
-    <Compile Remove="singleshell\installer\MshCoreMshSnapin.cs" />
-    <Compile Remove="singleshell\installer\MshInstaller.cs" />
-    <Compile Remove="singleshell\installer\MshSnapin.cs" />
-    <Compile Remove="singleshell\installer\MshSnapinInstaller.cs" />
     <Compile Remove="utils\BackgroundDispatcher.cs" />
     <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
@@ -138,8 +122,6 @@
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
-    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
-    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
     <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>

@@ -13,7 +13,7 @@ namespace System.Management.Automation
     public abstract class PSSessionTypeOption
     {
         /// <summary>
-        /// Returns a xml formatted data that represents the options
+        /// Returns a xml formatted data that represents the options.
         /// </summary>
         /// <returns></returns>
         protected internal virtual string ConstructPrivateData()
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clone from ICloneable
+        /// Clone from ICloneable.
         /// </summary>
         public object Clone()
         {

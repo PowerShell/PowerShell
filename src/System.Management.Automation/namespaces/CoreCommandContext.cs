@@ -64,7 +64,7 @@ namespace System.Management.Automation
             {
                 _command = (Cmdlet)executionContext.CurrentCommandProcessor.Command;
             }
-        } // CmdletProviderContext constructor
+        }
 
         /// <summary>
         /// Constructs the context under which the core command providers
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
             ExecutionContext = executionContext;
             Origin = origin;
-        } // CmdletProviderContext constructor
+        }
 
         /// <summary>
         /// Constructs the context under which the core command providers
@@ -139,13 +139,14 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
             PassThru = true;
             _streamErrors = true;
-        } // CmdletProviderContext constructor
+        }
 
         /// <summary>
         /// Constructs the context under which the core command providers
@@ -190,13 +191,14 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
             PassThru = true;
             _streamErrors = true;
-        } // CmdletProviderContext constructor
+        }
 
         /// <summary>
         /// Constructs the context under which the core command providers
@@ -227,13 +229,14 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
             PassThru = true;
             _streamErrors = true;
-        } // CmdletProviderContext constructor
+        }
 
         /// <summary>
         /// Constructs the context under which the core command providers
@@ -254,6 +257,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("contextToCopyFrom");
             }
+
             ExecutionContext = contextToCopyFrom.ExecutionContext;
 
             _command = contextToCopyFrom._command;
@@ -280,7 +284,7 @@ namespace System.Management.Automation
 
             contextToCopyFrom.StopReferrals.Add(this);
             _copiedContext = contextToCopyFrom;
-        } // CmdletProviderContext constructor
+        }
 
         #endregion Constructor
 
@@ -311,7 +315,7 @@ namespace System.Management.Automation
         private Cmdlet _command;
 
         /// <summary>
-        /// This makes the origin of the provider request visible to the internals
+        /// This makes the origin of the provider request visible to the internals.
         /// </summary>
         internal CommandOrigin Origin { get; } = CommandOrigin.Internal;
 
@@ -347,7 +351,7 @@ namespace System.Management.Automation
         #region Internal properties
 
         /// <summary>
-        /// Gets the execution context of the engine
+        /// Gets the execution context of the engine.
         /// </summary>
         internal ExecutionContext ExecutionContext { get; }
 
@@ -360,13 +364,13 @@ namespace System.Management.Automation
             get
             {
                 return _providerInstance;
-            } // get
+            }
 
             set
             {
                 _providerInstance = value;
-            } // set
-        } // ProviderInstance
+            }
+        }
 
         /// <summary>
         /// Copies the include, exclude, and provider filters from
@@ -384,7 +388,7 @@ namespace System.Management.Automation
             Include = context.Include;
             Exclude = context.Exclude;
             Filter = context.Filter;
-        } // CopyFilters
+        }
 
         internal void RemoveStopReferral()
         {
@@ -398,12 +402,12 @@ namespace System.Management.Automation
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the dynamic parameters for the context
+        /// Gets or sets the dynamic parameters for the context.
         /// </summary>
         internal object DynamicParameters { get; set; }
 
         /// <summary>
-        /// Returns MyInvocation from the underlying cmdlet
+        /// Returns MyInvocation from the underlying cmdlet.
         /// </summary>
         internal InvocationInfo MyInvocation
         {
@@ -452,7 +456,7 @@ namespace System.Management.Automation
 
                 return result;
             }
-        } // Credential
+        }
 
         #region Transaction Support
 
@@ -492,7 +496,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         public PSTransactionContext CurrentPSTransaction
         {
@@ -514,6 +518,7 @@ namespace System.Management.Automation
         internal SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
 
@@ -546,7 +551,7 @@ namespace System.Management.Automation
         #region User feedback mechanisms
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
         /// Name of the target resource being acted upon
@@ -568,15 +573,15 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldProcess
+        }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
         /// Name of the target resource being acted upon
         /// </param>
-        /// <param name="action">What action was being performed</param>
+        /// <param name="action">What action was being performed.</param>
         /// <remarks>true iff the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
@@ -595,10 +600,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldProcess
+        }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="verboseDescription">
         /// This should contain a textual description of the action to be
@@ -638,10 +643,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldProcess
+        }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="verboseDescription">
         /// This should contain a textual description of the action to be
@@ -693,10 +698,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldProcess
+        }
 
         /// <summary>
-        /// Ask the user whether to continue/stop or break to a subshell
+        /// Ask the user whether to continue/stop or break to a subshell.
         /// </summary>
         /// <param name="query">
         /// Message to display to the user. This routine will append
@@ -720,10 +725,10 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldContinue
+        }
 
         /// <summary>
-        /// Ask the user whether to continue/stop or break to a subshell
+        /// Ask the user whether to continue/stop or break to a subshell.
         /// </summary>
         /// <param name="query">
         /// Message to display to the user. This routine will append
@@ -761,7 +766,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ShouldContinue
+        }
 
         /// <summary>
         /// Writes the object to the Verbose pipe.
@@ -775,7 +780,7 @@ namespace System.Management.Automation
             {
                 _command.WriteVerbose(text);
             }
-        } // WriteVerbose
+        }
 
         /// <summary>
         /// Writes the object to the Warning pipe.
@@ -789,7 +794,7 @@ namespace System.Management.Automation
             {
                 _command.WriteWarning(text);
             }
-        } // WriteWarning
+        }
 
         internal void WriteProgress(ProgressRecord record)
         {
@@ -797,7 +802,7 @@ namespace System.Management.Automation
             {
                 _command.WriteProgress(record);
             }
-        } // WriteProgress
+        }
 
         /// <summary>
         /// Writes a debug string.
@@ -811,7 +816,7 @@ namespace System.Management.Automation
             {
                 _command.WriteDebug(text);
             }
-        } // WriteDebug
+        }
 
         internal void WriteInformation(InformationRecord record)
         {
@@ -819,7 +824,7 @@ namespace System.Management.Automation
             {
                 _command.WriteInformation(record);
             }
-        } // WriteInformation
+        }
 
         internal void WriteInformation(Object messageData, string[] tags)
         {
@@ -827,7 +832,7 @@ namespace System.Management.Automation
             {
                 _command.WriteInformation(messageData, tags);
             }
-        } // WriteInformation
+        }
 
         #endregion User feedback mechanisms
 
@@ -854,7 +859,7 @@ namespace System.Management.Automation
             Include = include;
             Exclude = exclude;
             Filter = filter;
-        } // SetFilters
+        }
 
         /// <summary>
         /// Gets an array of the objects that have been accumulated
@@ -874,7 +879,7 @@ namespace System.Management.Automation
             // Return the array
 
             return results;
-        } // GetAccumulatedObjects
+        }
 
         /// <summary>
         /// Gets an array of the error objects that have been accumulated
@@ -894,7 +899,7 @@ namespace System.Management.Automation
             // Return the array
 
             return results;
-        } // GetAccumulatedErrorObjects
+        }
 
         /// <summary>
         /// If there are any errors accumulated, the first error is thrown.
@@ -967,7 +972,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes all the accumulated errors to the specified context using WriteError
+        /// Writes all the accumulated errors to the specified context using WriteError.
         /// </summary>
         /// <param name="errorContext">
         /// The context to write the errors to.
@@ -1062,7 +1067,7 @@ namespace System.Management.Automation
 
                 _accumulatedObjects.Add(newObj);
             }
-        } // WriteObject
+        }
 
         /// <summary>
         /// Writes the error to the pipeline or accumulates the error in an internal
@@ -1126,7 +1131,7 @@ namespace System.Management.Automation
                         Severity.Warning);
                 }
             }
-        } // WriteError
+        }
 
         /// <summary>
         /// If the error pipeline hasn't been supplied a delegate or a command then this method
@@ -1138,7 +1143,7 @@ namespace System.Management.Automation
         internal bool HasErrors()
         {
             return _accumulatedErrorObjects != null && _accumulatedErrorObjects.Count > 0;
-        } // HasErrors
+        }
 
         /// <summary>
         /// Call this on a separate thread when a provider is using
@@ -1164,7 +1169,7 @@ namespace System.Management.Automation
             {
                 referralContext.StopProcessing();
             }
-        } // StopProcessing
+        }
 
         internal bool Stopping { get; private set; }
 
@@ -1184,6 +1189,6 @@ namespace System.Management.Automation
         }
 
         #endregion Public methods
-    } // CmdletProviderContext
+    }
 }
 

@@ -73,7 +73,7 @@ namespace System.Management.Automation.ComInterop
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public override IMessage Invoke(IMessage msg)
         {
-            //Only know how to handle method calls (property and fields accessors count as methods)
+            // Only know how to handle method calls (property and fields accessors count as methods)
             IMethodCallMessage methodCallMessage = msg as IMethodCallMessage;
             if (methodCallMessage == null)
                 throw new NotSupportedException();

@@ -19,7 +19,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Constructors
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CounterInfo(int id, CounterType type, string name)
         {
@@ -29,7 +29,7 @@ namespace System.Management.Automation.PerformanceData
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CounterInfo(int id, CounterType type)
         {
@@ -41,7 +41,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Properties
         /// <summary>
-        /// Getter for Counter Name property
+        /// Getter for Counter Name property.
         /// </summary>
         public string Name { get; }
 
@@ -124,11 +124,12 @@ namespace System.Management.Automation.PerformanceData
                         counterInfoArray[i].Name
                         );
             }
+
             this._counterSetInstanceBase = null;
         }
 
         /// <summary>
-        /// Copy constructor
+        /// Copy constructor.
         /// </summary>
         protected CounterSetRegistrarBase(
             CounterSetRegistrarBase srcCounterSetRegistrarBase)
@@ -137,6 +138,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 throw new ArgumentNullException("srcCounterSetRegistrarBase");
             }
+
             ProviderId = srcCounterSetRegistrarBase.ProviderId;
             CounterSetId = srcCounterSetRegistrarBase.CounterSetId;
             CounterSetInstType = srcCounterSetRegistrarBase.CounterSetInstType;
@@ -159,34 +161,34 @@ namespace System.Management.Automation.PerformanceData
         #region Properties
 
         /// <summary>
-        /// Getter method for ProviderId property
+        /// Getter method for ProviderId property.
         /// </summary>
         public Guid ProviderId { get; }
 
         /// <summary>
-        /// Getter method for CounterSetId property
+        /// Getter method for CounterSetId property.
         /// </summary>
         public Guid CounterSetId { get; }
 
         /// <summary>
-        /// Getter method for CounterSetName property
+        /// Getter method for CounterSetName property.
         /// </summary>
         public string CounterSetName { get; }
 
         /// <summary>
-        /// Getter method for CounterSetInstanceType property
+        /// Getter method for CounterSetInstanceType property.
         /// </summary>
         public CounterSetInstanceType CounterSetInstType { get; }
 
         /// <summary>
-        /// Getter method for array of counters information property
+        /// Getter method for array of counters information property.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public CounterInfo[] CounterInfoArray { get; }
 
         /// <summary>
         /// Getter method that returns an instance of the CounterSetInstanceBase's
-        /// derived type
+        /// derived type.
         /// </summary>
         public CounterSetInstanceBase CounterSetInstance
         {
@@ -233,7 +235,7 @@ namespace System.Management.Automation.PerformanceData
         }
 
         /// <summary>
-        /// Copy Constructor
+        /// Copy Constructor.
         /// </summary>
         public PSCounterSetRegistrar(
             PSCounterSetRegistrar srcPSCounterSetRegistrar)

@@ -32,7 +32,7 @@ namespace System.Management.Automation.Internal
     public abstract class CmdletMetadataAttribute : Attribute
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal CmdletMetadataAttribute()
         {
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Internal
     public abstract class ParsingBaseAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Constructor with no parameters
+        /// Constructor with no parameters.
         /// </summary>
         internal ParsingBaseAttribute()
         {
@@ -119,9 +119,9 @@ namespace System.Management.Automation
     public abstract class ValidateArgumentsAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Overridden by subclasses to implement the validation of the parameter arguments
+        /// Overridden by subclasses to implement the validation of the parameter arguments.
         /// </summary>
-        /// <param name="arguments">argument value to validate</param>
+        /// <param name="arguments">Argument value to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
@@ -131,30 +131,30 @@ namespace System.Management.Automation
         /// and throw <see cref="ValidationMetadataException"/>
         /// if it is invalid.
         /// </remarks>
-        /// <exception cref="ValidationMetadataException">should be thrown for any validation failure</exception>
+        /// <exception cref="ValidationMetadataException">Should be thrown for any validation failure.</exception>
         protected abstract void Validate(object arguments, EngineIntrinsics engineIntrinsics);
 
         /// <summary>
-        /// Method that the command processor calls for data validate processing
+        /// Method that the command processor calls for data validate processing.
         /// </summary>
-        /// <param name="o">object to validate</param>
+        /// <param name="o">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        /// <returns>bool true if the validate succeeded</returns>
+        /// <returns>Bool true if the validate succeeded.</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
         /// All the system exceptions are wrapped in ValidationMetadataException
         /// </exception>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal void InternalValidate(object o, EngineIntrinsics engineIntrinsics)
         {
             Validate(o, engineIntrinsics);
         }
 
         /// <summary>
-        /// Initializes a new instance of a class derived from ValidateArgumentsAttribute
+        /// Initializes a new instance of a class derived from ValidateArgumentsAttribute.
         /// </summary>
         protected ValidateArgumentsAttribute()
         {
@@ -204,13 +204,13 @@ namespace System.Management.Automation
     public abstract class ValidateEnumeratedArgumentsAttribute : ValidateArgumentsAttribute
     {
         /// <summary>
-        /// Initializes a new instance of a class derived from ValidateEnumeratedArgumentsAttribute
+        /// Initializes a new instance of a class derived from ValidateEnumeratedArgumentsAttribute.
         /// </summary>
         protected ValidateEnumeratedArgumentsAttribute() : base()
         {
         }
         /// <summary>
-        /// Overridden by subclasses to implement the validation of each parameter argument
+        /// Overridden by subclasses to implement the validation of each parameter argument.
         /// </summary>
         /// <remarks>
         /// Validate that the value of <paramref name="element"/>
@@ -218,14 +218,14 @@ namespace System.Management.Automation
         /// <see cref="ValidationMetadataException"/>
         /// if it is invalid.
         /// </remarks>
-        /// <param name="element">one of the parameter arguments</param>
-        /// <exception cref="ValidationMetadataException">should be thrown for any validation failure</exception>
+        /// <param name="element">One of the parameter arguments.</param>
+        /// <exception cref="ValidationMetadataException">Should be thrown for any validation failure.</exception>
         protected abstract void ValidateElement(object element);
 
         /// <summary>
         /// Calls ValidateElement in each element in the enumeration argument value.
         /// </summary>
-        /// <param name="arguments">object to validate</param>
+        /// <param name="arguments">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// PSSnapins should override <see cref="ValidateElement"/> instead.
         /// </remarks>
-        /// <exception cref="ValidationMetadataException">should be thrown for any validation failure</exception>
+        /// <exception cref="ValidationMetadataException">Should be thrown for any validation failure.</exception>
         protected sealed override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
             if (arguments == null || arguments == AutomationNull.Value)
@@ -257,6 +257,7 @@ namespace System.Management.Automation
             {
                 ValidateElement(enumerator.Current);
             }
+
             enumerator.Reset();
         }
 
@@ -276,15 +277,15 @@ namespace System.Management.Automation
         /// <summary>Default is same as optional.</summary>
         Default,
         /// <summary>
-        /// PsDscRunAsCredential can not be used for this DSC Resource
+        /// PsDscRunAsCredential can not be used for this DSC Resource.
         /// </summary>
         NotSupported,
         /// <summary>
-        /// PsDscRunAsCredential is mandatory for resource
+        /// PsDscRunAsCredential is mandatory for resource.
         /// </summary>
         Mandatory,
         /// <summary>
-        /// PsDscRunAsCredential can or can not be specified
+        /// PsDscRunAsCredential can or can not be specified.
         /// </summary>
         Optional = Default,
     }
@@ -342,7 +343,7 @@ namespace System.Management.Automation
     public abstract class CmdletCommonMetadataAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Gets and sets the cmdlet default parameter set
+        /// Gets and sets the cmdlet default parameter set.
         /// </summary>
         public string DefaultParameterSetName { get; set; }
 
@@ -365,6 +366,7 @@ namespace System.Management.Automation
         public bool SupportsTransactions
         {
             get { return _supportsTransactions; }
+
             set
             {
 #if !CORECLR
@@ -376,7 +378,10 @@ namespace System.Management.Automation
 #endif
             }
         }
+
         private bool _supportsTransactions = false;
+
+        private ConfirmImpact _confirmImpact = ConfirmImpact.Medium;
 
         /// <summary>
         /// Gets and sets a ConfirmImpact value that indicates
@@ -384,7 +389,11 @@ namespace System.Management.Automation
         /// should be confirmed.  This should only be used when
         /// SupportsShouldProcess is specified.
         /// </summary>
-        public ConfirmImpact ConfirmImpact { get; set; } = ConfirmImpact.Medium;
+        public ConfirmImpact ConfirmImpact
+        {
+            get => SupportsShouldProcess ? _confirmImpact : ConfirmImpact.None;
+            set => _confirmImpact = value;
+        }
 
         /// <summary>
         /// Gets and sets a HelpUri value that indicates
@@ -393,7 +402,7 @@ namespace System.Management.Automation
         /// is specified.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri { get; set; } = String.Empty;
+        public string HelpUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets and sets the RemotingBehavior value that declares how this cmdlet should interact
@@ -409,24 +418,24 @@ namespace System.Management.Automation
     public sealed class CmdletAttribute : CmdletCommonMetadataAttribute
     {
         /// <summary>
-        /// Gets the cmdlet noun
+        /// Gets the cmdlet noun.
         /// </summary>
         public string NounName { get; }
 
         /// <summary>
-        /// Gets the cmdlet verb
+        /// Gets the cmdlet verb.
         /// </summary>
         public string VerbName { get; }
 
         /// <summary>
-        /// Initializes a new instance of the CmdletAttribute class
+        /// Initializes a new instance of the CmdletAttribute class.
         /// </summary>
-        /// <param name="verbName">verb for the command</param>
-        /// <param name="nounName">noun for the command</param>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <param name="verbName">Verb for the command.</param>
+        /// <param name="nounName">Noun for the command.</param>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public CmdletAttribute(string verbName, string nounName)
         {
-            //NounName,VerbName have to be Non-Null strings
+            // NounName,VerbName have to be Non-Null strings
             if (string.IsNullOrEmpty(nounName))
             {
                 throw PSTraceSource.NewArgumentException("nounName");
@@ -484,7 +493,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct the attribute from an array of <see>System.Type</see>
         /// </summary>
-        /// <param name="type">The types output by the cmdlet</param>
+        /// <param name="type">The types output by the cmdlet.</param>
         public OutputTypeAttribute(params Type[] type)
         {
             if (type != null && type.Length > 0)
@@ -497,14 +506,14 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
         /// <summary>
         /// Construct the attribute from an array of names of types.
         /// </summary>
-        /// <param name="type">The types output by the cmdlet</param>
+        /// <param name="type">The types output by the cmdlet.</param>
         public OutputTypeAttribute(params string[] type)
         {
             if (type != null && type.Length > 0)
@@ -517,7 +526,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
@@ -544,8 +553,10 @@ namespace System.Management.Automation
         public string[] ParameterSetName
         {
             get { return _parameterSetName ?? (_parameterSetName = new[] { ParameterAttribute.AllParameterSets }); }
+
             set { _parameterSetName = value; }
         }
+
         private string[] _parameterSetName;
     }
 
@@ -566,7 +577,7 @@ namespace System.Management.Automation
 
     #region Parsing guidelines Attributes
     /// <summary>
-    /// Declares an alternative name for a parameter
+    /// Declares an alternative name for a parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public sealed class AliasAttribute : ParsingBaseAttribute
@@ -574,7 +585,7 @@ namespace System.Management.Automation
         internal string[] aliasNames;
 
         /// <summary>
-        /// Gets the alias names passed to the constructor
+        /// Gets the alias names passed to the constructor.
         /// </summary>
         public IList<string> AliasNames
         {
@@ -585,10 +596,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the AliasAttribute class
+        /// Initializes a new instance of the AliasAttribute class.
         /// </summary>
-        /// <param name="aliasNames">The name for this alias</param>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <param name="aliasNames">The name for this alias.</param>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public AliasAttribute(params string[] aliasNames)
         {
             if (aliasNames == null)
@@ -601,18 +612,18 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Identifies parameters to Cmdlets
+    /// Identifies parameters to Cmdlets.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
     public sealed class ParameterAttribute : ParsingBaseAttribute
     {
         /// <summary>
-        /// ParameterSetName referring to all ParameterSets
+        /// ParameterSetName referring to all ParameterSets.
         /// </summary>
         public const string AllParameterSets = "__AllParameterSets";
 
         /// <summary>
-        /// Initializes a new instance of the ParameterAttribute class
+        /// Initializes a new instance of the ParameterAttribute class.
         /// </summary>
         public ParameterAttribute()
         {
@@ -660,9 +671,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = default(ExperimentAction);
 
         #endregion
@@ -679,10 +692,11 @@ namespace System.Management.Automation
         public string ParameterSetName
         {
             get { return _parameterSetName; }
+
             set
             {
                 _parameterSetName = value;
-                if (String.IsNullOrEmpty(_parameterSetName))
+                if (string.IsNullOrEmpty(_parameterSetName))
                 {
                     _parameterSetName = ParameterAttribute.AllParameterSets;
                 }
@@ -718,19 +732,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets a short description for this parameter, suitable for presentation as a tool tip.
         /// </summary>
-        /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
+        /// <exception cref="ArgumentException">For a null or empty value when setting.</exception>
         public string HelpMessage
         {
             get
             {
                 return _helpMessage;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessage");
                 }
+
                 _helpMessage = value;
             }
         }
@@ -739,19 +755,21 @@ namespace System.Management.Automation
         /// Gets and sets the base name of the resource for a help message. When this field is specified,
         /// HelpMessageResourceId must also be specified.
         /// </summary>
-        /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
+        /// <exception cref="ArgumentException">For a null or empty value when setting.</exception>
         public string HelpMessageBaseName
         {
             get
             {
                 return _helpMessageBaseName;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageBaseName");
                 }
+
                 _helpMessageBaseName = value;
             }
         }
@@ -760,19 +778,21 @@ namespace System.Management.Automation
         /// Gets and sets the Id of the resource for a help message. When this field is specified,
         /// HelpMessageBaseName must also be specified.
         /// </summary>
-        /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
+        /// <exception cref="ArgumentException">For a null or empty value when setting.</exception>
         public string HelpMessageResourceId
         {
             get
             {
                 return _helpMessageResourceId;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageResourceId");
                 }
+
                 _helpMessageResourceId = value;
             }
         }
@@ -804,7 +824,7 @@ namespace System.Management.Automation
         public string PSTypeName { get; private set; }
 
         /// <summary>
-        /// Creates a new PSTypeNameAttribute
+        /// Creates a new PSTypeNameAttribute.
         /// </summary>
         /// <param name="psTypeName"></param>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -863,29 +883,29 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Validates that the length of each parameter argument's Length falls in the range
-    /// specified by MinLength and MaxLength
+    /// specified by MinLength and MaxLength.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateLengthAttribute : ValidateEnumeratedArgumentsAttribute
     {
         /// <summary>
-        /// Gets the attribute's minimum length
+        /// Gets the attribute's minimum length.
         /// </summary>
         public int MinLength { get; }
 
         /// <summary>
-        /// Gets the attribute's maximum length
+        /// Gets the attribute's maximum length.
         /// </summary>
         public int MaxLength { get; }
 
         /// <summary>
         /// Validates that the length of each parameter argument's Length falls in the range
-        /// specified by MinLength and MaxLength
+        /// specified by MinLength and MaxLength.
         /// </summary>
-        /// <param name="element">object to validate</param>
-        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
+        /// <param name="element">Object to validate.</param>
+        /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is not a string
         /// with length between minLength and maxLength</exception>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
             string objectString = element as string;
@@ -913,27 +933,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateLengthAttribute class
+        /// Initializes a new instance of the ValidateLengthAttribute class.
         /// </summary>
-        /// <param name="minLength">Minimum required length </param>
-        /// <param name="maxLength">Maximum required length </param>
-        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
-        /// <exception cref="ValidationMetadataException">if maxLength is less than minLength</exception>
+        /// <param name="minLength">Minimum required length.</param>
+        /// <param name="maxLength">Maximum required length.</param>
+        /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
+        /// <exception cref="ValidationMetadataException">If maxLength is less than minLength.</exception>
         public ValidateLengthAttribute(int minLength, int maxLength) : base()
         {
             if (minLength < 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateLengthMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateLengthMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -966,20 +989,20 @@ namespace System.Management.Automation
     }
     /// <summary>
     /// Validates that each parameter argument falls in the range
-    /// specified by MinRange and MaxRange
+    /// specified by MinRange and MaxRange.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateRangeAttribute : ValidateEnumeratedArgumentsAttribute
     {
         /// <summary>
-        /// Gets the attribute's minimum range
+        /// Gets the attribute's minimum range.
         /// </summary>
         public object MinRange { get; }
 
         private IComparable _minComparable;
 
         /// <summary>
-        /// Gets the attribute's maximum range
+        /// Gets the attribute's maximum range.
         /// </summary>
         public object MaxRange { get; }
 
@@ -995,9 +1018,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Validates that each parameter argument falls in the range
-        /// specified by MinRange and MaxRange
+        /// specified by MinRange and MaxRange.
         /// </summary>
-        /// <param name="element">object to validate</param>
+        /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
         /// Thrown if the object to be validated does not implement IComparable,
         /// if the element type is not the same of MinRange, MaxRange,
@@ -1030,11 +1053,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateRangeAttribute class
+        /// Initializes a new instance of the ValidateRangeAttribute class.
         /// </summary>
-        /// <param name="minRange">Minimum value of the range allowed. </param>
-        /// <param name="maxRange">Maximum value of the range allowed. </param>
-        /// <exception cref="ArgumentNullException">for invalid arguments</exception>
+        /// <param name="minRange">Minimum value of the range allowed.</param>
+        /// <param name="maxRange">Maximum value of the range allowed.</param>
+        /// <exception cref="ArgumentNullException">For invalid arguments.</exception>
         /// <exception cref="ValidationMetadataException">
         /// if maxRange has a different type than minRange
         /// if maxRange is smaller than minRange
@@ -1046,10 +1069,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("minRange");
             }
+
             if (maxRange == null)
             {
                 throw PSTraceSource.NewArgumentNullException("maxRange");
             }
+
             if (maxRange.GetType() != minRange.GetType())
             {
                 bool failure = true;
@@ -1067,6 +1092,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 if (failure)
                 {
                     throw new ValidationMetadataException("MinRangeNotTheSameTypeOfMaxRange", null,
@@ -1098,13 +1124,14 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("MaxRangeSmallerThanMinRange",
                     null, Metadata.ValidateRangeMaxRangeSmallerThanMinRange);
             }
+
             MinRange = minRange;
             MaxRange = maxRange;
         }
 
         /// <summary>
         /// Initializes a new instance of the ValidateRangeAttribute class
-        /// this constructor uses a predefined ranged
+        /// this constructor uses a predefined ranged.
         /// </summary>
         public ValidateRangeAttribute(ValidateRangeKind kind) : base()
         {
@@ -1113,12 +1140,12 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
-            Type commonType = GetCommonType(typeof(int),element.GetType());
+            Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
-                    throw new ValidationMetadataException(
+                throw new ValidationMetadataException(
                     "ValidationRangeElementType",
-                    null,
+                    innerException: null,
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name,
                     typeof(int).Name);
@@ -1157,6 +1184,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangePositiveFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonNegative:
                     if (dynamicZero.CompareTo(element) > 0)
@@ -1167,6 +1195,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.Negative:
                     if (dynamicZero.CompareTo(element) <= 0)
@@ -1177,6 +1206,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonPositive:
                     if (dynamicZero.CompareTo(element) < 0)
@@ -1187,8 +1217,9 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonPositiveFailure,
                             element.ToString());
                     }
+
                     break;
-                }
+            }
         }
 
         private void ValidateRange(object element)
@@ -1278,18 +1309,18 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that each parameter argument matches the RegexPattern
+    /// Validates that each parameter argument matches the RegexPattern.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidatePatternAttribute : ValidateEnumeratedArgumentsAttribute
     {
         /// <summary>
-        /// Gets the Regex pattern to be used in the validation
+        /// Gets the Regex pattern to be used in the validation.
         /// </summary>
         public string RegexPattern { get; }
 
         /// <summary>
-        /// Gets or sets the Regex options to be used in the validation
+        /// Gets or sets the Regex options to be used in the validation.
         /// </summary>
         public RegexOptions Options { set; get; } = RegexOptions.IgnoreCase;
 
@@ -1307,10 +1338,10 @@ namespace System.Management.Automation
         public string ErrorMessage { get; set; }
 
         /// <summary>
-        /// Validates that each parameter argument matches the RegexPattern
+        /// Validates that each parameter argument matches the RegexPattern.
         /// </summary>
-        /// <param name="element">object to validate</param>
-        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
+        /// <param name="element">Object to validate.</param>
+        /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is not a string
         ///  that matches the pattern
         ///  and for invalid arguments</exception>
         protected override void ValidateElement(object element)
@@ -1329,7 +1360,7 @@ namespace System.Management.Automation
             Match match = regex.Match(objectString);
             if (!match.Success)
             {
-                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePatternFailure : ErrorMessage;
+                var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePatternFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidatePatternFailure",
                         null, errorMessageFormat,
                         objectString, RegexPattern);
@@ -1337,13 +1368,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidatePatternAttribute class
+        /// Initializes a new instance of the ValidatePatternAttribute class.
         /// </summary>
-        /// <param name="regexPattern">Pattern string to match</param>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <param name="regexPattern">Pattern string to match.</param>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public ValidatePatternAttribute(string regexPattern)
         {
-            if (String.IsNullOrEmpty(regexPattern))
+            if (string.IsNullOrEmpty(regexPattern))
             {
                 throw PSTraceSource.NewArgumentException("regexPattern");
             }
@@ -1371,15 +1402,15 @@ namespace System.Management.Automation
         public string ErrorMessage { get; set; }
 
         /// <summary>
-        /// Gets the scriptblock to be used in the validation
+        /// Gets the scriptblock to be used in the validation.
         /// </summary>
         public ScriptBlock ScriptBlock { get; }
 
         /// <summary>
-        /// Validates that each parameter argument matches the scriptblock
+        /// Validates that each parameter argument matches the scriptblock.
         /// </summary>
-        /// <param name="element">object to validate</param>
-        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is invalid</exception>
+        /// <param name="element">Object to validate.</param>
+        /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is invalid.</exception>
         protected override void ValidateElement(object element)
         {
             if (element == null)
@@ -1396,11 +1427,11 @@ namespace System.Management.Automation
                 dollarUnder: LanguagePrimitives.AsPSObjectOrNull(element),
                 input: AutomationNull.Value,
                 scriptThis: AutomationNull.Value,
-                args: Utils.EmptyArray<object>());
+                args: Array.Empty<object>());
 
             if (!LanguagePrimitives.IsTrue(result))
             {
-                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateScriptFailure : ErrorMessage;
+                var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateScriptFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidateScriptFailure",
                         null, errorMessageFormat,
                         element, ScriptBlock);
@@ -1408,10 +1439,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateScriptBlockAttribute class
+        /// Initializes a new instance of the ValidateScriptBlockAttribute class.
         /// </summary>
-        /// <param name="scriptBlock">Scriptblock to match</param>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        /// <param name="scriptBlock">Scriptblock to match.</param>
+        /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public ValidateScriptAttribute(ScriptBlock scriptBlock)
         {
             if (scriptBlock == null)
@@ -1424,25 +1455,25 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the parameter argument count is in the specified range
+    /// Validates that the parameter argument count is in the specified range.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateCountAttribute : ValidateArgumentsAttribute
     {
         /// <summary>
-        /// Gets the minimum length of this attribute
+        /// Gets the minimum length of this attribute.
         /// </summary>
         public int MinLength { get; }
 
         /// <summary>
-        /// Gets the maximum length of this attribute
+        /// Gets the maximum length of this attribute.
         /// </summary>
         public int MaxLength { get; }
 
         /// <summary>
-        /// Validates that the parameter argument count is in the specified range
+        /// Validates that the parameter argument count is in the specified range.
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
+        /// <param name="arguments">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the validation is being
         /// evaluated.
@@ -1476,13 +1507,17 @@ namespace System.Management.Automation
             else if ((ie = arguments as IEnumerable) != null)
             {
                 IEnumerator e = ie.GetEnumerator();
-                for (; e.MoveNext() == true; len++)
-                    ;
+                while (e.MoveNext())
+                {
+                    len++;
+                }
             }
             else if ((ienumerator = arguments as IEnumerator) != null)
             {
-                for (; ienumerator.MoveNext() == true; len++)
-                    ;
+                while (ienumerator.MoveNext())
+                {
+                    len++;
+                }
             }
             else
             {
@@ -1507,11 +1542,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateCountAttribute class
+        /// Initializes a new instance of the ValidateCountAttribute class.
         /// </summary>
-        /// <param name="minLength">Minimum number of values required</param>
-        /// <param name="maxLength">Maximum number of values required</param>
-        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
+        /// <param name="minLength">Minimum number of values required.</param>
+        /// <param name="maxLength">Maximum number of values required.</param>
+        /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         /// <exception cref="ValidationMetadataException">
         /// if minLength is greater than maxLength
         /// </exception>
@@ -1521,15 +1556,18 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateRangeMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateCountMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -1592,7 +1630,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that each parameter argument is present in a specified set
+    /// Validates that each parameter argument is present in a specified set.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateSetAttribute : ValidateEnumeratedArgumentsAttribute
@@ -1651,9 +1689,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Validates that each parameter argument is present in the specified set
+        /// Validates that each parameter argument is present in the specified set.
         /// </summary>
-        /// <param name="element">Object to validate</param>
+        /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
         /// if element is not in the set
         /// for invalid argument
@@ -1671,17 +1709,16 @@ namespace System.Management.Automation
             string objString = element.ToString();
             foreach (string setString in ValidValues)
             {
-                if (CultureInfo.InvariantCulture.
-                        CompareInfo.Compare(setString, objString,
-                                            IgnoreCase
-                                                ? CompareOptions.IgnoreCase
-                                                : CompareOptions.None) == 0)
+                if (CultureInfo.InvariantCulture.CompareInfo.Compare(
+                        setString,
+                        objString,
+                        IgnoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0)
                 {
                     return;
                 }
             }
 
-            var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateSetFailure : ErrorMessage;
+            var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateSetFailure : ErrorMessage;
             throw new ValidationMetadataException("ValidateSetFailure", null,
                 errorMessageFormat,
                 element.ToString(), SetAsString());
@@ -1693,11 +1730,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateSetAttribute class
+        /// Initializes a new instance of the ValidateSetAttribute class.
         /// </summary>
-        /// <param name="validValues">list of valid values</param>
-        /// <exception cref="ArgumentNullException">for null arguments</exception>
-        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
+        /// <param name="validValues">List of valid values.</param>
+        /// <exception cref="ArgumentNullException">For null arguments.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         public ValidateSetAttribute(params string[] validValues)
         {
             if (validValues == null)
@@ -1717,8 +1754,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ValidateSetAttribute class.
         /// Valid values is returned dynamically from a custom class implementing 'IValidateSetValuesGenerator' interface.
         /// </summary>
-        /// <param name="valuesGeneratorType">class that implements the 'IValidateSetValuesGenerator' interface</param>
-        /// <exception cref="ArgumentException">for null arguments</exception>
+        /// <param name="valuesGeneratorType">Class that implements the 'IValidateSetValuesGenerator' interface.</param>
+        /// <exception cref="ArgumentException">For null arguments.</exception>
         public ValidateSetAttribute(Type valuesGeneratorType)
         {
             // We check 'IsNotPublic' because we don't want allow 'Activator.CreateInstance' create an instance of non-public type.
@@ -1746,15 +1783,15 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that each parameter argument is Trusted data
+    /// Validates that each parameter argument is Trusted data.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateTrustedDataAttribute : ValidateArgumentsAttribute
     {
         /// <summary>
-        /// Validates that the parameter argument is not untrusted
+        /// Validates that the parameter argument is not untrusted.
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
+        /// <param name="arguments">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the validation is being
         /// evaluated.
@@ -1778,37 +1815,37 @@ namespace System.Management.Automation
     #region Allow
 
     /// <summary>
-    /// Allows a NULL as the argument to a mandatory parameter
+    /// Allows a NULL as the argument to a mandatory parameter.
     /// </summary>
     [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowNullAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the AllowNullAttribute class
+        /// Initializes a new instance of the AllowNullAttribute class.
         /// </summary>
         public AllowNullAttribute() { }
     }
 
     /// <summary>
-    /// Allows an empty string as the argument to a mandatory string parameter
+    /// Allows an empty string as the argument to a mandatory string parameter.
     /// </summary>
     [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyStringAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the AllowEmptyStringAttribute class
+        /// Initializes a new instance of the AllowEmptyStringAttribute class.
         /// </summary>
         public AllowEmptyStringAttribute() { }
     }
 
     /// <summary>
-    /// Allows an empty collection as the argument to a mandatory collection parameter
+    /// Allows an empty collection as the argument to a mandatory collection parameter.
     /// </summary>
     [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyCollectionAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the AllowEmptyCollectionAttribute class
+        /// Initializes a new instance of the AllowEmptyCollectionAttribute class.
         /// </summary>
         public AllowEmptyCollectionAttribute() { }
     }
@@ -1818,7 +1855,7 @@ namespace System.Management.Automation
     #region Path validation attributes
 
     /// <summary>
-    /// Validates that the path has an approved root drive
+    /// Validates that the path has an approved root drive.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ValidateDriveAttribute : ValidateArgumentsAttribute
@@ -1826,7 +1863,7 @@ namespace System.Management.Automation
         private string[] _validRootDrives;
 
         /// <summary>
-        /// Gets the values in the set
+        /// Gets the values in the set.
         /// </summary>
         public IList<string> ValidRootDrives
         {
@@ -1837,9 +1874,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateDrivePath class
+        /// Initializes a new instance of the ValidateDrivePath class.
         /// </summary>
-        /// <param name="validRootDrives">List of approved root drives for path</param>
+        /// <param name="validRootDrives">List of approved root drives for path.</param>
         public ValidateDriveAttribute(params string[] validRootDrives)
         {
             if (validRootDrives == null)
@@ -1851,10 +1888,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Validates path argument
+        /// Validates path argument.
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
-        /// <param name="engineIntrinsics">Engine intrinsics</param>
+        /// <param name="arguments">Object to validate.</param>
+        /// <param name="engineIntrinsics">Engine intrinsics.</param>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
             if (arguments == null)
@@ -1918,13 +1955,13 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the path parameter is a User drive
+    /// Validates that the path parameter is a User drive.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateUserDriveAttribute : ValidateDriveAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the ValidateUserDrivePathAttribute class
+        /// Initializes a new instance of the ValidateUserDrivePathAttribute class.
         /// </summary>
         public ValidateUserDriveAttribute()
             : base(new string[] { "User" })
@@ -1964,7 +2001,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the parameters's argument is not null
+    /// Validates that the parameters's argument is not null.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateNotNullAttribute : NullValidationAttributeBase
@@ -2051,7 +2088,7 @@ namespace System.Management.Automation
             }
             else if (arguments is string str)
             {
-                if (String.IsNullOrEmpty(str))
+                if (string.IsNullOrEmpty(str))
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -2069,7 +2106,8 @@ namespace System.Management.Automation
                 // because a value-type value cannot be null.
                 if (!isEmpty && !isElementValueType)
                 {
-                    do {
+                    do
+                    {
                         object element = ienum.Current;
                         if (element == null || element == AutomationNull.Value)
                         {
@@ -2081,7 +2119,7 @@ namespace System.Management.Automation
 
                         if (element is string elementAsString)
                         {
-                            if (String.IsNullOrEmpty(elementAsString))
+                            if (string.IsNullOrEmpty(elementAsString))
                             {
                                 throw new ValidationMetadataException(
                                     "ArgumentCollectionContainsEmpty",
@@ -2154,7 +2192,7 @@ namespace System.Management.Automation
     public abstract class ArgumentTransformationAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the ArgumentTransformationAttribute class
+        /// Initializes a new instance of the ArgumentTransformationAttribute class.
         /// </summary>
         protected ArgumentTransformationAttribute()
         {
@@ -2168,8 +2206,8 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the transformation is being
         /// made.
         /// </param>
-        /// <param name="inputData"> parameter argument to mutate </param>
-        /// <returns> mutated object(s) </returns>
+        /// <param name="inputData">Parameter argument to mutate.</param>
+        /// <returns>Mutated object(s).</returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.
         /// Throw <see cref="ArgumentException"/>
@@ -2177,8 +2215,8 @@ namespace System.Management.Automation
         /// and throw <see cref="ArgumentTransformationMetadataException"/>
         /// for other recoverable errors.
         /// </remarks>
-        /// <exception cref="ArgumentException">should be thrown for invalid arguments</exception>
-        /// <exception cref="ArgumentTransformationMetadataException">should be thrown for any problems during transformation</exception>
+        /// <exception cref="ArgumentException">Should be thrown for invalid arguments.</exception>
+        /// <exception cref="ArgumentTransformationMetadataException">Should be thrown for any problems during transformation.</exception>
         public abstract object Transform(EngineIntrinsics engineIntrinsics, object inputData);
 
         /// <summary>
@@ -2199,13 +2237,14 @@ namespace System.Management.Automation
             {
                 ExecutionContext.PropagateInputSource(inputData, result, engineIntrinsics.SessionState.Internal.LanguageMode);
             }
+
             return result;
         }
 
         /// <summary>
         /// The property is only checked when:
         ///   a) The parameter is not mandatory
-        ///   b) The argument is null
+        ///   b) The argument is null.
         /// </summary>
         public virtual bool TransformNullOptionalParameters { get { return true; } }
     }

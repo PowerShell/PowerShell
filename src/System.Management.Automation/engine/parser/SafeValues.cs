@@ -41,11 +41,7 @@ namespace System.Management.Automation.Language
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
             IsSafeValueVisitor visitor = new IsSafeValueVisitor(safeValueContext);
-            if ((bool)ast.Accept(visitor) && visitor._visitCount < MaxVisitCount)
-            {
-                return true;
-            }
-            return false;
+            return visitor.IsAstSafe(ast);
         }
 
         internal IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext safeValueContext)
@@ -53,50 +49,97 @@ namespace System.Management.Automation.Language
             _safeValueContext = safeValueContext;
         }
 
+        internal bool IsAstSafe(Ast ast)
+        {
+            if ((bool)ast.Accept(this) && _visitCount < MaxVisitCount)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        // A readonly singleton with the default SafeValueContext.
+        internal static readonly IsSafeValueVisitor Default = new IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext.Default);
+
         // This is a check of the number of visits
-        private int _visitCount = 0;
-        private const int MaxVisitCount = 5000;
+        private uint _visitCount = 0;
+        private const uint MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;
 
         // Used to determine if we are being called within a GetPowerShell() context,
         // which does some additional security verification outside of the scope of
         // what we can verify.
-        private GetSafeValueVisitor.SafeValueContext _safeValueContext;
+        private readonly GetSafeValueVisitor.SafeValueContext _safeValueContext;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
+
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return false; }
+
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst) { return false; }
+
         public object VisitParamBlock(ParamBlockAst paramBlockAst) { return false; }
+
         public object VisitNamedBlock(NamedBlockAst namedBlockAst) { return false; }
+
         public object VisitTypeConstraint(TypeConstraintAst typeConstraintAst) { return false; }
+
         public object VisitAttribute(AttributeAst attributeAst) { return false; }
+
         public object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { return false; }
+
         public object VisitParameter(ParameterAst parameterAst) { return false; }
+
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { return false; }
+
         public object VisitIfStatement(IfStatementAst ifStmtAst) { return false; }
+
         public object VisitTrap(TrapStatementAst trapStatementAst) { return false; }
+
         public object VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return false; }
+
         public object VisitDataStatement(DataStatementAst dataStatementAst) { return false; }
+
         public object VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return false; }
+
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return false; }
+
         public object VisitForStatement(ForStatementAst forStatementAst) { return false; }
+
         public object VisitWhileStatement(WhileStatementAst whileStatementAst) { return false; }
+
         public object VisitCatchClause(CatchClauseAst catchClauseAst) { return false; }
+
         public object VisitTryStatement(TryStatementAst tryStatementAst) { return false; }
+
         public object VisitBreakStatement(BreakStatementAst breakStatementAst) { return false; }
+
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst) { return false; }
+
         public object VisitReturnStatement(ReturnStatementAst returnStatementAst) { return false; }
+
         public object VisitExitStatement(ExitStatementAst exitStatementAst) { return false; }
+
         public object VisitThrowStatement(ThrowStatementAst throwStatementAst) { return false; }
+
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return false; }
+
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return false; }
+
         public object VisitCommand(CommandAst commandAst) { return false; }
+
         public object VisitCommandExpression(CommandExpressionAst commandExpressionAst) { return false; }
+
         public object VisitCommandParameter(CommandParameterAst commandParameterAst) { return false; }
+
         public object VisitFileRedirection(FileRedirectionAst fileRedirectionAst) { return false; }
+
         public object VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) { return false; }
+
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return false; }
+
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return false; }
+
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -116,6 +159,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
             }
+
             return isSafe;
         }
 
@@ -130,12 +174,14 @@ namespace System.Management.Automation.Language
                     isSafe = false;
                     break;
                 }
+
                 if (!(bool)statement.Accept(this))
                 {
                     isSafe = false;
                     break;
                 }
             }
+
             return isSafe;
         }
 
@@ -162,6 +208,7 @@ namespace System.Management.Automation.Language
             {
                 _visitCount++;
             }
+
             return unaryExpressionIsSafe;
         }
 
@@ -172,12 +219,14 @@ namespace System.Management.Automation.Language
             {
                 return false;
             }
+
             if (!type.IsSafePrimitive())
             {
                 // Only do conversions to built-in types - other conversions might not
                 // be safe to optimize.
                 return false;
             }
+
             _visitCount++;
             return (bool)convertExpressionAst.Child.Accept(this);
         }
@@ -263,6 +312,7 @@ namespace System.Management.Automation.Language
             {
                 return false;
             }
+
             return hashtableAst.KeyValuePairs.All(pair => (bool)pair.Item1.Accept(this) && (bool)pair.Item2.Accept(this));
         }
 
@@ -308,45 +358,80 @@ namespace System.Management.Automation.Language
             {
                 return null;
             }
+
             throw PSTraceSource.NewArgumentException("ast");
         }
 
         private static ExecutionContext s_context;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitParamBlock(ParamBlockAst paramBlockAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitNamedBlock(NamedBlockAst namedBlockAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitTypeConstraint(TypeConstraintAst typeConstraintAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitAttribute(AttributeAst attributeAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitParameter(ParameterAst parameterAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitIfStatement(IfStatementAst ifStmtAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitTrap(TrapStatementAst trapStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitSwitchStatement(SwitchStatementAst switchStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitDataStatement(DataStatementAst dataStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitForEachStatement(ForEachStatementAst forEachStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitForStatement(ForStatementAst forStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitWhileStatement(WhileStatementAst whileStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitCatchClause(CatchClauseAst catchClauseAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitTryStatement(TryStatementAst tryStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitBreakStatement(BreakStatementAst breakStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitReturnStatement(ReturnStatementAst returnStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitExitStatement(ExitStatementAst exitStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitThrowStatement(ThrowStatementAst throwStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitCommand(CommandAst commandAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitCommandExpression(CommandExpressionAst commandExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitCommandParameter(CommandParameterAst commandParameterAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitFileRedirection(FileRedirectionAst fileRedirectionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
+
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
 
         //
@@ -365,8 +450,10 @@ namespace System.Management.Automation.Language
                 {
                     return null;
                 }
+
                 return offset >= 0 ? targetString[offset] : targetString[targetString.Length + offset];
             }
+
             var targetArray = target as object[];
             if (targetArray != null)
             {
@@ -376,8 +463,10 @@ namespace System.Management.Automation.Language
                 {
                     return null;
                 }
+
                 return offset >= 0 ? targetArray[offset] : targetArray[targetArray.Length + offset];
             }
+
             var targetHashtable = target as Hashtable;
             if (targetHashtable != null)
             {
@@ -416,18 +505,20 @@ namespace System.Management.Automation.Language
             {
                 ofs = s_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
+
             if (ofs == null)
             {
                 ofs = " ";
             }
+
             for (int offset = 0; offset < safeValues.Length; offset++)
             {
                 var result = expandableStringExpressionAst.NestedExpressions[offset].Accept(this);
                 // depending on the nested expression we may retrieve a variable, or even need to
                 // execute a sub-expression. The result of which may be returned
                 // as a scalar, array or nested array. If the unwrap of first array doesn't contain a nested
-                // array we can then pass it to String.Join. If it *does* contain an array,
-                // we need to unwrap the inner array and pass *that* to String.Join.
+                // array we can then pass it to string.Join. If it *does* contain an array,
+                // we need to unwrap the inner array and pass *that* to string.Join.
                 //
                 // This means we get the same answer with GetPowerShell() as in the command-line
                 // { echo "abc $true $(1) $(2,3) def" }.Invoke() gives the same answer as
@@ -458,13 +549,14 @@ namespace System.Management.Automation.Language
                         object[] subResult = resultArray[subExpressionOffset] as object[];
                         if (subResult != null)
                         {
-                            subExpressionResult[subExpressionOffset] = String.Join(ofs, subResult);
+                            subExpressionResult[subExpressionOffset] = string.Join(ofs, subResult);
                         }
                         else // it is a scalar, so we can just add it to our collections
                         {
                             subExpressionResult[subExpressionOffset] = resultArray[subExpressionOffset];
                         }
                     }
+
                     safeValues[offset] = string.Join(ofs, subExpressionResult);
                 }
                 else
@@ -502,6 +594,7 @@ namespace System.Management.Automation.Language
                     throw PSTraceSource.NewArgumentException("ast");
                 }
             }
+
             return statementList.ToArray();
         }
 
@@ -512,6 +605,7 @@ namespace System.Management.Automation.Language
             {
                 return expr.Accept(this);
             }
+
             throw PSTraceSource.NewArgumentException("ast");
         }
 
@@ -633,6 +727,7 @@ namespace System.Management.Automation.Language
             {
                 arrayElements.Add(element.Accept(this));
             }
+
             return arrayElements.ToArray();
         }
 
@@ -645,6 +740,7 @@ namespace System.Management.Automation.Language
                 var value = pair.Item2.Accept(this);
                 hashtable.Add(key, value);
             }
+
             return hashtable;
         }
 

@@ -4,10 +4,10 @@
 # This module include help functions for writing remoting tests
 #
 
-$Script:AppVeyorRemoteCred = $null
+$Script:CIRemoteCred = $null
 
 if ($IsWindows) {
-    try { $Script:AppVeyorRemoteCred = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" } catch { }
+    try { $Script:CIRemoteCred = Import-Clixml -Path "$env:TEMP\CIRemoteCred.xml" } catch { }
 }
 
 function Get-DefaultEndPointName
@@ -57,10 +57,10 @@ function New-RemoteRunspace
 
     $wsmanConInfo.ShellUri = 'http://schemas.microsoft.com/powershell/' + $ConfigurationName
 
-    if ($Script:AppVeyorRemoteCred)
+    if ($Script:CIRemoteCred)
     {
-        Write-Verbose "Using Global AppVeyor Credential" -Verbose
-        $wsmanConInfo.Credential = $Script:AppVeyorRemoteCred
+        Write-Verbose "Using Global CI Credential" -Verbose
+        $wsmanConInfo.Credential = $Script:CIRemoteCred
     }
     else
     {
@@ -92,10 +92,10 @@ function New-RemoteRunspacePool
         $wsmanConnection.ShellUri = "http://schemas.microsoft.com/powershell/$ConfigurationName"
     }
 
-    if ($Script:AppVeyorRemoteCred)
+    if ($Script:CIRemoteCred)
     {
-        Write-Verbose "Using Global AppVeyor Credential" -Verbose
-        $wsmanConnection.Credential = $Script:AppVeyorRemoteCred
+        Write-Verbose "Using Global CI Credential" -Verbose
+        $wsmanConnection.Credential = $Script:CIRemoteCred
     }
     else
     {
@@ -104,7 +104,7 @@ function New-RemoteRunspacePool
 
     [System.Management.Automation.Runspaces.RunspacePool] $remoteRunspacePool = [runspacefactory]::CreateRunspacePool($MinRunspace, $MaxRunspace, $wsmanConnection)
     $remoteRunspacePool.Open()
-    
+
     return $remoteRunspacePool
 }
 
@@ -154,10 +154,10 @@ function CreateParameters
     }
 
     ## If a PSSession is provided, do not add credentials.
-    if ($Script:AppVeyorRemoteCred -and (-not $Session))
+    if ($Script:CIRemoteCred -and (-not $Session))
     {
-        Write-Verbose "Using Global AppVeyor Credential" -Verbose
-        $parameters["Credential"] = $Script:AppVeyorRemoteCred
+        Write-Verbose "Using Global CI Credential" -Verbose
+        $parameters["Credential"] = $Script:CIRemoteCred
     }
     else
     {
@@ -247,4 +247,14 @@ function Connect-RemoteSession
 
     $parameters = CreateParameters -ComputerName $ComputerName -Name $Name -Session $Session -ConfigurationName $ConfigurationName
     Connect-PSSession @parameters
+}
+
+function Get-PipePath {
+    param (
+        $PipeName
+    )
+    if ($IsWindows) {
+        return "\\.\pipe\$PipeName"
+    }
+    "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
 }

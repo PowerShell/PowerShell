@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 <#
 .SYNOPSIS
   Idempotently removes extra PowerShell Core paths from the machine, user and/or process environment scope with no reordering.
@@ -5,7 +8,7 @@
 .DESCRIPTION
   Defaults to machine scope and leaving the last sorted path alone.
   Does not touch path if there is nothing to clean.
-  Emits one simple log line about it's actions for each scope.
+  Emits one simple log line about its actions for each scope.
 
   Also accessible in the powershell-core Chocolatey package by using -params '"/CleanUpSystemPath"'
 

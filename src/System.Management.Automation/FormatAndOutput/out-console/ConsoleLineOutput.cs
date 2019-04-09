@@ -5,6 +5,7 @@
 // characters
 //#define TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
+using System;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -19,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
     /// <summary>
-    /// test class to provide easily overridable behavior for testing on US machines
+    /// Test class to provide easily overridable behavior for testing on US machines
     /// using US data.
     /// NOTE: the class just forces any uppercase letter [A-Z] to be prepended
     /// with an underscore (e.g. "A" becomes "_A", but "a" stays the same)
@@ -33,6 +34,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 len += this.Length(str[k]);
             }
+
             return len;
         }
 
@@ -47,6 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, true);
         }
+
         internal override int GetTailSplitLength(string str, int offset, int displayCells)
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, false);
@@ -62,8 +65,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     sb.Append('_');
                 }
+
                 sb.Append(ch);
             }
+
             return sb.ToString();
         }
 
@@ -71,7 +76,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #endif
 
     /// <summary>
-    /// Tear off class
+    /// Tear off class.
     /// </summary>
     internal class DisplayCellsPSHost : DisplayCells
     {
@@ -89,37 +94,42 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str, offset);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
+
             return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
         }
+
         internal override int Length(string str)
         {
             try
             {
                 return _rawUserInterface.LengthInBufferCells(str);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
+
             return string.IsNullOrEmpty(str) ? 0 : str.Length;
         }
+
         internal override int Length(char character)
         {
             try
             {
                 return _rawUserInterface.LengthInBufferCells(character);
             }
-            catch (HostException)
+            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
+
             return 1;
         }
 
@@ -127,6 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, true);
         }
+
         internal override int GetTailSplitLength(string str, int offset, int displayCells)
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, false);
@@ -136,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// Implementation of the LineOutput interface on top of Console and RawConsole
+    /// Implementation of the LineOutput interface on top of Console and RawConsole.
     /// </summary>
     internal sealed class ConsoleLineOutput : LineOutput
     {
@@ -147,7 +158,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region LineOutput implementation
         /// <summary>
-        /// the # of columns is just the width of the screen buffer (not the
+        /// The # of columns is just the width of the screen buffer (not the
         /// width of the window)
         /// </summary>
         /// <value></value>
@@ -168,17 +179,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
                 }
-                catch (HostException)
+                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
+
                 return _forceNewLine ? _fallbackRawConsoleColumnNumber - 1 : _fallbackRawConsoleColumnNumber;
             }
         }
 
         /// <summary>
-        /// the # of rows is the # of rows visible in the window (and not the # of
+        /// The # of rows is the # of rows visible in the window (and not the # of
         /// rows in the screen buffer)
         /// </summary>
         /// <value></value>
@@ -193,19 +205,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return raw.WindowSize.Height;
                 }
-                catch (HostException)
+                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
+
                 return _fallbackRawConsoleRowNumber;
             }
         }
 
         /// <summary>
-        /// write a line to the output device
+        /// Write a line to the output device.
         /// </summary>
-        /// <param name="s">line to write</param>
+        /// <param name="s">Line to write.</param>
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
@@ -231,11 +244,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// constructor for the ConsoleLineOutput
+        /// Constructor for the ConsoleLineOutput.
         /// </summary>
-        /// <param name="hostConsole">PSHostUserInterface to wrap</param>
-        /// <param name="paging">true if we require prompting for page breaks</param>
-        /// <param name="errorContext">error context to throw exceptions</param>
+        /// <param name="hostConsole">PSHostUserInterface to wrap.</param>
+        /// <param name="paging">True if we require prompting for page breaks.</param>
+        /// <param name="errorContext">Error context to throw exceptions.</param>
         internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
             if (hostConsole == null)
@@ -283,9 +296,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper
+        /// Callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper.
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">String to write.</param>
         private void OnWriteLine(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
@@ -328,11 +341,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when ILineOutput.Write() is called by WriteLineHelper
+        /// Callback to be called when ILineOutput.Write() is called by WriteLineHelper
         /// This is called when the WriteLineHelper needs to write a line whose length
-        /// is the same as the width of the screen buffer
+        /// is the same as the width of the screen buffer.
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">String to write.</param>
         private void OnWrite(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
@@ -365,7 +378,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// called when a line was written to console
+        /// Called when a line was written to console.
         /// </summary>
         private void LineWrittenEvent()
         {
@@ -396,12 +409,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // reset the counter, since we are starting a new page
                             _linesWritten = 0;
                         }
+
                         break;
                     case PromptHandler.PromptResponse.NextLine:
                         {
                             // roll back the counter by one, since we allow one more line
                             _linesWritten--;
                         }
+
                         break;
                     case PromptHandler.PromptResponse.Quit:
                         // 1021203-2005/05/09-JonN
@@ -413,7 +428,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// check if we need to put out a prompt
+        /// Check if we need to put out a prompt.
         /// </summary>
         /// <value>true if we need to prompt</value>
         private bool NeedToPrompt
@@ -447,15 +462,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Private Members
         /// <summary>
-        /// object to manage prompting
+        /// Object to manage prompting.
         /// </summary>
         private class PromptHandler
         {
             /// <summary>
-            /// prompt handler with the given prompt
+            /// Prompt handler with the given prompt.
             /// </summary>
-            /// <param name="s">prompt string to be used</param>
-            /// <param name="cmdlet">the Cmdlet using this prompt handler</param>
+            /// <param name="s">Prompt string to be used.</param>
+            /// <param name="cmdlet">The Cmdlet using this prompt handler.</param>
             internal PromptHandler(string s, ConsoleLineOutput cmdlet)
             {
                 if (string.IsNullOrEmpty(s))
@@ -466,10 +481,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// determine how many rows the prompt should take.
+            /// Determine how many rows the prompt should take.
             /// </summary>
-            /// <param name="cols">current number of columns on the screen</param>
-            /// <param name="displayCells">string manipulation helper</param>
+            /// <param name="cols">Current number of columns on the screen.</param>
+            /// <param name="displayCells">String manipulation helper.</param>
             /// <returns></returns>
             internal int ComputePromptLines(DisplayCells displayCells, int cols)
             {
@@ -479,7 +494,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// options returned by the PromptUser() call
+            /// Options returned by the PromptUser() call.
             /// </summary>
             internal enum PromptResponse
             {
@@ -489,9 +504,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// do the actual prompting
+            /// Do the actual prompting.
             /// </summary>
-            /// <param name="console">PSHostUserInterface instance to prompt to</param>
+            /// <param name="console">PSHostUserInterface instance to prompt to.</param>
             internal PromptResponse PromptUser(PSHostUserInterface console)
             {
                 // NOTE: assume the values passed to ComputePromptLines are still valid
@@ -533,68 +548,68 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// cached string(s) valid during a sequence of ComputePromptLines()/PromptUser()
+            /// Cached string(s) valid during a sequence of ComputePromptLines()/PromptUser()
             /// </summary>
             private StringCollection _actualPrompt;
 
             /// <summary>
-            /// prompt string as passed at initialization
+            /// Prompt string as passed at initialization.
             /// </summary>
             private string _promptString;
 
             /// <summary>
-            /// The cmdlet that uses this prompt helper
+            /// The cmdlet that uses this prompt helper.
             /// </summary>
             private ConsoleLineOutput _callingCmdlet = null;
         }
 
         /// <summary>
-        /// flag to force new lines in CMD.EXE by limiting the
+        /// Flag to force new lines in CMD.EXE by limiting the
         /// usable width to N-1 (e.g. 80-1) and forcing a call
         /// to WriteLine()
         /// </summary>
         private bool _forceNewLine = true;
 
         /// <summary>
-        /// use this if IRawConsole is null;
+        /// Use this if IRawConsole is null;
         /// </summary>
         private int _fallbackRawConsoleColumnNumber = 80;
 
         /// <summary>
-        /// use this if IRawConsole is null;
+        /// Use this if IRawConsole is null;
         /// </summary>
         private int _fallbackRawConsoleRowNumber = 40;
 
         private WriteLineHelper _writeLineHelper;
 
         /// <summary>
-        /// handler to prompt the user for page breaks
-        /// if this handler is not null, we have prompting
+        /// Handler to prompt the user for page breaks
+        /// if this handler is not null, we have prompting.
         /// </summary>
         private PromptHandler _prompt = null;
 
         /// <summary>
-        /// conter for the # of lines written when prompting is on
+        /// Conter for the # of lines written when prompting is on.
         /// </summary>
         private long _linesWritten = 0;
 
         /// <summary>
-        /// flag to avoid reentrancy on prompting
+        /// Flag to avoid reentrancy on prompting.
         /// </summary>
         private bool _disableLineWrittenEvent = false;
 
         /// <summary>
-        /// refecence to the PSHostUserInterface interface we use
+        /// Refecence to the PSHostUserInterface interface we use.
         /// </summary>
         private PSHostUserInterface _console = null;
 
         /// <summary>
-        /// Msh host specific string manipulation helper
+        /// Msh host specific string manipulation helper.
         /// </summary>
         private DisplayCells _displayCellsPSHost;
 
         /// <summary>
-        /// reference to error context to throw Msh exceptions
+        /// Reference to error context to throw Msh exceptions.
         /// </summary>
         private TerminatingErrorContext _errorContext = null;
 

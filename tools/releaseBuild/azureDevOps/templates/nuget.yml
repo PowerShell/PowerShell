@@ -1,0 +1,173 @@
+parameters:
+  parentJobs: []
+
+jobs:
+- job: build_nuget
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  displayName: Build NuGet packages
+  condition: succeeded()
+  pool: PowerShell
+  variables:
+    GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
+    PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
+    winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
+    linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
+
+  steps:
+
+  - powershell: |
+      $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
+      $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Find SDK version from global.json'
+
+  - task: DotNetCoreInstaller@0
+    displayName: 'Use .NET Core SDK from global.json'
+    inputs:
+      version: '$(SDKVersion)'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download PowerShell build artifacts'
+    inputs:
+      buildType: current
+      downloadType: single
+      artifactName: finalResults
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - powershell: 'Get-ChildItem $(System.ArtifactsDirectory) -recurse'
+    displayName: 'Capture downloaded artifacts'
+
+  - powershell: |
+      $packagePath = (Join-Path $(System.ArtifactsDirectory)  packages)
+      New-Item $packagePath -ItemType Directory -Force > $null
+      $packages  = Get-ChildItem $(System.ArtifactsDirectory) -Include *.zip, *.tar.gz -Recurse
+      $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
+      Get-ChildItem $packagePath -Recurse
+    displayName: 'Conflate packages to same folder'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependent.zip'
+      destinationFolder: '$(winFxdPath)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files linux-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
+      destinationFolder: '$(linuxFxdPath)'
+
+  - task: PkgESInstallNuGetToolsPackage@10
+    displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
+    inputs:
+      packageName: Microsoft.DotNet.BuildTools.GenAPI
+      packageVersion: '1.0.0-beta-00081'
+      packageSources: 'https://nuget.org/api/v2'
+      installRoot: '$(GenAPIToolPath)'
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - task: NuGetToolInstaller@0
+    displayName: 'Install NuGet 4.9.3'
+    inputs:
+      versionSpec: 4.9.3
+
+  - powershell: |
+      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
+      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
+    displayName: 'Create Nuget Package Folders'
+
+  - powershell: |
+      Get-ChildItem $(linuxFxdPath)
+      Get-ChildItem $(winFxdPath)
+    displayName: Capture fxd folders
+
+  - powershell: |
+      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
+      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+
+      # Create unified package first
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+
+      # Create packages for dotnet sdk
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+    displayName: 'Create Global tool packages'
+
+  - powershell: |
+      Get-ChildItem "$(PackagePath)" -Recurse
+    displayName: Capture generated packages
+
+  - powershell: |
+      $packages = Get-ChildItem "$(PackagePath)\*.nupkg", "$(PackagePath)\globaltool\*.nupkg" | Select-Object -ExpandProperty FullName
+
+      if($packages.Count -lt 1)
+      {
+          throw "No packages created"
+      }
+
+      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(PackagePath)\NugetSigning.xml -NuPkgFiles $packages
+    displayName: Create signing file
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign Nuget Packages'
+    inputs:
+      signConfigXml: '$(PackagePath)\NugetSigning.xml'
+      inPathRoot: '$(PackagePath)'
+      outPathRoot: '$(System.ArtifactsDirectory)\signed'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+
+  - powershell: |
+      Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
+      Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
+    displayName: Verify all packages are signed
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run MpCmdRun.exe'
+    inputs:
+      FileDirPath: '$(PackagePath)'
+      TreatStaleSignatureAs: Warning
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs'
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: '$(System.ArtifactsDirectory)\signed'
+
+  - powershell: |
+      $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
+      Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
+    displayName: Move global tool packages to subfolder and capture
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload NuGet packages to Azure'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-nuget'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload global tool packages to Azure'
+    inputs:
+      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
+      azureSubscription: '$(GlobalToolSubscription)'
+      Destination: AzureBlob
+      storage: '$(GlobalToolStorageAccount)'
+      ContainerName: 'tool'
+      blobPrefix: '$(Version)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(PackagePath)'

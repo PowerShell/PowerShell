@@ -17,7 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Event Metadata
+    /// Event Metadata.
     /// </summary>
     public sealed class EventMetadata
     {
@@ -116,18 +116,18 @@ namespace System.Diagnostics.Eventing.Reader
                 ulong theKeywords = unchecked((ulong)_keywords);
                 ulong mask = 0x8000000000000000;
 
-                //for every bit
-                //for (int i = 0; i < 64 && theKeywords != 0; i++)
+                // for every bit
+                // for (int i = 0; i < 64 && theKeywords != 0; i++)
                 for (int i = 0; i < 64; i++)
                 {
-                    //if this bit is set
+                    // if this bit is set
                     if ((theKeywords & mask) > 0)
                     {
-                        //the mask is the keyword we will be searching for.
+                        // the mask is the keyword we will be searching for.
                         list.Add(new EventKeyword(unchecked((long)mask), _pmReference));
-                        //theKeywords = theKeywords - mask;
+                        // theKeywords = theKeywords - mask;
                     }
-                    //modify the mask to check next bit.
+                    // modify the mask to check next bit.
                     mask = mask >> 1;
                 }
 

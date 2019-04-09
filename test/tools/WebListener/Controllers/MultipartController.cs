@@ -23,8 +23,9 @@ namespace mvc.Controllers
         {
             _environment = environment;
         }
+
         public ActionResult Index()
-        {   
+        {
             return View();
         }
 
@@ -49,6 +50,7 @@ namespace mvc.Controllers
                         result = reader.ReadToEnd();
                     }
                 }
+
                 Hashtable fileHash = new Hashtable
                 {
                     {"ContentDisposition" , file.ContentDisposition},
@@ -61,17 +63,20 @@ namespace mvc.Controllers
                 };
                 fileList.Add(fileHash);
             }
+
             Hashtable itemsHash = new Hashtable();
             foreach (var key in collection.Keys)
             {
                 itemsHash.Add(key,collection[key]);
             }
+
             MediaTypeHeaderValue mediaContentType = MediaTypeHeaderValue.Parse(Request.ContentType);
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Headers.Keys)
             {
-                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Headers[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Headers[key]));
             }
+
             Hashtable output = new Hashtable
             {
                 {"Files"   , fileList},

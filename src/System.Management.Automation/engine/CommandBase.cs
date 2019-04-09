@@ -84,11 +84,12 @@ namespace System.Management.Automation.Internal
         internal PSObject currentObjectInPipeline = AutomationNull.Value;
 
         /// <summary>
-        /// Gets or sets the current pipeline object under consideration
+        /// Gets or sets the current pipeline object under consideration.
         /// </summary>
         internal PSObject CurrentPipelineObject
         {
             get { return currentObjectInPipeline; }
+
             set
             {
                 currentObjectInPipeline = value;
@@ -102,15 +103,17 @@ namespace System.Management.Automation.Internal
         {
             get { return _CBhost; }
         }
+
         private PSHost _CBhost;
 
         /// <summary>
-        /// Internal helper to get to SessionState
+        /// Internal helper to get to SessionState.
         /// </summary>
         internal SessionState InternalState
         {
             get { return _state; }
         }
+
         private SessionState _state;
 
         /// <summary>
@@ -135,6 +138,7 @@ namespace System.Management.Automation.Internal
         internal CommandInfo CommandInfo
         {
             get { return _commandInfo; }
+
             set { _commandInfo = value; }
         }
 
@@ -151,12 +155,14 @@ namespace System.Management.Automation.Internal
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Context");
                 }
+
                 _context = value;
                 Diagnostics.Assert(_context.EngineHostInterface is InternalHost, "context.EngineHostInterface is not an InternalHost");
                 _CBhost = (InternalHost)_context.EngineHostInterface;
@@ -166,6 +172,7 @@ namespace System.Management.Automation.Internal
                 _state = new SessionState(_context.EngineSessionState);
             }
         }
+
         private ExecutionContext _context;
 
         /// <summary>
@@ -176,6 +183,7 @@ namespace System.Management.Automation.Internal
         {
             get { return CommandOriginInternal; }
         }
+
         internal CommandOrigin CommandOriginInternal = CommandOrigin.Internal;
 
         #endregion public_properties
@@ -221,7 +229,7 @@ namespace System.Management.Automation.Internal
         #endregion Override
 
         /// <summary>
-        /// throws if the pipeline is stopping
+        /// Throws if the pipeline is stopping.
         /// </summary>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         internal void ThrowIfStopping()
@@ -234,7 +242,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// IDisposable implementation
-        /// When the command is complete, release the associated members
+        /// When the command is complete, release the associated members.
         /// </summary>
         /// <remarks>
         /// Using InternalDispose instead of Dispose pattern because this
@@ -323,7 +331,7 @@ namespace System.Management.Automation
         /// confirmed by default unless otherwise specified.
         /// </summary>
         High,
-    } // enum ConfirmImpact
+    }
     #endregion ConfirmImpact
 
     /// <summary>
@@ -380,7 +388,7 @@ namespace System.Management.Automation
                     return this.InternalState;
                 }
             }
-        } // SessionState
+        }
 
         /// <summary>
         /// Gets the event manager for the current runspace.
@@ -394,10 +402,10 @@ namespace System.Management.Automation
                     return this.Context.Events;
                 }
             }
-        } // Events
+        }
 
         /// <summary>
-        /// Repository for jobs
+        /// Repository for jobs.
         /// </summary>
         public JobRepository JobRepository
         {
@@ -425,7 +433,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Repository for runspaces
+        /// Repository for runspaces.
         /// </summary>
         internal RunspaceRepository RunspaceRepository
         {
@@ -447,7 +455,7 @@ namespace System.Management.Automation
                     return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
                 }
             }
-        } // InvokeProvider
+        }
 
         #region Provider wrappers
 
@@ -474,7 +482,7 @@ namespace System.Management.Automation
             {
                 return SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
             }
-        } // GetUnresolvedProviderPathFromPSPath
+        }
 
         /// <Content contentref="System.Management.Automation.PathIntrinsics.GetResolvedProviderPathFromPSPath" />
         public Collection<string> GetResolvedProviderPathFromPSPath(string path, out ProviderInfo provider)
@@ -483,7 +491,7 @@ namespace System.Management.Automation
             {
                 return SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
             }
-        } // GetResolvedProviderPathFromPSPath
+        }
         #endregion Provider wrappers
 
         #endregion internal_members
@@ -514,7 +522,7 @@ namespace System.Management.Automation
             {
                 return this.SessionState.PSVariable.GetValue(name);
             }
-        } // GetVariableValue
+        }
 
         /// <Content contentref="System.Management.Automation.VariableIntrinsics.GetValue" />
 
@@ -524,7 +532,7 @@ namespace System.Management.Automation
             {
                 return this.SessionState.PSVariable.GetValue(name, defaultValue);
             }
-        } // GetVariableValue
+        }
 
         #endregion PSVariable APIs
 
@@ -533,6 +541,6 @@ namespace System.Management.Automation
         #endregion Parameter methods
 
         #endregion public_methods
-    } // PSCmdlet
+    }
 }
 

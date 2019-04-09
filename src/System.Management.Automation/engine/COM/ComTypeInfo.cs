@@ -10,7 +10,7 @@ using COM = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A Wrapper class for COM object's Type Information
+    /// A Wrapper class for COM object's Type Information.
     /// </summary>
     internal class ComTypeInfo
     {
@@ -27,22 +27,22 @@ namespace System.Management.Automation
         internal const int DISPID_DEFAULTMEMBER = 0;
 
         /// <summary>
-        ///  Member variables.
+        /// Member variables.
         /// </summary>
-        private Dictionary<String, ComProperty> _properties = null;
-        private Dictionary<String, ComMethod> _methods = null;
+        private Dictionary<string, ComProperty> _properties = null;
+        private Dictionary<string, ComMethod> _methods = null;
         private COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
         /// <summary>
-        ///  Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="info">ITypeInfo object being wrapped by this object</param>
+        /// <param name="info">ITypeInfo object being wrapped by this object.</param>
         internal ComTypeInfo(COM.ITypeInfo info)
         {
             _typeinfo = info;
-            _properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
-            _methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
+            _properties = new Dictionary<string, ComProperty>(StringComparer.OrdinalIgnoreCase);
+            _methods = new Dictionary<string, ComMethod>(StringComparer.OrdinalIgnoreCase);
 
             if (_typeinfo != null)
             {
@@ -51,9 +51,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Collection of properties in the COM object.
+        /// Collection of properties in the COM object.
         /// </summary>
-        internal Dictionary<String, ComProperty> Properties
+        internal Dictionary<string, ComProperty> Properties
         {
             get
             {
@@ -62,9 +62,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Collection of methods in the COM object.
+        /// Collection of methods in the COM object.
         /// </summary>
-        internal Dictionary<String, ComMethod> Methods
+        internal Dictionary<string, ComMethod> Methods
         {
             get
             {
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Returns the string of the GUID for the type information.
+        /// Returns the string of the GUID for the type information.
         /// </summary>
         internal string Clsid
         {
@@ -90,7 +90,7 @@ namespace System.Management.Automation
         internal COM.INVOKEKIND? NewEnumInvokeKind { get; private set; }
 
         /// <summary>
-        /// Initializes the typeinfo object
+        /// Initializes the typeinfo object.
         /// </summary>
         private void Initialize()
         {
@@ -98,7 +98,7 @@ namespace System.Management.Automation
             {
                 COM.TYPEATTR typeattr = GetTypeAttr(_typeinfo);
 
-                //Initialize the type information guid
+                // Initialize the type information guid
                 _guid = typeattr.guid;
 
                 for (int i = 0; i < typeattr.cFuncs; i++)
@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
-                        // http://msdn.microsoft.com/library/ee488948.aspx
+                        // https://msdn.microsoft.com/library/ee488948.aspx
                         // FUNCFLAGS -- FUNCFLAG_FRESTRICTED = 0x1:
                         //     Indicates that the function should not be accessible from macro languages.
                         //     This flag is intended for system-level functions or functions that type browsers should not display.
@@ -118,7 +118,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    String strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
+                    string strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
 
                     switch (funcdesc.invkind)
                     {
@@ -137,10 +137,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Get the typeinfo interface for the given comobject.
+        /// Get the typeinfo interface for the given comobject.
         /// </summary>
-        /// <param name="comObject">reference to com object for which we are getting type information.</param>
-        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object</returns>
+        /// <param name="comObject">Reference to com object for which we are getting type information.</param>
+        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Code uses the out parameter of 'GetTypeInfo' to check if the call succeeded.")]
         internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
         {
@@ -156,18 +156,20 @@ namespace System.Management.Automation
 
                     if ((typeattr.typekind == COM.TYPEKIND.TKIND_INTERFACE))
                     {
-                        //We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                        // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
                         typeinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeinfo);
                     }
 
                     if ((typeattr.typekind == COM.TYPEKIND.TKIND_COCLASS))
                     {
-                        //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                        // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                         typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);
                     }
+
                     result = new ComTypeInfo(typeinfo);
                 }
             }
+
             return result;
         }
 
@@ -202,9 +204,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Get TypeAttr for the given type information.
+        /// Get TypeAttr for the given type information.
         /// </summary>
-        /// <param name="typeinfo">reference to ITypeInfo from which to get TypeAttr</param>
+        /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
         [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
@@ -248,34 +250,35 @@ namespace System.Management.Automation
             }
             catch (COMException ce)
             {
-                //check if the error code is TYPE_E_ELEMENTNOTFOUND.
-                //This error code is thrown when we can't IDispatch interface.
+                // check if the error code is TYPE_E_ELEMENTNOTFOUND.
+                // This error code is thrown when we can't IDispatch interface.
                 if (ce.HResult != ComUtil.TYPE_E_ELEMENTNOTFOUND)
                 {
-                    //For other codes, rethrow the exception.
+                    // For other codes, rethrow the exception.
                     throw;
                 }
             }
+
             return dispinfo;
         }
 
         /// <summary>
         /// Get the IDispatch Typeinfo from CoClass typeinfo.
         /// </summary>
-        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
-        /// <returns>ITypeInfo reference to the Dispatch interface </returns>
+        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs.</param>
+        /// <returns>ITypeInfo reference to the Dispatch interface.</returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {
-            //Get the number of interfaces implemented by this CoClass.
+            // Get the number of interfaces implemented by this CoClass.
             COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
             int count = typeattr.cImplTypes;
             int href;
             COM.ITypeInfo interfaceinfo = null;
 
-            //For each interface implemented by this coclass
+            // For each interface implemented by this coclass
             for (int i = 0; i < count; i++)
             {
-                //Get the type information?
+                // Get the type information?
                 typeinfo.GetRefTypeOfImplType(i, out href);
                 typeinfo.GetRefTypeInfo(href, out interfaceinfo);
                 typeattr = GetTypeAttr(interfaceinfo);
@@ -286,7 +289,7 @@ namespace System.Management.Automation
                     return interfaceinfo;
                 }
 
-                //Nope. Is this a dual interface
+                // Nope. Is this a dual interface
                 if ((typeattr.wTypeFlags & COM.TYPEFLAGS.TYPEFLAG_FDUAL) != 0)
                 {
                     interfaceinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(interfaceinfo);
@@ -298,6 +301,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
     }

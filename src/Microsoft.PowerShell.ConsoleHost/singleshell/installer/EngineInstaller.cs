@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell
     public sealed class EngineInstaller : PSInstaller
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public EngineInstaller()
             : base()

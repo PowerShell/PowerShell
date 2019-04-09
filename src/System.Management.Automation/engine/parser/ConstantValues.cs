@@ -30,6 +30,7 @@ namespace System.Management.Automation.Language
                         {
                             break;
                         }
+
                         parent = parent.Parent;
                     }
 
@@ -56,41 +57,77 @@ namespace System.Management.Automation.Language
         internal bool CheckingRequiresArgument { get; set; }
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
+
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return false; }
+
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst) { return false; }
+
         public object VisitParamBlock(ParamBlockAst paramBlockAst) { return false; }
+
         public object VisitNamedBlock(NamedBlockAst namedBlockAst) { return false; }
+
         public object VisitTypeConstraint(TypeConstraintAst typeConstraintAst) { return false; }
+
         public object VisitAttribute(AttributeAst attributeAst) { return false; }
+
         public object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { return false; }
+
         public object VisitParameter(ParameterAst parameterAst) { return false; }
+
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { return false; }
+
         public object VisitIfStatement(IfStatementAst ifStmtAst) { return false; }
+
         public object VisitTrap(TrapStatementAst trapStatementAst) { return false; }
+
         public object VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return false; }
+
         public object VisitDataStatement(DataStatementAst dataStatementAst) { return false; }
+
         public object VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return false; }
+
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return false; }
+
         public object VisitForStatement(ForStatementAst forStatementAst) { return false; }
+
         public object VisitWhileStatement(WhileStatementAst whileStatementAst) { return false; }
+
         public object VisitCatchClause(CatchClauseAst catchClauseAst) { return false; }
+
         public object VisitTryStatement(TryStatementAst tryStatementAst) { return false; }
+
         public object VisitBreakStatement(BreakStatementAst breakStatementAst) { return false; }
+
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst) { return false; }
+
         public object VisitReturnStatement(ReturnStatementAst returnStatementAst) { return false; }
+
         public object VisitExitStatement(ExitStatementAst exitStatementAst) { return false; }
+
         public object VisitThrowStatement(ThrowStatementAst throwStatementAst) { return false; }
+
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return false; }
+
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return false; }
+
         public object VisitCommand(CommandAst commandAst) { return false; }
+
         public object VisitCommandExpression(CommandExpressionAst commandExpressionAst) { return false; }
+
         public object VisitCommandParameter(CommandParameterAst commandParameterAst) { return false; }
+
         public object VisitFileRedirection(FileRedirectionAst fileRedirectionAst) { return false; }
+
         public object VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) { return false; }
+
         public object VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) { return false; }
+
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst) { return false; }
+
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return false; }
+
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return false; }
+
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
@@ -155,12 +192,14 @@ namespace System.Management.Automation.Language
             {
                 return false;
             }
+
             if (!type.IsSafePrimitive())
             {
                 // Only do conversions to built-in types - other conversions might not
                 // be safe to optimize.
                 return false;
             }
+
             return (bool)convertExpressionAst.Child.Accept(this);
         }
 
@@ -288,41 +327,77 @@ namespace System.Management.Automation.Language
         }
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return AutomationNull.Value; }
+
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return AutomationNull.Value; }
+
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst) { return AutomationNull.Value; }
+
         public object VisitParamBlock(ParamBlockAst paramBlockAst) { return AutomationNull.Value; }
+
         public object VisitNamedBlock(NamedBlockAst namedBlockAst) { return AutomationNull.Value; }
+
         public object VisitTypeConstraint(TypeConstraintAst typeConstraintAst) { return AutomationNull.Value; }
+
         public object VisitAttribute(AttributeAst attributeAst) { return AutomationNull.Value; }
+
         public object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { return AutomationNull.Value; }
+
         public object VisitParameter(ParameterAst parameterAst) { return AutomationNull.Value; }
+
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { return AutomationNull.Value; }
+
         public object VisitIfStatement(IfStatementAst ifStmtAst) { return AutomationNull.Value; }
+
         public object VisitTrap(TrapStatementAst trapStatementAst) { return AutomationNull.Value; }
+
         public object VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AutomationNull.Value; }
+
         public object VisitDataStatement(DataStatementAst dataStatementAst) { return AutomationNull.Value; }
+
         public object VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return AutomationNull.Value; }
+
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return AutomationNull.Value; }
+
         public object VisitForStatement(ForStatementAst forStatementAst) { return AutomationNull.Value; }
+
         public object VisitWhileStatement(WhileStatementAst whileStatementAst) { return AutomationNull.Value; }
+
         public object VisitCatchClause(CatchClauseAst catchClauseAst) { return AutomationNull.Value; }
+
         public object VisitTryStatement(TryStatementAst tryStatementAst) { return AutomationNull.Value; }
+
         public object VisitBreakStatement(BreakStatementAst breakStatementAst) { return AutomationNull.Value; }
+
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst) { return AutomationNull.Value; }
+
         public object VisitReturnStatement(ReturnStatementAst returnStatementAst) { return AutomationNull.Value; }
+
         public object VisitExitStatement(ExitStatementAst exitStatementAst) { return AutomationNull.Value; }
+
         public object VisitThrowStatement(ThrowStatementAst throwStatementAst) { return AutomationNull.Value; }
+
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return AutomationNull.Value; }
+
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return AutomationNull.Value; }
+
         public object VisitCommand(CommandAst commandAst) { return AutomationNull.Value; }
+
         public object VisitCommandExpression(CommandExpressionAst commandExpressionAst) { return AutomationNull.Value; }
+
         public object VisitCommandParameter(CommandParameterAst commandParameterAst) { return AutomationNull.Value; }
+
         public object VisitFileRedirection(FileRedirectionAst fileRedirectionAst) { return AutomationNull.Value; }
+
         public object VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) { return AutomationNull.Value; }
+
         public object VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) { return AutomationNull.Value; }
+
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst) { return AutomationNull.Value; }
+
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return AutomationNull.Value; }
+
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return AutomationNull.Value; }
+
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return AutomationNull.Value; }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
@@ -442,6 +517,7 @@ namespace System.Management.Automation.Language
             {
                 result.Add(pair.Item1.Accept(this), pair.Item2.Accept(this));
             }
+
             return result;
         }
     }

@@ -118,8 +118,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Checks the provided path against the the default path of scheduled jobs
         /// for the current user.
         /// </summary>
-        /// <param name="definitionPath">Path for scheduled job definitions</param>
-        /// <returns>True if paths are equal</returns>
+        /// <param name="definitionPath">Path for scheduled job definitions.</param>
+        /// <returns>True if paths are equal.</returns>
         public static bool IsDefaultUserPath(string definitionPath)
         {
             return definitionPath.Equals(GetJobDefinitionLocation(), StringComparison.OrdinalIgnoreCase);
@@ -162,9 +162,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="definitionName">Scheduled job definition name.</param>
         /// <param name="runStart">DateTime of job run start time.</param>
         /// <param name="runItem">Job run item.</param>
-        /// <param name="fileAccess">File access</param>
-        /// <param name="fileMode">File mode</param>
-        /// <param name="fileShare">File share</param>
+        /// <param name="fileAccess">File access.</param>
+        /// <param name="fileMode">File mode.</param>
+        /// <param name="fileShare">File share.</param>
         /// <returns>FileStream object.</returns>
         public static FileStream GetFileForJobRunItem(
             string definitionName,
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove the job definition and all job runs from job store.
         /// </summary>
-        /// <param name="definitionName">Scheduled Job Definition name</param>
+        /// <param name="definitionName">Scheduled Job Definition name.</param>
         public static void RemoveJobDefinition(
             string definitionName)
         {
@@ -281,8 +281,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Renames the directory containing the old job definition name
         /// to the new name provided.
         /// </summary>
-        /// <param name="oldDefName">Existing job definition directory</param>
-        /// <param name="newDefName">Renamed job definition directory</param>
+        /// <param name="oldDefName">Existing job definition directory.</param>
+        /// <param name="newDefName">Renamed job definition directory.</param>
         public static void RenameScheduledJobDefDir(
             string oldDefName,
             string newDefName)
@@ -291,6 +291,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException("oldDefName");
             }
+
             if (string.IsNullOrEmpty(newDefName))
             {
                 throw new PSArgumentException("newDefName");
@@ -304,8 +305,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove a single job definition job run from the job store.
         /// </summary>
-        /// <param name="definitionName">Scheduled Job Definition name</param>
-        /// <param name="runStart">DateTime of job run</param>
+        /// <param name="definitionName">Scheduled Job Definition name.</param>
+        /// <param name="runStart">DateTime of job run.</param>
         public static void RemoveJobRun(
             string definitionName,
             DateTime runStart)
@@ -323,8 +324,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove a single job definition job run from the job store.
         /// </summary>
-        /// <param name="definitionOutputPath">Scheduled Job Definition Output path</param>
-        /// <param name="runStart">DateTime of job run</param>
+        /// <param name="definitionOutputPath">Scheduled Job Definition Output path.</param>
+        /// <param name="runStart">DateTime of job run.</param>
         public static void RemoveJobRunFromOutputPath(
             string definitionOutputPath,
             DateTime runStart)
@@ -342,7 +343,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove all job runs for this job definition.
         /// </summary>
-        /// <param name="definitionName">Scheduled Job Definition name</param>
+        /// <param name="definitionName">Scheduled Job Definition name.</param>
         public static void RemoveAllJobRuns(
             string definitionName)
         {
@@ -362,8 +363,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Set read access on provided definition file for specified user.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="user">Account user name</param>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="user">Account user name.</param>
         public static void SetReadAccessOnDefinitionFile(
             string definitionName,
             string user)
@@ -390,8 +391,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Set write access on Output directory for provided definition for
         /// specified user.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="user">Account user name</param>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="user">Account user name.</param>
         public static void SetWriteAccessOnJobRunOutput(
             string definitionName,
             string user)
@@ -401,11 +402,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        ///  Returns the directory path for job run output for the specified
-        ///  scheduled job definition.
+        /// Returns the directory path for job run output for the specified
+        /// scheduled job definition.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <returns>Directory Path</returns>
+        /// <param name="definitionName">Definition name.</param>
+        /// <returns>Directory Path.</returns>
         public static string GetJobRunOutputDirectory(
             string definitionName)
         {
@@ -420,7 +421,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Gets the directory path for a Scheduled Job Definition.
         /// </summary>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         public static string GetJobDefinitionLocation()
         {
 #if UNIX
@@ -443,7 +444,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Gets the directory path for Scheduled Jobs.  Will create the directory if
         /// it does not exist.
         /// </summary>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         private static string GetDirectoryPath()
         {
             string pathName;
@@ -466,9 +467,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         ///  ...\ScheduledJobs\definitionName\fileName.xml
         ///  ...\ScheduledJobs\definitionName\Output\
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="fileName">File name</param>
-        /// <returns>File path/name</returns>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="fileName">File name.</param>
+        /// <returns>File path/name.</returns>
         private static string CreateFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
@@ -488,9 +489,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Returns a file path/name for an existing Scheduled job definition directory.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="fileName">File name</param>
-        /// <returns>File path/name</returns>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="fileName">File name.</param>
+        /// <returns>File path/name.</returns>
         private static string GetFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
@@ -500,8 +501,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Gets the directory path for a Scheduled Job Definition.
         /// </summary>
-        /// <param name="definitionName">Scheduled job definition name</param>
-        /// <returns>Directory Path</returns>
+        /// <param name="definitionName">Scheduled job definition name.</param>
+        /// <returns>Directory Path.</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
 #if UNIX
@@ -516,9 +517,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Returns a directory path for an existing ScheduledJob run result directory.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="runStart">File name</param>
-        /// <returns>Directory Path</returns>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="runStart">File name.</param>
+        /// <returns>Directory Path.</returns>
         private static string GetRunDirectory(
             string definitionName,
             DateTime runStart)
@@ -532,9 +533,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns a directory path for an existing ScheduledJob run based on
         /// provided definition Output directory path.
         /// </summary>
-        /// <param name="definitionOutputPath">Output directory path</param>
-        /// <param name="runStart">File name</param>
-        /// <returns>Directory Path</returns>
+        /// <param name="definitionOutputPath">Output directory path.</param>
+        /// <param name="runStart">File name.</param>
+        /// <returns>Directory Path.</returns>
         private static string GetRunDirectoryFromPath(
             string definitionOutputPath,
             DateTime runStart)
@@ -547,10 +548,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns a file path/name for a run result file.  Will create the
         /// job run directory if it does not exist.
         /// </summary>
-        /// <param name="definitionName">Definition name</param>
-        /// <param name="runItem">Result type</param>
-        /// <param name="runStart">Run date</param>
-        /// <returns>File path/name</returns>
+        /// <param name="definitionName">Definition name.</param>
+        /// <param name="runItem">Result type.</param>
+        /// <param name="runStart">Run date.</param>
+        /// <returns>File path/name.</returns>
         private static string GetRunFilePathName(
             string definitionName,
             JobRunItem runItem,
@@ -569,9 +570,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// job run output path.  Will create the job run directory if it does not
         /// exist.
         /// </summary>
-        /// <param name="outputPath">Definition job run output path</param>
-        /// <param name="runItem">Result type</param>
-        /// <param name="runStart">Run date</param>
+        /// <param name="outputPath">Definition job run output path.</param>
+        /// <param name="runItem">Result type.</param>
+        /// <param name="runStart">Run date.</param>
         /// <returns></returns>
         private static string GetRunFilePathNameFromPath(
             string outputPath,
@@ -624,7 +625,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Converts a jobRun name string to an equivalent DateTime
+        /// Converts a jobRun name string to an equivalent DateTime.
         /// </summary>
         /// <param name="jobRunName"></param>
         /// <param name="jobRun"></param>

@@ -10,86 +10,66 @@ $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
-        # Skip if not windows, We don't need these tests to run on linux (the tests run fine in travis-ci)
-        $skip = !$IsWindows
-        if ( !$skip )
+        Push-Location $psscriptroot
+        $skip = $false
+        $NpmInstalled = "not installed"
+        if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
         {
-            $NpmInstalled = "not installed"
-            if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
+            $NpmInstalled = "Installed"
+            Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
+            start-nativeExecution { npm install --silent }
+            start-nativeExecution { npm install 'gulp@4.0.0' --silent }
+            if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
             {
-                $NpmInstalled = "Installed"
-                Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
-                Start-Process `
-                    -FilePath "npm" `
-                    -ArgumentList @('install','--silent') `
-                    -Wait `
-                    -WorkingDirectory $PSScriptRoot `
-                    -NoNewWindow
-                Start-Process `
-                    -FilePath "npm" `
-                    -ArgumentList @('install','-g','gulp@4.0.0','--silent') `
-                    -Wait `
-                    -WorkingDirectory $PSScriptRoot `
-                    -NoNewWindow
+                start-nativeExecution {
+                    sudo npm install -g 'gulp@4.0.0' --silent
+                    # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+                    sudo rm -rf ~/.npm/_cacache
+                }
             }
-            elseif( -not $env:AppVeyor)
+            if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
             {
-                <#
-                    On Windows, but not an AppVeyor and pre-requisites are missing
-                    For now we will skip, and write a warning.  Work to resolve this is tracked in:
-                    https://github.com/PowerShell/PowerShell/issues/3429
-                #>
-                Write-Warning "Node and npm are required to run this test"
-                $skip = $true
+                throw "node not found"
             }
-
-            $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
-            Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
         }
+        if(!(Get-Command -Name 'node' -ErrorAction SilentlyContinue))
+        {
+            <#
+                On Windows, pre-requisites are missing
+                For now we will skip, and write a warning.  Work to resolve this is tracked in:
+                https://github.com/PowerShell/PowerShell/issues/3429
+            #>
+            Write-Warning "Node and npm are required to run this test"
+            $skip = $true
+        }
+
+        $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
+        Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
     }
 
     AfterAll {
-        if ( !$skip )
-        {
-            <#
-                NPM install all the tools needed to run this test in the test folder.
-                We will now clean these up.
-                We're using this tool to delete the node_modules folder because it gets too long
-                for PowerShell to remove.
-            #>
-            Start-Process `
-                -FilePath "npm" `
-                -ArgumentList @('install','rimraf','-g','--silent') `
-                -Wait `
-                -WorkingDirectory $PSScriptRoot `
-                -NoNewWindow
-            Start-Process `
-                -FilePath "rimraf" `
-                -ArgumentList @(Join-Path -Path $PSScriptRoot -ChildPath 'node_modules') `
-                -Wait `
-                -WorkingDirectory $PSScriptRoot `
-                -NoNewWindow
-        }
+        Pop-Location
     }
 
-    It "Should not have errors in any markdown files" -Skip:$skip {
+    It "Should not have errors in any markdown files" -skip:$skip {
         $NpmInstalled | should BeExactly "Installed"
         $mdErrors = 0
         Push-Location -Path $PSScriptRoot
         try
         {
             $docsToTest = @(
-                './.github/CONTRIBUTING.md'
-                './*.md'
+                './.github/*.md'
+                './README.md'
                 './demos/python/*.md'
                 './docker/*.md'
-                './docs/*.md'
                 './docs/building/*.md'
+                './docs/community/*.md'
+                './docs/host-powershell/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/maintainers/*.md'
-                './docs/testing-guidelines/testing-guidelines.md'
                 './test/powershell/README.md'
                 './tools/*.md'
+                './.github/ISSUE_TEMPLATE/*.md'
             )
             $filter = ($docsToTest -join ',')
 

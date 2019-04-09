@@ -70,17 +70,19 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHtml
         {
             get { return _asHtml; }
+
             set
             {
                 _isHtmlSet = true;
                 _asHtml = value;
             }
         }
+
         private bool _asHtml;
         private bool _isHtmlSet = false;
 
         /// <summary>
-        /// This method implements the BeginProcessing method for Set-Clipboard command
+        /// This method implements the BeginProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -88,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Set-Clipboard command
+        /// This method implements the ProcessRecord method for Set-Clipboard command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -96,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             if (Value == null && _isHtmlSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
+    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -115,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for Set-Clipboard command
+        /// This method implements the EndProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -145,11 +147,12 @@ namespace Microsoft.PowerShell.Commands
 
             if ((contentList == null || contentList.Count == 0) && !append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
                     Clipboard.Clear();
                 }
+
                 return;
             }
 
@@ -158,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsText())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -186,11 +189,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
             }
             else
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
             }
 
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
@@ -220,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsFileDropList())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -228,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     StringCollection clipBoardContent = Clipboard.GetFileDropList();
                     dropFiles = new HashSet<string>(clipBoardContent.Cast<string>().ToList(), StringComparer.OrdinalIgnoreCase);
 
-                    //we need the count of original files so we can get the accurate files number that has been appended.
+                    // we need the count of original files so we can get the accurate files number that has been appended.
                     clipBoardContentLength = clipBoardContent.Count;
                 }
             }
@@ -273,22 +276,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
                 }
             }
             else
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
                 }
             }
 
@@ -305,8 +308,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generate HTML fragment data string with header that is required for the clipboard.
         /// </summary>
-        /// <param name="html">the html to generate for</param>
-        /// <returns>the resulted string</returns>
+        /// <param name="html">The html to generate for.</param>
+        /// <returns>The resulted string.</returns>
         private static string GetHtmlDataString(string html)
         {
             // The string contains index references to other spots in the string, so we need placeholders so we can compute the offsets.
@@ -332,15 +335,15 @@ EndSelection:<<<<<<<<4";
             int fragmentEndIdx = html.LastIndexOf(EndFragment, StringComparison.OrdinalIgnoreCase);
 
             // if html tag is missing add it surrounding the given html
-            //find the index of "<html", ignore white space and case
+            // find the index of "<html", ignore white space and case
             int htmlOpenIdx = Regex.Match(html, @"<\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
             int htmlOpenEndIdx = htmlOpenIdx > 0 ? html.IndexOf('>', htmlOpenIdx) + 1 : -1;
-            //find the index of "</html", ignore white space and case
+            // find the index of "</html", ignore white space and case
             int htmlCloseIdx = Regex.Match(html, @"<\s*/\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
 
             if (fragmentStartIdx < 0 && fragmentEndIdx < 0)
             {
-                //find the index of "<body", ignore white space and case
+                // find the index of "<body", ignore white space and case
                 int bodyOpenIdx = Regex.Match(html, @"<\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
                 int bodyOpenEndIdx = bodyOpenIdx > 0 ? html.IndexOf('>', bodyOpenIdx) + 1 : -1;
 
@@ -358,7 +361,7 @@ EndSelection:<<<<<<<<4";
                 else
                 {
                     // insert start/end fragments in the proper place (related to html/body tags if exists) so the paste will work correctly
-                    //find the index of "</body", ignore white space and case
+                    // find the index of "</body", ignore white space and case
                     int bodyCloseIdx = Regex.Match(html, @"<\s*/\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
 
                     if (htmlOpenEndIdx < 0)
@@ -403,10 +406,10 @@ EndSelection:<<<<<<<<4";
         /// <summary>
         /// Calculates the number of bytes produced by encoding the string in the string builder in UTF-8 and not .NET default string encoding.
         /// </summary>
-        /// <param name="sb">the string builder to count its string</param>
-        /// <param name="start">optional: the start index to calculate from (default  - start of string)</param>
-        /// <param name="end">optional: the end index to calculate to (default - end of string)</param>
-        /// <returns>the number of bytes required to encode the string in UTF-8</returns>
+        /// <param name="sb">The string builder to count its string.</param>
+        /// <param name="start">Optional: the start index to calculate from (default  - start of string).</param>
+        /// <param name="end">Optional: the end index to calculate to (default - end of string).</param>
+        /// <returns>The number of bytes required to encode the string in UTF-8.</returns>
         private static int GetByteCount(StringBuilder sb, int start = 0, int end = -1)
         {
             char[] _byteCount = new char[1];
@@ -417,6 +420,7 @@ EndSelection:<<<<<<<<4";
                 _byteCount[0] = sb[i];
                 count += Encoding.UTF8.GetByteCount(_byteCount);
             }
+
             return count;
         }
     }

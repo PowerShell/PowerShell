@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal class DefaultHelpProvider : HelpFileHelpProvider
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal DefaultHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)
@@ -51,7 +51,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {

@@ -36,7 +36,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Returns the number of objects currently in the underlying stream
+        /// Returns the number of objects currently in the underlying stream.
         /// </summary>
         public abstract int Count
         {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -82,9 +82,9 @@ namespace System.Management.Automation.Runspaces
         public abstract void Flush();
 
         /// <summary>
-        /// Write a single object into the underlying stream
+        /// Write a single object into the underlying stream.
         /// </summary>
-        /// <param name="obj">The object to add to the stream</param>
+        /// <param name="obj">The object to add to the stream.</param>
         /// <returns>
         /// One, if the write was successful, otherwise;
         /// zero if the stream was closed before the object could be written,
@@ -99,9 +99,9 @@ namespace System.Management.Automation.Runspaces
         public abstract int Write(object obj);
 
         /// <summary>
-        /// Write multiple objects to the underlying stream
+        /// Write multiple objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Runspaces
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is already closed
         /// </exception>

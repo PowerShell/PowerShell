@@ -41,7 +41,7 @@ try
 
             $modulePathName = "modulePath_$(Get-Random -Max 9999)"
             $modulePath = Join-Path $testdrive $modulePathName
-            mkdir $modulePath
+            New-Item -ItemType Directory $modulePath
             $trustedModuleFile = Join-Path $modulePath "T1TestModule_System32.psm1"
             $script | Out-File -FilePath $trustedModuleFile
         }
@@ -79,7 +79,7 @@ try
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_CannotExportMembersAccrossLanguageBoundaries,Microsoft.PowerShell.Commands.ExportModuleMemberCommand"
 
             # PrivateAddTypeAndRun private function should not be exposed
-            $result = Get-Command -Name T1TestModule_System32\PrivateAddTypeAndRun 2>$null
+            $result = Get-Command -Name T1TestModule_System32\PrivateAddTypeAndRun 2> $null
             $result | Should -BeNullOrEmpty
         }
     }
@@ -175,7 +175,7 @@ try
             function PublicFnE {{ "PublicFnE"; PublicDSFnE }}
             function PrivateFnE {{ "PrivateFnE"; PrivateDSFnE }}
 '@ -f $dotSourceFilePathE | Out-File -FilePath $moduleFilePathE
-    
+
             # Module with dot source ps1 file and nested modules that do use Export-ModuleMember
             $scriptModuleNameF = "ModuleDotSourceNestedExport_System32"
             $moduleFilePathF = Join-Path $TestModulePath ($scriptModuleNameF + ".psm1")
@@ -254,7 +254,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                Import-Module -Name $moduleFilePathA -Force 2>$null
+                Import-Module -Name $moduleFilePathA -Force 2> $null
                 throw "No Exception!"
             }
             catch
@@ -276,7 +276,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                Import-Module -Name $moduleFilePathB -Force 2>$null
+                Import-Module -Name $moduleFilePathB -Force 2> $null
                 throw "No Exception!"
             }
             catch
@@ -384,7 +384,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                $module = Import-Module -Name $moduleFilePathG -Force -PassThru -ErrorVariable expectedError 2>$null
+                $module = Import-Module -Name $moduleFilePathG -Force -PassThru -ErrorVariable expectedError 2> $null
             }
             finally
             {
@@ -401,7 +401,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                $module = Import-Module -Name $moduleFilePathH -Force -PassThru 2>$null
+                $module = Import-Module -Name $moduleFilePathH -Force -PassThru 2> $null
                 throw "No Exception!"
             }
             catch
@@ -467,7 +467,7 @@ try
                 $module = Import-Module -Name $manifestFileName -Force -PassThru
 
                 & $module PrivateFn
-                
+
                 throw "No Exception!"
             }
             catch
@@ -492,7 +492,7 @@ try
             $modulePath = Join-Path $TestDrive $moduleName
             New-Item -ItemType Directory -Path $modulePath
 
-            # Parent module directory 
+            # Parent module directory
             $scriptModuleName = "TrustedParentModule_System32"
             $scriptModulePath = Join-Path $modulePath $scriptModuleName
             $moduleFileName = Join-Path $scriptModulePath ($scriptModuleName + ".psm1")
@@ -550,13 +550,13 @@ try
                 Import-Module -Name $scriptModuleName -Force
 
                 # Public functions should be available in the session
-                $GetCommandPublicFnCmdInfo = Get-Command -Name "PublicFn" 2>$null
+                $GetCommandPublicFnCmdInfo = Get-Command -Name "PublicFn" 2> $null
 
                 # Private functions should not be available in the session
                 # Get-Command will import the TrustedImportModule_System32 module from the PSModulePath to find PrivateFn1
-                # However, it should not get TrustedImportModule_System32 from the module cache because it was loaded in a 
+                # However, it should not get TrustedImportModule_System32 from the module cache because it was loaded in a
                 # different language mode, and should instead re-load it (equivalent to Import-Module -Force)
-                $GetCommandPrivateFnCmdInfo = Get-Command -Name "PrivateFn1" 2>$null
+                $GetCommandPrivateFnCmdInfo = Get-Command -Name "PrivateFn1" 2> $null
             }
             finally
             {
@@ -581,16 +581,16 @@ try
                 Import-Module -Name $scriptModuleName -Force
 
                 # Directly import nested TrustedImportModule_System32 module.
-                # This makes TrustedImportModule_System32 functions visible but should not use the existing loaded module 
+                # This makes TrustedImportModule_System32 functions visible but should not use the existing loaded module
                 # since all functions are visible, but instead should re-load the module with the correct language context,
                 # ensuring only explictly exported functions are visible.
                 Import-Module -Name $scriptModuleImportName
 
                 # Public functions should be available in the session
-                $ReImportPublicFnCmdInfo = Get-Command -Name "PublicFn" 2>$null
+                $ReImportPublicFnCmdInfo = Get-Command -Name "PublicFn" 2> $null
 
                 # Private functions should not be available in the session
-                $ReImportPrivateFnCmdInfo = Get-Command -Name "PrivateFn1" 2>$null
+                $ReImportPrivateFnCmdInfo = Get-Command -Name "PrivateFn1" 2> $null
             }
             finally
             {
@@ -631,8 +631,8 @@ try
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
                 throw "No Exception!"
             }
-            catch 
-            { 
+            catch
+            {
                 $expectedError = $_
             }
             finally
@@ -1399,6 +1399,128 @@ try
 
             $module.ExportedCommands.Count | Should -Be 1
             $module.ExportedCommands.Values[0].Name | Should -BeExactly 'PublicFn'
+        }
+    }
+
+    Describe "Export-ModuleMember should succeed in FullLanguage mode with scriptblock created without context" -Tag 'Feature' {
+
+        BeforeAll {
+
+            $typeDef = @'
+            using System;
+            using System.Management.Automation;
+            using System.Management.Automation.Runspaces;
+
+            public class TestScriptBlockCreate
+            {
+                private ScriptBlock _scriptBlock;
+
+                public ScriptBlock CreateScriptBlock()
+                {
+                    var thread = new System.Threading.Thread(ThreadProc);
+                    thread.Start(null);
+                    thread.Join();
+
+                    return _scriptBlock;
+                }
+
+                private void ThreadProc(object state)
+                {
+                    // Create script block on thread with no PowerShell context
+                    _scriptBlock = ScriptBlock.Create(@"function Do-Nothing {}; Export-ModuleMember -Function Do-Nothing");
+                }
+            }
+'@
+
+            try
+            {
+                Add-Type -TypeDefinition $typeDef
+            }
+            catch { }
+        }
+
+        It "Verfies that Export-ModuleMember does not throw error with context-less scriptblock" {
+
+            $scriptBlockCreator = [TestScriptBlockCreate]::new()
+            $testScriptBlock = $scriptBlockCreator.CreateScriptBlock()
+
+            $testScriptBlock | Should -Not -BeNullOrEmpty
+
+            { New-Module -ScriptBlock $testScriptBlock -ErrorAction Stop } | Should -Not -Throw -Because "Scriptblock without execution context is allowed in Full Language"
+        }
+    }
+
+    Describe "New-Module should not create module from trusted scriptblock when running in ConstrainedLanguage context" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $script = @'
+            function ScriptFn { Write-Output $ExecutionContext.SessionState.LanguageMode }
+'@
+
+            $scriptFileNameT = "NewModuleTrustedScriptBlock_System32"
+            $scriptFilePathT = Join-Path $TestDrive ($scriptFileNameT + ".ps1")
+            $script | Out-File -FilePath $scriptFilePathT
+
+            $scriptFileNameU = "NewModuleUntrustedScriptBlock"
+            $scriptFilePathU = Join-Path $TestDrive ($scriptFileNameU + ".ps1")
+            $script | Out-File -FilePath $scriptFilePathU
+        }
+
+        It "New-Module throws error when creating module with trusted scriptblock in ConstrainedLanguage" {
+
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Get scriptblock from trusted script file
+                $sb = (Get-Command $scriptFilePathT).ScriptBlock
+
+                # Create new module from trusted scriptblock while in ConstrainedLanguage
+                try
+                {
+                    New-Module -Name TrustedScriptFoo -ScriptBlock $sb
+                    throw "No Exception!"
+                }
+                catch
+                {
+                    $expectedError = $_
+                }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_CannotCreateModuleWithFullLanguageScriptBlock,Microsoft.PowerShell.Commands.NewModuleCommand"
+        }
+
+        It "New-Module succeeds in creating module with untrusted scriptblock in ConstrainedLanguage" {
+
+            $result = $null
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                # Get scriptblock from untrusted script file
+                $sb = (Get-Command $scriptFilePathU).ScriptBlock
+
+                # Create and import module from scriptblock
+                $m = New-Module -Name UntrustedScriptFoo -ScriptBlock $sb
+                Import-Module -ModuleInfo $m -Force
+
+                $result = ScriptFn
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $result | Should -BeExactly "ConstrainedLanguage"
         }
     }
 }

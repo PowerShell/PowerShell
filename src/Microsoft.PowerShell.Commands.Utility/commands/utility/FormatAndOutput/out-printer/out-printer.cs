@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return _printerName; }
+
             set { _printerName = value; }
         }
 

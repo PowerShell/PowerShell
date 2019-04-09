@@ -63,7 +63,7 @@ namespace System.Management.Automation.Remoting.Internal
     }
 
     /// <summary>
-    /// struct which describes whether an object written
+    /// Struct which describes whether an object written
     /// to an ObjectStream is of type - output, error,
     /// verbose, debug.
     /// PSStreamObject is for internal (PowerShell) consumption
@@ -74,10 +74,10 @@ namespace System.Management.Automation.Remoting.Internal
         /// <summary>
         /// </summary>
         public PSStreamObjectType ObjectType { get; set; }
-        internal Object Value { get; set; }
+        internal object Value { get; set; }
         internal Guid Id { get; set; }
 
-        internal PSStreamObject(PSStreamObjectType objectType, Object value, Guid id)
+        internal PSStreamObject(PSStreamObjectType objectType, object value, Guid id)
         {
             ObjectType = objectType;
             Value = value;
@@ -88,16 +88,16 @@ namespace System.Management.Automation.Remoting.Internal
         /// </summary>
         /// <param name="objectType"></param>
         /// <param name="value"></param>
-        public PSStreamObject(PSStreamObjectType objectType, Object value) :
+        public PSStreamObject(PSStreamObjectType objectType, object value) :
             this(objectType, value, Guid.Empty)
         {
         }
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
-        /// <param name="cmdlet">cmdlet to use for outputting the object</param>
+        /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="overrideInquire">Used by Receive-Job to suppress inquire preference.</param>
         public void WriteStreamObject(Cmdlet cmdlet, bool overrideInquire = false)
         {
@@ -109,6 +109,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             cmdlet.WriteObject(this.Value);
                         }
+
                         break;
 
                     case PSStreamObjectType.Error:
@@ -121,6 +122,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.Debug:
@@ -133,6 +135,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.Warning:
@@ -145,6 +148,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.Verbose:
@@ -157,6 +161,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.Progress:
@@ -167,6 +172,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteProgress((ProgressRecord)Value, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.Information:
@@ -177,6 +183,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.WriteInformation((InformationRecord)Value, overrideInquire);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.WarningRecord:
@@ -188,6 +195,7 @@ namespace System.Management.Automation.Remoting.Internal
                                 mshCommandRuntime.AppendWarningVarList(warningRecord);
                             }
                         }
+
                         break;
 
                     case PSStreamObjectType.MethodExecutor:
@@ -197,6 +205,7 @@ namespace System.Management.Automation.Remoting.Internal
                             ClientMethodExecutor methodExecutor = (ClientMethodExecutor)Value;
                             methodExecutor.Execute(cmdlet);
                         }
+
                         break;
 
                     case PSStreamObjectType.BlockingError:
@@ -204,6 +213,7 @@ namespace System.Management.Automation.Remoting.Internal
                             CmdletMethodInvoker<object> methodInvoker = (CmdletMethodInvoker<object>)Value;
                             InvokeCmdletMethodAndWaitForResults(methodInvoker, cmdlet);
                         }
+
                         break;
 
                     case PSStreamObjectType.ShouldMethod:
@@ -211,6 +221,7 @@ namespace System.Management.Automation.Remoting.Internal
                             CmdletMethodInvoker<bool> methodInvoker = (CmdletMethodInvoker<bool>)Value;
                             InvokeCmdletMethodAndWaitForResults(methodInvoker, cmdlet);
                         }
+
                         break;
 
                     case PSStreamObjectType.Exception:
@@ -245,9 +256,9 @@ namespace System.Management.Automation.Remoting.Internal
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
-        /// <param name="cmdlet">cmdlet to use for outputting the object</param>
+        /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="instanceId"></param>
         /// <param name="overrideInquire">Suppresses prompt on messages with Inquire preference.
         /// Needed for Receive-Job</param>
@@ -263,8 +274,10 @@ namespace System.Management.Automation.Remoting.Internal
                             if (o != null)
                                 AddSourceJobNoteProperty(o, instanceId);
                         }
+
                         cmdlet.WriteObject(Value);
                     }
+
                     break;
 
                 case PSStreamObjectType.Error:
@@ -300,6 +313,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.Warning:
@@ -312,6 +326,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.Verbose:
@@ -324,6 +339,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.Progress:
@@ -351,6 +367,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteProgress(progressRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.Debug:
@@ -363,6 +380,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.Information:
@@ -374,7 +392,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             // if we get a base InformationRecord object, check if the computerName is
                             // populated in the Source field
-                            if (!String.IsNullOrEmpty(informationRecord.Source))
+                            if (!string.IsNullOrEmpty(informationRecord.Source))
                             {
                                 string computerName;
                                 Guid jobInstanceId;
@@ -395,6 +413,7 @@ namespace System.Management.Automation.Remoting.Internal
                             mshCommandRuntime.WriteInformation(informationRecord, overrideInquire);
                         }
                     }
+
                     break;
 
                 case PSStreamObjectType.WarningRecord:
@@ -404,15 +423,16 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         WriteStreamObject(cmdlet, overrideInquire);
                     }
+
                     break;
             }
         }
 
         /// <summary>
         /// Handle the object obtained from an ObjectStream's reader
-        /// based on its type
+        /// based on its type.
         /// </summary>
-        /// <param name="cmdlet">cmdlet to use for outputting the object</param>
+        /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="writeSourceIdentifier"></param>
         /// <param name="overrideInquire">Overrides the inquire preference, used in Receive-Job to suppress prompts.</param>
         internal void WriteStreamObject(Cmdlet cmdlet, bool writeSourceIdentifier, bool overrideInquire)
@@ -442,6 +462,7 @@ namespace System.Management.Automation.Remoting.Internal
                 {
                     cmdletMethodInvoker.ExceptionThrownOnCmdletThread = e;
                 }
+
                 throw;
             }
             finally
@@ -460,6 +481,7 @@ namespace System.Management.Automation.Remoting.Internal
             {
                 psObj.Properties.Remove(RemotingConstants.SourceJobInstanceId);
             }
+
             psObj.Properties.Add(new PSNoteProperty(RemotingConstants.SourceJobInstanceId, instanceId));
         }
 
@@ -474,7 +496,7 @@ namespace System.Management.Automation.Remoting.Internal
         internal static ErrorRecord AddSourceTagToError(ErrorRecord errorRecord, Guid sourceId)
         {
             if (errorRecord == null) return null;
-            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(String.Empty);
+            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
             return errorRecord;
         }

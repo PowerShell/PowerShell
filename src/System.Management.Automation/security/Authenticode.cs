@@ -16,7 +16,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Defines the options that control what data is embedded in the
-    /// signature blob
+    /// signature blob.
     /// </summary>
     public enum SigningOption
     {
@@ -44,12 +44,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Helper functions for signature functionality
+    /// Helper functions for signature functionality.
     /// </summary>
     internal static class SignatureHelper
     {
         /// <summary>
-        /// tracer for SignatureHelper
+        /// Tracer for SignatureHelper.
         /// </summary>
         [Dbg.TraceSource("SignatureHelper",
                           "tracer for SignatureHelper")]
@@ -58,15 +58,15 @@ namespace System.Management.Automation
                           "tracer for SignatureHelper");
 
         /// <summary>
-        /// Sign a file
+        /// Sign a file.
         /// </summary>
-        /// <param name="option"> option that controls what gets embedded in the signature blob  </param>
-        /// <param name="fileName"> name of file to sign </param>
-        /// <param name="certificate"> signing cert  </param>
-        /// <param name="timeStampServerUrl"> URL of time stamping server  </param>
+        /// <param name="option">Option that controls what gets embedded in the signature blob.</param>
+        /// <param name="fileName">Name of file to sign.</param>
+        /// <param name="certificate">Signing cert.</param>
+        /// <param name="timeStampServerUrl">URL of time stamping server.</param>
         /// <param name="hashAlgorithm"> The name of the hash
-        /// algorithm to use. </param>
-        /// <returns> Does not return a value </returns>
+        /// algorithm to use.</param>
+        /// <returns>Does not return a value.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
         /// </exception>
@@ -89,7 +89,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        /// <remarks>  </remarks>
         [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
@@ -107,7 +106,7 @@ namespace System.Management.Automation
             Utils.CheckArgForNull(certificate, "certificate");
 
             // If given, TimeStamp server URLs must begin with http://
-            if (!String.IsNullOrEmpty(timeStampServerUrl))
+            if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
                 if ((timeStampServerUrl.Length <= 7) ||
                     (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
@@ -119,7 +118,7 @@ namespace System.Management.Automation
             }
 
             // Validate that the hash algorithm is valid
-            if (!String.IsNullOrEmpty(hashAlgorithm))
+            if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 IntPtr intptrAlgorithm = Marshal.StringToHGlobalUni(hashAlgorithm);
 
@@ -152,7 +151,7 @@ namespace System.Management.Automation
             }
 
             SecuritySupport.CheckIfFileExists(fileName);
-            //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+            // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
 
             try
             {
@@ -161,7 +160,7 @@ namespace System.Management.Automation
                 // It expects null, only.  Instead, it randomly AVs if you
                 // try.
                 string timeStampServerUrlForCryptUI = null;
-                if (!String.IsNullOrEmpty(timeStampServerUrl))
+                if (!string.IsNullOrEmpty(timeStampServerUrl))
                 {
                     timeStampServerUrlForCryptUI = timeStampServerUrl;
                 }
@@ -191,7 +190,7 @@ namespace System.Management.Automation
                     IntPtr.Zero,
                     pSignInfo,
                     IntPtr.Zero);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 if (si.pSignExtInfo != null)
                 {
@@ -255,11 +254,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get signature on the specified file
+        /// Get signature on the specified file.
         /// </summary>
-        /// <param name="fileName"> name of file to check </param>
-        /// <param name="fileContent"> content of file to check </param>
-        /// <returns> Signature object </returns>
+        /// <param name="fileName">Name of file to check.</param>
+        /// <param name="fileContent">Content of file to check.</param>
+        /// <returns>Signature object.</returns>
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
         /// </exception>
@@ -269,7 +268,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        /// <remarks>  </remarks>
         [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {
@@ -366,7 +364,7 @@ namespace System.Management.Automation
 
                             if (!Signature.CatalogApiAvailable.HasValue)
                             {
-                                string productFile = Path.Combine(Utils.DefaultPowerShellAppBase, "Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psm1");
+                                string productFile = Path.Combine(Utils.DefaultPowerShellAppBase, "Modules\\PSDiagnostics\\PSDiagnostics.psm1");
                                 if (signature.Status != SignatureStatus.Valid)
                                 {
                                     if (string.Equals(filename, productFile, StringComparison.OrdinalIgnoreCase))
@@ -444,7 +442,7 @@ namespace System.Management.Automation
             {
                 Utils.CheckArgForNullOrEmpty(fileName, "fileName");
                 SecuritySupport.CheckIfFileExists(fileName);
-                //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+                // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
             }
 
             try
@@ -515,7 +513,7 @@ namespace System.Management.Automation
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 wtData = Marshal.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
             }
@@ -526,6 +524,7 @@ namespace System.Management.Automation
                 Marshal.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
             }
+
             return dwResult;
         }
 
@@ -539,7 +538,7 @@ namespace System.Management.Automation
 #pragma warning disable 56523
             IntPtr pCert =
                 NativeMethods.WTHelperGetProvCertFromChain(pSigner, 0);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
             if (pCert != IntPtr.Zero)
             {
@@ -609,7 +608,7 @@ namespace System.Management.Automation
 #pragma warning disable 56523
             IntPtr pProvData =
                 NativeMethods.WTHelperProvDataFromStateData(wvtStateData);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
             if (pProvData != IntPtr.Zero)
             {

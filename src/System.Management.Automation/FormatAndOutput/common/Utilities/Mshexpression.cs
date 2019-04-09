@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// class that represents the results from evaluating a PSPropertyExpression against an object.
+    /// Class that represents the results from evaluating a PSPropertyExpression against an object.
     /// </summary>
     public class PSPropertyExpressionResult
     {
@@ -53,9 +53,9 @@ namespace Microsoft.PowerShell.Commands
     public class PSPropertyExpression
     {
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="s">expression</param>
+        /// <param name="s">Expression.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s)
             : this(s, false)
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// Create a property expression with a wildcard pattern.
         /// </summary>
         /// <param name="s">Property name pattern to match.</param>
-        /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards</param>
+        /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s, bool isResolved)
         {
@@ -74,12 +74,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("s");
             }
+
             _stringValue = s;
             _isResolved = isResolved;
         }
 
         /// <summary>
-        /// Create a property expression with a ScriptBlock
+        /// Create a property expression with a ScriptBlock.
         /// </summary>
         /// <param name="scriptBlock">ScriptBlock to evaluate when retrieving the property value from an object.</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -89,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
+
             Script = scriptBlock;
         }
 
@@ -180,11 +182,13 @@ namespace Microsoft.PowerShell.Commands
                     // to attempt the binding whether it's in there or not.
                     x = new PSDynamicMember(_stringValue);
                 }
+
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
                     temp.Add(x);
                 }
+
                 members = temp;
             }
 
@@ -309,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
                         dollarUnder: target,
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
-                        args: Utils.EmptyArray<object>());
+                        args: Array.Empty<object>());
                 }
                 else
                 {
@@ -322,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                                         classScope: (Type) null,
                                         @static: false));
                     }
+
                     result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
 
@@ -339,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        
+
         private PSObject IfHashtableWrapAsPSCustomObject(PSObject target)
         {
             // If the object passed in is a hashtable, then turn it into a PSCustomObject so
@@ -348,6 +353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
             }
+
             return target;
         }
 

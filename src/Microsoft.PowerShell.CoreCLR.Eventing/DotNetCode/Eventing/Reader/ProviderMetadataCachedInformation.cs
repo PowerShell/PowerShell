@@ -60,6 +60,7 @@ namespace System.Diagnostics.Eventing.Reader
                     return _providerName;
                 }
             }
+
             public CultureInfo TheCultureInfo
             {
                 get
@@ -86,6 +87,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     return _theTime;
                 }
+
                 set
                 {
                     _theTime = value;
@@ -147,13 +149,13 @@ namespace System.Diagnostics.Eventing.Reader
             DateTime timeNow = DateTime.Now;
             ProviderMetadataId keyToDelete = null;
 
-            //get the entry in the cache which was not accessed for the longest time.
+            // get the entry in the cache which was not accessed for the longest time.
             foreach (KeyValuePair<ProviderMetadataId, CacheItem> kvp in _cache)
             {
-                //the time difference (in ms) between the timeNow and the last used time of each entry
+                // the time difference (in ms) between the timeNow and the last used time of each entry
                 TimeSpan timeDifference = timeNow.Subtract(kvp.Value.TheTime);
 
-                //for the "unused" items (with ReferenceCount == 0)   -> can possible be deleted.
+                // for the "unused" items (with ReferenceCount == 0)   -> can possible be deleted.
                 if (timeDifference.TotalMilliseconds >= maxPassedTime)
                 {
                     maxPassedTime = timeDifference.TotalMilliseconds;
@@ -183,6 +185,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     pm = new ProviderMetadata(key.ProviderName, _session, key.TheCultureInfo);
                 }
+
                 AddCacheEntry(key, pm);
                 return pm;
             }
@@ -213,6 +216,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         pm = new ProviderMetadata(key.ProviderName, _session, key.TheCultureInfo);
                     }
+
                     AddCacheEntry(key, pm);
                 }
 

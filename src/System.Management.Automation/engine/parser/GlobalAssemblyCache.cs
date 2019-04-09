@@ -18,10 +18,11 @@ namespace Microsoft.CodeAnalysis
     internal static class GlobalAssemblyCache
     {
         /// <summary>
-        /// Represents the current Processor architecture
+        /// Represents the current Processor architecture.
         /// </summary>
         public static readonly ProcessorArchitecture[] CurrentArchitectures = (IntPtr.Size == 4)
             ? new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.X86 }
+
             : new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.Amd64 };
 
 #region Interop
@@ -99,6 +100,7 @@ namespace Microsoft.CodeAnalysis
                 // no assembly found
                 yield break;
             }
+
             if (hr != S_OK)
             {
                 Exception e = Marshal.GetExceptionForHR(hr);
@@ -107,6 +109,7 @@ namespace Microsoft.CodeAnalysis
                     // invalid assembly name:
                     yield break;
                 }
+
                 if (e != null)
                 {
                     throw e;
@@ -147,10 +150,10 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Looks up specified partial assembly name in the GAC and returns the best matching full assembly name/>.
         /// </summary>
-        /// <param name="displayName">The display name of an assembly</param>
-        /// <param name="location">Full path name of the resolved assembly</param>
-        /// <param name="architectureFilter">The optional processor architecture</param>
-        /// <param name="preferredCulture">The optional preferred culture information</param>
+        /// <param name="displayName">The display name of an assembly.</param>
+        /// <param name="location">Full path name of the resolved assembly.</param>
+        /// <param name="architectureFilter">The optional processor architecture.</param>
+        /// <param name="preferredCulture">The optional preferred culture information.</param>
         /// <returns>An assembly identity or null, if <paramref name="displayName"/> can't be resolved.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="displayName"/> is null.</exception>
         public static unsafe string ResolvePartialName(

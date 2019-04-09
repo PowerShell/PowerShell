@@ -29,8 +29,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 Id
         {
             get { return _id; }
+
             set { _id = value; }
         }
+
         private Int32 _id;
 
         /// <summary>
@@ -42,8 +44,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
+
         private string _name;
 
         /// <summary>
@@ -55,8 +59,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition InputObject
         {
             get { return _definition; }
+
             set { _definition = value; }
         }
+
         private ScheduledJobDefinition _definition;
 
         #endregion

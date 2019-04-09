@@ -32,6 +32,13 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty
             receive-job -id $j.id | Should -Be 2
         }
+        It "-RunAs32 not supported from 64-bit pwsh" -Skip:(-not [System.Environment]::Is64BitProcess) {
+            { Start-Job -ScriptBlock {} -RunAs32 } | Should -Throw -ErrorId "RunAs32NotSupported,Microsoft.PowerShell.Commands.StartJobCommand"
+        }
+        It "-RunAs32 supported in 32-bit pwsh" -Skip:([System.Environment]::Is64BitProcess) {
+            $job = Start-Job -ScriptBlock { 1+1 } -RunAs32
+            Receive-Job $job -Wait | Should -Be 2
+        }
     }
     Context "Jobs with arguments" {
         It "Start-Job accepts arguments" {
@@ -44,7 +51,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = Start-Job -ScriptBlock { Start-Sleep 15 }
+            $j = Start-Job -ScriptBlock { Start-Sleep -Seconds 15 }
         }
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -93,7 +100,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
                         throw "Receive-Job behaves suspiciously: Cannot receive $n results in 5 minutes."
                     }
 
-                    # sleep for 300 ms to allow data to be produced
+                    # Wait to allow data to be produced
                     Start-Sleep -Milliseconds 300
 
                     if ($keep)
@@ -159,7 +166,7 @@ Describe "Debug-job test" -tag "Feature" {
     # we check this via implication.
     # if we're debugging a job, then the debugger will have a callstack
     It "Debug-Job will break into debugger" -pending {
-        $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { sleep 1 } }').Invoke()
+        $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { Start-Sleep 1 } }').Invoke()
         $ps.Commands.Clear()
         $ps.Runspace.Debugger.GetCallStack() | Should -BeNullOrEmpty
         Start-Sleep 3

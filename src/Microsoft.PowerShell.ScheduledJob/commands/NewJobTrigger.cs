@@ -37,8 +37,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 DaysInterval
         {
             get { return _daysInterval; }
+
             set { _daysInterval = value; }
         }
+
         private Int32 _daysInterval = 1;
 
         /// <summary>
@@ -48,8 +50,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 WeeksInterval
         {
             get { return _weeksInterval; }
+
             set { _weeksInterval = value; }
         }
+
         private Int32 _weeksInterval = 1;
 
         /// <summary>
@@ -63,8 +67,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RandomDelay
         {
             get { return _randomDelay; }
+
             set { _randomDelay = value; }
         }
+
         private TimeSpan _randomDelay;
 
         /// <summary>
@@ -79,8 +85,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DateTime At
         {
             get { return _atTime; }
+
             set { _atTime = value; }
         }
+
         private DateTime _atTime;
 
         /// <summary>
@@ -92,8 +100,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string User
         {
             get { return _user; }
+
             set { _user = value; }
         }
+
         private string _user;
 
         /// <summary>
@@ -106,8 +116,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DayOfWeek[] DaysOfWeek
         {
             get { return _daysOfWeek; }
+
             set { _daysOfWeek = value; }
         }
+
         private DayOfWeek[] _daysOfWeek;
 
         /// <summary>
@@ -118,8 +130,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter AtStartup
         {
             get { return _atStartup; }
+
             set { _atStartup = value; }
         }
+
         private SwitchParameter _atStartup;
 
         /// <summary>
@@ -130,8 +144,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter AtLogOn
         {
             get { return _atLogon; }
+
             set { _atLogon = value; }
         }
+
         private SwitchParameter _atLogon;
 
         /// <summary>
@@ -142,8 +158,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Once
         {
             get { return _once; }
+
             set { _once = value; }
         }
+
         private SwitchParameter _once;
 
         /// <summary>
@@ -153,8 +171,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RepetitionInterval
         {
             get { return _repInterval; }
+
             set { _repInterval = value; }
         }
+
         private TimeSpan _repInterval;
 
         /// <summary>
@@ -164,8 +184,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RepetitionDuration
         {
             get { return _repDuration; }
+
             set { _repDuration = value; }
         }
+
         private TimeSpan _repDuration;
 
         /// <summary>
@@ -175,8 +197,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RepeatIndefinitely
         {
             get { return _repRepeatIndefinitely; }
+
             set { _repRepeatIndefinitely = value; }
         }
+
         private SwitchParameter _repRepeatIndefinitely;
 
         /// <summary>
@@ -187,8 +211,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Daily
         {
             get { return _daily; }
+
             set { _daily = value; }
         }
+
         private SwitchParameter _daily;
 
         /// <summary>
@@ -199,8 +225,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Weekly
         {
             get { return _weekly; }
+
             set { _weekly = value; }
         }
+
         private SwitchParameter _weekly;
 
         #endregion
@@ -219,6 +247,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidDaysIntervalParam);
             }
+
             if (_weeksInterval < 1)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidWeeksIntervalParam);
@@ -281,24 +310,29 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepeatIndefinitelyParams);
                     }
+
                     if (!MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)))
                     {
                         throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionRepeatParams);
                     }
+
                     _repDuration = TimeSpan.MaxValue;
                 }
                 else if (!MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || !MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)))
                 {
                     throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionParams);
                 }
+
                 if (_repInterval < TimeSpan.Zero || _repDuration < TimeSpan.Zero)
                 {
                     throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionParamValues);
                 }
+
                 if (_repInterval < TimeSpan.FromMinutes(1))
                 {
                     throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionIntervalValue);
                 }
+
                 if (_repInterval > _repDuration)
                 {
                     throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionInterval);

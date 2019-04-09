@@ -17,13 +17,13 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the types of commands that MSH can execute
+    /// Defines the types of commands that MSH can execute.
     /// </summary>
     [Flags]
     public enum CommandTypes
     {
         /// <summary>
-        /// Aliases create a name that refers to other command types
+        /// Aliases create a name that refers to other command types.
         /// </summary>
         /// <remarks>
         /// Aliases are only persisted within the execution of a single engine.
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         Alias = 0x0001,
 
         /// <summary>
-        /// Script functions that are defined by a script block
+        /// Script functions that are defined by a script block.
         /// </summary>
         /// <remarks>
         /// Functions are only persisted within the execution of a single engine.
@@ -66,17 +66,17 @@ namespace System.Management.Automation
         Application = 0x0020,
 
         /// <summary>
-        /// A script that is built into the runspace configuration
+        /// A script that is built into the runspace configuration.
         /// </summary>
         Script = 0x0040,
 
         /// <summary>
-        /// A workflow
+        /// A workflow.
         /// </summary>
         Workflow = 0x0080,
 
         /// <summary>
-        /// A Configuration
+        /// A Configuration.
         /// </summary>
         Configuration = 0x0100,
 
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the CommandInfo class with the specified name and type
+        /// Creates an instance of the CommandInfo class with the specified name and type.
         /// </summary>
         /// <param name="name">
         /// The name of the command.
@@ -122,10 +122,10 @@ namespace System.Management.Automation
 
             Name = name;
             CommandType = type;
-        } // CommandInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the CommandInfo class with the specified name and type
+        /// Creates an instance of the CommandInfo class with the specified name and type.
         /// </summary>
         /// <param name="name">
         /// The name of the command.
@@ -143,7 +143,7 @@ namespace System.Management.Automation
             : this(name, type)
         {
             this.Context = context;
-        } // CommandInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -151,9 +151,9 @@ namespace System.Management.Automation
         internal CommandInfo(CommandInfo other)
         {
             // Computed fields not copied:
-            //this._externalCommandMetadata = other._externalCommandMetadata;
-            //this._moduleName = other._moduleName;
-            //this.parameterSets = other.parameterSets;
+            // this._externalCommandMetadata = other._externalCommandMetadata;
+            // this._moduleName = other._moduleName;
+            // this.parameterSets = other.parameterSets;
             this.Module = other.Module;
             _visibility = other._visibility;
             Arguments = other.Arguments;
@@ -178,12 +178,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the command.
         /// </summary>
-        public string Name { get; private set; } = String.Empty;
+        public string Name { get; private set; } = string.Empty;
 
 // Name
 
         /// <summary>
-        /// Gets the type of the command
+        /// Gets the type of the command.
         /// </summary>
         public CommandTypes CommandType { get; private set; } = CommandTypes.Application;
 
@@ -212,9 +212,10 @@ namespace System.Management.Automation
                                 // Manifest module (.psd1)
                                 Module.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(Module.Path));
                             }
-                            else if (Module.Path.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                            else if (Module.Path.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                                     Module.Path.EndsWith(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                             {
-                                // Binary module (.dll)
+                                // Binary module (.dll or .exe)
                                 Module.SetVersion(AssemblyName.GetAssemblyName(Module.Path).Version);
                             }
                         }
@@ -235,6 +236,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set
             {
                 _context = value;
@@ -244,6 +246,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ExecutionContext _context;
 
         /// <summary>
@@ -277,7 +280,7 @@ namespace System.Management.Automation
         public abstract string Definition { get; }
 
         /// <summary>
-        /// This is required for renaming aliases, functions, and filters
+        /// This is required for renaming aliases, functions, and filters.
         /// </summary>
         /// <param name="newName">
         /// The new name for the command.
@@ -287,7 +290,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
             {
                 throw new ArgumentNullException("newName");
             }
@@ -296,7 +299,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -314,6 +317,7 @@ namespace System.Management.Automation
             {
                 return CopiedCommand == null ? _visibility : CopiedCommand.Visibility;
             }
+
             set
             {
                 if (CopiedCommand == null)
@@ -331,6 +335,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private SessionStateEntryVisibility _visibility = SessionStateEntryVisibility.Public;
 
         /// <summary>
@@ -345,7 +350,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the syntax of a command
+        /// Returns the syntax of a command.
         /// </summary>
         internal virtual string Syntax
         {
@@ -581,8 +586,10 @@ namespace System.Management.Automation
         internal CommandMetadata ExternalCommandMetadata
         {
             get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+
             set { _externalCommandMetadata = value; }
         }
+
         private CommandMetadata _externalCommandMetadata;
 
         /// <summary>
@@ -591,7 +598,7 @@ namespace System.Management.Automation
         /// algorithm.
         /// </summary>
         /// <param name="name">The name of the parameter to resolve.</param>
-        /// <returns>The parameter that matches this name</returns>
+        /// <returns>The parameter that matches this name.</returns>
         public ParameterMetadata ResolveParameter(string name)
         {
             MergedCommandParameterMetadata merged = GetMergedCommandParameterMetadataSafely();
@@ -614,9 +621,11 @@ namespace System.Management.Automation
 
                     _parameterSets = new ReadOnlyCollection<CommandParameterSetInfo>(parameterSetInfo);
                 }
+
                 return _parameterSets;
             }
-        } // ParameterSets
+        }
+
         internal ReadOnlyCollection<CommandParameterSetInfo> _parameterSets;
 
         /// <summary>
@@ -632,7 +641,7 @@ namespace System.Management.Automation
         internal bool IsImported { get; set; } = false;
 
         /// <summary>
-        /// The prefix that was used when importing this command
+        /// The prefix that was used when importing this command.
         /// </summary>
         internal string Prefix { get; set; } = string.Empty;
 
@@ -646,7 +655,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generates the parameter and parameter set info from the cmdlet metadata
+        /// Generates the parameter and parameter set info from the cmdlet metadata.
         /// </summary>
         /// <returns>
         /// A collection of CommandParameterSetInfo representing the cmdlet metadata.
@@ -678,6 +687,7 @@ namespace System.Management.Automation
             {
                 result = GetCacheableMetadata(CommandMetadata);
             }
+
             return result;
         }
 
@@ -741,8 +751,8 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetParameterMetadata
-    } // CommandInfo
+        }
+    }
 
     /// <summary>
     /// Represents <see cref="System.Type"/>, but can be used where a real type
@@ -753,7 +763,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type exists and is currently loaded.
         /// </summary>
-        /// <param name="type">The type</param>
+        /// <param name="type">The type.</param>
         public PSTypeName(Type type)
         {
             _type = type;
@@ -766,7 +776,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type may not exist, or is not loaded.
         /// </summary>
-        /// <param name="name">The name of the type</param>
+        /// <param name="name">The name of the type.</param>
         public PSTypeName(string name)
         {
             Name = name;
@@ -831,7 +841,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return the name of the type
+        /// Return the name of the type.
         /// </summary>
         public string Name { get; }
 
@@ -856,6 +866,7 @@ namespace System.Management.Automation
                             TypeResolver.TryResolveType(Name, out _type);
                         }
                     }
+
                     if (_type == null)
                     {
                         // We ignore the exception.
@@ -874,18 +885,20 @@ namespace System.Management.Automation
                 return _type;
             }
         }
+
         private Type _type;
 
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
         public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+
         private bool _typeWasCalculated;
 
         /// <summary>
         /// Returns a String that represents the current PSTypeName.
         /// </summary>
-        /// <returns> String that represents the current PSTypeName.</returns>
+        /// <returns>String that represents the current PSTypeName.</returns>
         public override string ToString()
         {
             return Name ?? string.Empty;
@@ -985,4 +998,4 @@ namespace System.Management.Automation
     {
         ScriptBlock ScriptBlock { get; }
     }
-} // namespace System.Management.Automation
+}

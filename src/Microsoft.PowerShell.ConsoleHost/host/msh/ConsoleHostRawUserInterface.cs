@@ -20,7 +20,7 @@ using DWORD = System.UInt32;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// implementation of RawConsole for powershell
+    /// Implementation of RawConsole for powershell.
     /// </summary>
 
     internal sealed
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
@@ -94,6 +94,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
                 return foreground;
             }
+
             set
             {
                 if (ConsoleControl.IsConsoleColor(value))
@@ -117,7 +118,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
@@ -144,6 +145,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
                 return background;
             }
+
             set
             {
                 if (ConsoleControl.IsConsoleColor(value))
@@ -167,7 +169,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -190,6 +192,7 @@ namespace Microsoft.PowerShell
                 Coordinates c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
                 return c;
             }
+
             set
             {
                 // cursor position can't be outside the buffer area
@@ -204,7 +207,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// Cursor size
@@ -231,6 +234,7 @@ namespace Microsoft.PowerShell
 
                 return size;
             }
+
             set
             {
                 const int MinCursorSize = 0;
@@ -263,7 +267,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -288,6 +292,7 @@ namespace Microsoft.PowerShell
 
                 return c;
             }
+
             set
             {
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
@@ -327,7 +332,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -351,6 +356,7 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
                 return new Size(bufferInfo.BufferSize.X, bufferInfo.BufferSize.Y);
             }
+
             set
             {
                 // looking in windows/core/ntcon/server/output.c, it looks like the minimum size is 1 row X however many
@@ -380,7 +386,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -409,6 +415,7 @@ namespace Microsoft.PowerShell
 
                 return s;
             }
+
             set
             {
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
@@ -506,7 +513,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -528,7 +535,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -549,7 +556,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Helper method to create and trace PipelineStoppedException
+        /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
         /// <returns></returns>
         private PipelineStoppedException NewPipelineStoppedException()
@@ -559,10 +566,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Used by ReadKey, cache KeyEvent based on if input.RepeatCount > 1
+        /// Used by ReadKey, cache KeyEvent based on if input.RepeatCount > 1.
         /// </summary>
-        /// <param name="input">Input key event record</param>
-        /// <param name="cache">Cache key event</param>
+        /// <param name="input">Input key event record.</param>
+        /// <param name="cache">Cache key event.</param>
         private static void CacheKeyEvent(ConsoleControl.KEY_EVENT_RECORD input, ref ConsoleControl.KEY_EVENT_RECORD cache)
         {
             if (input.RepeatCount > 1)
@@ -581,7 +588,7 @@ namespace Microsoft.PowerShell
         ///    key events: {Ctrl, KeyDown}, {Ctrl-c KeyDown}, {Ctrl, KeyUp}, {c, KeyUp} if Ctrl is released before c.
         ///    In this case, {Ctrl, KeyUp}, {c, KeyUp} would be returned.
         /// 2) If the cache is non-empty, a call to ReadLine will not return the cached keys. This
-        ///    behavior is the same as that of System.Console.ReadKey
+        ///    behavior is the same as that of System.Console.ReadKey.
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
@@ -626,6 +633,7 @@ namespace Microsoft.PowerShell
                     cachedKeyEvent.RepeatCount = 0;
                 }
             }
+
             if (cachedKeyEvent.RepeatCount > 0)
             {
                 KEY_EVENT_RECORDToKeyInfo(cachedKeyEvent, out keyInfo);
@@ -717,7 +725,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
@@ -736,7 +744,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -779,6 +787,7 @@ namespace Microsoft.PowerShell
                             // represent a keystroke.
                             continue;
                         }
+
                         return true;
                     }
                 }
@@ -788,7 +797,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentNullException">
@@ -808,6 +817,7 @@ namespace Microsoft.PowerShell
             {
                 return ConsoleControl.GetConsoleWindowTitle();
             }
+
             set
             {
                 const int MaxWindowTitleLength = 1023;
@@ -1037,11 +1047,13 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
+
                 if (lineLength % 2 == 1)
                 {
                     lineLength++;
                 }
             }
+
             for (int row = firstRow; row <= lastRow; ++row)
             {
                 origin.Y = row;
@@ -1129,7 +1141,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="source">
         /// area to be moved
@@ -1191,7 +1203,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -1206,7 +1218,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>
@@ -1222,11 +1234,12 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }
+
             return ConsoleControl.LengthInBufferCells(s, offset, parent.SupportsVirtualTerminal);
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -1243,7 +1256,7 @@ namespace Microsoft.PowerShell
 #region internal
 
         /// <summary>
-        /// Clear the ReadKey cache
+        /// Clear the ReadKey cache.
         /// </summary>
         /// <exception/>
         internal void ClearKeyCache()
@@ -1286,7 +1299,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get output buffer info
+        /// Get output buffer info.
         /// </summary>
         /// <param name="bufferInfo"></param>
         /// <returns></returns>
@@ -1357,6 +1370,7 @@ namespace Microsoft.PowerShell
         public override ConsoleColor BackgroundColor
         {
             get { return Console.BackgroundColor; }
+
             set { Console.BackgroundColor = value; }
         }
 
@@ -1376,6 +1390,7 @@ namespace Microsoft.PowerShell
                     ? s_wrapSize
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
+
             set { Console.SetBufferSize(value.Width, value.Height); }
         }
 
@@ -1385,6 +1400,7 @@ namespace Microsoft.PowerShell
         public override Coordinates CursorPosition
         {
             get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+
             set
             {
                 Console.SetCursorPosition(value.X < 0 ? 0 : value.X,
@@ -1401,6 +1417,7 @@ namespace Microsoft.PowerShell
             // Future porting note: this API throws on Windows when output is
             // redirected, but never throws on Unix because it's fake.
             get { return Console.CursorSize; }
+
             set { Console.CursorSize = value; }
         }
 
@@ -1411,6 +1428,7 @@ namespace Microsoft.PowerShell
         public override ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
+
             set { Console.ForegroundColor = value; }
         }
 
@@ -1459,6 +1477,7 @@ namespace Microsoft.PowerShell
         public override Coordinates WindowPosition
         {
             get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
+
             set { Console.SetWindowPosition(value.X, value.Y); }
         }
 
@@ -1477,13 +1496,14 @@ namespace Microsoft.PowerShell
                     ? s_wrapSize
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
+
             set { Console.SetWindowSize(value.Width, value.Height); }
         }
 
         /// <summary>
-        /// Cached Window Title, for systems that needs it
+        /// Cached Window Title, for systems that needs it.
         /// </summary>
-        private string _title = String.Empty;
+        private string _title = string.Empty;
 
         /// <summary>
         /// Gets or sets the title of the displayed window. The example
@@ -1549,7 +1569,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
             }
         }
 
@@ -1601,15 +1621,15 @@ namespace Microsoft.PowerShell
         public override void SetBufferContents(Coordinates origin,
                                                BufferCell[,] contents)
         {
-            //if there are no contents, there is nothing to set the buffer to
+            // if there are no contents, there is nothing to set the buffer to
             if (contents == null)
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
-            //if the cursor is on the last line, we need to make more space to print the specified buffer
+            // if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
             {
-                //for each row in the buffer, create a new line
+                // for each row in the buffer, create a new line
                 int rows = contents.GetLength(0);
                 ScrollBuffer(rows);
                 // for each row in the buffer, move the cursor y up to the beginning of the created blank space
@@ -1628,25 +1648,25 @@ namespace Microsoft.PowerShell
             CursorPosition = origin;
 #endif
 
-            //iterate through the buffer to set
+            // iterate through the buffer to set
             foreach (var charitem in contents)
             {
-                //set the cursor to false to prevent cursor flicker
+                // set the cursor to false to prevent cursor flicker
                 Console.CursorVisible = false;
 
-                //if x is exceeding buffer width, reset to the next line
+                // if x is exceeding buffer width, reset to the next line
                 if (origin.X >= BufferSize.Width)
                 {
                     origin.X = 0;
                 }
 
-                //write the character from contents
+                // write the character from contents
                 Console.Out.Write(charitem.Character);
             }
 
-            //reset the cursor to the original position
+            // reset the cursor to the original position
             CursorPosition = origin;
-            //reset the cursor to visible
+            // reset the cursor to visible
             Console.CursorVisible = true;
         }
 
@@ -1655,7 +1675,7 @@ namespace Microsoft.PowerShell
         /// color to a region of the screen buffer. In this example this
         /// functionality is not needed so the method throws a
         /// NotImplementException exception./// </summary>
-        /// <param name="rectangle">Defines the area to be filled. </param>
+        /// <param name="rectangle">Defines the area to be filled.</param>
         /// <param name="fill">Defines the fill character.</param>
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {
@@ -1663,7 +1683,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -1675,7 +1695,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>
@@ -1688,6 +1708,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }
+
             return ConsoleControl.LengthInBufferCells(s, offset, _parent.SupportsVirtualTerminal);
         }
     }

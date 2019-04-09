@@ -17,6 +17,7 @@ namespace System.Management.Automation
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
         internal bool UsesParameter { get; private set; }
+
         internal bool HasUsingExpr { get; private set; }
 
         public override AstVisitAction VisitParameter(ParameterAst parameterAst)
@@ -227,7 +228,7 @@ namespace System.Management.Automation
 
             if (args == null)
             {
-                args = Utils.EmptyArray<object>();
+                args = Array.Empty<object>();
             }
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one
@@ -251,6 +252,7 @@ namespace System.Management.Automation
                     parameter.InternalVisit(checker);
                 }
             }
+
             body.InternalVisit(checker);
 
             // When the context is null (or they haven't supplied any variables), throw, but only if we really need the
@@ -298,6 +300,7 @@ namespace System.Management.Automation
                     converter._powershell.AddStatement();
                     converter.ConvertPipeline(pipeline, isTrustedInput);
                 }
+
                 return converter._powershell;
             }
             finally
@@ -328,7 +331,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Collect values for UsingExpressions, in the form of a dictionary and an array.
         ///  - The dictionary form is used when the remote server is PSv5 and later version for handling UsingExpression in Invoke-Command/Start-Job
-        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command
+        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command.
         /// </summary>
         /// <remarks>
         /// We still keep the array-form using values because we want to avoid any breaking changes when running Invoke-Command
@@ -459,9 +462,9 @@ namespace System.Management.Automation
         /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
         /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
         /// </remarks>
-        /// <param name="usingExpr">The UsingExpression to analyze</param>
-        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst</param>
-        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions</param>
+        /// <param name="usingExpr">The UsingExpression to analyze.</param>
+        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst.</param>
+        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions.</param>
         private static bool HasUsingExpressionsInDifferentScopes(UsingExpressionAst usingExpr, Ast topLevelParent, ref ScriptBlockAst sbClosestToPreviousUsingExpr)
         {
             Diagnostics.Assert(topLevelParent is ScriptBlockAst || topLevelParent is FunctionDefinitionAst,
@@ -630,6 +633,7 @@ namespace System.Management.Automation
                         {
                             _powershell.AddArgument(usingValue);
                         }
+
                         continue;
                     }
 
@@ -676,6 +680,7 @@ namespace System.Management.Automation
                                 argument = GetExpressionValue(exprAst, isTrustedInput);
                             }
                         }
+
                         _powershell.AddArgument(argument);
                     }
                 }
@@ -757,10 +762,12 @@ namespace System.Management.Automation
                 rs.Open();
                 _context = rs.ExecutionContext;
             }
+
             if (!isTrustedInput) // if it's not trusted, call the safe value visitor
             {
                 return GetSafeValueVisitor.GetSafeValue(exprAst, _context, GetSafeValueVisitor.SafeValueContext.GetPowerShell);
             }
+
             return Compiler.GetExpressionValue(exprAst, isTrustedInput, _context, _usingValueMap);
         }
 
