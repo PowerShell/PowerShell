@@ -143,6 +143,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
             $mail.Headers["Cc"] | Should -Not -BeNullOrEmpty
             $mail.Headers["Cc"].Split(", ") | Should -BeExactly $InputObject.Cc
         }
+        # BCC addresses can't be tested against mail message header, as this information is by design never included in the mail message itself.
         If($InputObject.ReplyTo)
         {
             $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
@@ -176,6 +177,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
             $mail.Headers["Cc"] | Should -Not -BeNullOrEmpty
             $mail.Headers["Cc"].Split(", ") | Should -BeExactly $InputObject.Cc
         }
+        # BCC addresses can't be tested against mail message header, as this information is by design never included in the mail message itself.
         If($InputObject.ReplyTo)
         {
             $mail.Headers["Reply-To"] | Should -BeExactly $InputObject.ReplyTo
