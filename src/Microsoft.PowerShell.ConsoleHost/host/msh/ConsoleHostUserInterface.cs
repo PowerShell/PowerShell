@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell
 
             if (transcribeResult)
             {
-                PostWrite(value);
+                PostWrite(value, newLine);
             }
             else
             {
