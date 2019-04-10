@@ -209,6 +209,7 @@ try {
                 Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running } | Should -BeTrue
                 $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
+                $ps.Streams.Error.Count | Should -HaveCount 0 -Because ($ps.Streams.Error | Out-String)
                 $sr.IsCompletedSuccessfully | Should -Be $true
                 $ir.IsFaulted | Should -Be $true -Because ($ps.Streams.Error | Out-String)
                 $ir.Exception -is [System.AggregateException] | Should -Be $true

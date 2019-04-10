@@ -667,7 +667,7 @@ ZoneId=$FileType
                 $testData += @(
                     @{
                         module = $PSHomeUntrustedModule
-                        error = $null
+                        error = $error
                     }
                     @{
                         module = $PSHomeUnsignedModule
@@ -680,16 +680,16 @@ ZoneId=$FileType
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
                 param([string]$module, [string]$error)
 
-                $execPolicy = Get-ExecutionPolicy
+                $execPolicy = Get-ExecutionPolicy -List | Out-String
 
-                $testScript = {Import-Module -Name $module -Force}
+                $testScript = {Import-Module -Name $module -Force -ErrorAction Stop}
                 if($error)
                 {
                     $testScript | Should -Throw -ErrorId $error
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
+                    $testScript | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
                 }
             }
         }
