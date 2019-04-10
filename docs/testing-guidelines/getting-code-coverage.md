@@ -50,7 +50,7 @@ PS> Invoke-OpenCover -OutputLog coverage.xml -OpenCoverPath $env:TEMP\OpenCover
 
 `> Set-Location "C:\Path\to\powershell\build\dir"`
 
-Make sure there are no spaces in the path, since they are not replaced with escape characters.
+OpenCover does not tolerate whitespace in the path, so you will need to ensure the path to the build directory has no whitespace in it.
 
 `> Install-OpenCover -TargetDirectory $env:TEMP -Force`
 
