@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
  
-        private bool lineShouldBeSkipped(string line)
+        private static bool lineShouldBeSkipped(string line)
         {
             // if line is empty or a comment, return true
             return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
@@ -404,14 +404,14 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private Collection<string> ParseCsvLine(string csv)
+        private static Collection<string> ParseCsvLine(string csv)
         {        
-            csv = csv.Trim();
+            string csvTrimmed = csv.Trim();
             Collection<string> result = new Collection<string>();
             StringBuilder wordBuffer = new StringBuilder();
 
-            for (int i = 0; i < csv.Length; i++) {
-                char nextChar = (char) csv[i];
+            for (int i = 0; i < csvTrimmed.Length; i++) {
+                char nextChar = (char) csvTrimmed[i];
 
                 // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
                 // else if next character was quote, perform reading until next quote and add it to wordBuffer
@@ -428,13 +428,13 @@ namespace Microsoft.PowerShell.Commands
                     // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
                     // if it is a single quote, escape the quote section
                     // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
-                    while(i<csv.Length && inQuotes) {
+                    while(i<csvTrimmed.Length && inQuotes) {
                         i++;
-                        nextChar = (char)csv[i];
+                        nextChar = (char)csvTrimmed[i];
                         
                         if (nextChar == '"') 
                         {
-                            if (i+1 < csv.Length && (char)csv[i+1] == '"')
+                            if (i+1 < csvTrimmed.Length && (char)csvTrimmed[i+1] == '"')
                             {
                                 wordBuffer.Append(nextChar);
                                 i++;
