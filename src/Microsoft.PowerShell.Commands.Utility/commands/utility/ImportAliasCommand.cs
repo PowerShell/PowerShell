@@ -296,7 +296,6 @@ namespace Microsoft.PowerShell.Commands
             string filePath = null;
             using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
             {
-
                 long lineNumber = 0;
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
@@ -329,7 +328,8 @@ namespace Microsoft.PowerShell.Commands
             return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
         }
 
-        private KeyValuePair<ScopedItemOptions, bool> createItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) {
+        private KeyValuePair<ScopedItemOptions, bool> createItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
+        {
             ScopedItemOptions options = ScopedItemOptions.None;
             bool succesfullParse = false;
             try 
@@ -350,10 +350,12 @@ namespace Microsoft.PowerShell.Commands
                 errorRecord.ErrorDetails = new ErrorDetails(message);
                 WriteError(errorRecord);
             }
+
             return new KeyValuePair<ScopedItemOptions, bool>(options, succesfullParse);
         }
 
-        private AliasInfo constructAlias(Collection<string> parsedLine, ScopedItemOptions options) {
+        private AliasInfo constructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
+        {
             AliasInfo newAlias =
                         new AliasInfo(
                             parsedLine[0],
@@ -372,7 +374,8 @@ namespace Microsoft.PowerShell.Commands
         private bool isValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
         {
             // if options object cannot be created
-            if (!optionsParsedSuccesfully) {           
+            if (!optionsParsedSuccesfully) 
+            {           
                 return false;
             }
 
@@ -562,6 +565,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
     }
-
-    
 }
