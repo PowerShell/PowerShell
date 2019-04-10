@@ -373,8 +373,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool isValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
         {
-            // if options object cannot be created
-            if (!optionsParsedSuccesfully) 
+            if (!optionsParsedSuccesfully)
             {           
                 return false;
             }
