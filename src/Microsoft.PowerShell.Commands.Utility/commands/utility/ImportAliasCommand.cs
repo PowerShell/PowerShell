@@ -317,8 +317,10 @@ namespace Microsoft.PowerShell.Commands
                         result.Add(constructAlias(parsedLine, options));
                     }
                 }
+
                 reader.Dispose();
             }
+            
             return result;
         }
  
