@@ -679,6 +679,9 @@ ZoneId=$FileType
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
                 param([string]$module, [string]$error)
+
+                $execPolicy = Get-ExecutionPolicy
+
                 $testScript = {Import-Module -Name $module -Force}
                 if($error)
                 {
@@ -686,7 +689,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw
+                    {& $testScript} | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
                 }
             }
         }

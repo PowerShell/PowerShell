@@ -210,7 +210,7 @@ try {
                 $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $sr.IsCompletedSuccessfully | Should -Be $true
-                $ir.IsFaulted | Should -Be $true -Because "ERROR: $($ps.Streams.Error | Out-String)"
+                $ir.IsFaulted | Should -Be $true -Because ($ps.Streams.Error | Out-String)
                 $ir.Exception -is [System.AggregateException] | Should -Be $true
                 $ir.Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -Be $true
                 $ps.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)
