@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder wordBuffer = new StringBuilder();
 
             for (int i = 0; i < csvTrimmed.Length; i++) {
-                char nextChar = (char) csvTrimmed[i];
+                char nextChar = (char)csvTrimmed[i];
 
                 // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
                 // else if next character was quote, perform reading until next quote and add it to wordBuffer
@@ -428,9 +428,10 @@ namespace Microsoft.PowerShell.Commands
                     // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
                     // if it is a single quote, escape the quote section
                     // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
-                    while (i < csvTrimmed.Length && inQuotes) {
+                    while (i < csvTrimmed.Length && inQuotes) 
+                    {
                         i++;
-                        nextChar = (char) csvTrimmed[i];
+                        nextChar = (char)csvTrimmed[i];
                         
                         if (nextChar == '"') 
                         {
