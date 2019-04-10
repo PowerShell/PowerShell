@@ -4204,7 +4204,7 @@ param(
                 $customPagerCommand = $tokens[0].Content
                 if (!(Get-Command $customPagerCommand -ErrorAction Ignore)) {
                     # Custom pager command is invalid, issue a warning.
-                    Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $env:PAGER""
+                    Write-Warning ""Custom-paging utility command not found. Ignoring command specified in `$env:PAGER: $env:PAGER""
                 }
                 else {
                     # This approach will preserve all the pagers args.
