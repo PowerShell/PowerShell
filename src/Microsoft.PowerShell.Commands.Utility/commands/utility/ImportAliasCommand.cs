@@ -294,10 +294,8 @@ namespace Microsoft.PowerShell.Commands
             // it seems like filePath is always null and never defined, so we can remove it as far as I could see
             // bug keeping it for now because tests are failing
             string filePath = null;
-
             using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
             {
-                //CSVHelper csvHelper = new CSVHelper(',');
 
                 Int64 lineNumber = 0;
                 string line = null;
@@ -312,9 +310,9 @@ namespace Microsoft.PowerShell.Commands
                     Collection<string> parsedLine = ParseCsvLine(line);
 
                     // create options
-                    ScopedItemOptions options = createItemOptions(parsedLine, filePath, lineNumber);
-
-                    if(isValidParsedLine(parsedLine, options, lineNumber, filePath)) {
+                    KeyValuePair<ScopedItemOptions, bool> optionPair = createItemOptions(parsedLine, filePath, lineNumber);
+                    ScopedItemOptions options = optionPair.Key;
+                    if(isValidParsedLine(parsedLine, optionPair.Value, lineNumber, filePath)) {
                         result.Add(constructAlias(parsedLine, options));
                     }
                 }
@@ -330,14 +328,12 @@ namespace Microsoft.PowerShell.Commands
             return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
         }
 
-        private ScopedItemOptions createItemOptions(Collection<string> parsedLine, string filePath, Int64 lineNumber) {
+        private KeyValuePair<ScopedItemOptions, bool> createItemOptions(Collection<string> parsedLine, string filePath, Int64 lineNumber) {
             ScopedItemOptions options = ScopedItemOptions.None;
-            try
-            {
-                options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), parsedLine[3], true);
-            }
-            catch (ArgumentException argException)
-            {
+            bool succesfullParse = false;
+            try {
+                succesfullParse = Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options);
+            } catch (ArgumentException argException) {
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
 
                 ErrorRecord errorRecord =
@@ -350,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
                 errorRecord.ErrorDetails = new ErrorDetails(message);
                 WriteError(errorRecord);
             }
-            return options;
+            return new KeyValuePair<ScopedItemOptions, bool>(options, succesfullParse);
         }
 
         private AliasInfo constructAlias(Collection<string> parsedLine, ScopedItemOptions options) {
@@ -369,14 +365,15 @@ namespace Microsoft.PowerShell.Commands
             return newAlias;
         }
 
-        private bool isValidParsedLine(Collection<string> parsedLine, ScopedItemOptions options, Int64 lineNumber, string filePath) {
+        private bool isValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, Int64 lineNumber, string filePath) {
             // if options object cannot be created
-            if(options == ScopedItemOptions.None) {              
+            if(!optionsParsedSuccesfully) {           
                 return false;
             }
 
             if(parsedLine.Count != 4)
             {
+                Console.WriteLine("count was not 4");  
                 // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
 
