@@ -95,7 +95,7 @@ Describe "Import-Alias" -Tags "CI" {
     }
 
     It "Should classify an alias as non existent when it is not imported yet" {
-        {Get-Alias -Name invalid_alias -ErrorAction Stop} | Should -Throw -ErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand' }
+        {Get-Alias -Name invalid_alias -ErrorAction Stop} | Should -Throw -ErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
     }
 
     It "Should be able to parse <aliasToTest>" -TestCases @(
