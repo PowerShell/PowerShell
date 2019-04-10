@@ -410,7 +410,8 @@ namespace Microsoft.PowerShell.Commands
             Collection<string> result = new Collection<string>();
             StringBuilder wordBuffer = new StringBuilder();
 
-            for (int i = 0; i < csvTrimmed.Length; i++) {
+            for (int i = 0; i < csvTrimmed.Length; i++) 
+            {
                 char nextChar = csvTrimmed[i];
 
                 // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
