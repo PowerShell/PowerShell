@@ -428,13 +428,13 @@ namespace Microsoft.PowerShell.Commands
                     // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
                     // if it is a single quote, escape the quote section
                     // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
-                    while(i<csvTrimmed.Length && inQuotes) {
+                    while (i < csvTrimmed.Length && inQuotes) {
                         i++;
-                        nextChar = (char)csvTrimmed[i];
+                        nextChar = (char) csvTrimmed[i];
                         
                         if (nextChar == '"') 
                         {
-                            if (i+1 < csvTrimmed.Length && (char)csvTrimmed[i+1] == '"')
+                            if (i + 1 < csvTrimmed.Length && (char)csvTrimmed[i + 1] == '"')
                             {
                                 wordBuffer.Append(nextChar);
                                 i++;
@@ -460,7 +460,8 @@ namespace Microsoft.PowerShell.Commands
             if (lastWord != string.Empty)
             {
                 result.Add(lastWord);
-            }   
+            }
+
             return result;           
         }
 
