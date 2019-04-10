@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.9")
+$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -681,8 +681,6 @@ function New-UnixPackage {
 
                 if ($PSBoundParameters.ContainsKey('Distribution')) {
                     $DebDistro = $PSBoundParameters['Distribution']
-                } elseif ($Environment.IsUbuntu14) {
-                    $DebDistro = "ubuntu.14.04"
                 } elseif ($Environment.IsUbuntu16) {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
@@ -1117,7 +1115,6 @@ function Get-PackageDependencies
             )
 
             switch ($Distribution) {
-                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
