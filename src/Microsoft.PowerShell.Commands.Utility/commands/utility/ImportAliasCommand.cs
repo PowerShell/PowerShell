@@ -100,6 +100,93 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region Command code
+        
+        private static bool OnlyContainsWhitespace(string line)
+        {
+            bool result = true;
+
+            foreach (char c in line)
+            {
+                if (char.IsWhiteSpace(c) && c != '\n' && c != '\r')
+                {
+                    continue;
+                }
+
+                result = false;
+                break;
+            }
+
+            return result;
+        }
+      
+        private static Collection<string> ParseCsvLine(string csv)
+        {        
+            string csvTrimmed = csv.Trim();
+            Collection<string> result = new Collection<string>();
+            StringBuilder wordBuffer = new StringBuilder();
+
+            for (int i = 0; i < csvTrimmed.Length; i++) 
+            {
+                char nextChar = csvTrimmed[i];
+
+                // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
+                // else if next character was quote, perform reading until next quote and add it to wordBuffer
+                // else read and add it to wordBuffer
+                if (nextChar == ',') 
+                {
+                    result.Add(wordBuffer.ToString());
+                    wordBuffer.Clear();
+                } 
+                else if (nextChar == '"') 
+                {
+                    bool inQuotes = true;
+                    
+                    // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
+                    // if it is a single quote, escape the quote section
+                    // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
+                    while (i < csvTrimmed.Length && inQuotes) 
+                    {
+                        i++;
+                        nextChar = csvTrimmed[i];
+                        
+                        if (nextChar == '"') 
+                        {
+                            if (i + 1 < csvTrimmed.Length && csvTrimmed[i + 1] == '"')
+                            {
+                                wordBuffer.Append(nextChar);
+                                i++;
+                            } 
+                            else 
+                            {
+                                inQuotes = false;
+                            }
+                        } 
+                        else 
+                        {
+                            wordBuffer.Append(nextChar);
+                        }
+                    }
+                } 
+                else 
+                {
+                    wordBuffer.Append(nextChar);
+                }
+            }
+
+            string lastWord = wordBuffer.ToString();
+            if (lastWord != string.Empty)
+            {
+                result.Add(lastWord);
+            }
+
+            return result;           
+        }
+        
+        private static bool LineShouldBeSkipped(string line)
+        {
+            // if line is empty or a comment, return true
+            return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
+        }
 
         /// <summary>
         /// The main processing loop of the command.
@@ -302,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ++lineNumber;
 
-                    if (lineShouldBeSkipped(line)) 
+                    if (LineShouldBeSkipped(line)) 
                     {
                         continue;
                     }
@@ -310,11 +397,11 @@ namespace Microsoft.PowerShell.Commands
                     Collection<string> parsedLine = ParseCsvLine(line);
 
                     // create options
-                    KeyValuePair<ScopedItemOptions, bool> optionPair = createItemOptions(parsedLine, filePath, lineNumber);
+                    KeyValuePair<ScopedItemOptions, bool> optionPair = CreateItemOptions(parsedLine, filePath, lineNumber);
                     ScopedItemOptions options = optionPair.Key;
-                    if (isValidParsedLine(parsedLine, optionPair.Value, lineNumber, filePath)) 
+                    if (IsValidParsedLine(parsedLine, optionPair.Value, lineNumber, filePath)) 
                     {
-                        result.Add(constructAlias(parsedLine, options));
+                        result.Add(ConstructAlias(parsedLine, options));
                     }
                 }
 
@@ -323,14 +410,8 @@ namespace Microsoft.PowerShell.Commands
             
             return result;
         }
- 
-        private static bool lineShouldBeSkipped(string line)
-        {
-            // if line is empty or a comment, return true
-            return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
-        }
 
-        private KeyValuePair<ScopedItemOptions, bool> createItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
+        private KeyValuePair<ScopedItemOptions, bool> CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
         {
             ScopedItemOptions options = ScopedItemOptions.None;
             bool succesfullParse = false;
@@ -356,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
             return new KeyValuePair<ScopedItemOptions, bool>(options, succesfullParse);
         }
 
-        private AliasInfo constructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
+        private AliasInfo ConstructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
         {
             AliasInfo newAlias =
                         new AliasInfo(
@@ -373,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
             return newAlias;
         }
 
-        private bool isValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
+        private bool IsValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
         {
             if (!optionsParsedSuccesfully)
             {           
@@ -402,69 +483,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
-        }
-
-        private static Collection<string> ParseCsvLine(string csv)
-        {        
-            string csvTrimmed = csv.Trim();
-            Collection<string> result = new Collection<string>();
-            StringBuilder wordBuffer = new StringBuilder();
-
-            for (int i = 0; i < csvTrimmed.Length; i++) 
-            {
-                char nextChar = csvTrimmed[i];
-
-                // if next character was delimiter or we are at the end, add string to result and clear wordBuffer
-                // else if next character was quote, perform reading until next quote and add it to wordBuffer
-                // else read and add it to wordBuffer
-                if (nextChar == ',') 
-                {
-                    result.Add(wordBuffer.ToString());
-                    wordBuffer.Clear();
-                } 
-                else if (nextChar == '"') 
-                {
-                    bool inQuotes = true;
-                    
-                    // if we are within a quote section, read and append to wordBuffer until we find a next quote that is not followed by another quote
-                    // if it is a single quote, escape the quote section
-                    // if the quote is followed by an other quote, do not escape and add a quote character to wordBuffer
-                    while (i < csvTrimmed.Length && inQuotes) 
-                    {
-                        i++;
-                        nextChar = csvTrimmed[i];
-                        
-                        if (nextChar == '"') 
-                        {
-                            if (i + 1 < csvTrimmed.Length && csvTrimmed[i + 1] == '"')
-                            {
-                                wordBuffer.Append(nextChar);
-                                i++;
-                            } 
-                            else 
-                            {
-                                inQuotes = false;
-                            }
-                        } 
-                        else 
-                        {
-                            wordBuffer.Append(nextChar);
-                        }
-                    }
-                } 
-                else 
-                {
-                    wordBuffer.Append(nextChar);
-                }
-            }
-
-            string lastWord = wordBuffer.ToString();
-            if (lastWord != string.Empty)
-            {
-                result.Add(lastWord);
-            }
-
-            return result;           
         }
 
         private StreamReader OpenFile(out string filePath, bool isLiteralPath)
@@ -543,24 +561,6 @@ namespace Microsoft.PowerShell.Commands
 
             errorRecord.ErrorDetails = new ErrorDetails(message);
             this.ThrowTerminatingError(errorRecord);
-        }
-
-        private static bool OnlyContainsWhitespace(string line)
-        {
-            bool result = true;
-
-            foreach (char c in line)
-            {
-                if (char.IsWhiteSpace(c) && c != '\n' && c != '\r')
-                {
-                    continue;
-                }
-
-                result = false;
-                break;
-            }
-
-            return result;
         }
         #endregion Command code
     }
