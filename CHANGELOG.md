@@ -51,7 +51,7 @@
 - Publish test package on release builds (#9063)
 - Bump `Microsoft.PowerShell.Native` from `6.2.0-rc.1` to `6.2.0` (#9200)
 - Bump `NJsonSchema` from `9.13.19` to `9.13.27` (#9044, #9136, #9166, #9172, #9184 #9196)
-- Bump `PowerShellGet` from `2.0.4` to `2.1.1` in /src/Modules (#9110, #9145)
+- Bump `PowerShellGet` from `2.0.4` to `2.1.2` in /src/Modules (#9110, #9145)
 - Bump `SelfSignedCertificate` in `/test/tools/Modules` (#9055)
 
 ### Documentation and Help Content
