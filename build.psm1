@@ -130,7 +130,6 @@ function Get-EnvironmentInformation
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
-        $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
@@ -1510,7 +1509,7 @@ function Install-Dotnet {
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
 
         # Install new dotnet 1.1.0 preview packages
@@ -1587,8 +1586,7 @@ function Start-PSBootstrap {
 
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
-                if ($Environment.IsUbuntu14) { $Deps += "libicu52" }
-                elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
+                if ($Environment.IsUbuntu16) { $Deps += "libicu55" }
                 elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools

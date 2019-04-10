@@ -31,12 +31,11 @@ You can download and install a PowerShell package for any of the following platf
 | [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
 | [Ubuntu 18.04][corefx-linux]               | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
-| [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
 | [openSUSE 42.3][corefx-linux]              | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
-| [Fedora 27, Fedora 28][corefx-linux]       | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
+| [Fedora 28][corefx-linux]                  | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
 | [macOS 10.12+][corefx-macos]               | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | Docker                                     |                         |                       | [Instructions][in-docker]     |
 
@@ -62,7 +61,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/PowerShell-6.2.0-win-x86.msi
 [rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.ubuntu.18.04_amd64.deb
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.ubuntu.16.04_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.ubuntu.14.04_amd64.deb
 [rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.debian.9_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell-6.2.0-1.rhel.7.x86_64.rpm
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell-6.2.0-osx-x64.pkg
@@ -79,7 +77,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/PowerShell-6.2.0-rc.1-win-x86.msi
 [pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-preview_6.2.0-rc.1-1.ubuntu.18.04_amd64.deb
 [pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-preview_6.2.0-rc.1-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-preview_6.2.0-rc.1-1.ubuntu.14.04_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-preview_6.2.0-rc.1-1.debian.9_amd64.deb
 [pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-preview-6.2.0_rc.1-1.rhel.7.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-rc.1/powershell-6.2.0-rc.1-osx-x64.pkg
