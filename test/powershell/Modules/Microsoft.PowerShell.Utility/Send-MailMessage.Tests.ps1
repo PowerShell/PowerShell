@@ -12,6 +12,14 @@ if(-not ("netDumbster.smtp.SimpleSmtpServer" -as [type]))
     Add-Type -Path $dll
 }
 
+$DefaultInputObject = @{
+    From = "user01@example.com"
+    To = "user02@example.com"
+    Subject = "Subject $(Get-Date)"
+    Body = "Body $(Get-Date)"
+    SmtpServer = "127.0.0.1"
+}
+
 Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     BeforeAll {
         $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
@@ -28,7 +36,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         }
     }
 
-    AfterEach {
+    BeforeEach {
         if($server)
         {
             $server.ClearReceivedEmail()
@@ -45,13 +53,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     $testCases = @(
         @{
             Name = "with mandatory parameters"
-            InputObject = @{
-                From = "user01@example.com"
-                To = "user02@example.com"
-                Subject = "Subject $(Get-Date)"
-                Body = "Body $(Get-Date)"
-                SmtpServer = "127.0.0.1"
-            }
+            InputObject = $DefaultInputObject
         }
         @{
             Name = "with ReplyTo"
@@ -190,9 +192,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
 }
 
 Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
-    BeforeEach {
-        $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
-
+    BeforeAll {
         function Read-Mail
         {
             param()
@@ -205,115 +205,129 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
         }
     }
 
-    AfterEach {
+    BeforeEach {
         if($server)
         {
-            $server.Stop()
+            $server.ClearReceivedEmail()
         }
     }
 
-    $InputObject = @{
-        From = "user01@example.com"
-        To = "user02@example.com"
-        Subject = "Subject $(Get-Date)"
-        Body = "Body $(Get-Date)"
-        SmtpServer = "127.0.0.1"
+    Context "Default Port 25" {
+        BeforeAll {
+            $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
+        }
+
+        AfterAll {
+            if($server)
+            {
+                $server.Stop()
+            }
+        }
+
+        It "Can throw on wrong mail addresses" {
+            $server | Should -Not -Be $null
+
+            $obj = $DefaultInputObject.Clone()
+            $obj.To = "not_a_valid_mail.address"
+
+            { Send-MailMessage @obj -ErrorAction Stop } | Should -Throw -ErrorId "FormatException,Microsoft.PowerShell.Commands.SendMailMessage"
+        }
+
+        It "Can send mail with free-form email address" {
+            $server | Should -Not -Be $null
+
+            $obj = $DefaultInputObject.Clone()
+            $obj.From = "User01 <user01@example.com>"
+            $obj.To = "User02 <user02@example.com>"
+
+            Send-MailMessage @obj -ErrorAction SilentlyContinue
+
+            $mail = Read-Mail
+
+            $mail.FromAddress | Should -BeExactly "user01@example.com"
+            $mail.ToAddresses | Should -BeExactly "user02@example.com"
+        }
+
+        It "Can send mail with high priority" {
+            $server | Should -Not -Be $null
+
+            Send-MailMessage @DefaultInputObject -Priority High -ErrorAction SilentlyContinue
+
+            $mail = Read-Mail
+            $mail.Priority | Should -BeExactly "urgent"
+        }
+
+        It "Can send mail with HTML content as body" {
+            $server | Should -Not -Be $null
+
+            $obj = $DefaultInputObject.Clone()
+            $obj.Body = "<html><body><h1>PowerShell</h1></body></html>"
+
+            Send-MailMessage @obj -BodyAsHtml -Encoding utf8 -ErrorAction SilentlyContinue
+
+            $mail = Read-Mail
+            $mail.Headers["content-type"] | Should -BeLike "text/html*"
+            $mail.MessageParts.Count | Should -BeExactly 1
+            $mail.MessageParts[0].BodyData | Should -Be $obj.Body
+        }
+
+        It "Can send mail with UTF8 encoding" {
+            $server | Should -Not -Be $null
+
+            $obj = $DefaultInputObject.Clone()
+            $obj.Body = "We ❤ PowerShell"
+
+            Send-MailMessage @obj -Encoding utf8Bom -ErrorAction SilentlyContinue
+
+            $mail = Read-Mail
+            $mail.MessageParts.Count | Should -BeExactly 1
+            $mail.Headers["content-transfer-encoding"] | Should -BeExactly "base64"
+            $utf8Text = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($mail.MessageParts[0].BodyData))
+            $utf8Text | Should -Be $obj.Body
+        }
+
+        It "Can send mail with attachments" {
+            $attachment1 = "TestDrive:\attachment1.txt"
+            $attachment2 = "TestDrive:\attachment2.txt"
+
+            $pngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDoL9/aK3hHFSgyUw4o0KEIEQIQoQgRAhChAgRghAhCBGCECEIEYIQhAhBiBCECEGIEIQgRAhChCBECEKEIAQhQhAiBCFCECIEIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCECFChCBECEKEIOS7BU5Hx50BmcQaAAAAAElFTkSuQmCC"
+
+            Set-Content $attachment1 -Value "First attachment"
+            Set-Content $attachment2 -AsByteStream -Value ([Convert]::FromBase64String($pngBase64))
+
+            $server | Should -Not -Be $null
+
+            Send-MailMessage @DefaultInputObject -Attachments $attachment1,$attachment2 -ErrorAction SilentlyContinue
+
+            $mail = Read-Mail
+            $mail.MessageParts.Count | Should -BeExactly 3
+
+            $txt = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($mail.MessageParts[1].BodyData)) -replace "`n|`r"
+            $txt | Should -BeExactly "First attachment"
+
+            ($mail.MessageParts[2].BodyData -replace "`n|`r") | Should -BeExactly $pngBase64
+        }
     }
 
-    It "Can send mail message using custom port 2525" {
-        $server.Stop()
-        $customPortServer = [netDumbster.smtp.SimpleSmtpServer]::Start(2525)
+    Context "Custom Port 2525" {
+        BeforeAll {
+            $server = [netDumbster.smtp.SimpleSmtpServer]::Start(2525)
+        }
 
-        $customPortServer | Should -Not -Be $null
-        $customPortServer.ReceivedEmailCount | Should -BeExactly 0
+        AfterAll {
+            if($server)
+            {
+                $server.Stop()
+            }
+        }
 
-        Send-MailMessage @InputObject -Port 2525 -ErrorAction SilentlyContinue
+        It "Can send mail message using custom port 2525" {
+            $server | Should -Not -Be $null
+            $server.ReceivedEmailCount | Should -BeExactly 0
 
-        $customPortServer.ReceivedEmailCount | Should -BeExactly 1
-        $customPortServer.Stop()
-    }
+            Send-MailMessage @DefaultInputObject -Port 2525 -ErrorAction SilentlyContinue
 
-    It "Can throw on wrong mail addresses" {
-        $server | Should -Not -Be $null
-
-        $obj = $InputObject.Clone()
-        $obj.To = "not_a_valid_mail.address"
-
-        { Send-MailMessage @obj -ErrorAction Stop } | Should -Throw -ErrorId "FormatException,Microsoft.PowerShell.Commands.SendMailMessage"
-    }
-
-    It "Can send mail with free-form email address" {
-        $server | Should -Not -Be $null
-
-        $obj = $InputObject.Clone()
-        $obj.From = "User01 <user01@example.com>"
-        $obj.To = "User02 <user02@example.com>"
-
-        Send-MailMessage @obj -ErrorAction SilentlyContinue
-
-        $mail = Read-Mail
-
-        $mail.FromAddress | Should -BeExactly "user01@example.com"
-        $mail.ToAddresses | Should -BeExactly "user02@example.com"
-    }
-
-    It "Can send mail with high priority" {
-        $server | Should -Not -Be $null
-
-        Send-MailMessage @InputObject -Priority High -ErrorAction SilentlyContinue
-
-        $mail = Read-Mail
-        $mail.Priority | Should -BeExactly "urgent"
-    }
-
-    It "Can send mail with HTML content as body" {
-        $server | Should -Not -Be $null
-
-        $obj = $InputObject.Clone()
-        $obj.Body = "<html><body><h1>PowerShell</h1></body></html>"
-
-        Send-MailMessage @obj -BodyAsHtml -Encoding utf8 -ErrorAction SilentlyContinue
-
-        $mail = Read-Mail
-        $mail.Headers["content-type"] | Should -BeLike "text/html*"
-        $mail.MessageParts.Count | Should -BeExactly 1
-        $mail.MessageParts[0].BodyData | Should -Be $obj.Body
-    }
-
-    It "Can send mail with UTF8 encoding" {
-        $server | Should -Not -Be $null
-
-        $obj = $InputObject.Clone()
-        $obj.Body = "We ❤ PowerShell"
-
-        Send-MailMessage @obj -Encoding utf8Bom -ErrorAction SilentlyContinue
-
-        $mail = Read-Mail
-        $mail.MessageParts.Count | Should -BeExactly 1
-        $mail.Headers["content-transfer-encoding"] | Should -BeExactly "base64"
-        $utf8Text = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($mail.MessageParts[0].BodyData))
-        $utf8Text | Should -Be $obj.Body
-    }
-
-    It "Can send mail with attachments" {
-        $attachment1 = "TestDrive:\attachment1.txt"
-        $attachment2 = "TestDrive:\attachment2.txt"
-
-        $pngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDoL9/aK3hHFSgyUw4o0KEIEQIQoQgRAhChAgRghAhCBGCECEIEYIQhAhBiBCECEGIEIQgRAhChCBECEKEIAQhQhAiBCFCECIEIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCECFChCBECEKEIOS7BU5Hx50BmcQaAAAAAElFTkSuQmCC"
-
-        Set-Content $attachment1 -Value "First attachment"
-        Set-Content $attachment2 -AsByteStream -Value ([Convert]::FromBase64String($pngBase64))
-
-        $server | Should -Not -Be $null
-
-        Send-MailMessage @InputObject -Attachments $attachment1,$attachment2 -ErrorAction SilentlyContinue
-
-        $mail = Read-Mail
-        $mail.MessageParts.Count | Should -BeExactly 3
-
-        $txt = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($mail.MessageParts[1].BodyData)) -replace "`n|`r"
-        $txt | Should -BeExactly "First attachment"
-
-        ($mail.MessageParts[2].BodyData -replace "`n|`r") | Should -BeExactly $pngBase64
+            $server.ReceivedEmailCount | Should -BeExactly 1
+        }
     }
 }
