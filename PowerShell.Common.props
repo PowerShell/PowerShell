@@ -146,6 +146,6 @@
 
   <!-- Define all OS, CodeCoverage configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>
