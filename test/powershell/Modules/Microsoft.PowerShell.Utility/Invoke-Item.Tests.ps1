@@ -36,6 +36,9 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            $title = 'tell application "TextEdit" to get name of front window' | osascript
+            Write-Verbose "beforeCount: $beforeCount" -Verbose
+            Write-Verbose "btitle: $title" -Verbose
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
@@ -43,6 +46,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             {
                 Start-Sleep -Milliseconds 100
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
+                Write-Verbose "title: $title" -Verbose
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             $afterCount | Should -Be ($beforeCount + 1)
@@ -152,6 +156,7 @@ Categories=Application;
             {
                 # validate on MacOS by using AppleScript
                 $beforeCount = [int]('tell application "Finder" to count of windows' | osascript)
+                Write-Verbose "beforeCount: $beforeCount" -Verbose
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 $expectedTitle = Split-Path $PSHOME -Leaf
@@ -160,6 +165,7 @@ Categories=Application;
                 {
                     Start-Sleep -Milliseconds 100
                     $title = 'tell application "Finder" to get name of front window' | osascript
+                    Write-Verbose "title: $title" -Verbose
                 }
                 $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
                 $afterCount | Should -Be ($beforeCount + 1)
