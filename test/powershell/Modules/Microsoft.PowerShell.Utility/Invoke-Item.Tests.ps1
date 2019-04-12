@@ -9,7 +9,7 @@ function Invoke-AppleScript
         [switch]$PassThru
     )
 
-    Write-Verbose "running applescript: $Script" -Verbose
+    Write-Verbose "running applescript: $Script"
 
     $result = $Script | osascript
     if($PassThru.IsPresent)
@@ -104,15 +104,12 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to not respond.
-        It "Should invoke text file '<Name>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
+        It "Should invoke text file '<Name>' without error on Mac" -Pending -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = Get-WindowCountMacOS -Name TextEdit
-            $title = Get-WindowsTitleMacOS -name TextEdit
-            Write-Verbose "beforeCount: $beforeCount" -Verbose
-            Write-Verbose "btitle: $title" -Verbose
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
@@ -120,7 +117,6 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             {
                 Start-Sleep -Milliseconds 100
                 $title = Get-WindowsTitleMacOS -name TextEdit
-                Write-Verbose "title: $title" -Verbose
             }
             $afterCount = Get-WindowCountMacOS -Name TextEdit
             $afterCount | Should -Be ($beforeCount + 1) -Because "There should be one more 'textEdit' windows open than when the tests started and there was $beforeCount"
@@ -203,7 +199,6 @@ Categories=Application;
 
             if($IsMacOS)
             {
-                Write-Verbose "killing finder" -Verbose
                 Get-Process -Name Finder | Stop-Process -Force
             }
         }
@@ -244,9 +239,10 @@ Categories=Application;
             }
             else
             {
+                Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
+                return
                 # validate on MacOS by using AppleScript
                 $beforeCount = Get-WindowCountMacOS -Name Finder
-                Write-Verbose "beforeCount: $beforeCount" -Verbose
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 $expectedTitle = Split-Path $PSHOME -Leaf
@@ -255,7 +251,6 @@ Categories=Application;
                 {
                     Start-Sleep -Milliseconds 100
                     $title = 'tell application "Finder" to get name of front window' | osascript
-                    Write-Verbose "title: $title" -Verbose
                 }
                 $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
                 $afterCount | Should -Be ($beforeCount + 1)
