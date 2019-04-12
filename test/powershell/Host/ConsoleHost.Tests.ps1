@@ -480,14 +480,44 @@ foo
     }
 
     Context "Exception handling" {
-        It "Should handle a CallDepthOverflow" {
-            # Infinite recursion
-            function recurse
-            {
-                recurse $args
+        BeforeAll {
+            # the default stack size in PowerShell is 10000000, set the stack
+            # to something much smaller which will produce the error much faster
+            # I saw a reduction from 65 seconds to 79 milliseconds.
+            $classDefinition = @'
+using System;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Threading;
+namespace StackTest {
+    public class StackDepthTest {
+        public static PowerShell ps;
+        public static int size = 512 * 1024;
+        public static void CauseError() {
+            Thread t = new Thread(RunPS, size);
+            t.Start();
+            t.Join();
+        }
+        public static void RunPS() {
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            iss.ThreadOptions = PSThreadOptions.UseCurrentThread;
+            ps = PowerShell.Create(iss);
+            ps.AddScript("function recurse { recurse }; recurse").Invoke();
+        }
+        public static void GetPSError() {
+            if ( ps.Streams.Error.Count > 0) {
+                throw ps.Streams.Error[0].Exception.InnerException;
             }
+        }
+    }
+}
+'@
+            $TestType = Add-Type -PassThru -TypeDefinition $classDefinition
+        }
 
-            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
+        It "Should handle a CallDepthOverflow" {
+            $TestType::CauseError()
+            { $TestType::GetPSError() } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 
