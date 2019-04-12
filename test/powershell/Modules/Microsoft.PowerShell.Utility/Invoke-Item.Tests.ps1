@@ -2,6 +2,27 @@
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 
+function Get-WindowCountMacOS {
+    param(
+        [string]$Name
+    )
+    $processCount = @(Get-Process $Name -ErrorAction Ignore).Count
+
+    if($processCount -eq 0)
+    {
+        return 0
+    }
+
+    $title = "tell application `"$name`" to get name of front window" | osascript
+    if(!$title)
+    {
+        return 0
+    }
+
+    $windowCount = [int]("tell application `"$name`" to count of windows" | osascript)
+    return $windowCount
+}
+
 Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
         $powershell = Join-Path $PSHOME -ChildPath pwsh
@@ -22,10 +43,23 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
     Context "Invoke a text file on Unix" {
         BeforeEach {
             $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
+
+            if($IsMacOS)
+            {
+                'tell application "TextEdit" to quit' | osascript
+            }
         }
 
         AfterEach {
             Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
+
+        }
+
+        AfterAll{
+            if($IsMacOS)
+            {
+                'tell application "TextEdit" to quit' | osascript
+            }
         }
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
@@ -35,7 +69,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
-            $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            $beforeCount = Get-WindowCountMacOS -Name TextEdit
             $title = 'tell application "TextEdit" to get name of front window' | osascript
             Write-Verbose "beforeCount: $beforeCount" -Verbose
             Write-Verbose "btitle: $title" -Verbose
@@ -49,10 +83,9 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 Write-Verbose "title: $title" -Verbose
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
-            $afterCount | Should -Be ($beforeCount + 1)
+            $afterCount | Should -Be ($beforeCount + 1) -Because "There should be one more 'textEdit' windows open than when the tests started and there was $beforeCount"
             $title | Should -Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
-            'tell application "TextEdit" to quit' | osascript
         }
     }
 
@@ -126,6 +159,22 @@ Categories=Application;
             }
         }
 
+        BeforeEach {
+
+            if($IsMacOS)
+            {
+                'tell application "Finder" to quit' | osascript
+            }
+        }
+
+        AfterAll{
+            if($IsMacOS)
+            {
+                'tell application "Finder" to quit' | osascript
+            }
+        }
+
+
         It "Should invoke a folder without error" -Skip:(!$supportedEnvironment) {
             if ($IsWindows)
             {
@@ -155,7 +204,7 @@ Categories=Application;
             else
             {
                 # validate on MacOS by using AppleScript
-                $beforeCount = [int]('tell application "Finder" to count of windows' | osascript)
+                $beforeCount = Get-WindowCountMacOS -Name Finder
                 Write-Verbose "beforeCount: $beforeCount" -Verbose
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
