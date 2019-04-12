@@ -909,7 +909,8 @@ function Start-PSPester {
         [string]$Title = 'PowerShell Core Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
-        [switch]$Wait
+        [switch]$Wait,
+        [switch]$SkipTestToolBuild
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -968,7 +969,10 @@ function Start-PSPester {
     }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    Publish-PSTestTools | ForEach-Object {Write-Host $_}
+    if(!$SkipTestToolBuild.IsPresent)
+    {
+        Publish-PSTestTools | ForEach-Object {Write-Host $_}
+    }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
