@@ -15,8 +15,8 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         New-Item -Path $testFile2 -ItemType File -Force > $null
 
         $textFileTestCases = @(
-            @{ TestFile = $testFile1 },
-            @{ TestFile = $testFile2 })
+            @{ TestFile = $testFile1; Name='file in root' },
+            @{ TestFile = $testFile2; Name='file in subDirectory' })
     }
 
     Context "Invoke a text file on Unix" {
@@ -30,7 +30,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to not respond.
-        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
+        It "Should invoke text file '<Name>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
