@@ -2,10 +2,27 @@
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 
+function Invoke-AppleScript
+{
+    param(
+        [string]$Script,
+        [switch]$PassThru
+    )
+
+    Write-Verbose "running applescript: $Script" -Verbose
+
+    $result = $Script | osascript
+    if($PassThru.IsPresent)
+    {
+        return $result
+    }
+}
+
 function Get-WindowCountMacOS {
     param(
         [string]$Name
     )
+
     $processCount = @(Get-Process $Name -ErrorAction Ignore).Count
 
     if($processCount -eq 0)
@@ -13,14 +30,37 @@ function Get-WindowCountMacOS {
         return 0
     }
 
-    $title = "tell application `"$name`" to get name of front window" | osascript
+    $title = Get-WindowsTitleMacOS -name $Name
+
     if(!$title)
     {
         return 0
     }
 
-    $windowCount = [int]("tell application `"$name`" to count of windows" | osascript)
+    $windowCount = [int](Invoke-AppleScript -Script ('tell application "{0}" to count of windows' -f $Name) -PassThru)
     return $windowCount
+}
+
+function Get-WindowsTitleMacOS {
+    param(
+        [string]$Name
+    )
+
+    return Invoke-AppleScript -Script ('tell application "{0}" to get name of front window' -f $Name) -PassThru
+}
+
+function Stop-ProcessMacOS {
+    param(
+        [string]$Name,
+        [switch]$QuitFirst
+    )
+
+    if($QuitFirst.IsPresent)
+    {
+        Invoke-AppleScript -Script ('tell application "{0}" to quit' -f $Name)
+    }
+
+    Get-Process -Name $Name -ErrorAction Ignore | Stop-Process -Force
 }
 
 Describe "Invoke-Item basic tests" -Tags "Feature" {
@@ -46,7 +86,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
 
             if($IsMacOS)
             {
-                'tell application "TextEdit" to quit' | osascript
+                Stop-ProcessMacOs -Name TextEdit -QuitFirst
             }
         }
 
@@ -58,7 +98,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         AfterAll{
             if($IsMacOS)
             {
-                'tell application "TextEdit" to quit' | osascript
+                Stop-ProcessMacOs -Name TextEdit
             }
         }
 
@@ -70,7 +110,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = Get-WindowCountMacOS -Name TextEdit
-            $title = 'tell application "TextEdit" to get name of front window' | osascript
+            $title = Get-WindowsTitleMacOS -name TextEdit
             Write-Verbose "beforeCount: $beforeCount" -Verbose
             Write-Verbose "btitle: $title" -Verbose
             Invoke-Item -Path $TestFile
@@ -79,13 +119,13 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
-                $title = 'tell application "TextEdit" to get name of front window' | osascript
+                $title = Get-WindowsTitleMacOS -name TextEdit
                 Write-Verbose "title: $title" -Verbose
             }
-            $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            $afterCount = Get-WindowCountMacOS -Name TextEdit
             $afterCount | Should -Be ($beforeCount + 1) -Because "There should be one more 'textEdit' windows open than when the tests started and there was $beforeCount"
             $title | Should -Be $expectedTitle
-            "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
+            Invoke-AppleScript -Script ('tell application "{0}" to close window "{1}"' -f 'TextEdit', $expectedTitle)
         }
     }
 
@@ -163,14 +203,15 @@ Categories=Application;
 
             if($IsMacOS)
             {
-                'tell application "Finder" to quit' | osascript
+                Write-Verbose "killing finder" -Verbose
+                Get-Process -Name Finder | Stop-Process -Force
             }
         }
 
         AfterAll{
             if($IsMacOS)
             {
-                'tell application "Finder" to quit' | osascript
+                Stop-ProcessMacOs -Name Finder
             }
         }
 
