@@ -115,6 +115,8 @@ jobs:
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign Nuget Packages'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       signConfigXml: '$(PackagePath)\NugetSigning.xml'
       inPathRoot: '$(PackagePath)'
