@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
     BeforeAll {
         Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
