@@ -48,6 +48,8 @@ jobs:
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
       outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
