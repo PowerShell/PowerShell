@@ -28,8 +28,11 @@ jobs:
       $packageName = if ($IsWindows) {
         "TestPackage-win.zip"
       }
-      else {
+      elseif ($IsLinux) {
         "TestPackage-linux.zip"
+      }
+      else {
+        "TestPackage-macOS.zip"
       }
 
       Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
