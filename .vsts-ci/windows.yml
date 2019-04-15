@@ -13,6 +13,7 @@ trigger:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 pr:
   branches:
     include:
@@ -25,6 +26,7 @@ pr:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
