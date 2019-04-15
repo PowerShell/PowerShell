@@ -638,19 +638,10 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = 'Debug'
-    } else {
-        switch ($Configuration) {
-            "CodeCoverage" {
-                if(-not $Environment.IsWindows) {
-                    $Configuration = "Debug"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
-                }
-            }
-        }
     }
+
     Write-Verbose "Using configuration '$Configuration'"
 
     $PowerShellDir = if (!$Environment.IsWindows) {

@@ -332,8 +332,7 @@ function Invoke-CITest
     Set-BuildVariable -Name TestPassed -Value True
 }
 
-# Implement CI 'after_test' phase
-function Invoke-CIAfterTest
+function New-CodeCoverageAndTestPackage
 {
     [CmdletBinding()]
     param()
@@ -741,10 +740,5 @@ function New-LinuxPackage
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
-    }
-
-    if ($isFullBuild)
-    {
-        New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
     }
 }
