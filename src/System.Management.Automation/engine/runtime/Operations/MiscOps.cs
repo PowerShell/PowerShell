@@ -1343,15 +1343,15 @@ namespace System.Management.Automation
             }
 
             // Add key and values from left hand side...
-            foreach (object myKey in lvalDict.Keys)
+            foreach (object key in lvalDict.Keys)
             {
-                newDictionary.Add(myKey, lvalDict[myKey]);
+                newDictionary.Add(key, lvalDict[key]);
             }
 
             // and the right-hand side
-            foreach (object myKey in rvalDict.Keys)
+            foreach (object key in rvalDict.Keys)
             {
-                newDictionary.Add(myKey, rvalDict[myKey]);
+                newDictionary.Add(key, rvalDict[key]);
             }
 
             return newDictionary;
