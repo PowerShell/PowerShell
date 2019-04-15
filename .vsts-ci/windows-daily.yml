@@ -10,7 +10,6 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
 pr:
@@ -22,7 +21,6 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
 
