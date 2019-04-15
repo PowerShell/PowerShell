@@ -2086,6 +2086,14 @@ namespace System.Management.Automation
 
             CmdletInvocationException e =
                 new CmdletInvocationException(errorRecord);
+
+            // If the error action preference is set to break, break immediately
+            // into the debugger
+            if (ErrorAction == ActionPreference.Break)
+            {
+                Context?.Debugger?.Break(e.InnerException ?? e);
+            }
+
             // Code sees only that execution stopped
             throw ManageException(e);
         }

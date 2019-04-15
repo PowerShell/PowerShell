@@ -1610,6 +1610,13 @@ namespace System.Management.Automation
                 preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
             }
 
+            // if the error action preference is set to break, then break
+            // immediately into the debugger
+            if (preference == ActionPreference.Break)
+            {
+                funcContext._executionContext?.Debugger?.Break(rte);
+            }
+
             // set the value of $? here in case it is reset in trap handling.
             context.QuestionMarkVariableValue = false;
 
