@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell
         void
         Write(char c)
         {
-            Span<char> c1 = stackalloc char[1] { c };
+            ReadOnlySpan<char> c1 = stackalloc char[1] { c };
             _ui.WriteToConsole(c1, transcribeResult: true);
         }
 

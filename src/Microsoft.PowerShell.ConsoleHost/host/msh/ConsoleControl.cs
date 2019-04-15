@@ -2562,7 +2562,7 @@ namespace Microsoft.PowerShell
             {
                 if (newLine)
                 {
-                    WriteConsole(consoleHandle, ConsoleHostUserInterface.Crlf.AsSpan());
+                    WriteConsole(consoleHandle, ConsoleHostUserInterface.Crlf);
                 }
 
                 return;
