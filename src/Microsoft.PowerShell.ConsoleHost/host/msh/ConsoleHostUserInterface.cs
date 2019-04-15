@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole()
         {
-            WriteLineToConsole(string.Empty, transcribeResult: true);
+            WriteToConsole(Environment.NewLine, transcribeResult: true, newLine: false);
         }
 
         #endregion WriteToConsole
@@ -679,10 +679,10 @@ namespace Microsoft.PowerShell
 
         public override void Write(string value)
         {
-            WriteHelper(value, newLine: false);
+            WriteImpl(value, newLine: false);
         }
 
-        private void WriteHelper(string value, bool newLine)
+        private void WriteImpl(string value, bool newLine)
         {
             if (string.IsNullOrEmpty(value) && !newLine)
             {
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    this.WriteHelper(value, newLine);
+                    this.WriteImpl(value, newLine);
                 }
                 finally
                 {
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine(string value)
         {
-            this.WriteHelper(value, newLine: true);
+            this.WriteImpl(value, newLine: true);
         }
 
         /// <summary>
@@ -832,7 +832,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine()
         {
-            this.WriteHelper(string.Empty, newLine: true);
+            this.WriteImpl(Environment.NewLine, newLine: false);
         }
 
         #region Word Wrapping

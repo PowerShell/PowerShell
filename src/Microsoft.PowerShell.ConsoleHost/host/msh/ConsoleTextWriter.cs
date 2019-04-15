@@ -75,7 +75,6 @@ namespace Microsoft.PowerShell
             {
                 _ui.WriteToConsole(bool.FalseString, transcribeResult: true);
             }
-
         }
 
         public override
