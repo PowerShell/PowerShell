@@ -107,10 +107,13 @@ namespace System.Management.Automation
 
                     if (string.IsNullOrEmpty(commandName))
                     {
-                        throw InterpreterError.NewInterpreterException(command, typeof(RuntimeException),
-                                                                       commandExtent, "BadExpression",
-                                                                       ParserStrings.BadExpression,
-                                                                       dotSource ? "." : "&");
+                        throw InterpreterError.NewInterpreterException(
+                            command,
+                            typeof(RuntimeException),
+                            commandExtent,
+                            "BadExpression",
+                            ParserStrings.BadExpression,
+                            dotSource ? "." : "&");
                     }
 
                     try
@@ -328,7 +331,10 @@ namespace System.Management.Automation
                     object parameterValue = de.Value;
                     string parameterText = GetParameterText(parameterName);
 
-                    if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
+                    if (markUntrustedData)
+                    {
+                        ExecutionContext.MarkObjectAsUntrusted(parameterValue);
+                    }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
@@ -342,7 +348,10 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
-                        if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
+                        if (markUntrustedData)
+                        {
+                            ExecutionContext.MarkObjectAsUntrusted(obj);
+                        }
 
                         yield return SplatEnumerableElement(obj, splatAst);
                     }

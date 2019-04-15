@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The optional breakpoint objects to use for debugging.
+        /// Gets or sets the optional breakpoint objects to use for debugging.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
         [Parameter(Position = 1,
