@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Management.Automation;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands

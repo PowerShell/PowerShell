@@ -1768,6 +1768,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.Value.SetBreakpoints(breakpoints);
+        }
+
+        /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id) => 
+            _wrappedDebugger.Value.GetBreakpoint(id);
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints() =>
+            _wrappedDebugger.Value.GetBreakpoints();
+
+        /// <summary>
         /// Exits debugger mode with the provided resume action.
         /// </summary>
         /// <param name="resumeAction">DebuggerResumeAction.</param>
@@ -1919,6 +1941,16 @@ namespace System.Management.Automation
         internal override void DebugRunspace(Runspace runspace)
         {
             _wrappedDebugger.Value.DebugRunspace(runspace);
+        }
+
+        /// <summary>
+        /// Sets up debugger to debug provided Runspace in a nested debug session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug.</param>
+        /// <param name="disableBreakAll"></param>
+        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
+        {
+            _wrappedDebugger.Value.DebugRunspace(runspace, disableBreakAll);
         }
 
         /// <summary>

@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
 {

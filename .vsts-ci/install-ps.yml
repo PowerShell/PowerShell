@@ -15,6 +15,7 @@ trigger:
     - /tools/installpsh-redhat.sh
     - /tools/installpsh-suse.sh
     - /tools/install-powershell.ps1
+    - /.vsts-ci/install-ps.yml
 pr:
   branches:
     include:
@@ -29,6 +30,7 @@ pr:
     - /tools/installpsh-redhat.sh
     - /tools/installpsh-suse.sh
     - /tools/install-powershell.ps1
+    - /.vsts-ci/install-ps.yml
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -40,12 +42,42 @@ resources:
 phases:
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: ./tools/install-powershell.sh
+    scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellUbuntu
     pool: Hosted Ubuntu 1604
+    verification: |
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
-# amazonlinux was missing adduser
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: sudo ./tools/install-powershell.sh
+    jobName: InstallPowerShellAmazonLinux
+    pool: Hosted Ubuntu 1604
+    container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
+    verification: |
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: sudo ./tools/installpsh-amazonlinux.sh
+    jobName: InstallPSHAmazonLinux
+    pool: Hosted Ubuntu 1604
+    container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
+    verification: |
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
+    # ignoring this due to https://github.com/PowerShell/PowerShell/issues/9285
+    continueOnError: true
+
+# TODO: add sudo to script and use image with sudo
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
@@ -53,15 +85,23 @@ phases:
     pool: Hosted Ubuntu 1604
     container: mcr.microsoft.com/powershell:centos-7
 
+
 # VSTS could not find pwsh in:
 # mcr.microsoft.com/powershell:opensuse-42.3
 # could not repo locally
 
+# sudo is not needed on macOS
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: ./tools/install-powershell.sh
     jobName: InstallPowerShellMacOS
     pool: Hosted macOS
+    verification: |
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      {
+        # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
+        Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
 
 - template: templates/install-ps-phase.yml
   parameters:
