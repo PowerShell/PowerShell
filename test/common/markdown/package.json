@@ -5,7 +5,7 @@
   "main": "gulpfile.js",
   "dependencies": {
     "gulp": "^4.0.0",
-    "markdownlint": "^0.11.0",
+    "markdownlint": "^0.13.0",
     "through2": "^2.0.1"
   },
   "devDependencies": {
