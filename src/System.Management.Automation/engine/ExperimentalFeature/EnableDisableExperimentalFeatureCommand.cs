@@ -30,6 +30,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public ConfigScope Scope { get; set; } = ConfigScope.CurrentUser;
+
+        /// <summary>
+        /// EndProcessing method.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            WriteWarning(ExperimentalFeatureStrings.ExperimentalFeaturePending);
+        }
     }
 
     /// <summary>
@@ -87,8 +95,6 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.WriteError(new ErrorRecord(new ItemNotFoundException(errMsg), "ItemNotFoundException", ErrorCategory.ObjectNotFound, name));
                 return;
             }
-
-            cmdlet.WriteWarning(ExperimentalFeatureStrings.ExperimentalFeaturePending);
         }
     }
 
