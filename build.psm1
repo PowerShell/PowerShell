@@ -666,20 +666,6 @@ function New-PSOptions {
     }
     Write-Verbose "Using configuration '$Configuration'"
 
-    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
-        "powershell-win-core"
-    } else {
-        "powershell-unix"
-    }
-
-    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
-    Write-Verbose "Top project directory is $Top"
-
-    if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
-        Write-Verbose "Using framework '$Framework'"
-    }
-
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
             $Runtime = "linux-x64"
@@ -703,6 +689,20 @@ function New-PSOptions {
         } else {
             Write-Verbose "Using runtime '$Runtime'"
         }
+    }
+
+    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+        "powershell-win-core"
+    } else {
+        "powershell-unix"
+    }
+
+    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
+    Write-Verbose "Top project directory is $Top"
+
+    if (-not $Framework) {
+        $Framework = "netcoreapp2.1"
+        Write-Verbose "Using framework '$Framework'"
     }
 
     $Executable = if ($Runtime -eq 'fxdependent') {
