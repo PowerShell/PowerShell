@@ -99,9 +99,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal
         private List<OrderByPropertyEntry> _referenceEntries;
-        private List<OrderByPropertyEntry> _referenceEntryBacklog
+        private readonly List<OrderByPropertyEntry> _referenceEntryBacklog
             = new List<OrderByPropertyEntry>();
-        private List<OrderByPropertyEntry> _differenceEntryBacklog
+        private readonly List<OrderByPropertyEntry> _differenceEntryBacklog
             = new List<OrderByPropertyEntry>();
         private OrderByProperty _orderByProperty = null;
         private OrderByPropertyComparer _comparer = null;
