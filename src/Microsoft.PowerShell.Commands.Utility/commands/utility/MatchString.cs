@@ -1615,11 +1615,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // otherwise construct and populate a new MatchInfo object
                 matchResult = new MatchInfo
-                              {
-                                  IgnoreCase = !CaseSensitive,
-                                  Line = operandString,
-                                  Pattern = Pattern[patternIndex]
-                              };
+                {
+                    IgnoreCase = !CaseSensitive,
+                    Line = operandString,
+                    Pattern = Pattern[patternIndex]
+                };
 
                 if (_preContext > 0 || _postContext > 0)
                 {

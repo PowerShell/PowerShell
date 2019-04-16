@@ -862,7 +862,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-
         /// <summary>
         /// Gets or sets the PreserveAuthorizationOnRedirect property.
         /// </summary>
@@ -1107,7 +1106,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
                 }
-
             }
 
             // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.
@@ -1790,7 +1788,6 @@ namespace Microsoft.PowerShell.Commands
 
             string body = FormatDictionary(content);
             return (SetRequestContent(request, body));
-
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
