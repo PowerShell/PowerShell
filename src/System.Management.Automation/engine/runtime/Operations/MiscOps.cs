@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
             // immediately into the debugger
             if (preference == ActionPreference.Break)
             {
-                funcContext._executionContext?.Debugger?.Break(rte);
+                context.Debugger?.Break(rte);
             }
 
             // set the value of $? here in case it is reset in trap handling.
