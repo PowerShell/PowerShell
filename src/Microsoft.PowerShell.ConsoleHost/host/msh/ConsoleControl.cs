@@ -2542,61 +2542,91 @@ namespace Microsoft.PowerShell
         /// Wrap Win32 WriteConsole.
         /// </summary>
         /// <param name="consoleHandle">
-        /// handle for the console where the string is written
+        /// Handle for the console where the string is written.
         /// </param>
         /// <param name="output">
-        /// string that is written
+        /// String that is written.
+        /// </param>
+        /// <param name="newLine">
+        /// New line is written.
         /// </param>
         /// <exception cref="HostException">
-        /// if the Win32's WriteConsole fails
+        /// If the Win32's WriteConsole fails.
         /// </exception>
-
-        internal static void WriteConsole(ConsoleHandle consoleHandle, string output)
+        internal static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> output, bool newLine)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            if (string.IsNullOrEmpty(output))
+            if (output.Length == 0)
+            {
+                if (newLine)
+                {
+                    WriteConsole(consoleHandle, ConsoleHostUserInterface.Crlf);
+                }
+
                 return;
+            }
 
             // Native WriteConsole doesn't support output buffer longer than 64K.
             // We need to chop the output string if it is too long.
-
             int cursor = 0; // This records the chopping position in output string
-            const int maxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
 
             while (cursor < output.Length)
             {
-                string outBuffer;
+                ReadOnlySpan<char> outBuffer;
 
-                if (cursor + maxBufferSize < output.Length)
+                if (cursor + MaxBufferSize < output.Length)
                 {
-                    outBuffer = output.Substring(cursor, maxBufferSize);
-                    cursor += maxBufferSize;
+                    outBuffer = output.Slice(cursor, MaxBufferSize);
+                    cursor += MaxBufferSize;
+
+                    WriteConsole(consoleHandle, outBuffer);
                 }
                 else
                 {
-                    outBuffer = output.Substring(cursor);
+                    outBuffer = output.Slice(cursor);
                     cursor = output.Length;
+
+                    if (newLine)
+                    {
+                        var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
+                        var endOfLineLength = endOfLine.Length;
+                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+                        outBuffer.CopyTo(outBufferLine);
+                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
+                        WriteConsole(consoleHandle, outBufferLine);
+                    }
+                    else
+                    {
+                        WriteConsole(consoleHandle, outBuffer);
+                    }
                 }
+            }
+        }
 
-                DWORD charsWritten;
-                bool result =
-                    NativeMethods.WriteConsole(
-                        consoleHandle.DangerousGetHandle(),
-                        outBuffer,
-                        (DWORD)outBuffer.Length,
-                        out charsWritten,
-                        IntPtr.Zero);
+        private static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> buffer)
+        {
+            DWORD charsWritten;
+            bool result =
+                NativeMethods.WriteConsole(
+                    consoleHandle.DangerousGetHandle(),
+                    buffer,
+                    (DWORD)buffer.Length,
+                    out charsWritten,
+                    IntPtr.Zero);
 
-                if (result == false)
-                {
-                    int err = Marshal.GetLastWin32Error();
+            if (result == false)
+            {
+                int err = Marshal.GetLastWin32Error();
 
-                    HostException e = CreateHostException(err, "WriteConsole",
-                        ErrorCategory.WriteError, ConsoleControlStrings.WriteConsoleExceptionTemplate);
-                    throw e;
-                }
+                HostException e = CreateHostException(
+                    err,
+                    "WriteConsole",
+                    ErrorCategory.WriteError,
+                    ConsoleControlStrings.WriteConsoleExceptionTemplate);
+                throw e;
             }
         }
 
@@ -3009,14 +3039,29 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.WriteConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool WriteConsole
+            private static extern unsafe bool WriteConsole
             (
                 NakedWin32Handle consoleOutput,
-                string buffer,
+                char* buffer,
                 DWORD numberOfCharsToWrite,
                 out DWORD numberOfCharsWritten,
                 IntPtr reserved
             );
+
+            internal static unsafe bool WriteConsole
+            (
+                NakedWin32Handle consoleOutput,
+                ReadOnlySpan<char> buffer,
+                DWORD numberOfCharsToWrite,
+                out DWORD numberOfCharsWritten,
+                IntPtr reserved
+            )
+            {
+                fixed (char* bufferPtr = &MemoryMarshal.GetReference(buffer))
+                {
+                    return WriteConsole(consoleOutput, bufferPtr, numberOfCharsToWrite, out numberOfCharsWritten, reserved);
+                }
+            }
 
             [DllImport(PinvokeDllNames.GetConsoleTitleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern DWORD GetConsoleTitle(StringBuilder consoleTitle, DWORD size);
