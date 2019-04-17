@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.9")
+$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -254,7 +254,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "nupkg"
+                "msi", "nupkg", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -333,6 +333,18 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
+                }
+            }
+            "msix" {
+                $Arguments = @{
+                    ProductNameSuffix = $NameSuffix
+                    ProductSourcePath = $Source
+                    ProductVersion = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
+                    New-MSIXPackage @Arguments
                 }
             }
             'nupkg' {
@@ -681,8 +693,6 @@ function New-UnixPackage {
 
                 if ($PSBoundParameters.ContainsKey('Distribution')) {
                     $DebDistro = $PSBoundParameters['Distribution']
-                } elseif ($Environment.IsUbuntu14) {
-                    $DebDistro = "ubuntu.14.04"
                 } elseif ($Environment.IsUbuntu16) {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
@@ -1117,7 +1127,6 @@ function Get-PackageDependencies
             )
 
             switch ($Distribution) {
-                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
@@ -2635,6 +2644,8 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
+        # The ApplicationProgramsMenuShortcut GUID should be changed when bumping the major version because the installation directory changes
+        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", '6a69de6c-183d-4bf4-a40e-83007d6293bf', "Process")
     }
     else
     {
@@ -2642,6 +2653,7 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
+        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", 'ab727c4f-2311-474c-9ade-f2c6fd7f7322', "Process")
     }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -2723,6 +2735,107 @@ function New-MSIPackage
            Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
         }
         throw $errorMessage
+    }
+}
+
+<#
+    .Synopsis
+        Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of makeappx.exe.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.1\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
+function New-MSIXPackage
+{
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact='Low')]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Source Path to the Product Files - required to package the contents into an MSIX
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
+    if ($null -eq $makeappx) {
+        # This is location in our dockerfile
+        $dockerPath = Join-Path $env:SystemDrive "makeappx"
+        if (Test-Path $dockerPath) {
+            $makeappx = Get-ChildItem $dockerPath -Include makeappx.exe -Recurse | Select-Object -First 1
+        }
+
+        if ($null -eq $makeappx) {
+            # Try to find in well known location
+            $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64" -Include makeappx.exe -Recurse | Select-Object -First 1
+            if ($null -eq $makeappx) {
+                throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
+            }
+        }
+    }
+
+    $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
+
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion)
+    Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
+    # Necessary image assets need to be in source assets folder
+    $assets = @(
+        'Square150x150Logo.png'
+        'Square44x44Logo.png'
+        'Square44x44Logo.targetsize-48.png'
+        'Square44x44Logo.targetsize-48_altform-unplated.png'
+        'StoreLogo.png'
+    )
+
+    if (!(Test-Path "$ProductSourcePath\assets")) {
+        $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
+    }
+
+    $assets | ForEach-Object {
+        Copy-Item -Path "$RepoRoot\assets\$_" -Destination "$ProductSourcePath\assets\"
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
+        Write-Verbose "Creating priconfig.xml" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makepri createconfig /o /cf (Join-Path $ProductSourcePath "priconfig.xml") /dq en-US }
+        Write-Verbose "Creating resources.pri" -Verbose
+        Push-Location $ProductSourcePath
+        Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
+        Pop-Location
+        Write-Verbose "Creating msix package" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Write-Verbose "Created $packageName.msix" -Verbose
     }
 }
 

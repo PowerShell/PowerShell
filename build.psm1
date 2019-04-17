@@ -130,7 +130,6 @@ function Get-EnvironmentInformation
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
-        $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
@@ -238,7 +237,8 @@ function Start-PSBuild {
 
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag
+        [string]$ReleaseTag,
+        [switch]$Detailed
     )
 
     if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
@@ -328,10 +328,22 @@ Fix steps:
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
+    if ($Options.Runtime -like 'win*' -or ($Options.Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+        $Arguments += "/property:IsWindows=true"
+    }
+    else {
+        $Arguments += "/property:IsWindows=false"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
-    if (-not $SMAOnly -and $Options.Runtime -ne 'fxdependent') {
+    if ($Detailed.IsPresent)
+    {
+        $Arguments += '--verbosity', 'd'
+    }
+
+    if (-not $SMAOnly -and $Options.Runtime -notlike 'fxdependent*') {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
     }
@@ -639,33 +651,11 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = 'Debug'
-    } else {
-        switch ($Configuration) {
-            "CodeCoverage" {
-                if(-not $Environment.IsWindows) {
-                    $Configuration = "Debug"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
-                }
-            }
-        }
     }
+
     Write-Verbose "Using configuration '$Configuration'"
-
-    $PowerShellDir = if (!$Environment.IsWindows) {
-        "powershell-unix"
-    } else {
-        "powershell-win-core"
-    }
-    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
-    Write-Verbose "Top project directory is $Top"
-
-    if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
-        Write-Verbose "Using framework '$Framework'"
-    }
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
@@ -690,6 +680,20 @@ function New-PSOptions {
         } else {
             Write-Verbose "Using runtime '$Runtime'"
         }
+    }
+
+    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+        "powershell-win-core"
+    } else {
+        "powershell-unix"
+    }
+
+    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
+    Write-Verbose "Top project directory is $Top"
+
+    if (-not $Framework) {
+        $Framework = "netcoreapp2.1"
+        Write-Verbose "Using framework '$Framework'"
     }
 
     $Executable = if ($Runtime -eq 'fxdependent') {
@@ -910,7 +914,8 @@ function Start-PSPester {
         [string]$Title = 'PowerShell Core Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
-        [switch]$Wait
+        [switch]$Wait,
+        [switch]$SkipTestToolBuild
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -969,7 +974,10 @@ function Start-PSPester {
     }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    Publish-PSTestTools | ForEach-Object {Write-Host $_}
+    if(!$SkipTestToolBuild.IsPresent)
+    {
+        Publish-PSTestTools | ForEach-Object {Write-Host $_}
+    }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
@@ -1510,7 +1518,7 @@ function Install-Dotnet {
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
 
         # Install new dotnet 1.1.0 preview packages
@@ -1587,8 +1595,7 @@ function Start-PSBootstrap {
 
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
-                if ($Environment.IsUbuntu14) { $Deps += "libicu52" }
-                elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
+                if ($Environment.IsUbuntu16) { $Deps += "libicu55" }
                 elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools

@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Text;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 [module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "Microsoft.PowerShell.Commands.ByteCollection")]
 
@@ -179,15 +179,15 @@ namespace Microsoft.PowerShell.Commands
         [Obsolete("The property is deprecated, please use Offset64 instead.", true)]
         public UInt32 Offset
         {
-             get
-             {
+            get
+            {
                 return (UInt32)Offset64;
-             }
+            }
 
-             private set
-             {
-                 Offset64 = value;
-             }
+            private set
+            {
+                Offset64 = value;
+            }
         }
 
         /// <summary>

@@ -2,6 +2,67 @@
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 
+function Invoke-AppleScript
+{
+    param(
+        [string]$Script,
+        [switch]$PassThru
+    )
+
+    Write-Verbose "running applescript: $Script"
+
+    $result = $Script | osascript
+    if($PassThru.IsPresent)
+    {
+        return $result
+    }
+}
+
+function Get-WindowCountMacOS {
+    param(
+        [string]$Name
+    )
+
+    $processCount = @(Get-Process $Name -ErrorAction Ignore).Count
+
+    if($processCount -eq 0)
+    {
+        return 0
+    }
+
+    $title = Get-WindowsTitleMacOS -name $Name
+
+    if(!$title)
+    {
+        return 0
+    }
+
+    $windowCount = [int](Invoke-AppleScript -Script ('tell application "{0}" to count of windows' -f $Name) -PassThru)
+    return $windowCount
+}
+
+function Get-WindowsTitleMacOS {
+    param(
+        [string]$Name
+    )
+
+    return Invoke-AppleScript -Script ('tell application "{0}" to get name of front window' -f $Name) -PassThru
+}
+
+function Stop-ProcessMacOS {
+    param(
+        [string]$Name,
+        [switch]$QuitFirst
+    )
+
+    if($QuitFirst.IsPresent)
+    {
+        Invoke-AppleScript -Script ('tell application "{0}" to quit' -f $Name)
+    }
+
+    Get-Process -Name $Name -ErrorAction Ignore | Stop-Process -Force
+}
+
 Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
         $powershell = Join-Path $PSHOME -ChildPath pwsh
@@ -15,40 +76,52 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         New-Item -Path $testFile2 -ItemType File -Force > $null
 
         $textFileTestCases = @(
-            @{ TestFile = $testFile1 },
-            @{ TestFile = $testFile2 })
+            @{ TestFile = $testFile1; Name='file in root' },
+            @{ TestFile = $testFile2; Name='file in subDirectory' })
     }
 
     Context "Invoke a text file on Unix" {
         BeforeEach {
             $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
+
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name TextEdit -QuitFirst
+            }
         }
 
         AfterEach {
             Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
+
+        }
+
+        AfterAll{
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name TextEdit
+            }
         }
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to not respond.
-        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
+        It "Should invoke text file '<Name>' without error on Mac" -Pending -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
-            $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            $beforeCount = Get-WindowCountMacOS -Name TextEdit
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
             while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
-                $title = 'tell application "TextEdit" to get name of front window' | osascript
+                $title = Get-WindowsTitleMacOS -name TextEdit
             }
-            $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
-            $afterCount | Should -Be ($beforeCount + 1)
+            $afterCount = Get-WindowCountMacOS -Name TextEdit
+            $afterCount | Should -Be ($beforeCount + 1) -Because "There should be one more 'textEdit' windows open than when the tests started and there was $beforeCount"
             $title | Should -Be $expectedTitle
-            "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
-            'tell application "TextEdit" to quit' | osascript
+            Invoke-AppleScript -Script ('tell application "{0}" to close window "{1}"' -f 'TextEdit', $expectedTitle)
         }
     }
 
@@ -122,6 +195,22 @@ Categories=Application;
             }
         }
 
+        BeforeEach {
+
+            if($IsMacOS)
+            {
+                Get-Process -Name Finder | Stop-Process -Force
+            }
+        }
+
+        AfterAll{
+            if($IsMacOS)
+            {
+                Stop-ProcessMacOs -Name Finder
+            }
+        }
+
+
         It "Should invoke a folder without error" -Skip:(!$supportedEnvironment) {
             if ($IsWindows)
             {
@@ -150,8 +239,9 @@ Categories=Application;
             }
             else
             {
+                Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
                 # validate on MacOS by using AppleScript
-                $beforeCount = [int]('tell application "Finder" to count of windows' | osascript)
+                $beforeCount = Get-WindowCountMacOS -Name Finder
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 $expectedTitle = Split-Path $PSHOME -Leaf

@@ -25,7 +25,7 @@
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\out-printer\Out-Printer.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommand.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
@@ -33,7 +33,7 @@
     <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
-    <Compile Remove="commands\utility\update-list.cs" />
+    <Compile Remove="commands\utility\Update-List.cs" />
     <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
     <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
@@ -57,7 +57,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="4.5.0" />
-    <PackageReference Include="NJsonSchema" Version="9.13.28" />
+    <PackageReference Include="NJsonSchema" Version="9.13.29" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading.Tasks;
+
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands
@@ -174,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
 
             this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
 
-            if(PassThru.IsPresent)
+            if (PassThru.IsPresent)
             {
                 WriteObject(mdOptionInfo);
             }

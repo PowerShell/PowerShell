@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Threading;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -95,6 +95,21 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true,
                    ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
         public Guid InstanceId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The optional breakpoint objects to use for debugging.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints", ExperimentAction.Show)]
+        [Parameter(Position = 1,
+                   ParameterSetName = DebugRunspaceCommand.InstanceIdParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.RunspaceParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.IdParameterSet)]
+        [Parameter(ParameterSetName = DebugRunspaceCommand.NameParameterSet)]
+        public Breakpoint[] Breakpoint
         {
             get;
             set;
@@ -260,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
 
                 // Set up host script debugger to debug the runspace.
-                _debugger.DebugRunspace(_runspace);
+                _debugger.DebugRunspace(_runspace, disableBreakAll: Breakpoint?.Length > 0);
 
                 while (_debugging)
                 {
@@ -517,6 +532,10 @@ namespace Microsoft.PowerShell.Commands
         {
             SetLocalMode(runspace.Debugger, true);
             EnableHostDebugger(runspace, false);
+            if (Breakpoint?.Length > 0)
+            {
+                runspace.Debugger?.SetBreakpoints(Breakpoint);
+            }
         }
 
         private void RestoreRunspace(Runspace runspace)

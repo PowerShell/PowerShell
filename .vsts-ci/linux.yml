@@ -13,6 +13,7 @@ trigger:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 pr:
   branches:
     include:
@@ -25,6 +26,8 @@ pr:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
+
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -81,3 +84,11 @@ jobs:
   parameters:
     pool: Hosted Ubuntu 1604
     dependsOn: linux_build
+
+- job: CodeCovTestPackage
+  displayName: CodeCoverage and Test Packages
+  steps:
+  - powershell: |
+      Import-Module .\tools\ci.psm1
+      New-CodeCoverageAndTestPackage
+    displayName: CodeCoverage and Test Package
