@@ -179,15 +179,15 @@ namespace Microsoft.PowerShell.Commands
         [Obsolete("The property is deprecated, please use Offset64 instead.", true)]
         public UInt32 Offset
         {
-             get
-             {
+            get
+            {
                 return (UInt32)Offset64;
-             }
+            }
 
-             private set
-             {
-                 Offset64 = value;
-             }
+            private set
+            {
+                Offset64 = value;
+            }
         }
 
         /// <summary>

@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             string owner = ConvertToNTAccount(rawSecurityDescriptor.Owner);
             string group = ConvertToNTAccount(rawSecurityDescriptor.Group);
 
-            AccessRightTypeNames? typeToUse = _isTypeSet ? _type : (AccessRightTypeNames?) null;
+            AccessRightTypeNames? typeToUse = _isTypeSet ? _type : (AccessRightTypeNames?)null;
             string[] discretionaryAcl = ConvertAccessControlListToStrings(rawSecurityDescriptor.DiscretionaryAcl, typeToUse);
             string[] systemAcl = ConvertAccessControlListToStrings(rawSecurityDescriptor.SystemAcl, typeToUse);
 

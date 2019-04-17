@@ -9,7 +9,6 @@ using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// Implementation of the Get Verb Command.
     /// </summary>
@@ -41,7 +40,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-
             Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
                 typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
 

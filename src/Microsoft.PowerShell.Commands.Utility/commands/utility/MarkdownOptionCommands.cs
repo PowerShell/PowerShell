@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
 
             this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
 
-            if(PassThru.IsPresent)
+            if (PassThru.IsPresent)
             {
                 WriteObject(mdOptionInfo);
             }

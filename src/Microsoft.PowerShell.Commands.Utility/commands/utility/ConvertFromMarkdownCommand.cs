@@ -58,17 +58,17 @@ namespace Microsoft.PowerShell.Commands
         private const string PathParameterSet = "PathParamSet";
         private const string LiteralPathParameterSet = "LiteralParamSet";
         private const string InputObjParamSet = "InputObjParamSet";
-        private MarkdownConversionType conversionType = MarkdownConversionType.HTML;
-        private PSMarkdownOptionInfo mdOption = null;
+        private MarkdownConversionType _conversionType = MarkdownConversionType.HTML;
+        private PSMarkdownOptionInfo _mdOption = null;
 
         /// <summary>
         /// Read the PSMarkdownOptionInfo set in SessionState.
         /// </summary>
         protected override void BeginProcessing()
         {
-            mdOption = this.CommandInfo.Module.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
+            _mdOption = this.CommandInfo.Module.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
 
-            if (mdOption == null)
+            if (_mdOption == null)
             {
                 throw new InvalidOperationException();
             }
@@ -79,12 +79,12 @@ namespace Microsoft.PowerShell.Commands
             // supportsVT100 == false if host does not support VT100.
             if (supportsVT100 != true)
             {
-                mdOption.EnableVT100Encoding = false;
+                _mdOption.EnableVT100Encoding = false;
             }
 
             if (AsVT100EncodedString)
             {
-                conversionType = MarkdownConversionType.VT100;
+                _conversionType = MarkdownConversionType.VT100;
             }
         }
 
@@ -103,12 +103,12 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(
                             MarkdownConverter.Convert(
                                 ReadContentFromFile(fileInfo.FullName)?.Result,
-                                conversionType,
-                                mdOption));
+                                _conversionType,
+                                _mdOption));
                     }
                     else if (baseObj is string inpObj)
                     {
-                        WriteObject(MarkdownConverter.Convert(inpObj, conversionType, mdOption));
+                        WriteObject(MarkdownConverter.Convert(inpObj, _conversionType, _mdOption));
                     }
                     else
                     {
@@ -125,11 +125,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case PathParameterSet:
-                    ConvertEachFile(Path, conversionType, isLiteral: false, optionInfo: mdOption);
+                    ConvertEachFile(Path, _conversionType, isLiteral: false, optionInfo: _mdOption);
                     break;
 
                 case LiteralPathParameterSet:
-                    ConvertEachFile(LiteralPath, conversionType, isLiteral: true, optionInfo: mdOption);
+                    ConvertEachFile(LiteralPath, _conversionType, isLiteral: true, optionInfo: _mdOption);
                     break;
             }
         }
