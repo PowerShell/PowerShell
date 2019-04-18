@@ -303,7 +303,7 @@ namespace System.Management.Automation.ComInterop
                     return typeof(ErrorWrapper);
 
                 default:
-                    throw new InvalidOperationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, ParserStrings.UnexpectedVarEnum, varEnum)); ;
+                    throw new InvalidOperationException(string.Format(System.Globalization.CultureInfo.CurrentCulture, ParserStrings.UnexpectedVarEnum, varEnum));
             }
         }
 

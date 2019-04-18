@@ -993,7 +993,7 @@ namespace System.Management.Automation
                             scriptThis: AutomationNull.Value,
                             args: Array.Empty<object>());
 
-                        return PSObject.ToStringParser(context, result); ;
+                        return PSObject.ToStringParser(context, result);
                     };
                     return regex.Replace(input, me);
 
