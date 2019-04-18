@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             s_tracer.WriteLine("Initializing DSC class cache force={0}");
 
-            if (System.Management.Automation.Platform.IsLinux || System.Management.Automation.Platform.IsMacOS)
+            if (Platform.IsLinux || Platform.IsMacOS)
             {
                 //
                 // Load the base schema files.
