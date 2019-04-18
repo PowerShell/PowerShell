@@ -277,7 +277,6 @@ namespace Microsoft.WSMan.Management
             }
 
             WriteObject(objSessionOption);
-
         }
     }
 }
