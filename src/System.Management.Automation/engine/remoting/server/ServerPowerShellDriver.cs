@@ -21,11 +21,11 @@ namespace System.Management.Automation
         private bool _extraPowerShellAlreadyScheduled;
         private PowerShell _extraPowerShell;     // extra PowerShell at the server to be run after localPowerShell
         private PSDataCollection<PSObject> _localPowerShellOutput; // output buffer for the local PowerShell
-        // that is associated with this
-                                                 // powershell driver
-        // associated with this powershell
-        // data structure handler object to handle all
-        // communications with the client
+                                                                   // that is associated with this
+                                                                   // powershell driver
+                                                                   // associated with this powershell
+                                                                   // data structure handler object to handle all
+                                                                   // communications with the client
         private bool[] _datasent = new bool[2];  // if the remaining data has been sent
                                                  // to the client before sending state
                                                  // information

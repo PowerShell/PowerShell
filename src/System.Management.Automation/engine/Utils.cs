@@ -232,13 +232,13 @@ namespace System.Management.Automation
                 // circumstance was it faster or more effective than this unrolled version.
                 outputBytes[outputByteIndex--] =
                     (byte)(
-                        ( (digits[byteWalker - 7] << 7)
+                        ((digits[byteWalker - 7] << 7)
                         | (digits[byteWalker - 6] << 6)
                         | (digits[byteWalker - 5] << 5)
                         | (digits[byteWalker - 4] << 4)
                         )
                     | (
-                        ( (digits[byteWalker - 3] << 3)
+                        ((digits[byteWalker - 3] << 3)
                         | (digits[byteWalker - 2] << 2)
                         | (digits[byteWalker - 1] << 1)
                         | (digits[byteWalker])
@@ -762,17 +762,17 @@ namespace System.Management.Automation
                     PolicyBase result = null;
                     switch (typeof(T).Name)
                     {
-                        case nameof(ScriptExecution):             result = policies.ScriptExecution; break;
-                        case nameof(ScriptBlockLogging):          result = policies.ScriptBlockLogging; break;
-                        case nameof(ModuleLogging):               result = policies.ModuleLogging; break;
-                        case nameof(ProtectedEventLogging):       result = policies.ProtectedEventLogging; break;
-                        case nameof(Transcription):               result = policies.Transcription; break;
-                        case nameof(UpdatableHelp):               result = policies.UpdatableHelp; break;
+                        case nameof(ScriptExecution): result = policies.ScriptExecution; break;
+                        case nameof(ScriptBlockLogging): result = policies.ScriptBlockLogging; break;
+                        case nameof(ModuleLogging): result = policies.ModuleLogging; break;
+                        case nameof(ProtectedEventLogging): result = policies.ProtectedEventLogging; break;
+                        case nameof(Transcription): result = policies.Transcription; break;
+                        case nameof(UpdatableHelp): result = policies.UpdatableHelp; break;
                         case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
                         default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
                     }
 
-                    if (result != null) { return (T) result; }
+                    if (result != null) { return (T)result; }
                 }
             }
 
@@ -889,7 +889,7 @@ namespace System.Management.Automation
                 }
 
                 // If no property is set, then we consider this policy as undefined
-                return isAnyPropertySet ? (T) tInstance : null;
+                return isAnyPropertySet ? (T)tInstance : null;
             }
         }
 
@@ -917,7 +917,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (policy != null) { return (T) policy; }
+                if (policy != null) { return (T)policy; }
             }
 
             return null;
@@ -1956,8 +1956,8 @@ namespace System.Management.Automation.Internal
         internal static bool TestStopComputer;
         internal static bool TestWaitStopComputer;
         internal static bool TestRenameComputer;
-        internal static int  TestStopComputerResults;
-        internal static int  TestRenameComputerResults;
+        internal static int TestStopComputerResults;
+        internal static int TestRenameComputerResults;
 
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
