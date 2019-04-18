@@ -66,12 +66,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            _mdOption = this.CommandInfo.Module.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
-
-            if (_mdOption == null)
-            {
-                throw new InvalidOperationException();
-            }
+            _mdOption = this.CommandInfo.Module?.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
+            _mdOption = _mdOption ?? new PSMarkdownOptionInfo();
 
             bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;
 
