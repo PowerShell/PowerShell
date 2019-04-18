@@ -119,12 +119,55 @@ Function Remove-Destination([string] $Destination) {
 }
 
 <#
+.SYNOPSIS
+    Validation for Add-PathTToSettingsToSettings.
+.DESCRIPTION
+    Validates that the parameter being validated:
+    - is not null
+    - is a folder and exists
+    - and that it does not exist in settings where settings is:
+        = the process PATH for Linux/OSX
+        - the registry PATHs for Windows
+#>
+function Test-PathNotInSettings($Path) {
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $false
+    }
+
+    # Remove ending DirectorySeparatorChar for comparison purposes
+    $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
+
+    if (-not [System.IO.Directory]::Exists($Path)) {
+        return $false
+    }
+
+    # [System.Environment]::GetEnvironmentVariable automatically expands all variables
+    [System.Array] $InstalledPaths = @()
+    if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)).Split([System.IO.Path]::PathSeparator))
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)).Split([System.IO.Path]::PathSeparator))
+    } else {
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process).Split([System.IO.Path]::PathSeparator))
+    }
+
+    # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
+    $InstalledPaths = $InstalledPaths.ForEach( { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) } )
+
+    # if $InstalledPaths is in setting return false
+    if ($InstalledPaths -icontains $Path) {
+        return $false
+    }
+
+    return $true
+}
+
+<#
 .Synopsis
     Adds a Path to settings (Supports Windows Only)
 .DESCRIPTION
     Adds the target path to the target registry.
 .Parameter Path
-    The path to add to the registry. It is validated with ValidatePathNotInSettings which ensures that:
+    The path to add to the registry. It is validated with Test-PathNotInSettings which ensures that:
     -The path exists
     -Is a directory
     -Is not in the registry (HKCU or HKLM)
@@ -138,7 +181,7 @@ Function Add-PathTToSettings {
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidatePathNotInSettings()]
+        [ValidateScript({Test-PathNotInSettings $_})]
         [string] $Path,
 
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
