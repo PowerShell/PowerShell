@@ -557,7 +557,6 @@ namespace System.Management.Automation
             catch (Win32Exception e)
             {
                 exceptionToRethrow = e;
-
             }
             catch (PipelineStoppedException)
             {

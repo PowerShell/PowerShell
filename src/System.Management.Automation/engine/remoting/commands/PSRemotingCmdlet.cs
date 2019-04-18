@@ -3278,7 +3278,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-
     }
 
     /// <summary>

@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 using System;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.PowerShell {
+namespace Microsoft.PowerShell
+{
     /// <summary>
     /// Helper functions for process info.
     /// </summary>
@@ -86,5 +88,5 @@ namespace Microsoft.PowerShell {
                 out int returnLength);
 #endif
 
-        }
+    }
 }

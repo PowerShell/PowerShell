@@ -3045,7 +3045,7 @@ namespace System.Management.Automation.Runspaces
         private const uint FileNotFoundHResult = 0x80070002;
 
         // The list of executable to try in order
-        private static readonly string[] Executables = new string[] { "pwsh.exe", "powershell.exe"};
+        private static readonly string[] Executables = new string[] { "pwsh.exe", "powershell.exe" };
 
         #endregion
 

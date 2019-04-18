@@ -167,7 +167,6 @@ namespace System.Management.Automation.Remoting
         }
 
         #endregion
-
     }
 
     #endregion IThrottleOperation
