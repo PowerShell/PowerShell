@@ -30,7 +30,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
 
     internal enum USER_INFORMATION_CLASS
     {
-        UserGeneralInformation      = 1,
+        UserGeneralInformation = 1,
         UserPreferencesInformation,
         UserLogonInformation,
         UserLogonHoursInformation,
@@ -93,7 +93,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         public IntPtr LogonHours;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     internal struct USER_ALL_INFORMATION
     {
         public LARGE_INTEGER LastLogon;
@@ -135,7 +135,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         public bool PrivateDataSensitive;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     internal struct USER_GENERAL_INFORMATION
     {
         public UNICODE_STRING UserName;
@@ -145,7 +145,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         public UNICODE_STRING UserComment;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     internal struct USER_LOGON_INFORMATION
     {
         public UNICODE_STRING UserName;
@@ -271,77 +271,77 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
     {
         #region Constants
         // Account enumeration filters, may be combined by bitwise OR
-        internal const UInt32 SAM_USER_ENUMERATION_FILTER_LOCAL     = 0x00000001;
-        internal const UInt32 SAM_USER_ENUMERATION_FILTER_INTERNET  = 0x00000002;
-        internal const UInt32 SAM_SERVER_LOOKUP_DOMAIN              = 0x0020;
+        internal const UInt32 SAM_USER_ENUMERATION_FILTER_LOCAL = 0x00000001;
+        internal const UInt32 SAM_USER_ENUMERATION_FILTER_INTERNET = 0x00000002;
+        internal const UInt32 SAM_SERVER_LOOKUP_DOMAIN = 0x0020;
 
         //
         // Bits to be used in UserAllInformation's WhichFields field (to indicate
         // which items were queried or set).
         //
-        internal const UInt32 USER_ALL_USERNAME             = 0x00000001;
-        internal const UInt32 USER_ALL_FULLNAME             = 0x00000002;
-        internal const UInt32 USER_ALL_USERID               = 0x00000004;
-        internal const UInt32 USER_ALL_PRIMARYGROUPID       = 0x00000008;
-        internal const UInt32 USER_ALL_ADMINCOMMENT         = 0x00000010;
-        internal const UInt32 USER_ALL_USERCOMMENT          = 0x00000020;
-        internal const UInt32 USER_ALL_HOMEDIRECTORY        = 0x00000040;
-        internal const UInt32 USER_ALL_HOMEDIRECTORYDRIVE   = 0x00000080;
-        internal const UInt32 USER_ALL_SCRIPTPATH           = 0x00000100;
-        internal const UInt32 USER_ALL_PROFILEPATH          = 0x00000200;
-        internal const UInt32 USER_ALL_WORKSTATIONS         = 0x00000400;
-        internal const UInt32 USER_ALL_LASTLOGON            = 0x00000800;
-        internal const UInt32 USER_ALL_LASTLOGOFF           = 0x00001000;
-        internal const UInt32 USER_ALL_LOGONHOURS           = 0x00002000;
-        internal const UInt32 USER_ALL_BADPASSWORDCOUNT     = 0x00004000;
-        internal const UInt32 USER_ALL_LOGONCOUNT           = 0x00008000;
-        internal const UInt32 USER_ALL_PASSWORDCANCHANGE    = 0x00010000;
-        internal const UInt32 USER_ALL_PASSWORDMUSTCHANGE   = 0x00020000;
-        internal const UInt32 USER_ALL_PASSWORDLASTSET      = 0x00040000;
-        internal const UInt32 USER_ALL_ACCOUNTEXPIRES       = 0x00080000;
-        internal const UInt32 USER_ALL_USERACCOUNTCONTROL   = 0x00100000;
-        internal const UInt32 USER_ALL_PARAMETERS           = 0x00200000;   // ntsubauth
-        internal const UInt32 USER_ALL_COUNTRYCODE          = 0x00400000;
-        internal const UInt32 USER_ALL_CODEPAGE             = 0x00800000;
-        internal const UInt32 USER_ALL_NTPASSWORDPRESENT    = 0x01000000;   // field AND boolean
-        internal const UInt32 USER_ALL_LMPASSWORDPRESENT    = 0x02000000;   // field AND boolean
-        internal const UInt32 USER_ALL_PRIVATEDATA          = 0x04000000;   // field AND boolean
-        internal const UInt32 USER_ALL_PASSWORDEXPIRED      = 0x08000000;
-        internal const UInt32 USER_ALL_SECURITYDESCRIPTOR   = 0x10000000;
-        internal const UInt32 USER_ALL_OWFPASSWORD          = 0x20000000;   // boolean
+        internal const UInt32 USER_ALL_USERNAME = 0x00000001;
+        internal const UInt32 USER_ALL_FULLNAME = 0x00000002;
+        internal const UInt32 USER_ALL_USERID = 0x00000004;
+        internal const UInt32 USER_ALL_PRIMARYGROUPID = 0x00000008;
+        internal const UInt32 USER_ALL_ADMINCOMMENT = 0x00000010;
+        internal const UInt32 USER_ALL_USERCOMMENT = 0x00000020;
+        internal const UInt32 USER_ALL_HOMEDIRECTORY = 0x00000040;
+        internal const UInt32 USER_ALL_HOMEDIRECTORYDRIVE = 0x00000080;
+        internal const UInt32 USER_ALL_SCRIPTPATH = 0x00000100;
+        internal const UInt32 USER_ALL_PROFILEPATH = 0x00000200;
+        internal const UInt32 USER_ALL_WORKSTATIONS = 0x00000400;
+        internal const UInt32 USER_ALL_LASTLOGON = 0x00000800;
+        internal const UInt32 USER_ALL_LASTLOGOFF = 0x00001000;
+        internal const UInt32 USER_ALL_LOGONHOURS = 0x00002000;
+        internal const UInt32 USER_ALL_BADPASSWORDCOUNT = 0x00004000;
+        internal const UInt32 USER_ALL_LOGONCOUNT = 0x00008000;
+        internal const UInt32 USER_ALL_PASSWORDCANCHANGE = 0x00010000;
+        internal const UInt32 USER_ALL_PASSWORDMUSTCHANGE = 0x00020000;
+        internal const UInt32 USER_ALL_PASSWORDLASTSET = 0x00040000;
+        internal const UInt32 USER_ALL_ACCOUNTEXPIRES = 0x00080000;
+        internal const UInt32 USER_ALL_USERACCOUNTCONTROL = 0x00100000;
+        internal const UInt32 USER_ALL_PARAMETERS = 0x00200000;   // ntsubauth
+        internal const UInt32 USER_ALL_COUNTRYCODE = 0x00400000;
+        internal const UInt32 USER_ALL_CODEPAGE = 0x00800000;
+        internal const UInt32 USER_ALL_NTPASSWORDPRESENT = 0x01000000;   // field AND boolean
+        internal const UInt32 USER_ALL_LMPASSWORDPRESENT = 0x02000000;   // field AND boolean
+        internal const UInt32 USER_ALL_PRIVATEDATA = 0x04000000;   // field AND boolean
+        internal const UInt32 USER_ALL_PASSWORDEXPIRED = 0x08000000;
+        internal const UInt32 USER_ALL_SECURITYDESCRIPTOR = 0x10000000;
+        internal const UInt32 USER_ALL_OWFPASSWORD = 0x20000000;   // boolean
 
-        internal const UInt32 USER_ALL_UNDEFINED_MASK       = 0xC0000000;
+        internal const UInt32 USER_ALL_UNDEFINED_MASK = 0xC0000000;
 
         //
         // Bit masks for the UserAccountControl member of the USER_ALL_INFORMATION structure
         //
-        internal const UInt32 USER_ACCOUNT_DISABLED                       = 0x00000001;
-        internal const UInt32 USER_HOME_DIRECTORY_REQUIRED                = 0x00000002;
-        internal const UInt32 USER_PASSWORD_NOT_REQUIRED                  = 0x00000004;
-        internal const UInt32 USER_TEMP_DUPLICATE_ACCOUNT                 = 0x00000008;
-        internal const UInt32 USER_NORMAL_ACCOUNT                         = 0x00000010;
-        internal const UInt32 USER_MNS_LOGON_ACCOUNT                      = 0x00000020;
-        internal const UInt32 USER_INTERDOMAIN_TRUST_ACCOUNT              = 0x00000040;
-        internal const UInt32 USER_WORKSTATION_TRUST_ACCOUNT              = 0x00000080;
-        internal const UInt32 USER_SERVER_TRUST_ACCOUNT                   = 0x00000100;
-        internal const UInt32 USER_DONT_EXPIRE_PASSWORD                   = 0x00000200;
-        internal const UInt32 USER_ACCOUNT_AUTO_LOCKED                    = 0x00000400;
-        internal const UInt32 USER_ENCRYPTED_TEXT_PASSWORD_ALLOWED        = 0x00000800;
-        internal const UInt32 USER_SMARTCARD_REQUIRED                     = 0x00001000;
-        internal const UInt32 USER_TRUSTED_FOR_DELEGATION                 = 0x00002000;
-        internal const UInt32 USER_NOT_DELEGATED                          = 0x00004000;
-        internal const UInt32 USER_USE_DES_KEY_ONLY                       = 0x00008000;
-        internal const UInt32 USER_DONT_REQUIRE_PREAUTH                   = 0x00010000;
-        internal const UInt32 USER_PASSWORD_EXPIRED                       = 0x00020000;
+        internal const UInt32 USER_ACCOUNT_DISABLED = 0x00000001;
+        internal const UInt32 USER_HOME_DIRECTORY_REQUIRED = 0x00000002;
+        internal const UInt32 USER_PASSWORD_NOT_REQUIRED = 0x00000004;
+        internal const UInt32 USER_TEMP_DUPLICATE_ACCOUNT = 0x00000008;
+        internal const UInt32 USER_NORMAL_ACCOUNT = 0x00000010;
+        internal const UInt32 USER_MNS_LOGON_ACCOUNT = 0x00000020;
+        internal const UInt32 USER_INTERDOMAIN_TRUST_ACCOUNT = 0x00000040;
+        internal const UInt32 USER_WORKSTATION_TRUST_ACCOUNT = 0x00000080;
+        internal const UInt32 USER_SERVER_TRUST_ACCOUNT = 0x00000100;
+        internal const UInt32 USER_DONT_EXPIRE_PASSWORD = 0x00000200;
+        internal const UInt32 USER_ACCOUNT_AUTO_LOCKED = 0x00000400;
+        internal const UInt32 USER_ENCRYPTED_TEXT_PASSWORD_ALLOWED = 0x00000800;
+        internal const UInt32 USER_SMARTCARD_REQUIRED = 0x00001000;
+        internal const UInt32 USER_TRUSTED_FOR_DELEGATION = 0x00002000;
+        internal const UInt32 USER_NOT_DELEGATED = 0x00004000;
+        internal const UInt32 USER_USE_DES_KEY_ONLY = 0x00008000;
+        internal const UInt32 USER_DONT_REQUIRE_PREAUTH = 0x00010000;
+        internal const UInt32 USER_PASSWORD_EXPIRED = 0x00020000;
         internal const UInt32 USER_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION = 0x00040000;
-        internal const UInt32 USER_NO_AUTH_DATA_REQUIRED                  = 0x00080000;
-        internal const UInt32 USER_PARTIAL_SECRETS_ACCOUNT                = 0x00100000;
-        internal const UInt32 USER_USE_AES_KEYS                           = 0x00200000;
+        internal const UInt32 USER_NO_AUTH_DATA_REQUIRED = 0x00080000;
+        internal const UInt32 USER_PARTIAL_SECRETS_ACCOUNT = 0x00100000;
+        internal const UInt32 USER_USE_AES_KEYS = 0x00200000;
 
         //
         // Access rights for user object
         //
-        internal const UInt16 USER_CHANGE_PASSWORD  = 0x0040;
+        internal const UInt16 USER_CHANGE_PASSWORD = 0x0040;
         #endregion Constants
 
         #region Sam Functions

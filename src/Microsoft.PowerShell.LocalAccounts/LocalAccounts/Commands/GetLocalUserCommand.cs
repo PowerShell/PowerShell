@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -168,6 +169,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 

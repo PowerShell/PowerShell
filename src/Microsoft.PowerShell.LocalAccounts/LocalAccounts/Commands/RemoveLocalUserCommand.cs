@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Management.Automation;
 
@@ -43,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalUser[] InputObject
         {
-            get { return this.inputobject;}
+            get { return this.inputobject; }
 
             set { this.inputobject = value; }
         }
@@ -209,6 +210,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 

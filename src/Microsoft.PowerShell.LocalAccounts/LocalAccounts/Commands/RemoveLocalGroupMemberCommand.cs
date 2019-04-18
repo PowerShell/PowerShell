@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -41,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
-            get { return this.group;}
+            get { return this.group; }
 
             set { this.group = value; }
         }
@@ -62,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
         {
-            get { return this.member;}
+            get { return this.member; }
 
             set { this.member = value; }
         }
@@ -79,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
+            get { return this.name; }
 
             set { this.name = value; }
         }
@@ -96,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
+            get { return this.sid; }
 
             set { this.sid = value; }
         }
@@ -181,34 +182,34 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private LocalPrincipal MakePrincipal(string groupId, LocalPrincipal member)
         {
-               LocalPrincipal principal = null;
+            LocalPrincipal principal = null;
 
-                // if the member has a SID, we can use it directly
-                if (member.SID != null)
+            // if the member has a SID, we can use it directly
+            if (member.SID != null)
+            {
+                principal = member;
+            }
+            else    // otherwise it must have been constructed by name
+            {
+                SecurityIdentifier sid = this.TrySid(member.Name);
+
+                if (sid != null)
                 {
+                    member.SID = sid;
                     principal = member;
                 }
-                else    // otherwise it must have been constructed by name
+                else
                 {
-                    SecurityIdentifier sid = this.TrySid(member.Name);
-
-                    if (sid != null)
+                    try
                     {
-                        member.SID = sid;
-                        principal = member;
+                        principal = sam.LookupAccount(member.Name);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            principal = sam.LookupAccount(member.Name);
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteError(ex.MakeErrorRecord());
-                        }
+                        WriteError(ex.MakeErrorRecord());
                     }
                 }
+            }
 
             if (CheckShouldProcess(principal, groupId))
                 return principal;
@@ -297,6 +298,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 

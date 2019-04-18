@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Management.Automation;
 
@@ -208,6 +209,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 

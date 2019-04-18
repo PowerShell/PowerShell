@@ -37,14 +37,14 @@ namespace System.Management.Automation.SecurityAccountsManager
     /// </summary>
     internal class SamRidEnumeration
     {
-#region Original struct members
+        #region Original struct members
         public string Name;
         public UInt32 RelativeId;
-#endregion Original struct members
+        #endregion Original struct members
 
-#region Additional members
+        #region Additional members
         public IntPtr domainHandle;     // The domain handle used to acquire the data.
-#endregion Additional members
+        #endregion Additional members
     }
 
     /// <summary>
@@ -52,14 +52,14 @@ namespace System.Management.Automation.SecurityAccountsManager
     /// </summary>
     internal class Sam : IDisposable
     {
-#region Enums
+        #region Enums
         [Flags]
         private enum GroupProperties
         {
-            Name        = 0x0001,   // NOT changeable through Set-LocalGroup
+            Name = 0x0001,   // NOT changeable through Set-LocalGroup
             Description = 0x0002,
 
-            AllSetable  = Description,
+            AllSetable = Description,
             AllReadable = AllSetable | Name
         }
 
@@ -74,22 +74,22 @@ namespace System.Management.Automation.SecurityAccountsManager
         [Flags]
         private enum UserProperties
         {
-            None                    = 0x0000,   // not actually a LocalUser member
-            Name                    = 0x0001,   // NOT changeable through Set-LocalUser
-            AccountExpires          = 0x0002,
-            Description             = 0x0004,
-            Enabled                 = 0x0008,   // NOT changeable through Set-LocalUser
-            FullName                = 0x0010,
-            PasswordChangeableDate  = 0x0020,
-            PasswordExpires         = 0x0040,
-            PasswordNeverExpires    = 0x0080,
-            UserMayChangePassword   = 0x0100,
-            PasswordRequired        = 0x0200,
-            PasswordLastSet         = 0x0400,   // CANNOT be set by cmdlet
-            LastLogon               = 0x0800,   // CANNOT be set by cmdlet
+            None = 0x0000,   // not actually a LocalUser member
+            Name = 0x0001,   // NOT changeable through Set-LocalUser
+            AccountExpires = 0x0002,
+            Description = 0x0004,
+            Enabled = 0x0008,   // NOT changeable through Set-LocalUser
+            FullName = 0x0010,
+            PasswordChangeableDate = 0x0020,
+            PasswordExpires = 0x0040,
+            PasswordNeverExpires = 0x0080,
+            UserMayChangePassword = 0x0100,
+            PasswordRequired = 0x0200,
+            PasswordLastSet = 0x0400,   // CANNOT be set by cmdlet
+            LastLogon = 0x0800,   // CANNOT be set by cmdlet
 
             // All properties that can be set through Set-LocalUser
-            AllSetable              = AccountExpires
+            AllSetable = AccountExpires
                                         | Description
                                         | FullName
                                         | PasswordChangeableDate
@@ -99,10 +99,10 @@ namespace System.Management.Automation.SecurityAccountsManager
                                         | PasswordRequired,
 
             // Properties that can be set by Create-LocalUser
-            AllCreateable           = AllSetable | Name | Enabled,
+            AllCreateable = AllSetable | Name | Enabled,
 
             // Properties that can be read by e.g., Get-LocalUser
-            AllReadable             = AllCreateable | PasswordLastSet | LastLogon
+            AllReadable = AllCreateable | PasswordLastSet | LastLogon
         }
 
         private enum PasswordExpiredState
@@ -115,14 +115,14 @@ namespace System.Management.Automation.SecurityAccountsManager
         [Flags]
         internal enum ObjectAccess : uint
         {
-            AliasRead   = Win32.STANDARD_RIGHTS_READ
+            AliasRead = Win32.STANDARD_RIGHTS_READ
                             | ALIAS_LIST_MEMBERS,
-            ALiasWrite  = Win32.STANDARD_RIGHTS_WRITE
+            ALiasWrite = Win32.STANDARD_RIGHTS_WRITE
                             | ALIAS_WRITE_ACCOUNT
                             | ALIAS_ADD_MEMBER
                             | ALIAS_REMOVE_MEMBER,
 
-            UserAllAccess   = Win32.STANDARD_RIGHTS_REQUIRED
+            UserAllAccess = Win32.STANDARD_RIGHTS_REQUIRED
                                 | USER_READ_PREFERENCES
                                 | USER_READ_LOGON
                                 | USER_LIST_GROUPS
@@ -134,14 +134,14 @@ namespace System.Management.Automation.SecurityAccountsManager
                                 | USER_READ_ACCOUNT
                                 | USER_WRITE_ACCOUNT
                                 | USER_WRITE_GROUP_INFORMATION,
-            UserRead        = Win32.STANDARD_RIGHTS_READ
+            UserRead = Win32.STANDARD_RIGHTS_READ
                                 | USER_READ_GENERAL             // not in original USER_READ
                                 | USER_READ_PREFERENCES
                                 | USER_READ_LOGON
                                 | USER_READ_ACCOUNT
                                 | USER_LIST_GROUPS
                                 | USER_READ_GROUP_INFORMATION,
-            UserWrite       = Win32.STANDARD_RIGHTS_WRITE
+            UserWrite = Win32.STANDARD_RIGHTS_WRITE
                                 | USER_WRITE_PREFERENCES
                                 | USER_CHANGE_PASSWORD
         }
@@ -149,7 +149,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         [Flags]
         internal enum DomainAccess : uint
         {
-            AllAccess   = Win32.STANDARD_RIGHTS_REQUIRED
+            AllAccess = Win32.STANDARD_RIGHTS_REQUIRED
                             | DOMAIN_READ_OTHER_PARAMETERS
                             | DOMAIN_WRITE_OTHER_PARAMETERS
                             | DOMAIN_WRITE_PASSWORD_PARAMS
@@ -162,12 +162,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                             | DOMAIN_LOOKUP
                             | DOMAIN_ADMINISTER_SERVER,
 
-            Read        = Win32.STANDARD_RIGHTS_READ
+            Read = Win32.STANDARD_RIGHTS_READ
                             | DOMAIN_LIST_ACCOUNTS
                             | DOMAIN_GET_ALIAS_MEMBERSHIP
                             | DOMAIN_READ_OTHER_PARAMETERS,
 
-            Write       = Win32.STANDARD_RIGHTS_WRITE
+            Write = Win32.STANDARD_RIGHTS_WRITE
                             | DOMAIN_WRITE_OTHER_PARAMETERS
                             | DOMAIN_WRITE_PASSWORD_PARAMS
                             | DOMAIN_CREATE_USER
@@ -175,7 +175,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                             | DOMAIN_CREATE_ALIAS
                             | DOMAIN_ADMINISTER_SERVER,
 
-            Max         = Win32.MAXIMUM_ALLOWED
+            Max = Win32.MAXIMUM_ALLOWED
         }
 
         /// <summary>
@@ -204,9 +204,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             User = 1,
             Group
         }
-#endregion Enums
+        #endregion Enums
 
-#region Internal Classes
+        #region Internal Classes
         /// <summary>
         /// Holds information about the underway operation.
         /// </summary>
@@ -323,56 +323,56 @@ namespace System.Management.Automation.SecurityAccountsManager
                     return AccountName;
             }
         }
-#endregion Internal Classes
+        #endregion Internal Classes
 
-#region Constants
+        #region Constants
         //
         // Access rights
         //
-        private const UInt32 ALIAS_ADD_MEMBER       = 0x0001;
-        private const UInt32 ALIAS_REMOVE_MEMBER    = 0x0002;
-        private const UInt32 ALIAS_LIST_MEMBERS     = 0x0004;
+        private const UInt32 ALIAS_ADD_MEMBER = 0x0001;
+        private const UInt32 ALIAS_REMOVE_MEMBER = 0x0002;
+        private const UInt32 ALIAS_LIST_MEMBERS = 0x0004;
         private const UInt32 ALIAS_READ_INFORMATION = 0x0008;
-        private const UInt32 ALIAS_WRITE_ACCOUNT    = 0x0010;
+        private const UInt32 ALIAS_WRITE_ACCOUNT = 0x0010;
 
-        private const UInt32 USER_READ_GENERAL              = 0x0001;
-        private const UInt32 USER_READ_PREFERENCES          = 0x0002;
-        private const UInt32 USER_WRITE_PREFERENCES         = 0x0004;
-        private const UInt32 USER_READ_LOGON                = 0x0008;
-        private const UInt32 USER_READ_ACCOUNT              = 0x0010;
-        private const UInt32 USER_WRITE_ACCOUNT             = 0x0020;
-        private const UInt32 USER_CHANGE_PASSWORD           = 0x0040;
-        private const UInt32 USER_FORCE_PASSWORD_CHANGE     = 0x0080;
-        private const UInt32 USER_LIST_GROUPS               = 0x0100;
-        private const UInt32 USER_READ_GROUP_INFORMATION    = 0x0200;
-        private const UInt32 USER_WRITE_GROUP_INFORMATION   = 0x0400;
+        private const UInt32 USER_READ_GENERAL = 0x0001;
+        private const UInt32 USER_READ_PREFERENCES = 0x0002;
+        private const UInt32 USER_WRITE_PREFERENCES = 0x0004;
+        private const UInt32 USER_READ_LOGON = 0x0008;
+        private const UInt32 USER_READ_ACCOUNT = 0x0010;
+        private const UInt32 USER_WRITE_ACCOUNT = 0x0020;
+        private const UInt32 USER_CHANGE_PASSWORD = 0x0040;
+        private const UInt32 USER_FORCE_PASSWORD_CHANGE = 0x0080;
+        private const UInt32 USER_LIST_GROUPS = 0x0100;
+        private const UInt32 USER_READ_GROUP_INFORMATION = 0x0200;
+        private const UInt32 USER_WRITE_GROUP_INFORMATION = 0x0400;
 
         private const UInt32 DOMAIN_READ_PASSWORD_PARAMETERS = 0x0001;
-        private const UInt32 DOMAIN_WRITE_PASSWORD_PARAMS    = 0x0002;
-        private const UInt32 DOMAIN_READ_OTHER_PARAMETERS    = 0x0004;
-        private const UInt32 DOMAIN_WRITE_OTHER_PARAMETERS   = 0x0008;
-        private const UInt32 DOMAIN_CREATE_USER              = 0x0010;
-        private const UInt32 DOMAIN_CREATE_GROUP             = 0x0020;
-        private const UInt32 DOMAIN_CREATE_ALIAS             = 0x0040;
-        private const UInt32 DOMAIN_GET_ALIAS_MEMBERSHIP     = 0x0080;
-        private const UInt32 DOMAIN_LIST_ACCOUNTS            = 0x0100;
-        private const UInt32 DOMAIN_LOOKUP                   = 0x0200;
-        private const UInt32 DOMAIN_ADMINISTER_SERVER        = 0x0400;
-#endregion Constants
+        private const UInt32 DOMAIN_WRITE_PASSWORD_PARAMS = 0x0002;
+        private const UInt32 DOMAIN_READ_OTHER_PARAMETERS = 0x0004;
+        private const UInt32 DOMAIN_WRITE_OTHER_PARAMETERS = 0x0008;
+        private const UInt32 DOMAIN_CREATE_USER = 0x0010;
+        private const UInt32 DOMAIN_CREATE_GROUP = 0x0020;
+        private const UInt32 DOMAIN_CREATE_ALIAS = 0x0040;
+        private const UInt32 DOMAIN_GET_ALIAS_MEMBERSHIP = 0x0080;
+        private const UInt32 DOMAIN_LIST_ACCOUNTS = 0x0100;
+        private const UInt32 DOMAIN_LOOKUP = 0x0200;
+        private const UInt32 DOMAIN_ADMINISTER_SERVER = 0x0400;
+        #endregion Constants
 
-#region Static Data
+        #region Static Data
         private static SecurityIdentifier worldSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-#endregion Static Data
+        #endregion Static Data
 
-#region Instance Data
+        #region Instance Data
         private IntPtr samHandle = IntPtr.Zero;
         private IntPtr localDomainHandle = IntPtr.Zero;
         private IntPtr builtinDomainHandle = IntPtr.Zero;
         private Context context = null;
         private string machineName = string.Empty;
-#endregion Instance Data
+        #endregion Instance Data
 
-#region Construction
+        #region Construction
         internal Sam()
         {
             OpenHandles();
@@ -381,9 +381,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             // so we'll use this instead.
             machineName = System.Net.Dns.GetHostName();
         }
-#endregion Construction
+        #endregion Construction
 
-#region Public (Internal) Methods
+        #region Public (Internal) Methods
         public string StripMachineName(string name)
         {
             var mn = machineName + '\\';
@@ -393,7 +393,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             return name;
         }
-#region Local Groups
+        #region Local Groups
         /// <summary>
         /// Retrieve a named local group.
         /// </summary>
@@ -576,7 +576,6 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             foreach (var sre in EnumerateGroups())
             {
-
                 if (pred(sre.Name))
                 {
                     context.target = sre.Name;
@@ -742,9 +741,9 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             return RemoveGroupMember(groupSid, member);
         }
-#endregion Local Groups
+        #endregion Local Groups
 
-#region Local Users
+        #region Local Users
         /// <summary>
         /// Retrieve a named local user.
         /// </summary>
@@ -1009,9 +1008,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             foreach (var sre in EnumerateUsers())
                 yield return MakeLocalUserObject(sre);
         }
-#endregion Local Users
+        #endregion Local Users
 
-#region Local Principals
+        #region Local Principals
         internal LocalPrincipal LookupAccount(string name)
         {
             var info = LookupAccountInfo(name);
@@ -1021,10 +1020,10 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             return MakeLocalPrincipalObject(info);
         }
-#endregion Local Principals
-#endregion Public (Internal) Methods
+        #endregion Local Principals
+        #endregion Public (Internal) Methods
 
-#region Private Methods
+        #region Private Methods
         /// <summary>
         /// Open the handles stored by Sam instances.
         /// </summary>
@@ -1179,12 +1178,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                         buffer = IntPtr.Zero;
 
                         yield return new SamRidEnumeration
-                                        {
-                                            Name = sre.Name.ToString(),
-                                            RelativeId = sre.RelativeId,
+                        {
+                            Name = sre.Name.ToString(),
+                            RelativeId = sre.RelativeId,
 
-                                            domainHandle = domainHandle
-                                        };
+                            domainHandle = domainHandle
+                        };
                     }
                 }
             } while (Succeeded(status) && status != 0 && countReturned != 0);
@@ -1247,7 +1246,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 status = SamApi.SamCreateUser2InDomain(domainHandle,
                     ref str,
-                    (int) SamApi.USER_NORMAL_ACCOUNT,
+                    (int)SamApi.USER_NORMAL_ACCOUNT,
                     Win32.MAXIMUM_ALLOWED,
                     out userHandle,
                     out grantedAccess,
@@ -1264,11 +1263,11 @@ namespace System.Management.Automation.SecurityAccountsManager
                 SetUserData(userHandle, userInfo, UserProperties.AllCreateable, password, PasswordExpiredState.NotExpired, setPasswordNeverExpires);
 
                 return MakeLocalUserObject(new SamRidEnumeration
-                                            {
-                                                domainHandle = domainHandle,
-                                                Name = userInfo.Name,
-                                                RelativeId = relativeId
-                                            },
+                {
+                    domainHandle = domainHandle,
+                    Name = userInfo.Name,
+                    RelativeId = relativeId
+                },
                                             userHandle);
             }
             catch (Exception)
@@ -1361,11 +1360,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                        ALIAS_INFORMATION_CLASS.AliasNameInformation,
                                                        buffer);
                 ThrowOnFailure(status,
-                               new Context {
-                                            objectId = newName,
-                                            operation = context.operation,
-                                            type = context.type
-                                           }
+                               new Context
+                               {
+                                   objectId = newName,
+                                   operation = context.operation,
+                                   type = context.type
+                               }
                               );
             }
             finally
@@ -1426,7 +1426,6 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                 type = context.type
                                             }
                                             );
-
             }
             finally
             {
@@ -1473,7 +1472,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                     Marshal.Copy(memberIds, idArray, 0, (int)memberCount);
 
-                    for (int i=0; i < memberCount; i++)
+                    for (int i = 0; i < memberCount; i++)
                     {
                         var sid = new SecurityIdentifier(idArray[i]);
                         yield return MakeLocalPrincipalObject(LookupAccountInfo(sid));
@@ -1531,13 +1530,14 @@ namespace System.Management.Automation.SecurityAccountsManager
                 status = SamApi.SamRemoveMemberFromAlias(aliasHandle, binarySid);
 
                 ex = MakeException(status,
-                                        new Context {
-                                                        memberId = member.ToString(),
-                                                        objectId = context.objectId,
-                                                        operation = context.operation,
-                                                        target = context.target,
-                                                        type = context.type
-                                                    }
+                                        new Context
+                                        {
+                                            memberId = member.ToString(),
+                                            objectId = context.objectId,
+                                            operation = context.operation,
+                                            target = context.target,
+                                            type = context.type
+                                        }
                                         );
             }
             finally
@@ -1611,30 +1611,30 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 var userSid = RidToSid(sre.domainHandle, sre.RelativeId);
                 LocalUser user = new LocalUser()
-                                    {
-                                        PrincipalSource = GetPrincipalSource(sre),
-                                        SID = userSid,
+                {
+                    PrincipalSource = GetPrincipalSource(sre),
+                    SID = userSid,
 
-                                        Name = allInfo.UserName.ToString(),
-                                        FullName = allInfo.FullName.ToString(),
-                                        Description = allInfo.AdminComment.ToString(),
+                    Name = allInfo.UserName.ToString(),
+                    FullName = allInfo.FullName.ToString(),
+                    Description = allInfo.AdminComment.ToString(),
 
-                                        // TODO: why is this coming up as 864000000000 (number of ticks per day)?
-                                        PasswordChangeableDate = DateTimeFromSam(allInfo.PasswordCanChange.QuadPart),
+                    // TODO: why is this coming up as 864000000000 (number of ticks per day)?
+                    PasswordChangeableDate = DateTimeFromSam(allInfo.PasswordCanChange.QuadPart),
 
-                                        PasswordExpires = DateTimeFromSam(allInfo.PasswordMustChange.QuadPart),
+                    PasswordExpires = DateTimeFromSam(allInfo.PasswordMustChange.QuadPart),
 
-                                        // TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
-                                        AccountExpires = DateTimeFromSam(allInfo.AccountExpires.QuadPart),
-                                        LastLogon = DateTimeFromSam(allInfo.LastLogon.QuadPart),
-                                        PasswordLastSet = DateTimeFromSam(allInfo.PasswordLastSet.QuadPart),
+                    // TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
+                    AccountExpires = DateTimeFromSam(allInfo.AccountExpires.QuadPart),
+                    LastLogon = DateTimeFromSam(allInfo.LastLogon.QuadPart),
+                    PasswordLastSet = DateTimeFromSam(allInfo.PasswordLastSet.QuadPart),
 
-                                        UserMayChangePassword = GetUserMayChangePassword(userHandle, userSid),
+                    UserMayChangePassword = GetUserMayChangePassword(userHandle, userSid),
 
-                                        PasswordRequired = (allInfo.UserAccountControl & SamApi.USER_PASSWORD_NOT_REQUIRED) == 0,
+                    PasswordRequired = (allInfo.UserAccountControl & SamApi.USER_PASSWORD_NOT_REQUIRED) == 0,
 
-                                        Enabled = !((allInfo.UserAccountControl & SamApi.USER_ACCOUNT_DISABLED) == SamApi.USER_ACCOUNT_DISABLED)
-                                    };
+                    Enabled = !((allInfo.UserAccountControl & SamApi.USER_ACCOUNT_DISABLED) == SamApi.USER_ACCOUNT_DISABLED)
+                };
 
                 return user;
             }
@@ -1751,11 +1751,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                       USER_INFORMATION_CLASS.UserAccountNameInformation,
                                                       buffer);
                 ThrowOnFailure(status,
-                               new Context {
-                                            objectId = newName,
-                                            operation = context.operation,
-                                            type = context.type
-                                           }
+                               new Context
+                               {
+                                   objectId = newName,
+                                   operation = context.operation,
+                                   type = context.type
+                               }
                               );
             }
             finally
@@ -1845,12 +1846,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                         buffer = IntPtr.Zero;
 
                         yield return new SamRidEnumeration
-                                        {
-                                            Name = sre.Name.ToString(),
-                                            RelativeId = sre.RelativeId,
+                        {
+                            Name = sre.Name.ToString(),
+                            RelativeId = sre.RelativeId,
 
-                                            domainHandle = domainHandle
-                                        };
+                            domainHandle = domainHandle
+                        };
                     }
                 }
             } while (Succeeded(status) && status != 0 && countReturned != 0);
@@ -1930,11 +1931,11 @@ namespace System.Management.Automation.SecurityAccountsManager
                 }
 
                 return MakeLocalGroupObject(new SamRidEnumeration
-                                                {
-                                                    domainHandle = domainHandle,
-                                                    Name = groupInfo.Name,
-                                                    RelativeId = relativeId
-                                                },
+                {
+                    domainHandle = domainHandle,
+                    Name = groupInfo.Name,
+                    RelativeId = relativeId
+                },
                                             aliasHandle);
             }
             finally
@@ -2068,13 +2069,13 @@ namespace System.Management.Automation.SecurityAccountsManager
                 generalInfo = Marshal.PtrToStructure<ALIAS_GENERAL_INFORMATION>(buffer);
 
                 LocalGroup group = new LocalGroup()
-                                    {
-                                        PrincipalSource = GetPrincipalSource(sre),
-                                        SID = RidToSid(sre.domainHandle, sre.RelativeId),
+                {
+                    PrincipalSource = GetPrincipalSource(sre),
+                    SID = RidToSid(sre.domainHandle, sre.RelativeId),
 
-                                        Name = generalInfo.Name.ToString(),
-                                        Description = generalInfo.AdminComment.ToString()
-                                    };
+                    Name = generalInfo.Name.ToString(),
+                    Description = generalInfo.AdminComment.ToString()
+                };
 
                 return group;
             }
@@ -2134,7 +2135,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (user.PasswordRequired != changed.PasswordRequired)
                 properties |= UserProperties.PasswordRequired;
 
-            if (   properties != UserProperties.None
+            if (properties != UserProperties.None
                 || passwordExpired != PasswordExpiredState.Unchanged
                 || password != null)
             {
@@ -2627,7 +2628,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
         }
 
-#region Utility Methods
+        #region Utility Methods
         /// <summary>
         /// Create a <see cref="System.Security.Principal.SecurityIdentifier"/>
         /// object from a relative ID.
@@ -2716,12 +2717,12 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             if (error == Win32.ERROR_SUCCESS)
                 return new AccountInfo
-                            {
-                                AccountName = sbAccountName.ToString(),
-                                DomainName = sbDomainName.ToString(),
-                                Sid = sid,
-                                Use = use
-                            };
+                {
+                    AccountName = sbAccountName.ToString(),
+                    DomainName = sbDomainName.ToString(),
+                    Sid = sid,
+                    Use = use
+                };
             else if (error == Win32.ERROR_NONE_MAPPED)
                 return null;
             else
@@ -2742,7 +2743,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             var sbDomainName = new StringBuilder();
             var domainNameLength = (uint)sbDomainName.Capacity;
-            byte [] sid = null;
+            byte[] sid = null;
             uint sidLength = 0;
             SID_NAME_USE use;
             int error = Win32.NO_ERROR;
@@ -2771,7 +2772,6 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                  out use))
                         error = Marshal.GetLastWin32Error();
                 }
-
             }
 
             if (error == Win32.ERROR_SUCCESS)
@@ -2948,7 +2948,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     return new UserNotFoundException(context.ObjectName, context.target);
 
                 case NtStatus.STATUS_SPECIAL_GROUP:     // The group specified is a special group and cannot be operated on in the requested fashion.
-                // case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
+                                                        // case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
 
                     return new InvalidOperationException(StringUtil.Format(Strings.InvalidForGroup, context.ObjectName));
 
@@ -3212,10 +3212,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             return Environment.OSVersion;
 #endif
         }
-#endregion Utility Methods
-#endregion Private Methods
+        #endregion Utility Methods
+        #endregion Private Methods
 
-#region IDisposable Support
+        #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -3271,6 +3271,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             // uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
-#endregion IDisposable Support
+        #endregion IDisposable Support
     }
 }

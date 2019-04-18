@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -91,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public System.Security.Principal.SecurityIdentifier[] SID
         {
-            get { return this.sid;}
+            get { return this.sid; }
 
             set { this.sid = value; }
         }
@@ -215,6 +216,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 

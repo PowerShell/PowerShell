@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class LocalAccountsException : Exception
     {
-#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Gets the <see cref="System.Management.Automation.ErrorCategory"/>
         /// value for this exception.
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 return name;
             }
         }
-#endregion Public Properties
+        #endregion Public Properties
 
         internal LocalAccountsException(string message, object target, ErrorCategory errorCategory)
             : base(message)
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class InternalException : LocalAccountsException
     {
-#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Gets the NTSTATUS code for this exception.
         /// </summary>
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             private set;
         }
-#endregion Public Properties
+        #endregion Public Properties
 
         internal InternalException(UInt32 ntStatus,
                                    string message,
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class Win32InternalException : LocalAccountsException
     {
-#region Public Properties
+        #region Public Properties
         /// <summary>
         /// The Win32 error code for this exception.
         /// </summary>
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             private set;
         }
-#endregion Public Properties
+        #endregion Public Properties
 
         internal Win32InternalException(int errorCode,
                                         string message,
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Compliance Constructor.
         /// </summary>
-        public Win32InternalException() : base() {}
+        public Win32InternalException() : base() { }
         /// <summary>
         /// Compliance Constructor.
         /// </summary>

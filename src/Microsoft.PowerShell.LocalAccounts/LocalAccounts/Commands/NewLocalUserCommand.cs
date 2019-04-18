@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #region Using directives
+
 using System;
 using System.Management.Automation;
 
@@ -49,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.DateTime AccountExpires
         {
-            get { return this.accountexpires;}
+            get { return this.accountexpires; }
 
             set { this.accountexpires = value; }
         }
@@ -64,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
-            get { return this.accountneverexpires;}
+            get { return this.accountneverexpires; }
 
             set { this.accountneverexpires = value; }
         }
@@ -79,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Description
         {
-            get { return this.description;}
+            get { return this.description; }
 
             set { this.description = value; }
         }
@@ -93,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.Management.Automation.SwitchParameter Disabled
         {
-            get { return this.disabled;}
+            get { return this.disabled; }
 
             set { this.disabled = value; }
         }
@@ -109,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string FullName
         {
-            get { return this.fullname;}
+            get { return this.fullname; }
 
             set { this.fullname = value; }
         }
@@ -129,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateLength(1, 20)]
         public string Name
         {
-            get { return this.name;}
+            get { return this.name; }
 
             set { this.name = value; }
         }
@@ -147,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.SecureString Password
         {
-            get { return this.password;}
+            get { return this.password; }
 
             set { this.password = value; }
         }
@@ -193,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.Management.Automation.SwitchParameter UserMayNotChangePassword
         {
-            get { return this.usermaynotchangepassword;}
+            get { return this.usermaynotchangepassword; }
 
             set { this.usermaynotchangepassword = value; }
         }
@@ -226,13 +227,13 @@ namespace Microsoft.PowerShell.Commands
                 if (CheckShouldProcess(Name))
                 {
                     var user = new LocalUser
-                                {
-                                    Name = Name,
-                                    Description = Description,
-                                    Enabled = true,
-                                    FullName = FullName,
-                                    UserMayChangePassword = true
-                                };
+                    {
+                        Name = Name,
+                        Description = Description,
+                        Enabled = true,
+                        FullName = FullName,
+                        UserMayChangePassword = true
+                    };
 
                     foreach (var paramName in parameterNames)
                     {
@@ -290,6 +291,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
 
