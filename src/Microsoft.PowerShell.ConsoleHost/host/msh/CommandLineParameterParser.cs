@@ -1043,7 +1043,7 @@ namespace Microsoft.PowerShell
             foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
             {
                 sb.Append(s);
-                sb.Append(ConsoleHostUserInterface.Crlf);
+                sb.Append(Environment.NewLine);
             }
 
             ++i;

@@ -2562,7 +2562,7 @@ namespace Microsoft.PowerShell
             {
                 if (newLine)
                 {
-                    WriteConsole(consoleHandle, ConsoleHostUserInterface.Crlf);
+                    WriteConsole(consoleHandle, Environment.NewLine);
                 }
 
                 return;
@@ -2591,7 +2591,7 @@ namespace Microsoft.PowerShell
 
                     if (newLine)
                     {
-                        var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
+                        var endOfLine = Environment.NewLine.AsSpan();
                         var endOfLineLength = endOfLine.Length;
                         Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
                         outBuffer.CopyTo(outBufferLine);
