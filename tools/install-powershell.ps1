@@ -131,31 +131,31 @@ Function Remove-Destination([string] $Destination) {
 #>
 function Test-PathNotInSettings($Path) {
     if ([string]::IsNullOrWhiteSpace($Path)) {
-        return $false
+        throw 'Argument is null'
     }
 
     # Remove ending DirectorySeparatorChar for comparison purposes
     $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
 
     if (-not [System.IO.Directory]::Exists($Path)) {
-        return $false
+        throw "Path does not exist: $Path"
     }
 
     # [System.Environment]::GetEnvironmentVariable automatically expands all variables
     [System.Array] $InstalledPaths = @()
     if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
-        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)).Split([System.IO.Path]::PathSeparator))
-        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)).Split([System.IO.Path]::PathSeparator))
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)) -split ([System.IO.Path]::PathSeparator))
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)) -split ([System.IO.Path]::PathSeparator))
     } else {
-        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process).Split([System.IO.Path]::PathSeparator))
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process) -split ([System.IO.Path]::PathSeparator))
     }
 
     # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
-    $InstalledPaths = $InstalledPaths.ForEach( { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) } )
+    $InstalledPaths = $InstalledPaths | ForEach-Object { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) }
 
     # if $InstalledPaths is in setting return false
     if ($InstalledPaths -icontains $Path) {
-        return $false
+        throw 'Already in PATH environment variable'
     }
 
     return $true
@@ -370,7 +370,7 @@ try {
                 try {
                     Add-PathTToSettings -Path $Destination -Target $TargetRegistry
                 } catch {
-                    Write-Verbose -Message "Unable to save the new path in the machine wide registry."
+                    Write-Warning -Message "Unable to save the new path in the machine wide registry: $_"
                     $TargetRegistry = [System.EnvironmentVariableTarget]::User
                 }
             } else {
@@ -382,7 +382,7 @@ try {
                 try {
                     Add-PathTToSettings -Path $Destination -Target $TargetRegistry
                 } catch {
-                    Write-Verbose -Message "Unable to save the new path in the registry for the current user"
+                    Write-Warning -Message "Unable to save the new path in the registry for the current user : $_"
                 }
             }
         } else {
