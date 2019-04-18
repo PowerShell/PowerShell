@@ -317,7 +317,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initialize an instance that represents the none-value.
         /// </summary>
-        private ExperimentalAttribute() {}
+        private ExperimentalAttribute() { }
 
         /// <summary>
         /// An instance that represents the none-value.
