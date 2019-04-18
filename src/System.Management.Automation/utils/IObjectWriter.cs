@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Threading;
+
 namespace System.Management.Automation.Runspaces
 {
-    using System;
-    using System.Threading;
-    using System.Collections;
-
     /// <summary>
     /// PipelineWriter allows the caller to provide an asynchronous stream of objects
     /// as input to a <see cref="System.Management.Automation.Runspaces.Pipeline"/>.

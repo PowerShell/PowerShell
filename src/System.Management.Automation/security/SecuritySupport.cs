@@ -157,43 +157,43 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                {
-                    if (policy == ExecutionPolicy.Undefined)
-                        executionPolicy = null;
+                    {
+                        if (policy == ExecutionPolicy.Undefined)
+                            executionPolicy = null;
 
-                    Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
-                    break;
-                }
+                        Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
+                        break;
+                    }
 
                 case ExecutionPolicyScope.CurrentUser:
-                {
-                    // They want to remove it
-                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.CurrentUser, shellId);
-                    }
-                    else
-                    {
-                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
-                    }
+                        // They want to remove it
+                        if (policy == ExecutionPolicy.Undefined)
+                        {
+                            PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.CurrentUser, shellId);
+                        }
+                        else
+                        {
+                            PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
 
                 case ExecutionPolicyScope.LocalMachine:
-                {
-                    // They want to remove it
-                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.AllUsers, shellId);
-                    }
-                    else
-                    {
-                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
-                    }
+                        // They want to remove it
+                        if (policy == ExecutionPolicy.Undefined)
+                        {
+                            PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.AllUsers, shellId);
+                        }
+                        else
+                        {
+                            PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
 #endif
         }
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Internal
             return null;
         }
 
-#endregion execution policy
+        #endregion execution policy
 
         private static bool _saferIdentifyLevelApiSupported = true;
 

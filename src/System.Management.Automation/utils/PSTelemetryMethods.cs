@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public static class TelemetryAPI
     {
-        #region Public API
+#region Public API
 
         /// <summary>
         /// Public API to expose Telemetry in PowerShell
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage(message, arguments);
         }
 
-        #endregion
+#endregion
 
         private static int s_anyPowerShellSessionOpen;
         private static DateTime s_sessionStartTime;

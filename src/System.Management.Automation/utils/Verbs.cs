@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
         public static string GetVerbAliasPrefix(string verb)
         {
             FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
-            if(aliasField != null)
+            if (aliasField != null)
             {
                 return (string)aliasField.GetValue(null);
             }
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Verb
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation
         /// </summary>
         public string AliasPrefix
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Group
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Description
         {
-            get;set;
+            get; set;
         }
     }
 

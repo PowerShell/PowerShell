@@ -41,7 +41,6 @@ namespace System.Management.Automation.Tracing
 
             PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
                 PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
-
         }
 
         /// <summary>
