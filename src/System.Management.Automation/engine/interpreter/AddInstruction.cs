@@ -19,7 +19,7 @@ namespace System.Management.Automation.Interpreter
 {
     internal abstract class AddInstruction : Instruction
     {
-        private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
 
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Interpreter
 
     internal abstract class AddOvfInstruction : Instruction
     {
-        private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
 

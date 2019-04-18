@@ -9,6 +9,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Reflection;
@@ -39,7 +40,6 @@ namespace System.Management.Automation.Runspaces
 
         public static IEnumerable<TypeData> Get()
         {
-
             var td1 = new TypeData(@"System.Diagnostics.Eventing.Reader.EventLogConfiguration", true);
             td1.DefaultDisplayPropertySet =
                 new PropertySetData(new[] { "LogName", "MaximumSizeInBytes", "RecordCount", "LogMode" }) { Name = "DefaultDisplayPropertySet" };

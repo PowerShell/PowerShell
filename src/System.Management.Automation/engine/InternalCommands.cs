@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 _getValueDynamicSite = CallSite<Func<CallSite, object, object>>.Create(
                         PSGetMemberBinder.Get(
                             propertyName,
-                            classScope: (Type) null,
+                            classScope: (Type)null,
                             @static: false));
             }
 
