@@ -549,22 +549,26 @@ bool function()`n{`n}
 
     Context "Hosted PowerShell scenario" {
         It 'ConvertFrom-Markdown gets expected out when run in hosted powershell' {
-            $pool = [runspacefactory]::CreateRunspacePool(1, 2, $Host)
-            $pool.Open()
 
-            $ps = [powershell]::Create()
-            $ps.RunspacePool = $pool
-            $ps.AddScript( {
-                    try {
-                        $output =  '# test' | ConvertFrom-Markdown
-                        $output.Html | Should -BeExactly '<h1 id="test">test</h1>'
-                    } catch {
-                        $_ | Out-Default
-                    }
-                }) | Out-Null
+            try {
+                $pool = [runspacefactory]::CreateRunspacePool(1, 2, $Host)
+                $pool.Open()
 
-            $ps.Invoke()
-            $ps.Dispose()
+                $ps = [powershell]::Create()
+                $ps.RunspacePool = $pool
+                $ps.AddScript( {
+                        try {
+                            $output = '# test' | ConvertFrom-Markdown
+                            $output.Html.trim() | Should -BeExactly '<h1 id="test">test</h1>'
+                        } catch {
+                            throw $_
+                        }
+                    })
+
+                $ps.Invoke()
+            } finally {
+                $ps.Dispose()
+            }
         }
     }
 }
