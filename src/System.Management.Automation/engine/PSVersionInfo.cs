@@ -59,7 +59,8 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version;
+        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, null, null);
+        private static SemanticVersion s_psV7Version;
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
@@ -98,12 +99,12 @@ namespace System.Management.Automation
                 rawGitCommitId = mainVersion;
             }
 
-            s_psV6Version = new SemanticVersion(mainVersion);
+            s_psV7Version = new SemanticVersion(mainVersion);
 
-            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
+            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV7Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV7Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
@@ -270,6 +271,11 @@ namespace System.Management.Automation
 
         internal static bool IsValidPSVersion(Version version)
         {
+            if (version.Major == s_psV7Version.Major)
+            {
+                return version.Minor == s_psV7Version.Minor;
+            }
+
             if (version.Major == s_psV6Version.Major)
             {
                 return version.Minor == s_psV6Version.Minor;
@@ -318,6 +324,11 @@ namespace System.Management.Automation
         internal static SemanticVersion PSV6Version
         {
             get { return s_psV6Version; }
+        }
+
+        internal static SemanticVersion PSV7Version
+        {
+            get { return s_psV7Version; }
         }
 
         #endregion
