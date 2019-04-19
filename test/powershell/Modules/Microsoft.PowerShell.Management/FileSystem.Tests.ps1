@@ -22,9 +22,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newTestFile = "NewTestFile.txt"
             $testContent = "Some Content"
             $testContent2 = "More Content"
-            $reservedNames = "CON", "PRN", "AUX", "CLOCK$", "NUL",
-                             "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-                             "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+            $reservedNamesTests = @(
+                # other formally reserved names work with .Net Core 3.0
+                @{ deviceName = "CLOCK$" }
+            )
         }
 
         BeforeEach {
@@ -154,51 +155,39 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $contentAfter.Count | Should -Be 0
         }
 
-         It "Copy-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-             }
+         It "Copy-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
          }
 
-         It "Move-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
-             }
+         It "Move-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
          }
 
-         It "Rename-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
-             }
+         It "Rename-Item on Windows rejects Windows reserved device name: <deviceName>" -Skip:(-not $IsWindows) -TestCases $reservedNamesTests {
+             param($deviceName)
+            { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
          }
 
-         It "Copy-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-             }
+         It "Copy-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
          }
 
-         It "Move-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Move-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
-         It "Rename-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
-             foreach ($deviceName in $reservedNames)
-             {
-                Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -BeTrue
-                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
-             }
+         It "Rename-Item on Unix succeeds with Windows reserved device name: <deviceName>" -Skip:($IsWindows) -TestCases $reservedNamesTests {
+            param($deviceName)
+            Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
+            Test-Path $deviceName | Should -BeTrue
+            New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
          }
 
          It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(
@@ -462,7 +451,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
             Get-Content -Path $symLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create a symbolic link to nothing" {
@@ -470,7 +460,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $symLinkToNothing | Should -BeTrue
             $link = Get-Item -Path $symLinkToNothing
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $nonFile
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -Be $nonFile.ToString()
         }
         It "New-Item emits an error when path to symbolic link already exists." {
             { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | Should -Throw -ErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
@@ -481,7 +472,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
@@ -490,7 +482,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link = Get-Item -Path $symLinkToDir
             $link | Should -BeOfType System.IO.DirectoryInfo
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -BeExactly $real.FullName
+            $link.Target.Count | Should -Be 1
+            $link.Target[0] | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir

@@ -5,7 +5,7 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-$dotnetCLIChannel = "release"
+$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 3.0 goes RTM
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -410,10 +410,10 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.1 reference assemblies
+    # publish reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
+        $refAssemblies = Get-Content -Path $incFileName | ForEach-Object { $_.TrimEnd(';') } | Where-Object { $_ -ne "" }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -450,15 +450,6 @@ Fix steps:
     }
 
     if ($Environment.IsWindows) {
-        ## need RCEdit to modify the binaries embedded resources
-        $rcedit = "~/.rcedit/rcedit-x64.exe"
-        if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction Ignore | Select-Object -First 1 | ForEach-Object Name
-        }
-        if (-not $rcedit) {
-            throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
-        }
-
         $ReleaseVersion = ""
         if ($ReleaseTagToUse) {
             $ReleaseVersion = $ReleaseTagToUse
@@ -473,25 +464,6 @@ Fix steps:
             $fileVersion = $ReleaseVersion.Split("-")[0]
         }
 
-        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
-        $pwshPath = $Options.Output
-        if (!$pwshPath.EndsWith("pwsh.exe")) {
-            $pwshPath = Join-Path $Options.Output "pwsh.exe"
-        }
-
-        if (Test-IsPreview $ReleaseVersion) {
-            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
-        } else {
-            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
-        }
-
-        # fxdependent package does not have an executable to set iconPath etc.
-        if ($Options.Runtime -ne 'fxdependent') {
-            Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-                    --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
-                    --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
-        }
     }
 
     # download modules from powershell gallery.
@@ -617,7 +589,7 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.1")]
+        [ValidateSet("netcoreapp3.0")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -654,8 +626,12 @@ function New-PSOptions {
     if (-not $Configuration) {
         $Configuration = 'Debug'
     }
-
     Write-Verbose "Using configuration '$Configuration'"
+
+    if (-not $Framework) {
+        $Framework = "netcoreapp3.0"
+        Write-Verbose "Using framework '$Framework'"
+    }
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
@@ -1733,19 +1709,6 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
-
-            ## need RCEdit to modify the binaries embedded resources
-            if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-            {
-                Write-Log "Install RCEdit for modifying exe resources"
-                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-                New-Item -Path "~/.rcedit" -Type Directory -Force > $null
-
-                ## need to specify TLS version 1.2 since GitHub API requires it
-                [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-
-                Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
-            }
         }
     } finally {
         Pop-Location
@@ -2309,7 +2272,7 @@ function Copy-PSGalleryModules
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
         # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
+        $dontCopy = '*.nupkg', '*.nupkg.metadata', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
         Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }

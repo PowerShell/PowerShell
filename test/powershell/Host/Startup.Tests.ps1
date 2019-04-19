@@ -92,6 +92,7 @@ Describe "Validate start of console host" -Tag CI {
                 'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
                 'System.Reflection.Metadata.dll'
+                'System.Threading.ThreadPool.dll'
             )
         }
 

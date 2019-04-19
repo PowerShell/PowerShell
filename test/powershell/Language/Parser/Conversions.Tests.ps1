@@ -126,7 +126,8 @@ namespace TestTypeResolution {
             [TestTypeResolution.TestTypeFoo].Assembly.Location
 "@
         $location = & $powershell -noprofile -command $command
-        $location | Should -Be $cmdletDllPath
+        # need to resolve short filename to long filename using FileInfo
+        $location | Should -Be ([System.IO.Path]::GetFullPath($cmdletDllPath))
     }
 }
 
