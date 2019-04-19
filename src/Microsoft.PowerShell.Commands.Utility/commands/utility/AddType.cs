@@ -663,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // netcoreapp3.0 currently comes with 145 reference assemblies (maybe more in future), so we use a capacity of '150'.
+            // netcoreapp3.0 currently comes with 148 reference assemblies (maybe more in future), so we use a capacity of '150'.
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
