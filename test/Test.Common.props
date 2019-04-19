@@ -5,7 +5,7 @@
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>Latest</LangVersion>
+    <LangVersion>Preview</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

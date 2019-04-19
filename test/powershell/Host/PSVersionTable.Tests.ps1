@@ -45,7 +45,7 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.PSVersion | Should -BeOfType "System.Management.Automation.SemanticVersion"
        $PSVersionTable.PSVersion | Should -BeExactly $expectedPSVersion
        $PSVersionTable.PSVersion | Should -Match $expectedVersionPattern
-       $PSVersionTable.PSVersion.Major | Should -Be 6
+       $PSVersionTable.PSVersion.Major | Should -Be 7
     }
 
     It "GitCommitId property" {
