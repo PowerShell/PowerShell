@@ -6,6 +6,7 @@ trigger:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'
@@ -19,6 +20,7 @@ pr:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'

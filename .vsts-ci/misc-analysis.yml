@@ -6,12 +6,14 @@ trigger:
     include:
     - master
     - release*
+    - feature*
 
 pr:
   branches:
     include:
     - master
     - release*
+    - feature*
 
 resources:
 - repo: self
