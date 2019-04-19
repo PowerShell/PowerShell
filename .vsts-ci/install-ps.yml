@@ -6,6 +6,7 @@ trigger:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - /tools/install-powershell.sh
@@ -21,6 +22,7 @@ pr:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - /tools/install-powershell.sh
