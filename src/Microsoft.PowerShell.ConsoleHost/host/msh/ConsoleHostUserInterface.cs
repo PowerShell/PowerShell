@@ -712,7 +712,7 @@ namespace Microsoft.PowerShell
 
                 if (newLine)
                 {
-                    _parent.OutputSerializer.Serialize(Crlf);
+                    _parent.OutputSerializer.Serialize(Environment.NewLine);
                 }
             }
             else
@@ -1152,7 +1152,7 @@ namespace Microsoft.PowerShell
                 sb.Append(s);
                 if (++count != lines.Count)
                 {
-                    sb.Append(Crlf);
+                    sb.Append(Environment.NewLine);
                 }
             }
 
@@ -1344,7 +1344,7 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(writer == _parent.ErrorSerializer.textWriter, "writers should be the same");
 
-                _parent.ErrorSerializer.Serialize(value + Crlf);
+                _parent.ErrorSerializer.Serialize(value + Environment.NewLine);
             }
             else
             {
@@ -1612,7 +1612,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                if (s.EndsWith(Crlf, StringComparison.Ordinal))
+                if (s.EndsWith(Environment.NewLine, StringComparison.Ordinal))
 #endif
                     {
                         result = ReadLineResult.endedOnEnter;
@@ -1620,7 +1620,7 @@ namespace Microsoft.PowerShell
                         // We're intercepting characters, so we need to echo the newline
                         Console.Out.WriteLine();
 #else
-                    s = s.Remove(s.Length - Crlf.Length);
+                    s = s.Remove(s.Length - Environment.NewLine.Length);
 #endif
                         break;
                     }
