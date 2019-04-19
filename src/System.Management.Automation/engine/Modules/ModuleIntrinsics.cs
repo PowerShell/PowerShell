@@ -423,10 +423,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
-            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
+            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec, skipNameCheck);
         }
 
         /// <summary>
@@ -435,8 +439,13 @@ namespace System.Management.Automation
         /// <param name="matchFailureReason">The constraint that caused the match failure, if any.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            out ModuleMatchFailure matchFailureReason,
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
             if (moduleSpec == null)
             {
@@ -447,7 +456,7 @@ namespace System.Management.Automation
             return IsModuleMatchingConstraints(
                 out matchFailureReason,
                 moduleInfo,
-                moduleSpec.Name,
+                skipNameCheck ? null : moduleSpec.Name,
                 moduleSpec.Guid,
                 moduleSpec.RequiredVersion,
                 moduleSpec.Version,

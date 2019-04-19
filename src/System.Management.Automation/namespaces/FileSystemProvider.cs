@@ -340,8 +340,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region CmdletProvider members
+
         /// <summary>
-        /// Starts the File System provider.  This method sets the Home for the
+        /// Starts the File System provider. This method sets the Home for the
         /// provider to providerInfo.Home if specified, and %USERPROFILE%
         /// otherwise.
         /// </summary>
@@ -354,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
         protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             // Set the home folder for the user
-            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
+            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home)) 
             {
                 // %USERPROFILE% - indicate where a user's home directory is located in the file system.
                 string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
@@ -2000,7 +2001,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Clean up "newname" to fix some common usability problems:
             // Rename .\foo.txt .\bar.txt
-            // Rename c:\temp\foo.txt c:\temp\bar.txt
+            // Rename C:\temp\foo.txt C:\temp\bar.txt
             if (newName.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
                 newName.StartsWith("./", StringComparison.OrdinalIgnoreCase))
             {
@@ -2364,9 +2365,13 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string message = null;
                             if (itemType == ItemType.SymbolicLink)
+                            {
                                 message = FileSystemProviderStrings.SymbolicLinkNotSupported;
+                            }
                             else
+                            {
                                 message = FileSystemProviderStrings.HardLinkNotSupported;
+                            }
 
                             WriteError(new ErrorRecord(new InvalidOperationException(message, w32Exception), "NewItemInvalidOperation", ErrorCategory.InvalidOperation, value.ToString()));
                             return;

@@ -19,16 +19,16 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestEmptyObjectHasNoProperty()
         {
-            var psObject = new PSObject();
-            var actual = psObject.GetFirstPropertyOrDefault(name => true);
+            var pso = new PSObject();
+            var actual = pso.GetFirstPropertyOrDefault(name => true);
             Assert.Null(actual);
         }
 
         [Fact]
         public static void TestWrappedDateTimeHasReflectedMember()
         {
-            var psObject = new PSObject(DateTime.Now);
-            var member = psObject.GetFirstPropertyOrDefault(name => name == "DayOfWeek");
+            var pso = new PSObject(DateTime.Now);
+            var member = pso.GetFirstPropertyOrDefault(name => name == "DayOfWeek");
             Assert.NotNull(member);
             Assert.Equal("DayOfWeek", member.Name);
         }
@@ -36,9 +36,9 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestAdaptedMember()
         {
-            var psObject = new PSObject(DateTime.Now);
-            psObject.Members.Add(new PSNoteProperty("NewMember", "AValue"));
-            var member = psObject.GetFirstPropertyOrDefault(name => name == "NewMember");
+            var pso = new PSObject(DateTime.Now);
+            pso.Members.Add(new PSNoteProperty("NewMember", "AValue"));
+            var member = pso.GetFirstPropertyOrDefault(name => name == "NewMember");
             Assert.NotNull(member);
             Assert.Equal("NewMember", member.Name);
         }
@@ -46,9 +46,9 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestShadowedMember()
         {
-            var psObject = new PSObject(DateTime.Now);
-            psObject.Members.Add(new PSNoteProperty("DayOfWeek", "AValue"));
-            var member = psObject.GetFirstPropertyOrDefault(name => name == "DayOfWeek");
+            var pso = new PSObject(DateTime.Now);
+            pso.Members.Add(new PSNoteProperty("DayOfWeek", "AValue"));
+            var member = pso.GetFirstPropertyOrDefault(name => name == "DayOfWeek");
             Assert.NotNull(member);
             Assert.Equal("DayOfWeek", member.Name);
             Assert.Equal("AValue", member.Value);
@@ -57,24 +57,24 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestMemberSetIsNotProperty()
         {
-            var psObject = new PSObject(DateTime.Now);
+            var pso = new PSObject(DateTime.Now);
             var psNoteProperty = new PSNoteProperty("NewMember", "AValue");
-            psObject.Members.Add(psNoteProperty);
-            psObject.Members.Add(new PSMemberSet("NewMemberSet", new[] { psNoteProperty }));
+            pso.Members.Add(psNoteProperty);
+            pso.Members.Add(new PSMemberSet("NewMemberSet", new[] { psNoteProperty }));
 
-            var member = psObject.GetFirstPropertyOrDefault(name => name == "NewMemberSet");
+            var member = pso.GetFirstPropertyOrDefault(name => name == "NewMemberSet");
             Assert.Null(member);
         }
 
         [Fact]
         public static void TestMemberSet()
         {
-            var psObject = new PSObject(DateTime.Now);
+            var pso = new PSObject(DateTime.Now);
             var psNoteProperty = new PSNoteProperty("NewMember", "AValue");
-            psObject.Members.Add(psNoteProperty);
-            psObject.Members.Add(new PSMemberSet("NewMemberSet", new[] { psNoteProperty }));
+            pso.Members.Add(psNoteProperty);
+            pso.Members.Add(new PSMemberSet("NewMemberSet", new[] { psNoteProperty }));
 
-            var member = psObject.Members.FirstOrDefault(name => name == "NewMemberSet");
+            var member = pso.Members.FirstOrDefault(name => name == "NewMemberSet");
             Assert.NotNull(member);
             Assert.Equal("NewMemberSet", member.Name);
         }
@@ -89,8 +89,8 @@ namespace PSTests.Parallel
             root.AppendChild(firstChild);
             root.InsertAfter(doc.CreateElement("elem2"), firstChild);
 
-            var psObject = new PSObject(root);
-            var member = psObject.GetFirstPropertyOrDefault(name => name.StartsWith("elem"));
+            var pso = new PSObject(root);
+            var member = pso.GetFirstPropertyOrDefault(name => name.StartsWith("elem"));
             Assert.Equal("elem1", member.Name);
         }
 
@@ -103,8 +103,8 @@ namespace PSTests.Parallel
             root.SetAttribute("attr", "value");
             root.AppendChild(doc.CreateElement("elem"));
 
-            var psObject = new PSObject(root);
-            var member = psObject.GetFirstPropertyOrDefault(name => name.StartsWith("attr"));
+            var pso = new PSObject(root);
+            var member = pso.GetFirstPropertyOrDefault(name => name.StartsWith("attr"));
             Assert.Equal("attr", member.Name);
         }
 

@@ -11,6 +11,8 @@ folder "Linux Builds" as LinuxBuilds {
 
 agent "macOS Build"  as BuildMac
 
+agent "Upload build metadata" as BuildMetadata
+
 folder "Windows Builds" as WinBuilds {
     agent "x64"  as BuildWinX64
     agent "x86"  as BuildWinX86
@@ -84,6 +86,7 @@ SignMac ~~ Finish
 BuildCG ~~ Finish
 BuildNuGet ~~ Finish
 TestArtifacts ~~ Finish
+BuildMetadata ~~ Finish
 
 Start ~~ BuildDEB
 Start ~~ BuildRPM
@@ -97,5 +100,6 @@ Start ~~ BuildWinArm32
 Start ~~ BuildWinArm64
 Start ~~ BuildCG
 Start ~~ TestArtifacts
+Start ~~ BuildMetadata
 
 @enduml

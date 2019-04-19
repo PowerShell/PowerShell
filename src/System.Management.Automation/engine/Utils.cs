@@ -5,17 +5,18 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.ComponentModel;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -38,6 +39,229 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
+        /// <summary>
+        /// Converts a given double value to BigInteger via Math.Round().
+        /// </summary>
+        /// <param name="d">The value to convert.</param>
+        /// <returns>Returns a BigInteger value equivalent to the input value rounded to nearest integer.</returns>
+        internal static BigInteger AsBigInt(this double d) => new BigInteger(Math.Round(d));
+
+        internal static bool TryCast(BigInteger value, out byte b)
+        {
+            if (value < byte.MinValue || byte.MaxValue < value)
+            {
+                b = 0;
+                return false;
+            }
+
+            b = (byte)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out sbyte sb)
+        {
+            if (value < sbyte.MinValue || sbyte.MaxValue < value)
+            {
+                sb = 0;
+                return false;
+            }
+
+            sb = (sbyte)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out short s)
+        {
+            if (value < short.MinValue || short.MaxValue < value)
+            {
+                s = 0;
+                return false;
+            }
+
+            s = (short)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out ushort us)
+        {
+            if (value < ushort.MinValue || ushort.MaxValue < value)
+            {
+                us = 0;
+                return false;
+            }
+
+            us = (ushort)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out int i)
+        {
+            if (value < int.MinValue || int.MaxValue < value)
+            {
+                i = 0;
+                return false;
+            }
+
+            i = (int)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out uint u)
+        {
+            if (value < uint.MinValue || uint.MaxValue < value)
+            {
+                u = 0;
+                return false;
+            }
+
+            u = (uint)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out long l)
+        {
+            if (value < long.MinValue || long.MaxValue < value)
+            {
+                l = 0;
+                return false;
+            }
+
+            l = (long)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out ulong ul)
+        {
+            if (value < ulong.MinValue || ulong.MaxValue < value)
+            {
+                ul = 0;
+                return false;
+            }
+
+            ul = (ulong)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out decimal dm)
+        {
+            if (value < (BigInteger)decimal.MinValue || (BigInteger)decimal.MaxValue < value)
+            {
+                dm = 0;
+                return false;
+            }
+
+            dm = (decimal)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out double db)
+        {
+            if (value < (BigInteger)double.MinValue || (BigInteger)double.MaxValue < value)
+            {
+                db = 0;
+                return false;
+            }
+
+            db = (double)value;
+            return true;
+        }
+
+        /// <summary>
+        /// Parses a given string or ReadOnlySpan&lt;char&gt; to calculate its value as a binary number.
+        /// Assumes input has already been sanitized and only contains zeroes (0) or ones (1).
+        /// </summary>
+        /// <param name="digits">Span or string of binary digits. Assumes all digits are either 1 or 0.</param>
+        /// <param name="unsigned">
+        /// Whether to treat the number as unsigned. When false, respects established conventions
+        /// with sign bits for certain input string lengths.
+        /// </param>
+        /// <returns>Returns the value of the binary string as a BigInteger.</returns>
+        internal static BigInteger ParseBinary(ReadOnlySpan<char> digits, bool unsigned)
+        {
+            if (!unsigned)
+            {
+                if (digits[0] == '0')
+                {
+                    unsigned = true;
+                }
+                else
+                {
+                    switch (digits.Length)
+                    {
+                        // Only accept sign bits at these lengths:
+                        case 8: // byte
+                        case 16: // short
+                        case 32: // int
+                        case 64: // long
+                        case 96: // decimal
+                        case int n when n >= 128: // BigInteger
+                            break;
+                        default:
+                            // If we do not flag these as unsigned, bigint assumes a sign bit for any (8 * n) string length
+                            unsigned = true;
+                            break;
+                    }
+                }
+            }
+
+            // Only use heap allocation for very large numbers
+            const int MaxStackAllocation = 512;
+
+            // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
+            int outputByteCount = (digits.Length + 7) / 8;
+            Span<byte> outputBytes = outputByteCount <= MaxStackAllocation ? stackalloc byte[outputByteCount] : new byte[outputByteCount];
+            int outputByteIndex = outputBytes.Length - 1;
+
+            // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00101100), or cases
+            // where we only have less than 8 bits to work with from the beginning.
+            //
+            // Walk bytes right to left, stepping one whole byte at a time (if there are any whole bytes).
+            int byteWalker;
+            for (byteWalker = digits.Length - 1; byteWalker >= 7; byteWalker -= 8)
+            {
+                // Use bit shifts and binary-or to sum the values in each byte.  These calculations will
+                // create values higher than a single byte, but the higher bits will be stripped out when cast
+                // to byte.
+                //
+                // The low bits are added in separately to allow us to strip the higher 'noise' bits before we
+                // sum the values using binary-or.
+                //
+                // Simplified representation of logic:     (byte)( (7)|(6)|(5)|(4) ) | ( ( (3)|(2)|(1)|(0) ) & 0b1111 )
+                //
+                // N.B.: This code has been tested against a straight for loop iterating through the byte, and in no
+                // circumstance was it faster or more effective than this unrolled version.
+                outputBytes[outputByteIndex--] =
+                    (byte)(
+                        ( (digits[byteWalker - 7] << 7)
+                        | (digits[byteWalker - 6] << 6)
+                        | (digits[byteWalker - 5] << 5)
+                        | (digits[byteWalker - 4] << 4)
+                        )
+                    | (
+                        ( (digits[byteWalker - 3] << 3)
+                        | (digits[byteWalker - 2] << 2)
+                        | (digits[byteWalker - 1] << 1)
+                        | (digits[byteWalker])
+                        ) & 0b1111
+                      )
+                    );
+            }
+
+            // With complete bytes parsed, byteWalker is either at the partial byte start index, or at -1
+            if (byteWalker >= 0)
+            {
+                int currentByteValue = 0;
+                for (int i = 0; i <= byteWalker; i++)
+                {
+                    currentByteValue = (currentByteValue << 1) | (digits[i] - '0');
+                }
+
+                outputBytes[outputByteIndex] = (byte)currentByteValue;
+            }
+
+            return new BigInteger(outputBytes, isUnsigned: unsigned, isBigEndian: true);
+        }
+
         // From System.Web.Util.HashCodeCombiner
         internal static int CombineHashCodes(int h1, int h2)
         {

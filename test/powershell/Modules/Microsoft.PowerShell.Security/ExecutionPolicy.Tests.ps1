@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Import-Module HelpersCommon
+
 #
 # These are general tests that verify non-Windows behavior
 #
@@ -45,7 +47,7 @@ try {
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $IsNotSkipped = ($IsWindows -eq $true);
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
-    $ShouldSkipTest = !$IsNotSkipped
+    $ShouldSkipTest = !$IsNotSkipped -or !(Test-CanWriteToPsHome)
 
     Describe "Help work with ExecutionPolicy Restricted " -Tags "Feature" {
 
@@ -480,7 +482,9 @@ ZoneId=$FileType
 
                 foreach($fileInfo in $testFilesInfo)
                 {
-                    createTestFile -FilePath $fileInfo.filePath -FileType $fileInfo.fileType -AddSignature:$fileInfo.AddSignature -Corrupted:$fileInfo.corrupted
+                    if ((Test-CanWriteToPsHome) -or (!(Test-CanWriteToPsHome) -and !$fileInfo.filePath.StartsWith($PSHOME, $true, $null)) ) {
+                        createTestFile -FilePath $fileInfo.filePath -FileType $fileInfo.fileType -AddSignature:$fileInfo.AddSignature -Corrupted:$fileInfo.corrupted
+                    }
                 }
 
                 #Get Execution Policy
@@ -651,20 +655,26 @@ ZoneId=$FileType
             }
 
             $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+
             $testData = @(
-                @{
-                    module = $PSHomeUntrustedModule
-                    error = $null
-                }
-                @{
-                    module = $PSHomeUnsignedModule
-                    error = $null
-                }
                 @{
                     module = "Microsoft.PowerShell.Archive"
                     error = $null
                 }
             )
+
+            if (Test-CanWriteToPsHome) {
+                $testData += @(
+                    @{
+                        module = $PSHomeUntrustedModule
+                        error = $null
+                    }
+                    @{
+                        module = $PSHomeUnsignedModule
+                        error = $null
+                    }
+                )
+            }
 
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
@@ -899,18 +909,23 @@ ZoneId=$FileType
             $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
             $testData = @(
                 @{
-                    module = $PSHomeUntrustedModule
-                    error = $error
-                }
-                @{
-                    module = $PSHomeUnsignedModule
-                    error = $error
-                }
-                @{
                     module = "Microsoft.PowerShell.Archive"
                     error = $null
                 }
             )
+
+            if (Test-CanWriteToPsHome) {
+                $testData += @(
+                    @{
+                        module = $PSHomeUntrustedModule
+                        error = $error
+                    }
+                    @{
+                        module = $PSHomeUnsignedModule
+                        error = $error
+                    }
+                )
+            }
 
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
                 param([string]$module, [string]$error)
@@ -1132,7 +1147,7 @@ ZoneId=$FileType
             }
         }
 
-        It '-Scope LocalMachine is Settable, but overridden' {
+        It '-Scope LocalMachine is Settable, but overridden' -Skip:$ShouldSkipTest {
             # In this test, we first setup execution policy in the following way:
             # CurrentUser is specified and takes precedence over LocalMachine.
             # That's why we will get an error, when we are setting up LocalMachine policy.
@@ -1154,7 +1169,7 @@ ZoneId=$FileType
             Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
 
-        It '-Scope LocalMachine is Settable' {
+        It '-Scope LocalMachine is Settable' -Skip:$ShouldSkipTest {
             # We need to make sure that both Process and CurrentUser policies are Undefined
             # before we can set LocalMachine policy without ExecutionPolicyOverride error.
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined

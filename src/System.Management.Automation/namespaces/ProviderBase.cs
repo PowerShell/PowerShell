@@ -5,6 +5,7 @@
 #pragma warning disable 56506
 
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
@@ -1383,6 +1384,21 @@ namespace System.Management.Automation.Provider
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the default item separator character for this provider.
+        /// </summary>
+        public virtual char ItemSeparator => Path.DirectorySeparatorChar;
+
+        /// <summary>
+        /// Gets the alternate item separator character for this provider.
+        /// </summary>
+        public virtual char AltItemSeparator =>
+#if UNIX
+            Utils.Separators.Backslash[0];
+#else
+            Path.AltDirectorySeparatorChar;
+#endif
 
         #region IResourceSupplier
         /// <summary>

@@ -2,26 +2,27 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Net;
-using System.IO;
-using System.Text;
-using System.Collections;
-using System.Globalization;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Win32;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Xml;
-using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -861,7 +862,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-
         /// <summary>
         /// Gets or sets the PreserveAuthorizationOnRedirect property.
         /// </summary>
@@ -1106,7 +1106,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
                 }
-
             }
 
             // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.
@@ -1789,7 +1788,6 @@ namespace Microsoft.PowerShell.Commands
 
             string body = FormatDictionary(content);
             return (SetRequestContent(request, body));
-
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)

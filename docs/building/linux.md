@@ -5,7 +5,7 @@ We'll start by showing how to set up your environment from scratch.
 
 ## Environment
 
-These instructions are written assuming the Ubuntu 14.04 LTS, since that's the distro the team uses.
+These instructions are written assuming the Ubuntu 16.04 LTS, since that's the distro the team uses.
 The build module works on a best-effort basis for other distributions.
 
 ### Git Setup

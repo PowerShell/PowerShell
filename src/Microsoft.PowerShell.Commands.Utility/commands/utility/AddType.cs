@@ -2,9 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -233,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     case ".DLL":
-                        loadAssembly = true;
+                        _loadAssembly = true;
                         break;
 
                     // Throw an error if it is an unrecognized extension
@@ -281,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] AssemblyName { get; set; }
 
-        private bool loadAssembly = false;
+        private bool _loadAssembly = false;
 
         /// <summary>
         /// The language used to compile the source code.
@@ -302,15 +301,15 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ReferencedAssemblies
         {
-            get { return referencedAssemblies; }
+            get { return _referencedAssemblies; }
 
             set
             {
-                if (value != null) { referencedAssemblies = value; }
+                if (value != null) { _referencedAssemblies = value; }
             }
         }
 
-        private string[] referencedAssemblies = Array.Empty<string>();
+        private string[] _referencedAssemblies = Array.Empty<string>();
 
         /// <summary>
         /// The path to the output assembly.
@@ -588,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
 
-            if (loadAssembly)
+            if (_loadAssembly)
             {
                 // File extension is ".DLL" (ParameterSetName = FromPathParameterSetName or FromLiteralPathParameterSetName).
                 LoadAssemblies(_paths);
@@ -609,29 +608,29 @@ namespace Microsoft.PowerShell.Commands
         // We now ship .Net Core's reference assemblies with PowerShell Core, so that Add-Type can work
         // in a predictable way and won't be broken when we move to newer version of .NET Core.
         // The reference assemblies are located at '$PSHOME\ref'.
-        private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
-        private static string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
+        private static readonly string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
+        private static readonly string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
         // These assemblies are always automatically added to ReferencedAssemblies.
-        private static Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new Lazy<PortableExecutableReference[]>(InitAutoIncludedRefAssemblies);
+        private static readonly Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new Lazy<PortableExecutableReference[]>(InitAutoIncludedRefAssemblies);
 
         // A HashSet of assembly names to be ignored if they are specified in '-ReferencedAssemblies'
-        private static Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new Lazy<HashSet<string>>(InitRefAssemblyNamesToIgnore);
+        private static readonly Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new Lazy<HashSet<string>>(InitRefAssemblyNamesToIgnore);
 
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
-        private static Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
+        private static readonly Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
 
         private bool InMemory { get { return string.IsNullOrEmpty(_outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
-        private static Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
+        private static readonly Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
+        private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
         private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
-        private static string[] s_writeInformationTags = new string[] { "PSHOST" };
+        private static readonly string[] s_writeInformationTags = new string[] { "PSHOST" };
         private int _syntaxTreesHash;
 
         private const string FromMemberParameterSetName = "FromMember";
@@ -1085,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
         // Visit symbols in all namespaces and collect duplicates.
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
-            private int _hash;
+            private readonly int _hash;
 
             public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
             public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
@@ -1334,6 +1333,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion SourceCodeProcessing
-
     }
 }

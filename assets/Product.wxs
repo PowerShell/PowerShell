@@ -73,6 +73,8 @@
                   Return="ignore"
                   Impersonate="no" />
     <InstallExecuteSequence>
+      <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
+      <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
       <Custom Action="RegisterManifest" After="InstallFiles">
         <![CDATA[NOT Installed AND (REGISTER_MANIFEST=1)]]>
       </Custom>
@@ -228,7 +230,7 @@
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
-          <Component Id="ApplicationProgramsMenuShortcut" Guid="*">
+          <Component Id="ApplicationProgramsMenuShortcut" Guid="$(env.ApplicationProgramsMenuShortcut)">
             <Shortcut Id="PowerShell_ProgramsMenuShortcut"
                       Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
                       Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"

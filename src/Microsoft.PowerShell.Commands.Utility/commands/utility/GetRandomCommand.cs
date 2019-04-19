@@ -8,9 +8,10 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Numerics;
-using System.Threading;
-using Debug = System.Management.Automation.Diagnostics;
 using System.Security.Cryptography;
+using System.Threading;
+
+using Debug = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -281,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Number of items to output (number of list items or of numbers).
         /// </summary>
-        [Parameter(ParameterSetName = GetRandomCommand.RandomListItemParameterSet)]
+        [Parameter]
         [ValidateRange(1, int.MaxValue)]
         public int Count { get; set; } = 1;
 
@@ -397,11 +398,14 @@ namespace Microsoft.PowerShell.Commands
                         ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    int randomNumber = Generator.Next(minValue, maxValue);
-                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+                    for (int i = 0; i < Count; i++)
+                    {
+                        int randomNumber = Generator.Next(minValue, maxValue);
+                        Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                        Debug.Assert(randomNumber < maxValue, "random number < upper bound");
 
-                    WriteObject(randomNumber);
+                        WriteObject(randomNumber);
+                    }
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
                 {
@@ -413,11 +417,14 @@ namespace Microsoft.PowerShell.Commands
                         ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    Int64 randomNumber = GetRandomInt64(minValue, maxValue);
-                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+                    for (int i = 0; i < Count; i++)
+                    {
+                        Int64 randomNumber = GetRandomInt64(minValue, maxValue);
+                        Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                        Debug.Assert(randomNumber < maxValue, "random number < upper bound");
 
-                    WriteObject(randomNumber);
+                        WriteObject(randomNumber);
+                    }
                 }
                 else
                 {
@@ -429,11 +436,14 @@ namespace Microsoft.PowerShell.Commands
                         ThrowMinGreaterThanOrEqualMax(minValue, maxValue);
                     }
 
-                    double randomNumber = GetRandomDouble(minValue, maxValue);
-                    Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
-                    Debug.Assert(randomNumber < maxValue, "random number < upper bound");
+                    for (int i = 0; i < Count; i++)
+                    {
+                        double randomNumber = GetRandomDouble(minValue, maxValue);
+                        Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
+                        Debug.Assert(randomNumber < maxValue, "random number < upper bound");
 
-                    WriteObject(randomNumber);
+                        WriteObject(randomNumber);
+                    }
                 }
             }
             else if (EffectiveParameterSet == MyParameterSet.RandomListItem)

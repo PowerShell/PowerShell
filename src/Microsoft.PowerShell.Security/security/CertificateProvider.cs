@@ -942,6 +942,7 @@ namespace Microsoft.PowerShell.Commands
                                  StoreLocation.LocalMachine);
             WriteItemObject(outStore, path, true);
         }
+
         #region DriveCmdletProvider overrides
 
         /// <summary>

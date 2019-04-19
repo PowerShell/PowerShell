@@ -96,3 +96,21 @@ jobs:
   parameters:
     buildName: linux
     pool: Hosted Ubuntu 1604
+
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: macOS
+    pool: Hosted Mac Internal
+
+- job: release_json
+  displayName: Create and Upload release.json
+  steps:
+  - template: templates/SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      @{ ReleaseVersion = "$(Version)" } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      Get-Content "$(Build.StagingDirectory)\release.json"
+      Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+    displayName: Create and upload release.json file to build artifact

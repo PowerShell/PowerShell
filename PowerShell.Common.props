@@ -113,7 +113,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-    <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
+    <IsWindows Condition="'$(IsWindows)' =='true' or ( '$(IsWindows)' == '' and '$(OS)' == 'Windows_NT')">true</IsWindows>
   </PropertyGroup>
 
   <!-- Define non-windows, all configuration properties -->
@@ -134,6 +134,7 @@
   <!-- Define windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
     <Optimize>true</Optimize>
+    <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
   </PropertyGroup>
 
@@ -148,6 +149,7 @@
 
   <!-- Define all OS, CodeCoverage configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
+    <!-- This is required to be portable to Coverlet tool !-->
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>

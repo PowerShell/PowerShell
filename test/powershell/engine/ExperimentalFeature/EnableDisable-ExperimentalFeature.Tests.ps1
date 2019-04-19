@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
@@ -52,6 +54,10 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     ) {
         param ($scope)
 
+        if (!(Test-CanWriteToPsHome) -and $scope -eq "AllUsers") {
+            return
+        }
+
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "All Experimental Features disabled when no config file"
         $feature = pwsh -noprofile -output xml -command Enable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
@@ -65,6 +71,10 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         @{ scope = "CurrentUser"; configPath = $userConfigPath }
     ) {
         param ($scope, $configPath)
+
+        if (!(Test-CanWriteToPsHome) -and $scope -eq "AllUsers") {
+            return
+        }
 
         '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $configPath
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne

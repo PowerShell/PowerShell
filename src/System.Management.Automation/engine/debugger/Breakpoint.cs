@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -58,16 +59,36 @@ namespace System.Management.Automation
 
         #region constructors
 
-        internal Breakpoint(string script, ScriptBlock action)
+        /// <summary>
+        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// </summary>
+        protected Breakpoint(string script)
+            : this(script, null)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// </summary>
+        protected Breakpoint(string script, ScriptBlock action)
         {
             Enabled = true;
             Script = script;
-            Id = s_lastID++;
+            Id = Interlocked.Increment(ref s_lastID);
             Action = action;
             HitCount = 0;
         }
 
-        internal Breakpoint(string script, ScriptBlock action, int id)
+        /// <summary>
+        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// </summary>
+        protected Breakpoint(string script, int id)
+            : this(script, null, id)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// </summary>
+        protected Breakpoint(string script, ScriptBlock action, int id)
         {
             Enabled = true;
             Script = script;
@@ -135,14 +156,34 @@ namespace System.Management.Automation
     /// </summary>
     public class CommandBreakpoint : Breakpoint
     {
-        internal CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action)
+        /// <summary>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// </summary>
+        public CommandBreakpoint(string script, WildcardPattern command, string commandString)
+            : this(script, command, commandString, null)
+        {}
+        
+        /// <summary>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// </summary>
+        public CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action)
             : base(script, action)
         {
             CommandPattern = command;
             Command = commandString;
         }
 
-        internal CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action, int id)
+        /// <summary>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// </summary>
+        public CommandBreakpoint(string script, WildcardPattern command, string commandString, int id)
+            : this(script, command, commandString, null, id)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// </summary>
+        public CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action, int id)
             : base(script, action, id)
         {
             CommandPattern = command;
@@ -224,7 +265,7 @@ namespace System.Management.Automation
         /// </summary>
         Read,
         /// <summary>
-        /// Break on write access only (default)
+        /// Break on write access only (default).
         /// </summary>
         Write,
         /// <summary>
@@ -238,14 +279,34 @@ namespace System.Management.Automation
     /// </summary>
     public class VariableBreakpoint : Breakpoint
     {
-        internal VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action)
+        /// <summary>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
+        /// </summary>
+        public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode)
+            : this(script, variable, accessMode, null)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
+        /// </summary>
+        public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action)
             : base(script, action)
         {
             Variable = variable;
             AccessMode = accessMode;
         }
 
-        internal VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action, int id)
+        /// <summary>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
+        /// </summary>
+        public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, int id)
+            : this(script, variable, accessMode, null, id)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
+        /// </summary>
+        public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, ScriptBlock action, int id)
             : base(script, action, id)
         {
             Variable = variable;
@@ -300,7 +361,17 @@ namespace System.Management.Automation
     /// </summary>
     public class LineBreakpoint : Breakpoint
     {
-        internal LineBreakpoint(string script, int line, ScriptBlock action)
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line)
+            : this(script, line, null)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line, ScriptBlock action)
             : base(script, action)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(script), "Caller to verify script parameter is not null or empty.");
@@ -309,7 +380,17 @@ namespace System.Management.Automation
             SequencePointIndex = -1;
         }
 
-        internal LineBreakpoint(string script, int line, int column, ScriptBlock action)
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line, int column)
+            : this(script, line, column, null)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line, int column, ScriptBlock action)
             : base(script, action)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(script), "Caller to verify script parameter is not null or empty.");
@@ -318,7 +399,17 @@ namespace System.Management.Automation
             SequencePointIndex = -1;
         }
 
-        internal LineBreakpoint(string script, int line, int column, ScriptBlock action, int id)
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line, int column, int id)
+            : this(script, line, column, null, id)
+        {}
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// </summary>
+        public LineBreakpoint(string script, int line, int column, ScriptBlock action, int id)
             : base(script, action, id)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(script), "Caller to verify script parameter is not null or empty.");

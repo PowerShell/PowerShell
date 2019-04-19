@@ -1,0 +1,1 @@
+@{ ModuleVersion = '1.0'; NestedModules = 'D:\PowerShell\test\powershell\Modules\Microsoft.PowerShell.Security\Modules\ImportUnTrustedManifestWithBinFnExport_System32.dll'; CmdletsToExport = 'Invoke-Hello' }

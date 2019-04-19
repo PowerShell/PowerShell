@@ -627,6 +627,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public virtual Breakpoint GetBreakpoint(int id)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public virtual List<Breakpoint> GetBreakpoints()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Resets the command processor source information so that it is
         /// updated with latest information on the next debug stop.
         /// </summary>
@@ -743,6 +760,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Sets up debugger to debug provided Runspace in a nested debug session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug.</param>
+        /// <param name="disableBreakAll"></param>
+        internal virtual void DebugRunspace(Runspace runspace, bool disableBreakAll)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Removes the provided Runspace from the nested "active" debugger state.
         /// </summary>
         /// <param name="runspace">Runspace.</param>
@@ -822,11 +849,11 @@ namespace System.Management.Automation
         {
             _context = context;
             _inBreakpoint = false;
-            _idToBreakpoint = new Dictionary<int, Breakpoint>();
-            _pendingBreakpoints = new List<LineBreakpoint>();
-            _boundBreakpoints = new Dictionary<string, Tuple<WeakReference, List<LineBreakpoint>>>(StringComparer.OrdinalIgnoreCase);
-            _commandBreakpoints = new List<CommandBreakpoint>();
-            _variableBreakpoints = new Dictionary<string, List<VariableBreakpoint>>(StringComparer.OrdinalIgnoreCase);
+            _idToBreakpoint = new ConcurrentDictionary<int, Breakpoint>();
+            _pendingBreakpoints = new ConcurrentDictionary<int, LineBreakpoint>();
+            _boundBreakpoints = new ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>>(StringComparer.OrdinalIgnoreCase);
+            _commandBreakpoints = new ConcurrentDictionary<int, CommandBreakpoint>();
+            _variableBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>>(StringComparer.OrdinalIgnoreCase);
             _steppingMode = SteppingMode.None;
             _callStack = new CallStackList { _callStackList = new List<CallStackInfo>() };
 
@@ -1061,10 +1088,10 @@ namespace System.Management.Automation
 
         internal void RegisterScriptFile(string path, string scriptContents)
         {
-            Tuple<WeakReference, List<LineBreakpoint>> boundBreakpoints;
+            Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> boundBreakpoints;
             if (!_boundBreakpoints.TryGetValue(path, out boundBreakpoints))
             {
-                _boundBreakpoints.Add(path, Tuple.Create(new WeakReference(scriptContents), new List<LineBreakpoint>()));
+                _boundBreakpoints[path] = Tuple.Create(new WeakReference(scriptContents), new ConcurrentDictionary<int, LineBreakpoint>());
             }
             else
             {
@@ -1073,8 +1100,8 @@ namespace System.Management.Automation
                 boundBreakpoints.Item1.TryGetTarget(out oldScriptContents);
                 if (oldScriptContents == null || !oldScriptContents.Equals(scriptContents, StringComparison.Ordinal))
                 {
-                    UnbindBoundBreakpoints(boundBreakpoints.Item2);
-                    _boundBreakpoints[path] = Tuple.Create(new WeakReference(scriptContents), new List<LineBreakpoint>());
+                    UnbindBoundBreakpoints(boundBreakpoints.Item2.Values.ToList());
+                    _boundBreakpoints[path] = Tuple.Create(new WeakReference(scriptContents), new ConcurrentDictionary<int, LineBreakpoint>());
                 }
             }
         }
@@ -1097,7 +1124,7 @@ namespace System.Management.Automation
         private Breakpoint AddCommandBreakpoint(CommandBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
-            _commandBreakpoints.Add(breakpoint);
+            _commandBreakpoints[breakpoint.Id] = breakpoint;
             return breakpoint;
         }
 
@@ -1116,7 +1143,7 @@ namespace System.Management.Automation
         private Breakpoint AddLineBreakpoint(LineBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
-            _pendingBreakpoints.Add(breakpoint);
+            _pendingBreakpoints[breakpoint.Id] = breakpoint;
             return breakpoint;
         }
 
@@ -1161,14 +1188,13 @@ namespace System.Management.Automation
         {
             AddBreakpointCommon(breakpoint);
 
-            List<VariableBreakpoint> breakpoints;
-            if (!_variableBreakpoints.TryGetValue(breakpoint.Variable, out breakpoints))
+            if (!_variableBreakpoints.TryGetValue(breakpoint.Variable, out ConcurrentDictionary<int, VariableBreakpoint> breakpoints))
             {
-                breakpoints = new List<VariableBreakpoint>();
-                _variableBreakpoints.Add(breakpoint.Variable, breakpoints);
+                breakpoints = new ConcurrentDictionary<int, VariableBreakpoint>();
+                _variableBreakpoints[breakpoint.Variable] = breakpoints;
             }
 
-            breakpoints.Add(breakpoint);
+            breakpoints[breakpoint.Id] = breakpoint;
             return breakpoint;
         }
 
@@ -1198,7 +1224,7 @@ namespace System.Management.Automation
         // This is the implementation of the Remove-PSBreakpoint cmdlet.
         internal void RemoveBreakpoint(Breakpoint breakpoint)
         {
-            _idToBreakpoint.Remove(breakpoint.Id);
+            _idToBreakpoint.Remove(breakpoint.Id, out _);
 
             breakpoint.RemoveSelf(this);
 
@@ -1213,22 +1239,22 @@ namespace System.Management.Automation
 
         internal void RemoveVariableBreakpoint(VariableBreakpoint breakpoint)
         {
-            _variableBreakpoints[breakpoint.Variable].Remove(breakpoint);
+            _variableBreakpoints[breakpoint.Variable].Remove(breakpoint.Id, out _);
         }
 
         internal void RemoveCommandBreakpoint(CommandBreakpoint breakpoint)
         {
-            _commandBreakpoints.Remove(breakpoint);
+            _commandBreakpoints.Remove(breakpoint.Id, out _);
         }
 
         internal void RemoveLineBreakpoint(LineBreakpoint breakpoint)
         {
-            _pendingBreakpoints.Remove(breakpoint);
+            _pendingBreakpoints.Remove(breakpoint.Id, out _);
 
-            Tuple<WeakReference, List<LineBreakpoint>> value;
+            Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> value;
             if (_boundBreakpoints.TryGetValue(breakpoint.Script, out value))
             {
-                value.Item2.Remove(breakpoint);
+                value.Item2.Remove(breakpoint.Id, out _);
             }
         }
 
@@ -1255,7 +1281,7 @@ namespace System.Management.Automation
             }
 
             List<Breakpoint> breakpoints =
-                _commandBreakpoints.Where(bp => bp.Enabled && bp.Trigger(invocationInfo)).ToList<Breakpoint>();
+                _commandBreakpoints.Values.Where(bp => bp.Enabled && bp.Trigger(invocationInfo)).ToList<Breakpoint>();
 
             bool checkLineBp = true;
             if (breakpoints.Any())
@@ -1308,7 +1334,7 @@ namespace System.Management.Automation
             {
                 SetInternalDebugMode(InternalDebugMode.Disabled);
 
-                List<VariableBreakpoint> breakpoints;
+                ConcurrentDictionary<int, VariableBreakpoint> breakpoints;
                 if (!_variableBreakpoints.TryGetValue(variableName, out breakpoints))
                 {
                     // $PSItem is an alias for $_.  We don't use PSItem internally, but a user might
@@ -1324,7 +1350,7 @@ namespace System.Management.Automation
 
                 var callStackInfo = _callStack.Last();
                 var currentScriptFile = (callStackInfo != null) ? callStackInfo.File : null;
-                return breakpoints.Where(bp => bp.Trigger(currentScriptFile, read: read)).ToList();
+                return breakpoints.Values.Where(bp => bp.Trigger(currentScriptFile, read: read)).ToList();
             }
             finally
             {
@@ -1342,17 +1368,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
-        internal Breakpoint GetBreakpoint(int id)
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id)
         {
-            Breakpoint breakpoint;
-            _idToBreakpoint.TryGetValue(id, out breakpoint);
+            _idToBreakpoint.TryGetValue(id, out Breakpoint breakpoint);
             return breakpoint;
         }
 
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
-        internal List<Breakpoint> GetBreakpoints()
+        public override List<Breakpoint> GetBreakpoints()
         {
             return (from bp in _idToBreakpoint.Values orderby bp.Id select bp).ToList();
         }
@@ -1499,7 +1525,7 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(functionContext._file)) { return; }
 
                 bool havePendingBreakpoint = false;
-                foreach (var item in _pendingBreakpoints)
+                foreach ((int breakpointId, LineBreakpoint item) in _pendingBreakpoints)
                 {
                     if (item.IsScriptBreakpoint && item.Script.Equals(functionContext._file, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1618,11 +1644,11 @@ namespace System.Management.Automation
         }
 
         private readonly ExecutionContext _context;
-        private List<LineBreakpoint> _pendingBreakpoints;
-        private readonly Dictionary<string, Tuple<WeakReference, List<LineBreakpoint>>> _boundBreakpoints;
-        private readonly List<CommandBreakpoint> _commandBreakpoints;
-        private readonly Dictionary<string, List<VariableBreakpoint>> _variableBreakpoints;
-        private readonly Dictionary<int, Breakpoint> _idToBreakpoint;
+        private ConcurrentDictionary<int, LineBreakpoint> _pendingBreakpoints;
+        private readonly ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>> _boundBreakpoints;
+        private readonly ConcurrentDictionary<int, CommandBreakpoint> _commandBreakpoints;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>> _variableBreakpoints;
+        private readonly ConcurrentDictionary<int, Breakpoint> _idToBreakpoint;
         private SteppingMode _steppingMode;
         private CallStackInfo _overOrOutFrame;
         private CallStackList _callStack;
@@ -1935,7 +1961,7 @@ namespace System.Management.Automation
                 breakpoint.SequencePoints = null;
                 breakpoint.SequencePointIndex = -1;
                 breakpoint.BreakpointBitArray = null;
-                _pendingBreakpoints.Add(breakpoint);
+                _pendingBreakpoints[breakpoint.Id] = breakpoint;
             }
 
             boundBreakpoints.Clear();
@@ -1946,7 +1972,7 @@ namespace System.Management.Automation
             if (!_pendingBreakpoints.Any())
                 return;
 
-            var newPendingBreakpoints = new List<LineBreakpoint>();
+            var newPendingBreakpoints = new Dictionary<int, LineBreakpoint>();
             var currentScriptFile = functionContext._file;
 
             // If we're not in a file, we can't have any line breakpoints.
@@ -1967,7 +1993,7 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(tuple.Item1 == functionContext._boundBreakpoints, "What's up?");
 
-            foreach (var breakpoint in _pendingBreakpoints)
+            foreach ((int breakpointId, LineBreakpoint breakpoint) in _pendingBreakpoints)
             {
                 bool bound = false;
                 if (breakpoint.TrySetBreakpoint(currentScriptFile, functionContext))
@@ -1983,17 +2009,16 @@ namespace System.Management.Automation
                     // We need to keep track of any breakpoints that are bound in each script because they may
                     // need to be rebound if the script changes.
                     var boundBreakpoints = _boundBreakpoints[currentScriptFile].Item2;
-                    Diagnostics.Assert(boundBreakpoints.IndexOf(breakpoint) < 0, "Don't add more than once.");
-                    boundBreakpoints.Add(breakpoint);
+                    boundBreakpoints[breakpoint.Id] = breakpoint;
                 }
 
                 if (!bound)
                 {
-                    newPendingBreakpoints.Add(breakpoint);
+                    newPendingBreakpoints.Add(breakpoint.Id, breakpoint);
                 }
             }
 
-            _pendingBreakpoints = newPendingBreakpoints;
+            _pendingBreakpoints = new ConcurrentDictionary<int, LineBreakpoint>(newPendingBreakpoints);
         }
 
         private void StopOnSequencePoint(FunctionContext functionContext, List<Breakpoint> breakpoints)
@@ -2355,24 +2380,20 @@ namespace System.Management.Automation
             {
                 if (_idToBreakpoint.ContainsKey(breakpoint.Id)) { continue; }
 
-                LineBreakpoint lineBp = breakpoint as LineBreakpoint;
-                if (lineBp != null)
+                switch (breakpoint)
                 {
-                    AddLineBreakpoint(lineBp);
-                    continue;
-                }
-
-                CommandBreakpoint cmdBp = breakpoint as CommandBreakpoint;
-                if (cmdBp != null)
-                {
-                    AddCommandBreakpoint(cmdBp);
-                    continue;
-                }
-
-                VariableBreakpoint variableBp = breakpoint as VariableBreakpoint;
-                if (variableBp != null)
-                {
-                    AddVariableBreakpoint(variableBp);
+                    case LineBreakpoint lineBp:
+                        AddLineBreakpoint(lineBp);
+                        continue;
+                    case CommandBreakpoint cmdBp:
+                        AddCommandBreakpoint(cmdBp);
+                        continue;
+                    case VariableBreakpoint variableBp:
+                        AddVariableBreakpoint(variableBp);
+                        continue;
+                    default:
+                        // Unreachable default block
+                        break;
                 }
             }
         }
@@ -2657,11 +2678,17 @@ namespace System.Management.Automation
 
         #region Runspace Debugging
 
+        internal override void DebugRunspace(Runspace runspace)
+        {
+            DebugRunspace(runspace, disableBreakAll:false);
+        }
+
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
         /// <param name="runspace">Runspace to debug.</param>
-        internal override void DebugRunspace(Runspace runspace)
+        /// <param name="disableBreakAll">When specified, it will not turn on BreakAll.</param>
+        internal override void DebugRunspace(Runspace runspace, bool disableBreakAll)
         {
             if (runspace == null)
             {
@@ -2696,7 +2723,7 @@ namespace System.Management.Automation
 
             AddToRunningRunspaceList(new PSStandaloneMonitorRunspaceInfo(runspace));
 
-            if (!runspace.Debugger.InBreakpoint)
+            if (!runspace.Debugger.InBreakpoint && !disableBreakAll)
             {
                 EnableDebuggerStepping(EnableNestedType.NestedRunspace);
             }
@@ -3987,6 +4014,28 @@ namespace System.Management.Automation
 
             return _wrappedDebugger.ProcessCommand(command, output);
         }
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.SetBreakpoints(breakpoints);
+        }
+
+        /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id) => 
+            _wrappedDebugger.GetBreakpoint(id);
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints() =>
+            _wrappedDebugger.GetBreakpoints();
 
         /// <summary>
         /// SetDebuggerAction.

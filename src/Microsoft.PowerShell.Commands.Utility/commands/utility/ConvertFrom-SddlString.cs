@@ -5,12 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-using System.ComponentModel;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             string owner = ConvertToNTAccount(rawSecurityDescriptor.Owner);
             string group = ConvertToNTAccount(rawSecurityDescriptor.Group);
 
-            AccessRightTypeNames? typeToUse = _isTypeSet ? _type : (AccessRightTypeNames?) null;
+            AccessRightTypeNames? typeToUse = _isTypeSet ? _type : (AccessRightTypeNames?)null;
             string[] discretionaryAcl = ConvertAccessControlListToStrings(rawSecurityDescriptor.DiscretionaryAcl, typeToUse);
             string[] systemAcl = ConvertAccessControlListToStrings(rawSecurityDescriptor.SystemAcl, typeToUse);
 

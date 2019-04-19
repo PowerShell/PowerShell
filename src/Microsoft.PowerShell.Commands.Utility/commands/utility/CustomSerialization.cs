@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Xml;
+
+using Dbg = System.Management.Automation.Diagnostics;
+
 namespace System.Management.Automation
 {
-    using System;
-    using System.Collections;
-    using System.Reflection;
-    using System.Xml;
-    using System.Management.Automation.Internal;
-    using System.Collections.Generic;
-    using Dbg = System.Management.Automation.Diagnostics;
-
     /// <summary>
     /// This class provides functionality for serializing a PSObject.
     /// </summary>

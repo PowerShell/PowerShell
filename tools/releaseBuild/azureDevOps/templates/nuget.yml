@@ -9,13 +9,6 @@ jobs:
   condition: succeeded()
   pool: PowerShell
   variables:
-    linuxArm32Path: '$(System.ArtifactsDirectory)/linuxArm32'
-    winArm32Path: '$(System.ArtifactsDirectory)/winArm32'
-    linuxX64Path: '$(System.ArtifactsDirectory)/linuxX64'
-    macOSPath: '$(System.ArtifactsDirectory)/macOS'
-    winArm64Path: '$(System.ArtifactsDirectory)/winArm64'
-    winX64Path: '$(System.ArtifactsDirectory)/winX64'
-    winX86Path: '$(System.ArtifactsDirectory)/winX86'
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
     winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
@@ -55,48 +48,6 @@ jobs:
     displayName: 'Conflate packages to same folder'
 
   - task: ExtractFiles@1
-    displayName: 'Extract files linuxArm32'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-arm32.tar.gz'
-      destinationFolder: '$(linuxArm32Path)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files linuxX64'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64.tar.gz'
-      destinationFolder: '$(linuxX64Path)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files macOS files'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-osx*.tar.gz'
-      destinationFolder: '$(macOSPath)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files win-arm32'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm32.zip'
-      destinationFolder: '$(winArm32Path)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files win-arm64'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm64.zip'
-      destinationFolder: '$(winArm64Path)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files win-X64'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x64.zip'
-      destinationFolder: '$(winX64Path)'
-
-  - task: ExtractFiles@1
-    displayName: 'Extract files win-X86'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x86.zip'
-      destinationFolder: '$(winX86Path)'
-
-  - task: ExtractFiles@1
     displayName: 'Extract files win-fxdependent'
     inputs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependent.zip'
@@ -128,7 +79,7 @@ jobs:
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-      New-UnifiedNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -winx86BinPath "$(winX86Path)" -winx64BinPath "$(winX64Path)" -winArm32BinPath "$(winArm32Path)" -winArm64BinPath "$(winArm64Path)" -linuxArm32BinPath "$(linuxArm32Path)" -linuxBinPath "$(linuxX64Path)" -osxBinPath "$(macOSPath)" -GenAPIToolPath "$(GenAPIToolPath)"
+      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
   - powershell: |
@@ -164,6 +115,8 @@ jobs:
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign Nuget Packages'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       signConfigXml: '$(PackagePath)\NugetSigning.xml'
       inPathRoot: '$(PackagePath)'

@@ -2915,6 +2915,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the BeginInvoke completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3036,6 +3039,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the BeginInvoke completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3158,6 +3164,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3264,6 +3273,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3733,6 +3745,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginStop completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3794,6 +3809,9 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="callback">
         /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>

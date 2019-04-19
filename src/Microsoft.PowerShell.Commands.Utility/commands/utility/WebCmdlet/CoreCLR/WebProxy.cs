@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return _proxyAddress;
-
         }
 
         public bool IsBypassed(Uri host)

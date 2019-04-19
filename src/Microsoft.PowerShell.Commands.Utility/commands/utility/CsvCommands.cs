@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -60,6 +61,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets list of fields to quote in output.
+        /// </summary>
+        [Parameter]
+        [Alias("QF")]
+        public string[] QuoteFields { get; set; }
+
+        /// <summary>
         /// Gets or sets option to use or suppress quotes in output.
         /// </summary>
         [Parameter]
@@ -101,6 +109,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(QuoteFields)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(UseQuotes)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyQuoteFieldsAndUseQuotes);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyQuoteFieldsAndUseQuotes", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
             {
                 InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
@@ -245,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
 
             CreateFileStream();
 
-            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes, base.QuoteFields);
         }
 
         /// <summary>
@@ -672,7 +687,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes);
+            _helper = new ExportCsvHelper(base.Delimiter, base.UseQuotes, base.QuoteFields);
         }
 
         /// <summary>
@@ -840,6 +855,7 @@ namespace Microsoft.PowerShell.Commands
     {
         private char _delimiter;
         readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
+        readonly private HashSet<string> _quoteFields;
         readonly private StringBuilder _outputString;
 
         /// <summary>
@@ -847,10 +863,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="delimiter">Delimiter char.</param>
         /// <param name="quoteKind">Kind of quoting.</param>
-        internal ExportCsvHelper(char delimiter, BaseCsvWritingCommand.QuoteKind quoteKind)
+        /// <param name="quoteFields">List of fields to quote.</param>
+        internal ExportCsvHelper(char delimiter, BaseCsvWritingCommand.QuoteKind quoteKind, string[] quoteFields)
         {
             _delimiter = delimiter;
             _quoteKind = quoteKind;
+            _quoteFields = quoteFields == null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
             _outputString = new StringBuilder(128);
         }
 
@@ -906,25 +924,39 @@ namespace Microsoft.PowerShell.Commands
                     _outputString.Append(_delimiter);
                 }
 
-                switch (_quoteKind)
+                if (_quoteFields != null)
                 {
-                    case BaseCsvWritingCommand.QuoteKind.Always:
+                    if (_quoteFields.TryGetValue(propertyName, out _))
+                    {
                         AppendStringWithEscapeAlways(_outputString, propertyName);
-                        break;
-                    case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                        if (propertyName.Contains(_delimiter))
-                        {
-                            AppendStringWithEscapeAlways(_outputString, propertyName);
-                        }
-                        else
-                        {
-                            _outputString.Append(propertyName);
-                        }
-
-                        break;
-                    case BaseCsvWritingCommand.QuoteKind.Never:
+                    }
+                    else
+                    {
                         _outputString.Append(propertyName);
-                        break;
+                    }
+                }
+                else
+                {
+                    switch (_quoteKind)
+                    {
+                        case BaseCsvWritingCommand.QuoteKind.Always:
+                            AppendStringWithEscapeAlways(_outputString, propertyName);
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                            if (propertyName.Contains(_delimiter))
+                            {
+                                AppendStringWithEscapeAlways(_outputString, propertyName);
+                            }
+                            else
+                            {
+                                _outputString.Append(propertyName);
+                            }
+
+                            break;
+                        case BaseCsvWritingCommand.QuoteKind.Never:
+                            _outputString.Append(propertyName);
+                            break;
+                    }
                 }
             }
 
@@ -963,28 +995,42 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var value = GetToStringValueForProperty(property);
 
-                    switch (_quoteKind)
+                    if (_quoteFields != null)
                     {
-                        case BaseCsvWritingCommand.QuoteKind.Always:
+                        if (_quoteFields.TryGetValue(propertyName, out _))
+                        {
                             AppendStringWithEscapeAlways(_outputString, value);
-                            break;
-                        case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            if (value.Contains(_delimiter))
-                            {
-                                AppendStringWithEscapeAlways(_outputString, value);
-                            }
-                            else
-                            {
-                                _outputString.Append(value);
-                            }
-
-                            break;
-                        case BaseCsvWritingCommand.QuoteKind.Never:
+                        }
+                        else
+                        {
                             _outputString.Append(value);
-                            break;
-                        default:
-                            Diagnostics.Assert(false, "BaseCsvWritingCommand.QuoteKind has new item.");
-                            break;
+                        }
+                    }
+                    else
+                    {
+                        switch (_quoteKind)
+                        {
+                            case BaseCsvWritingCommand.QuoteKind.Always:
+                                AppendStringWithEscapeAlways(_outputString, value);
+                                break;
+                            case BaseCsvWritingCommand.QuoteKind.AsNeeded:
+                                if (value.Contains(_delimiter))
+                                {
+                                    AppendStringWithEscapeAlways(_outputString, value);
+                                }
+                                else
+                                {
+                                    _outputString.Append(value);
+                                }
+
+                                break;
+                            case BaseCsvWritingCommand.QuoteKind.Never:
+                                _outputString.Append(value);
+                                break;
+                            default:
+                                Diagnostics.Assert(false, "BaseCsvWritingCommand.QuoteKind has new item.");
+                                break;
+                        }
                     }
                 }
             }
