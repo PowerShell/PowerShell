@@ -37,7 +37,8 @@ namespace Microsoft.PowerShell
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
         }
 
-        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
+        {
             var str = Environment.GetEnvironmentVariable(name);
             if (string.IsNullOrEmpty(str))
             {
@@ -62,11 +63,11 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Send the telemetry.
         /// </summary>
-        private static void SendTelemetry(string eventName, Dictionary<string,string> payload)
+        private static void SendTelemetry(string eventName, Dictionary<string, string> payload)
         {
             try
             {
-                var enabled = !GetEnvironmentVariableAsBool(name : TelemetryOptoutEnvVar, defaultValue : false);
+                var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
                 if (!enabled)
                 {

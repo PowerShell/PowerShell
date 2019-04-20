@@ -55,7 +55,8 @@ namespace Microsoft.PowerShell
             if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Attach the debugger to continue...");
-                while (!System.Diagnostics.Debugger.IsAttached) {
+                while (!System.Diagnostics.Debugger.IsAttached)
+                {
                     Thread.Sleep(100);
                 }
 

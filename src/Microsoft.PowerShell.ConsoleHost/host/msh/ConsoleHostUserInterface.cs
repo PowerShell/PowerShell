@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell
             return sb.ToString();
         }
 
-#endregion Word Wrapping
+        #endregion Word Wrapping
 
         /// <summary>
         /// See base class.
@@ -1580,8 +1580,8 @@ namespace Microsoft.PowerShell
             }
 
 #endif
-                do
-                {
+            do
+            {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
 #else
@@ -1595,35 +1595,35 @@ namespace Microsoft.PowerShell
 #else
                 if (s.Length == 0)
 #endif
+                {
+                    result = ReadLineResult.endedOnBreak;
+                    s = null;
+
+                    if (calledFromPipeline)
                     {
-                        result = ReadLineResult.endedOnBreak;
-                        s = null;
+                        // make sure that the pipeline that called us is stopped
 
-                        if (calledFromPipeline)
-                        {
-                            // make sure that the pipeline that called us is stopped
-
-                            throw new PipelineStoppedException();
-                        }
-
-                        break;
+                        throw new PipelineStoppedException();
                     }
+
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
                 if (s.EndsWith(Environment.NewLine, StringComparison.Ordinal))
 #endif
-                    {
-                        result = ReadLineResult.endedOnEnter;
+                {
+                    result = ReadLineResult.endedOnEnter;
 #if UNIX
                         // We're intercepting characters, so we need to echo the newline
                         Console.Out.WriteLine();
 #else
                     s = s.Remove(s.Length - Environment.NewLine.Length);
 #endif
-                        break;
-                    }
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Tab)
@@ -1806,15 +1806,15 @@ namespace Microsoft.PowerShell
                     Console.Out.Write(s);
                     Console.CursorLeft = cursorCurrent + 1;
 #endif
-                }
-                while (true);
+            }
+            while (true);
 
-                Dbg.Assert(
-                           (s == null && result == ReadLineResult.endedOnBreak)
-                           || (s != null && result != ReadLineResult.endedOnBreak),
-                           "s should only be null if input ended with a break");
+            Dbg.Assert(
+                       (s == null && result == ReadLineResult.endedOnBreak)
+                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       "s should only be null if input ended with a break");
 
-                return s;
+            return s;
 #if UNIX
             }
             finally

@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell
                 {
                     return _workingDirectory.Remove(_workingDirectory.Length - 1);
                 }
- #endif
+#endif
                 return _workingDirectory;
             }
         }
@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell
         /// </param>
         private static void EarlyParseHelper(string[] args)
         {
-            if(args == null)
+            if (args == null)
             {
                 Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
                 return;
