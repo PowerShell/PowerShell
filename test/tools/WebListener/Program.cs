@@ -23,7 +23,7 @@ namespace mvc
             if (args.Count() != 6)
             {
                 System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls2> <HTTPSPortNumberTls11> <HTTPSPortNumberTls>");
-                Environment.Exit(1); 
+                Environment.Exit(1);
             }
 
             BuildWebHost(args).Run();
@@ -68,6 +68,12 @@ namespace mvc
                        listenOptions.UseHttps(httpsOption);
                    });
                 })
+#if !UNIX
+                .UseHttpSys(options =>
+                {
+                    options.AllowSynchronousIO = true;
+                })
+#endif
                 .Build();
     }
 }

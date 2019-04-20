@@ -96,7 +96,6 @@
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RuntimeFrameworkVersion>3.0.0-preview-27324-05</RuntimeFrameworkVersion>
     <LangVersion>8.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
