@@ -68,10 +68,12 @@ namespace mvc
                        listenOptions.UseHttps(httpsOption);
                    });
                 })
+#if !UNIX
                 .UseHttpSys(options =>
                 {
                     options.AllowSynchronousIO = true;
                 })
+#endif
                 .Build();
     }
 }
