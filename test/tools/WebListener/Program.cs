@@ -33,6 +33,7 @@ namespace mvc
             WebHost.CreateDefaultBuilder()
                 .UseStartup<Startup>().UseKestrel(options =>
                 {
+                   options.AllowSynchronousIO = true;
                    options.Listen(IPAddress.Loopback, int.Parse(args[2]));
                    options.Listen(IPAddress.Loopback, int.Parse(args[3]), listenOptions =>
                    {
@@ -68,12 +69,6 @@ namespace mvc
                        listenOptions.UseHttps(httpsOption);
                    });
                 })
-#if !UNIX
-                .UseHttpSys(options =>
-                {
-                    options.AllowSynchronousIO = true;
-                })
-#endif
                 .Build();
     }
 }
