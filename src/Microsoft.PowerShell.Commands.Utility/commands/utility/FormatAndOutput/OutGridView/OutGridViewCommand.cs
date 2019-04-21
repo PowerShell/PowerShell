@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
             internal static GridHeader ConstructGridHeader(PSObject input, OutGridViewCommand parentCmd)
             {
                 if (DefaultScalarTypes.IsTypeInList(input.TypeNames) ||
-                    OutOfBandFormatViewManager.IsPropertyLessObject(input))
+                    !OutOfBandFormatViewManager.HasNonRemotingProperties(input))
                 {
                     return new ScalarTypeHeader(parentCmd, input);
                 }

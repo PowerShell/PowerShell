@@ -225,8 +225,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // We wait untill the window is loaded and then activate it
-            // to work arround the console window gaining activation somewhere
+            // We wait until the window is loaded and then activate it
+            // to work around the console window gaining activation somewhere
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
             _showCommandProxy.WindowLoaded.WaitOne();
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
             output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
             _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
 
-            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.Streams.Error = _errors;
 
             ps.Commands.AddScript(script);

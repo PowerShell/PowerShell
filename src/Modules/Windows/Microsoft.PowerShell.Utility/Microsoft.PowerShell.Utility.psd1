@@ -23,7 +23,7 @@ CmdletsToExport = @(
   'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan', 'Get-TraceSource', 'Set-TraceSource',
   'Add-Type', 'Get-TypeData', 'Remove-TypeData', 'Update-TypeData', 'Get-UICulture', 'Get-Unique', 'Get-Uptime',
   'Clear-Variable', 'Get-Variable', 'New-Variable', 'Remove-Variable', 'Set-Variable', 'Get-Verb', 'Write-Verbose',
-  'Write-Warning', 'Invoke-WebRequest', 'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error'
+  'Write-Warning', 'Invoke-WebRequest', 'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Out-GridView', 'Show-Command'
 )
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
