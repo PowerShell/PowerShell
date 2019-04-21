@@ -104,7 +104,6 @@
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
     <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
     <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />

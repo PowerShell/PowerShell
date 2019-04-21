@@ -2112,7 +2112,7 @@ function Start-CrossGen {
     $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
 
     $crossGenRequiredAssemblies += if ($Environment.IsWindows) {
-         "clrjit.dll"
+        "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
     } elseif ($Environment.IsMacOS) {
@@ -2170,6 +2170,7 @@ function Start-CrossGen {
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
+            "Microsoft.PowerShell.GraphicalHost.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )
     }
