@@ -1,13 +1,6 @@
 <!--=================================================================
-Copyright (C) Microsoft Corporation.  All rights reserved.
-
-This file was generated from individual xaml files found
-   in mux\themes\xaml\, please do not edit it directly.
-
-To generate this file, bcz in mux\Themes\Generator and copy
-   the generated theme files from the output directory to
-   the corresponding mux\theme folder.
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 ==================================================================-->
 
 <ResourceDictionary x:Uid="MainResourceDictionary" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
