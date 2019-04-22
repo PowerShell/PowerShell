@@ -564,23 +564,19 @@ namespace System.Management.Automation
                             switch (expression)
                             {
                                 case ConstantExpressionAst constantExpression:
-                                    {
-                                        value = constantExpression.Value;
-                                        break;
-                                    }
+                                    value = constantExpression.Value;
+                                    break;
                                 default:
+                                    typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
+                                    if (typeName == null)
                                     {
-                                        typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
-                                        if (typeName == null)
+                                        if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
                                         {
-                                            if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
-                                            {
-                                                value = safeValue;
-                                            }
+                                            value = safeValue;
                                         }
-
-                                        break;
                                     }
+
+                                    break;
                             }
                         }
 
