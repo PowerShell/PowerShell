@@ -1,11 +1,5 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="SettingsDialog.xaml.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-// <summary>
-// Implements SettingsDialog.
-// </summary>
-//-----------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace Microsoft.Management.UI
 {
