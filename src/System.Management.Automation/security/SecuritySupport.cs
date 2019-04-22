@@ -157,43 +157,40 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                    {
-                        if (policy == ExecutionPolicy.Undefined)
-                            executionPolicy = null;
 
-                        Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
-                        break;
-                    }
+                    if (policy == ExecutionPolicy.Undefined)
+                        executionPolicy = null;
+
+                    Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
+                    break;
 
                 case ExecutionPolicyScope.CurrentUser:
-                    {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.CurrentUser, shellId);
-                        }
-                        else
-                        {
-                            PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
-                        }
 
-                        break;
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
+                    {
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.CurrentUser, shellId);
                     }
+                    else
+                    {
+                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
+                    }
+
+                    break;
 
                 case ExecutionPolicyScope.LocalMachine:
-                    {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.AllUsers, shellId);
-                        }
-                        else
-                        {
-                            PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
-                        }
 
-                        break;
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
+                    {
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.AllUsers, shellId);
                     }
+                    else
+                    {
+                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
+                    }
+
+                    break;
             }
 #endif
         }
