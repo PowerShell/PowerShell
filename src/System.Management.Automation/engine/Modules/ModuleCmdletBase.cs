@@ -315,27 +315,27 @@ namespace Microsoft.PowerShell.Commands
                     {
                         fileBaseName = moduleName;
 #endif
-                string qualifiedPath = Path.Combine(path, fileBaseName);
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-                if (!found)
-                {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
-                    {
-                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                    }
-                    else if (Directory.Exists(qualifiedPath))
-                    {
-                        // if it points to a directory, add the basename back onto the path...
-                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                    }
+                        string qualifiedPath = Path.Combine(path, fileBaseName);
+                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                        if (!found)
+                        {
+                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                            {
+                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                            }
+                            else if (Directory.Exists(qualifiedPath))
+                            {
+                                // if it points to a directory, add the basename back onto the path...
+                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                            }
 
-                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                }
+                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                        }
 
-                if (found)
-                {
-                    break;
-                }
+                        if (found)
+                        {
+                            break;
+                        }
 #if UNIX
                     }
                 }
@@ -686,8 +686,8 @@ namespace Microsoft.PowerShell.Commands
                         module = LoadUsingExtensions(
                             parentModule,
                             moduleSpecification.Name,
-                            rootedPath, // fileBaseName
-                                        /*extension*/null,
+                            fileBaseName: rootedPath,
+                            extension: null,
                             moduleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                             prefix,
                             ss,
