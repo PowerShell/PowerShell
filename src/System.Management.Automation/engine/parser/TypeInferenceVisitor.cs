@@ -785,33 +785,29 @@ namespace System.Management.Automation
                 switch (attrib)
                 {
                     case TypeConstraintAst typeConstraint:
+                        if (!typeConstraintAdded)
                         {
-                            if (!typeConstraintAdded)
-                            {
-                                res.Add(new PSTypeName(typeConstraint.TypeName));
-                                typeConstraintAdded = true;
-                            }
-
-                            break;
+                            res.Add(new PSTypeName(typeConstraint.TypeName));
+                            typeConstraintAdded = true;
                         }
+
+                        break;
                     case AttributeAst attributeAst:
+                        PSTypeNameAttribute attribute = null;
+                        try
                         {
-                            PSTypeNameAttribute attribute = null;
-                            try
-                            {
-                                attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
-                            }
-                            catch (RuntimeException)
-                            {
-                            }
-
-                            if (attribute != null)
-                            {
-                                res.Add(new PSTypeName(attribute.PSTypeName));
-                            }
-
-                            break;
+                            attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
                         }
+                        catch (RuntimeException)
+                        {
+                        }
+
+                        if (attribute != null)
+                        {
+                            res.Add(new PSTypeName(attribute.PSTypeName));
+                        }
+
+                        break;
                 }
             }
 
