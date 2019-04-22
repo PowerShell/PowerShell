@@ -414,7 +414,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         {
             $item = Get-Item $TestPath
             $dirName = $item.BaseName
-            $item = Get-Item $item.PSParentPath
+            $item = Get-Item $item.PSParentPath -Force
             if ($item.LinkType -eq "SymbolicLink")
             {
                 $TestPath = Join-Path $item.Target $dirName
@@ -439,44 +439,41 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
     Context "New-Item and hard/symbolic links" {
         It "New-Item can create a hard link to a file" {
-            New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile
+            New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile > $null
             Test-Path $hardLinkToFile | Should -BeTrue
             $link = Get-Item -Path $hardLinkToFile
             $link.LinkType | Should -BeExactly "HardLink"
             Get-Content -Path $hardLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create symbolic link to file" {
-            New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile
+            New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile > $null
             Test-Path $symLinkToFile | Should -BeTrue
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target.Count | Should -Be 1
-            $link.Target[0] | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $real.ToString()
             Get-Content -Path $symLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create a symbolic link to nothing" {
-            New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile
+            New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile > $null
             Test-Path $symLinkToNothing | Should -BeTrue
             $link = Get-Item -Path $symLinkToNothing
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target.Count | Should -Be 1
-            $link.Target[0] | Should -Be $nonFile.ToString()
+            $link.Target | Should -Be $nonFile.ToString()
         }
         It "New-Item emits an error when path to symbolic link already exists." {
             { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | Should -Throw -ErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
         }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
-            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target.Count | Should -Be 1
-            $link.Target[0] | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
-            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir > $null
             Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
@@ -486,7 +483,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.Target[0] | Should -BeExactly $real.ToString()
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
-            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
         }
     }
