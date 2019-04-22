@@ -762,14 +762,30 @@ namespace System.Management.Automation
                     PolicyBase result = null;
                     switch (typeof(T).Name)
                     {
-                        case nameof(ScriptExecution): result = policies.ScriptExecution; break;
-                        case nameof(ScriptBlockLogging): result = policies.ScriptBlockLogging; break;
-                        case nameof(ModuleLogging): result = policies.ModuleLogging; break;
-                        case nameof(ProtectedEventLogging): result = policies.ProtectedEventLogging; break;
-                        case nameof(Transcription): result = policies.Transcription; break;
-                        case nameof(UpdatableHelp): result = policies.UpdatableHelp; break;
-                        case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
-                        default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
+                        case nameof(ScriptExecution):
+                            result = policies.ScriptExecution;
+                            break;
+                        case nameof(ScriptBlockLogging):
+                            result = policies.ScriptBlockLogging;
+                            break;
+                        case nameof(ModuleLogging):
+                            result = policies.ModuleLogging;
+                            break;
+                        case nameof(ProtectedEventLogging):
+                            result = policies.ProtectedEventLogging;
+                            break;
+                        case nameof(Transcription):
+                            result = policies.Transcription;
+                            break;
+                        case nameof(UpdatableHelp):
+                            result = policies.UpdatableHelp;
+                            break;
+                        case nameof(ConsoleSessionConfiguration):
+                            result = policies.ConsoleSessionConfiguration;
+                            break;
+                        default:
+                            Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added.");
+                            break;
                     }
 
                     if (result != null) { return (T)result; }
