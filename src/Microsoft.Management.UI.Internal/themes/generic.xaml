@@ -13,7 +13,6 @@
     xmlns:aerotheme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
     xmlns:classictheme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic">
 
-
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
 
     <Geometry x:Key="NavPane_ListViewItem_RightArrow">M7.3391155,8.3084572 L7.3391708,16.109179 10.974259,12.431834 z</Geometry>

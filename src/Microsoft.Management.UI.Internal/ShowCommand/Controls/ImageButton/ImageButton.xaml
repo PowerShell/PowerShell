@@ -11,7 +11,7 @@
         <Grid.Resources>
             <ResourceDictionary>
                 <ResourceDictionary.MergedDictionaries>
-                    <ResourceDictionary Source="/Microsoft.PowerShell.GraphicalHost;component/ImageButtonCommon.xaml"/>
+                    <ResourceDictionary Source="/Microsoft.PowerShell.GraphicalHost;showcommand/controls/imagebutton/imagebuttoncommon.xaml"/>
                 </ResourceDictionary.MergedDictionaries>
             </ResourceDictionary>
         </Grid.Resources>
