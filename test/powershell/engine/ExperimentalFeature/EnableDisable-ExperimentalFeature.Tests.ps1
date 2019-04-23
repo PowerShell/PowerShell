@@ -94,4 +94,14 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         & $cmdlet ExpTest.FeatureOne -WarningVariable warning -WarningAction SilentlyContinue
         $warning | Should -Not -BeNullOrEmpty -Because "A warning message is always given indicating restart is required"
     }
+
+    It "Multiple features enabled will only output one warning message for <cmdlet>" -TestCases @(
+        @{ cmdlet = "Enable-ExperimentalFeature" },
+        @{ cmdlet = "Disable-Experimentalfeature" }
+    ) {
+        param ($cmdlet)
+
+        Get-ExperimentalFeature | & $cmdlet -WarningAction SilentlyContinue -WarningVariable warning
+        $warning | Should -HaveCount 1
+    }
 }
