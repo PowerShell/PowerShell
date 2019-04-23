@@ -377,9 +377,6 @@ namespace Microsoft.PowerShell.Commands
         private Collection<AliasInfo> GetAliasesFromFile(bool isLiteralPath)
         {
             Collection<AliasInfo> result = new Collection<AliasInfo>();
-
-            // it seems like filePath is always null and never defined, so we can remove it as far as I could see
-            // bug keeping it for now because tests are failing
             string filePath = null;
             using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
             {
@@ -404,8 +401,6 @@ namespace Microsoft.PowerShell.Commands
                         result.Add(ConstructAlias(parsedLine, options));
                     }
                 }
-
-                reader.Dispose();
             }
             
             return result;
@@ -445,10 +440,10 @@ namespace Microsoft.PowerShell.Commands
                             parsedLine[1],
                             Context,
                             options);
-
-            if (!string.IsNullOrEmpty(parsedLine[2]))
+            string aliasDescription = parsedLine[2];
+            if (!string.IsNullOrEmpty(aliasDescription))
             {
-                newAlias.Description = parsedLine[2];
+                newAlias.Description = aliasDescription;
             }
 
             return newAlias;
