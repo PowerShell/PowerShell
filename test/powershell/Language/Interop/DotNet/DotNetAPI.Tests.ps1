@@ -27,6 +27,6 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should access types in System.Console" {
-        [System.Console]::TreatControlCAsInput | Should -BeFalse
+        [System.Console]::CursorVisible | Should -BeFalse
     }
 }
