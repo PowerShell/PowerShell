@@ -173,7 +173,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
             $job | Remove-Job -ErrorAction Ignore
         }
 
-        $assemblyLocation | Should -BeExactly $TestModulePath
+        $assemblyLocation | Should -BeExactly (Resolve-FilePath $TestModulePath)
         $cmdletOutput | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
 
@@ -218,7 +218,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $module.ModuleType.ToString() | Should -Be 'Manifest'
         $module.ExportedCmdlets['Test-BinaryModuleCmdlet1'] | Should -Be 'Test-BinaryModuleCmdlet1'
         $module.NestedModules | Should -Not -BeNullOrEmpty
-        $location | Should -Be $exe
+        $location | Should -Be (Resolve-FilePath $exe)
     }
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
@@ -258,7 +258,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
 
         # Use a different pwsh so that we do not have the PSScheduledJob module already loaded.
         $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
-        $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
+        $loadedAssemblyLocation | Should -BeLike "$(Resolve-FilePath $TestDrive)*\Microsoft.PowerShell.ScheduledJob.dll"
     }
 }
 
