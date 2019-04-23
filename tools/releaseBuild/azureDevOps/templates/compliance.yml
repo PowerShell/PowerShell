@@ -20,9 +20,10 @@ jobs:
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
     inputs:
-      downloadType: specific
-      itemPattern: |
-        **/*.zip
+      buildType: current
+      downloadType: single
+      artifactName: results
+      downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
@@ -128,6 +129,7 @@ jobs:
     inputs:
       tsaStamp: $(TsaStamp)
       codeBaseName: $(CodeBaseName)
+      tsaVersion: TsaV1
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false

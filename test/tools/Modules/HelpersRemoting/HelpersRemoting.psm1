@@ -248,3 +248,13 @@ function Connect-RemoteSession
     $parameters = CreateParameters -ComputerName $ComputerName -Name $Name -Session $Session -ConfigurationName $ConfigurationName
     Connect-PSSession @parameters
 }
+
+function Get-PipePath {
+    param (
+        $PipeName
+    )
+    if ($IsWindows) {
+        return "\\.\pipe\$PipeName"
+    }
+    "$([System.IO.Path]::GetTempPath())CoreFxPipe_$PipeName"
+}

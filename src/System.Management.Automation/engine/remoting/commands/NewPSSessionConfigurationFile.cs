@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _scriptsToProcess = Utils.EmptyArray<string>();
+        private string[] _scriptsToProcess = Array.Empty<string>();
 
         /// <summary>
         /// Role definitions for this session configuration (Role name -> Role capability)
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleAliases = Utils.EmptyArray<string>();
+        private string[] _visibleAliases = Array.Empty<string>();
 
         /// <summary>
         /// A list of visible cmdlets.
@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
+        private string[] _visibleExternalCommands = Array.Empty<string>();
 
         /// <summary>
         /// A list of providers.
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleProviders = Utils.EmptyArray<string>();
+        private string[] _visibleProviders = Array.Empty<string>();
 
         /// <summary>
         /// A list of aliases.
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _typesToProcess = Utils.EmptyArray<string>();
+        private string[] _typesToProcess = Array.Empty<string>();
 
         /// <summary>
         /// A list of format data to process.
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _formatsToProcess = Utils.EmptyArray<string>();
+        private string[] _formatsToProcess = Array.Empty<string>();
 
         /// <summary>
         /// A list of assemblies to load.
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleAliases = Utils.EmptyArray<string>();
+        private string[] _visibleAliases = Array.Empty<string>();
 
         /// <summary>
         /// A list of visible cmdlets.
@@ -1351,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
+        private string[] _visibleExternalCommands = Array.Empty<string>();
 
         /// <summary>
         /// A list of providers.
@@ -1371,7 +1371,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _visibleProviders = Utils.EmptyArray<string>();
+        private string[] _visibleProviders = Array.Empty<string>();
 
         /// <summary>
         /// Scripts to process.
@@ -1391,7 +1391,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _scriptsToProcess = Utils.EmptyArray<string>();
+        private string[] _scriptsToProcess = Array.Empty<string>();
 
         /// <summary>
         /// A list of aliases.
@@ -1492,7 +1492,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _typesToProcess = Utils.EmptyArray<string>();
+        private string[] _typesToProcess = Array.Empty<string>();
 
         /// <summary>
         /// A list of format data to process.
@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _formatsToProcess = Utils.EmptyArray<string>();
+        private string[] _formatsToProcess = Array.Empty<string>();
 
         /// <summary>
         /// A list of assemblies to load.

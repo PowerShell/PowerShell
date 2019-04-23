@@ -94,7 +94,7 @@ namespace System.Management.Automation
                 // implement a "trigger once" breakpoint that disables itself after first hit.
                 // One could also share an action across many breakpoints - and hence needs
                 // to know something about the breakpoint that is hit, e.g. in a poor mans code coverage tool.
-                Action.DoInvoke(dollarUnder: this, input: null, args: Utils.EmptyArray<object>());
+                Action.DoInvoke(dollarUnder: this, input: null, args: Array.Empty<object>());
             }
             catch (BreakException)
             {

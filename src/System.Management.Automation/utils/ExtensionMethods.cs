@@ -71,11 +71,6 @@ namespace System.Management.Automation
     internal static partial class PSTypeExtensions
     {
         /// <summary>
-        /// Type.EmptyTypes is not in CoreCLR. Use this one to replace it.
-        /// </summary>
-        internal static Type[] EmptyTypes = new Type[0];
-
-        /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
         /// </summary>
         /// <param name="type">Type.</param>

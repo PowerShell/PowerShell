@@ -1212,26 +1212,15 @@ namespace System.Management.Automation
             return commandName;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static T[] EmptyArray<T>()
-        {
-            return EmptyArrayHolder<T>._instance;
-        }
-
         internal static ReadOnlyCollection<T> EmptyReadOnlyCollection<T>()
         {
             return EmptyReadOnlyCollectionHolder<T>._instance;
         }
 
-        private static class EmptyArrayHolder<T>
-        {
-            internal static readonly T[] _instance = new T[0];
-        }
-
         private static class EmptyReadOnlyCollectionHolder<T>
         {
             internal static readonly ReadOnlyCollection<T> _instance =
-                new ReadOnlyCollection<T>(EmptyArray<T>());
+                new ReadOnlyCollection<T>(Array.Empty<T>());
         }
 
         internal static class Separators

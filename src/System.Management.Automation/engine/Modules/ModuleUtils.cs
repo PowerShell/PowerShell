@@ -266,8 +266,8 @@ namespace System.Management.Automation.Internal
                     subdirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     ProcessPossibleVersionSubdirectories(subdirectories, versionDirectories);
                 }
-                catch (IOException) { subdirectories = Utils.EmptyArray<string>(); }
-                catch (UnauthorizedAccessException) { subdirectories = Utils.EmptyArray<string>(); }
+                catch (IOException) { subdirectories = Array.Empty<string>(); }
+                catch (UnauthorizedAccessException) { subdirectories = Array.Empty<string>(); }
 
                 bool isModuleDirectory = false;
                 string proposedModuleName = Path.GetFileName(directoryToCheck);

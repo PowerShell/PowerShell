@@ -18,9 +18,10 @@ install(){
     #Completely automated install requires a root account or sudo with a password requirement
 
     #Switches
-    #  -includeide - the script is being run headless, do not perform actions that require response from the console
-    #  -interactivetesting - requires a human user in front of the machine - loads a script into the ide to test with F5 to ensure the IDE can run scripts
-    #  -appimage - does appimage instead of native install
+    # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
+    # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
+    # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
+    # -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
 
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -31,7 +32,7 @@ install(){
 
     echo "Get-PowerShell Core MASTER Installer Version $VERSION"
     echo "Installs PowerShell Core and Optional The Development Environment"
-    echo "  Original script is at: $gitreposcriptroot\$gitscriptname"
+    echo "  Original script is at: $gitreposcriptroot\\$gitscriptname"
 
     echo "Arguments used: $*"
     echo ""
@@ -44,12 +45,15 @@ install(){
     ' INT
 
     lowercase(){
-        echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+        echo "$1" | tr "[:upper:]" "[:lower:]"
     }
 
-    local OS=`lowercase \`uname\``
-    local KERNEL=`uname -r`
-    local MACH=`uname -m`
+    local OS
+    OS=$(lowercase "$(uname)")
+    local KERNEL
+    KERNEL=$(uname -r)
+    local MACH
+    MACH=$(uname -m)
     local DIST
     local DistroBasedOn
     local PSUEDONAME
@@ -58,33 +62,33 @@ install(){
     if [ "${OS}" == "windowsnt" ]; then
         OS=windows
         DistroBasedOn=windows
-        SCRIPTFOLDER=$(dirname $(readlink -f $0))
+        SCRIPTFOLDER=$(dirname "$(readlink -f "$0")")
     elif [ "${OS}" == "darwin" ]; then
         OS=osx
         DistroBasedOn=osx
         # readlink doesn't work the same on macOS
-        SCRIPTFOLDER=$(dirname $0)
+        SCRIPTFOLDER=$(dirname "$0")
     else
-        SCRIPTFOLDER=$(dirname $(readlink -f $0))
-        OS=`uname`
+        SCRIPTFOLDER=$(dirname "$(readlink -f "$0")")
+        OS=$(uname)
         if [ "${OS}" == "SunOS" ] ; then
             OS=solaris
-            ARCH=`uname -p`
-            OSSTR="${OS} ${REV}(${ARCH} `uname -v`)"
+            ARCH=$(uname -p)
+            OSSTR="${OS} ${REV}(${ARCH} $(uname -v))"
             DistroBasedOn=sunos
         elif [ "${OS}" == "AIX" ] ; then
-            OSSTR="${OS} `oslevel` (`oslevel -r`)"
+            OSSTR="${OS} $(oslevel) ($(oslevel -r))"
             DistroBasedOn=aix
         elif [ "${OS}" == "Linux" ] ; then
             if [ -f /etc/redhat-release ] ; then
                 DistroBasedOn='redhat'
-                DIST=`cat /etc/redhat-release |sed s/\ release.*//`
-                PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(sed s/\ release.*// < /etc/redhat-release)
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/redhat-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/redhat-release )
             elif [ -f /etc/system-release ] ; then
-                DIST=`cat /etc/system-release |sed s/\ release.*//`
-                PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(sed s/\ release.*// < /etc/system-release)
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/system-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/system-release )
                 if [[ $DIST == *"Amazon Linux"* ]] ; then
                     DistroBasedOn='amazonlinux'
                 else
@@ -92,23 +96,23 @@ install(){
                 fi
             elif [ -f /etc/SuSE-release ] ; then
                 DistroBasedOn='suse'
-                PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
-                REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
+                PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
+                REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
-                PSUEDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
-                DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
-                PSUEDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
-                REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+                DIST=$( (grep '^DISTRIB_ID' | awk -F=  '{ print $2 }') < /etc/lsb-release )
+                PSUEDONAME=$( (grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }') < /etc/lsb-release )
+                REV=$( (grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }') < /etc/lsb-release)
             fi
             if [ -f /etc/UnitedLinux-release ] ; then
-                DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+                DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             fi
-            OS=`lowercase $OS`
-            DistroBasedOn=`lowercase $DistroBasedOn`
+            OS=$(lowercase $OS)
+            DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
     fi
 
@@ -120,42 +124,25 @@ install(){
     echo "  REV: $REV"
     echo "  KERNEL: $KERNEL"
     echo "  MACH: $MACH"
+    echo "  OSSTR: $OSSTR"
 
 
-
-    if [[ "'$*'" =~ appimage ]] ; then
-        if [ -f $SCRIPTFOLDER/appimage.sh ]; then
-            #Script files were copied local - use them
-            . $SCRIPTFOLDER/appimage.sh
-        else
-            #Script files are not local - pull from remote
-            echo "Could not find \"appimage.sh\" next to this script..."
-            echo "Pulling and executing it from \"$gitreposcriptroot/appimage.sh\""
-            if [ -n "$(command -v curl)" ]; then
-                echo "found and using curl"
-                bash <(curl -s $gitreposcriptroot/appimage.sh) $@
-            elif [ -n "$(command -v wget)" ]; then
-                echo "found and using wget"
-                bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
-            else
-                echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/appimage.sh\""
-            fi
-        fi
-    elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
+    if [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
         echo "Configuring PowerShell Core Environment for: $DistroBasedOn $DIST $REV"
-        if [ -f $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh ]; then
+        if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
             #Script files were copied local - use them
-            . $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh
+            # shellcheck source=/dev/null
+            . "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh"
         else
             #Script files are not local - pull from remote
             echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
             echo "Pulling and executing it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
             if [ -n "$(command -v curl)" ]; then
                 echo "found and using curl"
-                bash <(curl -s $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+                bash <(curl -s $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
             elif [ -n "$(command -v wget)" ]; then
                 echo "found and using wget"
-                bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+                bash <(wget -qO- $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
             else
                 echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
             fi
@@ -166,4 +153,4 @@ install(){
 }
 
 # run the install function
-install;
+install "$@";

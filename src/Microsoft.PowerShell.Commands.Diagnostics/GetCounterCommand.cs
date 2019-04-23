@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
             set { _computerName = value; }
         }
 
-        private string[] _computerName = new string[0];
+        private string[] _computerName = Array.Empty<string>();
 
         private ResourceManager _resourceMgr = null;
 

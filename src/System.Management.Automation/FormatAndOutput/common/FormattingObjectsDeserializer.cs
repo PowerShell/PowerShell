@@ -291,9 +291,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return (int)DeserializeMemberVariable(so, property, typeof(int), true /* cannotBeNull */);
         }
 
-        internal bool DeserializeBoolMemberVariable(PSObject so, string property)
+        internal bool DeserializeBoolMemberVariable(PSObject so, string property, bool cannotBeNull = true)
         {
-            return (bool)DeserializeMemberVariable(so, property, typeof(bool), true /* cannotBeNull */);
+            var val = DeserializeMemberVariable(so, property, typeof(bool), cannotBeNull);
+            return (val == null) ? false : (bool)val;
         }
 
         internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
@@ -586,8 +587,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
             base.Deserialize(so, deserializer);
+
+            // The "repeatHeader" property was added later (V5, V6) and presents an incompatibility when remoting to older version PowerShell sessions.
+            // When the property is missing from the serialized object, let the deserialized property be false.
+            this.repeatHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader", cannotBeNull: false);
             this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "hideHeader");
-            this.repeatHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader");
             FormatInfoDataListDeserializer<TableColumnInfo>.ReadList(so, "tableColumnInfoList", this.tableColumnInfoList, deserializer);
         }
     }

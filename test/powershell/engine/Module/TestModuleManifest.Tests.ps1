@@ -67,6 +67,16 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest.RootModule | Should -Be $rootModuleValue
     }
 
+    It "module manifest containing valid rootmodule without specifying .psm1 extension succeeds" {
+
+        $rootModuleFileName = "bar.psm1";
+        New-Item -ItemType File -Path testdrive:/module/$rootModuleFileName > $null
+        New-ModuleManifest -Path $testModulePath -RootModule "bar"
+        $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
+        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest.RootModule | Should -Be "bar"
+    }
+
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
         @{rootModuleValue = "foo.xaml"; error = "Modules_WorkflowModuleNotSupported"}   # not supported on PowerShell Core

@@ -464,65 +464,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal static class OutOfBandFormatViewManager
     {
-        internal static bool IsPropertyLessObject(PSObject so)
+        private static bool IsNotRemotingProperty(string name)
         {
-            List<MshResolvedExpressionParameterAssociation> allProperties = AssociationManager.ExpandAll(so);
-
-            if (allProperties.Count == 0)
-            {
-                return true;
-            }
-
-            if (allProperties.Count == 3)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            if (allProperties.Count == 4)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
-                        && !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            if (allProperties.Count == 5)
-            {
-                foreach (MshResolvedExpressionParameterAssociation property in allProperties)
-                {
-                    if (!property.ResolvedExpression.ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase) &&
-                        !property.ResolvedExpression.ToString().Equals(RemotingConstants.SourceLength, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
+            var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
+                   || name.Equals(RemotingConstants.SourceLength, StringComparison.OrdinalIgnoreCase);
+            return !isRemotingPropertyName;
         }
+
+        private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
+
+        private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
@@ -549,8 +503,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                if (DefaultScalarTypes.IsTypeInList(typeNames) ||
-                    IsPropertyLessObject(so))
+                if (DefaultScalarTypes.IsTypeInList(typeNames)
+                    || !HasNonRemotingProperties(so))
                 {
                     // we force a ToString() on well known types
                     return GenerateOutOfBandObjectAsToString(so);
@@ -575,7 +529,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
             fed.outOfBand = true;
-            fed.SetStreamTypeFromPSObject(so);
+            fed.writeStream = so.WriteStream;
 
             errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList();
 

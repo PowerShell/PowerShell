@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             Diagnostics.Assert(so != null, "object so cannot be null");
             FormatEntryData fed = _viewManager.ViewGenerator.GeneratePayload(so, _enumerationLimit);
-            fed.SetStreamTypeFromPSObject(so);
+            fed.writeStream = so.WriteStream;
             this.WriteObject(fed);
 
             List<ErrorRecord> errors = _viewManager.ViewGenerator.ErrorManager.DrainFailedResultList();

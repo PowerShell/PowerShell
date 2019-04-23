@@ -5342,7 +5342,7 @@ end {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasDefaultConstructor(Type type)
         {
-            return !(type.GetConstructor(PSTypeExtensions.EmptyTypes) == null);
+            return !(type.GetConstructor(Type.EmptyTypes) == null);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

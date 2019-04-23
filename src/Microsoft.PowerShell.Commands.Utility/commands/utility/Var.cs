@@ -42,14 +42,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
 
                 _include = value;
             }
         }
 
-        private string[] _include = new string[0];
+        private string[] _include = Array.Empty<string>();
 
         /// <summary>
         /// The Exclude parameter for all the variable commands.
@@ -65,14 +65,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
 
                 _exclude = value;
             }
         }
 
-        private string[] _exclude = new string[0];
+        private string[] _exclude = Array.Empty<string>();
 
         #region helpers
 

@@ -903,7 +903,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    Utils.EmptyArray<object>());
+                    Array.Empty<object>());
             }
         }
 

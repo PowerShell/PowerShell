@@ -96,7 +96,7 @@ namespace System.Management.Automation
                 CmdletBindingAttribute cmdletBindingAttribute = null;
                 if (!Ast.HasAnyScriptBlockAttributes())
                 {
-                    attributes = Utils.EmptyArray<Attribute>();
+                    attributes = Array.Empty<Attribute>();
                 }
                 else
                 {
@@ -963,7 +963,7 @@ namespace System.Management.Automation
 
             if (args == null)
             {
-                args = Utils.EmptyArray<object>();
+                args = Array.Empty<object>();
             }
 
             bool runOptimized = context._debuggingMode > 0 ? false : createLocalScope;
@@ -1289,7 +1289,7 @@ namespace System.Management.Automation
             var leftOverArgs = args.Length - parameters.Length;
             if (leftOverArgs <= 0)
             {
-                return Utils.EmptyArray<object>();
+                return Array.Empty<object>();
             }
 
             object[] result = new object[leftOverArgs];

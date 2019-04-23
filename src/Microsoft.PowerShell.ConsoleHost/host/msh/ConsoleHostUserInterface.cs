@@ -307,8 +307,9 @@ namespace Microsoft.PowerShell
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    uint unused = 0;
-                    string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
+                    const int CharactersToRead = 1;
+                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
 #if UNIX
@@ -1287,7 +1288,7 @@ namespace Microsoft.PowerShell
             endedOnBreak = 3
         }
 
-        private const int maxInputLineLength = 8192;
+        private const int MaxInputLineLength = 1024;
 
         /// <summary>
         /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In
@@ -1468,13 +1469,19 @@ namespace Microsoft.PowerShell
             _rawui.ClearKeyCache();
             uint keyState = 0;
             string s = string.Empty;
+            Span<char> inputBuffer = stackalloc char[MaxInputLineLength + 1];
+            if (initialContent.Length > 0)
+            {
+                initialContent.AsSpan().CopyTo(inputBuffer);
+            }
+
 #endif
                 do
                 {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
 #else
-                s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
+                s += ConsoleControl.ReadConsole(handle, initialContent.Length, inputBuffer, MaxInputLineLength, endOnTab, out keyState);
                 Dbg.Assert(s != null, "s should never be null");
 #endif
 
@@ -1861,9 +1868,9 @@ namespace Microsoft.PowerShell
                         completedInput += restOfLine;
                     }
 
-                    if (completedInput.Length > (maxInputLineLength - 2))
+                    if (completedInput.Length > (MaxInputLineLength - 2))
                     {
-                        completedInput = completedInput.Substring(0, maxInputLineLength - 2);
+                        completedInput = completedInput.Substring(0, MaxInputLineLength - 2);
                     }
 
                     // Remove any nulls from the string...

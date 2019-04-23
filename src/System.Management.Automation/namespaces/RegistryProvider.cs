@@ -3116,7 +3116,7 @@ namespace Microsoft.PowerShell.Commands
                 case RegistryValueKind.Binary:
                 case RegistryValueKind.Unknown:
                     {
-                        defaultValue = new byte[0];
+                        defaultValue = Array.Empty<byte>();
                     }
 
                     break;
@@ -3135,7 +3135,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case RegistryValueKind.MultiString:
                     {
-                        defaultValue = new string[0];
+                        defaultValue = Array.Empty<string>();
                     }
 
                     break;

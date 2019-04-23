@@ -1757,7 +1757,7 @@ namespace System.Management.Automation
         {
             if (valueToConvert != null)
             {
-                ConstructorInfo toConstructor = resultType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo toConstructor = resultType.GetConstructor(Type.EmptyTypes);
                 ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
                 return noArgumentConstructorConverter.Convert(PSObject.Base(valueToConvert), resultType, recursion, (PSObject)valueToConvert, formatProvider, null, ignoreUnknownMembers);
             }
@@ -5005,7 +5005,7 @@ namespace System.Management.Automation
             {
                 Type actualResultType = typeof(PSObject);
 
-                ConstructorInfo resultConstructor = actualResultType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo resultConstructor = actualResultType.GetConstructor(Type.EmptyTypes);
 
                 var converterObj = new ConvertViaNoArgumentConstructor(resultConstructor, actualResultType);
                 return CacheConversion(fromType, toType, converterObj.Convert, ConversionRank.Language);
@@ -5441,7 +5441,7 @@ namespace System.Management.Automation
             ConstructorInfo toConstructor = null;
             try
             {
-                toConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                toConstructor = toType.GetConstructor(Type.EmptyTypes);
             }
             catch (AmbiguousMatchException e)
             {
@@ -5663,7 +5663,7 @@ namespace System.Management.Automation
                                 // If the ToType has a constructor that takes a hashtable or OrderedDictionary,
                                 // then it would have been returned as the constructor during FigureConstructorConversion
                                 // So, we need to check only for the first condition
-                                ConstructorInfo resultConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                                ConstructorInfo resultConstructor = toType.GetConstructor(Type.EmptyTypes);
 
                                 if (resultConstructor != null || (toType.IsValueType && !toType.IsPrimitive))
                                 {

@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
             if (_scripts[0] == null)
                 return;
 
-            var emptyArray = Utils.EmptyArray<object>();
+            var emptyArray = Array.Empty<object>();
             _scripts[0].InvokeUsingCmdlet(
                 contextCmdlet: this,
                 useLocalScope: false,
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
                                 dollarUnder: InputObject,
                                 input: new object[] { InputObject },
                                 scriptThis: AutomationNull.Value,
-                                args: Utils.EmptyArray<object>());
+                                args: Array.Empty<object>());
                         }
                     }
 
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (!BlockMethodInLanguageMode(InputObject))
                                     {
-                                        object result = targetMethod.Invoke(Utils.EmptyArray<object>());
+                                        object result = targetMethod.Invoke(Array.Empty<object>());
                                         WriteToPipelineWithUnrolling(result);
                                     }
                                 }
@@ -849,7 +849,7 @@ namespace Microsoft.PowerShell.Commands
             if (_endScript == null)
                 return;
 
-            var emptyArray = Utils.EmptyArray<object>();
+            var emptyArray = Array.Empty<object>();
             _endScript.InvokeUsingCmdlet(
                 contextCmdlet: this,
                 useLocalScope: false,
@@ -1634,7 +1634,7 @@ namespace Microsoft.PowerShell.Commands
                     dollarUnder: InputObject,
                     input: new object[] { _inputObject },
                     scriptThis: AutomationNull.Value,
-                    args: Utils.EmptyArray<object>());
+                    args: Array.Empty<object>());
 
                 if (_toBoolSite.Target.Invoke(_toBoolSite, result))
                 {

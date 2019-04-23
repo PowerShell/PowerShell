@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
             set { _listSet = value; }
         }
 
-        private string[] _listSet = new string[0];
+        private string[] _listSet = Array.Empty<string>();
 
         //
         // StartTime parameter
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
             set { _counter = value; }
         }
 
-        private string[] _counter = new string[0];
+        private string[] _counter = Array.Empty<string>();
 
         //
         // Summary switch

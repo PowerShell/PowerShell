@@ -33,4 +33,9 @@ FunctionsToExport = @(
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
     )
+
+CmdletsToExport= @()
+
+AliasesToExport= @()
+
 }

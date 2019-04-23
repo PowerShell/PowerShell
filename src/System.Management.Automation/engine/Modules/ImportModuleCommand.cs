@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public string[] Name { set; get; } = Utils.EmptyArray<string>();
+        public string[] Name { set; get; } = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the current pipeline object.
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _functionImportList; }
         }
 
-        private string[] _functionImportList = Utils.EmptyArray<string>();
+        private string[] _functionImportList = Array.Empty<string>();
 
         /// <summary>
         /// This patterns matching the names of cmdlets to import from the module...
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _cmdletImportList; }
         }
 
-        private string[] _cmdletImportList = Utils.EmptyArray<string>();
+        private string[] _cmdletImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the variables to import from the module...
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_ModuleInfo, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public PSModuleInfo[] ModuleInfo { set; get; } = Utils.EmptyArray<PSModuleInfo>();
+        public PSModuleInfo[] ModuleInfo { set; get; } = Array.Empty<PSModuleInfo>();
 
         /// <summary>
         /// The arguments to pass to the module script.

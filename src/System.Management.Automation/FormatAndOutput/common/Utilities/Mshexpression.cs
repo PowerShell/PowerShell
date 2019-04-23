@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
                         dollarUnder: target,
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
-                        args: Utils.EmptyArray<object>());
+                        args: Array.Empty<object>());
                 }
                 else
                 {

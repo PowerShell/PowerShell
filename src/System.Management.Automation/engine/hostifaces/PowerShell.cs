@@ -13,6 +13,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Management.Infrastructure;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -598,6 +599,10 @@ namespace System.Management.Automation
         private bool _isBatching = false;
         private bool _stopBatchExecution = false;
 
+        // Delegates for asynchronous invocation/termination of PowerShell commands
+        private readonly Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
+        private readonly Action<IAsyncResult> _endStopMethod;
+
         #endregion
 
         #region Internal Constructors
@@ -633,6 +638,8 @@ namespace System.Management.Automation
             ErrorBufferOwner = true;
             InformationalBuffers = new PSInformationalBuffers(InstanceId);
             Streams = new PSDataStreams(this);
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
         }
 
         /// <summary>
@@ -695,6 +702,9 @@ namespace System.Management.Automation
             {
                 RemotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
             }
+
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
         }
 
         /// <summary>
@@ -3058,6 +3068,224 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync()
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="T">
+        /// Type of the input buffer.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="T">
+        /// Type of the input buffer.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="settings">
+        /// Invocation Settings.
+        /// </param>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="TInput">
+        /// Type of input object(s) for the command invocation.
+        /// </typeparam>
+        /// <typeparam name="TOutput">
+        /// Type of output object(s) expected from the command invocation.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="output">
+        /// A buffer supplied by the user where output is collected.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously and collect
+        /// output data into the buffer <paramref name="output"/>.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="TInput">
+        /// Type of input object(s) for the command invocation.
+        /// </typeparam>
+        /// <typeparam name="TOutput">
+        /// Type of output object(s) expected from the command invocation.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="output">
+        /// A buffer supplied by the user where output is collected.
+        /// </param>
+        /// <param name="settings">
+        /// Invocation Settings.
+        /// </param>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod);
+
+        /// <summary>
         /// Begins a batch execution.
         /// </summary>
         /// <typeparam name="TInput">
@@ -3553,6 +3781,33 @@ namespace System.Management.Automation
             // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
             ResetOutputBufferAsNeeded();
         }
+
+        /// <summary>
+        /// Stop a PowerShell command asynchronously.
+        /// Use await to wait for the command to stop.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the command is not started, the state of the PowerShell instance
+        /// is changed to Stopped and corresponding events will be raised.
+        /// </para>
+        /// </remarks>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task StopAsync(AsyncCallback callback, object state)
+            => Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod);
 
         #endregion
 

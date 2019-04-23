@@ -128,7 +128,7 @@ namespace System.Management.Automation
             }
             else
             {
-                PipelineIterationInfo = Utils.EmptyArray<int>();
+                PipelineIterationInfo = Array.Empty<int>();
             }
 
             //
@@ -399,7 +399,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// All the commands in a given pipeline share the same PipelinePositionInfo.
         /// </remarks>
-        internal int[] PipelineIterationInfo { get; set; } = Utils.EmptyArray<int>();
+        internal int[] PipelineIterationInfo { get; set; } = Array.Empty<int>();
 
         /// <summary>
         /// Adds the information about this informational record to a PSObject as note properties.

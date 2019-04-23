@@ -128,6 +128,30 @@ namespace System.Management.Automation
             return property;
         }
 
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            PSAdaptedProperty property = null;
+
+            try
+            {
+                property = _externalAdapter.GetFirstPropertyOrDefault(obj, predicate);
+            }
+            catch (Exception exception)
+            {
+                throw new ExtendedTypeSystemException(
+                    "PSPropertyAdapter.GetProperty",
+                    exception,
+                    ExtendedTypeSystem.GetProperty, nameof(predicate), obj.ToString());
+            }
+
+            if (property != null)
+            {
+                InitializeProperty(property, obj);
+            }
+
+            return property;
+        }
+
         /// <summary>
         /// Ensures that the adapter and base object are set in the given PSAdaptedProperty.
         /// </summary>
@@ -323,5 +347,22 @@ namespace System.Management.Automation
         /// Returns the type for a given property.
         /// </summary>
         public abstract string GetPropertyTypeName(PSAdaptedProperty adaptedProperty);
+
+        /// <summary>
+        /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
+        /// </summary>
+        /// <returns>An adapted property if the predicate matches, or <c>null</c>.</returns>
+        public virtual PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
+        {
+            foreach (var property in GetProperties(baseObject))
+            {
+                if (predicate(property.Name))
+                {
+                    return property;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Array.Empty<string>();
                 }
 
                 _PSSnapins = value;
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _PSSnapins = new string[0];
+        private string[] _PSSnapins = Array.Empty<string>();
         internal bool IsModuleSpecified = false;
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.

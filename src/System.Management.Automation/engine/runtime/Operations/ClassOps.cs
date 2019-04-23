@@ -99,7 +99,7 @@ namespace System.Management.Automation.Internal
     public class ScriptBlockMemberMethodWrapper
     {
         /// <summary>Used in codegen</summary>
-        public static readonly object[] _emptyArgumentArray = Utils.EmptyArray<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
+        public static readonly object[] _emptyArgumentArray = Array.Empty<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
 
         /// <summary>
         /// Indicate the wrapper is for a static member method.

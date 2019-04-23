@@ -87,7 +87,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
                 if (!constructor.IsPublic)
                 {
                     string message = string.Format(CultureInfo.CurrentCulture,

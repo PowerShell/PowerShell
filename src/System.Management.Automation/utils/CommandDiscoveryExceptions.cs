@@ -436,7 +436,7 @@ namespace System.Management.Automation
             get { return _missingPSSnapIns; }
         }
 
-        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(new string[0]);
+        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
 
         /// <summary>
         /// Gets or sets the ID of the shell.

@@ -39,7 +39,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 ### Contributing to documentation related to PowerShell
 
-Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 

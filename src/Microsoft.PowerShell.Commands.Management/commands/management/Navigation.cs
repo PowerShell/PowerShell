@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get;
             set;
-        } = new string[0];
+        } = Array.Empty<string>();
 
         /// <summary>
         /// Gets or sets the exclude property.
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get;
             set;
-        } = new string[0];
+        } = Array.Empty<string>();
 
         /// <summary>
         /// Gets or sets the force property.
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The name of the provider from which to return the current location.
         /// </summary>
-        private string[] _provider = new string[0];
+        private string[] _provider = Array.Empty<string>();
 
         #endregion Location parameter set data
 
@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -1563,7 +1563,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The name of the provider(s) for which to remove all drives.
         /// </summary>
-        private string[] _provider = new string[0];
+        private string[] _provider = Array.Empty<string>();
 
         #endregion Command data
 
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         #endregion Command parameters
@@ -1732,7 +1732,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The provider ID for the drives you want to see.
         /// </summary>
-        private string[] _provider = new string[0];
+        private string[] _provider = Array.Empty<string>();
 
         #endregion Command data
 
@@ -4137,7 +4137,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] PSProvider
         {
             get => _provider;
-            set => _provider = value ?? Utils.EmptyArray<string>();
+            set => _provider = value ?? Array.Empty<string>();
         }
 
         #endregion Command parameters
@@ -4146,7 +4146,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The string ID of the provider to remove.
         /// </summary>
-        private string[] _provider = new string[0];
+        private string[] _provider = Array.Empty<string>();
 
         #endregion Command data
 

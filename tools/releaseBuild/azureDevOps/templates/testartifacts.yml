@@ -1,0 +1,38 @@
+parameters:
+  buildName: 'linux'
+  pool: 'Hosted Ubuntu 1604'
+
+jobs:
+- job: build_testartifacts_${{ parameters.buildName }}
+  displayName: Build test artifacts ${{ parameters.buildName }}
+  condition: succeeded()
+  pool: ${{ parameters.pool }}
+  steps:
+
+  - pwsh: |
+      Import-Module ./build.psm1
+      Start-PSBootstrap
+    displayName: Bootstrap
+
+  - pwsh: |
+      Import-Module ./build.psm1
+      New-TestPackage -Destination $(System.ArtifactsDirectory)
+    displayName: Build test package
+
+  - pwsh: |
+      if (-not (Test-Path $(System.ArtifactsDirectory)/TestPackage.zip))
+      {
+        throw "Test Package was not found at: $(System.ArtifactsDirectory)"
+      }
+
+      $packageName = if ($IsWindows) {
+        "TestPackage-win.zip"
+      }
+      else {
+        "TestPackage-linux.zip"
+      }
+
+      Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
+
+      Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+    displayName: Upload to build artifacts

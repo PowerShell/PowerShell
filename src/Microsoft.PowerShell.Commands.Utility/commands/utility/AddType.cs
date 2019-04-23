@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull()]
         [Alias("Using")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] UsingNamespace { get; set; } = Utils.EmptyArray<string>();
+        public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// The path to the source code or DLL to load.
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] referencedAssemblies = Utils.EmptyArray<string>();
+        private string[] referencedAssemblies = Array.Empty<string>();
 
         /// <summary>
         /// The path to the output assembly.

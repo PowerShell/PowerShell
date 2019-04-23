@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </returns>
         public static string Escape(string pattern)
         {
-            return Escape(pattern, Utils.EmptyArray<char>());
+            return Escape(pattern, Array.Empty<char>());
         }
 
         /// <summary>

@@ -641,7 +641,7 @@ namespace System.Management.Automation.ComInterop
                     if (s_dynamicModule == null)
                     {
                         var attributes = new[] {
-                            new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>()),
+                            new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()),
                             // PermissionSet(SecurityAction.Demand, Unrestricted = true)
                             new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[] { typeof(SecurityAction) }),
                                 new object[] { SecurityAction.Demand },

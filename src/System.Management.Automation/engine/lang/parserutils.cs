@@ -990,7 +990,7 @@ namespace System.Management.Automation
                             dollarUnder: match,
                             input: AutomationNull.Value,
                             scriptThis: AutomationNull.Value,
-                            args: Utils.EmptyArray<object>());
+                            args: Array.Empty<object>());
 
                         return PSObject.ToStringParser(context, result);;
                     };

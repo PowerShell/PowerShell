@@ -123,6 +123,13 @@ Describe "Group-Object" -Tags "CI" {
         $result['Successful'].ErrorMessage.Count | Should -Be 4
         $result['Successful'].ErrorMessage[0] | Should -Be ''
     }
+
+    It "Should understand empty NoteProperty" {
+        $result = "dummy" | Select-Object -Property @{Name = 'X'; Expression = {}} | Group-Object X
+        $result.Count | Should -Be 1
+        $result[0].Name | Should -Be ""
+        $result[0].Group | Should -Be '@{X=}'
+    }
 }
 
 Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {
