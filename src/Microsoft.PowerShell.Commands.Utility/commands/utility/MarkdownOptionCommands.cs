@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -173,11 +174,14 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
+            string currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId.ToString();
+
+            // If the option is already set once for this runspace, then update it or set it.
+            var setOption = PSMarkdownOptionInfoCache.Set(currentRunspaceId, mdOptionInfo);
 
             if (PassThru.IsPresent)
             {
-                WriteObject(mdOptionInfo);
+                WriteObject(setOption);
             }
         }
 
@@ -256,7 +260,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            WriteObject(this.CommandInfo.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()));
+            string currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId.ToString();
+            WriteObject(PSMarkdownOptionInfoCache.Get(currentRunspaceId));
+        }
+    }
+
+    internal static class PSMarkdownOptionInfoCache
+    {
+        private static ConcurrentDictionary<string, PSMarkdownOptionInfo> markdownOptionInfoCache;
+
+        static PSMarkdownOptionInfoCache()
+        {
+            markdownOptionInfoCache = new ConcurrentDictionary<string, PSMarkdownOptionInfo>();
+        }
+
+        internal static PSMarkdownOptionInfo Get(string runspaceId)
+        {
+            if (markdownOptionInfoCache.TryGetValue(runspaceId, out PSMarkdownOptionInfo cachedOption))
+            {
+                // return the cached options for the runspaceId
+                return cachedOption;
+            }
+            else
+            {
+                // no option cache so cache and return the default PSMarkdownOptionInfo
+                var newOptionInfo = new PSMarkdownOptionInfo();
+                return markdownOptionInfoCache.GetOrAdd(runspaceId, (key) => newOptionInfo);
+            }
+        }
+
+        internal static PSMarkdownOptionInfo Set(string runspaceId, PSMarkdownOptionInfo optionInfo)
+        {
+            return markdownOptionInfoCache.AddOrUpdate(runspaceId, optionInfo, (key, oldvalue) => optionInfo);
         }
     }
 }
