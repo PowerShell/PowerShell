@@ -454,9 +454,8 @@ namespace Microsoft.PowerShell.Commands
             if (!optionsParsedSuccesfully)
             {           
                 return false;
-            }
-
-            if (parsedLine.Count != 4)
+            } 
+            else if (parsedLine.Count != 4)
             {
                 // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
