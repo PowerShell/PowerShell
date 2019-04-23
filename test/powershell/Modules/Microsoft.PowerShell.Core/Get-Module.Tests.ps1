@@ -248,10 +248,10 @@ Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
 
         $modules | Should -HaveCount 2
         $modules[0].Name | Should -BeExactly $moduleName
-        $modules[0].Path | Should -BeExactly $manifestV1Path
+        $modules[0].Path | Should -BeExactly (Resolve-FilePath $manifestV1Path)
         $modules[0].Version | Should -Be $v1
         $modules[1].Name | Should -BeExactly $moduleName
-        $modules[1].Path | Should -BeExactly $manifestV2Path
+        $modules[1].Path | Should -BeExactly (Resolve-FilePath $manifestV2Path)
         $modules[1].Version | Should -Be $v2
     }
 

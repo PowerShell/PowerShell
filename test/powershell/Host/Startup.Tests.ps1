@@ -72,6 +72,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Threading.Tasks.dll'
             'System.Threading.Tasks.Parallel.dll'
             'System.Threading.Thread.dll'
+            'System.Threading.ThreadPool.dll'
             'System.Threading.Timer.dll'
             'System.Xml.ReaderWriter.dll'
             'System.Xml.XDocument.dll'
@@ -92,7 +93,6 @@ Describe "Validate start of console host" -Tag CI {
                 'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
                 'System.Reflection.Metadata.dll'
-                'System.Threading.ThreadPool.dll'
             )
         }
 
