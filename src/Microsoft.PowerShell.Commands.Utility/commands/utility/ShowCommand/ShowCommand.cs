@@ -156,7 +156,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, true))
+            // Don't send newline at end as PSReadLine shows it rather than executing
+            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, newLine: false))
             {
                 this.WriteDebug(FormatAndOut_out_gridview.CannotWriteToConsoleInputBuffer);
                 this.RunScriptSilentlyAndWithErrorHookup(script);
