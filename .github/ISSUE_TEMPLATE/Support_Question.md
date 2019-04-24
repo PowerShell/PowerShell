@@ -15,5 +15,5 @@ assignees: ''
 
 ## Community Resources
 
-[Slack](https://j.mp/psslack) and [Discord](https://j.mp/psdiscord) Community Chat - Interactive chat with other PowerShell enthusiasts. Both Slack and Discord are bridged via a bot and can seamlessly talk to each other.
+[Slack](https://aka.ms/psslack) and [Discord](https://aka.ms/psdiscord) Community Chat - Interactive chat with other PowerShell enthusiasts. Both Slack and Discord are bridged via a bot and can seamlessly talk to each other.
 [PowerShell.org Forum](https://powershell.org/forums/) - Search or post new general PowerShell usage questions
