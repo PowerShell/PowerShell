@@ -32,7 +32,7 @@ function Wait-FileToBePresent
         [int]$IntervalInMilliseconds = 100
     )
 
-    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
+    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds
 }
 
 function Test-IsElevated

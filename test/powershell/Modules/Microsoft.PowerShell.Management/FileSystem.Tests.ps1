@@ -1391,7 +1391,7 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
         Set-Acl $protectedPath $acl
 
         runas.exe /trustlevel:0x20000 "$cmdline"
-        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10
+        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10 | Should -BeExactly $true
         Get-Content $errorFile | Should -BeExactly 'RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand'
     }
 }

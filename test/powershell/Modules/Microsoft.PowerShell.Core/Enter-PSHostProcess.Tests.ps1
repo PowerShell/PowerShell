@@ -85,7 +85,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         }
 
         It "Can enter, exit, and re-enter another PSHost" {
-            Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
+            Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) } | Should -BeExactly $true
 
             # This will enter and exit another process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
@@ -109,7 +109,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $powershellId = Wait-JobPid $powershellJob
 
             try {
-                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) }
+                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) } | Should -BeExactly $true
 
                 # This will enter and exit another process
                 Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
@@ -126,7 +126,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
         It "Can enter using NamedPipeConnectionInfo" {
             try {
-                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) }
+                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) } | Should -BeExactly $true
 
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
@@ -159,7 +159,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $pwshId = Wait-JobPid $pwshJob
 
             try {
-                Wait-UntilTrue { Test-Path $pipePath }
+                Wait-UntilTrue { Test-Path $pipePath } | Should -BeExactly $true
 
                 # This will enter and exit another process
                 Invoke-PSHostProcessScript -ArgumentString "-CustomPipeName $pipeName" -Id $pwshId |
