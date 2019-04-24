@@ -21,17 +21,17 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// The builder for the help FlowDocument Paragraph  used in a RichEditText control
         /// </summary>
-        private HelpParagraphBuilder helpBuilder;
+        private readonly HelpParagraphBuilder helpBuilder;
 
         /// <summary>
         /// Searcher for selecting current matches in paragraph text
         /// </summary>
-        private ParagraphSearcher searcher;
+        private readonly ParagraphSearcher searcher;
 
         /// <summary>
         /// Title of the help window
         /// </summary>
-        private string helpTitle;
+        private readonly string helpTitle;
 
         /// <summary>
         /// the zoom bound to the zoom slider value
