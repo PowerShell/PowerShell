@@ -19,22 +19,40 @@ namespace Microsoft.Management.UI
         /// <summary>
         /// Minimum zoom in the slider
         /// </summary>
-        public const double MinimumZoom = 20;
+        public static double MinimumZoom
+        {
+            get
+            {
+                return 20;
+            }
+        }
 
         /// <summary>
         /// Maximum zoom in the slider
         /// </summary>
-        public const double MaximumZoom = 300;
+        public static double MaximumZoom
+        {
+            get
+            {
+                return 300;
+            }
+        }
 
         /// <summary>
         /// Zoom interval
         /// </summary>
-        public const double ZoomInterval = 10;
+        public static double ZoomInterval
+        {
+            get
+            {
+                return 10;
+            }
+        }
 
         /// <summary>
         /// The ViewModel for the dialog
         /// </summary>
-        private HelpViewModel viewModel;
+        private readonly HelpViewModel viewModel;
 
         /// <summary>
         /// Initializes a new instance of the HelpWindow class
@@ -129,10 +147,6 @@ namespace Microsoft.Management.UI
             if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
             {
                 this.HandleZoomInAndZoomOut(e);
-                if (e.Handled)
-                {
-                    return;
-                }
             }
         }
 
