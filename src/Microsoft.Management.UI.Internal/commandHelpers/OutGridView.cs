@@ -402,11 +402,7 @@ namespace Microsoft.Management.UI.Internal
             // Wait for the gridViewWindow thread to signal that loading of Window is done
             if (this.gridViewWindowLoaded != null)
             {
-                if(!this.gridViewWindowLoaded.WaitOne(5000))
-                {
-                    throw new Exception("The window didn't open in time");
-                }
-
+                this.gridViewWindowLoaded.WaitOne();
                 this.gridViewWindowLoaded = null;
             }
 
