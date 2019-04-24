@@ -149,7 +149,7 @@ Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
             @{ Editions = $null; ModuleName = "NeitherModule" }
         )
 
-        $basePath = Join-Path $TestDrive "EditionCompatibleModules"
+        $basePath = Join-Path (Resolve-FilePath $TestDrive) "EditionCompatibleModules"
         New-TestModules -TestCases $successCases -BaseDir $basePath
         New-TestModules -TestCases $failCases -BaseDir $basePath
 
@@ -242,7 +242,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             @{ Editions = $null; ModuleName = "NeitherModule"; Result = $true }
         )
 
-        $basePath = Join-Path $TestDrive "EditionCompatibleModules"
+        $basePath = Join-Path (Resolve-FilePath $TestDrive) "EditionCompatibleModules"
         New-TestModules -TestCases $successCases -BaseDir $basePath
         New-TestModules -TestCases $failCases -BaseDir $basePath
 
@@ -387,6 +387,8 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             $testCases = $list
         }
 
+        $resolvedTestDrive = Resolve-FilePath $TestDrive
+
         # Define nested script module
         $scriptModuleName = "NestedScriptModule"
         $scriptModuleFile = "$scriptModuleName.psm1"
@@ -396,7 +398,7 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
         $binaryModuleName = "NestedBinaryModule"
         $binaryModuleFile = "$binaryModuleName.dll"
         $binaryModuleContent = 'public static class TestBinaryModuleClass { public static bool Test() { return true; } }'
-        $binaryModuleSourcePath = Join-Path $TestDrive $binaryModuleFile
+        $binaryModuleSourcePath = Join-Path $resolvedTestDrive $binaryModuleFile
         Add-Type -OutputAssembly $binaryModuleSourcePath -TypeDefinition $binaryModuleContent
 
         # Define root module definition
@@ -407,8 +409,8 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
         # Module directory structure: $TestDrive/$compatibility/$guid/$moduleName/{module parts}
         $compatibleDir = "Compatible"
         $incompatibleDir = "Incompatible"
-        $compatiblePath = Join-Path $TestDrive $compatibleDir
-        $incompatiblePath = Join-Path $TestDrive $incompatibleDir
+        $compatiblePath = Join-Path $resolvedTestDrive $compatibleDir
+        $incompatiblePath = Join-Path $resolvedTestDrive $incompatibleDir
 
         foreach ($basePath in $compatiblePath,$incompatiblePath)
         {
@@ -429,7 +431,7 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             # Create the module directory
             $guid = New-Guid
             $compatibilityDir = $incompatibleDir
-            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $containingDir = Join-Path $resolvedTestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
             New-Item -Path $moduleBase -ItemType Directory
@@ -559,7 +561,7 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             # Create the module directory
             $guid = New-Guid
             $compatibilityDir = $compatibleDir
-            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $containingDir = Join-Path $resolvedTestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
             New-Item -Path $moduleBase -ItemType Directory
@@ -690,6 +692,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             $testCases = $list
         }
 
+        $resolvedTestDrive = Resolve-FilePath $TestDrive
+
         # Define nested script module
         $scriptModuleName = "NestedScriptModule"
         $scriptModuleFile = "$scriptModuleName.psm1"
@@ -703,8 +707,8 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
         # Module directory structure: $TestDrive/$compatibility/$guid/$moduleName/{module parts}
         $compatibleDir = "Compatible"
         $incompatibleDir = "Incompatible"
-        $compatiblePath = Join-Path $TestDrive $compatibleDir
-        $incompatiblePath = Join-Path $TestDrive $incompatibleDir
+        $compatiblePath = Join-Path $resolvedTestDrive $compatibleDir
+        $incompatiblePath = Join-Path $resolvedTestDrive $incompatibleDir
 
         foreach ($basePath in $compatiblePath,$incompatiblePath)
         {
@@ -725,7 +729,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             # Create the module directory
             $guid = New-Guid
             $compatibilityDir = $incompatibleDir
-            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $containingDir = Join-Path $resolvedTestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
             New-Item -Path $moduleBase -ItemType Directory
@@ -815,7 +819,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             # Create the module directory
             $guid = New-Guid
             $compatibilityDir = $compatibleDir
-            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $containingDir = Join-Path $resolvedTestDrive $compatibilityDir $guid
             $moduleName = "CpseTestModule"
             $moduleBase = Join-Path $containingDir $moduleName
             New-Item -Path $moduleBase -ItemType Directory
