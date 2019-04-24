@@ -684,12 +684,15 @@ namespace System.Management.Automation.Runspaces
         /// Get unique id for this instance of runspace. It is primarily used
         /// for logging purposes.
         /// </summary>
-        public Guid InstanceId { get;
+        public Guid InstanceId
+        {
+            get;
 
             // This id is also used to identify proxy and remote runspace objects.
             // We need to set this when reconstructing a remote runspace to connect
             // to an existing remote runspace.
-            internal set; } = Guid.NewGuid();
+            internal set;
+        } = Guid.NewGuid();
 
         /// <summary>
         /// Gets execution context.

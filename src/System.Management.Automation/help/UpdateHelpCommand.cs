@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
             string moduleBase = module.ModuleBase;
 
-            if(this.Scope == UpdateHelpScope.CurrentUser)
+            if (this.Scope == UpdateHelpScope.CurrentUser)
             {
                 moduleBase = HelpUtils.GetModuleBaseForUserHelp(moduleBase, module.ModuleName);
             }
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        if(!Directory.Exists(moduleBase))
+                        if (!Directory.Exists(moduleBase))
                         {
                             Directory.CreateDirectory(moduleBase);
                         }

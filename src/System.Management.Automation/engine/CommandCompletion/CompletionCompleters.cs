@@ -6053,7 +6053,7 @@ namespace System.Management.Automation
             // Add the user scope path first, since it is searched in order.
             var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
 
-            if(Directory.Exists(userHelpRoot))
+            if (Directory.Exists(userHelpRoot))
             {
                 searchPaths.Add(userHelpRoot);
             }

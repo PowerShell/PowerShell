@@ -475,7 +475,7 @@ namespace System.Management.Automation.Configuration
                         if (isReadSuccess)
                         {
                             // Read the stream into a root JObject for manipulation
-                            jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                            jsonObject = (JObject)JToken.ReadFrom(jsonReader);
                             JProperty propertyToModify = jsonObject.Property(key);
 
                             if (propertyToModify == null)

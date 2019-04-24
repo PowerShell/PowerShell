@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
         protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             // Set the home folder for the user
-            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home)) 
+            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
             {
                 // %USERPROFILE% - indicate where a user's home directory is located in the file system.
                 string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
@@ -1978,10 +1978,10 @@ namespace Microsoft.PowerShell.Commands
                 ReadOnlySpan<char> mode = stackalloc char[]
                 {
                     isLink ? 'l' : isDirectory ? 'd' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Archive)  ? 'a' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Archive) ? 'a' : '-',
                     fileAttributes.HasFlag(FileAttributes.ReadOnly) ? 'r' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Hidden)   ? 'h' : '-',
-                    fileAttributes.HasFlag(FileAttributes.System)   ? 's' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Hidden) ? 'h' : '-',
+                    fileAttributes.HasFlag(FileAttributes.System) ? 's' : '-',
                 };
                 return new string(mode);
             }
@@ -7503,7 +7503,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
         public bool WasStreamTypeSpecified { get; private set; }
-
     }
 
     /// <summary>

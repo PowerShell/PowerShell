@@ -157,16 +157,15 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                {
+
                     if (policy == ExecutionPolicy.Undefined)
                         executionPolicy = null;
 
                     Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
                     break;
-                }
 
                 case ExecutionPolicyScope.CurrentUser:
-                {
+
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
@@ -178,10 +177,9 @@ namespace System.Management.Automation.Internal
                     }
 
                     break;
-                }
 
                 case ExecutionPolicyScope.LocalMachine:
-                {
+
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
@@ -193,7 +191,6 @@ namespace System.Management.Automation.Internal
                     }
 
                     break;
-                }
             }
 #endif
         }
@@ -477,7 +474,7 @@ namespace System.Management.Automation.Internal
             return null;
         }
 
-#endregion execution policy
+        #endregion execution policy
 
         private static bool _saferIdentifyLevelApiSupported = true;
 

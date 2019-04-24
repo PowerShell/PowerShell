@@ -25,6 +25,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region ModuleCmdletBase class
@@ -685,8 +686,8 @@ namespace Microsoft.PowerShell.Commands
                         module = LoadUsingExtensions(
                             parentModule,
                             moduleSpecification.Name,
-                            rootedPath, // fileBaseName
-                            /*extension*/null,
+                            fileBaseName: rootedPath,
+                            extension: null,
                             moduleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                             prefix,
                             ss,

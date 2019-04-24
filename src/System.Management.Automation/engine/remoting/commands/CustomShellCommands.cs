@@ -500,7 +500,7 @@ else
             {
                 PSInvalidOperationException ioe = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.PluginDllMissing, RemotingConstants.PSPluginDLLName));
-                    ThrowTerminatingError(ioe.ErrorRecord);
+                ThrowTerminatingError(ioe.ErrorRecord);
             }
         }
 
@@ -1538,7 +1538,7 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
+            string pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
 

@@ -138,7 +138,7 @@ namespace System.Management.Automation
             {
                 if (!this._processId.HasValue)
                 {
-                    this._processId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
+                    this._processId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
                 }
 
                 return this._processId.Value;

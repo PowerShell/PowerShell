@@ -533,7 +533,8 @@ namespace System.Management.Automation
         /// </exception>
         internal override CommandMetadata CommandMetadata
         {
-            get {
+            get
+            {
                 return _cmdletMetadata ??
                        (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }

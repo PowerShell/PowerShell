@@ -199,7 +199,8 @@ namespace System.Management.Automation
         /// </summary>
         public Dictionary<string, object> BoundParameters
         {
-            get {
+            get
+            {
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
