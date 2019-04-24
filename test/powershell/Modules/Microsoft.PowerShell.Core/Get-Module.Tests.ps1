@@ -8,7 +8,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
         $resolvedTestDrive = Resolve-FilePath $TestDrive
 
-        New-Item -ItemType Directory -Path "$resolvedTestPath\Modules\Foo\1.1" -Force > $null
+        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Foo\1.1" -Force > $null
         New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Foo\2.0" -Force > $null
         New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Bar\Download" -Force > $null
         New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Zoo\Too" -Force > $null
