@@ -381,7 +381,7 @@
 
             <local:ScalableImage Margin="1,5,0,4">
                 <local:ScalableImage.Source>
-                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Add16.png"
+                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Add16.png"
                                                Size="9,9" />
                 </local:ScalableImage.Source>
             </local:ScalableImage>
@@ -915,7 +915,7 @@
                                 Height="18">
                             <local:ScalableImage x:Name="image">
                                 <local:ScalableImage.Source>
-                                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Delete16.png"
+                                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Delete16.png"
                                                                Size="10,10" />
                                 </local:ScalableImage.Source>
                             </local:ScalableImage>
@@ -999,7 +999,7 @@
                    Stretch="None"
                    Width="16"
                    Height="16"
-                   Source="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Error16.png" />
+                   Source="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Error16.png" />
 
             <local:MessageTextBox
                 x:Name="InputField"
@@ -1437,7 +1437,7 @@
                                     <local:ScalableImageSource
                                         AccessibleName="{x:Static default:XamlLocalizableResources.AutoResXGen_ListOrganizer_AutomationPropertiesName_47}"
                                         Size="9, 9"
-                                        Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Delete16.png" />
+                                        Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Delete16.png" />
                                 </local:ScalableImage.Source>
                             </local:ScalableImage>
                         </local:AutomationButton>
@@ -1462,7 +1462,7 @@
                                     <local:ScalableImageSource
                                         AccessibleName="{x:Static default:XamlLocalizableResources.AutoResXGen_ListOrganizer_AutomationPropertiesName_72}"
                                         Size="16, 16"
-                                        Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Rename16.png" />
+                                        Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Rename16.png" />
                                 </local:ScalableImage.Source>
                             </local:ScalableImage>
                         </ToggleButton>
@@ -1739,7 +1739,7 @@
 
                         <local:ScalableImage Style="{StaticResource Dimming_Image_Style}"  Margin="1,2,5,0" >
                             <local:ScalableImage.Source>
-                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/SpyGlass16.png" Size="16,16" />
+                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/SpyGlass16.png" Size="16,16" />
                             </local:ScalableImage.Source>
                         </local:ScalableImage>
 
@@ -1763,7 +1763,7 @@
 
                         <local:ScalableImage Style="{StaticResource Dimming_Image_Style}"  Margin="1,2,5,0" >
                             <local:ScalableImage.Source>
-                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/CloseTile16.png" Size="16,16" />
+                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/CloseTile16.png" Size="16,16" />
                             </local:ScalableImage.Source>
                         </local:ScalableImage>
 
@@ -1787,7 +1787,7 @@
 
                         <local:ScalableImage Margin="1,3,5,1" Style="{StaticResource Dimming_Image_Style}">
                             <local:ScalableImage.Source>
-                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Delete16.png" Size="14,14" />
+                                <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Delete16.png" Size="14,14" />
                             </local:ScalableImage.Source>
                         </local:ScalableImage>
 
@@ -1833,7 +1833,7 @@
             <!--Save Glyph-->
             <local:ScalableImage Style="{StaticResource Dimming_Image_Style}">
                 <local:ScalableImage.Source>
-                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Save16.png" Size="14,14" />
+                    <local:ScalableImageSource Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Save16.png" Size="14,14" />
                 </local:ScalableImage.Source>
             </local:ScalableImage>
 
@@ -2575,7 +2575,7 @@
                         <local:ScalableImage.Source>
                             <local:ScalableImageSource
                             AccessibleName="{Binding Path=ToolTip, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
-                            Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/Delete16.png"
+                            Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/Delete16.png"
                             Size="10,10" />
                         </local:ScalableImage.Source>
                     </local:ScalableImage>
@@ -2632,7 +2632,7 @@
                 <local:ScalableImage.Source>
                     <local:ScalableImageSource
                             AccessibleName="{Binding Path=ToolTip, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
-                            Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/SpyGlass10.png"
+                            Image="pack://application:,,,/Microsoft.Powershell.GraphicalHost;component/resources/Graphics/SpyGlass10.png"
                             Size="12,12" />
                 </local:ScalableImage.Source>
             </local:ScalableImage>
