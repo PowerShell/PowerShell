@@ -7,8 +7,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:this="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
-        xmlns:sc="clr-namespace:Microsoft.Management.UI.Internal"
         xmlns:default="clr-namespace:"
+        xmlns:sc="clr-namespace:Microsoft.Management.UI.Internal"
         MinWidth="300" MinHeight="300"
         Title="Commands" Width="380" Height="600">
     <Grid Margin="3" x:Name="MainGrid">

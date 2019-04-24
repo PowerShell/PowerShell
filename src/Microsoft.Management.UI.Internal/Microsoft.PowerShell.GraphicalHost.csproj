@@ -13,18 +13,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="resources\Graphics\Add16.png" Link="Add16.png" />
-    <EmbeddedResource Include="resources\Graphics\CloseTile16.png" Link="CloseTile16.png" />
-    <EmbeddedResource Include="resources\Graphics\Delete16.png" Link="Delete16.png" />
-    <EmbeddedResource Include="resources\Graphics\down.ico" Link="down.ico" />
-    <EmbeddedResource Include="resources\Graphics\Error16.png" Link="Error16.png" />
-    <EmbeddedResource Include="resources\Graphics\Help.ico" Link="Help.ico" />
-    <EmbeddedResource Include="resources\Graphics\Rename16.png" Link="Rename16.png" />
-    <EmbeddedResource Include="resources\Graphics\Save16.png" Link="Save16.png" />
-    <EmbeddedResource Include="resources\Graphics\SortAdornerAscending.png" Link="SortAdornerAscending.png" />
-    <EmbeddedResource Include="resources\Graphics\SortAdornerDescending.png" Link="SortAdornerDescending.png" />
-    <EmbeddedResource Include="resources\Graphics\SpyGlass10.png" Link="SpyGlass10.png" />
-    <EmbeddedResource Include="resources\Graphics\SpyGlass16.png" Link="SpyGlass16.png" />
+    <Resource Include="resources\Graphics\Add16.png" />
+    <Resource Include="resources\Graphics\CloseTile16.png" />
+    <Resource Include="resources\Graphics\Delete16.png" />
+    <Resource Include="resources\Graphics\down.ico" />
+    <Resource Include="resources\Graphics\Error16.png" />
+    <Resource Include="resources\Graphics\Help.ico" />
+    <Resource Include="resources\Graphics\Rename16.png" />
+    <Resource Include="resources\Graphics\Save16.png" />
+    <Resource Include="resources\Graphics\SortAdornerAscending.png" />
+    <Resource Include="resources\Graphics\SortAdornerDescending.png" />
+    <Resource Include="resources\Graphics\SpyGlass10.png" />
+    <Resource Include="resources\Graphics\SpyGlass16.png" />
   </ItemGroup>
 
   <ItemGroup>
