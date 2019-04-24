@@ -77,7 +77,7 @@ Describe "Manifest required module autoloading from module path with simple name
 
     AfterAll {
         $env:PSModulePath = $prevModulePath
-        Get-Module $mainModule,$requiredModule | Remove-Module
+        Remove-Module $mainModule,$requiredModule -ErrorAction SilentlyContinue
     }
 
     It "Importing main module loads required modules successfully" {
