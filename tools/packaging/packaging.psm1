@@ -679,7 +679,6 @@ function New-UnixPackage {
 
     End {
         # This allows sudo install to be optional; needed when running in containers / as root
-        # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
         $sudo = if (!$NoSudo) { "sudo" }
 
         # Validate platform
@@ -778,7 +777,7 @@ function New-UnixPackage {
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
                     Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
+                    Start-NativeExecution [scriptblock]::Create("$sudo mv $symlink_dest $hack_dest")
                 }
             }
 
@@ -851,7 +850,7 @@ function New-UnixPackage {
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest"))
+                    Start-NativeExecution [scriptblock]::Create("$sudo mv $hack_dest $symlink_dest")
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {

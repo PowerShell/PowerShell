@@ -1498,7 +1498,6 @@ function Install-Dotnet {
     )
 
     # This allows sudo install to be optional; needed when running in containers / as root
-    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
     $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
@@ -1513,10 +1512,8 @@ function Install-Dotnet {
         }
 
         if ($uninstallScript) {
-            Start-NativeExecution {
-                curl -sO $obtainUrl/uninstall/$uninstallScript
-                Invoke-Expression "$sudo bash ./$uninstallScript"
-            }
+            Start-NativeExecution [scriptblock]::Create("curl -sO $obtainUrl/uninstall/$uninstallScript")
+            Start-NativeExecution [scriptblock]::Create("$sudo bash ./$uninstallScript")
         } else {
             Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
@@ -1575,7 +1572,6 @@ function Start-PSBootstrap {
     try {
         if ($Environment.IsLinux -or $Environment.IsMacOS) {
             # This allows sudo install to be optional; needed when running in containers / as root
-            # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
             if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
@@ -1606,10 +1602,8 @@ function Start-PSBootstrap {
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
                 try {
-                    Start-NativeExecution {
-                        Invoke-Expression "$sudo apt-get update -qq"
-                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
-                    }
+                    Start-NativeExecution [scriptblock]::Create("$sudo apt-get update -qq")
+                    Start-NativeExecution [scriptblock]::Create("$sudo apt-get install -y -qq $Deps")
                 }
                 finally {
                     # change the apt frontend back to the original
@@ -1636,9 +1630,7 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
-                }
+                Start-NativeExecution [scriptblock]::Create("$baseCommand $Deps")
             } elseif ($Environment.IsSUSEFamily) {
                 # Build tools
                 $Deps += "gcc", "cmake", "make"
@@ -1656,9 +1648,7 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
-                }
+                Start-NativeExecution [scriptblock]::Create("$baseCommand $Deps")
             } elseif ($Environment.IsMacOS) {
                 precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
@@ -1674,9 +1664,7 @@ function Start-PSBootstrap {
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
-                Start-NativeExecution {
-                    Invoke-Expression "apk add $Deps"
-                }
+                Start-NativeExecution [scriptblock]::Create("apk add $Deps")
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1688,8 +1676,8 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
+                    Start-NativeExecution [scriptblock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document")
+                    Start-NativeExecution [scriptblock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document")
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
