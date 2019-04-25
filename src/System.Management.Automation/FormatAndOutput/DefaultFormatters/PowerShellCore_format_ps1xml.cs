@@ -840,18 +840,22 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         if ($_.Suggestions.Count -gt 0) {
-                                            $Prefix = "" "" * 2
+                                            $Green = ""`e[32m""
+                                            $Reset = ""`e[0m""
+                                            $Count = 0
+
                                             $NewLine
-                                            ""Suggestions:""
+                                            '{0}Suggestions:{1}' -f $Green, $Reset
 
                                             foreach ($Item in $_.Suggestions) {
-                                                if (-not [string]::IsNullOrEmpty($item)) {
-                                                    ""${Prefix}${Item}""
+                                                if (-not [string]::IsNullOrEmpty($Item)) {
+                                                    $Count++
+                                                    '{0}{1,3}. {2}{3}' -f $Green, $Count, $Item, $Reset
                                                 }
                                             }
                                         }
 
-                                        $NewLine
+                                        ""$NewLine""
                                     )
 
                                     $FormattedErrorStrings -join ""`n""
