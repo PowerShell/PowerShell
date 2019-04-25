@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
         /// </summary>
         internal ValidateRangeKind? RangeKind { get => _rangeKind; }
 
-        ValidateRangeKind? _rangeKind;
+        private ValidateRangeKind? _rangeKind;
 
         /// <summary>
         /// Validates that each parameter argument falls in the range
