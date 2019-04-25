@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            string currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId.ToString();
+            Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
             _mdOption = PSMarkdownOptionInfoCache.Get(currentRunspaceId);
 
             bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;

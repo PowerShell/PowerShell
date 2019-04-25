@@ -527,13 +527,9 @@ bool function()`n{`n}
 
                 $ps = [powershell]::Create()
                 $ps.RunspacePool = $pool
-                $ps.AddScript( {
-                        try {
-                            $output = '# test' | ConvertFrom-Markdown
-                            $output.Html.trim()
-                        } catch {
-                            throw $_
-                        }
+                $ps.AddScript({
+                        $output = '# test' | ConvertFrom-Markdown
+                        $output.Html.trim()
                     })
 
                 $output = $ps.Invoke()
@@ -554,6 +550,7 @@ bool function()`n{`n}
 
                 $options = $ps.Invoke()
 
+                $options | Should -Not -BeNullOrEmpty
                 $options.Header1 | Should -BeExactly "[7m"
                 $options.Header2 | Should -BeExactly "[4;93m"
                 $options.Header3 | Should -BeExactly "[4;94m"
@@ -587,6 +584,7 @@ bool function()`n{`n}
 
                 $options = $ps.Invoke()
 
+                $options | Should -Not -BeNullOrEmpty
                 $options.Header1 | Should -BeExactly "[93m"
                 $options.Header2 | Should -BeExactly "[4;93m"
                 $options.Header3 | Should -BeExactly "[4;94m"

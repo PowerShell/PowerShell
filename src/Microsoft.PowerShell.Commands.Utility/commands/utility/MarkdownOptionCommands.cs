@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            string currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId.ToString();
+            Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
 
             // If the option is already set once for this runspace, then update it or set it.
             var setOption = PSMarkdownOptionInfoCache.Set(currentRunspaceId, mdOptionInfo);
@@ -260,21 +260,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId.ToString();
+            Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
             WriteObject(PSMarkdownOptionInfoCache.Get(currentRunspaceId));
         }
     }
 
     internal static class PSMarkdownOptionInfoCache
     {
-        private static ConcurrentDictionary<string, PSMarkdownOptionInfo> markdownOptionInfoCache;
+        private static ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
 
         static PSMarkdownOptionInfoCache()
         {
-            markdownOptionInfoCache = new ConcurrentDictionary<string, PSMarkdownOptionInfo>();
+            markdownOptionInfoCache = new ConcurrentDictionary<Guid, PSMarkdownOptionInfo>();
         }
 
-        internal static PSMarkdownOptionInfo Get(string runspaceId)
+        internal static PSMarkdownOptionInfo Get(Guid runspaceId)
         {
             if (markdownOptionInfoCache.TryGetValue(runspaceId, out PSMarkdownOptionInfo cachedOption))
             {
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static PSMarkdownOptionInfo Set(string runspaceId, PSMarkdownOptionInfo optionInfo)
+        internal static PSMarkdownOptionInfo Set(Guid runspaceId, PSMarkdownOptionInfo optionInfo)
         {
             return markdownOptionInfoCache.AddOrUpdate(runspaceId, optionInfo, (key, oldvalue) => optionInfo);
         }
