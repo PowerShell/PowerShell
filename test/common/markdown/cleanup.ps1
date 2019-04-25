@@ -3,7 +3,7 @@
 
 Start-Process `
 -FilePath "npm" `
--ArgumentList @('install','rimraf','-g','--silent') `
+-ArgumentList @('install','-g','rimraf','--silent') `
 -Wait `
 -WorkingDirectory $PSScriptRoot `
 -NoNewWindow
