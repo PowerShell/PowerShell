@@ -76,8 +76,7 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $testPath.FullName
     }
 
-    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux)
-    {
+    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux) {
         $dir = "teST"
         $testPathLower = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToLower())
         $testPathUpper = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToUpper())
@@ -85,7 +84,7 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $testPathLower.FullName
         Set-Location $testPathUpper.FullName
         $(Get-Location).Path | Should -BeExactly $testPathUpper.FullName
-        { Set-Locaiton (Join-Path $TestDrive $dir) } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+        { Set-Location (Join-Path $TestDrive $dir) -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
     }
 
     Context 'Set-Location with no arguments' {
