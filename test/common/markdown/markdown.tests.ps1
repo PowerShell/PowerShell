@@ -18,12 +18,11 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $NpmInstalled = "Installed"
             Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
             start-nativeExecution { yarn }
-            start-nativeExecution { yarn add gulp@4.0.0 }
             if(!(Get-Command -Name 'gulp' -ErrorAction SilentlyContinue))
             {
                 start-nativeExecution {
                     # Installing globally with yarn is a pain, please don't try it
-                    sudo npm install -g 'gulp@4.0.0' --silent
+                    sudo npm install -g 'gulp@4.0.1' --silent
                     # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
                     sudo rm -rf ~/.npm/_cacache
                 }
