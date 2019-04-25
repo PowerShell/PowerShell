@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
 
 using Microsoft.PowerShell.MarkdownRender;
@@ -174,10 +175,19 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
+            PSMarkdownOptionInfo setOption = null;
 
-            // If the option is already set once for this runspace, then update it or set it.
-            var setOption = PSMarkdownOptionInfoCache.Set(currentRunspaceId, mdOptionInfo);
+            // If we have the moduleInfo then store are module scope variable
+            if (this.CommandInfo.Module != null)
+            {
+                this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
+                setOption = mdOptionInfo;
+            }
+            else // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
+            {
+                // If the option is already set once for this runspace, then update it or set it.
+                setOption = PSMarkdownOptionInfoCache.Set(Runspace.DefaultRunspace.InstanceId, mdOptionInfo);
+            }
 
             if (PassThru.IsPresent)
             {
@@ -260,8 +270,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
-            WriteObject(PSMarkdownOptionInfoCache.Get(currentRunspaceId));
+            var option = this.CommandInfo.Module == null
+                // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
+                ? PSMarkdownOptionInfoCache.Get(Runspace.DefaultRunspace.InstanceId)
+                // If we have the moduleInfo then store are module scope variable
+                : this.CommandInfo.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo());
+
+            WriteObject(option);
         }
     }
 
