@@ -1512,8 +1512,8 @@ function Install-Dotnet {
         }
 
         if ($uninstallScript) {
-            Start-NativeExecution [scriptblock]::Create("curl -sO $obtainUrl/uninstall/$uninstallScript")
-            Start-NativeExecution [scriptblock]::Create("$sudo bash ./$uninstallScript")
+            Start-NativeExecution ([scriptblock]::Create("curl -sO $obtainUrl/uninstall/$uninstallScript"))
+            Start-NativeExecution ([scriptblock]::Create("$sudo bash ./$uninstallScript"))
         } else {
             Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
@@ -1602,8 +1602,8 @@ function Start-PSBootstrap {
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
                 try {
-                    Start-NativeExecution [scriptblock]::Create("$sudo apt-get update -qq")
-                    Start-NativeExecution [scriptblock]::Create("$sudo apt-get install -y -qq $Deps")
+                    Start-NativeExecution ([scriptblock]::Create("$sudo apt-get update -qq"))
+                    Start-NativeExecution ([scriptblock]::Create("$sudo apt-get install -y -qq $Deps"))
                 }
                 finally {
                     # change the apt frontend back to the original
@@ -1630,7 +1630,7 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
-                Start-NativeExecution [scriptblock]::Create("$baseCommand $Deps")
+                Start-NativeExecution ([scriptblock]::Create("$baseCommand $Deps"))
             } elseif ($Environment.IsSUSEFamily) {
                 # Build tools
                 $Deps += "gcc", "cmake", "make"
@@ -1648,7 +1648,7 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
-                Start-NativeExecution [scriptblock]::Create("$baseCommand $Deps")
+                Start-NativeExecution ([scriptblock]::Create("$baseCommand $Deps"))
             } elseif ($Environment.IsMacOS) {
                 precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See https://brew.sh/"
 
@@ -1664,7 +1664,7 @@ function Start-PSBootstrap {
             } elseif ($Environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
-                Start-NativeExecution [scriptblock]::Create("apk add $Deps")
+                Start-NativeExecution ([scriptblock]::Create("apk add $Deps"))
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1676,8 +1676,8 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution [scriptblock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document")
-                    Start-NativeExecution [scriptblock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document")
+                    Start-NativeExecution ([scriptblock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
+                    Start-NativeExecution ([scriptblock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
