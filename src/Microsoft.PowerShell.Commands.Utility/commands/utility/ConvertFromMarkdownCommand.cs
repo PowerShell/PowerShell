@@ -66,17 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // If we have the moduleInfo then store are module scope variable
-            if (this.CommandInfo.Module != null)
-            {
-                _mdOption = this.CommandInfo.Module?.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
-                _mdOption = _mdOption ?? new PSMarkdownOptionInfo();
-            }
-            else // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
-            {
-                Guid currentRunspaceId = this.CommandInfo.Context.CurrentRunspace.InstanceId;
-                _mdOption = PSMarkdownOptionInfoCache.Get(currentRunspaceId);
-            }
+            _mdOption = PSMarkdownOptionInfoCache.Get(this.CommandInfo);
 
             bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;
 

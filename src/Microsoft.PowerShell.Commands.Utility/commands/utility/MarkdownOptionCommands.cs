@@ -126,7 +126,6 @@ namespace Microsoft.PowerShell.Commands
         private const string IndividualSetting = "IndividualSetting";
         private const string InputObjectParamSet = "InputObject";
         private const string ThemeParamSet = "Theme";
-        private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
         private const string LightThemeName = "Light";
         private const string DarkThemeName = "Dark";
 
@@ -175,19 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            PSMarkdownOptionInfo setOption = null;
-
-            // If we have the moduleInfo then store are module scope variable
-            if (this.CommandInfo.Module != null)
-            {
-                this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
-                setOption = mdOptionInfo;
-            }
-            else // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
-            {
-                // If the option is already set once for this runspace, then update it or set it.
-                setOption = PSMarkdownOptionInfoCache.Set(Runspace.DefaultRunspace.InstanceId, mdOptionInfo);
-            }
+            var setOption = PSMarkdownOptionInfoCache.Set(this.CommandInfo, mdOptionInfo);
 
             if (PassThru.IsPresent)
             {
@@ -270,28 +257,30 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            var option = this.CommandInfo.Module == null
-                // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
-                ? PSMarkdownOptionInfoCache.Get(Runspace.DefaultRunspace.InstanceId)
-                // If we have the moduleInfo then store are module scope variable
-                : this.CommandInfo.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo());
-
-            WriteObject(option);
+            WriteObject(PSMarkdownOptionInfoCache.Get(this.CommandInfo));
         }
     }
 
     internal static class PSMarkdownOptionInfoCache
     {
         private static ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
+        private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
 
         static PSMarkdownOptionInfoCache()
         {
             markdownOptionInfoCache = new ConcurrentDictionary<Guid, PSMarkdownOptionInfo>();
         }
 
-        internal static PSMarkdownOptionInfo Get(Guid runspaceId)
+        internal static PSMarkdownOptionInfo Get(CommandInfo command)
         {
-            if (markdownOptionInfoCache.TryGetValue(runspaceId, out PSMarkdownOptionInfo cachedOption))
+            // If we have the moduleInfo then store are module scope variable
+            if (command.Module != null)
+            {
+                return command.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
+            }
+
+            // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
+            if (markdownOptionInfoCache.TryGetValue(Runspace.DefaultRunspace.InstanceId, out PSMarkdownOptionInfo cachedOption))
             {
                 // return the cached options for the runspaceId
                 return cachedOption;
@@ -300,13 +289,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no option cache so cache and return the default PSMarkdownOptionInfo
                 var newOptionInfo = new PSMarkdownOptionInfo();
-                return markdownOptionInfoCache.GetOrAdd(runspaceId, (key) => newOptionInfo);
+                return markdownOptionInfoCache.GetOrAdd(Runspace.DefaultRunspace.InstanceId, (key) => newOptionInfo);
             }
         }
 
-        internal static PSMarkdownOptionInfo Set(Guid runspaceId, PSMarkdownOptionInfo optionInfo)
+        internal static PSMarkdownOptionInfo Set(CommandInfo command, PSMarkdownOptionInfo optionInfo)
         {
-            return markdownOptionInfoCache.AddOrUpdate(runspaceId, optionInfo, (key, oldvalue) => optionInfo);
+            // If we have the moduleInfo then store are module scope variable
+            if (command.Module != null)
+            {
+                command.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, optionInfo);
+                return optionInfo;
+            }
+
+            // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
+            return markdownOptionInfoCache.AddOrUpdate(Runspace.DefaultRunspace.InstanceId, optionInfo, (key, oldvalue) => optionInfo);
         }
     }
 }
