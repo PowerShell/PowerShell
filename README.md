@@ -128,9 +128,10 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].
+The larger community chat is on Discord, Slack and IRC which you can join via [Discord], [Slack] or the #PowerShell channel on Freenode.
 
-[Slack]: http://slack.poshcode.org
+[Slack]: http://aka.ms/psslack
+[Discord]: http://aka.ms/psdiscord
 
 ## Add-ons and libraries
 
