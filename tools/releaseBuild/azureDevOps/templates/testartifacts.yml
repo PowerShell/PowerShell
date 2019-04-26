@@ -34,7 +34,7 @@ jobs:
           linux-x64 { $packageName = "TestPackage-linux-x64.zip" }
           linux-arm { $packageName = "TestPackage-linux-arm.zip" }
           linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
-          osx-x64 { $packageName = ""TestPackage-macOS.zip" }
+          osx-x64 { $packageName = "TestPackage-macOS.zip" }
         }
 
         Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
