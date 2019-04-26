@@ -1,12 +1,8 @@
-parameters:
-  buildName: 'linux'
-  pool: 'Hosted Ubuntu 1604'
-
 jobs:
-- job: build_testartifacts_${{ parameters.buildName }}
-  displayName: Build test artifacts ${{ parameters.buildName }}
+- job: build_testartifacts
+  displayName: Build test artifacts
   condition: succeeded()
-  pool: ${{ parameters.pool }}
+  pool: 'Hosted Ubuntu 1604'
   steps:
 
   - pwsh: |
