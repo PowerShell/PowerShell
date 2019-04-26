@@ -261,6 +261,14 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+    /// <summary>
+    /// The class manages whether we should use a module scope variable or concurrent dictionary for storing the set PSMarkdownOptions.
+    /// When we have a moduleInfo available we use the module scope variable.
+    /// In case of built-in modules, they are loaded as snapins when we are hosting PowerShell.
+    /// We use runspace Id as the key for the concurrent dictionary to have the functionality of separate settings per runspace.
+    /// Force loading the module does not unload the nested modules and hence we cannot use IModuleAssemblyCleanup to remove items from the dictionary.
+    /// Because of these reason, we continue using module scope variable when moduleInfo is available.
+    /// </summary>
     internal static class PSMarkdownOptionInfoCache
     {
         private static ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
@@ -302,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                 return optionInfo;
             }
 
-            // If we don't have a moduleInfo, like in PowerShell hosting scenarios, use a concurrent dictionary.
+            // If we don't have a moduleInfo, like in PowerShell hosting scenarios with modules loaded as snapins, use a concurrent dictionary.
             return markdownOptionInfoCache.AddOrUpdate(Runspace.DefaultRunspace.InstanceId, optionInfo, (key, oldvalue) => optionInfo);
         }
     }
