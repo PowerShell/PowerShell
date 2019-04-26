@@ -116,7 +116,6 @@ namespace Microsoft.WSMan.Management
     [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
     {
-
         #region Parameters
 
         /// <summary>
@@ -253,7 +252,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-
             WSManHelper helper = new WSManHelper(this);
             if (connectionuri != null)
             {
@@ -283,7 +281,6 @@ namespace Microsoft.WSMan.Management
 
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
         }
-
     }
     #endregion
 
@@ -311,7 +308,6 @@ namespace Microsoft.WSMan.Management
 
             set
             {
-
                 computername = value;
                 if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -343,7 +339,6 @@ namespace Microsoft.WSMan.Management
         {
             session = null;
             this.Dispose();
-
         }
 
         #endregion IDisposable Members
@@ -379,7 +374,6 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
         }
-
     }
     #endregion Disconnect-WSMAN
 }

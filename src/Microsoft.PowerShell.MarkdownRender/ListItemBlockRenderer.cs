@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.MarkdownRender
 
             if (result == null)
             {
-                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand : null);
+                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand: null);
                 result = IndentCache[countOfSpaces];
             }
 

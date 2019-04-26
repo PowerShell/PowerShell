@@ -4,7 +4,7 @@
   "description": "The PowerShell Common MarkDown Tests.",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.1",
     "markdownlint": "^0.12.0",
     "through2": "^3.0.1"
   },

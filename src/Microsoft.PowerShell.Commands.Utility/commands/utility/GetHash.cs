@@ -189,7 +189,6 @@ namespace Microsoft.PowerShell.Commands
         private const string PathParameterSet = "Path";
         private const string LiteralPathParameterSet = "LiteralPath";
         private const string StreamParameterSet = "StreamParameterSet";
-
     }
 
     /// <summary>

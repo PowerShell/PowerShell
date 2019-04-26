@@ -1250,7 +1250,6 @@ namespace Microsoft.PowerShell.Commands
 
                             // finally dispose the job.
                             _job.Dispose();
-
                         }
                     }
                 }

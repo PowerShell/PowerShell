@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class PSUserAgent
     {
-
         private static string s_windowsUserAgent;
 
         internal static string UserAgent

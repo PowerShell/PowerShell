@@ -152,7 +152,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 3,
+        "ArtifactsExpected": 4,
         "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
@@ -190,7 +190,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 1,
+        "ArtifactsExpected": 2,
         "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
@@ -209,7 +209,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 1,
+        "ArtifactsExpected": 2,
         "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {

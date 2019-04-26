@@ -571,7 +571,6 @@ namespace Microsoft.PowerShell.Commands
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
 #endif
-
         }
 
         /// <summary>

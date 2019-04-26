@@ -103,6 +103,9 @@ namespace System.Management.Automation
 
                 if (lastAst != null)
                 {
+                    // We need to add the wildcard to the end so the regex is built correctly.
+                    commandName += "*";
+
                     // Search the asts for function definitions that we might be calling
                     var findFunctionsVisitor = new FindFunctionsVisitor();
                     while (lastAst.Parent != null)
@@ -6050,7 +6053,7 @@ namespace System.Management.Automation
             // Add the user scope path first, since it is searched in order.
             var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
 
-            if(Directory.Exists(userHelpRoot))
+            if (Directory.Exists(userHelpRoot))
             {
                 searchPaths.Add(userHelpRoot);
             }

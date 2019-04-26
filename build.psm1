@@ -237,7 +237,8 @@ function Start-PSBuild {
 
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
-        [string]$ReleaseTag
+        [string]$ReleaseTag,
+        [switch]$Detailed
     )
 
     if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
@@ -327,10 +328,22 @@ Fix steps:
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
+    if ($Options.Runtime -like 'win*' -or ($Options.Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+        $Arguments += "/property:IsWindows=true"
+    }
+    else {
+        $Arguments += "/property:IsWindows=false"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
-    if (-not $SMAOnly -and $Options.Runtime -ne 'fxdependent') {
+    if ($Detailed.IsPresent)
+    {
+        $Arguments += '--verbosity', 'd'
+    }
+
+    if (-not $SMAOnly -and $Options.Runtime -notlike 'fxdependent*') {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
     }
@@ -638,33 +651,11 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = 'Debug'
-    } else {
-        switch ($Configuration) {
-            "CodeCoverage" {
-                if(-not $Environment.IsWindows) {
-                    $Configuration = "Debug"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
-                }
-            }
-        }
     }
+
     Write-Verbose "Using configuration '$Configuration'"
-
-    $PowerShellDir = if (!$Environment.IsWindows) {
-        "powershell-unix"
-    } else {
-        "powershell-win-core"
-    }
-    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
-    Write-Verbose "Top project directory is $Top"
-
-    if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
-        Write-Verbose "Using framework '$Framework'"
-    }
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
@@ -689,6 +680,20 @@ function New-PSOptions {
         } else {
             Write-Verbose "Using runtime '$Runtime'"
         }
+    }
+
+    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -eq 'fxdependent' -and $Environment.IsWindows)) {
+        "powershell-win-core"
+    } else {
+        "powershell-unix"
+    }
+
+    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
+    Write-Verbose "Top project directory is $Top"
+
+    if (-not $Framework) {
+        $Framework = "netcoreapp2.1"
+        Write-Verbose "Using framework '$Framework'"
     }
 
     $Executable = if ($Runtime -eq 'fxdependent') {
@@ -1248,7 +1253,7 @@ function Publish-TestResults
         # If the the "test-case" count is greater than 0, then we have results.
         # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
         if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 -or $Type -eq 'XUnit' ) {
-            Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
+            Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;failTaskOnFailedTests=true]"
         }
 
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath

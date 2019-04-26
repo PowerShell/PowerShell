@@ -17,16 +17,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
+
 namespace Microsoft.WSMan.Management
 {
-
     /// <summary>
     /// Session option class.
     /// </summary>
 
     public sealed class SessionOption
     {
-
         /// <summary>
         /// Property.
         /// </summary>
@@ -68,7 +67,6 @@ namespace Microsoft.WSMan.Management
             {
                 _SkipRevocationCheck = value;
             }
-
         }
 
         private bool _SkipRevocationCheck;

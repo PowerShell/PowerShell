@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands
             if (WebResponseHelper.IsText(response))
             {
                 output = new BasicHtmlWebResponseObject(response, responseStream);
-
             }
             else
             {

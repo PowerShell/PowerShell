@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-     /// <summary>
+    /// <summary>
     /// Scope to which the help should be saved.
     /// </summary>
     public enum UpdateHelpScope

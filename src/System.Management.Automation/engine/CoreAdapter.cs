@@ -2140,7 +2140,7 @@ namespace System.Management.Automation
                 return ctor.Invoke(arguments);
             }
 
-            var methodInfo = (MethodInfo) method;
+            var methodInfo = (MethodInfo)method;
             if (methodInfo.ReturnType.IsByRefLike)
             {
                 throw new MethodException(
@@ -3575,12 +3575,11 @@ namespace System.Management.Automation
                                : typeTable[propertyName];
             switch (entry)
             {
-                case null: return null;
+                case null:
+                    return null;
                 case PropertyCacheEntry cacheEntry when lookingForProperties:
-                {
                     var isHidden = cacheEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
                     return new PSProperty(cacheEntry.member.Name, this, obj, cacheEntry) { IsHidden = isHidden } as T;
-                }
                 case ParameterizedPropertyCacheEntry paramCacheEntry when lookingForParameterizedProperties:
 
                     // TODO: check for HiddenAttribute

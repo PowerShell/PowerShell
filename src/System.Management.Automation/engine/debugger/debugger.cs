@@ -2724,7 +2724,7 @@ namespace System.Management.Automation
 
         internal override void DebugRunspace(Runspace runspace)
         {
-            DebugRunspace(runspace, disableBreakAll:false);
+            DebugRunspace(runspace, disableBreakAll: false);
         }
 
         /// <summary>
@@ -4072,7 +4072,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) => 
+        public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.GetBreakpoint(id);
 
         /// <summary>

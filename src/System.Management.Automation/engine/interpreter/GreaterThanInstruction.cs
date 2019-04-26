@@ -19,7 +19,7 @@ namespace System.Management.Automation.Interpreter
 {
     internal abstract class GreaterThanInstruction : Instruction
     {
-        private static Instruction s_SByte,s_int16,s_char,s_int32,s_int64,s_byte,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_SByte, s_int16, s_char, s_int32, s_int64, s_byte, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
 

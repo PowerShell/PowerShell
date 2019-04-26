@@ -1591,7 +1591,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 #endif // !UNIX
-
 }
 
 #pragma warning restore 56506

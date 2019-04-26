@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -254,7 +254,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "nupkg"
+                "msi", "nupkg", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -333,6 +333,18 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
+                }
+            }
+            "msix" {
+                $Arguments = @{
+                    ProductNameSuffix = $NameSuffix
+                    ProductSourcePath = $Source
+                    ProductVersion = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
+                    New-MSIXPackage @Arguments
                 }
             }
             'nupkg' {
@@ -2723,6 +2735,118 @@ function New-MSIPackage
            Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
         }
         throw $errorMessage
+    }
+}
+
+<#
+    .Synopsis
+        Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of makeappx.exe.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.1\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
+function New-MSIXPackage
+{
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact='Low')]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Source Path to the Product Files - required to package the contents into an MSIX
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
+    if ($null -eq $makeappx) {
+        # This is location in our dockerfile
+        $dockerPath = Join-Path $env:SystemDrive "makeappx"
+        if (Test-Path $dockerPath) {
+            $makeappx = Get-ChildItem $dockerPath -Include makeappx.exe -Recurse | Select-Object -First 1
+        }
+
+        if ($null -eq $makeappx) {
+            # Try to find in well known location
+            $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64" -Include makeappx.exe -Recurse | Select-Object -First 1
+            if ($null -eq $makeappx) {
+                throw "Could not locate makeappx.exe, make sure Windows 10 SDK is installed"
+            }
+        }
+    }
+
+    $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
+
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion)
+    Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
+    # Necessary image assets need to be in source assets folder
+    $assets = @(
+        'Square150x150Logo'
+        'Square44x44Logo'
+        'Square44x44Logo.targetsize-48'
+        'Square44x44Logo.targetsize-48_altform-unplated'
+        'StoreLogo'
+    )
+
+    if (!(Test-Path "$ProductSourcePath\assets")) {
+        $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
+    }
+
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+    if ($isPreview) {
+        Write-Verbose "Using Preview assets" -Verbose
+    }
+
+    $assets | ForEach-Object {
+        if ($isPreview) {
+            Copy-Item -Path "$RepoRoot\assets\$_-Preview.png" -Destination "$ProductSourcePath\assets\$_.png"
+        }
+        else {
+            Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
+        }
+
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
+        Write-Verbose "Creating priconfig.xml" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makepri createconfig /o /cf (Join-Path $ProductSourcePath "priconfig.xml") /dq en-US }
+        Write-Verbose "Creating resources.pri" -Verbose
+        Push-Location $ProductSourcePath
+        Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
+        Pop-Location
+        Write-Verbose "Creating msix package" -Verbose
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Write-Verbose "Created $packageName.msix" -Verbose
     }
 }
 

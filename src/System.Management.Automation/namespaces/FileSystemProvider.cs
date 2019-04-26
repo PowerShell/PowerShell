@@ -98,7 +98,75 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static string NormalizePath(string path)
         {
-            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
+        }
+
+        /// <summary>
+        /// Get the correct casing for a path.  This method assumes it's being called by NormalizePath()
+        /// so that the path is already normalized.
+        /// </summary>
+        /// <param name="path">
+        /// The path to retrieve.
+        /// </param>
+        /// <returns>
+        /// The path with accurate casing if item exists, otherwise it returns path that was passed in.
+        /// </returns>
+        private static string GetCorrectCasedPath(string path)
+        {
+            // Only apply to directories where there are issues with some tools if the casing
+            // doesn't match the source like git
+            if (Directory.Exists(path))
+            {
+                string exactPath = string.Empty;
+                int itemsToSkip = 0;
+                if (Utils.PathIsUnc(path))
+                {
+                    // With the Split method, a UNC path like \\server\share, we need to skip
+                    // trying to enumerate the server and share, so skip the first two empty
+                    // strings, then server, and finally share name.
+                    itemsToSkip = 4;
+                }
+
+                foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
+                {
+                    if (itemsToSkip-- > 0)
+                    {
+                        // This handles the UNC server and share and 8.3 short path syntax
+                        exactPath += item + StringLiterals.DefaultPathSeparator;
+                        continue;
+                    }
+                    else if (string.IsNullOrEmpty(exactPath))
+                    {
+                        // This handles the drive letter or / root path start
+                        exactPath = item + StringLiterals.DefaultPathSeparator;
+                    }
+                    else if (string.IsNullOrEmpty(item))
+                    {
+                        // This handles the trailing slash case
+                        continue;
+                    }
+                    else if (item.Contains('~'))
+                    {
+                        // This handles short path names
+                        exactPath += StringLiterals.DefaultPathSeparator + item;
+                    }
+                    else
+                    {
+                        exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
+                    }
+                }
+
+                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
+                {
+                    return exactPath + StringLiterals.DefaultPathSeparator;
+                }
+
+                return exactPath;
+            }
+            else
+            {
+                return path;
+            }
         }
 
         /// <summary>
@@ -355,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
         protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             // Set the home folder for the user
-            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home)) 
+            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
             {
                 // %USERPROFILE% - indicate where a user's home directory is located in the file system.
                 string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
@@ -1910,10 +1978,10 @@ namespace Microsoft.PowerShell.Commands
                 ReadOnlySpan<char> mode = stackalloc char[]
                 {
                     isLink ? 'l' : isDirectory ? 'd' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Archive)  ? 'a' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Archive) ? 'a' : '-',
                     fileAttributes.HasFlag(FileAttributes.ReadOnly) ? 'r' : '-',
-                    fileAttributes.HasFlag(FileAttributes.Hidden)   ? 'h' : '-',
-                    fileAttributes.HasFlag(FileAttributes.System)   ? 's' : '-',
+                    fileAttributes.HasFlag(FileAttributes.Hidden) ? 'h' : '-',
+                    fileAttributes.HasFlag(FileAttributes.System) ? 's' : '-',
                 };
                 return new string(mode);
             }
@@ -7435,7 +7503,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
         public bool WasStreamTypeSpecified { get; private set; }
-
     }
 
     /// <summary>

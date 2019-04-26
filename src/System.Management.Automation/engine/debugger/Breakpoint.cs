@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// </summary>
         protected Breakpoint(string script)
             : this(script, null)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
@@ -83,7 +83,7 @@ namespace System.Management.Automation
         /// </summary>
         protected Breakpoint(string script, int id)
             : this(script, null, id)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="Breakpoint"/>
@@ -161,8 +161,8 @@ namespace System.Management.Automation
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString)
             : this(script, command, commandString, null)
-        {}
-        
+        { }
+
         /// <summary>
         /// Creates a new instance of a <see cref="CommandBreakpoint"/>
         /// </summary>
@@ -178,7 +178,7 @@ namespace System.Management.Automation
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString, int id)
             : this(script, command, commandString, null, id)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="CommandBreakpoint"/>
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode)
             : this(script, variable, accessMode, null)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         /// </summary>
         public VariableBreakpoint(string script, string variable, VariableAccessMode accessMode, int id)
             : this(script, variable, accessMode, null, id)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="VariableBreakpoint"/>.
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// </summary>
         public LineBreakpoint(string script, int line)
             : this(script, line, null)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="LineBreakpoint"/>
@@ -385,7 +385,7 @@ namespace System.Management.Automation
         /// </summary>
         public LineBreakpoint(string script, int line, int column)
             : this(script, line, column, null)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="LineBreakpoint"/>
@@ -404,7 +404,7 @@ namespace System.Management.Automation
         /// </summary>
         public LineBreakpoint(string script, int line, int column, int id)
             : this(script, line, column, null, id)
-        {}
+        { }
 
         /// <summary>
         /// Creates a new instance of a <see cref="LineBreakpoint"/>
