@@ -33,36 +33,7 @@ Function Test-DailyBuild
     {
         return $true
     }
-
-    # if [feature] is in the commit message,
-    # Run Daily tests
-    $commitMessage = Get-CommitMessage
-    Write-log -message "commitMessage: $commitMessage"
-
-    if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
-    {
-        Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
-        return $true
-    }
-    else
-    {
-        return $false
-    }
-}
-
-# Returns the commit message for the current build
-function Get-CommitMessage
-{
-    if ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
-    {
-        # We are in VSTS and have a commit ID in the Source Version Message
-        $commitId = $Matches[1]
-        return &git log --format=%B -n 1 $commitId
-    }
-    else
-    {
-        Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
-    }
+    return $false
 }
 
 # Sets a build variable
@@ -127,7 +98,6 @@ function Invoke-CIBuild
     }
 
     Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
-
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -152,7 +122,6 @@ function Invoke-CIInstall
     )
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    $releaseTag = Get-ReleaseTag
 
     if(Test-DailyBuild)
     {
@@ -165,7 +134,7 @@ function Invoke-CIInstall
     if ($env:TF_BUILD -and !$SkipUser.IsPresent)
     {
         # Generate new credential for CI (only) remoting tests.
-        Write-Log -Message "Creating account for remoting tests in CI."
+        Write-Verbose "Creating account for remoting tests in CI." -Verbose
 
         # Password
         $randomObj = [System.Random]::new()
@@ -257,7 +226,7 @@ function Invoke-CITest
             $ExcludeTag = @('CI')
         }
         Default {
-            throw "Unknow TagSet: '$TagSet'"
+            throw "Unknown TagSet: '$TagSet'"
         }
     }
 
@@ -363,8 +332,7 @@ function Invoke-CITest
     Set-BuildVariable -Name TestPassed -Value True
 }
 
-# Implement CI 'after_test' phase
-function Invoke-CIAfterTest
+function New-CodeCoverageAndTestPackage
 {
     [CmdletBinding()]
     param()
@@ -376,13 +344,26 @@ function Invoke-CIAfterTest
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
-        Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | ForEach-Object {
-            Push-Artifact -Path $_ -Name 'CodeCoverage'
+        $destBasePath = if ($env:TF_BUILD) {
+            $env:BUILD_ARTIFACTSTAGINGDIRECTORY
+        } else {
+            Join-Path (Get-Location).Path "out"
         }
 
-        New-TestPackage -Destination (Get-Location).Path
-        $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
+        if (-not (Test-Path $destBasePath))
+        {
+            $null = New-Item -ItemType Directory -Path $destBasePath
+        }
+
+        Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
+        $codeCoverageArtifacts | ForEach-Object {
+            Copy-Item -Path $_ -Destination $destBasePath
+            $newPath = Join-Path $destBasePath (Split-Path $_ -Leaf)
+            Push-Artifact -Path $newPath -Name 'CodeCoverage'
+        }
+
+        New-TestPackage -Destination $destBasePath
+        $testPackageFullName = Join-Path $destBasePath 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
         Push-Artifact $testPackageFullName -Name 'CodeCoverage'
@@ -520,29 +501,26 @@ function Invoke-CIFinish
         }
 
         # only publish assembly nuget packages if it is a daily build and tests passed
-        if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
+        if(Test-DailyBuild)
         {
-            Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
-            $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+            $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
             if($nugetArtifacts)
             {
-                $artifacts.AddRange($nugetArtifacts)
+                $artifacts.AddRange(@($nugetArtifacts))
             }
         }
 
-        if (Test-DailyBuild)
-        {
-            # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-            $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
-            $artifacts.Add($arm32Package)
+        # produce win-arm and win-arm64 packages if it is a daily build
+        Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+        $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
+        $artifacts.Add($arm32Package)
 
-            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-            $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
-            $artifacts.Add($arm64Package)
-        }
+        Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+        $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
+        $artifacts.Add($arm64Package)
 
         $pushedAllArtifacts = $true
+
         $artifacts | ForEach-Object {
             Write-Log -Message "Pushing $_ as CI artifact"
             if(Test-Path $_)
@@ -607,14 +585,6 @@ function Invoke-LinuxTestsCore
         'Tag'        = @()
         'ExcludeTag' = $testExcludeTag
         'OutputFile' = $testResultsNoSudo
-    }
-    # create packages if it is a full build
-    $isFullBuild = Test-DailyBuild
-    if (!$isFullBuild) {
-        $noSudoPesterParam['ThrowOnFailure'] = $true
-    }
-    if ($hasRunFailingTestTag) {
-        $noSudoPesterParam['IncludeFailingTest'] = $true
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -688,62 +658,15 @@ function Invoke-LinuxTestsCore
     # Determine whether the build passed
     try {
         $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
-        $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
+        $allTestResultsWithExpFeatures = @($noSudoResultsWithExpFeatures, $sudoResultsWithExpFeatures)
         # This throws if there was an error:
-        $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
-        $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
+        $allTestResultsWithNoExpFeature | Where-Object {$null -ne $_} | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithExpFeatures  | Where-Object {$null -ne $_} | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
         $result = "PASS"
     } catch {
         # The build failed, set the result:
         $resultError = $_
         $result = "FAIL"
-    }
-}
-
-# Build and test script for Linux and macOS:
-function Invoke-LinuxTests
-{
-    param(
-        [switch]
-        $SkipBuild
-    )
-
-    if(!$SkipBuild.IsPresent)
-    {
-        $releaseTag = Get-ReleaseTag
-        Write-Log -Message "Executing ci.psm1 build and test on a Linux based operating system."
-        $originalProgressPreference = $ProgressPreference
-        $ProgressPreference = 'SilentlyContinue'
-        try {
-            # We use CrossGen build to run tests only if it's the daily build.
-            Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
-        }
-        finally
-        {
-            $ProgressPreference = $originalProgressPreference
-        }
-    }
-
-    Invoke-LinuxTestsCore
-
-    try {
-        $xUnitTestResultsFile = "$pwd/xUnitTestResults.xml"
-        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
-        # If there are failures, Test-XUnitTestResults throws
-        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
-    } catch {
-        $result = "FAIL"
-        if (!$resultError)
-        {
-            $resultError = $_
-        }
-    }
-
-    $createPackages = $isFullBuild
-
-    if ($createPackages)
-    {
-        New-LinuxPackage -NugetKey $env:NugetKey
     }
 
     # If the tests did not pass, throw the reason why
@@ -817,10 +740,5 @@ function New-LinuxPackage
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
-    }
-
-    if ($isFullBuild)
-    {
-        New-TestPackage -Destination "${env:SYSTEM_ARTIFACTSDIRECTORY}"
     }
 }

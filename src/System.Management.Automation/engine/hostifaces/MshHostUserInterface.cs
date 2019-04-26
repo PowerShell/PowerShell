@@ -399,7 +399,7 @@ namespace System.Management.Automation.Host
             private bool _disposed = false;
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
-                _ui=ui;
+                _ui = ui;
                 Interlocked.Increment(ref _ui._transcribeOnlyCount);
             }
 
@@ -725,12 +725,12 @@ namespace System.Management.Automation.Host
                         throw new ArgumentException(errorMessage);
                     }
 
-                    if(!Directory.Exists(baseDirectory))
+                    if (!Directory.Exists(baseDirectory))
                     {
                         Directory.CreateDirectory(baseDirectory);
                     }
 
-                    if(!File.Exists(transcript.Path))
+                    if (!File.Exists(transcript.Path))
                     {
                         File.Create(transcript.Path).Dispose();
                     }

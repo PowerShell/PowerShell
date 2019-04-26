@@ -1332,7 +1332,7 @@ namespace System.Management.Automation
 
                         bool isFileOrDirectoryPresent = false;
 
-                        if(context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
+                        if (context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
                         {
                             isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
                         }
@@ -1624,17 +1624,17 @@ namespace System.Management.Automation
             string path,
             CmdletProviderContext context)
         {
-           bool itemContainer = false;
-           try
-           {
-               itemContainer = IsItemContainer(providerInstance, path, context);
-           }
-           catch (UnauthorizedAccessException accessException)
-           {
-               context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
-           }
-           catch (ProviderInvocationException accessException)
-           {
+            bool itemContainer = false;
+            try
+            {
+                itemContainer = IsItemContainer(providerInstance, path, context);
+            }
+            catch (UnauthorizedAccessException accessException)
+            {
+                context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+            }
+            catch (ProviderInvocationException accessException)
+            {
                 // if providerinvocationexception is wrapping access denied error, it is ok to not terminate the pipeline
                 if (accessException.InnerException != null &&
                     accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
@@ -1645,10 +1645,9 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
-           }
+            }
 
-           return itemContainer;
-
+            return itemContainer;
         }
 
         /// <summary>
@@ -3428,7 +3427,7 @@ namespace System.Management.Automation
                 else
                 {
                     // To be compatible with Linux OS. Which will be either '/' or '\' depends on the OS type.
-                    char[] charsToTrim = {' ', Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar};
+                    char[] charsToTrim = { ' ', Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar };
                     resolvePath = path.TrimEnd(charsToTrim);
                 }
 

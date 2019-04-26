@@ -1,5 +1,63 @@
 # Changelog
 
+## v6.2.0 - 03/28/2019
+
+### Breaking Changes
+
+- Fix `-NoEnumerate` behavior in `Write-Output` to be consistent with Windows PowerShell (#9069) (Thanks @vexx32!)
+
+### Engine Updates and Fixes
+
+- Add PowerShell remoting enable/disable cmdlet warning messages (#9203)
+- Fix for `FormatTable` remote deserialization regression (#9116)
+- Update the task-based `async` APIs added to PowerShell to return a Task object directly (#9079)
+- Add 5 `InvokeAsync` overloads and `StopAsync` to the `PowerShell` type (#8056) (Thanks @KirkMunro!)
+
+### General Cmdlet Updates and Fixes
+
+- Enable `SecureString` cmdlets for non-Windows by storing the plain text (#9199)
+- Add Obsolete message to `Send-MailMessage` (#9178)
+- Fix `Restart-Computer` to work on `localhost` when WinRM is not present (#9160)
+- Make `Start-Job` throw terminating error when PowerShell is being hosted (#9128)
+- Update version for `PowerShell.Native` and hosting tests (#8983)
+
+### Tools
+
+- Adding `CmdletsToExport` and `AliasesToExport` to test module manifests. (#9108) (Thanks @powercode!)
+- Comment cleanup in `releaseTools.psm1` (#9064) (Thanks @RDIL!)
+
+### Tests
+
+- Fix `Enter-PSHostProcess` tests flakiness (#9007)
+- Add tests for command globbing (#9180)
+- Add source for `Install-package` to install `netDumbster` (#9081) (Thanks @Geweldig!)
+- Fix tab completion test to handle multiple matches (#8891)
+- Refactor macOS and Linux CI so that tests run in parallel (#9056, #9209)
+- Added `RequireSudoOnUnix` tags to `PowerShellGet` tests and remove `-pending` parameter (#8954) (Thanks @RDIL!)
+- Pending `NamedPipeConnectionInfo` test (#9003) (Thanks @iSazonov!)
+- Add test for `-WhatIf` for `New-FileCatalog` (#8966) (Thanks @mjanko5!)
+
+### Build and Packaging Improvements
+
+- Performance improvements for release build (#9179)
+- Add `tsaVersion` property as `TsaV1` for compliance build phase (#9176)
+- Publish global tool packages to `pwshtool` blob and bug fixes (#9163)
+- Translate Skipped test results into something Azure DevOps does **not** understand (#9124)
+- Disable Homebrew analytics in macOS VSTS builds (#9130) (Thanks @RDIL!)
+- Remove AppVeyor references from packaging tools (#9117) (Thanks @RDIL!)
+- Fixed Dockerfile syntax highlighting (#8991) (Thanks @RDIL!)
+- Fix dependencies of NuGet build to wait on DEB uploads to finish (#9118)
+- Fix artifact download issue in release build (#9095)
+- Publish test package on release builds (#9063)
+- Bump `Microsoft.PowerShell.Native` from `6.2.0-rc.1` to `6.2.0` (#9200)
+- Bump `NJsonSchema` from `9.13.19` to `9.13.27` (#9044, #9136, #9166, #9172, #9184 #9196)
+- Bump `PowerShellGet` from `2.0.4` to `2.1.2` in /src/Modules (#9110, #9145)
+- Bump `SelfSignedCertificate` in `/test/tools/Modules` (#9055)
+
+### Documentation and Help Content
+
+- Update docs for `6.2.0-rc.1` release (#9022)
+
 ## v6.2.0-rc.1 - 2019-03-05
 
 ### Breaking Changes

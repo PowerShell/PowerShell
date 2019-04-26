@@ -813,7 +813,6 @@ namespace Microsoft.PowerShell.Commands
 
             using (EventLogSession eventLogSession = CreateSession())
             {
-
                 string query = BuildStructuredQuery(eventLogSession);
                 if (query.Length == 0)
                 {
@@ -1076,7 +1075,6 @@ namespace Microsoft.PowerShell.Commands
                             //
                             // Fix Issue #2327
                             added = HandleNamedDataHashValue(key, hash[key]);
-
                         }
 
                         break;
@@ -1091,7 +1089,6 @@ namespace Microsoft.PowerShell.Commands
 
                     xpathString.Append(added);
                 }
-
             }
 
             return xpathString.ToString();

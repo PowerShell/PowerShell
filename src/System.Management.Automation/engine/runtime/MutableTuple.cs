@@ -53,7 +53,7 @@ namespace System.Management.Automation
                 nestedTuple = (MutableTuple)nestedTuple.GetValueImpl(accessPath[i]);
             }
 
-            return nestedTuple._valuesSet[accessPath[length-1]];
+            return nestedTuple._valuesSet[accessPath[length - 1]];
         }
 
         internal void SetAutomaticVariable(AutomaticVariable auto, object value, ExecutionContext context)

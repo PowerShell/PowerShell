@@ -4176,40 +4176,61 @@ param(
     }
     elseif ($help -ne $null)
     {
-        $customPagerCommand = """"
-        $customPagerCommandArgs = """"
-        $customPagerCommandLine = """"
+        # By default use more on Windows and less on Linux.
+        if ($IsWindows) {
+            $pagerCommand = 'more.com'
+            $pagerArgs = $null
+        }
+        else {
+            $pagerCommand = 'less'
+            $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+        }
 
-        if ($env:PAGER)
-        {
-            $customPagerCommandLine = $env:PAGER
-
-            # Split the command line into tokens, respecting quoting.
-            $customPagerCommand, $customPagerCommandArgs = & { Write-Output -- $customPagerCommandLine }
-
-            # See if the first token refers to a known command (executable),
-            # and if not, see if the command line as a whole is an executable path.
-            $cmds = Get-Command $customPagerCommand, $customPagerCommandLine -ErrorAction Ignore
-            if (-not $cmds) {
-                # Custom command is invalid; ignore it, but issue a warning.
-                Write-Warning ""Ignoring invalid custom-paging utility command line specified in `$env:PAGER: $customPagerCommandLine""
-                $customPagerCommand = $null # use default command
+        # Respect PAGER environment variable which allows user to specify a custom pager.
+        # Ignore a pure whitespace PAGER value as that would cause the tokenizer to return 0 tokens.
+        if (![string]::IsNullOrWhitespace($env:PAGER)) {
+            if (Get-Command $env:PAGER -ErrorAction Ignore) {
+                # Entire PAGER value corresponds to a single command.
+                $pagerCommand = $env:PAGER
+                $pagerArgs = $null
             }
-            elseif ($cmds.Count -eq 1 -and $cmds[0].Source -eq $customPagerCommandLine) {
-                # The full command line is an unquoted path to an existing executable
-                # with embedded spaces.
-                $customPagerCommand = $customPagerCommandLine
-                $customPagerCommandArgs = $null
+            else {
+                # PAGER value is not a valid command, check if PAGER command and arguments have been specified.
+                # Tokenize the specified $env:PAGER value. Ignore tokenizing errors since any errors may be valid
+                # argument syntax for the paging utility.
+                $errs = $null
+                $tokens = [System.Management.Automation.PSParser]::Tokenize($env:PAGER, [ref]$errs)
+
+                $customPagerCommand = $tokens[0].Content
+                if (!(Get-Command $customPagerCommand -ErrorAction Ignore)) {
+                    # Custom pager command is invalid, issue a warning.
+                    Write-Warning ""Custom-paging utility command not found. Ignoring command specified in `$env:PAGER: $env:PAGER""
+                }
+                else {
+                    # This approach will preserve all the pagers args.
+                    $pagerCommand = $customPagerCommand
+                    $pagerArgs = if ($tokens.Count -gt 1) {$env:PAGER.Substring($tokens[1].Start)} else {$null}
+                }
             }
         }
 
-        # Respect PAGER, use more on Windows, and use less on Linux
-        if ($customPagerCommand) {
-            $help | & $customPagerCommand $customPagerCommandArgs
-        } elseif ($IsWindows) {
-            $help | more.com
-        } else {
-            $help | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
+        # If the pager is an application, format the output width before sending to the app.
+        if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
+            $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
+
+            if ($pagerArgs) {
+                # Supply pager arguments to an application without any PowerShell parsing of the arguments.
+                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
+                $env:__PSPAGER_ARGS = $pagerArgs
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
+            }
+            else {
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
+            }
+        }
+        else {
+            # The pager command is a PowerShell function, script or alias, so pipe directly into it.
+            $help | & $pagerCommand $pagerArgs
         }
     }
 ";
@@ -4532,6 +4553,7 @@ end {
                     new SessionStateAliasEntry("mi", "Move-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("mp", "Move-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nal", "New-Alias", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("nbp", "New-PSBreakpoint", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ndr", "New-PSDrive", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ni", "New-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("nv", "New-Variable", string.Empty, ReadOnly),

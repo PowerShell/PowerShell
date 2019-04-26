@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Management.Automation;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
@@ -98,9 +99,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal
         private List<OrderByPropertyEntry> _referenceEntries;
-        private List<OrderByPropertyEntry> _referenceEntryBacklog
+        private readonly List<OrderByPropertyEntry> _referenceEntryBacklog
             = new List<OrderByPropertyEntry>();
-        private List<OrderByPropertyEntry> _differenceEntryBacklog
+        private readonly List<OrderByPropertyEntry> _differenceEntryBacklog
             = new List<OrderByPropertyEntry>();
         private OrderByProperty _orderByProperty = null;
         private OrderByPropertyComparer _comparer = null;

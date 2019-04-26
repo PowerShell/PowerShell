@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, CodeInline obj)
         {
-            renderer.Write(renderer.EscapeSequences.FormatCode(obj.Content, isInline : true));
+            renderer.Write(renderer.EscapeSequences.FormatCode(obj.Content, isInline: true));
         }
     }
 }

@@ -18,6 +18,7 @@ Description = 'Temporary module contains functions for using in tests'
 
 FunctionsToExport = @(
         'Add-TestDynamicType'
+        'Test-CanWriteToPsHome'
         'Disable-Testhook'
         'Enable-Testhook'
         'Get-RandomFileName'

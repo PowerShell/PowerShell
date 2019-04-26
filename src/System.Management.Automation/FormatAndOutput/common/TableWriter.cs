@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int k = 0; k < scArray.Length; k++)
             {
                 // for the last column, don't pad it with trailing spaces
-                if (k == scArray.Length-1)
+                if (k == scArray.Length - 1)
                 {
                     addPadding = false;
                 }
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
                 // don't pad the last column
-                if (k == _si.columnInfo.Length -1)
+                if (k == _si.columnInfo.Length - 1)
                 {
                     addPadding = false;
                 }

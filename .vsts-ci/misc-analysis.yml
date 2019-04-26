@@ -6,26 +6,26 @@ trigger:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
+    - feature*
 
 pr:
   branches:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
+    - feature*
 
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- template: templates/credscan.yml
 
-  queue:
+- job: Linux_CI
+
+  displayName: Markdown and Common Tests
+
+  pool:
     name: Hosted Ubuntu 1604
   steps:
   - powershell: |
@@ -33,13 +33,25 @@ phases:
     displayName: Capture environment
     condition: succeededOrFailed()
 
+  - bash: |
+      curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
+    displayName: Bootstrap Yarn
+    condition: succeededOrFailed()
+
   - powershell: |
       Install-Module pester -Scope CurrentUser -Force
       Install-Module -Name ThreadJob -Scope CurrentUser -Force
     displayName: Install Dependencies
+
+  - bash: |
+      # Installing globally with yarn is a pain, please don't try
+      sudo npm install -g markdown-spellcheck@0.11.0
+      # Sometimes this folder is left behind with root permissions and is needed by later npm installs which don't need sudo
+      sudo rm -rf ~/.npm/_cacache
+    displayName: Install mdspell
     condition: succeededOrFailed()
 
-  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+  - powershell: Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 

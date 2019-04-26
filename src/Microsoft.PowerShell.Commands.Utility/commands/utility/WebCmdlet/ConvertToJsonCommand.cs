@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading;
+
 using Newtonsoft.Json;
 
 namespace Microsoft.PowerShell.Commands
@@ -28,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int _depth = 2;
         private const int maxDepthAllowed = 100;
-        private readonly CancellationTokenSource cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
 
         /// <summary>
         /// Gets or sets the Depth property.
@@ -118,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
                     Depth,
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
-                    cancellationSource.Token,
+                    _cancellationSource.Token,
                     EscapeHandling,
                     targetCmdlet: this);
 
@@ -137,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            cancellationSource.Cancel();
+            _cancellationSource.Cancel();
         }
     }
 }

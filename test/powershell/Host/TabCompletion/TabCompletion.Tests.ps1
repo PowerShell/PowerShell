@@ -485,6 +485,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
                 @{ inputStr = 'try { 1/0 } catch {};$error[0].'; expected = 'CategoryInfo'; setup = $null }
                 @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = 'function Get-ScrumData {}; Get-Scrum'; expected = 'Get-ScrumData'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
                 @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }

@@ -1,14 +1,15 @@
+
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Diagnostics.Eventing.Reader;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
+
 namespace System.Diagnostics.Eventing
 {
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Text;
-    using System.Diagnostics.Eventing.Reader;
-
     internal static class UnsafeNativeMethods
     {
         private const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";

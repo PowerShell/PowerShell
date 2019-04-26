@@ -6,6 +6,7 @@ trigger:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'
@@ -13,11 +14,13 @@ trigger:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 pr:
   branches:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'
@@ -25,6 +28,8 @@ pr:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
+
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -71,30 +76,15 @@ jobs:
     parentJobs:
       - mac_build
 
-- job: verify_xunit
-  displayName: Verify xUnit Results
-  pool:
-    name: 'Hosted macOS'
-  dependsOn:
-    - mac_build
+- template: templates/verify-xunit.yml
+  parameters:
+    pool: 'Hosted macOS'
+    dependsOn: mac_build
+
+- job: CodeCovTestPackage
+  displayName: CodeCoverage and Test Packages
   steps:
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download build artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: |
-        xunit/**/*
-      downloadPath: '$(System.ArtifactsDirectory)'
-
-  - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture artifacts directory'
-    continueOnError: true
-
-  - pwsh: |
+  - powershell: |
       Import-Module .\tools\ci.psm1
-      $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
-
-      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
-    displayName: Test
-    condition: succeeded()
+      New-CodeCoverageAndTestPackage
+    displayName: CodeCoverage and Test Package

@@ -715,9 +715,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Interface that should be used for interaction with host.
         /// </summary>
-        internal InternalHost EngineHostInterface { get; private set;
-
+        internal InternalHost EngineHostInterface
+        {
             // set not provided: it's not meaningful to change the host post-construction.
+            get; private set;
         }
 
         /// <summary>

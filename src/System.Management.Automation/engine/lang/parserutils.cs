@@ -983,7 +983,8 @@ namespace System.Management.Automation
                     return regex.Replace(input, replacementString);
 
                 case ScriptBlock sb:
-                    MatchEvaluator me = match => {
+                    MatchEvaluator me = match =>
+                    {
                         var result = sb.DoInvokeReturnAsIs(
                             useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
                             errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
@@ -992,7 +993,7 @@ namespace System.Management.Automation
                             scriptThis: AutomationNull.Value,
                             args: Array.Empty<object>());
 
-                        return PSObject.ToStringParser(context, result);;
+                        return PSObject.ToStringParser(context, result);
                     };
                     return regex.Replace(input, me);
 

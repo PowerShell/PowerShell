@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
@@ -38,7 +40,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows )
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -80,7 +82,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows )
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }

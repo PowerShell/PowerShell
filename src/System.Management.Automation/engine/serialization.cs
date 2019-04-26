@@ -1888,7 +1888,8 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
-            get {
+            get
+            {
                 return _extendedMembersCollection ??
                        (_extendedMembersCollection =
                            PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
@@ -1898,7 +1899,8 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get {
+            get
+            {
                 return _allPropertiesCollection ??
                        (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }

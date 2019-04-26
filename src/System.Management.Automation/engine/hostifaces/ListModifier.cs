@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 namespace System.Management.Automation
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Collections.Generic;
-    using System.Collections;
-
     /// <summary>
     /// PSListModifier is a simple helper class created by the update-list cmdlet.
     /// The update-list cmdlet will either return an instance of this class, or

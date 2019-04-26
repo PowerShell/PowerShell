@@ -272,7 +272,7 @@ namespace System.Management.Automation
                     // Try loading from GAC
                     if (!TryFindInGAC(assemblyName, out asmFilePath))
                     {
-                         return null;
+                        return null;
                     }
 #else
                     return null;
