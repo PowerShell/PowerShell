@@ -128,10 +128,10 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-The larger community chat is on Discord, Slack and IRC which you can join via [Discord], [Slack] or the #PowerShell channel on Freenode.
+The larger community chat is on Discord, Slack and IRC which you can join via [Discord], [Slack] or the #PowerShell channel on Freenode.net!
 
-[Slack]: http://aka.ms/psslack
-[Discord]: http://aka.ms/psdiscord
+[Slack]: https://powershell.slack.com/join/shared_invite/enQtMzA3MDcxNTM5MTkxLTBmMWIyNzhkYzVjNGRiOTgxZmFlN2E0ZmVmOWU5NDczNTY2NDFhZjFlZTM1MTZiMWIzZDcwMGYzNjQ3YTRkNWM
+[Discord]: https://discordapp.com/invite/AtzXnJM
 
 ## Add-ons and libraries
 
