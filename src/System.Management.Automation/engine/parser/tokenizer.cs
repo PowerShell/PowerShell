@@ -1360,6 +1360,7 @@ namespace System.Management.Automation.Language
                         // blank or whitespace-only lines are not allowed in automatic line continuance
                         return false;
                     }
+
                     lastNonWhitespaceIsNewline = true;
                     i++;
                     continue;
@@ -1371,6 +1372,7 @@ namespace System.Management.Automation.Language
                         // blank or whitespace-only lines are not allowed in automatic line continuance
                         return false;
                     }
+
                     lastNonWhitespaceIsNewline = true;
                     i += 2;
                     continue;
