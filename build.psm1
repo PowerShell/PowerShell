@@ -843,6 +843,7 @@ function Get-PesterTag {
 function Publish-PSTestTools {
     [CmdletBinding()]
     param(
+        [string]
         $runtime
     )
 
