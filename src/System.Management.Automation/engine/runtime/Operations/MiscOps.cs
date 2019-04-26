@@ -1612,7 +1612,7 @@ namespace System.Management.Automation
                 context.CurrentExceptionBeingHandled == null &&
                 preference == ActionPreference.Break)
             {
-                funcContext._executionContext?.Debugger?.Break(rte);
+                context.Debugger?.Break(rte);
 
                 // set the value of $? here in case it was reset in the debugger.
                 context.QuestionMarkVariableValue = false;

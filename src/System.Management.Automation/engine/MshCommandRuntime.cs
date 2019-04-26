@@ -2091,7 +2091,7 @@ namespace System.Management.Automation
             // into the debugger
             if (ErrorAction == ActionPreference.Break)
             {
-                Context?.Debugger?.Break(e.InnerException ?? e);
+                Context.Debugger?.Break(e.InnerException ?? e);
             }
 
             // Code sees only that execution stopped
