@@ -1602,32 +1602,37 @@ namespace System.Management.Automation
             // set $? to false indicating an error
             context.QuestionMarkVariableValue = false;
 
+            ActionPreference preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
+
+            // if the exception is new (i.e. it was not rethrown from a naked throw
+            // statement inside of a catch block, and it is not currently being
+            // handled by the system), and if ErrorActionPreference is set to break,
+            // then break immediately into the debugger.
+            if (!rte.WasRethrown &&
+                context.CurrentExceptionBeingHandled == null &&
+                preference == ActionPreference.Break)
+            {
+                funcContext._executionContext?.Debugger?.Break(rte);
+
+                // set the value of $? here in case it was reset in the debugger.
+                context.QuestionMarkVariableValue = false;
+            }
+
             bool anyTrapHandlers = funcContext._traps.Any() && funcContext._traps.Last().Item2 != null;
 
-            if (!anyTrapHandlers && !ExceptionHandlingOps.NeedToQueryForActionPreference(rte, context))
+            if (anyTrapHandlers)
+            {
+                // update the action preference according to how the exception is
+                // handled in the trap statement(s).
+                preference = ProcessTraps(funcContext, rte);
+
+                // set the value of $? here in case it was reset in trap handling.
+                context.QuestionMarkVariableValue = false;
+            }
+            else if (ExceptionHandlingOps.ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
                 throw rte;
             }
-
-            ActionPreference preference;
-            if (anyTrapHandlers)
-            {
-                preference = ProcessTraps(funcContext, rte);
-            }
-            else
-            {
-                preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
-            }
-
-            // if the error action preference is set to break, then break
-            // immediately into the debugger
-            if (preference == ActionPreference.Break)
-            {
-                funcContext._executionContext?.Debugger?.Break(rte);
-            }
-
-            // set the value of $? here in case it is reset in trap handling.
-            context.QuestionMarkVariableValue = false;
 
             if ((preference == ActionPreference.SilentlyContinue) ||
                 (preference == ActionPreference.Ignore))
@@ -1651,12 +1656,12 @@ namespace System.Management.Automation
                 throw rte;
             }
 
-            bool b = ExceptionHandlingOps.ReportErrorRecord(extent, rte, context);
+            bool errorReportedSuccessfully = ExceptionHandlingOps.ReportErrorRecord(extent, rte, context);
 
             // set the value of $? here in case it is reset in error reporting
             context.QuestionMarkVariableValue = false;
 
-            if (!b)
+            if (!errorReportedSuccessfully)
             {
                 throw rte;
             }
@@ -1877,13 +1882,13 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool NeedToQueryForActionPreference(RuntimeException rte, ExecutionContext context)
+        internal static bool ExceptionCannotBeStoppedContinuedOrIgnored(RuntimeException rte, ExecutionContext context)
         {
-            return !context.PropagateExceptionsToEnclosingStatementBlock
-                   && context.ShellFunctionErrorOutputPipe != null
-                   && !context.CurrentPipelineStopping
-                   && !rte.SuppressPromptInInterpreter
-                   && !(rte is PipelineStoppedException);
+            return context.PropagateExceptionsToEnclosingStatementBlock
+                   || context.ShellFunctionErrorOutputPipe == null
+                   || context.CurrentPipelineStopping
+                   || rte.SuppressPromptInInterpreter
+                   || rte is PipelineStoppedException;
         }
 
         /// <summary>
@@ -1918,7 +1923,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        internal static RuntimeException ConvertToException(object result, IScriptExtent extent)
+        internal static RuntimeException ConvertToException(object result, IScriptExtent extent, bool rethrow)
         {
             result = PSObject.Base(result);
 
@@ -1927,13 +1932,14 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 runtimeException.WasThrownFromThrowStatement = true;
+                runtimeException.WasRethrown = rethrow;
                 return runtimeException;
             }
 
             ErrorRecord er = result as ErrorRecord;
             if (er != null)
             {
-                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 
                 return runtimeException;
@@ -1943,7 +1949,7 @@ namespace System.Management.Automation
             if (exception != null)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
-                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true };
+                runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 return runtimeException;
             }
@@ -1954,7 +1960,7 @@ namespace System.Management.Automation
             exception = new RuntimeException(message, null);
 
             er = new ErrorRecord(exception, message, ErrorCategory.OperationStopped, null);
-            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true };
+            runtimeException = new RuntimeException(message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
             runtimeException.SetTargetObject(result);
             InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
 
