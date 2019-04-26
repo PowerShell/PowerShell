@@ -842,7 +842,9 @@ function Get-PesterTag {
 
 function Publish-PSTestTools {
     [CmdletBinding()]
-    param()
+    param(
+        $runtime
+    )
 
     Find-Dotnet
 
@@ -859,7 +861,12 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
-            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            if (-not $runtime) {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            } else {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            }
+
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             if ( -not $env:PATH.Contains($toolPath) ) {
@@ -2974,7 +2981,8 @@ function New-TestPackage
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Destination
+        [string] $Destination,
+        [string] $Runtime
     )
 
     if (Test-Path $Destination -PathType Leaf)
@@ -3002,7 +3010,7 @@ function New-TestPackage
     Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
-    $null = Publish-PSTestTools
+    $null = Publish-PSTestTools -runtime $Runtime
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
     Write-Verbose -Message "Copied test directory"
