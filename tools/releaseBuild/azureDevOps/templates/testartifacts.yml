@@ -13,7 +13,7 @@ jobs:
   - pwsh: |
       Import-Module ./build.psm1
 
-      function BuildTestPackage($runtime)
+      function BuildTestPackage([string] $runtime)
       {
         Write-Verbose -Verbose "Starting to build package for $runtime"
 
