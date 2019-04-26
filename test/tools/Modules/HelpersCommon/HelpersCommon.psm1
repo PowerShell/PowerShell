@@ -18,7 +18,7 @@ function Wait-UntilTrue
             return $false
         }
         # Wait
-        Start-Sleep -Milliseconds $intervalInMilliseconds
+        Start-Sleep -Milliseconds $intervalInMilliseconds > $null
     }
     return $true
 }
