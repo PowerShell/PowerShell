@@ -777,7 +777,8 @@ namespace System.Management.Automation
             // because a value-type value cannot be null.
             if (!isEmpty && !isElementValueType)
             {
-                do {
+                do
+                {
                     object element = ParserOps.Current(null, ienum);
                     ValidateNullOrEmptyArgument(
                         parameter,

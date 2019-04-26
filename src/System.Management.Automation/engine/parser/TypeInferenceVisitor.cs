@@ -127,8 +127,7 @@ namespace System.Management.Automation
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
         private readonly PowerShell _powerShell;
 
-        public TypeInferenceContext()
-        : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
+        public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
         }
 
@@ -564,12 +563,9 @@ namespace System.Management.Automation
                             switch (expression)
                             {
                                 case ConstantExpressionAst constantExpression:
-                                {
                                     value = constantExpression.Value;
                                     break;
-                                }
                                 default:
-                                {
                                     typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
                                     if (typeName == null)
                                     {
@@ -580,7 +576,6 @@ namespace System.Management.Automation
                                     }
 
                                     break;
-                                }
                             }
                         }
 
@@ -789,7 +784,6 @@ namespace System.Management.Automation
                 switch (attrib)
                 {
                     case TypeConstraintAst typeConstraint:
-                    {
                         if (!typeConstraintAdded)
                         {
                             res.Add(new PSTypeName(typeConstraint.TypeName));
@@ -797,9 +791,7 @@ namespace System.Management.Automation
                         }
 
                         break;
-                    }
                     case AttributeAst attributeAst:
-                    {
                         PSTypeNameAttribute attribute = null;
                         try
                         {
@@ -815,7 +807,6 @@ namespace System.Management.Automation
                         }
 
                         break;
-                    }
                 }
             }
 
@@ -1184,21 +1175,15 @@ namespace System.Management.Automation
                     switch (astPair.Argument)
                     {
                         case StringConstantExpressionAst stringConstant:
-                        {
                             properties = new[] { stringConstant.Value };
                             break;
-                        }
                         case ArrayLiteralAst arrayLiteral:
-                        {
                             properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => c.Value).ToArray();
                             scriptBlockProperty = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Any();
-                                break;
-                        }
+                            break;
                         case CommandElementAst _:
-                        {
                             scriptBlockProperty = true;
                             break;
-                        }
                     }
                 }
             }
@@ -1313,15 +1298,11 @@ namespace System.Management.Automation
                     switch (astPair.Argument)
                     {
                         case StringConstantExpressionAst stringConstant:
-                        {
                             properties = new[] { ToWildCardOrString(stringConstant.Value) };
                             break;
-                        }
                         case ArrayLiteralAst arrayLiteral:
-                        {
                             properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => ToWildCardOrString(c.Value)).ToArray();
                             break;
-                        }
                     }
 
                     if (properties == null)
@@ -1347,23 +1328,19 @@ namespace System.Management.Automation
                             switch (propertyNameOrPattern)
                             {
                                 case string propertyName:
-                                {
                                     if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         return includeMatchedProperties;
                                     }
 
                                     break;
-                                }
                                 case WildcardPattern pattern:
-                                {
                                     if (pattern.IsMatch(name))
                                     {
                                         return includeMatchedProperties;
                                     }
 
                                     break;
-                                }
                             }
                         }
 
@@ -1452,9 +1429,12 @@ namespace System.Management.Automation
         {
             switch (member)
             {
-                case PropertyInfo _: return true;
-                case PSMemberInfo memberInfo: return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
-                default: return false;
+                case PropertyInfo _:
+                    return true;
+                case PSMemberInfo memberInfo:
+                    return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
+                default:
+                    return false;
             }
         }
 
@@ -1591,7 +1571,6 @@ namespace System.Management.Automation
             switch (member)
             {
                 case PropertyInfo propertyInfo: // .net property
-                {
                     if (propertyInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
                     {
                         result.Add(new PSTypeName(propertyInfo.PropertyType));
@@ -1599,9 +1578,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case FieldInfo fieldInfo: // .net field
-                {
                     if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
                     {
                         result.Add(new PSTypeName(fieldInfo.FieldType));
@@ -1609,9 +1586,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
-                {
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         maybeWantDefaultCtor = false;
@@ -1620,9 +1595,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case MemberAst memberAst: // this is for members defined by PowerShell classes
-                {
                     if (memberAst.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         if (isInvokeMemberExpressionAst)
@@ -1654,9 +1627,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case PSMemberInfo memberInfo:
-                {
                     if (!memberInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         return false;
@@ -1666,7 +1637,6 @@ namespace System.Management.Automation
                     switch (memberInfo)
                     {
                         case PSMethod m:
-                        {
                             if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                             {
                                 AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
@@ -1674,46 +1644,31 @@ namespace System.Management.Automation
                             }
 
                             return false;
-                        }
                         case PSProperty p:
-                        {
                             result.Add(new PSTypeName(p.Value.GetType()));
                             return true;
-                        }
                         case PSNoteProperty noteProperty:
-                        {
                             result.Add(new PSTypeName(noteProperty.Value.GetType()));
                             return true;
-                        }
                         case PSAliasProperty aliasProperty:
-                        {
                             memberNamesToCheck.Add(aliasProperty.ReferencedMemberName);
                             return true;
-                        }
                         case PSCodeProperty codeProperty:
-                        {
                             if (codeProperty.GetterCodeReference != null)
                             {
                                 result.Add(new PSTypeName(codeProperty.GetterCodeReference.ReturnType));
                             }
 
                             return true;
-                        }
                         case PSScriptProperty scriptProperty:
-                        {
                             scriptBlock = scriptProperty.GetterScript;
                             break;
-                        }
                         case PSScriptMethod scriptMethod:
-                        {
                             scriptBlock = scriptMethod.Script;
                             break;
-                        }
                         case PSInferredProperty inferredProperty:
-                        {
                             result.Add(inferredProperty.TypeName);
                             break;
-                        }
                     }
 
                     if (scriptBlock != null)
@@ -1739,7 +1694,6 @@ namespace System.Management.Automation
                             _context.CurrentThisType = thisToRestore;
                         }
                     }
-                }
 
                     return false;
             }

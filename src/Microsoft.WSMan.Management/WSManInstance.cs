@@ -305,7 +305,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string returntype="object";
+        private string returntype = "object";
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
@@ -402,16 +402,16 @@ namespace Microsoft.WSMan.Management
             string name;
             string value;
             string[] Split = filter.Trim().Split(new char[] { '=', ';' });
-            if ((Split.Length)%2 != 0)
+            if ((Split.Length) % 2 != 0)
             {
                 // mismatched property name/value pair
                 return null;
             }
 
             filter = "<wsman:SelectorSet xmlns:wsman='http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd'>";
-            for (int i = 0; i<Split.Length; i+=2)
+            for (int i = 0; i < Split.Length; i += 2)
             {
-                value = Split[i+1].Substring(1, Split[i+1].Length - 2);
+                value = Split[i + 1].Substring(1, Split[i + 1].Length - 2);
                 name = Split[i];
                 filter = filter + "<wsman:Selector Name='" + name + "'>" + value + "</wsman:Selector>";
             }
@@ -435,11 +435,11 @@ namespace Microsoft.WSMan.Management
                     }
                     else if (returntype.Equals("epr", StringComparison.OrdinalIgnoreCase))
                     {
-                            flags = wsmanObject.EnumerationFlagReturnEPR();
+                        flags = wsmanObject.EnumerationFlagReturnEPR();
                     }
                     else
                     {
-                            flags = wsmanObject.EnumerationFlagReturnObjectAndEPR();
+                        flags = wsmanObject.EnumerationFlagReturnObjectAndEPR();
                     }
                 }
 
@@ -458,7 +458,6 @@ namespace Microsoft.WSMan.Management
 
                 if (dialect != null && filter != null)
                 {
-
                     if (dialect.ToString().Equals(helper.ALIAS_WQL, StringComparison.OrdinalIgnoreCase) || dialect.ToString().Equals(helper.URI_WQL_DIALECT, StringComparison.OrdinalIgnoreCase))
                     {
                         fragment = helper.URI_WQL_DIALECT;
@@ -466,36 +465,36 @@ namespace Microsoft.WSMan.Management
                     }
                     else if (dialect.ToString().Equals(helper.ALIAS_ASSOCIATION, StringComparison.OrdinalIgnoreCase) || dialect.ToString().Equals(helper.URI_ASSOCIATION_DIALECT, StringComparison.OrdinalIgnoreCase))
                     {
-                            if (associations)
-                            {
-                                flags |= wsmanObject.EnumerationFlagAssociationInstance();
-                            }
-                            else
-                            {
-                                flags |= wsmanObject.EnumerationFlagAssociatedInstance();
-                            }
+                        if (associations)
+                        {
+                            flags |= wsmanObject.EnumerationFlagAssociationInstance();
+                        }
+                        else
+                        {
+                            flags |= wsmanObject.EnumerationFlagAssociatedInstance();
+                        }
 
-                            fragment = helper.URI_ASSOCIATION_DIALECT;
-                            dialect = new Uri(fragment);
+                        fragment = helper.URI_ASSOCIATION_DIALECT;
+                        dialect = new Uri(fragment);
                     }
                     else if (dialect.ToString().Equals(helper.ALIAS_SELECTOR, StringComparison.OrdinalIgnoreCase) || dialect.ToString().Equals(helper.URI_SELECTOR_DIALECT, StringComparison.OrdinalIgnoreCase))
                     {
-                                filter = GetFilter();
-                                fragment = helper.URI_SELECTOR_DIALECT;
-                                dialect = new Uri(fragment);
+                        filter = GetFilter();
+                        fragment = helper.URI_SELECTOR_DIALECT;
+                        dialect = new Uri(fragment);
                     }
 
                     obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, dialect.ToString(), flags);
                 }
                 else if (filter != null)
                 {
-                        fragment = helper.URI_WQL_DIALECT;
-                        dialect = new Uri(fragment);
-                        obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, dialect.ToString(), flags);
+                    fragment = helper.URI_WQL_DIALECT;
+                    dialect = new Uri(fragment);
+                    obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, dialect.ToString(), flags);
                 }
                 else
                 {
-                        obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, null, flags);
+                    obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, null, flags);
                 }
                 while (!obj.AtEndOfStream)
                 {
@@ -536,7 +535,6 @@ namespace Microsoft.WSMan.Management
                 {
                     helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
-
             }
 
             try
@@ -551,7 +549,7 @@ namespace Microsoft.WSMan.Management
                     {
                         xmldoc.LoadXml(m_session.Get(m_resource, 0));
                     }
-                    catch(XmlException ex)
+                    catch (XmlException ex)
                     {
                         helper.AssertError(ex.Message, false, computername);
                     }
@@ -576,7 +574,6 @@ namespace Microsoft.WSMan.Management
                         helper.AssertError(ex.Message, false, computername);
                     }
                 }
-
             }
             finally
             {
@@ -625,10 +622,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void EndProcessing()
         {
-
             helper.CleanUp();
         }
-
     }
     #endregion
 
@@ -644,7 +639,6 @@ namespace Microsoft.WSMan.Management
     [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141458")]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
-
         #region Parameters
         /// <summary>
         /// The following is the definition of the input parameter "ApplicationName".
@@ -883,7 +877,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion
 
-        private WSManHelper helper ;
+        private WSManHelper helper;
         /// <summary>
         /// ProcessRecord method.
         /// </summary>
@@ -921,7 +915,6 @@ namespace Microsoft.WSMan.Management
                     {
                         helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                     }
-
                 }
 
                 IWSManResourceLocator m_resource = helper.InitializeResourceLocator(optionset, selectorset, fragment, dialect, m_wsmanObject, resourceuri);
@@ -934,7 +927,7 @@ namespace Microsoft.WSMan.Management
                 {
                     xmldoc.LoadXml(m_session.Put(m_resource, input, 0));
                 }
-                catch(XmlException ex)
+                catch (XmlException ex)
                 {
                     helper.AssertError(ex.Message, false, computername);
                 }
@@ -952,7 +945,6 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                     WriteObject(xmldoc.DocumentElement);
-
             }
             finally
             {
@@ -1003,7 +995,6 @@ namespace Microsoft.WSMan.Management
         {
             helper.CleanUp();
         }
-
     }
 
     #endregion
@@ -1020,7 +1011,6 @@ namespace Microsoft.WSMan.Management
     [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141453")]
     public class RemoveWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
-
         #region Parameters
         /// <summary>
         /// The following is the definition of the input parameter "ApplicationName".
@@ -1219,7 +1209,6 @@ namespace Microsoft.WSMan.Management
                     {
                         helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                     }
-
                 }
 
                 IWSManResourceLocator m_resource = helper.InitializeResourceLocator(optionset, selectorset, null, null, m_wsmanObject, resourceuri);
@@ -1233,7 +1222,6 @@ namespace Microsoft.WSMan.Management
                 {
                     helper.AssertError(ex.Message, false, computername);
                 }
-
             }
             finally
             {
@@ -1249,9 +1237,7 @@ namespace Microsoft.WSMan.Management
 
                 if (m_session != null)
                     Dispose(m_session);
-
             }
-
         }
 
         #region IDisposable Members
@@ -1278,7 +1264,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
 
     #endregion
@@ -1497,7 +1482,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            helper = new WSManHelper(this );
+            helper = new WSManHelper(this);
             helper.WSManOp = "new";
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
             if (connectionuri != null)
@@ -1513,9 +1498,7 @@ namespace Microsoft.WSMan.Management
                 {
                     helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
-
             }
-
         }
 
         /// <summary>
@@ -1560,7 +1543,6 @@ namespace Microsoft.WSMan.Management
                     Dispose(m_session);
                 }
             }
-
         }
 
         #region IDisposable Members
@@ -1594,7 +1576,6 @@ namespace Microsoft.WSMan.Management
         protected override void EndProcessing()
         {
             helper.CleanUp();
-
         }
     }
 

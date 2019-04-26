@@ -180,14 +180,14 @@ namespace System.Management.Automation
         /// </summary>
         public string Name { get; private set; } = string.Empty;
 
-// Name
+        // Name
 
         /// <summary>
         /// Gets the type of the command.
         /// </summary>
         public CommandTypes CommandType { get; private set; } = CommandTypes.Application;
 
-// CommandType
+        // CommandType
 
         /// <summary>
         /// Gets the source of the command (shown by default in Get-Command)
@@ -938,7 +938,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1,c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 

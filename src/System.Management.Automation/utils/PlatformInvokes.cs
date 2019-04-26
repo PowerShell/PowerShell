@@ -611,7 +611,6 @@ namespace System.Management.Automation
                 this.hStdOutput = new SafeFileHandle(IntPtr.Zero, false);
                 this.hStdError = new SafeFileHandle(IntPtr.Zero, false);
                 this.cb = Marshal.SizeOf(this);
-
             }
 
             public void Dispose(bool disposing)

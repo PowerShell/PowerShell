@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 case NativeErrorCode.Ok:
                     return ErrorCategory.NotSpecified;
                 case NativeErrorCode.Failed:
-                    return ErrorCategory.NotSpecified; 
+                    return ErrorCategory.NotSpecified;
                 case NativeErrorCode.AccessDenied:
                     return ErrorCategory.PermissionDenied;
                 case NativeErrorCode.InvalidNamespace:

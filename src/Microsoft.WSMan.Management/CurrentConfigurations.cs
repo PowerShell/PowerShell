@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Globalization;
+using System.Xml;
+
 namespace Microsoft.WSMan.Management
 {
-    using System;
-    using System.Globalization;
-    using System.Xml;
-
     /// <summary>
     /// Class that queries the server and gets current configurations.
     /// Also provides a generic way to update the configurations.

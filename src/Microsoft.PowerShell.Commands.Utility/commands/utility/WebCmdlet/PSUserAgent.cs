@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class PSUserAgent
     {
-
         private static string s_windowsUserAgent;
 
         internal static string UserAgent

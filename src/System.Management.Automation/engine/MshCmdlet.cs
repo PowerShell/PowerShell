@@ -83,7 +83,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="switchParameter">The SwitchParameter object to convert to bool.</param>
         /// <returns>The corresponding boolean value.</returns>
-        public static implicit operator bool (SwitchParameter switchParameter)
+        public static implicit operator bool(SwitchParameter switchParameter)
         {
             return switchParameter.IsPresent;
         }
@@ -719,11 +719,11 @@ namespace System.Management.Automation
             {
                 _context.EngineSessionState = sessionState.Internal;
                 return InvokeScript(
-                    sb:scriptBlock,
-                    useNewScope:false,
-                    writeToPipeline:PipelineResultTypes.None,
-                    input:null,
-                    args:args);
+                    sb: scriptBlock,
+                    useNewScope: false,
+                    writeToPipeline: PipelineResultTypes.None,
+                    input: null,
+                    args: args);
             }
             finally
             {

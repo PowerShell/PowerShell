@@ -705,9 +705,7 @@ namespace Microsoft.PowerShell
 
             if ((options & ReadKeyOptions.NoEcho) == 0)
             {
-                parent.WriteToConsole(
-                    keyInfo.Character.ToString(),
-                    true);
+                parent.WriteToConsole(keyInfo.Character, transcribeResult: true);
             }
 
             return keyInfo;
@@ -1253,7 +1251,7 @@ namespace Microsoft.PowerShell
             return ConsoleControl.LengthInBufferCells(c);
         }
 
-#region internal
+        #region internal
 
         /// <summary>
         /// Clear the ReadKey cache.
@@ -1264,9 +1262,9 @@ namespace Microsoft.PowerShell
             cachedKeyEvent.RepeatCount = 0;
         }
 
-#endregion internal
+        #endregion internal
 
-#region helpers
+        #region helpers
 
         // pass-by-ref for speed.
         /// <summary>
@@ -1317,7 +1315,7 @@ namespace Microsoft.PowerShell
             return result;
         }
 
-#endregion helpers
+        #endregion helpers
 
         private ConsoleColor defaultForeground = ConsoleColor.Gray;
 

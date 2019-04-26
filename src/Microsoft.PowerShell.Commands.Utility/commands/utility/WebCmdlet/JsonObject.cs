@@ -10,6 +10,7 @@ using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -257,33 +258,33 @@ namespace Microsoft.PowerShell.Commands
                 switch (entry.Value)
                 {
                     case JArray list:
-                    {
-                        var listResult = PopulateFromJArray(list, out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            var listResult = PopulateFromJArray(list, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result.Properties.Add(new PSNoteProperty(entry.Key, listResult));
-                        break;
-                    }
+                            result.Properties.Add(new PSNoteProperty(entry.Key, listResult));
+                            break;
+                        }
                     case JObject dic:
-                    {
-                        // Dictionary
-                        var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Dictionary
+                            var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result.Properties.Add(new PSNoteProperty(entry.Key, dicResult));
-                        break;
-                    }
+                            result.Properties.Add(new PSNoteProperty(entry.Key, dicResult));
+                            break;
+                        }
                     case JValue value:
-                    {
-                        result.Properties.Add(new PSNoteProperty(entry.Key, value.Value));
-                        break;
-                    }
+                        {
+                            result.Properties.Add(new PSNoteProperty(entry.Key, value.Value));
+                            break;
+                        }
                 }
 
                 memberHashTracker.Add(entry.Key);
@@ -304,34 +305,34 @@ namespace Microsoft.PowerShell.Commands
                 switch (element)
                 {
                     case JArray subList:
-                    {
-                        // Array
-                        var listResult = PopulateFromJArray(subList, out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Array
+                            var listResult = PopulateFromJArray(subList, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result[index] = listResult;
-                        break;
-                    }
+                            result[index] = listResult;
+                            break;
+                        }
                     case JObject dic:
-                    {
-                        // Dictionary
-                        var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count),  out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Dictionary
+                            var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result[index] = dicResult;
-                        break;
-                    }
+                            result[index] = dicResult;
+                            break;
+                        }
                     case JValue value:
-                    {
-                        result[index] = value.Value;
-                        break;
-                    }
+                        {
+                            result[index] = value.Value;
+                            break;
+                        }
                 }
             }
 
@@ -361,34 +362,34 @@ namespace Microsoft.PowerShell.Commands
                 switch (entry.Value)
                 {
                     case JArray list:
-                    {
-                        // Array
-                        var listResult = PopulateHashTableFromJArray(list, out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Array
+                            var listResult = PopulateHashTableFromJArray(list, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result.Add(entry.Key, listResult);
-                        break;
-                    }
+                            result.Add(entry.Key, listResult);
+                            break;
+                        }
                     case JObject dic:
-                    {
-                        // Dictionary
-                        var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Dictionary
+                            var dicResult = PopulateHashTableFromJDictionary(dic, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result.Add(entry.Key, dicResult);
-                        break;
-                    }
+                            result.Add(entry.Key, dicResult);
+                            break;
+                        }
                     case JValue value:
-                    {
-                        result.Add(entry.Key, value.Value);
-                        break;
-                    }
+                        {
+                            result.Add(entry.Key, value.Value);
+                            break;
+                        }
                 }
             }
 
@@ -408,34 +409,34 @@ namespace Microsoft.PowerShell.Commands
                 switch (element)
                 {
                     case JArray array:
-                    {
-                        // Array
-                        var listResult = PopulateHashTableFromJArray(array, out error);
-                        if (error != null)
                         {
-                            return null;
-                        }
+                            // Array
+                            var listResult = PopulateHashTableFromJArray(array, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result[index] = listResult;
+                            result[index] = listResult;
                             break;
-                    }
-                    case JObject dic:
-                    {
-                        // Dictionary
-                        var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                        if (error != null)
-                        {
-                            return null;
                         }
+                    case JObject dic:
+                        {
+                            // Dictionary
+                            var dicResult = PopulateHashTableFromJDictionary(dic, out error);
+                            if (error != null)
+                            {
+                                return null;
+                            }
 
-                        result[index] = dicResult;
-                        break;
-                    }
+                            result[index] = dicResult;
+                            break;
+                        }
                     case JValue value:
-                    {
-                        result[index] = value.Value;
-                        break;
-                    }
+                        {
+                            result[index] = value.Value;
+                            break;
+                        }
                 }
             }
 

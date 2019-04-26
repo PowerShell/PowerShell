@@ -79,7 +79,7 @@ try
                 Import-Module -Name $trustedModuleName1 -Force -ErrorAction Stop;
 "@
                 $command += @'
-                $null = help NestedFn1 2> $null;
+                $null = help -Name NestedFn1 -Category Function 2> $null;
                 $result = Get-Command NestedFn1 2> $null;
                 return ($result -ne $null)
 '@
@@ -1003,7 +1003,7 @@ try
             $scriptModuleName = "UntrustedModuleScriptBlockTest"
             $scriptModulePath = Join-Path $TestDrive ($scriptModuleName + ".psm1")
             @'
-            function RunScriptBlock {{ 
+            function RunScriptBlock {{
                 $sb = (Get-Command -Name {0}).ScriptBlock
 
                 # ScriptBlock trusted function, TrustedFn, is dot sourced into current scope

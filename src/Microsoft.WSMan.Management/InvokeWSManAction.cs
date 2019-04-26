@@ -78,7 +78,6 @@ namespace Microsoft.WSMan.Management
                 {
                     computername = "localhost";
                 }
-
             }
         }
 
@@ -261,7 +260,6 @@ namespace Microsoft.WSMan.Management
 
             // create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-
         }
 
         /// <summary>
@@ -269,7 +267,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-
             try
             {
                 // create the resourcelocator object
@@ -285,7 +282,6 @@ namespace Microsoft.WSMan.Management
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.LoadXml(resultXml);
                 WriteObject(xmldoc.DocumentElement);
-
             }
             finally
             {
@@ -301,9 +297,7 @@ namespace Microsoft.WSMan.Management
 
                 if (m_session != null)
                     Dispose(m_session);
-
             }
-
         }
 
         #region IDisposable Members
@@ -339,7 +333,5 @@ namespace Microsoft.WSMan.Management
             //  WSManHelper helper = new WSManHelper();
             helper.CleanUp();
         }
-
-
     }
 }

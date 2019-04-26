@@ -3,17 +3,16 @@
 
 #if CORECLR
 
+using System;
+using System.Collections;
+using System.Globalization;
+using System.Xml;
+using System.Xml.Schema;
+
 #pragma warning disable
 
 namespace Microsoft.PowerShell.Cmdletization.Xml
 {
-
-    using System;
-    using System.Collections;
-    using System.Globalization;
-    using System.Xml;
-    using System.Xml.Schema;
-
     internal class XmlSerializationReader1
     {
         #region Copy_From_XmlSerializationReader

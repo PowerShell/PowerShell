@@ -986,7 +986,7 @@ namespace System.Management.Automation.Runspaces
                 new ScriptPropertyData(@"State", GetScriptBlock(@"$this.JobStateInfo.State.ToString()"), null));
             td108.SerializationMethod = "SpecificProperties";
             td108.SerializationDepth = 2;
-            td108.PropertySerializationSet  =
+            td108.PropertySerializationSet =
                 new PropertySetData(new[] { "HasMoreData", "StatusMessage", "Location", "Command", "JobStateInfo", "InstanceId", "Id", "Name", "State", "ChildJobs", "PSJobTypeName", "PSBeginTime", "PSEndTime" }) { Name = "PropertySerializationSet" };
             yield return td108;
 
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation.Runspaces
             var td114 = new TypeData(@"System.Globalization.CultureInfo", true);
             td114.SerializationMethod = "SpecificProperties";
             td114.SerializationDepth = 1;
-            td114.PropertySerializationSet  =
+            td114.PropertySerializationSet =
                 new PropertySetData(new[] { "LCID", "Name", "DisplayName", "IetfLanguageTag", "ThreeLetterISOLanguageName", "ThreeLetterWindowsLanguageName", "TwoLetterISOLanguageName" }) { Name = "PropertySerializationSet" };
             yield return td114;
 
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation.Runspaces
             var td124 = new TypeData(@"System.Security.Cryptography.X509Certificates.X509Certificate2", true);
             td124.SerializationMethod = "SpecificProperties";
             td124.SerializationDepth = 1;
-            td124.PropertySerializationSet  =
+            td124.PropertySerializationSet =
                 new PropertySetData(new[] { "RawData" }) { Name = "PropertySerializationSet" };
             yield return td124;
 
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Runspaces
             var td126 = new TypeData(@"System.Security.Cryptography.X509Certificates.X500DistinguishedName", true);
             td126.SerializationMethod = "SpecificProperties";
             td126.SerializationDepth = 1;
-            td126.PropertySerializationSet  =
+            td126.PropertySerializationSet =
                 new PropertySetData(new[] { "RawData" }) { Name = "PropertySerializationSet" };
             yield return td126;
 
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation.Runspaces
 
             var td134 = new TypeData(@"System.Management.Automation.ParameterMetadata", true);
             td134.SerializationMethod = "SpecificProperties";
-            td134.PropertySerializationSet  =
+            td134.PropertySerializationSet =
                 new PropertySetData(new[] { "Name", "ParameterType", "Aliases", "IsDynamic", "SwitchParameter" }) { Name = "PropertySerializationSet" };
             yield return td134;
 
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation.Runspaces
             td136.Members.Add("Flags",
                 new CodePropertyData("Flags", GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), "GetParameterSetMetadataFlags"), null) { IsHidden = true });
             td136.SerializationMethod = "SpecificProperties";
-            td136.PropertySerializationSet  =
+            td136.PropertySerializationSet =
                 new PropertySetData(new[] { "Position", "Flags", "HelpMessage" }) { Name = "PropertySerializationSet" };
             yield return td136;
 

@@ -187,7 +187,7 @@ namespace System.Management.Automation
             string tempPath = Path.GetTempPath();
             do
             {
-                tempDir = Path.Combine(tempPath,System.Guid.NewGuid().ToString());
+                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
             }
             while (Directory.Exists(tempDir));
 

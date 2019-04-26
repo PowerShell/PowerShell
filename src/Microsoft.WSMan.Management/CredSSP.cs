@@ -255,7 +255,6 @@ namespace Microsoft.WSMan.Management
             bool otherkeys = false;
             try
             {
-
                 string Registry_Path_Credentials_Delegation = Registry_Path + @"\CredentialsDelegation";
                 RegistryKey Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true);
                 if (Allow_Fresh_Credential_Key != null)
@@ -642,7 +641,6 @@ namespace Microsoft.WSMan.Management
                 {
                     string key = GPOpath + "\\" + keyname + "\\" + @"Software\Policies\Microsoft\Windows";
                     UpdateGPORegistrySettings(applicationname, this.delegatecomputer, Registry.CurrentUser, key);
-
                 }
             }
             // saving gpo settings
@@ -703,7 +701,6 @@ namespace Microsoft.WSMan.Management
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
-
         }
 
         #region IDisposable Members
@@ -812,7 +809,7 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
             }
 
-             return result;
+            return result;
         }
         #endregion private
 
@@ -929,7 +926,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
 
     #endregion

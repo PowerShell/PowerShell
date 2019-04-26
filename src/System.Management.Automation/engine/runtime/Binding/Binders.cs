@@ -7157,7 +7157,6 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-
                         argExprs[i] = args[i].CastOrConvertMethodArgument(
                             parameterType,
                             paramName,

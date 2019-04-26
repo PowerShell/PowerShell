@@ -70,8 +70,7 @@ namespace Microsoft.PowerShell
                     // Should be a skin lookup
 
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
 
                 if (!string.IsNullOrEmpty(message))
@@ -216,8 +215,7 @@ namespace Microsoft.PowerShell
                 {
                     // Should be a skin lookup
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
                 // write message
                 if (!string.IsNullOrEmpty(message))

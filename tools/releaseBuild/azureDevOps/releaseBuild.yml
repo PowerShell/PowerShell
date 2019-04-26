@@ -97,6 +97,11 @@ jobs:
     buildName: linux
     pool: Hosted Ubuntu 1604
 
+- template: templates/testartifacts.yml
+  parameters:
+    buildName: macOS
+    pool: Hosted Mac Internal
+
 - job: release_json
   displayName: Create and Upload release.json
   steps:
