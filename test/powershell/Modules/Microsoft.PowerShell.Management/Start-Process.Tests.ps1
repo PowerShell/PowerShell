@@ -165,7 +165,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
         New-Item $fooFile -ItemType File -Force
         Start-Process $fooFile
 
-        Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeExactly $true
+        Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
         Get-Content $testdrive\foo.txt | Should -BeExactly $fooFile
     }
 }

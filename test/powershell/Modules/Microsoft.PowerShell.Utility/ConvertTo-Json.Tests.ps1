@@ -32,7 +32,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         })
         $null = $ps.BeginInvoke()
         # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
-        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } | Should -BeExactly $true
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } | Should -BeTrue
         $null = $ps.BeginStop($null, $null)
         # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
         Start-Sleep -Milliseconds 100

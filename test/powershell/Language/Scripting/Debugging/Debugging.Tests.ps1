@@ -324,7 +324,7 @@ Describe "It should be possible to reset runspace debugging" -tag "Feature" {
         $breakpoints.Count | Should -Be 2
     }
     It "The breakpoint Should have been hit" {
-        $completed | Should -BeExactly $true
+        $completed | Should -BeTrue
     }
     It "The reset debugger should not be in a breakpoint" {
         $rs.Debugger.InBreakPoint | Should -BeFalse

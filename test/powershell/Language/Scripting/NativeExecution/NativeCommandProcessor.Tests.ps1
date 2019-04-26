@@ -27,7 +27,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
-        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should -BeExactly $true
+        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should -BeTrue
 
         $ps.Stop()
         $rs.ResetRunspaceState()
@@ -207,12 +207,12 @@ Categories=Application;
             # Validate on Linux by reassociating default app for text file
             & $TestFile
             # It may take time for handler to start
-            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeExactly $true
+            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
             Get-Content $HOME/nativeCommandProcessor.Success | Should -BeExactly $TestFile
         }
         else {
             & $TestFile
-            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeExactly $true
+            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
             Get-Content $TestDrive\foo.txt | Should -BeExactly $TestFile
         }
     }
