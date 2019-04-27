@@ -2020,7 +2020,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) => 
+        public override Breakpoint GetBreakpoint(int id) =>
             _runspace.Debugger?.GetBreakpoint(id);
 
         /// <summary>
@@ -2612,12 +2612,12 @@ namespace System.Management.Automation
             }
         }
 
-#endregion
+        #endregion
     }
 
-#endregion
+    #endregion
 
-#region RemoteSessionStateProxy
+    #region RemoteSessionStateProxy
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
@@ -3022,5 +3022,5 @@ namespace System.Management.Automation
         }
     }
 
-#endregion
+    #endregion
 }

@@ -18,6 +18,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region New-ModuleManifest
@@ -1260,5 +1261,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-#endregion
+    #endregion
 }

@@ -191,7 +191,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
-                if ( source != null && source.Equals("GPO"))
+                if (source != null && source.Equals("GPO"))
                 {
                     string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
@@ -260,7 +260,6 @@ namespace Microsoft.WSMan.Management
 
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
-
             }
         }
         #endregion private
@@ -289,7 +288,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
     #endregion Set-WsManQuickConfig
 }

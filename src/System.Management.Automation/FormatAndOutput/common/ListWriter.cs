@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _propertyLabelsDisplayLength = 0; // reset max
 
             // cache the cell lengths for each property
-            Span<int> propertyNameCellCounts = propertyNames.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[propertyNames.Length] : new int[propertyNames.Length];;
+            Span<int> propertyNameCellCounts = propertyNames.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[propertyNames.Length] : new int[propertyNames.Length];
             for (int k = 0; k < propertyNames.Length; k++)
             {
                 Debug.Assert(propertyNames[k] != null, "propertyNames[k] is null");

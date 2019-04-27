@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections;
-    using System.Management.Automation;
-    using System.Management.Automation.Host;
-    using System.Management.Automation.Internal;
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     /// <summary>
     /// Null sink to absorb pipeline output.
     /// </summary>

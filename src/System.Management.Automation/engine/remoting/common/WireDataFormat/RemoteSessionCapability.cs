@@ -59,7 +59,7 @@ namespace System.Management.Automation.Remoting
             // PS Version 3 is fully backward compatible with Version 2
             // In the remoting protocol sense, nothing is changing between PS3 and PS2
             // For negotiation to succeed with old client/servers we have to use 2.
-            _psversion = new Version(2,0); // PSVersionInfo.PSVersion;
+            _psversion = new Version(2, 0); // PSVersionInfo.PSVersion;
             _serversion = PSVersionInfo.SerializationVersion;
             _remotingDestination = remotingDestination;
         }

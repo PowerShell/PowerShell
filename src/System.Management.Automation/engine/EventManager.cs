@@ -2289,8 +2289,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the time and date that this event was generated.
         /// </summary>
-        public DateTime TimeGenerated { get; internal set;
-// internal setter using during deserialization
+        public DateTime TimeGenerated
+        {
+            // internal setter using during deserialization
+            get; internal set;
         }
 
         /// <summary>

@@ -456,7 +456,7 @@ namespace System.Management.Automation
                     {
                         pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
                         commandProcessor = nextToLastCommand;
-                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe { NullPipe = true };
                     }
                 }
 
@@ -524,14 +524,14 @@ namespace System.Management.Automation
                 // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
-                    var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                    var vName = ((VariableExpressionAst)v).VariablePath.UserPath;
                     // Skip variables that don't exist
                     if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
                         continue;
                     // Skip PowerShell magic variables
                     if (Regex.Match(vName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false
                     )
                     {
                         updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
@@ -825,7 +825,7 @@ namespace System.Management.Automation
         internal static void Nop() { }
     }
 
-#region Redirections
+    #region Redirections
 
     internal abstract class CommandRedirection
     {
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
         }
     }
 
-#endregion Redirections
+    #endregion Redirections
 
     internal static class FunctionOps
     {
@@ -1456,7 +1456,8 @@ namespace System.Management.Automation
             int[] ranks = RankExceptionTypes(types);
             var current = new HandlerSearchResult();
 
-            do {
+            do
+            {
                 // Always assume no need to repeat the search for another interation
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_

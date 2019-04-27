@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
             Mandatory = true,
             ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
         [ValidateTrustedData]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get

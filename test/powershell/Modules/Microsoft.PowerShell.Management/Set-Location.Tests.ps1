@@ -70,6 +70,23 @@ Describe "Set-Location" -Tags "CI" {
             Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
     }
 
+    It "Should use actual casing of folder on case-insensitive filesystem" -Skip:($IsLinux) {
+        $testPath = New-Item -ItemType Directory -Path testdrive:/teST
+        Set-Location $testPath.FullName.ToUpper()
+        $(Get-Location).Path | Should -BeExactly $testPath.FullName
+    }
+
+    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux) {
+        $dir = "teST"
+        $testPathLower = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToLower())
+        $testPathUpper = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToUpper())
+        Set-Location $testPathLower.FullName
+        $(Get-Location).Path | Should -BeExactly $testPathLower.FullName
+        Set-Location $testPathUpper.FullName
+        $(Get-Location).Path | Should -BeExactly $testPathUpper.FullName
+        { Set-Location (Join-Path $TestDrive $dir) -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+    }
+
     Context 'Set-Location with no arguments' {
 
         It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {

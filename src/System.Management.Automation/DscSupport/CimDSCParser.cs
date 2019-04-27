@@ -684,9 +684,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (!Directory.Exists(systemResourceRoot))
                 {
-                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
-                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
-                     inboxModulePath = InboxDscResourceModulePath;
+                    configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                    systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                    inboxModulePath = InboxDscResourceModulePath;
                 }
 
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);

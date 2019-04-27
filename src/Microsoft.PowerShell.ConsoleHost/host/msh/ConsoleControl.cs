@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
     internal static class ConsoleControl
     {
 #if !UNIX
-#region structs
+        #region structs
 
         internal enum InputRecordEventTypes : ushort
         {
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell
             public byte tmCharSet;
         }
 
-#region SentInput Data Structures
+        #region SentInput Data Structures
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct INPUT
@@ -417,11 +417,11 @@ namespace Microsoft.PowerShell
             ScanCode = 0x0008
         }
 
-#endregion SentInput Data Structures
+        #endregion SentInput Data Structures
 
-#endregion structs
+        #endregion structs
 
-#region Window Visibility
+        #region Window Visibility
         [DllImport(PinvokeDllNames.GetConsoleWindowDllName)]
         internal static extern IntPtr GetConsoleWindow();
 
@@ -473,9 +473,9 @@ namespace Microsoft.PowerShell
             }
         }
 #endif
-#endregion
+        #endregion
 
-#region Input break handler (Ctrl-C, Ctrl-Break)
+        #region Input break handler (Ctrl-C, Ctrl-Break)
 
         /// <summary>
         /// Types of control ConsoleBreakSignals received by break Win32Handler delegates.
@@ -546,9 +546,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion
+        #endregion
 
-#region Win32Handles
+        #region Win32Handles
 
         private static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
             {
@@ -621,9 +621,9 @@ namespace Microsoft.PowerShell
             return _outputHandle.Value;
         }
 
-#endregion
+        #endregion
 
-#region Mode
+        #region Mode
 
         /// <summary>
         /// Flags used by ConsoleControl.GetMode and ConsoleControl.SetMode.
@@ -707,9 +707,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion
+        #endregion
 
-#region Input
+        #region Input
 
         /// <summary>
         /// Reads input from the console device according to the mode in effect (see GetMode, SetMode)
@@ -943,9 +943,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Input
+        #endregion Input
 
-#region Buffer
+        #region Buffer
 
         /// <summary>
         /// Wraps Win32 GetConsoleScreenBufferInfo
@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell
                     firstRightLeadingRow = r;
                 }
 
-                for (;;)
+                for (; ; )
                 {
                     r++;
                     if (r > contentsRegion.Bottom)
@@ -1769,7 +1769,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#region ReadConsoleOutput CJK
+        #region ReadConsoleOutput CJK
         /// <summary>
         /// If an edge cell read is a blank, it is potentially part of a double width character. Hence,
         ///  at least one of the left and right edges should be checked.
@@ -2066,7 +2066,7 @@ namespace Microsoft.PowerShell
                 rowIndex++;
             }
         }
-#endregion ReadConsoleOutput CJK
+        #endregion ReadConsoleOutput CJK
 
         private static void ReadConsoleOutputPlain
         (
@@ -2408,9 +2408,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Buffer
+        #endregion Buffer
 
-#region Window
+        #region Window
 
         /// <summary>
         /// Wraps Win32 SetConsoleWindowInfo.
@@ -2536,7 +2536,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Window
+        #endregion Window
 
         /// <summary>
         /// Wrap Win32 WriteConsole.
@@ -2562,7 +2562,7 @@ namespace Microsoft.PowerShell
             {
                 if (newLine)
                 {
-                    WriteConsole(consoleHandle, ConsoleHostUserInterface.Crlf);
+                    WriteConsole(consoleHandle, Environment.NewLine);
                 }
 
                 return;
@@ -2591,7 +2591,7 @@ namespace Microsoft.PowerShell
 
                     if (newLine)
                     {
-                        var endOfLine = ConsoleHostUserInterface.Crlf.AsSpan();
+                        var endOfLine = Environment.NewLine.AsSpan();
                         var endOfLineLength = endOfLine.Length;
                         Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
                         outBuffer.CopyTo(outBufferLine);
@@ -2661,7 +2661,7 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-#region Dealing with CJK
+        #region Dealing with CJK
 
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
@@ -2748,11 +2748,11 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-#endregion Dealing with CJK
+        #endregion Dealing with CJK
 
 #if !UNIX
 
-#region Cursor
+        #region Cursor
 
         /// <summary>
         /// Wraps Win32 SetConsoleCursorPosition.
@@ -2874,9 +2874,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Cursor
+        #endregion Cursor
 
-#region helper
+        #region helper
 
         /// <summary>
         /// Helper function to create the proper HostException.
@@ -2895,9 +2895,9 @@ namespace Microsoft.PowerShell
             return e;
         }
 
-#endregion helper
+        #endregion helper
 
-#region
+        #region
 
         internal static int LengthInBufferCells(char c)
         {
@@ -2915,16 +2915,16 @@ namespace Microsoft.PowerShell
                  (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
                  (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
                  (c >= 0xffe0 && c <= 0xffe6));
-                  // We can ignore these ranges because .Net strings use surrogate pairs
-                  // for this range and we do not handle surrogage pairs.
-                  // (c >= 0x20000 && c <= 0x2fffd) ||
-                  // (c >= 0x30000 && c <= 0x3fffd)
+            // We can ignore these ranges because .Net strings use surrogate pairs
+            // for this range and we do not handle surrogage pairs.
+            // (c >= 0x20000 && c <= 0x2fffd) ||
+            // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
         }
 
-#endregion
+        #endregion
 
-#region SendInput
+        #region SendInput
 
         internal static void MimicKeyPress(INPUT[] inputs)
         {
@@ -2941,7 +2941,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion SendInput
+        #endregion SendInput
 
         /// <summary>
         /// Class to hold the Native Methods used in this file enclosing class.
@@ -2953,7 +2953,7 @@ namespace Microsoft.PowerShell
             internal const int FontTypeMask = 0x06;
             internal const int TrueTypeFont = 0x04;
 
-#region CreateFile
+            #region CreateFile
 
             [Flags]
             internal enum AccessQualifiers : uint
@@ -2993,14 +2993,14 @@ namespace Microsoft.PowerShell
                 NakedWin32Handle templateFileWin32Handle
             );
 
-#endregion CreateFile
+            #endregion CreateFile
 
-#region Code Page
+            #region Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleOutputCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetConsoleOutputCP();
 
-#endregion Code Page
+            #endregion Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleWindowDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern HWND GetConsoleWindow();

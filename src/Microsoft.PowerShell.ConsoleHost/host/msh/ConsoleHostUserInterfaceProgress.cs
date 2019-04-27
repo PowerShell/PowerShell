@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell
                     progPaneUpdateFlag = 1;
 
                     // The timer will be auto restarted every 'UpdateTimerThreshold' ms
-                    _progPaneUpdateTimer = new Timer( new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, UpdateTimerThreshold);
+                    _progPaneUpdateTimer = new Timer(new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, UpdateTimerThreshold);
                 }
             }
 
