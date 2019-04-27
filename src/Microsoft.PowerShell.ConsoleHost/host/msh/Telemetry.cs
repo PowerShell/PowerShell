@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using System.Management.Automation;
-using System.Security.Cryptography;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.IO;
 
 namespace Microsoft.PowerShell
 {
