@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Globalization;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Security;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
 

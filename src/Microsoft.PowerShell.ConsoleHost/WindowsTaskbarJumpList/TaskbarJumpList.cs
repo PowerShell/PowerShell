@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+
 using static Microsoft.PowerShell.ComInterfaces;
 
 namespace Microsoft.PowerShell

@@ -2,20 +2,21 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
-using System.Diagnostics;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
-using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Security;
+using System.Text;
+using System.Text.RegularExpressions;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
