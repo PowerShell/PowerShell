@@ -2,19 +2,19 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Help;
-using System.Net;
-using System.IO;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
+using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {
