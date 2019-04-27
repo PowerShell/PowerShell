@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Remoting;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Collections;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
 
 namespace Microsoft.PowerShell.Commands
 {
