@@ -21,6 +21,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType 'Hashtable'
             $output['a'] | Should -Be 'b'
+            throw "This is a mock test failure"
         }
 
         It 'gets the error stream from minishell' {

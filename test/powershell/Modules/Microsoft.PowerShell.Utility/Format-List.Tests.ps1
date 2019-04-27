@@ -19,7 +19,7 @@ Describe "Format-List" -Tags "CI" {
         $expected = $in | Format-List | Out-String
         $actual   = $in | fl          | Out-String
 
-        $actual | Should -Be $expected
+        $actual | Should -Be "This is a forced test failure"
     }
 
     It "Should produce the expected output" {
