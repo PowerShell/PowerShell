@@ -567,6 +567,43 @@ namespace System.Management.Automation
             EngineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
         }
 
+        internal bool IsBreakOnErrorEnabled()
+        {
+            // Unlike the GetEnumPreference method, which can throw an exception, this
+            // method  is used to specifically check if ErrorActionPreference is set to
+            // ActionPreference.Break so that it can 
+            CmdletProviderContext context = null;
+            SessionStateScope scope = null;
+            object val = EngineSessionState.GetVariableValue(SpecialVariables.ErrorActionPreferenceVarPath, out context, out scope);
+            if (val is ActionPreference)
+            {
+                return ((ActionPreference)val) == ActionPreference.Break;
+            }
+
+            if (val != null)
+            {
+                try
+                {
+                    string valString = val as string;
+                    if (valString != null)
+                    {
+                        var result = (ActionPreference)Enum.Parse(typeof(ActionPreference), valString, true);
+                        return (result == ActionPreference.Break);
+                    }
+                }
+                catch (InvalidCastException)
+                {
+                    // default value is used
+                }
+                catch (ArgumentException)
+                {
+                    // default value is used
+                }
+            }
+
+            return false;
+        }
+
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
             CmdletProviderContext context = null;
@@ -574,22 +611,7 @@ namespace System.Management.Automation
             object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
             if (val is T)
             {
-                // We don't want to support "Ignore" as action preferences, as it leads to bad
-                // scripting habits. They are only supported as cmdlet overrides.
-                if (val is ActionPreference)
-                {
-                    ActionPreference preference = (ActionPreference)val;
-                    if ((preference == ActionPreference.Ignore) || (preference == ActionPreference.Suspend))
-                    {
-                        // Reset the variable value
-                        EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultPref);
-                        string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
-                        throw new NotSupportedException(message);
-                    }
-                }
-
                 T convertedResult = (T)val;
-
                 defaultUsed = false;
                 return convertedResult;
             }
@@ -624,6 +646,40 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Checks that an action preference is an allowed value.
+        /// </summary>
+        /// <param name="currentValue"></param>
+        /// <param name="preferenceVariablePath"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        internal void CheckActionPreference(ActionPreference currentValue, VariablePath preferenceVariablePath, ActionPreference defaultValue)
+        {
+            // We don't want to support "Ignore" as action preferences, as it leads to bad
+            // scripting habits. They are only supported as cmdlet overrides.
+            if ((currentValue == ActionPreference.Ignore) || (currentValue == ActionPreference.Suspend))
+            {
+                // Reset the variable value
+                EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultValue);
+                string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, currentValue);
+                throw new NotSupportedException(message);
+            }
+        }
+
+        /// <summary>
+        /// Gets an action preference and validates that it is an allowed value.
+        /// </summary>
+        /// <param name="preferenceVariablePath"></param>
+        /// <param name="defaultPref"></param>
+        /// <param name="defaultUsed"></param>
+        /// <returns></returns>
+        internal ActionPreference GetAndCheckActionPreference(VariablePath preferenceVariablePath, ActionPreference defaultPref, out bool defaultUsed)
+        {
+            var val = GetEnumPreference(preferenceVariablePath, defaultPref, out defaultUsed);
+            CheckActionPreference(val, preferenceVariablePath, defaultPref);
+            return val;
         }
 
         /// <summary>
@@ -1047,7 +1103,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetAndCheckActionPreference(
                     SpecialVariables.DebugPreferenceVarPath,
                     InitialSessionState.defaultDebugPreference,
                     out defaultUsed);
@@ -1068,7 +1124,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetAndCheckActionPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
                     InitialSessionState.defaultVerbosePreference,
                     out defaultUsed);
@@ -1089,7 +1145,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetAndCheckActionPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     InitialSessionState.defaultErrorActionPreference,
                     out defaultUsed);
@@ -1110,7 +1166,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetAndCheckActionPreference(
                     SpecialVariables.WarningPreferenceVarPath,
                     InitialSessionState.defaultWarningPreference,
                     out defaultUsed);
@@ -1131,7 +1187,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetAndCheckActionPreference(
                     SpecialVariables.InformationPreferenceVarPath,
                     InitialSessionState.defaultInformationPreference,
                     out defaultUsed);
@@ -1177,7 +1233,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ConfirmImpact>(
+                return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
                     InitialSessionState.defaultConfirmPreference,
                     out defaultUsed);

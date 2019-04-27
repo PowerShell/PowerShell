@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
             // set $? to false indicating an error
             context.QuestionMarkVariableValue = false;
 
-            ActionPreference preference = ExceptionHandlingOps.QueryForAction(rte, rte.Message, context);
+            ActionPreference preference = GetErrorActionPreference(context);
 
             // if the exception is new (i.e. it was not rethrown from a naked throw
             // statement inside of a catch block, and it is not currently being
@@ -1630,9 +1630,26 @@ namespace System.Management.Automation
                 // set the value of $? here in case it was reset in trap handling.
                 context.QuestionMarkVariableValue = false;
             }
-            else if (ExceptionHandlingOps.ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
+            else if (ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
                 throw rte;
+            }
+            else
+            {
+                if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
+                {
+                    preference = InquireForActionPreference(rte.Message, context);
+                }
+
+                // If we don't have any trap handlers and the exception can be stopped,
+                // continued or ignored, check the action preference to ensure it has a
+                // valid value. Ideally this method call can go away entirely once issue
+                // #4348 (https://github.com/PowerShell/PowerShell/issues/4348) is
+                // approved.
+                context.CheckActionPreference(
+                    preference,
+                    SpecialVariables.ErrorActionPreferenceVarPath,
+                    ActionPreference.Continue);
             }
 
             if ((preference == ActionPreference.SilentlyContinue) ||
@@ -1657,7 +1674,7 @@ namespace System.Management.Automation
                 throw rte;
             }
 
-            bool errorReportedSuccessfully = ExceptionHandlingOps.ReportErrorRecord(extent, rte, context);
+            bool errorReportedSuccessfully = ReportErrorRecord(extent, rte, context);
 
             // set the value of $? here in case it is reset in error reporting
             context.QuestionMarkVariableValue = false;
@@ -1773,7 +1790,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determine if we should continue or not after and error or exception....
+        /// Gets the current error action preference value.
+        /// </summary>
+        /// <param name="context">The execution context.</param>
+        /// <returns>The preference the user selected.</returns>
+        /// <remarks>
+        /// Error action is decided by error action preference. If preference is inquire, we will
+        /// prompt user for their preference.
+        /// </remarks>
+        internal static ActionPreference GetErrorActionPreference(ExecutionContext context)
+        {
+            bool defaultUsed;
+            return context.GetEnumPreference(
+                SpecialVariables.ErrorActionPreferenceVarPath,
+                ActionPreference.Continue,
+                out defaultUsed);
+        }
+
+        /// <summary>
+        /// Determine if we should continue or not after an error or exception.
         /// </summary>
         /// <param name="rte">The RuntimeException which was reported.</param>
         /// <param name="message">The message to display.</param>
@@ -1788,8 +1823,10 @@ namespace System.Management.Automation
             // 906264 "$ErrorActionPreference="Inquire" prevents original non-terminating error from being reported to $error"
             bool defaultUsed;
             ActionPreference preference =
-                context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath,
-                                          ActionPreference.Continue, out defaultUsed);
+                context.GetAndCheckActionPreference(
+                    SpecialVariables.ErrorActionPreferenceVarPath,
+                    ActionPreference.Continue,
+                    out defaultUsed);
 
             if (preference != ActionPreference.Inquire || rte.SuppressPromptInInterpreter)
                 return preference;
