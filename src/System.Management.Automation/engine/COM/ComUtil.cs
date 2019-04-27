@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
-using System.Management.Automation.ComInterop;
-using System.Text;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Management.Automation.ComInterop;
+using System.Runtime.InteropServices;
+using System.Text;
+
 using COM = System.Runtime.InteropServices.ComTypes;
 
 // Stops compiler from warning about unknown warnings. Prefast warning numbers are not recognized by C# compiler

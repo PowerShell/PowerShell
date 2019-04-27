@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
