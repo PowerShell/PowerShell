@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
+
 using Microsoft.PowerShell.Commands;
-using System.IO;
 
 namespace System.Management.Automation.Language
 {

@@ -6,9 +6,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 

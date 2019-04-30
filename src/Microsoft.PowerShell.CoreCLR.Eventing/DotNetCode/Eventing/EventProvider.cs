@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Threading;
 using System.Security;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace System.Diagnostics.Eventing
 {

@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Runspaces;
-using System.Globalization;
 using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;

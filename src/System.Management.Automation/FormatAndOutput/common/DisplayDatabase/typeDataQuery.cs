@@ -5,9 +5,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Globalization;
 using System.Management.Automation;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {

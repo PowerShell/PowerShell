@@ -2,20 +2,20 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.Reflection;
-using System.Globalization;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Principal;
-using System.Resources;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
+using System.Management.Automation;
+using System.Net;
+using System.Reflection;
+using System.Resources;
+using System.Security.Principal;
 using System.Text;
+using System.Xml;
 
 [assembly: CLSCompliant(false)]
 

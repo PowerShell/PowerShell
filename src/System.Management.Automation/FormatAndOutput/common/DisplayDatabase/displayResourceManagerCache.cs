@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections;
+using System.Management.Automation;
 using System.Reflection;
 using System.Resources;
-using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {

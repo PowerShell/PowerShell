@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+
 using Microsoft.PowerShell.Commands;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {

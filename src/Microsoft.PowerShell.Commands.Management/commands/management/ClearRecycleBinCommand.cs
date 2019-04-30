@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Globalization;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {

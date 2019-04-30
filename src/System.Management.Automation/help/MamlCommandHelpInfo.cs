@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Globalization;
-using System.Xml;
 using System.Text;
+using System.Xml;
 
 namespace System.Management.Automation
 {

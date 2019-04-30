@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Management.Automation;
 using System.Xml;
 
 namespace Microsoft.PowerShell.Commands

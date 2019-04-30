@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Threading;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation

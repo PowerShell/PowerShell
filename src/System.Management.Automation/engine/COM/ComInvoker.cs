@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using COM = System.Runtime.InteropServices.ComTypes;
 
 // Disable obsolete warnings about VarEnum and COM-marshaling APIs in CoreCLR

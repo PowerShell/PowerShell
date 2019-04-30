@@ -3,12 +3,13 @@
 
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Reflection;
+
 using Dbg = System.Management.Automation;
-using System.IO;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
