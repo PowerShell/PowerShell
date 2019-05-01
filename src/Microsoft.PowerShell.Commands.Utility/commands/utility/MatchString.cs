@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_supportsVirtualTerminal)
                 {
-                    open = "\u001b[31m";
+                    open = "\u001b[7m";
                     close = "\u001b[0m";
                 }
                 else

@@ -75,7 +75,7 @@ Describe "Select-String" -Tags "CI" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize | Out-String
-			$result | Should -Be "`nhe`e[31ml`e[0mlo`nHe`e[31ml`e[0mlo`n`n"
+			$result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
 		}
 		else
 		{
@@ -88,7 +88,7 @@ Describe "Select-String" -Tags "CI" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize -AllMatch | Out-String
-			$result | Should -Be "`nhe`e[31ml`e[0m`e[31ml`e[0mo`nHe`e[31ml`e[0m`e[31ml`e[0mo`n`n"
+			$result | Should -Be "`nhe`e[7ml`e[0m`e[7ml`e[0mo`nHe`e[7ml`e[0m`e[7ml`e[0mo`n`n"
 		}
 		else
 		{
@@ -101,7 +101,7 @@ Describe "Select-String" -Tags "CI" {
 		if ($Host.UI.SupportsVirtualTerminal)
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
-			$result | Should -Be "`nhe`e[31ml`e[0mlo`nHe`e[31ml`e[0mlo`n`n"
+			$result | Should -Be "`nhe`e[7ml`e[0mlo`nHe`e[7ml`e[0mlo`n`n"
 		}
 		else
 		{
