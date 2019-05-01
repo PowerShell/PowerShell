@@ -265,6 +265,10 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
         Import-Module -Name "$testdrive\Modules\Foo\Foo_rw.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Bar\Bar_rw.psd1" -Force
 
+        # If this test is run again in the same session, this test module
+        # will already be loaded and can't be removed because it sets
+        # AccessMode to Constant, so only import this test module and
+        # set AccessMode if it isn't already loaded
         if ($null -eq (Get-Module "Const_module")) {
             Import-Module -Name "$testdrive\Modules\Baz\Const_module.psd1" -Force
             (Get-Module -Name "Const_module").AccessMode = "Constant"
