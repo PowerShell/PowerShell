@@ -80,7 +80,7 @@ Describe "Select-String" -Tags "CI" {
 		else
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
-			$result | Should -Be "`nhe*l*lo`nHe*l*lo`n`n"
+			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 
@@ -93,7 +93,7 @@ Describe "Select-String" -Tags "CI" {
 		else
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
-			$result | Should -Be "`nhe*l**l*o`nHe*l**l*o`n`n"
+			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 
@@ -106,7 +106,7 @@ Describe "Select-String" -Tags "CI" {
 		else
 		{
 			$result = $testinputone | Select-String -Pattern "l" -Emphasize -SimpleMatch | Out-String
-			$result | Should -Be "`nhe*l*lo`nHe*l*lo`n`n"
+			$result | Should -Be "`nhello`nHello`n`n"
 		}
 	}
 

@@ -294,69 +294,59 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The colored string representation of the match object.</returns>
         public string ToEmphasizedString(string directory)
         {
+            if (!Emphasize || ! _supportsVirtualTerminal) {
+                return ToString(directory);
+            }
+
             string originalLine = Line;
-            if (Emphasize)
+            string open = "\u001b[7m";
+            string close = "\u001b[0m";
+
+            Line = string.Create((_matchIndexes.Count * (open.Length + close.Length)) + Line.Length, Line, (chars, buf) =>
             {
-                string open;
-                string close;
-
-                if (_supportsVirtualTerminal)
+                int lineIndex = 0;
+                int charsIndex = 0;
+                for (int i = 0; i < _matchIndexes.Count; i++) 
                 {
-                    open = "\u001b[7m";
-                    close = "\u001b[0m";
-                }
-                else
-                {
-                    open = "*";
-                    close = "*";
-                }
-
-                Line = string.Create((_matchIndexes.Count * (open.Length + close.Length)) + Line.Length, Line, (chars, buf) =>
-                {
-                    int lineIndex = 0;
-                    int charsIndex = 0;
-                    for (int i = 0; i < _matchIndexes.Count; i++) 
-                    {
-                        // Adds characters before match
-                        while (lineIndex < _matchIndexes[i])
-                        {
-                            chars[charsIndex] = Line[lineIndex];
-                            lineIndex++;
-                            charsIndex++;
-                        }
-                        
-                        // Adds opening vt sequence
-                        for (int j = 0; j < open.Length; j++)
-                        {
-                            chars[charsIndex] = open[j];
-                            charsIndex++;
-                        }
-                        
-                        // Adds characters being emphasized
-                        for (int j = 0; j < _matchLengths[i]; j++)
-                        {
-                            chars[charsIndex] = Line[lineIndex];
-                            lineIndex++;
-                            charsIndex++; 
-                        }
-
-                        // Adds closing vt sequence
-                        for (int j = 0; j < close.Length; j++)
-                        {
-                            chars[charsIndex] = close[j];
-                            charsIndex++;
-                        }
-                    }
-
-                    // Adds remaining characters in line
-                    while (lineIndex < Line.Length)
+                    // Adds characters before match
+                    while (lineIndex < _matchIndexes[i])
                     {
                         chars[charsIndex] = Line[lineIndex];
                         lineIndex++;
                         charsIndex++;
                     }
-                });
-            }
+                    
+                    // Adds opening vt sequence
+                    for (int j = 0; j < open.Length; j++)
+                    {
+                        chars[charsIndex] = open[j];
+                        charsIndex++;
+                    }
+                    
+                    // Adds characters being emphasized
+                    for (int j = 0; j < _matchLengths[i]; j++)
+                    {
+                        chars[charsIndex] = Line[lineIndex];
+                        lineIndex++;
+                        charsIndex++; 
+                    }
+
+                    // Adds closing vt sequence
+                    for (int j = 0; j < close.Length; j++)
+                    {
+                        chars[charsIndex] = close[j];
+                        charsIndex++;
+                    }
+                }
+
+                // Adds remaining characters in line
+                while (lineIndex < Line.Length)
+                {
+                    chars[charsIndex] = Line[lineIndex];
+                    lineIndex++;
+                    charsIndex++;
+                }
+            });
 
             string modifiedLine = ToString(directory);
             Line = originalLine;
