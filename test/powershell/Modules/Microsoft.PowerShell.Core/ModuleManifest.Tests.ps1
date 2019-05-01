@@ -57,13 +57,12 @@ function New-ModuleFromLayout
 Describe "Manifest required module autoloading from module path with simple names" -Tags "CI" {
     BeforeAll {
         $prevModulePath = $env:PSModulePath
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-        $env:PSModulePath = $resolvedTestDrive + [System.IO.Path]::PathSeparator + $env:PSModulePath
+        $env:PSModulePath = ($TestDrive -as [string]) + [System.IO.Path]::PathSeparator + $env:PSModulePath
 
         $mainModule = 'mainmod'
         $requiredModule = 'reqmod'
 
-        New-ModuleFromLayout -BaseDir $resolvedTestDrive -Layout @{
+        New-ModuleFromLayout -BaseDir $TestDrive -Layout @{
             $mainModule = @{
                 "$mainModule.psd1" = @{
                     RequiredModules = $requiredModule
@@ -77,7 +76,7 @@ Describe "Manifest required module autoloading from module path with simple name
 
     AfterAll {
         $env:PSModulePath = $prevModulePath
-        Remove-Module $mainModule,$requiredModule -ErrorAction SilentlyContinue
+        Get-Module $mainModule,$requiredModule | Remove-Module
     }
 
     It "Importing main module loads required modules successfully" {
@@ -95,14 +94,12 @@ Describe "Manifest required module autoloading with relative path to dir" -Tags 
         $mainModule = 'mainmod'
         $requiredModule = 'reqmod'
 
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-
-        $mainModPath = Join-Path $resolvedTestDrive $mainModule
+        $mainModPath = Join-Path $TestDrive $mainModule
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
 
-        New-ModuleFromLayout -BaseDir $resolvedTestDrive -Layout @{
+        New-ModuleFromLayout -BaseDir $TestDrive -Layout @{
             $mainModule = @{
                 "$mainModule.psd1" = @{
                     RequiredModules = "..${altSep}$requiredModule"
@@ -133,15 +130,13 @@ Describe "Manifest required module autoloading with relative path to manifest" -
         $mainModule = 'mainmod'
         $requiredModule = 'reqmod'
 
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-
-        $mainModPath = Join-Path $resolvedTestDrive $mainModule "$mainModule.psd1"
+        $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
         $sep = [System.IO.Path]::DirectorySeparatorChar
 
-        New-ModuleFromLayout -BaseDir $resolvedTestDrive -Layout @{
+        New-ModuleFromLayout -BaseDir $TestDrive -Layout @{
             $mainModule = @{
                 "$mainModule.psd1" = @{
                     RequiredModules = "..${altSep}$requiredModule${sep}$requiredModule.psd1"
@@ -172,18 +167,16 @@ Describe "Manifest required module autoloading with absolute path to dir" -Tags 
         $mainModule = 'mainmod'
         $requiredModule = 'reqmod'
 
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-
-        $mainModPath = Join-Path $resolvedTestDrive $mainModule "$mainModule.psd1"
+        $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
         $sep = [System.IO.Path]::DirectorySeparatorChar
 
-        New-ModuleFromLayout -BaseDir $resolvedTestDrive -Layout @{
+        New-ModuleFromLayout -BaseDir $TestDrive -Layout @{
             $mainModule = @{
                 "$mainModule.psd1" = @{
-                    RequiredModules = "$resolvedTestDrive${altSep}$requiredModule${sep}"
+                    RequiredModules = "$TestDrive${altSep}$requiredModule${sep}"
                 }
             }
             $requiredModule = @{
@@ -211,18 +204,16 @@ Describe "Manifest required module autoloading with absolute path to manifest" -
         $mainModule = 'mainmod'
         $requiredModule = 'reqmod'
 
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-
-        $mainModPath = Join-Path $resolvedTestDrive $mainModule "$mainModule.psd1"
+        $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
         $sep = [System.IO.Path]::DirectorySeparatorChar
 
-        New-ModuleFromLayout -BaseDir $resolvedTestDrive -Layout @{
+        New-ModuleFromLayout -BaseDir $TestDrive -Layout @{
             $mainModule = @{
                 "$mainModule.psd1" = @{
-                    RequiredModules = "$resolvedTestDrive${altSep}$requiredModule${sep}$requiredModule.psd1"
+                    RequiredModules = "$TestDrive${altSep}$requiredModule${sep}$requiredModule.psd1"
                 }
             }
             $requiredModule = @{
