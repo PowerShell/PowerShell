@@ -14,7 +14,7 @@ Describe "Convert-Path tests" -Tag CI {
     }
 
     It "Convert-Path supports pipelined input by property name" {
-        Get-Item -Path $TestDrive | Convert-Path | Should -BeExactly (Resolve-FilePath $TestDrive)
+        Get-Item -Path $TestDrive | Convert-Path | Should -BeExactly $TestDrive
     }
 
     It "Convert-Path without arguments is an error" {

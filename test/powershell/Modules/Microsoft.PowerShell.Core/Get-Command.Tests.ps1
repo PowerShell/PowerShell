@@ -228,7 +228,7 @@ Describe "Get-Command Tests" -Tags "CI" {
         $results = Get-Command $fullPath
 
         $results.Name | Should -BeExactly $tempFile
-        $results.Definition | Should -BeExactly (Resolve-FilePath $fullPath)
+        $results.Definition | Should -BeExactly $fullPath
     }
 
     It "Two dynamic parameters are created properly" {
