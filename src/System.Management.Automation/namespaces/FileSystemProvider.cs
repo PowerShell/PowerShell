@@ -7878,13 +7878,8 @@ namespace Microsoft.PowerShell.Commands
             internal uint nFileSizeLow;
             internal uint dwReserved0;
             internal uint dwReserved1;
-            private fixed char _cFileName[MAX_PATH];
-            private fixed char _cAlternateFileName[14];
-
-            internal ReadOnlySpan<char> cFileName
-            {
-                get { fixed (char* c = _cFileName) return new ReadOnlySpan<char>(c, MAX_PATH); }
-            }
+            internal fixed char cFileName[MAX_PATH];
+            internal fixed char cAlternateFileName[14];
         }
 
         /// <summary>
