@@ -4972,7 +4972,7 @@ param(
 
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
-            # PowerShell Workflow and WOW are not supported for PowerShell
+            # PowerShell Workflow and WOW are not supported for PowerShell 6+
             if (![System.Management.Automation.Platform]::IsCoreCLR)
             {{
                 # Check Microsoft.PowerShell.Workflow endpoint
