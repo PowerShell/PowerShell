@@ -121,7 +121,7 @@ open {0}
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>PowerShell runtime for hosting PowerShell Core</description>
+        <description>Runtime for hosting PowerShell</description>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
@@ -159,7 +159,7 @@ open {0}
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>PowerShell Core global tool</description>
+        <description>PowerShell global tool</description>
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>

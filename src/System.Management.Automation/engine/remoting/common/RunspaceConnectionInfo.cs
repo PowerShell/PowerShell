@@ -3326,7 +3326,7 @@ namespace System.Management.Automation.Runspaces
                     // Hyper-V container (i.e., RuntimeId is not empty) uses Hyper-V socket transport.
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
                     // This code executes `pwsh.exe` as it exists in the container which currently is
-                    // expected to be PowerShell Core as it's inbox in the container.
+                    // expected to be PowerShell as it's inbox in the container.
                     // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
                     foreach (string executableToTry in Executables)

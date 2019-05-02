@@ -193,7 +193,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 return;
             }
 
-            // powershell CoreStop would have handled cases
+            // PowerShell CoreStop would have handled cases
             // for NotStarted, Stopping and already Stopped
             // so at this point, there is no need to make any
             // check. The message simply needs to be sent
