@@ -1687,7 +1687,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
   </data>
   <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been disabled only for PowerShell configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+    <value>PowerShell remoting has been disabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
