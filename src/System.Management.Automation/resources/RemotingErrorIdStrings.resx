@@ -1659,7 +1659,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
