@@ -1691,6 +1691,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been enabled only for PowerShell configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+    <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
   </data>
 </root>
