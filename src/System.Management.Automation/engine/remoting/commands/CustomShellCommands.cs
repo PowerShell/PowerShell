@@ -3117,7 +3117,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    }}
    else
    {{
-        # Filter out WindowsPowerShell endpoints when running as PowerShell
+        # Filter out WindowsPowerShell endpoints when running as PowerShell 6+
         if (($pluginFileName.Value -match 'system32\\{0}') -OR
             ($pluginFileName.Value -match 'syswow64\\{0}'))
         {{
