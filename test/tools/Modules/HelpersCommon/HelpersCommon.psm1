@@ -344,8 +344,3 @@ function Test-CanWriteToPsHome
 
     $script:CanWriteToPsHome
 }
-
-# This resolves a short path on Windows to the long path
-function Resolve-FilePath($path) {
-    ([System.IO.FileInfo]::new($path)).FullName
-}

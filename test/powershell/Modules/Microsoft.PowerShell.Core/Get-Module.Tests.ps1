@@ -6,36 +6,34 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
 
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.1" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\Download" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Zoo\Too" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Az" -Force > $null
 
-        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Foo\1.1" -Force > $null
-        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Foo\2.0" -Force > $null
-        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Bar\Download" -Force > $null
-        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Zoo\Too" -Force > $null
-        New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\Az" -Force > $null
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Az\Az.psd1" -ModuleVersion 1.1
 
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Bar\Bar.psd1"
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Zoo\Zoo.psd1"
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Az\Az.psd1" -ModuleVersion 1.1
-
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Foo\1.1\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Foo\2.0\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Bar\Bar.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Bar\Download\Download.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Zoo\Zoo.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Zoo\Too\Zoo.psm1" > $null
-        New-Item -ItemType File -Path "$resolvedTestDrive\Modules\Az\Az.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Download\Download.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Az\Az.psm1" > $null
 
         $fullyQualifiedPathTestCases = @(
-            @{ ModPath = "$resolvedTestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
-            @{ ModPath = "$resolvedTestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
-            @{ ModPath = "$resolvedTestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
-            @{ ModPath = "$resolvedTestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
         )
 
-        $env:PSModulePath = Join-Path $resolvedTestDrive "Modules"
+        $env:PSModulePath = Join-Path $testdrive "Modules"
     }
 
     AfterAll {
@@ -80,11 +78,11 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules[7].Version | Should -Be "2.0"
         $modules[8].ModuleType | Should -BeExactly "Script"
         $modules[9].ModuleType | Should -BeExactly "Script"
-        $modules[9].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Too\Zoo.psm1").Path
+        $modules[9].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
         $modules[10].ModuleType | Should -BeExactly "Manifest"
-        $modules[10].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Zoo.psd1").Path
+        $modules[10].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Zoo.psd1").Path
         $modules[11].ModuleType | Should -BeExactly "Script"
-        $modules[11].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Zoo.psm1").Path
+        $modules[11].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Zoo.psm1").Path
     }
 
     It "Get-Module <Name> -ListAvailable -All" {
@@ -93,14 +91,14 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Download,Zoo,Zoo,Zoo"
 
-        $modules[0].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Bar\Download\Download.psm1").Path
-        $modules[1].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Too\Zoo.psm1").Path
-        $modules[2].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Zoo.psd1").Path
-        $modules[3].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Zoo.psm1").Path
+        $modules[0].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Bar\Download\Download.psm1").Path
+        $modules[1].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
+        $modules[2].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Zoo.psd1").Path
+        $modules[3].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Zoo.psm1").Path
     }
 
     It "Get-Module <Path> -ListAvailable" {
-        $modules = Get-Module "$resolvedTestDrive\Modules\*" -ListAvailable
+        $modules = Get-Module "$testdrive\Modules\*" -ListAvailable
         $modules.Count | Should -Be 5
         $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
@@ -109,11 +107,11 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     }
 
     It "Get-Module <Path> -ListAvailable -All" {
-        $modules = Get-Module "$resolvedTestDrive\Modules\*" -ListAvailable -All
+        $modules = Get-Module "$testdrive\Modules\*" -ListAvailable -All
         $modules.Count | Should -Be 6
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo,Zoo"
-        $modules[4].Path | Should -BeExactly (Resolve-Path "$resolvedTestDrive\Modules\Zoo\Too\Zoo.psm1").Path
+        $modules[4].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
     }
 
     It "Get-Module -FullyQualifiedName <FullyQualifiedName> -ListAvailable" {
@@ -130,7 +128,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules.Name | Should -BeExactly "Zoo"
         $modules.ExportedFunctions.Count | Should -Be 0 -Because 'No exports were defined'
 
-        New-ModuleManifest -Path "$resolvedTestDrive\Modules\Zoo\Zoo.psd1" -FunctionsToExport 'Test-ZooFunction'
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -FunctionsToExport 'Test-ZooFunction'
 
         $modules = Get-Module -Name 'Zoo' -ListAvailable -Refresh
         $modules | Should -HaveCount 1
@@ -155,17 +153,17 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     Context "PSEdition" {
 
         BeforeAll {
-            New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\DesktopOnlyModule" -Force > $null
-            New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\CoreOnlyModule" -Force > $null
-            New-Item -ItemType Directory -Path "$resolvedTestDrive\Modules\CoreAndDesktopModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\DesktopOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreAndDesktopModule" -Force > $null
 
-            New-ModuleManifest -Path "$resolvedTestDrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psd1" -CompatiblePSEditions Desktop
-            New-ModuleManifest -Path "$resolvedTestDrive\Modules\CoreOnlyModule\CoreOnlyModule.psd1" -CompatiblePSEditions Core
-            New-ModuleManifest -Path "$resolvedTestDrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core, Desktop
+            New-ModuleManifest -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psd1" -CompatiblePSEditions Desktop
+            New-ModuleManifest -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psd1" -CompatiblePSEditions Core
+            New-ModuleManifest -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core, Desktop
 
-            New-Item -ItemType File -Path "$resolvedTestDrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psm1" > $null
-            New-Item -ItemType File -Path "$resolvedTestDrive\Modules\CoreOnlyModule\CoreOnlyModule.psm1" > $null
-            New-Item -ItemType File -Path "$resolvedTestDrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psm1" > $null
         }
 
         It "Get-Module -PSEdition <CompatiblePSEditions> -ListAvailable" -TestCases @(
@@ -181,7 +179,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     Context "Module analysis shouldn't load assembly" {
         BeforeAll {
-            $tempModulePath = Join-Path $resolvedTestDrive "TempModules"
+            $tempModulePath = Join-Path $TestDrive "TempModules"
             $testModuleDir = Join-Path $tempModulePath "MyModuelTest"
             $moduleManifest = Join-Path $testModuleDir "MyModuelTest.psd1"
             $assemblyPath = Join-Path $testModuleDir "MyModuelTestCommandAssembly.dll"
@@ -230,8 +228,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
     BeforeAll {
         $moduleName = 'Banana'
-        $resolvedTestDrive = Resolve-FilePath $TestDrive
-        $modulePath = Join-Path $resolvedTestDrive $moduleName
+        $modulePath = Join-Path $TestDrive $moduleName
         $v1 = '1.2.3'
         $v2 = '4.8.3'
         $v1DirPath = Join-Path $modulePath $v1
@@ -251,10 +248,10 @@ Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
 
         $modules | Should -HaveCount 2
         $modules[0].Name | Should -BeExactly $moduleName
-        $modules[0].Path | Should -BeExactly (Resolve-FilePath $manifestV1Path)
+        $modules[0].Path | Should -BeExactly $manifestV1Path
         $modules[0].Version | Should -Be $v1
         $modules[1].Name | Should -BeExactly $moduleName
-        $modules[1].Path | Should -BeExactly (Resolve-FilePath $manifestV2Path)
+        $modules[1].Path | Should -BeExactly $manifestV2Path
         $modules[1].Version | Should -Be $v2
     }
 

@@ -45,11 +45,11 @@ Describe "#requires -Modules" -Tags "CI" {
         $sep = [System.IO.Path]::DirectorySeparatorChar
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
 
-        $scriptPath = Join-Path (Resolve-FilePath $TestDrive) 'script.ps1'
+        $scriptPath = Join-Path $TestDrive 'script.ps1'
 
         $moduleName = 'Banana'
         $moduleVersion = '0.12.1'
-        $moduleDirPath = Join-Path (Resolve-FilePath $TestDrive) 'modules'
+        $moduleDirPath = Join-Path $TestDrive 'modules'
         New-Item -Path $moduleDirPath -ItemType Directory
         $modulePath = "$moduleDirPath${sep}$moduleName"
         New-Item -Path $modulePath -ItemType Directory
@@ -62,7 +62,7 @@ Describe "#requires -Modules" -Tags "CI" {
     Context "Requiring non-existent modules" {
         BeforeAll {
             $badName = 'ModuleThatDoesNotExist'
-            $badPath = Join-Path (Resolve-FilePath $TestDrive) 'ModuleThatDoesNotExist'
+            $badPath = Join-Path $TestDrive 'ModuleThatDoesNotExist'
             $version = '1.0'
             $testCases = @(
                 @{ ModuleRequirement = "'$badName'"; Scenario = 'name' }
