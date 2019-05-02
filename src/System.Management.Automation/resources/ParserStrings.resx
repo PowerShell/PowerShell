@@ -1203,7 +1203,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell.</value>
+    <value>Workflow is not supported in PowerShell 6+.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
     <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
