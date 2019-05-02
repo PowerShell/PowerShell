@@ -657,7 +657,7 @@
     <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell (not Windows PowerShell) to modify it.</value>
+    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell 6+ to modify it.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
     <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
