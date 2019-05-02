@@ -27,6 +27,6 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should access types in System.Console" {
-        [System.Console]::CursorVisible | Should -BeFalse
+        [System.Console]::KeyAvailable | Should -BeFalse
     }
 }
