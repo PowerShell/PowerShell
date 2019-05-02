@@ -2773,7 +2773,7 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 
     Get-Details $pluginDir $h
 
-    # Workflow is not supported in PowerShell. Attempting to load the
+    # Workflow is not supported in PowerShell 6+. Attempting to load the
     # assembly results in a FileNotFoundException.
     if (![System.Management.Automation.Platform]::IsCoreCLR -AND
         $h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
