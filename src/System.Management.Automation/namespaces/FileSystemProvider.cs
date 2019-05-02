@@ -8036,20 +8036,20 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsNameSurrogateReparsePoint(string filePath)
         {
-            if (Platform.IsWindows)
+#if !UNIX
+            var data = new WIN32_FIND_DATA();
+            using (SafeFileHandle handle = FindFirstFileEx(filePath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                var data = new WIN32_FIND_DATA();
-                using (SafeFileHandle handle = FindFirstFileEx(filePath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+                // Name surrogates are reparse points that point to other named entities local to the filesystem (like symlinks)
+                // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
+                // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
+                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0)
                 {
-                    // Name surrogates are reparse points that point to other named entities local to the filesystem (like symlinks)
-                    // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
-                    if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
-
+#endif
+            // true means the reparse point is a symlink
             return true;
         }
 
