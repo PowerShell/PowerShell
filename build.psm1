@@ -919,7 +919,7 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Tests',
+        [string]$Title = 'PowerShell 7 Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
