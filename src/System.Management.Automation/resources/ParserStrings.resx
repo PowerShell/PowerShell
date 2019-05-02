@@ -1272,7 +1272,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Variant.GetAccessor cannot handle {0}.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell.</value>
+    <value>Configuration keyword is not supported in PowerShell 6+.</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
     <value>Not all code path returns value within method.</value>
