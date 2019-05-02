@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
 
             // We look up in reference/framework only when it's for resolving reference assemblies.
             // In case of 'Add-Type -AssemblyName' scenario, we don't attempt to resolve against framework assemblies because
-            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell.
+            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell 6+.
             //   2. A user should use assembly name instead of path if they want to explicitly load a framework assembly.
             if (isForReferenceAssembly)
             {
