@@ -2856,7 +2856,7 @@ $args[0] | ForEach-Object {{
             if (!($customPluginObject.FileName -match 'system32\\{1}') -AND # WindowsPowerShell
                 !($customPluginObject.FileName -match 'syswow64\\{1}'))     # WOW64 WindowsPowerShell
             {{
-                # Add the PowerShell endpoint when running as PowerShell
+                # Add the PowerShell endpoint when running PowerShell 6+
                 $shellsFound++
                 $customPluginObject
             }}
