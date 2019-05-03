@@ -2539,7 +2539,7 @@ function Unregister-PSSessionConfiguration
                 if (($pluginFileName.Value -match 'system32\\{0}') -OR
                     ($pluginFileName.Value -match 'syswow64\\{0}'))
                 {{
-                    # Filter out WindowsPowerShell endpoints when running as PowerShell
+                    # Filter out WindowsPowerShell endpoints when running as PowerShell 6+
                     return
                 }}
            }}
