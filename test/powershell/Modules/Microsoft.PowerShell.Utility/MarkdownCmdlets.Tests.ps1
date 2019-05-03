@@ -434,36 +434,6 @@ bool function()`n{`n}
             $options.EmphasisBold | Should -BeExactly "[1m"
             $options.EmphasisItalics | Should -BeExactly "[36m"
         }
-
-        It "Verify PSMarkdownOptionInfo is defined in module scope" {
-
-            $PSMarkdownOptionInfo | Should -BeNullOrEmpty
-
-            $mod = Get-Module Microsoft.PowerShell.Utility
-            $options =  & $mod { $PSMarkdownOptionInfo }
-
-            $options.Header1 | Should -BeExactly "[7m"
-            $options.Header2 | Should -BeExactly "[4;93m"
-            $options.Header3 | Should -BeExactly "[4;94m"
-            $options.Header4 | Should -BeExactly "[4;95m"
-            $options.Header5 | Should -BeExactly "[4;96m"
-            $options.Header6 | Should -BeExactly "[4;97m"
-
-            if($IsMacOS)
-            {
-                $options.Code | Should -BeExactly "[107;95m"
-            }
-            else
-            {
-                $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
-            }
-
-
-            $options.Link | Should -BeExactly "[4;38;5;117m"
-            $options.Image | Should -BeExactly "[33m"
-            $options.EmphasisBold | Should -BeExactly "[1m"
-            $options.EmphasisItalics | Should -BeExactly "[36m"
-        }
     }
 
     Context "Show-Markdown tests" {
@@ -543,6 +513,98 @@ bool function()`n{`n}
             else
             {
                 { Show-Markdown -UseBrowser -InputObject $markdownInfo -ErrorAction Stop } | Should -Throw -ErrorId 'HtmlIsNullOrEmpty,Microsoft.PowerShell.Commands.ShowMarkdownCommand'
+            }
+        }
+    }
+
+    Context "Hosted PowerShell scenario" {
+
+        It 'ConvertFrom-Markdown gets expected output when run in hosted powershell' {
+
+            try {
+                $pool = [runspacefactory]::CreateRunspacePool(1, 2, $Host)
+                $pool.Open()
+
+                $ps = [powershell]::Create()
+                $ps.RunspacePool = $pool
+                $ps.AddScript({
+                        $output = '# test' | ConvertFrom-Markdown
+                        $output.Html.trim()
+                    })
+
+                $output = $ps.Invoke()
+
+                $output | Should -BeExactly '<h1 id="test">test</h1>'
+            } finally {
+                $ps.Dispose()
+            }
+        }
+
+        It 'Get-MarkdownOption gets default values when run in hosted powershell' {
+
+            try {
+                $ps = [powershell]::Create()
+                $ps.AddScript( {
+                    Get-MarkdownOption -ErrorAction Stop
+                })
+
+                $options = $ps.Invoke()
+
+                $options | Should -Not -BeNullOrEmpty
+                $options.Header1 | Should -BeExactly "[7m"
+                $options.Header2 | Should -BeExactly "[4;93m"
+                $options.Header3 | Should -BeExactly "[4;94m"
+                $options.Header4 | Should -BeExactly "[4;95m"
+                $options.Header5 | Should -BeExactly "[4;96m"
+                $options.Header6 | Should -BeExactly "[4;97m"
+
+                if ($IsMacOS) {
+                    $options.Code | Should -BeExactly "[107;95m"
+                } else {
+                    $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+                }
+
+                $options.Link | Should -BeExactly "[4;38;5;117m"
+                $options.Image | Should -BeExactly "[33m"
+                $options.EmphasisBold | Should -BeExactly "[1m"
+                $options.EmphasisItalics | Should -BeExactly "[36m"
+            }
+            finally {
+                $ps.Dispose()
+            }
+        }
+
+        It 'Set-MarkdownOption sets values when run in hosted powershell' {
+
+            try {
+                $ps = [powershell]::Create()
+                $ps.AddScript( {
+                    Set-MarkdownOption -Header1Color '[93m' -ErrorAction Stop -PassThru
+                })
+
+                $options = $ps.Invoke()
+
+                $options | Should -Not -BeNullOrEmpty
+                $options.Header1 | Should -BeExactly "[93m"
+                $options.Header2 | Should -BeExactly "[4;93m"
+                $options.Header3 | Should -BeExactly "[4;94m"
+                $options.Header4 | Should -BeExactly "[4;95m"
+                $options.Header5 | Should -BeExactly "[4;96m"
+                $options.Header6 | Should -BeExactly "[4;97m"
+
+                if ($IsMacOS) {
+                    $options.Code | Should -BeExactly "[107;95m"
+                } else {
+                    $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+                }
+
+                $options.Link | Should -BeExactly "[4;38;5;117m"
+                $options.Image | Should -BeExactly "[33m"
+                $options.EmphasisBold | Should -BeExactly "[1m"
+                $options.EmphasisItalics | Should -BeExactly "[36m"
+            }
+            finally {
+                $ps.Dispose()
             }
         }
     }
