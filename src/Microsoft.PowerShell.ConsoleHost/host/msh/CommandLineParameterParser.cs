@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "loadprofile", "l"))
                 {
-                    // do nothing as we load profile by default, but this is needed to be compatible with POSIX shell expectations
+                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
