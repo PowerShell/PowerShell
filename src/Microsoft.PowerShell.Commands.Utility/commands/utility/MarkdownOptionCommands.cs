@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no option cache so cache and return the default PSMarkdownOptionInfo
                 var newOptionInfo = new PSMarkdownOptionInfo();
-                return markdownOptionInfoCache.GetOrAdd(Runspace.DefaultRunspace.InstanceId, (key) => newOptionInfo);
+                return markdownOptionInfoCache.GetOrAdd(Runspace.DefaultRunspace.InstanceId, newOptionInfo);
             }
         }
 
