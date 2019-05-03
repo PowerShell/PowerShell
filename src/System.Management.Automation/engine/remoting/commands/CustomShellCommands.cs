@@ -1537,7 +1537,7 @@ else
         /// <returns></returns>
         internal static string GetWinrmPluginDllPath()
         {
-            // PowerShell uses its versioned directory instead of system32
+            // PowerShell 6+ uses its versioned directory instead of system32
             string pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
