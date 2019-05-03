@@ -27,6 +27,6 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should access types in System.Console" {
-        [System.Console]::KeyAvailable | Should -BeFalse
+        "System.Console" -as [type] | Should -BeOfType "System.Console"
     }
 }
