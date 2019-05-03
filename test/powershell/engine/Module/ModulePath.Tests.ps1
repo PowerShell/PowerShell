@@ -25,7 +25,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         # Skip these tests in cases when there is no 'pwsh' executable (e.g. when framework dependent PS package is used)
         $skipNoPwsh = -not (Test-Path $powershell)
-        
+
         if ($IsWindows)
         {
             $expectedWindowsPowerShellPSHomePath = Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"
@@ -135,7 +135,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It 'Ensures $PSHOME\Modules is inserted correctly when launched from a different version of PowerShell' -Skip:(!($IsCoreCLR -and $IsWindows) -or $skipNoPwsh) {
         # When launched from a different version of PowerShell, PSModulePath contains the other version's PSHOME\Modules path
-        # and the Windows PowerShell modoule path. THe other version's module path should be removed and this version's
+        # and the Windows PowerShell module path. The other version's module path should be removed and this version's
         # PSHOME\Modules path should be inserted before Windows PowerShell module path.
         $winpwshModulePath = [System.IO.Path]::Combine([System.Environment]::SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
         $pwshModulePath = Join-Path -Path $PSHOME -ChildPath 'Modules'

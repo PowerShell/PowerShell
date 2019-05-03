@@ -342,7 +342,7 @@ namespace System.Management.Automation.Remoting
 
             // check if the incoming message is a PromptForCredential message
             // if so, do the following:
-            //       (a) prepend "Windows PowerShell Credential Request" in the title
+            //       (a) prepend "PowerShell Credential Request" in the title
             //       (b) prepend "Message from Server XXXXX" to the text message
             if (MethodId == RemoteHostMethodId.PromptForCredential1 ||
                 MethodId == RemoteHostMethodId.PromptForCredential2)
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Provides the modified caption for the given caption
         /// Used in ensuring that remote prompt messages are
-        /// tagged with "Windows PowerShell Credential Request"
+        /// tagged with "PowerShell Credential Request"
         /// </summary>
         /// <param name="caption">Caption to modify.</param>
         /// <returns>New modified caption.</returns>
