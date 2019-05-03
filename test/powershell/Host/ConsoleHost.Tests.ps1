@@ -245,6 +245,33 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
+    Context "-LoadProfile Commandline switch" {
+        BeforeAll {
+            if (Test-Path $profile) {
+                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
+                Rename-Item -Path $profile -NewName "$profile.backup"
+                Set-Content -Path $profile -Value "'profile-loaded'" -Force
+            }
+        }
+
+        AfterAll {
+            if (Test-Path "$profile.backup") {
+                Remove-Item -Path $profile -ErrorAction SilentlyContinue
+                Rename-Item -Path "$profile.backup" -NewName $profile
+            }
+        }
+
+        It "Verifies pwsh will accept <switch> switch" -TestCases @(
+            @{ switch = "-l"},
+            @{ switch = "-loadprofile"}
+        ){
+            param($switch)
+
+            & pwsh $switch -c exit | Should -BeExactly "profile-loaded"
+        }
+    }
+
+
     Context "-SettingsFile Commandline switch" {
 
         BeforeAll {
