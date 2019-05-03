@@ -27,6 +27,7 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should access types in System.Console" {
-        "System.Console" -as [type] | Should -BeOfType "System.Console"
+        $type = "System.Console" -as [type]
+        $type.GetTypeInfo().FullName | Should -BeOfType "System.Console"
     }
 }
