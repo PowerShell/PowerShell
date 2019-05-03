@@ -2852,7 +2852,7 @@ $args[0] | ForEach-Object {{
         {{
             # Filter the endpoints based on the typeof PowerShell that is
             # executing the cmdlet. {1} in another location indicates that it
-            # is a PowerShell endpoint
+            # is a PowerShell 6+ endpoint
             if (!($customPluginObject.FileName -match 'system32\\{1}') -AND # WindowsPowerShell
                 !($customPluginObject.FileName -match 'syswow64\\{1}'))     # WOW64 WindowsPowerShell
             {{
