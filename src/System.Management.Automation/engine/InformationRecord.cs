@@ -103,7 +103,7 @@ namespace System.Management.Automation
 #if UNIX
                     this._user = Environment.UserName;
 #else
-                    this._user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                    this._user = Environment.UserDomainName + "\\" + Environment.UserName;
 #endif
                 }
 

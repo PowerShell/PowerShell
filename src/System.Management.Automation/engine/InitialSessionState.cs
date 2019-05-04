@@ -2770,7 +2770,7 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
                 : Environment.UserName;
 #else
-                : System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                : Environment.UserDomainName + "_" + Environment.UserName;
 #endif
 
             // Ensure that user name contains no invalid path characters.
@@ -2781,7 +2781,7 @@ namespace System.Management.Automation.Runspaces
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }
 
-            return userName.Replace("\\", "_");
+            return userName;
         }
 
         private Exception ProcessStartupScripts(Runspace initializedRunspace)
