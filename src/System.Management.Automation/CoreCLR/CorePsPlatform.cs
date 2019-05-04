@@ -587,26 +587,6 @@ namespace System.Management.Automation
                 }
             }
 
-            public static string TemporaryDirectory
-            {
-                get
-                {
-                    // POSIX temporary directory environment variables
-                    string[] environmentVariables = { "TMPDIR", "TMP", "TEMP", "TEMPDIR" };
-                    string dir = string.Empty;
-                    foreach (string s in environmentVariables)
-                    {
-                        dir = System.Environment.GetEnvironmentVariable(s);
-                        if (!string.IsNullOrEmpty(dir))
-                        {
-                            return dir;
-                        }
-                    }
-
-                    return "/tmp";
-                }
-            }
-
             public static bool IsHardLink(ref IntPtr handle)
             {
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
