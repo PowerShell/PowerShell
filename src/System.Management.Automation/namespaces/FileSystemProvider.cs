@@ -85,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _excludeMatcher = null;
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
+            MatchType = MatchType.Win32,
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
