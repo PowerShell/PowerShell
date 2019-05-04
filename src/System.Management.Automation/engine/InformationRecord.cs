@@ -101,7 +101,7 @@ namespace System.Management.Automation
                 {
                     // domain\user on Windows, just user on Unix
 #if UNIX
-                    this._user = Platform.Unix.UserName;
+                    this._user = Environment.UserName;
 #else
                     this._user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 #endif

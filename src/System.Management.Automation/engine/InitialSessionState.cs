@@ -2768,7 +2768,7 @@ namespace System.Management.Automation.Runspaces
                 ? this.UserDriveUserName
                 // domain\user on Windows, just user on Unix
 #if UNIX
-                : Platform.Unix.UserName;
+                : Environment.UserName;
 #else
                 : System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 #endif
