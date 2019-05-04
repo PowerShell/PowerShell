@@ -225,7 +225,7 @@ All parameters are case-insensitive.</value>
     Present an interactive prompt to the user. Inverse for NonInteractive parameter.
 
 -LoadProfile | -l
-    Load the PowerShell profiles.  This is the default behavior even if this is not specified.
+    Load the PowerShell profiles. This is the default behavior even if this is not specified.
 
 -NoExit | -noe
     Does not exit after running startup commands.
