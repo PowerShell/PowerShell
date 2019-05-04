@@ -522,12 +522,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
-        // Hostname in this context seems to be the FQDN
-        internal static string NonWindowsGetHostName()
-        {
-            return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
-        }
-
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
         {
             return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
@@ -689,10 +683,6 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetFullyQualifiedName();
 
                 // This is a struct tm from <time.h>
                 [StructLayout(LayoutKind.Sequential)]
