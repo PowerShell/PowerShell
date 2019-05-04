@@ -250,8 +250,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             if (Test-Path $profile) {
                 Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
                 Rename-Item -Path $profile -NewName "$profile.backup"
-                Set-Content -Path $profile -Value "'profile-loaded'" -Force
             }
+            Set-Content -Path $profile -Value "'profile-loaded'" -Force
         }
 
         AfterAll {
@@ -267,6 +267,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         ){
             param($switch)
 
+            Get-Content $profile -Raw | Should -Not -BeNullOrEmpty
             & pwsh $switch -c exit | Should -BeExactly "profile-loaded"
         }
     }
