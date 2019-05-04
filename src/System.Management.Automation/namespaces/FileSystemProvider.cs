@@ -7987,9 +7987,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
         {
-            return Platform.IsWindows
-                ? fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint)
-                : Platform.NonWindowsIsSymLink(fileInfo);
+            return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)

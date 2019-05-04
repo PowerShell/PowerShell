@@ -475,11 +475,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
-        {
-            return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
-        }
-
         internal static string NonWindowsInternalGetTarget(string path)
         {
             return Unix.NativeMethods.FollowSymLink(path);
@@ -492,7 +487,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (NonWindowsIsSymLink(fileInfo))
+            if (fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint))
             {
                 return "SymbolicLink";
             }
@@ -678,10 +673,6 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
