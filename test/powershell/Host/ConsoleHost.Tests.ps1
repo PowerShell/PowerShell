@@ -251,12 +251,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
                 Rename-Item -Path $profile -NewName "$profile.backup"
             }
+
             Set-Content -Path $profile -Value "'profile-loaded'" -Force
         }
 
         AfterAll {
+            Remove-Item -Path $profile -ErrorAction SilentlyContinue
+
             if (Test-Path "$profile.backup") {
-                Remove-Item -Path $profile -ErrorAction SilentlyContinue
                 Rename-Item -Path "$profile.backup" -NewName $profile
             }
         }
