@@ -210,9 +210,13 @@ namespace System.Management.Automation
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!string.IsNullOrEmpty(ipProperties.DomainName))
+            string domainName = ipProperties.DomainName;
+
+            // CoreFX on Unix calls GLibc getdomainname()
+            // which returns "(none)" if a domain name is not set by setdomainname()
+            if (!string.IsNullOrEmpty(domainName) && !domainName.Equals("(none)", StringComparison.Ordinal))
             {
-                hostname = hostname + "." + ipProperties.DomainName;
+                hostname = hostname + "." + domainName;
             }
 
             return hostname;
