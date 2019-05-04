@@ -573,20 +573,6 @@ namespace System.Management.Automation
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
             }
 
-            private static string s_userName;
-            public static string UserName
-            {
-                get
-                {
-                    if (string.IsNullOrEmpty(s_userName))
-                    {
-                        s_userName = NativeMethods.GetUserName();
-                    }
-
-                    return s_userName ?? string.Empty;
-                }
-            }
-
             public static bool IsHardLink(ref IntPtr handle)
             {
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
@@ -648,10 +634,6 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern int GetErrorCategory(int errno);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserName();
 
                 [DllImport(psLib)]
                 internal static extern int GetPPid(int pid);
