@@ -1442,6 +1442,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
+        It "Verifies Invoke-WebRequest -Authentication Basic with null username" {
+            $credential = [pscredential]::new([PSCustomObject]@{UserName = $null;Password=$token.psobject.BaseObject})
+            $params = @{
+                Uri                  = $httpsUri
+                Authentication       = "Basic"
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should -BeExactly "Basic OnRlc3RwYXNzd29yZA=="
+        }
+
         It "Verifies Invoke-WebRequest -Authentication <Authentication>" -TestCases $testCases {
             param($Authentication)
             $params = @{
@@ -2755,6 +2769,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-RestMethod -Authentication Basic with null username" {
+            $credential = [pscredential]::new([PSCustomObject]@{UserName = $null;Password=$token.psobject.BaseObject})
+            $params = @{
+                Uri                  = $httpsUri
+                Authentication       = "Basic"
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-RestMethod @params
+
+            $Response.Headers.Authorization | Should -BeExactly "Basic OnRlc3RwYXNzd29yZA=="
         }
 
         It "Verifies Invoke-RestMethod -Authentication <Authentication>" -TestCases $testCases {
