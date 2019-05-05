@@ -271,7 +271,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
         $expectedTarget = Join-Path -Path $tmpDirectory -ChildPath $testlinkSrcSpName
 
-        $fileInfo = Get-ChildItem -Path $FullyQualifiedLinkSp
+        $fileInfo = Get-Item -Path $FullyQualifiedLinkSp
         $fileInfo.Target | Should -BeExactly $expectedTarget
         $fileInfo.LinkType | Should -BeExactly "SymbolicLink"
         $fileInfo.Attributes -band $DirLinkMask | Should -BeExactly $SymLinkMask
