@@ -210,6 +210,7 @@ try {
                 $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $ps.Streams.Error | Should -HaveCount 0 -Because ($ps.Streams.Error | Out-String)
+                $ps.HadErrors | Should -BeFalse
                 $sr.IsCompletedSuccessfully | Should -Be $true
                 $ir.IsFaulted | Should -Be $true -Because ($ir | Format-List -Force * | Out-String)
                 $ir.Exception -is [System.AggregateException] | Should -Be $true

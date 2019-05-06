@@ -28,6 +28,6 @@ Describe "DotNetAPI" -Tags "CI" {
 
     It "Should access types in System.Console" {
         $type = "System.Console" -as [type]
-        $type.GetTypeInfo().FullName | Should -BeOfType "System.Console"
+        $type.GetTypeInfo().FullName | Should -BeExactly "System.Console"
     }
 }
