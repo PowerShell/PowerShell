@@ -20,6 +20,11 @@ Describe 'Line Continuance' -Tags 'CI' {
             ExecuteCommand $script | Should -Be 'Hello world'
         }
 
+        It 'Lines ending with a single backtick followed only by a CR (old-style Mac line ending)' {
+            $script = "'Hello' + ```r' world'"
+            ExecuteCommand $script | Should -Be 'Hello world'
+        }
+
         It 'Lines ending with a single backtick followed by whitespace' {
             $script = @'
 # The first line of this command ends with trailing whitespace
@@ -75,6 +80,11 @@ Describe 'Line Continuance' -Tags 'CI' {
 'Hello' |
     ForEach-Object {"$_ world"}
 '@
+            ExecuteCommand $script | Should -Be 'Hello world'
+        }
+
+        It 'Lines ending with a pipe followed only by a CR (old-style Mac line ending)' {
+            $script = "'Hello' |`r    ForEach-Object {`"`$_ world`"}"
             ExecuteCommand $script | Should -Be 'Hello world'
         }
 
@@ -134,6 +144,11 @@ Describe 'Line Continuance' -Tags 'CI' {
 'Hello'
     | ForEach-Object {"$_ world"}
 '@
+            ExecuteCommand $script | Should -Be 'Hello world'
+        }
+
+        It 'Line continuance using a pipe at the start of a subsequent line after a CR (old-style Mac line ending)' {
+            $script = "'Hello'`r    | ForEach-Object {`"`$_ world`"}"
             ExecuteCommand $script | Should -Be 'Hello world'
         }
 

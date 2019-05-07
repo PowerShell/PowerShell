@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -877,8 +876,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
-            // so we create them when asked to create them.
+            // We normally don't create any tokens in a Skip method, but the
+            // V2 tokenizer api returns newline, semi-colon, and line
+            // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)
@@ -968,19 +968,21 @@ namespace System.Management.Automation.Language
 
         private void ScanNewline(char c)
         {
+            _tokenStart = _currentIndex - 1;
+            NormalizeCRLF(c);
+            // Memory optimization: only create the token if it will be stored
             if (TokenList != null)
             {
-                _tokenStart = _currentIndex - 1;
-                SkipNewline(c);
                 NewToken(TokenKind.NewLine);
             }
         }
 
         private void ScanSemicolon()
         {
+            _tokenStart = _currentIndex - 1;
+            // Memory optimization: only create the token if it will be stored
             if (TokenList != null)
             {
-                _tokenStart = _currentIndex - 1;
                 NewToken(TokenKind.Semi);
             }
         }
@@ -988,8 +990,12 @@ namespace System.Management.Automation.Language
         private void ScanLineContinuation(char c)
         {
             _tokenStart = _currentIndex - 2;
-            SkipNewline(c);
-            NewToken(TokenKind.LineContinuation);
+            NormalizeCRLF(c);
+            // Memory optimization: only create the token if it will be stored
+            if (TokenList != null)
+            {
+                NewToken(TokenKind.LineContinuation);
+            }
         }
 
         internal int GetRestorePoint()
@@ -1091,8 +1097,9 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private void SkipNewline(char c)
+        private void NormalizeCRLF(char c)
         {
+            // CRs in Windows line endings are ignored
             if (c == '\r' && PeekChar() == '\n')
             {
                 SkipChar();
@@ -1334,17 +1341,21 @@ namespace System.Management.Automation.Language
 
         internal bool IsPipeContinuance(IScriptExtent extent)
         {
-            var scriptExtent = (InternalScriptExtent)extent;
-            return scriptExtent.EndOffset < _script.Length && PipeContinuanceAfterExtent(scriptExtent);
+            return extent.EndOffset < _script.Length && PipeContinuanceAfterExtent(extent);
         }
 
-        private bool PipeContinuanceAfterExtent(InternalScriptExtent extent)
+        private bool PipeContinuanceAfterExtent(IScriptExtent extent)
         {
             // If the first non-newline, non-whitespace, non-comment, non-backtick, non-semi-colon character
             // following the newline is a pipe, we have a pipe continuance.
             bool lastNonWhitespaceIsNewline = true;
+            int i = extent.EndOffset;
 
-            for (int i = extent.EndOffset; i < _script.Length - 1;)
+            // Since some token pattern matching looks for multiple characters (e.g. newline, block comment,
+            // or line continuance), we stop searching at _script.Length - 1 and perform one additional check
+            // after the while loop. This avoids having to compare i + 1 against the script length in multiple
+            // locations inside the loop.
+            while (i < _script.Length - 1)
             {
                 char c = _script[i];
 
@@ -1366,7 +1377,7 @@ namespace System.Management.Automation.Language
                     i++;
                     continue;
                 }
-                else if (c == '\r' && _script[i + 1] == '\n')
+                else if (c == '\r')
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
@@ -1375,7 +1386,7 @@ namespace System.Management.Automation.Language
                     }
 
                     lastNonWhitespaceIsNewline = true;
-                    i += 2;
+                    i += _script[i + 1] == '\n' ? 2 : 1;
                     continue;
                 }
 
@@ -1403,9 +1414,9 @@ namespace System.Management.Automation.Language
                         i += 2;
                         continue;
                     }
-                    else if (c2 == '\r' && i + 2 < _script.Length && _script[i + 2] == '\n')
+                    else if (c2 == '\r')
                     {
-                        i += 3;
+                        i += i + 2 < _script.Length && _script[i + 2] == '\n' ? 3 : 2;
                         continue;
                     }
 
@@ -1784,9 +1795,9 @@ namespace System.Management.Automation.Language
                     break;
                 }
 
-                if (c == '\r' || c == '\n')
+                if (c == '\r')
                 {
-                    SkipNewline(c);
+                    NormalizeCRLF(c);
                 }
                 else if (c == '\0' && AtEof())
                 {
@@ -2560,11 +2571,11 @@ namespace System.Management.Automation.Language
                 c = GetChar();
             } while (c.IsWhitespace());
 
-            if (c == '\r' || c == '\n')
+            if (c == '\r')
             {
-                SkipNewline(c);
+                NormalizeCRLF(c);
             }
-            else
+            else if (c != '\n')
             {
                 if (c == '\0' && AtEof())
                 {
@@ -4618,16 +4629,21 @@ namespace System.Management.Automation.Language
                     ScanLineComment();
                     goto again;
 
-                case '\r':
                 case '\n':
-                    SkipNewline(c);
                     return NewToken(TokenKind.NewLine);
+
+                case '\r':
+                    NormalizeCRLF(c);
+                    goto case '\n';
 
                 case '`':
                     c1 = GetChar();
+                    if (c1 == '\r')
+                    {
+                        NormalizeCRLF(c1);
+                    }
                     if (c1 == '\n' || c1 == '\r')
                     {
-                        SkipNewline(c1);
                         NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
