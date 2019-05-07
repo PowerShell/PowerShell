@@ -91,8 +91,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a value indicating whether the matched portion of the string is highlighted.
         /// </summary>
-        /// <value>Whether the matched portion of the string is highlighted with asterisks.</value>
-        public bool Emphasize { get; set; }
+        /// <value>Whether the matched portion of the string is highlighted with the negative VT sequence.</value>
+        private bool Emphasize { get; set; }
 
         /// <summary>
         /// Stores the starting index of each match within the line.
@@ -1174,8 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating if the matching portion of the string should be highlighted by 
-        /// surrounding it with asterisks.
+        /// Gets or sets a value indicating if the matching portion of the string should be highlighted.
         /// </summary>
         [Parameter]
         public SwitchParameter Emphasize { get; set; }
