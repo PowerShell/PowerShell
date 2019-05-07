@@ -3535,9 +3535,13 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
                         }
 
-                        // If the original target was a relative path, we want to leave it as relative if it did not require
-                        // globbing to resolve.
-                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
+                        // If the original target was a relative path, we want to leave it as relative
+                        if (targetPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var SessionStateInt = ExecutionContext.EngineSessionState;
+                            content = SessionStateInt.NormalizeRelativePath(globbedTarget[0], SessionStateInt.CurrentLocation.ProviderPath);
+                        }
+                        else
                         {
                             content = globbedTarget[0];
                         }
