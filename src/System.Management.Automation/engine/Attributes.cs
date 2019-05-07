@@ -1014,7 +1014,12 @@ namespace System.Management.Automation
         /// </summary>
         private Type _promotedType;
 
-        ValidateRangeKind? _rangeKind;
+        /// <summary>
+        /// Gets the name of the predefined range.
+        /// </summary>
+        internal ValidateRangeKind? RangeKind { get => _rangeKind; }
+
+        private ValidateRangeKind? _rangeKind;
 
         /// <summary>
         /// Validates that each parameter argument falls in the range
