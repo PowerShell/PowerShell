@@ -245,6 +245,42 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
+    Context "-LoadProfile Commandline switch" {
+        BeforeAll {
+            if (Test-Path $profile) {
+                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
+                Rename-Item -Path $profile -NewName "$profile.backup"
+            }
+
+            Set-Content -Path $profile -Value "'profile-loaded'" -Force
+        }
+
+        AfterAll {
+            Remove-Item -Path $profile -ErrorAction SilentlyContinue
+
+            if (Test-Path "$profile.backup") {
+                Rename-Item -Path "$profile.backup" -NewName $profile
+            }
+        }
+
+        It "Verifies pwsh will accept <switch> switch" -TestCases @(
+            @{ switch = "-l"},
+            @{ switch = "-loadprofile"}
+        ){
+            param($switch)
+
+            if (Test-Path $profile) {
+                & pwsh $switch -command exit | Should -BeExactly "profile-loaded"
+            }
+            else {
+                # In CI, may not be able to write to $profile location, so just verify that the switch is accepted
+                # and no error message is in the output
+                & pwsh $switch -command exit *>&1 | Should -BeNullOrEmpty
+            }
+        }
+    }
+
+
     Context "-SettingsFile Commandline switch" {
 
         BeforeAll {
