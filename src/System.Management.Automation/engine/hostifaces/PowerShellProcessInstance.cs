@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Remoting;
 using System.Text;
-using System.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {

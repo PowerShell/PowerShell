@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.IO;
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Text;
+
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using HRESULT = System.UInt32;
+using Dbg = System.Management.Automation.Diagnostics;
 using DWORD = System.UInt32;
+using HRESULT = System.UInt32;
 using NakedWin32Handle = System.IntPtr;
 
 namespace Microsoft.PowerShell

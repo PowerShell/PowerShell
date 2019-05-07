@@ -16,6 +16,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -1605,12 +1606,7 @@ namespace System.Management.Automation
 
             ActionPreference preference = GetErrorActionPreference(context);
 
-            // if the exception is new (i.e. it was not rethrown from a naked throw
-            // statement inside of a catch block, and it is not currently being
-            // handled by the system), and if ErrorActionPreference is set to break,
-            // then break immediately into the debugger.
-            if (!rte.WasRethrown &&
-                context.CurrentExceptionBeingHandled == null &&
+            if (IsExceptionNew(rte, context) &&
                 preference == ActionPreference.Break)
             {
                 context.Debugger?.Break(rte);
@@ -1619,7 +1615,11 @@ namespace System.Management.Automation
                 context.QuestionMarkVariableValue = false;
             }
 
-            bool anyTrapHandlers = funcContext._traps.Any() && funcContext._traps.Last().Item2 != null;
+            // Item2 in the trap tuples is the action (script) for the trap.
+            // A null action script is only used to indicate when exceptions
+            // should be thrown up to a higher level, and doesn't count as an
+            // actual trap handler in the function context.
+            bool anyTrapHandlers = funcContext._traps.Count > 0 && funcContext._traps[funcContext._traps.Count - 1].Item2 != null;
 
             if (anyTrapHandlers)
             {
@@ -1683,6 +1683,12 @@ namespace System.Management.Automation
             {
                 throw rte;
             }
+        }
+
+        private static bool IsExceptionNew(RuntimeException rte, ExecutionContext context)
+        {
+            return !rte.WasRethrown &&
+                   context.CurrentExceptionBeingHandled == null;
         }
 
         private static ActionPreference ProcessTraps(FunctionContext funcContext,

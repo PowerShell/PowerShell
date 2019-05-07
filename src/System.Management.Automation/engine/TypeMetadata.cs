@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using Microsoft.PowerShell;
-using Dbg = System.Diagnostics.Debug;
 using System.Management.Automation.Language;
+using System.Reflection;
+
+using Microsoft.PowerShell;
+
+using Dbg = System.Diagnostics.Debug;
 
 namespace System.Management.Automation
 {

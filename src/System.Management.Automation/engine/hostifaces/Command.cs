@@ -3,9 +3,11 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
+
 using Microsoft.Management.Infrastructure;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {

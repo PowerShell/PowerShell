@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Text;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace System.Management.Automation
 {

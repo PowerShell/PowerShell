@@ -2,29 +2,31 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Net;
-using System.Xml;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Web.Services;
-using System.Web.Services.Description;
-using System.Web.Services.Discovery;
-using System.Management;
-using System.Management.Automation;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Microsoft.CSharp;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Dbg = System.Management.Automation;
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Management;
+using System.Management.Automation;
+using System.Net;
+using System.Reflection;
 using System.Resources;
-using Microsoft.Win32;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Web.Services;
+using System.Web.Services.Description;
+using System.Web.Services.Discovery;
+using System.Xml;
+
+using Microsoft.CSharp;
+using Microsoft.Win32;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {

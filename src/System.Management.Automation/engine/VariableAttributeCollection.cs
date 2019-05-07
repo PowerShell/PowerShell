@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System.Collections.ObjectModel;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {

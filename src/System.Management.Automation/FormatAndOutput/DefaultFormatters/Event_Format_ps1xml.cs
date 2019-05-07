@@ -27,7 +27,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("Default",
                 TableControl.Create()
                     .GroupByProperty("ProviderName", label: "ProviderName")
-                    .AddHeader(width: 25)
+                    .AddHeader(width: 26)
                     .AddHeader(Alignment.Right, width: 8)
                     .AddHeader(width: 16)
                     .AddHeader()
