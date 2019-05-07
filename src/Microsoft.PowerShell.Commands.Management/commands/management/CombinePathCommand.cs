@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands

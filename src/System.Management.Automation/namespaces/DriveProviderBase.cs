@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
-using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation.Provider
 {

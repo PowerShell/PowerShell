@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
-using System.IO;
 
 namespace System.Management.Automation
 {

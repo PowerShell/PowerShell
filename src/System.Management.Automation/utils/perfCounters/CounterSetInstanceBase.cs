@@ -3,10 +3,10 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.PerformanceData;
+using System.Globalization;
 using System.Management.Automation.Tracing;
 
 namespace System.Management.Automation.PerformanceData

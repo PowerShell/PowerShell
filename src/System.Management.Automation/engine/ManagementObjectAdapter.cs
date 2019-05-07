@@ -4,12 +4,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.ComponentModel;
+using System.Globalization;
 using System.Management.Automation.Internal;
+using System.Text;
+
 using Microsoft.PowerShell;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings

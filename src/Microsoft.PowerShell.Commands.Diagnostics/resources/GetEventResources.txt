@@ -1,7 +1,7 @@
 #Copyright (c) Microsoft Corporation. All rights reserved.
 
 Vendor=Microsoft
-Description=This Windows PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.
+Description=This PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.
 
 NoMatchingEventsFound=No events were found that match the specified selection criteria.
 NoMatchingLogsFound=There is not an event log on the {0} computer that matches "{1}".

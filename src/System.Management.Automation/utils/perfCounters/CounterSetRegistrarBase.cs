@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics.PerformanceData;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.PerformanceData;
 
 namespace System.Management.Automation.PerformanceData
 {

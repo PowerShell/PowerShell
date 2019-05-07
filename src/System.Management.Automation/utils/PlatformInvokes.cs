@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Win32.SafeHandles;
-using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {

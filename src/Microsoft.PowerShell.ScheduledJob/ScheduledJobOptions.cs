@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Management.Automation;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {

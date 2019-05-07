@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
+
 using Dbg = System.Management.Automation.Diagnostics;
 // Stops compiler from warning about unknown warnings
 #pragma warning disable 1634, 1691

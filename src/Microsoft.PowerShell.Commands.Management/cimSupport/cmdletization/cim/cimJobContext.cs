@@ -4,6 +4,7 @@
 using System;
 using System.Globalization;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim

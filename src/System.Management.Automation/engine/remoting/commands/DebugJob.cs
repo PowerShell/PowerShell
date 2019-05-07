@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {

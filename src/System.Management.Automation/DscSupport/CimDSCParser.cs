@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Management.Infrastructure;
-using Microsoft.Management.Infrastructure.Generic;
-using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell.Commands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,10 +12,15 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Language;
-using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
+
+using Microsoft.Management.Infrastructure;
+using Microsoft.Management.Infrastructure.Generic;
+using Microsoft.Management.Infrastructure.Serialization;
+using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {

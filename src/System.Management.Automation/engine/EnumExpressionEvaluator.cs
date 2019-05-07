@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Diagnostics;
-using Dbg = System.Management.Automation;
 using System.Globalization;
+using System.Reflection;
+using System.Text;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {

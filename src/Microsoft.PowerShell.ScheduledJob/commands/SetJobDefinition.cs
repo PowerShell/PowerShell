@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
