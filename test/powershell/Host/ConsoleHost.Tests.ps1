@@ -780,8 +780,9 @@ public enum ShowWindowCommands : int
             Start-Sleep -Milliseconds 100
             $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
         }
-        $showCmd | Should -BeExactly $WindowStyle
+
         $ps | Stop-Process -Force
+        $showCmd | Should -BeExactly $WindowStyle
     }
 
     It "Invalid -WindowStyle returns error" {
