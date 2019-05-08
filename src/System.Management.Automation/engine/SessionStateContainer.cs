@@ -3536,11 +3536,11 @@ namespace System.Management.Automation
                         }
 
                         // If the original target was a relative path, we want to leave it as relative
-                        if (targetPath.StartsWith("."))
+                        if (targetPath.StartsWith('.'))
                         {
                             var sessionState = ExecutionContext.EngineSessionState;
                             string resolvedPath = sessionState.NormalizeRelativePath(globbedTarget[0], sessionState.CurrentLocation.ProviderPath);
-                            content = resolvedPath.StartsWith(".") ? resolvedPath : Path.Combine(".", resolvedPath);
+                            content = resolvedPath.StartsWith('.') ? resolvedPath : Path.Combine(".", resolvedPath);
                         }
                         else
                         {
