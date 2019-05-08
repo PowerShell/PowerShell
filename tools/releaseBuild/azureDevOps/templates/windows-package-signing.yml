@@ -3,7 +3,7 @@ parameters:
 
 jobs:
 - job: WinPackageSigningJob
-  displayName: Windows Package signing
+  displayName: Windows Package signing and upload
   dependsOn:
     ${{ parameters.parentJobs }}
   condition: succeeded()
@@ -22,10 +22,10 @@ jobs:
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
     inputs:
-      downloadType: specific
-      itemPattern: |
-        **/*.zip
-        **/*.msi
+      buildType: current
+      downloadType: single
+      artifactName: signed
+      downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
@@ -34,19 +34,14 @@ jobs:
     continueOnError: true
 
   - powershell: |
-      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x86.zip" -Destination "$(Build.StagingDirectory)\symbols\x86"
-    displayName: 'Expand symbols zip - x86'
-
-  - powershell: |
-      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x64.zip" -Destination "$(Build.StagingDirectory)\symbols\x64"
-    displayName: 'Expand symbols zip - x64'
-
-  - powershell: |
-      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-fxdependent.zip" -Destination "$(Build.StagingDirectory)\symbols\fxdependent"
-    displayName: 'Expand symbols zip - fxdependent'
-
-  - powershell: |
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi" -path "$(System.ArtifactsDirectory)\package.xml"
+      $authenticodefiles = @(
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
+      )
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |
@@ -68,6 +63,7 @@ jobs:
     parameters:
       architecture: x86
       version: $(version)
+      msix: no
 
   - template: upload.yml
     parameters:
@@ -91,6 +87,13 @@ jobs:
       architecture: fxdependent
       version: $(version)
       msi: no
+      msix: no
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

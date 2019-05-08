@@ -44,7 +44,6 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'max is double with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
         @{ Name = 'both set to the special numbers as 1.0e+xx '; Maximum = $null; Minimum = 1.0e+100; GreaterThan = 1.0e+99; LessThan = ([double]::MaxValue); Type = 'System.Double' }
         @{ Name = 'max is Double.MaxValue, min is Double.MinValue'; Maximum = ([double]::MaxValue); Minimum = ([double]::MinValue); GreaterThan = ([double]::MinValue); LessThan = ([double]::MaxValue); Type = 'System.Double' }
-
     )
 
     $testDataForError = @(
@@ -57,18 +56,32 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'Min is greater than max and all are negative double-precision number'; Maximum = -20.0; Minimum = -10.0}
         @{ Name = 'Min and Max are same and all are negative double-precision number'; Maximum = -20.0; Minimum = -20.0}
         @{ Name = 'Max is a negative number, min is the default number '; Maximum = -10; Minimum = $null}
-
     )
 
     # minimum is always set to the actual low end of the range, details refer to closed issue #887.
-    It "get a correct random number for '<Name>'" -TestCases $testData {
+    It "Should return a correct random number for '<Name>'" -TestCases $testData {
         param($maximum, $minimum, $greaterThan, $lessThan, $type)
 
         $result = Get-Random -Maximum $maximum -Minimum $minimum
         $result | Should -BeGreaterThan $greaterThan
         $result | Should -BeLessThan $lessThan
         $result | Should -BeOfType $type
+    }
 
+    It "Should return correct random numbers for '<Name>' with Count specified" -TestCases $testData {
+        param($maximum, $minimum, $greaterThan, $lessThan, $type)
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 1
+        $result | Should -BeGreaterThan $greaterThan
+        $result | Should -BeLessThan $lessThan
+        $result | Should -BeOfType $type
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 3
+        foreach ($randomNumber in $result) {
+            $randomNumber | Should -BeGreaterThan $greaterThan
+            $randomNumber | Should -BeLessThan $lessThan
+            $randomNumber | Should -BeOfType $type
+        }
     }
 
     It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
@@ -84,10 +97,11 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Get-Random" -Tags "CI" {
-    It "Should return a random number greater than -1 " {
+    It "Should return a random number greater than -1" {
         Get-Random | Should -BeGreaterThan -1
     }
-    It "Should return a random number less than 100 " {
+
+    It "Should return a random number less than 100" {
         Get-Random -Maximum 100 | Should -BeLessThan 100
         Get-Random -Maximum 100 | Should -BeGreaterThan -1
     }
@@ -112,7 +126,7 @@ Describe "Get-Random" -Tags "CI" {
 
     It "Should return a number from 1,2,3,5,8,13 " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13
-        $randomNumber | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
     }
 
     It "Should return an array " {
@@ -124,21 +138,21 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
         $randomNumber.Count | Should -Be 3
-        $randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
         $randomNumber[3] | Should -BeNullOrEmpty
     }
 
     It "Should return all the numbers for array of 1,2,3,5,8,13 in no particular order" {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count ([int]::MaxValue)
         $randomNumber.Count | Should -Be 6
-        $randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[3] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[4] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-        $randomNumber[5] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[3] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[4] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[5] | Should -BeIn 1, 2, 3, 5, 8, 13
         $randomNumber[6] | Should -BeNullOrEmpty
     }
 
@@ -164,6 +178,7 @@ Describe "Get-Random" -Tags "CI" {
         $secondRandomNumber = Get-Random 34359738367 -SetSeed 20
         $firstRandomNumber | Should -Be @secondRandomNumber
     }
+
     It "Should throw an error because the hexadecimal number is to large " {
         { Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"
     }

@@ -4,6 +4,7 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -43,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    var emptyArray = Utils.EmptyArray<object>();
+                    var emptyArray = Array.Empty<object>();
                     _transactedScript.InvokeUsingCmdlet(
                         contextCmdlet: this,
                         useLocalScope: false,

@@ -1,19 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Management.Automation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.ShowCommandExtension;
+
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Management.Automation;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Threading;
-    using Microsoft.PowerShell.Commands.ShowCommandExtension;
-
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>

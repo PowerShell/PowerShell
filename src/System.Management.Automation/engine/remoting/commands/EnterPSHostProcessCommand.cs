@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
-        private const string PipeNameParameterSet = "PipePipeNameParameterSet";
+        private const string PipeNameParameterSet = "PipeNameParameterSet";
         private const string PSHostProcessInfoParameterSet = "PSHostProcessInfoParameterSet";
 
         private const string NamedPipeRunspaceName = "PSAttachRunspace";

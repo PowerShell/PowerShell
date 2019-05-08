@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -11,13 +12,13 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell;
@@ -103,6 +104,9 @@ namespace System.Management.Automation
 
                 if (lastAst != null)
                 {
+                    // We need to add the wildcard to the end so the regex is built correctly.
+                    commandName += "*";
+
                     // Search the asts for function definitions that we might be calling
                     var findFunctionsVisitor = new FindFunctionsVisitor();
                     while (lastAst.Parent != null)
@@ -6042,7 +6046,7 @@ namespace System.Management.Automation
             // Add the user scope path first, since it is searched in order.
             var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
 
-            if(Directory.Exists(userHelpRoot))
+            if (Directory.Exists(userHelpRoot))
             {
                 searchPaths.Add(userHelpRoot);
             }
@@ -6556,7 +6560,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    members = PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type);
+                    members = PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type);
                 }
                 else
                 {

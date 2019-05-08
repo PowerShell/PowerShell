@@ -71,6 +71,28 @@ if (-not $UseMSI) {
     }
 }
 
+# Expand an archive using Expand-archive when available
+# and the DotNet API when it is not
+function Expand-ArchiveInternal {
+    [CmdletBinding()]
+    param(
+        $Path,
+        $DestinationPath
+    )
+
+    if((Get-Command -Name Expand-Archive -ErrorAction Ignore))
+    {
+        Expand-Archive -Path $Path -DestinationPath $DestinationPath
+    }
+    else
+    {
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+        $resolvedDestinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DestinationPath)
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath,$resolvedDestinationPath)
+    }
+}
+
 Function Remove-Destination([string] $Destination) {
     if (Test-Path -Path $Destination) {
         if ($DoNotOverwrite) {
@@ -97,8 +119,8 @@ Function Remove-Destination([string] $Destination) {
 }
 
 <#
-.Synopsis
-    Parameter validation for Add-PathTToSettingsToSettings.
+.SYNOPSIS
+    Validation for Add-PathTToSettingsToSettings.
 .DESCRIPTION
     Validates that the parameter being validated:
     - is not null
@@ -107,37 +129,36 @@ Function Remove-Destination([string] $Destination) {
         = the process PATH for Linux/OSX
         - the registry PATHs for Windows
 #>
-class ValidatePathNotInSettingsAttribute : System.Management.Automation.ValidateArgumentsAttribute {
-    [void] Validate([object] $Arguments, [System.Management.Automation.EngineIntrinsics] $engineIntrinsics) {
-        $Path = $Arguments
-        if ([string]::IsNullOrWhiteSpace($Path)) {
-            Throw [System.ArgumentNullException]::new()
-        }
-
-        # Remove ending DirectorySeparatorChar for comparison purposes
-        $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
-
-        if (-not [System.IO.Directory]::Exists($Path)) {
-            Throw [System.IO.DirectoryNotFoundException]::new()
-        }
-
-        # [System.Environment]::GetEnvironmentVariable automatically expands all variables
-        [System.Array] $InstalledPaths = @()
-        if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)).Split([System.IO.Path]::PathSeparator))
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)).Split([System.IO.Path]::PathSeparator))
-        } else {
-            $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process).Split([System.IO.Path]::PathSeparator))
-        }
-
-        # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
-        $InstalledPaths = $InstalledPaths.ForEach( { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) } )
-
-        # Throw if $InstalledPaths is in setting
-        if ($InstalledPaths -icontains $Path) {
-            Throw [System.ArgumentException]::new("Path already exists.")
-        }
+function Test-PathNotInSettings($Path) {
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        throw 'Argument is null'
     }
+
+    # Remove ending DirectorySeparatorChar for comparison purposes
+    $Path = [System.Environment]::ExpandEnvironmentVariables($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar));
+
+    if (-not [System.IO.Directory]::Exists($Path)) {
+        throw "Path does not exist: $Path"
+    }
+
+    # [System.Environment]::GetEnvironmentVariable automatically expands all variables
+    [System.Array] $InstalledPaths = @()
+    if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)) -split ([System.IO.Path]::PathSeparator))
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)) -split ([System.IO.Path]::PathSeparator))
+    } else {
+        $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH'), [System.EnvironmentVariableTarget]::Process) -split ([System.IO.Path]::PathSeparator))
+    }
+
+    # Remove ending DirectorySeparatorChar in all items of array for comparison purposes
+    $InstalledPaths = $InstalledPaths | ForEach-Object { $_.TrimEnd([System.IO.Path]::DirectorySeparatorChar) }
+
+    # if $InstalledPaths is in setting return false
+    if ($InstalledPaths -icontains $Path) {
+        throw 'Already in PATH environment variable'
+    }
+
+    return $true
 }
 
 <#
@@ -146,7 +167,7 @@ class ValidatePathNotInSettingsAttribute : System.Management.Automation.Validate
 .DESCRIPTION
     Adds the target path to the target registry.
 .Parameter Path
-    The path to add to the registry. It is validated with ValidatePathNotInSettings which ensures that:
+    The path to add to the registry. It is validated with Test-PathNotInSettings which ensures that:
     -The path exists
     -Is a directory
     -Is not in the registry (HKCU or HKLM)
@@ -160,7 +181,7 @@ Function Add-PathTToSettings {
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidatePathNotInSettings()]
+        [ValidateScript({Test-PathNotInSettings $_})]
         [string] $Path,
 
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -183,7 +204,7 @@ Function Add-PathTToSettings {
 
     # $key is null here if it the user was unable to get ReadWriteSubTree access.
     if ($null -eq $Key) {
-        throw [System.Security.SecurityException]::new("Unable to access the target registry")
+        throw (new-object -typeName 'System.Security.SecurityException' -ArgumentList "Unable to access the target registry")
     }
 
     # Get current unexpanded value
@@ -275,7 +296,7 @@ try {
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-        if ($PSVersionTable.PSEdition -eq "Desktop") {
+        if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
             # On Windows PowerShell, progress can make the download significantly slower
             $oldProgressPreference = $ProgressPreference
             $ProgressPreference = "SilentlyContinue"
@@ -284,7 +305,7 @@ try {
         try {
             Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
         } finally {
-            if ($PSVersionTable.PSEdition -eq "Desktop") {
+            if (!$PSVersionTable.ContainsKey('PSEdition') -or $PSVersionTable.PSEdition -eq "Desktop") {
                 $ProgressPreference = $oldProgressPreference
             }
         }
@@ -302,7 +323,7 @@ try {
             } elseif ($UseMSI) {
                 Start-Process $packagePath -Wait
             } else {
-                Expand-Archive -Path $packagePath -DestinationPath $contentPath
+                Expand-ArchiveInternal -Path $packagePath -DestinationPath $contentPath
             }
         } else {
             tar zxf $packagePath -C $contentPath
@@ -349,7 +370,7 @@ try {
                 try {
                     Add-PathTToSettings -Path $Destination -Target $TargetRegistry
                 } catch {
-                    Write-Verbose -Message "Unable to save the new path in the machine wide registry."
+                    Write-Warning -Message "Unable to save the new path in the machine wide registry: $_"
                     $TargetRegistry = [System.EnvironmentVariableTarget]::User
                 }
             } else {
@@ -361,7 +382,7 @@ try {
                 try {
                     Add-PathTToSettings -Path $Destination -Target $TargetRegistry
                 } catch {
-                    Write-Verbose -Message "Unable to save the new path in the registry for the current user"
+                    Write-Warning -Message "Unable to save the new path in the registry for the current user : $_"
                 }
             }
         } else {

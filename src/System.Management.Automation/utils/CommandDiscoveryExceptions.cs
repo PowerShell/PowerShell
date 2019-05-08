@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.Serialization;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -436,7 +436,7 @@ namespace System.Management.Automation
             get { return _missingPSSnapIns; }
         }
 
-        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(new string[0]);
+        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
 
         /// <summary>
         /// Gets or sets the ID of the shell.

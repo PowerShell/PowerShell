@@ -2,17 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
@@ -78,7 +78,6 @@ namespace Microsoft.WSMan.Management
                 {
                     computername = "localhost";
                 }
-
             }
         }
 
@@ -261,7 +260,6 @@ namespace Microsoft.WSMan.Management
 
             // create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-
         }
 
         /// <summary>
@@ -269,7 +267,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-
             try
             {
                 // create the resourcelocator object
@@ -285,7 +282,6 @@ namespace Microsoft.WSMan.Management
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.LoadXml(resultXml);
                 WriteObject(xmldoc.DocumentElement);
-
             }
             finally
             {
@@ -301,9 +297,7 @@ namespace Microsoft.WSMan.Management
 
                 if (m_session != null)
                     Dispose(m_session);
-
             }
-
         }
 
         #region IDisposable Members
@@ -339,7 +333,5 @@ namespace Microsoft.WSMan.Management
             //  WSManHelper helper = new WSManHelper();
             helper.CleanUp();
         }
-
-
     }
 }

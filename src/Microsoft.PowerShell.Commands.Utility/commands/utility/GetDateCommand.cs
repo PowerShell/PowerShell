@@ -3,9 +3,9 @@
 
 using System;
 using System.Globalization;
-using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// This is more an implementation of the UNIX strftime.
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(epoch).TotalSeconds));
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(s_epoch).TotalSeconds));
                             break;
 
                         case 'T':

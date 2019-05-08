@@ -2,20 +2,20 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.Reflection;
-using System.Globalization;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Principal;
-using System.Resources;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
+using System.Management.Automation;
+using System.Net;
+using System.Reflection;
+using System.Resources;
+using System.Security.Principal;
 using System.Text;
+using System.Xml;
 
 [assembly: CLSCompliant(false)]
 
@@ -813,7 +813,6 @@ namespace Microsoft.PowerShell.Commands
 
             using (EventLogSession eventLogSession = CreateSession())
             {
-
                 string query = BuildStructuredQuery(eventLogSession);
                 if (query.Length == 0)
                 {
@@ -1076,7 +1075,6 @@ namespace Microsoft.PowerShell.Commands
                             //
                             // Fix Issue #2327
                             added = HandleNamedDataHashValue(key, hash[key]);
-
                         }
 
                         break;
@@ -1091,7 +1089,6 @@ namespace Microsoft.PowerShell.Commands
 
                     xpathString.Append(added);
                 }
-
             }
 
             return xpathString.ToString();

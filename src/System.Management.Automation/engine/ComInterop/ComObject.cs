@@ -104,12 +104,12 @@ namespace System.Management.Automation.ComInterop
 
         internal virtual IList<string> GetMemberNames(bool dataOnly)
         {
-            return Utils.EmptyArray<string>();
+            return Array.Empty<string>();
         }
 
         internal virtual IList<KeyValuePair<string, object>> GetMembers(IEnumerable<string> names)
         {
-            return Utils.EmptyArray<KeyValuePair<string, object>>();
+            return Array.Empty<KeyValuePair<string, object>>();
         }
 
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)

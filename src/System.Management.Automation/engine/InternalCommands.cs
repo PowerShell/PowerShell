@@ -2,18 +2,19 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Dynamic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -42,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                 _getValueDynamicSite = CallSite<Func<CallSite, object, object>>.Create(
                         PSGetMemberBinder.Get(
                             propertyName,
-                            classScope: (Type) null,
+                            classScope: (Type)null,
                             @static: false));
             }
 
@@ -269,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
             if (_scripts[0] == null)
                 return;
 
-            var emptyArray = Utils.EmptyArray<object>();
+            var emptyArray = Array.Empty<object>();
             _scripts[0].InvokeUsingCmdlet(
                 contextCmdlet: this,
                 useLocalScope: false,
@@ -309,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                                 dollarUnder: InputObject,
                                 input: new object[] { InputObject },
                                 scriptThis: AutomationNull.Value,
-                                args: Utils.EmptyArray<object>());
+                                args: Array.Empty<object>());
                         }
                     }
 
@@ -434,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (!BlockMethodInLanguageMode(InputObject))
                                     {
-                                        object result = targetMethod.Invoke(Utils.EmptyArray<object>());
+                                        object result = targetMethod.Invoke(Array.Empty<object>());
                                         WriteToPipelineWithUnrolling(result);
                                     }
                                 }
@@ -849,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
             if (_endScript == null)
                 return;
 
-            var emptyArray = Utils.EmptyArray<object>();
+            var emptyArray = Array.Empty<object>();
             _endScript.InvokeUsingCmdlet(
                 contextCmdlet: this,
                 useLocalScope: false,
@@ -1634,7 +1635,7 @@ namespace Microsoft.PowerShell.Commands
                     dollarUnder: InputObject,
                     input: new object[] { _inputObject },
                     scriptThis: AutomationNull.Value,
-                    args: Utils.EmptyArray<object>());
+                    args: Array.Empty<object>());
 
                 if (_toBoolSite.Target.Invoke(_toBoolSite, result))
                 {

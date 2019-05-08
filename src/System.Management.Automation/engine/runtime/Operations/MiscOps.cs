@@ -16,6 +16,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -456,7 +457,7 @@ namespace System.Management.Automation
                     {
                         pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
                         commandProcessor = nextToLastCommand;
-                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe { NullPipe = true };
                     }
                 }
 
@@ -524,14 +525,14 @@ namespace System.Management.Automation
                 // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
-                    var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                    var vName = ((VariableExpressionAst)v).VariablePath.UserPath;
                     // Skip variables that don't exist
                     if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
                         continue;
                     // Skip PowerShell magic variables
                     if (Regex.Match(vName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false
                     )
                     {
                         updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
@@ -659,7 +660,7 @@ namespace System.Management.Automation
                 // GetSteppablePipeline() is called on an arbitrary script block with the intention
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
-                bool isTrusted = (scriptBlock.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {
@@ -825,7 +826,7 @@ namespace System.Management.Automation
         internal static void Nop() { }
     }
 
-#region Redirections
+    #region Redirections
 
     internal abstract class CommandRedirection
     {
@@ -1234,7 +1235,7 @@ namespace System.Management.Automation
         }
     }
 
-#endregion Redirections
+    #endregion Redirections
 
     internal static class FunctionOps
     {
@@ -1456,7 +1457,8 @@ namespace System.Management.Automation
             int[] ranks = RankExceptionTypes(types);
             var current = new HandlerSearchResult();
 
-            do {
+            do
+            {
                 // Always assume no need to repeat the search for another interation
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
@@ -1888,8 +1890,7 @@ namespace System.Management.Automation
                 rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, extent, context));
             PSObject errorWrap = PSObject.AsPSObject(new ErrorRecord(rte.ErrorRecord, rte));
 
-            PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
-            errorWrap.Properties.Add(note);
+            errorWrap.WriteStream = WriteStreamType.Error;
 
             // If this is an error pipe for a hosting application (i.e.: no downstream cmdlet),
             // and we are logging, then create a temporary PowerShell to log the error.

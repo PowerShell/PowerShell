@@ -20,9 +20,10 @@ jobs:
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
     inputs:
-      downloadType: specific
-      itemPattern: |
-        **/*.zip
+      buildType: current
+      downloadType: single
+      artifactName: results
+      downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
@@ -75,6 +76,7 @@ jobs:
       optionsHMENABLE: 0
       optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
       optionsFTPATH: '$(Build.SourcesDirectory)\tools\terms\FileTypeSet.xml'
+      toolVersion: 5.8.2.1
     continueOnError: true
 
   # add RoslynAnalyzers
@@ -95,23 +97,7 @@ jobs:
 
   # FXCop is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-    displayName: 'Publish Security Analysis Logs to Build Artifacts'
-    continueOnError: true
-
   # PreFASt is not applicable
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
-    displayName: 'Run PoliCheck'
-    inputs:
-      targetType: F
-      optionsFC: 0
-      optionsXS: 0
-      optionsPE: '1|2|3|4'
-      optionsHMENABLE: 0
-      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
-      optionsFTPATH: '$(Build.SourcesDirectory)\tools\terms\FileTypeSet.xml'
-    continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@1
     displayName: 'Run APIScan'
@@ -123,11 +109,16 @@ jobs:
       preserveTempFiles: true
     continueOnError: true
 
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    continueOnError: true
+
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
     displayName: 'TSA upload to Codebase: PowerShellCore_201807 Stamp: Azure'
     inputs:
       tsaStamp: $(TsaStamp)
       codeBaseName: $(CodeBaseName)
+      tsaVersion: TsaV1
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false
@@ -144,3 +135,9 @@ jobs:
       CredScan: true
       PoliCheck: true
       PoliCheckBreakOn: Severity2Above
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

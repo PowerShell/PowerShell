@@ -4,16 +4,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Text.RegularExpressions;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -983,16 +984,17 @@ namespace System.Management.Automation
                     return regex.Replace(input, replacementString);
 
                 case ScriptBlock sb:
-                    MatchEvaluator me = match => {
+                    MatchEvaluator me = match =>
+                    {
                         var result = sb.DoInvokeReturnAsIs(
                             useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
                             errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                             dollarUnder: match,
                             input: AutomationNull.Value,
                             scriptThis: AutomationNull.Value,
-                            args: Utils.EmptyArray<object>());
+                            args: Array.Empty<object>());
 
-                        return PSObject.ToStringParser(context, result);;
+                        return PSObject.ToStringParser(context, result);
                     };
                     return regex.Replace(input, me);
 

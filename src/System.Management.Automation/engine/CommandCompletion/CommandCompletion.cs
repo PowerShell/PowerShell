@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.ObjectModel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
-        internal static readonly IList<CompletionResult> EmptyCompletionResult = Utils.EmptyArray<CompletionResult>();
+        internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 

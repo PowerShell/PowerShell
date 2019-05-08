@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Threading;
+
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.MarkdownRender
 
             if (result == null)
             {
-                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand : null);
+                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand: null);
                 result = IndentCache[countOfSpaces];
             }
 

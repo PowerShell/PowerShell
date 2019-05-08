@@ -2,16 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
-using System.Management.Automation.Runspaces;
-using System.Text;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+using System.Runtime.CompilerServices;
 using System.Security;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 #if !UNIX
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
@@ -268,7 +270,7 @@ namespace Microsoft.PowerShell
 #else
                 // Ensure that we're in the proper line-input mode.
 
-                ConsoleControl.ConsoleModes desiredMode =
+                const ConsoleControl.ConsoleModes DesiredMode =
                     ConsoleControl.ConsoleModes.Extended |
                     ConsoleControl.ConsoleModes.QuickEdit;
 
@@ -278,13 +280,13 @@ namespace Microsoft.PowerShell
                 bool shouldUnsetMouseInput = shouldUnsetMode(ConsoleControl.ConsoleModes.MouseInput, ref m);
                 bool shouldUnsetProcessInput = shouldUnsetMode(ConsoleControl.ConsoleModes.ProcessedInput, ref m);
 
-                if ((m & desiredMode) != desiredMode ||
+                if ((m & DesiredMode) != DesiredMode ||
                     shouldUnsetMouseInput ||
                     shouldUnsetEchoInput ||
                     shouldUnsetLineInput ||
                     shouldUnsetProcessInput)
                 {
-                    m |= desiredMode;
+                    m |= DesiredMode;
                     ConsoleControl.SetMode(handle, m);
                 }
                 else
@@ -307,8 +309,9 @@ namespace Microsoft.PowerShell
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    uint unused = 0;
-                    string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
+                    const int CharactersToRead = 1;
+                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+                    string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
 #if UNIX
@@ -541,23 +544,35 @@ namespace Microsoft.PowerShell
 
         #region WriteToConsole
 
-        internal void WriteToConsole(string value, bool transcribeResult)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteToConsole(char c, bool transcribeResult)
+        {
+            ReadOnlySpan<char> value = stackalloc char[1] { c };
+            WriteToConsole(value, transcribeResult);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: false);
+        }
+
+        private void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult, bool newLine)
         {
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
             // attempt to set the mode from multiple threads at once.
-
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
-                    ConsoleControl.ConsoleModes.ProcessedOutput
+            const ConsoleControl.ConsoleModes DesiredMode =
+                ConsoleControl.ConsoleModes.ProcessedOutput
                 | ConsoleControl.ConsoleModes.WrapEndOfLine;
 
-            if ((m & desiredMode) != desiredMode)
+            if ((m & DesiredMode) != DesiredMode)
             {
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
@@ -565,21 +580,20 @@ namespace Microsoft.PowerShell
             PreWrite();
 
             // This is atomic, so we don't lock here...
-
 #if !UNIX
-            ConsoleControl.WriteConsole(handle, value);
+            ConsoleControl.WriteConsole(handle, value, newLine);
 #else
-            Console.Out.Write(value);
+            ConsoleOutWriteHelper(value, newLine);
 #endif
 
             if (_isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
-                Console.Out.Write(value);
+                ConsoleOutWriteHelper(value, newLine);
             }
 
             if (transcribeResult)
             {
-                PostWrite(value);
+                PostWrite(value, newLine);
             }
             else
             {
@@ -587,34 +601,64 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
         {
-            ConsoleColor fg = RawUI.ForegroundColor;
-            ConsoleColor bg = RawUI.BackgroundColor;
-
-            RawUI.ForegroundColor = foregroundColor;
-            RawUI.BackgroundColor = backgroundColor;
-
-            try
+            // Sync access so that we don't race on color settings if called from multiple threads.
+            lock (_instanceLock)
             {
-                WriteToConsole(text, true);
-            }
-            finally
-            {
-                RawUI.ForegroundColor = fg;
-                RawUI.BackgroundColor = bg;
+                ConsoleColor fg = RawUI.ForegroundColor;
+                ConsoleColor bg = RawUI.BackgroundColor;
+
+                RawUI.ForegroundColor = foregroundColor;
+                RawUI.BackgroundColor = backgroundColor;
+
+                try
+                {
+                    WriteToConsole(text, transcribeResult: true, newLine);
+                }
+                finally
+                {
+                    RawUI.ForegroundColor = fg;
+                    RawUI.BackgroundColor = bg;
+                }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        {
+            if (newLine)
+            {
+                Console.Out.WriteLine(value);
+            }
+            else
+            {
+                Console.Out.Write(value);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        {
+            WriteToConsole(foregroundColor, backgroundColor, text, newLine: true);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole(string text)
         {
-            WriteToConsole(text, true);
-            WriteToConsole(Crlf, true);
+            WriteLineToConsole(text, transcribeResult: true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLineToConsole()
         {
-            WriteToConsole(Crlf, true);
+            WriteToConsole(Environment.NewLine, transcribeResult: true, newLine: false);
         }
 
         #endregion WriteToConsole
@@ -635,15 +679,28 @@ namespace Microsoft.PowerShell
 
         public override void Write(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                // do nothing
+            WriteImpl(value, newLine: false);
+        }
 
+        private void WriteImpl(string value, bool newLine)
+        {
+            if (string.IsNullOrEmpty(value) && !newLine)
+            {
                 return;
             }
 
             // If the test hook is set, write to it and continue.
-            if (s_h != null) s_h.Write(value);
+            if (s_h != null)
+            {
+                if (newLine)
+                {
+                    s_h.WriteLine(value);
+                }
+                else
+                {
+                    s_h.Write(value);
+                }
+            }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
 
@@ -652,10 +709,22 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
                 _parent.OutputSerializer.Serialize(value);
+
+                if (newLine)
+                {
+                    _parent.OutputSerializer.Serialize(Environment.NewLine);
+                }
             }
             else
             {
-                writer.Write(value);
+                if (newLine)
+                {
+                    writer.WriteLine(value);
+                }
+                else
+                {
+                    writer.Write(value);
+                }
             }
         }
 
@@ -681,8 +750,36 @@ namespace Microsoft.PowerShell
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            Write(foregroundColor, backgroundColor, value, newLine: false);
+        }
 
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
+        /// <param name="value"></param>
+        /// <exception cref="HostException">
+        /// If obtaining information about the buffer failed
+        ///    OR
+        ///    Win32's SetConsoleTextAttribute
+        ///    OR
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        /// </exception>
+        public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
+        {
+            Write(foregroundColor, backgroundColor, value, newLine: true);
+        }
+
+        private void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value, bool newLine)
+        {
+            // Sync access so that we don't race on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -693,7 +790,7 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    this.Write(value);
+                    this.WriteImpl(value, newLine);
                 }
                 finally
                 {
@@ -716,16 +813,26 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void WriteLine(string value)
         {
-            // lock here so that the newline is written atomically with the value
+            this.WriteImpl(value, newLine: true);
+        }
 
-            lock (_instanceLock)
-            {
-                this.Write(value);
-                this.Write(Crlf);
-            }
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        /// <exception cref="HostException">
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        /// </exception>
+        public override void WriteLine()
+        {
+            this.WriteImpl(Environment.NewLine, newLine: false);
         }
 
         #region Word Wrapping
@@ -1045,14 +1152,14 @@ namespace Microsoft.PowerShell
                 sb.Append(s);
                 if (++count != lines.Count)
                 {
-                    sb.Append(Crlf);
+                    sb.Append(Environment.NewLine);
                 }
             }
 
             return sb.ToString();
         }
 
-#endregion Word Wrapping
+        #endregion Word Wrapping
 
         /// <summary>
         /// See base class.
@@ -1226,8 +1333,6 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(value))
             {
-                // do nothing
-
                 return;
             }
 
@@ -1239,14 +1344,14 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(writer == _parent.ErrorSerializer.textWriter, "writers should be the same");
 
-                _parent.ErrorSerializer.Serialize(value + Crlf);
+                _parent.ErrorSerializer.Serialize(value + Environment.NewLine);
             }
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
                     WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
                 else
-                    Console.Error.Write(value + Crlf);
+                    Console.Error.WriteLine(value);
             }
         }
 
@@ -1287,7 +1392,7 @@ namespace Microsoft.PowerShell
             endedOnBreak = 3
         }
 
-        private const int maxInputLineLength = 8192;
+        private const int MaxInputLineLength = 1024;
 
         /// <summary>
         /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In
@@ -1418,15 +1523,15 @@ namespace Microsoft.PowerShell
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
-            const ConsoleControl.ConsoleModes desiredMode =
+            const ConsoleControl.ConsoleModes DesiredMode =
                 ConsoleControl.ConsoleModes.LineInput
                 | ConsoleControl.ConsoleModes.EchoInput
                 | ConsoleControl.ConsoleModes.ProcessedInput;
 
-            if ((m & desiredMode) != desiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
+            if ((m & DesiredMode) != DesiredMode || (m & ConsoleControl.ConsoleModes.MouseInput) > 0)
             {
                 m &= ~ConsoleControl.ConsoleModes.MouseInput;
-                m |= desiredMode;
+                m |= DesiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
 #endif
@@ -1468,13 +1573,19 @@ namespace Microsoft.PowerShell
             _rawui.ClearKeyCache();
             uint keyState = 0;
             string s = string.Empty;
+            Span<char> inputBuffer = stackalloc char[MaxInputLineLength + 1];
+            if (initialContent.Length > 0)
+            {
+                initialContent.AsSpan().CopyTo(inputBuffer);
+            }
+
 #endif
-                do
-                {
+            do
+            {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
 #else
-                s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
+                s += ConsoleControl.ReadConsole(handle, initialContent.Length, inputBuffer, MaxInputLineLength, endOnTab, out keyState);
                 Dbg.Assert(s != null, "s should never be null");
 #endif
 
@@ -1484,35 +1595,35 @@ namespace Microsoft.PowerShell
 #else
                 if (s.Length == 0)
 #endif
+                {
+                    result = ReadLineResult.endedOnBreak;
+                    s = null;
+
+                    if (calledFromPipeline)
                     {
-                        result = ReadLineResult.endedOnBreak;
-                        s = null;
+                        // make sure that the pipeline that called us is stopped
 
-                        if (calledFromPipeline)
-                        {
-                            // make sure that the pipeline that called us is stopped
-
-                            throw new PipelineStoppedException();
-                        }
-
-                        break;
+                        throw new PipelineStoppedException();
                     }
+
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                if (s.EndsWith(Crlf, StringComparison.Ordinal))
+                if (s.EndsWith(Environment.NewLine, StringComparison.Ordinal))
 #endif
-                    {
-                        result = ReadLineResult.endedOnEnter;
+                {
+                    result = ReadLineResult.endedOnEnter;
 #if UNIX
                         // We're intercepting characters, so we need to echo the newline
                         Console.Out.WriteLine();
 #else
-                    s = s.Remove(s.Length - Crlf.Length);
+                    s = s.Remove(s.Length - Environment.NewLine.Length);
 #endif
-                        break;
-                    }
+                    break;
+                }
 
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Tab)
@@ -1695,15 +1806,15 @@ namespace Microsoft.PowerShell
                     Console.Out.Write(s);
                     Console.CursorLeft = cursorCurrent + 1;
 #endif
-                }
-                while (true);
+            }
+            while (true);
 
-                Dbg.Assert(
-                           (s == null && result == ReadLineResult.endedOnBreak)
-                           || (s != null && result != ReadLineResult.endedOnBreak),
-                           "s should only be null if input ended with a break");
+            Dbg.Assert(
+                       (s == null && result == ReadLineResult.endedOnBreak)
+                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       "s should only be null if input ended with a break");
 
-                return s;
+            return s;
 #if UNIX
             }
             finally
@@ -1861,9 +1972,9 @@ namespace Microsoft.PowerShell
                         completedInput += restOfLine;
                     }
 
-                    if (completedInput.Length > (maxInputLineLength - 2))
+                    if (completedInput.Length > (MaxInputLineLength - 2))
                     {
-                        completedInput = completedInput.Substring(0, maxInputLineLength - 2);
+                        completedInput = completedInput.Substring(0, MaxInputLineLength - 2);
                     }
 
                     // Remove any nulls from the string...
@@ -1934,7 +2045,7 @@ namespace Microsoft.PowerShell
             {
                 // Reads always terminate with the enter key, so add that.
 
-                _parent.WriteToTranscript(input + Crlf);
+                _parent.WriteLineToTranscript(input);
             }
 
             return input;

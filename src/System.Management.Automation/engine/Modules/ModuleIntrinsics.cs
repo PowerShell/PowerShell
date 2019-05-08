@@ -4,13 +4,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using Microsoft.PowerShell.Commands;
-using System.Linq;
 using System.Text;
 using System.Threading;
+
+using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -228,7 +230,7 @@ namespace System.Management.Automation
                         scriptThis: AutomationNull.Value,
                         outputPipe: outputPipe,
                         invocationInfo: invocationInfo,
-                        args: arguments ?? Utils.EmptyArray<object>());
+                        args: arguments ?? Array.Empty<object>());
                 }
                 catch (ExitException ee)
                 {
@@ -423,10 +425,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
-            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
+            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec, skipNameCheck);
         }
 
         /// <summary>
@@ -435,8 +441,13 @@ namespace System.Management.Automation
         /// <param name="matchFailureReason">The constraint that caused the match failure, if any.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <param name="skipNameCheck">True if we should skip the name check on the module specification.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            out ModuleMatchFailure matchFailureReason,
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec,
+            bool skipNameCheck = false)
         {
             if (moduleSpec == null)
             {
@@ -447,7 +458,7 @@ namespace System.Management.Automation
             return IsModuleMatchingConstraints(
                 out matchFailureReason,
                 moduleInfo,
-                moduleSpec.Name,
+                skipNameCheck ? null : moduleSpec.Name,
                 moduleSpec.Guid,
                 moduleSpec.RequiredVersion,
                 moduleSpec.Version,
@@ -879,7 +890,7 @@ namespace System.Management.Automation
             }
             catch (PSInvalidOperationException) { }
 
-            return Utils.EmptyArray<ExperimentalFeature>();
+            return Array.Empty<ExperimentalFeature>();
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.

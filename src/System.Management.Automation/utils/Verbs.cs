@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -1103,7 +1104,7 @@ namespace System.Management.Automation
         public static string GetVerbAliasPrefix(string verb)
         {
             FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
-            if(aliasField != null)
+            if (aliasField != null)
             {
                 return (string)aliasField.GetValue(null);
             }
@@ -1124,7 +1125,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Verb
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1132,7 +1133,7 @@ namespace System.Management.Automation
         /// </summary>
         public string AliasPrefix
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1140,7 +1141,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Group
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
@@ -1148,7 +1149,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Description
         {
-            get;set;
+            get; set;
         }
     }
 

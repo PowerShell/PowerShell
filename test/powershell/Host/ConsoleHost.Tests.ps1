@@ -119,6 +119,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
+
     Context "CommandLine" {
         It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should -Be "hello world"
@@ -216,7 +217,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolValue
         }
 
-        It "-File '<filename>' should return exit code from script"  -TestCases @(
+        It "-File '<filename>' should return exit code from script" -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -224,6 +225,23 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
+        }
+
+        It "A single dash should be passed as an arg" {
+            $testScript = @'
+    [CmdletBinding()]param(
+        [string]$p1,
+        [string]$p2,
+        [Parameter(ValueFromPipeline)][string]$InputObject
+    )
+    process{
+        $input.replace($p1, $p2)
+    }
+'@
+            $testFilePath = Join-Path $TestDrive "test.ps1"
+            Set-Content -Path $testFilePath -Value $testScript
+            $observed = echo hello | pwsh $testFilePath e -
+            $observed | Should -BeExactly "h-llo"
         }
     }
 
@@ -479,14 +497,44 @@ foo
     }
 
     Context "Exception handling" {
-        It "Should handle a CallDepthOverflow" {
-            # Infinite recursion
-            function recurse
-            {
-                recurse $args
+        BeforeAll {
+            # the default stack size in PowerShell is 10000000, set the stack
+            # to something much smaller which will produce the error much faster
+            # I saw a reduction from 65 seconds to 79 milliseconds.
+            $classDefinition = @'
+using System;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Threading;
+namespace StackTest {
+    public class StackDepthTest {
+        public static PowerShell ps;
+        public static int size = 512 * 1024;
+        public static void CauseError() {
+            Thread t = new Thread(RunPS, size);
+            t.Start();
+            t.Join();
+        }
+        public static void RunPS() {
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            iss.ThreadOptions = PSThreadOptions.UseCurrentThread;
+            ps = PowerShell.Create(iss);
+            ps.AddScript("function recurse { recurse }; recurse").Invoke();
+        }
+        public static void GetPSError() {
+            if ( ps.Streams.Error.Count > 0) {
+                throw ps.Streams.Error[0].Exception.InnerException;
             }
+        }
+    }
+}
+'@
+            $TestType = Add-Type -PassThru -TypeDefinition $classDefinition
+        }
 
-            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
+        It "Should handle a CallDepthOverflow" {
+            $TestType::CauseError()
+            { $TestType::GetPSError() } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 
@@ -609,6 +657,26 @@ foo
                     Remove-Item $PROFILE
                 }
             }
+        }
+    }
+
+    Context "CustomPipeName startup tests" {
+
+        It "Should create pipe file if CustomPipeName is specified" {
+            $pipeName = [System.IO.Path]::GetRandomFileName()
+            $pipePath = Get-PipePath $pipeName
+
+            # The pipePath should be created by the time the -Command is executed.
+            & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
+        }
+
+        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
+            # Generate a string that is larger than the max pipe name length.
+            $longPipeName = [string]::new("A", 200)
+
+            "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
+            # 64 is the ExitCode for BadCommandLineParameter
+            $LASTEXITCODE | Should -Be 64
         }
     }
 }

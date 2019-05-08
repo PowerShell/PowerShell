@@ -146,7 +146,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal virtual PSObject[] GetParameter(string pattern)
         {
-            return new PSObject[0];
+            return Array.Empty<PSObject>();
         }
 
         /// <summary>

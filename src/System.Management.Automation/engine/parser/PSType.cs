@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Reflection.Emit;
-using Microsoft.PowerShell;
 using System.Threading;
-using System.Management.Automation.Internal;
+
+using Microsoft.PowerShell;
 
 namespace System.Management.Automation.Language
 {
@@ -19,7 +20,7 @@ namespace System.Management.Automation.Language
 
         private static int s_globalCounter = 0;
         private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =
-            new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>());
+            new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
 
         private static readonly string s_sessionStateKeeperFieldName = "__sessionStateKeeper";
         internal static readonly string SessionStateFieldName = "__sessionState";
@@ -765,7 +766,7 @@ namespace System.Management.Automation.Language
                 var parameters = ((IParameterMetadataProvider)functionMemberAst).Parameters;
                 if (parameters == null)
                 {
-                    return PSTypeExtensions.EmptyTypes;
+                    return Type.EmptyTypes;
                 }
 
                 bool anyErrors = false;
@@ -1279,9 +1280,10 @@ namespace System.Management.Automation.Language
         private static IEnumerable<CustomAttributeBuilder> GetAssemblyAttributeBuilders(string scriptFile)
         {
             var ctor = typeof(DynamicClassImplementationAssemblyAttribute).GetConstructor(Type.EmptyTypes);
-            var emptyArgs = Utils.EmptyArray<object>();
+            var emptyArgs = Array.Empty<object>();
 
-            if (string.IsNullOrEmpty(scriptFile)) {
+            if (string.IsNullOrEmpty(scriptFile))
+            {
                 yield return new CustomAttributeBuilder(ctor, emptyArgs);
                 yield break;
             }
@@ -1291,8 +1293,7 @@ namespace System.Management.Automation.Language
             var propertyArgs = new object[] { scriptFile };
 
             yield return new CustomAttributeBuilder(ctor, emptyArgs,
-                propertyInfo, propertyArgs, Utils.EmptyArray<FieldInfo>(), emptyArgs);
-
+                propertyInfo, propertyArgs, Array.Empty<FieldInfo>(), emptyArgs);
         }
 
         private static int counter = 0;

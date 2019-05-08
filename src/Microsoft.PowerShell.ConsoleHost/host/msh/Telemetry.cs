@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using System.Management.Automation;
-using System.Security.Cryptography;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.IO;
 
 namespace Microsoft.PowerShell
 {
@@ -37,7 +38,8 @@ namespace Microsoft.PowerShell
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
         }
 
-        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
+        {
             var str = Environment.GetEnvironmentVariable(name);
             if (string.IsNullOrEmpty(str))
             {
@@ -62,11 +64,11 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Send the telemetry.
         /// </summary>
-        private static void SendTelemetry(string eventName, Dictionary<string,string> payload)
+        private static void SendTelemetry(string eventName, Dictionary<string, string> payload)
         {
             try
             {
-                var enabled = !GetEnvironmentVariableAsBool(name : TelemetryOptoutEnvVar, defaultValue : false);
+                var enabled = !GetEnvironmentVariableAsBool(name: TelemetryOptoutEnvVar, defaultValue: false);
 
                 if (!enabled)
                 {

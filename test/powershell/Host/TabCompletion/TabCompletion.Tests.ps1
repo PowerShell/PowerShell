@@ -26,13 +26,13 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It 'Should complete abbreviated cmdlet' {
-            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
             $res | Should -HaveCount 1
             $res | Should -BeExactly 'Import-PowerShellDataFile'
         }
 
         It 'Should complete abbreviated function' {
-            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
             $res.Count | Should -BeGreaterOrEqual 1
             $res | Should -BeExactly 'PSConsoleHostReadLine'
         }
@@ -245,6 +245,51 @@ Describe "TabCompletion" -Tags CI {
         $completionText -join ' '| Should -BeExactly 'blg csv tsv'
     }
 
+    Context "Script name completion" {
+        BeforeAll {
+            setup -f 'install-powershell.ps1' -content ""
+            setup -f 'remove-powershell.ps1' -content ""
+
+            $scriptWithWildcardCases = @(
+                @{
+                    command = '.\install-*.ps1'
+                    expectedCommand = Join-Path -Path '.' -ChildPath 'install-powershell.ps1'
+                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')'"
+                }
+                @{
+                    command = (Join-Path ${TestDrive}  -ChildPath 'install-*.ps1')
+                    expectedCommand = (Join-Path ${TestDrive}  -ChildPath 'install-powershell.ps1')
+                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')' by fully qualified path"
+                }
+                @{
+                    command = '.\?emove-powershell.ps1'
+                    expectedCommand = Join-Path -Path '.' -ChildPath 'remove-powershell.ps1'
+                    name = "'$(Join-Path -Path '.' -ChildPath '?emove-powershell.ps1')'"
+                }
+                @{
+                    # [] cause the parser to create a new token.
+                    # So, the command must be quoted to tab complete.
+                    command = "'.\[ra]emove-powershell.ps1'"
+                    expectedCommand = "'$(Join-Path -Path '.' -ChildPath 'remove-powershell.ps1')'"
+                    name = "'$(Join-Path -Path '.' -ChildPath '[ra]emove-powershell.ps1')'"
+                }
+            )
+
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        it "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
+            param($command, $expectedCommand)
+            $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expectedCommand
+        }
+    }
+
     Context "File name completion" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
@@ -440,6 +485,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
                 @{ inputStr = 'try { 1/0 } catch {};$error[0].'; expected = 'CategoryInfo'; setup = $null }
                 @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = 'function Get-ScrumData {}; Get-Scrum'; expected = 'Get-ScrumData'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
                 @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
@@ -545,7 +591,7 @@ Describe "TabCompletion" -Tags CI {
             if ($null -ne $setup) { . $setup }
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+            $res.CompletionMatches.CompletionText | Should -Contain $expected
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
@@ -725,7 +771,7 @@ dir -Recurse `
         It "Test member completion of a static method invocation" {
             $inputStr = '[powershell]::Create().'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 32
+            $res.CompletionMatches | Should -HaveCount 34
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
     }

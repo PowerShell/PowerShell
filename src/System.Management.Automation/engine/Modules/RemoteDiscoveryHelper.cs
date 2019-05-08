@@ -15,10 +15,12 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -660,7 +662,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    byte[] rawFileData = GetPropertyValue<byte[]>(_baseObject, "moduleManifestFileData", Utils.EmptyArray<byte>());
+                    byte[] rawFileData = GetPropertyValue<byte[]>(_baseObject, "moduleManifestFileData", Array.Empty<byte>());
                     return new CimModuleManifestFile(this.ModuleName + ".psd1", rawFileData);
                 }
             }
@@ -728,7 +730,7 @@ namespace System.Management.Automation
 
                 internal override byte[] RawFileDataCore
                 {
-                    get { return GetPropertyValue<byte[]>(_baseObject, "FileData", Utils.EmptyArray<byte>()); }
+                    get { return GetPropertyValue<byte[]>(_baseObject, "FileData", Array.Empty<byte>()); }
                 }
             }
         }
@@ -851,9 +853,9 @@ namespace System.Management.Automation
             IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
-            nestedModules = nestedModules ?? Utils.EmptyArray<string>();
-            typesToProcess = typesToProcess ?? Utils.EmptyArray<string>();
-            formatsToProcess = formatsToProcess ?? Utils.EmptyArray<string>();
+            nestedModules = nestedModules ?? Array.Empty<string>();
+            typesToProcess = typesToProcess ?? Array.Empty<string>();
+            formatsToProcess = formatsToProcess ?? Array.Empty<string>();
 
             var newManifest = new Hashtable(StringComparer.OrdinalIgnoreCase);
             newManifest["NestedModules"] = nestedModules;
@@ -975,9 +977,15 @@ namespace System.Management.Automation
             string computerName,
             PSCredential credential,
             string authentication,
+            bool isLocalHost,
             CancellationToken cancellationToken,
             PSCmdlet cmdlet)
         {
+            if (isLocalHost)
+            {
+                return CimSession.Create(null);
+            }
+
             var sessionOptions = new CimSessionOptions();
 
             CimCredential cimCredentials = GetCimCredentials(authentication, credential);

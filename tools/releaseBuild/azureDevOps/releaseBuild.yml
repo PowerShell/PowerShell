@@ -82,7 +82,22 @@ jobs:
   parameters:
     parentJobs:
       - WinPackageSigningJob
-      - build_deb
-      - build_rpm
-      - build_alpine
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
       - build_macOS
+
+- template: templates/testartifacts.yml
+
+- job: release_json
+  displayName: Create and Upload release.json
+  steps:
+  - template: templates/SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      @{ ReleaseVersion = "$(Version)" } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      Get-Content "$(Build.StagingDirectory)\release.json"
+      Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+    displayName: Create and upload release.json file to build artifact

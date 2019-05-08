@@ -5,8 +5,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel; // Win32Exception
-using System.Diagnostics; // Eventlog class
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics; // Eventlog class
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName { get; set; } = new string[0];
+        public string[] ComputerName { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Read only this number of entries.

@@ -2,22 +2,23 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Win32;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+using System.Xml;
+
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation;
 
@@ -255,7 +256,6 @@ namespace Microsoft.WSMan.Management
             bool otherkeys = false;
             try
             {
-
                 string Registry_Path_Credentials_Delegation = Registry_Path + @"\CredentialsDelegation";
                 RegistryKey Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true);
                 if (Allow_Fresh_Credential_Key != null)
@@ -642,7 +642,6 @@ namespace Microsoft.WSMan.Management
                 {
                     string key = GPOpath + "\\" + keyname + "\\" + @"Software\Policies\Microsoft\Windows";
                     UpdateGPORegistrySettings(applicationname, this.delegatecomputer, Registry.CurrentUser, key);
-
                 }
             }
             // saving gpo settings
@@ -703,7 +702,6 @@ namespace Microsoft.WSMan.Management
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
-
         }
 
         #region IDisposable Members
@@ -812,7 +810,7 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
             }
 
-             return result;
+            return result;
         }
         #endregion private
 
@@ -929,7 +927,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
 
     #endregion

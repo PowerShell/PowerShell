@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Security;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Security;
+
 using Microsoft.Win32;
-using System.Globalization;
 
 namespace Microsoft.PowerShell
 {
@@ -72,8 +73,7 @@ namespace Microsoft.PowerShell
                 // Should be a skin lookup
 
                 WriteLineToConsole();
-                WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                WriteLineToConsole();
+                WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
             }
 
             if (!string.IsNullOrEmpty(message))

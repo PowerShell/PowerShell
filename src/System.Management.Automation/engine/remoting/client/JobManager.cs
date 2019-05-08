@@ -5,11 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Remoting;
-using System.Management.Automation.Tracing;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 // Stops compiler from warning about unknown warnings
@@ -87,7 +88,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
                 if (!constructor.IsPublic)
                 {
                     string message = string.Format(CultureInfo.CurrentCulture,

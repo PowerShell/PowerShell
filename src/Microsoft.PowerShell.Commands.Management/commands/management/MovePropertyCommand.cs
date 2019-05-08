@@ -3,6 +3,7 @@
 
 using System;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -58,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = Utils.EmptyArray<string>();
+                    value = Array.Empty<string>();
                 }
 
                 _property = value;
@@ -111,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The property to be created.
         /// </summary>
-        private string[] _property = new string[0];
+        private string[] _property = Array.Empty<string>();
 
         #endregion parameter data
 

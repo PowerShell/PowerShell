@@ -15,9 +15,10 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Xml;
-using Dbg = System.Diagnostics.Debug;
 using System.Security.Permissions;
+using System.Xml;
+
+using Dbg = System.Diagnostics.Debug;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -1488,7 +1489,7 @@ namespace System.Management.Automation.Runspaces
             UpdateKey();
         }
 
-        internal static readonly ConsolidatedString Empty = new ConsolidatedString(Utils.EmptyArray<string>());
+        internal static readonly ConsolidatedString Empty = new ConsolidatedString(Array.Empty<string>());
 
         internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
@@ -3633,6 +3634,11 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
+        internal T GetFirstMemberOrDefault<T>(ConsolidatedString types, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            return GetMembers(types).FirstOrDefault(member => member is T && predicate(member.Name)) as T;
+        }
+
         internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
         {
             if ((types == null) || string.IsNullOrEmpty(types.Key))
@@ -3640,8 +3646,7 @@ namespace System.Management.Automation.Runspaces
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
 
-            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
-            return result;
+            return _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
         }
 
         private PSMemberInfoInternalCollection<PSMemberInfo> MemberFactory(string k, ConsolidatedString types)

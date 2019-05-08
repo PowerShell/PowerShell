@@ -2,15 +2,15 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Management.Automation.Internal;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Internal
@@ -506,7 +506,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
@@ -526,7 +526,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type = Utils.EmptyArray<PSTypeName>();
+                Type = Array.Empty<PSTypeName>();
             }
         }
 
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
                 dollarUnder: LanguagePrimitives.AsPSObjectOrNull(element),
                 input: AutomationNull.Value,
                 scriptThis: AutomationNull.Value,
-                args: Utils.EmptyArray<object>());
+                args: Array.Empty<object>());
 
             if (!LanguagePrimitives.IsTrue(result))
             {

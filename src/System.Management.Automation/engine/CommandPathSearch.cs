@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -349,7 +350,7 @@ namespace System.Management.Automation
         {
             _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
             _patternEnumerator = _patterns.GetEnumerator();
-            _currentDirectoryResults = Utils.EmptyArray<string>();
+            _currentDirectoryResults = Array.Empty<string>();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
         }
@@ -468,7 +469,7 @@ namespace System.Management.Automation
                 // accessible
             }
 
-            _currentDirectoryResults = result ?? Utils.EmptyArray<string>();
+            _currentDirectoryResults = result ?? Array.Empty<string>();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
         }
 

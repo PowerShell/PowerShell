@@ -4,11 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation.Internal;
 using System.Text;
 using System.Threading;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {
@@ -459,7 +460,7 @@ namespace System.Management.Automation.Configuration
                 // prevents other processes from reading or writing the file while
                 // the update is in progress. It also locks out readers during write
                 // operations.
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream fs = WaitForFile(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     JObject jsonObject = null;
 
@@ -475,7 +476,7 @@ namespace System.Management.Automation.Configuration
                         if (isReadSuccess)
                         {
                             // Read the stream into a root JObject for manipulation
-                            jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                            jsonObject = (JObject)JToken.ReadFrom(jsonReader);
                             JProperty propertyToModify = jsonObject.Property(key);
 
                             if (propertyToModify == null)

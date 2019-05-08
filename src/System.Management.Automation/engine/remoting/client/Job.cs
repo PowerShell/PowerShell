@@ -4,17 +4,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Management.Automation.Language;
-using System.Management.Automation.Remoting.Internal;
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
 using System.Runtime.Serialization;
-using System.Threading;
 using System.Text;
+using System.Threading;
+
 using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 // Stops compiler from warning about unknown warnings
@@ -3906,6 +3908,28 @@ namespace System.Management.Automation
 
             return _wrappedDebugger.ProcessCommand(command, output);
         }
+
+        /// <summary>
+        /// Adds the provided set of breakpoints to the debugger.
+        /// </summary>
+        /// <param name="breakpoints">Breakpoints.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            _wrappedDebugger.SetBreakpoints(breakpoints);
+        }
+
+        /// <summary>
+        /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
+        /// </summary>
+        /// <param name="id">Id of the breakpoint you want.</param>
+        public override Breakpoint GetBreakpoint(int id) =>
+            _wrappedDebugger.GetBreakpoint(id);
+
+        /// <summary>
+        /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
+        /// </summary>
+        public override List<Breakpoint> GetBreakpoints() =>
+            _wrappedDebugger.GetBreakpoints();
 
         /// <summary>
         /// Sets the debugger resume action.

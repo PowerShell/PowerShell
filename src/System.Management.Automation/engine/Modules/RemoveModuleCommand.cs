@@ -9,6 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -36,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _name; }
         }
 
-        private string[] _name = Utils.EmptyArray<string>();
+        private string[] _name = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the current pipeline object.
@@ -57,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _moduleInfo; }
         }
 
-        private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
+        private PSModuleInfo[] _moduleInfo = Array.Empty<PSModuleInfo>();
 
         /// <summary>
         /// If provided, this parameter will allow readonly modules to be removed.

@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Resources;
-using System.Reflection;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Resources;
+using System.Xml;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -17,16 +17,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
+
 namespace Microsoft.WSMan.Management
 {
-
     /// <summary>
     /// Session option class.
     /// </summary>
 
     public sealed class SessionOption
     {
-
         /// <summary>
         /// Property.
         /// </summary>
@@ -68,7 +67,6 @@ namespace Microsoft.WSMan.Management
             {
                 _SkipRevocationCheck = value;
             }
-
         }
 
         private bool _SkipRevocationCheck;

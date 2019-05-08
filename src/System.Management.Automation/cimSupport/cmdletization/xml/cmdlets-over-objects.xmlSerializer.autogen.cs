@@ -5143,7 +5143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNull) return null;
             global::System.Object o;
             o = new global::System.Object();
-            bool[] paramsRead = new bool[0];
+            bool[] paramsRead = Array.Empty<bool>();
             while (Reader.MoveToNextAttribute())
             {
                 if (!IsXmlnsAttribute(Reader.Name))

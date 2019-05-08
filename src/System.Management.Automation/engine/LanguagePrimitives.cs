@@ -6,20 +6,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.IO;
-using System.Text;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Diagnostics.CodeAnalysis;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
@@ -1757,7 +1758,7 @@ namespace System.Management.Automation
         {
             if (valueToConvert != null)
             {
-                ConstructorInfo toConstructor = resultType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo toConstructor = resultType.GetConstructor(Type.EmptyTypes);
                 ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
                 return noArgumentConstructorConverter.Convert(PSObject.Base(valueToConvert), resultType, recursion, (PSObject)valueToConvert, formatProvider, null, ignoreUnknownMembers);
             }
@@ -5005,7 +5006,7 @@ namespace System.Management.Automation
             {
                 Type actualResultType = typeof(PSObject);
 
-                ConstructorInfo resultConstructor = actualResultType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                ConstructorInfo resultConstructor = actualResultType.GetConstructor(Type.EmptyTypes);
 
                 var converterObj = new ConvertViaNoArgumentConstructor(resultConstructor, actualResultType);
                 return CacheConversion(fromType, toType, converterObj.Convert, ConversionRank.Language);
@@ -5441,7 +5442,7 @@ namespace System.Management.Automation
             ConstructorInfo toConstructor = null;
             try
             {
-                toConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                toConstructor = toType.GetConstructor(Type.EmptyTypes);
             }
             catch (AmbiguousMatchException e)
             {
@@ -5663,7 +5664,7 @@ namespace System.Management.Automation
                                 // If the ToType has a constructor that takes a hashtable or OrderedDictionary,
                                 // then it would have been returned as the constructor during FigureConstructorConversion
                                 // So, we need to check only for the first condition
-                                ConstructorInfo resultConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);
+                                ConstructorInfo resultConstructor = toType.GetConstructor(Type.EmptyTypes);
 
                                 if (resultConstructor != null || (toType.IsValueType && !toType.IsPrimitive))
                                 {

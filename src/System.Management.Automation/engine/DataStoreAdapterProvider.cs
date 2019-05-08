@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Management.Automation.Provider;
 using System.Reflection;
-using System.Linq;
 using System.Threading;
+
 using Dbg = System.Management.Automation;
-using System.Collections.Generic;
 
 namespace System.Management.Automation
 {
@@ -260,6 +261,16 @@ namespace System.Management.Automation
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
         /// <summary>
+        /// Gets the default item separator character for this provider.
+        /// </summary>
+        public char ItemSeparator { get; private set; }
+
+        /// <summary>
+        /// Gets the alternate item separator character for this provider.
+        /// </summary>
+        public char AltItemSeparator { get; private set; }
+
+        /// <summary>
         /// Constructs an instance of the class using an existing reference
         /// as a template.
         /// </summary>
@@ -292,6 +303,8 @@ namespace System.Management.Automation
             PSSnapIn = providerInfo.PSSnapIn;
             _sessionState = providerInfo._sessionState;
             VolumeSeparatedByColon = providerInfo.VolumeSeparatedByColon;
+            ItemSeparator = providerInfo.ItemSeparator;
+            AltItemSeparator = providerInfo.AltItemSeparator;
         }
 
         /// <summary>
@@ -606,6 +619,8 @@ namespace System.Management.Automation
             }
 
             Provider.CmdletProvider result = providerInstance as Provider.CmdletProvider;
+            ItemSeparator = result.ItemSeparator;
+            AltItemSeparator = result.AltItemSeparator;
 
             Dbg.Diagnostics.Assert(
                 result != null,

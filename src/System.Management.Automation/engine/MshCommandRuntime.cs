@@ -249,7 +249,7 @@ namespace System.Management.Automation
 
 #if CORECLR
             // SecurityContext is not supported in CoreCLR
-            DoWriteObjects(sendToPipeline);
+            DoWriteEnumeratedObject(sendToPipeline);
 #else
             if (UseSecurityContextRun)
             {
@@ -278,11 +278,11 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
-        private void DoWriteObjects(object sendToPipeline)
+        private void DoWriteEnumeratedObject(object sendToPipeline)
         {
             // NOTICE-2004/06/08-JonN 959638
             ThrowIfWriteNotPermitted(true);
-            _WriteObjectsSkipAllowCheck(sendToPipeline);
+            _EnumerateAndWriteObjectSkipAllowCheck(sendToPipeline);
         }
         // Trust:  public void WriteObject(object sendToPipeline, DataTrustCategory trustCategory);     // enumerateCollection defaults to false
         // Trust:  public void WriteObject(object sendToPipeline, bool enumerateCollection, DataTrustCategory trustCategory);
@@ -486,12 +486,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteDebugInfoBuffers(record);
                     }
 
-                    // Add note property so that the debug output is formatted correctly.
+                    // Set WriteStream so that the debug output is formatted correctly.
                     PSObject debugWrap = PSObject.AsPSObject(record);
-                    if (debugWrap.Members["WriteDebugStream"] == null)
-                    {
-                        debugWrap.Properties.Add(new PSNoteProperty("WriteDebugStream", true));
-                    }
+                    debugWrap.WriteStream = WriteStreamType.Debug;
 
                     DebugOutputPipe.Add(debugWrap);
                 }
@@ -577,12 +574,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteVerboseInfoBuffers(record);
                     }
 
-                    // Add note property so that the verbose output is formatted correctly.
+                    // Add WriteStream so that the verbose output is formatted correctly.
                     PSObject verboseWrap = PSObject.AsPSObject(record);
-                    if (verboseWrap.Members["WriteVerboseStream"] == null)
-                    {
-                        verboseWrap.Properties.Add(new PSNoteProperty("WriteVerboseStream", true));
-                    }
+                    verboseWrap.WriteStream = WriteStreamType.Verbose;
 
                     VerboseOutputPipe.Add(verboseWrap);
                 }
@@ -668,12 +662,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteWarningInfoBuffers(record);
                     }
 
-                    // Add note property so that the warning output is formatted correctly.
+                    // Add WriteStream so that the warning output is formatted correctly.
                     PSObject warningWrap = PSObject.AsPSObject(record);
-                    if (warningWrap.Members["WriteWarningStream"] == null)
-                    {
-                        warningWrap.Properties.Add(new PSNoteProperty("WriteWarningStream", true));
-                    }
+                    warningWrap.WriteStream = WriteStreamType.Warning;
 
                     WarningOutputPipe.AddWithoutAppendingOutVarList(warningWrap);
                 }
@@ -733,12 +724,9 @@ namespace System.Management.Automation
                         CBhost.InternalUI.WriteInformationInfoBuffers(record);
                     }
 
-                    // Add note property so that the information output is formatted correctly.
+                    // Add WriteStream so that the information output is formatted correctly.
                     PSObject informationWrap = PSObject.AsPSObject(record);
-                    if (informationWrap.Members["WriteInformationStream"] == null)
-                    {
-                        informationWrap.Properties.Add(new PSNoteProperty("WriteInformationStream", true));
-                    }
+                    informationWrap.WriteStream = WriteStreamType.Information;
 
                     InformationOutputPipe.Add(informationWrap);
                 }
@@ -2199,7 +2187,7 @@ namespace System.Management.Automation
         /// An empty array that is declared statically so we don't keep
         /// allocating them over and over...
         /// </summary>
-        internal static object[] StaticEmptyArray = Utils.EmptyArray<object>();
+        internal static object[] StaticEmptyArray = Array.Empty<object>();
 
         /// <summary>
         /// Gets or sets the error pipe.
@@ -2591,7 +2579,7 @@ namespace System.Management.Automation
         /// The Cmdlet should generally just allow PipelineStoppedException
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
-        internal void _WriteObjectsSkipAllowCheck(object sendToPipeline)
+        internal void _EnumerateAndWriteObjectSkipAllowCheck(object sendToPipeline)
         {
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(sendToPipeline);
             if (enumerable == null)
@@ -2845,10 +2833,9 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError && errorWrap.Members["writeErrorStream"] == null)
+            if (!isNativeError)
             {
-                PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
-                errorWrap.Properties.Add(note);
+                errorWrap.WriteStream = WriteStreamType.Error;
             }
 
             // 2003/11/19-JonN Previously, PSObject instances in ErrorOutputPipe
@@ -3566,7 +3553,7 @@ namespace System.Management.Automation
                 CBhost.InternalUI.TranscribeResult(inquireCaption);
                 CBhost.InternalUI.TranscribeResult(inquireMessage);
 
-                System.Text.StringBuilder textChoices = new System.Text.StringBuilder();
+                Text.StringBuilder textChoices = new Text.StringBuilder();
                 foreach (ChoiceDescription choice in choices)
                 {
                     if (textChoices.Length > 0)

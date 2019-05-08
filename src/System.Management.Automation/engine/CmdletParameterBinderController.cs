@@ -4,14 +4,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Text;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation
 {
@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
                     {
                         try
                         {
-                            output = script.DoInvoke(inputToOperateOn, inputToOperateOn, Utils.EmptyArray<object>());
+                            output = script.DoInvoke(inputToOperateOn, inputToOperateOn, Array.Empty<object>());
                             delayedScriptBlock.Value._evaluatedArgument = output;
                         }
                         catch (RuntimeException runtimeException)

@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Help;
-using System.IO;
-using System.Globalization;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
             string moduleBase = module.ModuleBase;
 
-            if(this.Scope == UpdateHelpScope.CurrentUser)
+            if (this.Scope == UpdateHelpScope.CurrentUser)
             {
                 moduleBase = HelpUtils.GetModuleBaseForUserHelp(moduleBase, module.ModuleName);
             }
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        if(!Directory.Exists(moduleBase))
+                        if (!Directory.Exists(moduleBase))
                         {
                             Directory.CreateDirectory(moduleBase);
                         }

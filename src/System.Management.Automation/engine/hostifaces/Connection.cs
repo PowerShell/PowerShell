@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Management.Automation.Host;
-using System.Management.Automation.Internal;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
@@ -684,12 +685,15 @@ namespace System.Management.Automation.Runspaces
         /// Get unique id for this instance of runspace. It is primarily used
         /// for logging purposes.
         /// </summary>
-        public Guid InstanceId { get;
+        public Guid InstanceId
+        {
+            get;
 
             // This id is also used to identify proxy and remote runspace objects.
             // We need to set this when reconstructing a remote runspace to connect
             // to an existing remote runspace.
-            internal set; } = Guid.NewGuid();
+            internal set;
+        } = Guid.NewGuid();
 
         /// <summary>
         /// Gets execution context.

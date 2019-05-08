@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation

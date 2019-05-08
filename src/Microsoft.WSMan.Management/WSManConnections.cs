@@ -2,18 +2,19 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation.Runspaces;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.WSMan.Management
@@ -116,7 +117,6 @@ namespace Microsoft.WSMan.Management
     [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
     {
-
         #region Parameters
 
         /// <summary>
@@ -253,7 +253,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-
             WSManHelper helper = new WSManHelper(this);
             if (connectionuri != null)
             {
@@ -283,7 +282,6 @@ namespace Microsoft.WSMan.Management
 
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
         }
-
     }
     #endregion
 
@@ -311,7 +309,6 @@ namespace Microsoft.WSMan.Management
 
             set
             {
-
                 computername = value;
                 if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -343,7 +340,6 @@ namespace Microsoft.WSMan.Management
         {
             session = null;
             this.Dispose();
-
         }
 
         #endregion IDisposable Members
@@ -379,7 +375,6 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
         }
-
     }
     #endregion Disconnect-WSMAN
 }

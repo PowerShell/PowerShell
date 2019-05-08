@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace System.Management.Automation
 {
@@ -138,7 +138,7 @@ namespace System.Management.Automation
             {
                 if (!this._processId.HasValue)
                 {
-                    this._processId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
+                    this._processId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
                 }
 
                 return this._processId.Value;

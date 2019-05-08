@@ -2,22 +2,24 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region New-ModuleManifest
@@ -30,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class NewModuleManifestCommand : PSCmdlet
     {
         /// <summary>
-        /// The output path for the generated file...
+        /// Gets or sets the output path for the generated file.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         public string Path
@@ -43,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
 
         /// <summary>
-        /// Sets the list of files to load by default...
+        /// Gets or sets the list of files to load by default.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -58,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _nestedModules;
 
         /// <summary>
-        /// Set the GUID in the manifest file.
+        /// Gets or sets the GUID in the manifest file.
         /// </summary>
         [Parameter]
         public Guid Guid
@@ -71,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         private Guid _guid = Guid.NewGuid();
 
         /// <summary>
-        /// Set the author string in the manifest.
+        /// Gets or sets the author string in the manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -85,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         private string _author;
 
         /// <summary>
-        /// Set the company name in the manifest.
+        /// Gets or sets the company name in the manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -99,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         private string _companyName = string.Empty;
 
         /// <summary>
-        /// Set the copyright string in the module manifest.
+        /// Gets or sets the copyright string in the module manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -113,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         private string _copyright;
 
         /// <summary>
-        /// Set the module version...
+        /// Gets or sets the root module.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -128,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         private string _rootModule = null;
 
         /// <summary>
-        /// Set the module version...
+        /// Gets or sets the module version.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -142,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _moduleVersion = new Version(0, 0, 1);
 
         /// <summary>
-        /// Set the module description.
+        /// Gets or sets the module description.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -156,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         private string _description;
 
         /// <summary>
-        /// Set the ProcessorArchitecture required by this module.
+        /// Gets or sets the ProcessorArchitecture required by this module.
         /// </summary>
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
@@ -169,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         private ProcessorArchitecture? _processorArchitecture = null;
 
         /// <summary>
-        /// Set the PowerShell version required by this module.
+        /// Gets or sets the PowerShell version required by this module.
         /// </summary>
         [Parameter]
         public Version PowerShellVersion
@@ -182,10 +184,10 @@ namespace Microsoft.PowerShell.Commands
         private Version _powerShellVersion = null;
 
         /// <summary>
-        /// Set the CLR version required by the module.
+        /// Gets or sets the CLR version required by the module.
         /// </summary>
         [Parameter]
-        public Version ClrVersion
+        public Version CLRVersion
         {
             get { return _ClrVersion; }
 
@@ -195,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _ClrVersion = null;
 
         /// <summary>
-        /// Set the version of .NET Framework required by the module.
+        /// Gets or sets the version of .NET Framework required by the module.
         /// </summary>
         [Parameter]
         public Version DotNetFrameworkVersion
@@ -208,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _DotNetFrameworkVersion = null;
 
         /// <summary>
-        /// Set the name of PowerShell host required by the module.
+        /// Gets or sets the name of PowerShell host required by the module.
         /// </summary>
         [Parameter]
         public string PowerShellHostName
@@ -221,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
         private string _PowerShellHostName = null;
 
         /// <summary>
-        /// Set the version of PowerShell host required by the module.
+        /// Gets or sets the version of PowerShell host required by the module.
         /// </summary>
         [Parameter]
         public Version PowerShellHostVersion
@@ -234,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _PowerShellHostVersion = null;
 
         /// <summary>
-        /// Sets the list of Dependencies for the module.
+        /// Gets or sets the list of Dependencies for the module.
         /// </summary>
         [Parameter]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
@@ -250,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _requiredModules;
 
         /// <summary>
-        /// Sets the list of types files for the module.
+        /// Gets or sets the list of types files for the module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -266,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _types;
 
         /// <summary>
-        /// Sets the list of formats files for the module.
+        /// Gets or sets the list of formats files for the module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -282,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _formats;
 
         /// <summary>
-        /// Sets the list of ps1 scripts to run in the session state of the import-module invocation.
+        /// Gets or sets the list of ps1 scripts to run in the session state of the import-module invocation.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -298,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _scripts;
 
         /// <summary>
-        /// Set the list of assemblies to load for this module.
+        /// Gets or sets the list of assemblies to load for this module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -314,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _requiredAssemblies;
 
         /// <summary>
-        /// Specify any additional files used by this module.
+        /// Gets or sets the additional files used by this module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -330,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _miscFiles;
 
         /// <summary>
-        /// List of other modules included with this module.
+        /// Gets or sets the list of other modules included with this module.
         /// Like the RequiredModules key, this list can be a simple list of module names or a complex list of module hashtables.
         /// </summary>
         [Parameter]
@@ -348,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _moduleList;
 
         /// <summary>
-        /// Specify any functions to export from this manifest.
+        /// Gets or sets the functions to export from this manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -364,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _exportedFunctions;
 
         /// <summary>
-        /// Specify any aliases to export from this manifest.
+        /// Gets or sets the aliases to export from this manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -380,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _exportedAliases;
 
         /// <summary>
-        /// Specify any variables to export from this manifest.
+        /// Gets or sets the variables to export from this manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -396,7 +398,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _exportedVariables = new string[] { "*" };
 
         /// <summary>
-        /// Specify any cmdlets to export from this manifest.
+        /// Gets or sets the cmdlets to export from this manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -412,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _exportedCmdlets;
 
         /// <summary>
-        /// Specify any dsc resources to export from this manifest.
+        /// Gets or sets the dsc resources to export from this manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -428,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _dscResourcesToExport;
 
         /// <summary>
-        /// Specify compatible PSEditions of this module.
+        /// Gets or sets the compatible PSEditions of this module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -445,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _compatiblePSEditions;
 
         /// <summary>
-        /// Specify any module-specific private data here.
+        /// Gets or sets the module-specific private data here.
         /// </summary>
         [Parameter(Mandatory = false)]
         [AllowNull]
@@ -459,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
         private object _privateData;
 
         /// <summary>
-        /// Specify any Tags.
+        /// Gets or sets the Tags.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
@@ -468,35 +470,55 @@ namespace Microsoft.PowerShell.Commands
         public string[] Tags { get; set; }
 
         /// <summary>
-        /// Specify the ProjectUri.
+        /// Gets or sets the ProjectUri.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public Uri ProjectUri { get; set; }
 
         /// <summary>
-        /// Specify the LicenseUri.
+        /// Gets or sets the LicenseUri.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public Uri LicenseUri { get; set; }
 
         /// <summary>
-        /// Specify the IconUri.
+        /// Gets or sets the IconUri.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public Uri IconUri { get; set; }
 
         /// <summary>
-        /// Specify the ReleaseNotes.
+        /// Gets or sets the ReleaseNotes.
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public string ReleaseNotes { get; set; }
 
         /// <summary>
-        /// Specify the HelpInfo URI.
+        /// Gets or sets whether or not the module is a prerelease.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prerelease { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the external module dependencies.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string[] ExternalModuleDependencies { get; set; }
+
+        /// <summary>
+        /// Gets or sets the HelpInfo URI.
         /// </summary>
         [Parameter]
         [AllowNull]
@@ -511,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
         private string _helpInfoUri;
 
         /// <summary>
-        /// This parameter causes the module manifest string to be to the output stream...
+        /// Gets or sets whether the module manifest string should go to the output stream.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
@@ -524,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Specify the Default Command Prefix.
+        /// Gets or sets the Default Command Prefix.
         /// </summary>
         [Parameter]
         [AllowNull]
@@ -1044,65 +1066,65 @@ namespace Microsoft.PowerShell.Commands
                     if (_rootModule == null)
                         _rootModule = string.Empty;
 
-                    BuildModuleManifest(result, "RootModule", Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
+                    BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
-                    BuildModuleManifest(result, "ModuleVersion", Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(ModuleVersion), Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion), streamWriter);
 
-                    BuildModuleManifest(result, "CompatiblePSEditions", Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(CompatiblePSEditions), Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "GUID", Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.GUID), Modules.GUID, !string.IsNullOrEmpty(_guid.ToString()), () => QuoteName(_guid.ToString()), streamWriter);
 
-                    BuildModuleManifest(result, "Author", Modules.Author, !string.IsNullOrEmpty(_author), () => QuoteName(Author), streamWriter);
+                    BuildModuleManifest(result, nameof(Author), Modules.Author, !string.IsNullOrEmpty(_author), () => QuoteName(Author), streamWriter);
 
-                    BuildModuleManifest(result, "CompanyName", Modules.CompanyName, !string.IsNullOrEmpty(_companyName), () => QuoteName(_companyName), streamWriter);
+                    BuildModuleManifest(result, nameof(CompanyName), Modules.CompanyName, !string.IsNullOrEmpty(_companyName), () => QuoteName(_companyName), streamWriter);
 
-                    BuildModuleManifest(result, "Copyright", Modules.Copyright, !string.IsNullOrEmpty(_copyright), () => QuoteName(_copyright), streamWriter);
+                    BuildModuleManifest(result, nameof(Copyright), Modules.Copyright, !string.IsNullOrEmpty(_copyright), () => QuoteName(_copyright), streamWriter);
 
-                    BuildModuleManifest(result, "Description", Modules.Description, !string.IsNullOrEmpty(_description), () => QuoteName(_description), streamWriter);
+                    BuildModuleManifest(result, nameof(Description), Modules.Description, !string.IsNullOrEmpty(_description), () => QuoteName(_description), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellVersion", Modules.PowerShellVersion, _powerShellVersion != null && !string.IsNullOrEmpty(_powerShellVersion.ToString()), () => QuoteName(_powerShellVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellVersion), Modules.PowerShellVersion, _powerShellVersion != null && !string.IsNullOrEmpty(_powerShellVersion.ToString()), () => QuoteName(_powerShellVersion), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellHostName", Modules.PowerShellHostName, !string.IsNullOrEmpty(_PowerShellHostName), () => QuoteName(_PowerShellHostName), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellHostName), Modules.PowerShellHostName, !string.IsNullOrEmpty(_PowerShellHostName), () => QuoteName(_PowerShellHostName), streamWriter);
 
-                    BuildModuleManifest(result, "PowerShellHostVersion", Modules.PowerShellHostVersion, _PowerShellHostVersion != null && !string.IsNullOrEmpty(_PowerShellHostVersion.ToString()), () => QuoteName(_PowerShellHostVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(PowerShellHostVersion), Modules.PowerShellHostVersion, _PowerShellHostVersion != null && !string.IsNullOrEmpty(_PowerShellHostVersion.ToString()), () => QuoteName(_PowerShellHostVersion), streamWriter);
 
-                    BuildModuleManifest(result, "DotNetFrameworkVersion", StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(DotNetFrameworkVersion), StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
 
-                    BuildModuleManifest(result, "CLRVersion", StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(CLRVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
-                    BuildModuleManifest(result, "ProcessorArchitecture", Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
+                    BuildModuleManifest(result, nameof(ProcessorArchitecture), Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 
-                    BuildModuleManifest(result, "RequiredModules", Modules.RequiredModules, _requiredModules != null && _requiredModules.Length > 0, () => QuoteModules(_requiredModules, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(RequiredModules), Modules.RequiredModules, _requiredModules != null && _requiredModules.Length > 0, () => QuoteModules(_requiredModules, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "RequiredAssemblies", Modules.RequiredAssemblies, _requiredAssemblies != null, () => QuoteFiles(_requiredAssemblies, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(RequiredAssemblies), Modules.RequiredAssemblies, _requiredAssemblies != null, () => QuoteFiles(_requiredAssemblies, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "ScriptsToProcess", Modules.ScriptsToProcess, _scripts != null, () => QuoteFiles(_scripts, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(ScriptsToProcess), Modules.ScriptsToProcess, _scripts != null, () => QuoteFiles(_scripts, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "TypesToProcess", Modules.TypesToProcess, _types != null, () => QuoteFiles(_types, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(TypesToProcess), Modules.TypesToProcess, _types != null, () => QuoteFiles(_types, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FormatsToProcess", Modules.FormatsToProcess, _formats != null, () => QuoteFiles(_formats, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FormatsToProcess), Modules.FormatsToProcess, _formats != null, () => QuoteFiles(_formats, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "NestedModules", Modules.NestedModules, _nestedModules != null, () => QuoteModules(PreProcessModuleSpec(_nestedModules), streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(NestedModules), Modules.NestedModules, _nestedModules != null, () => QuoteModules(PreProcessModuleSpec(_nestedModules), streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FunctionsToExport", Modules.FunctionsToExport, true, () => QuoteNames(_exportedFunctions, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FunctionsToExport), Modules.FunctionsToExport, true, () => QuoteNames(_exportedFunctions, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "CmdletsToExport", Modules.CmdletsToExport, true, () => QuoteNames(_exportedCmdlets, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(CmdletsToExport), Modules.CmdletsToExport, true, () => QuoteNames(_exportedCmdlets, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "VariablesToExport", Modules.VariablesToExport, _exportedVariables != null && _exportedVariables.Length > 0, () => QuoteNames(_exportedVariables, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(VariablesToExport), Modules.VariablesToExport, _exportedVariables != null && _exportedVariables.Length > 0, () => QuoteNames(_exportedVariables, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "AliasesToExport", Modules.AliasesToExport, true, () => QuoteNames(_exportedAliases, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(AliasesToExport), Modules.AliasesToExport, true, () => QuoteNames(_exportedAliases, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "DscResourcesToExport", Modules.DscResourcesToExport, _dscResourcesToExport != null && _dscResourcesToExport.Length > 0, () => QuoteNames(_dscResourcesToExport, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(DscResourcesToExport), Modules.DscResourcesToExport, _dscResourcesToExport != null && _dscResourcesToExport.Length > 0, () => QuoteNames(_dscResourcesToExport, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "ModuleList", Modules.ModuleList, _moduleList != null, () => QuoteModules(_moduleList, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(ModuleList), Modules.ModuleList, _moduleList != null, () => QuoteModules(_moduleList, streamWriter), streamWriter);
 
-                    BuildModuleManifest(result, "FileList", Modules.FileList, _miscFiles != null, () => QuoteFiles(_miscFiles, streamWriter), streamWriter);
+                    BuildModuleManifest(result, nameof(FileList), Modules.FileList, _miscFiles != null, () => QuoteFiles(_miscFiles, streamWriter), streamWriter);
 
                     BuildPrivateDataInModuleManifest(result, streamWriter);
 
-                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
+                    BuildModuleManifest(result, nameof(Modules.HelpInfoURI), Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
 
-                    BuildModuleManifest(result, "DefaultCommandPrefix", Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
+                    BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
                     result.Append("}");
                     result.Append(streamWriter.NewLine);
@@ -1174,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteWarning(Modules.PrivateDataValueTypeShouldBeHashTableWarning);
 
-                    BuildModuleManifest(result, "PrivateData", Modules.PrivateData, _privateData != null,
+                    BuildModuleManifest(result, nameof(PrivateData), Modules.PrivateData, _privateData != null,
                         () => QuoteName((string)LanguagePrimitives.ConvertTo(_privateData, typeof(string), CultureInfo.InvariantCulture)),
                         streamWriter);
                 }
@@ -1192,11 +1214,14 @@ namespace Microsoft.PowerShell.Commands
 
                 _indent = "        ";
 
-                BuildModuleManifest(result, "Tags", Modules.Tags, Tags != null && Tags.Length > 0, () => QuoteNames(Tags, streamWriter), streamWriter);
-                BuildModuleManifest(result, "LicenseUri", Modules.LicenseUri, LicenseUri != null, () => QuoteName(LicenseUri), streamWriter);
-                BuildModuleManifest(result, "ProjectUri", Modules.ProjectUri, ProjectUri != null, () => QuoteName(ProjectUri), streamWriter);
-                BuildModuleManifest(result, "IconUri", Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
-                BuildModuleManifest(result, "ReleaseNotes", Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
+                BuildModuleManifest(result, nameof(Tags), Modules.Tags, Tags != null && Tags.Length > 0, () => QuoteNames(Tags, streamWriter), streamWriter);
+                BuildModuleManifest(result, nameof(LicenseUri), Modules.LicenseUri, LicenseUri != null, () => QuoteName(LicenseUri), streamWriter);
+                BuildModuleManifest(result, nameof(ProjectUri), Modules.ProjectUri, ProjectUri != null, () => QuoteName(ProjectUri), streamWriter);
+                BuildModuleManifest(result, nameof(IconUri), Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
+                BuildModuleManifest(result, nameof(ReleaseNotes), Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
+                BuildModuleManifest(result, nameof(Prerelease), Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
+                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "$false"; }, streamWriter);
+                BuildModuleManifest(result, nameof(ExternalModuleDependencies), Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");
                 result.Append(ManifestComment(StringUtil.Format(Modules.EndOfManifestHashTable, "PSData"), streamWriter));
@@ -1237,5 +1262,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-#endregion
+    #endregion
 }

@@ -12,19 +12,21 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+
 using Microsoft.PowerShell.Cmdletization;
-using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region ModuleCmdletBase class
@@ -685,8 +687,8 @@ namespace Microsoft.PowerShell.Commands
                         module = LoadUsingExtensions(
                             parentModule,
                             moduleSpecification.Name,
-                            rootedPath, // fileBaseName
-                            /*extension*/null,
+                            fileBaseName: rootedPath,
+                            extension: null,
                             moduleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                             prefix,
                             ss,
@@ -1065,7 +1067,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure we always return a non-null collection.
-            return allModules ?? Utils.EmptyArray<PSModuleInfo>();
+            return allModules ?? Array.Empty<PSModuleInfo>();
         }
 
         /// <summary>
@@ -5732,7 +5734,7 @@ namespace Microsoft.PowerShell.Commands
                                     scriptThis: AutomationNull.Value,
                                     outputPipe: ((MshCommandRuntime)this.CommandRuntime).OutputPipe,
                                     invocationInfo: invocationInfo,
-                                    args: this.BaseArgumentList ?? Utils.EmptyArray<object>());
+                                    args: this.BaseArgumentList ?? Array.Empty<object>());
                             }
                             finally
                             {

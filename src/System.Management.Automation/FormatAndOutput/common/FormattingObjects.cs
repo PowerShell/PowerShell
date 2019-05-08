@@ -23,6 +23,7 @@
 //
 
 using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -149,40 +150,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public bool outOfBand = false;
         public WriteStreamType writeStream = WriteStreamType.None;
         internal bool isHelpObject = false;
-
-        /// <summary>
-        /// Helper method to set the WriteStreamType property
-        /// based on note properties of a PSObject object.
-        /// </summary>
-        /// <param name="so">PSObject.</param>
-        internal void SetStreamTypeFromPSObject(
-            System.Management.Automation.PSObject so)
-        {
-            if (PSObjectHelper.IsWriteErrorStream(so))
-            {
-                writeStream = WriteStreamType.Error;
-            }
-            else if (PSObjectHelper.IsWriteWarningStream(so))
-            {
-                writeStream = WriteStreamType.Warning;
-            }
-            else if (PSObjectHelper.IsWriteVerboseStream(so))
-            {
-                writeStream = WriteStreamType.Verbose;
-            }
-            else if (PSObjectHelper.IsWriteDebugStream(so))
-            {
-                writeStream = WriteStreamType.Debug;
-            }
-            else if (PSObjectHelper.IsWriteInformationStream(so))
-            {
-                writeStream = WriteStreamType.Information;
-            }
-            else
-            {
-                writeStream = WriteStreamType.None;
-            }
-        }
     }
     #endregion
 

@@ -191,7 +191,7 @@ namespace System.Management.Automation.Tracing
                     IsEnabled(level, keywords));
         }
 
-        #region resource manager
+#region resource manager
 
         private static global::System.Resources.ResourceManager _resourceManager;
         private static global::System.Globalization.CultureInfo _resourceCulture;
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Tracing
             return value;
         }
 
-        #endregion resource manager
+#endregion resource manager
 
         /// <summary>
         /// Gets the EventMessage for a given event.
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        #region logging
+#region logging
 
         // maps a LogLevel to an associated SysLogPriority.
         static NativeMethods.SysLogPriority[] _levels =
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        #endregion logging
+#endregion logging
     }
 
     internal enum LogLevel : uint

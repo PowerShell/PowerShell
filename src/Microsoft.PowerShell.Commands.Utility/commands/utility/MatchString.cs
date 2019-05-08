@@ -1064,10 +1064,10 @@ namespace Microsoft.PowerShell.Commands
                 // but we have to include it to silence OACR
                 _includeStrings = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
 
-                this._include = new WildcardPattern[_includeStrings.Length];
+                _include = new WildcardPattern[_includeStrings.Length];
                 for (int i = 0; i < _includeStrings.Length; i++)
                 {
-                    this._include[i] = WildcardPattern.Get(_includeStrings[i], WildcardOptions.IgnoreCase);
+                    _include[i] = WildcardPattern.Get(_includeStrings[i], WildcardOptions.IgnoreCase);
                 }
             }
         }
@@ -1091,10 +1091,10 @@ namespace Microsoft.PowerShell.Commands
                 // but we have to include it to silence OACR
                 _excludeStrings = value ?? throw PSTraceSource.NewArgumentNullException("value");
 
-                this._exclude = new WildcardPattern[_excludeStrings.Length];
+                _exclude = new WildcardPattern[_excludeStrings.Length];
                 for (int i = 0; i < _excludeStrings.Length; i++)
                 {
-                    this._exclude[i] = WildcardPattern.Get(_excludeStrings[i], WildcardOptions.IgnoreCase);
+                    _exclude[i] = WildcardPattern.Get(_excludeStrings[i], WildcardOptions.IgnoreCase);
                 }
             }
         }
@@ -1615,11 +1615,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // otherwise construct and populate a new MatchInfo object
                 matchResult = new MatchInfo
-                              {
-                                  IgnoreCase = !CaseSensitive,
-                                  Line = operandString,
-                                  Pattern = Pattern[patternIndex]
-                              };
+                {
+                    IgnoreCase = !CaseSensitive,
+                    Line = operandString,
+                    Pattern = Pattern[patternIndex]
+                };
 
                 if (_preContext > 0 || _postContext > 0)
                 {
@@ -1758,9 +1758,9 @@ namespace Microsoft.PowerShell.Commands
             bool ok = false;
 
             // see if the file is on the include list...
-            if (this._include != null)
+            if (_include != null)
             {
-                foreach (WildcardPattern patternItem in this._include)
+                foreach (WildcardPattern patternItem in _include)
                 {
                     if (patternItem.IsMatch(filename))
                     {
@@ -1780,9 +1780,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // now see if it's on the exclude list...
-            if (this._exclude != null)
+            if (_exclude != null)
             {
-                foreach (WildcardPattern patternItem in this._exclude)
+                foreach (WildcardPattern patternItem in _exclude)
                 {
                     if (patternItem.IsMatch(filename))
                     {

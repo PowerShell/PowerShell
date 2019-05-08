@@ -2,14 +2,15 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -197,6 +198,22 @@ namespace Microsoft.PowerShell.Commands
             get { return null; }
         }
 
+        /// <summary>
+        /// Suppress HostName.
+        /// </summary>
+        public override string[] HostName
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress Subsystem.
+        /// </summary>
+        public override string Subsystem
+        {
+            get { return null; }
+        }
+
         #endregion
 
         /// <summary>
@@ -318,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
             Mandatory = true,
             ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
         [ValidateTrustedData]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
@@ -464,20 +481,13 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _initScript;
 
         /// <summary>
-        /// Launces the background job as a 32-bit process. This can be used on
+        /// Launches the background job as a 32-bit process. This can be used on
         /// 64-bit systems to launch a 32-bit wow process for the background job.
         /// </summary>
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        public virtual SwitchParameter RunAs32
-        {
-            get { return _shouldRunAs32; }
-
-            set { _shouldRunAs32 = value; }
-        }
-
-        private bool _shouldRunAs32;
+        public virtual SwitchParameter RunAs32 { get; set; }
 
         /// <summary>
         /// Powershell Version to execute the background job.
@@ -548,6 +558,37 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (!File.Exists(PowerShellProcessInstance.PwshExePath))
+            {
+                // The pwsh executable file is not found under $PSHOME.
+                // This means that PowerShell is currently being hosted in another application,
+                // and 'Start-Job' is not supported by design in that scenario.
+                string message = StringUtil.Format(
+                    RemotingErrorIdStrings.IPCPwshExecutableNotFound,
+                    PowerShellProcessInstance.PwshExePath);
+
+                var errorRecord = new ErrorRecord(
+                    new PSNotSupportedException(message),
+                    "IPCPwshExecutableNotFound",
+                    ErrorCategory.NotInstalled,
+                    PowerShellProcessInstance.PwshExePath);
+
+                ThrowTerminatingError(errorRecord);
+            }
+
+            if (RunAs32.IsPresent && Environment.Is64BitProcess)
+            {
+                // We cannot start a 32-bit 'pwsh' process from a 64-bit 'pwsh' installation.
+                string message = RemotingErrorIdStrings.RunAs32NotSupported;
+                var errorRecord = new ErrorRecord(
+                    new PSNotSupportedException(message),
+                    "RunAs32NotSupported",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
+
+                ThrowTerminatingError(errorRecord);
+            }
+
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);
 
             if (ParameterSetName == DefinitionNameParameterSet)
@@ -584,7 +625,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
-            connectionInfo.RunAs32 = _shouldRunAs32;
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;

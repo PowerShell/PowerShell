@@ -9,6 +9,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -25,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        internal string[] NameInternal { get; set; } = new string[0];
+        internal string[] NameInternal { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// The flags to be set on the TraceSource.

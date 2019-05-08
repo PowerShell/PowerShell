@@ -6,26 +6,26 @@ trigger:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
+    - feature*
 
 pr:
   branches:
     include:
     - master
     - release*
-  paths:
-    exclude:
-    - /src/*
+    - feature*
 
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- template: templates/credscan.yml
 
-  queue:
+- job: Linux_CI
+
+  displayName: Markdown and Common Tests
+
+  pool:
     name: Hosted Ubuntu 1604
   steps:
   - powershell: |
@@ -33,13 +33,20 @@ phases:
     displayName: Capture environment
     condition: succeededOrFailed()
 
-  - powershell:  Install-module pester -Scope CurrentUser -Force -SkipPublisherCheck
+  - powershell: |
+      Install-module pester -Scope CurrentUser -Force
     displayName: Install Pester
     condition: succeededOrFailed()
 
   - bash: |
+      curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
+    displayName: Bootstrap Yarn
+    condition: succeededOrFailed()
+
+  - bash: |
+      # Installing globally with yarn is a pain, please don't try
       sudo npm install -g markdown-spellcheck@0.11.0
-      # Sometimes this folder is left behind with root permissions and is needed by later NPM installs which don't need sudo
+      # Sometimes this folder is left behind with root permissions and is needed by later npm installs which don't need sudo
       sudo rm -rf ~/.npm/_cacache
     displayName: Install mdspell
     condition: succeededOrFailed()
@@ -50,7 +57,7 @@ phases:
 
   - bash: |
       mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
-    displayName: Test Spelling
+    displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
 
   - powershell: |
@@ -60,7 +67,7 @@ phases:
       Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Common Tests;publishRunAttachments=true;resultFiles=$path;]"
       if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
       {
-        throw "markdown link tests failed"
+        throw "Markdown tests failed"
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()

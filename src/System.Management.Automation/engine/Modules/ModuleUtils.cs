@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Text;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -266,8 +267,8 @@ namespace System.Management.Automation.Internal
                     subdirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     ProcessPossibleVersionSubdirectories(subdirectories, versionDirectories);
                 }
-                catch (IOException) { subdirectories = Utils.EmptyArray<string>(); }
-                catch (UnauthorizedAccessException) { subdirectories = Utils.EmptyArray<string>(); }
+                catch (IOException) { subdirectories = Array.Empty<string>(); }
+                catch (UnauthorizedAccessException) { subdirectories = Array.Empty<string>(); }
 
                 bool isModuleDirectory = false;
                 string proposedModuleName = Path.GetFileName(directoryToCheck);
@@ -607,7 +608,7 @@ namespace System.Management.Automation.Internal
         public CommandScore(CommandInfo command, int score)
         {
             Command = command;
-            Score =  score;
+            Score = score;
         }
 
         public CommandInfo Command;

@@ -149,9 +149,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
-        $powerShellPath = [System.Diagnostics.Process]::GetCurrentProcess().Path
-        $powerShellCommand = $powerShellPath + ' -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
-        Invoke-Expression $powerShellCommand
+        pwsh -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch "Before Dispose"
@@ -300,7 +298,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Stop-Transcript
         }
 
-        $transcriptMinHeaderFilePath = $transcriptFilePath + "_minimal" 
+        $transcriptMinHeaderFilePath = $transcriptFilePath + "_minimal"
         $scriptMinHeader = {
             Start-Transcript -Path $transcriptMinHeaderFilePath -UseMinimalHeader
             Stop-Transcript
@@ -309,7 +307,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
         $transcriptFilePath | Should -Exist
         $transcriptLength = (Get-Content -Path $transcriptFilePath -Raw).Length
-        
+
         & $scriptMinHeader
         $transcriptMinHeaderFilePath | Should -Exist
         $transcriptMinHeaderLength = (Get-Content -Path $transcriptMinHeaderFilePath -Raw).Length

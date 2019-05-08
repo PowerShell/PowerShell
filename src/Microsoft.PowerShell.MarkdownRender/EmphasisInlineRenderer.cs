@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, EmphasisInline obj)
         {
-            renderer.Write(renderer.EscapeSequences.FormatEmphasis(obj.FirstChild.ToString(), isBold : obj.DelimiterCount == 2 ? true : false));
+            renderer.Write(renderer.EscapeSequences.FormatEmphasis(obj.FirstChild.ToString(), isBold: obj.DelimiterCount == 2 ? true : false));
         }
     }
 }

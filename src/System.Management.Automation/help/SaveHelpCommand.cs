@@ -3,14 +3,14 @@
 
 using System;
 using System.Collections;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Help;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath

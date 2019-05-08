@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Tracing;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Host;
-using System.Collections.ObjectModel;
-using System.Management.Automation.Remoting.Client;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif

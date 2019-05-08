@@ -15,7 +15,8 @@
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win7-x86",
@@ -25,14 +26,15 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-x64-component-registration",
@@ -42,7 +44,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -51,7 +53,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "componentregistration"
+        "VariableForExtractedBinariesPath": "componentregistration",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-x64-symbols",
@@ -61,7 +64,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -70,7 +73,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "Symbols_x64"
+        "VariableForExtractedBinariesPath": "Symbols_x64",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-x86-symbols",
@@ -80,7 +84,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -89,7 +93,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "Symbols_x86"
+        "VariableForExtractedBinariesPath": "Symbols_x86",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-arm-symbols",
@@ -99,7 +104,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -108,7 +113,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "Symbols_arm"
+        "VariableForExtractedBinariesPath": "Symbols_arm",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-arm64-symbols",
@@ -118,7 +124,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -127,7 +133,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "Symbols_arm64"
+        "VariableForExtractedBinariesPath": "Symbols_arm64",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-x64-package",
@@ -137,7 +144,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -145,7 +152,8 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 3
+        "ArtifactsExpected": 4,
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-x86-package",
@@ -155,7 +163,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -163,7 +171,8 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 3
+        "ArtifactsExpected": 3,
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-arm-package",
@@ -173,7 +182,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -181,7 +190,8 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 1
+        "ArtifactsExpected": 2,
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-arm64-package",
@@ -191,7 +201,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -199,7 +209,8 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 1
+        "ArtifactsExpected": 2,
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-fxdependent-symbols",
@@ -209,7 +220,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -218,7 +229,8 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "results",
         "ArtifactsExpected": 1,
-        "VariableForExtractedBinariesPath": "Symbols_fxdependent"
+        "VariableForExtractedBinariesPath": "Symbols_fxdependent",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "win-fxdependent-package",
@@ -228,7 +240,7 @@
             "-m",
             "3968m"
         ],
-        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\Dockerfile",
         "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
@@ -236,28 +248,11 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 1
+        "ArtifactsExpected": 1,
+        "EnableFeature": [ "ArtifactAsFolder" ]
     }
   ],
   "Linux": [
-    {
-        "Name": "ubuntu.14.04-unused",
-        "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage -TarX64 -TarArm",
-        "BuildDockerOptions": [
-            "--cap-add",
-            "SYS_ADMIN",
-            "--cap-add",
-            "MKNOD",
-            "--device=/dev/fuse",
-            "--security-opt",
-            "apparmor:unconfined"
-        ],
-        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu14.04/Dockerfile",
-        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
-        "DockerImageName": "ps-ubunutu-14-04",
-        "BinaryBucket": "release"
-    },
     {
         "Name": "deb",
         "RepoDestinationPath": "/PowerShell",
@@ -265,7 +260,8 @@
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu18.04/Dockerfile",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerImageName": "ps-ubunutu-18-04",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "rpm",
@@ -274,7 +270,8 @@
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "alpine",
@@ -283,7 +280,8 @@
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_alpine3/Dockerfile",
         "DockerImageName": "ps-alpine-3",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     },
     {
         "Name": "fxdependent",
@@ -292,7 +290,8 @@
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7",
-        "BinaryBucket": "release"
+        "BinaryBucket": "release",
+        "EnableFeature": [ "ArtifactAsFolder" ]
     }
   ]
 }

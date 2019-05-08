@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -98,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_content == null)
             {
-                _content = new object[0];
+                _content = Array.Empty<object>();
             }
 
             if (_pipingPaths)

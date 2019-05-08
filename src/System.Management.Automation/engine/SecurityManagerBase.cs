@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System.Management.Automation.Host;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -86,9 +87,9 @@ namespace System.Management.Automation
 
 #if DEBUG
             // If we are debugging, let the unit tests swap the file from beneath us
-            if(commandInfo.CommandType == CommandTypes.ExternalScript)
+            if (commandInfo.CommandType == CommandTypes.ExternalScript)
             {
-                while(Environment.GetEnvironmentVariable("PSCommandDiscoveryPreDelay") != null) { System.Threading.Thread.Sleep(100); }
+                while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPreDelay") != null) { System.Threading.Thread.Sleep(100); }
             }
 #endif
 
@@ -105,9 +106,9 @@ namespace System.Management.Automation
 
 #if DEBUG
                 // If we are debugging, let the unit tests swap the file from beneath us
-                if(commandInfo.CommandType == CommandTypes.ExternalScript)
+                if (commandInfo.CommandType == CommandTypes.ExternalScript)
                 {
-                    while(Environment.GetEnvironmentVariable("PSCommandDiscoveryPostDelay") != null) { System.Threading.Thread.Sleep(100); }
+                    while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPostDelay") != null) { System.Threading.Thread.Sleep(100); }
                 }
 #endif
             }

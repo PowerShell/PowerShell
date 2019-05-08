@@ -2,27 +2,28 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
+using System.Diagnostics; // Process class
 using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
-using Microsoft.Win32.SafeHandles;
-using System.Management.Automation.Internal;
-using Microsoft.PowerShell.Commands.Internal;
+using System.Text;
+using System.Threading;
+
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands.Internal;
+using Microsoft.Win32.SafeHandles;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
@@ -779,29 +780,24 @@ namespace Microsoft.PowerShell.Commands
 
                     var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
 
-                    // Set the default length to be 256, so it will be sufficient for most cases.
-                    int userNameLength = 256, domainNameLength = 256;
-                    var userNameStr = new StringBuilder(userNameLength);
-                    var domainNameStr = new StringBuilder(domainNameLength);
+                    // Max username is defined as UNLEN = 256 in lmcons.h
+                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                    // The buffer length must be +1, last position is for a null string terminator.
+                    int userNameLength = 257;
+                    int domainNameLength = 16;
+                    Span<char> userNameStr = stackalloc char[userNameLength];
+                    Span<char> domainNameStr = stackalloc char[domainNameLength];
                     Win32Native.SID_NAME_USE accountType;
 
+                    // userNameLength and domainNameLength will be set to actual lengths.
                     if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
                     {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            userNameStr.EnsureCapacity(userNameLength);
-                            domainNameStr.EnsureCapacity(domainNameLength);
-
-                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
 
-                    userName = domainNameStr + "\\" + userNameStr;
+                    // TODO: Use Concat() from .Net Core 3.0
+                    // public static string Concat(ReadOnlySpan<char> str0, ReadOnlySpan<char> str1, ReadOnlySpan<char> str2)
+                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength).ToString(), "\\", userNameStr.Slice(0, userNameLength).ToString());
                 } while (false);
             }
             catch (NotSupportedException)
@@ -1882,14 +1878,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ArgumentList != null)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (string str in ArgumentList)
-                {
-                    sb.Append(str);
-                    sb.Append(' ');
-                }
-
-                startInfo.Arguments = sb.ToString(); ;
+                startInfo.Arguments = string.Join(' ', ArgumentList);
             }
 
             if (WorkingDirectory != null)
@@ -2311,21 +2300,21 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder builder = new StringBuilder();
             string str = executableFileName.Trim();
-            bool flag = str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal);
+            bool flag = str.StartsWith('"') && str.EndsWith('"');
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             builder.Append(str);
             if (!flag)
             {
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                builder.Append(" ");
+                builder.Append(' ');
                 builder.Append(arguments);
             }
 

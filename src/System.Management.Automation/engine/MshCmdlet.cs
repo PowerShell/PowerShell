@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
+
 using PipelineResultTypes = System.Management.Automation.Runspaces.PipelineResultTypes;
 
 namespace System.Management.Automation
@@ -83,7 +84,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="switchParameter">The SwitchParameter object to convert to bool.</param>
         /// <returns>The corresponding boolean value.</returns>
-        public static implicit operator bool (SwitchParameter switchParameter)
+        public static implicit operator bool(SwitchParameter switchParameter)
         {
             return switchParameter.IsPresent;
         }
@@ -719,11 +720,11 @@ namespace System.Management.Automation
             {
                 _context.EngineSessionState = sessionState.Internal;
                 return InvokeScript(
-                    sb:scriptBlock,
-                    useNewScope:false,
-                    writeToPipeline:PipelineResultTypes.None,
-                    input:null,
-                    args:args);
+                    sb: scriptBlock,
+                    useNewScope: false,
+                    writeToPipeline: PipelineResultTypes.None,
+                    input: null,
+                    args: args);
             }
             finally
             {

@@ -9,9 +9,11 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Internal;
 using System.Threading;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
@@ -54,7 +56,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
         }
 
-        private CimSensitiveValueConverter _cimSensitiveValueConverter = new CimSensitiveValueConverter();
+        private readonly CimSensitiveValueConverter _cimSensitiveValueConverter = new CimSensitiveValueConverter();
         internal CimSensitiveValueConverter CimSensitiveValueConverter { get { return _cimSensitiveValueConverter; } }
 
         internal abstract IObservable<T> GetCimOperation();

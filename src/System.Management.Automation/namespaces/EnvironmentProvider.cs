@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -200,7 +201,8 @@ namespace Microsoft.PowerShell.Commands
                     //       (If, by contrast, we just used `entry` as-is every time a duplicate is encountered,
                     //        it could - intermittently - represent a value *other* than the effective one.)
                     string effectiveValue = Environment.GetEnvironmentVariable((string)entry.Key);
-                    if (((string)entry.Value).Equals(effectiveValue, StringComparison.Ordinal)) { // We've found the effective definition.
+                    if (((string)entry.Value).Equals(effectiveValue, StringComparison.Ordinal))
+                    { // We've found the effective definition.
                         // Note: We *recreate* the entry so that the specific name casing of the
                         //       effective definition is also reflected. However, if the case variants
                         //       define the same value, it is unspecified which name variant is reflected

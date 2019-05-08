@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Security.Principal;
-using System.Management.Automation.Runspaces;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
+using System.Security.Principal;
 using System.Threading;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -19,28 +20,36 @@ namespace System.Management.Automation
         #region Private Members
 
         private bool _extraPowerShellAlreadyScheduled;
-        private PowerShell _extraPowerShell;     // extra PowerShell at the server to be run after localPowerShell
-        private PSDataCollection<PSObject> _localPowerShellOutput; // output buffer for the local PowerShell
-        // that is associated with this
-                                                 // powershell driver
-        // associated with this powershell
-        // data structure handler object to handle all
-        // communications with the client
-        private bool[] _datasent = new bool[2];  // if the remaining data has been sent
-                                                 // to the client before sending state
-                                                 // information
-        private object _syncObject = new object(); // sync object for synchronizing sending
-                                                   // data to client
-        private bool _noInput;                   // there is no input when this driver
-                                                 // was created
+
+        // extra PowerShell at the server to be run after localPowerShell
+        private PowerShell _extraPowerShell;
+
+        // output buffer for the local PowerShell that is associated with this powershell driver
+        // associated with this powershell data structure handler object to handle all communications with the client
+        private PSDataCollection<PSObject> _localPowerShellOutput;
+
+        // if the remaining data has been sent to the client before sending state information
+        private bool[] _datasent = new bool[2];
+
+        // sync object for synchronizing sending data to client
+        private object _syncObject = new object();
+
+        // there is no input when this driver was created
+        private bool _noInput;
         private bool _addToHistory;
-        private ServerRemoteHost _remoteHost;   // the server remote host instance
-                                                // associated with this powershell
-#if !CORECLR // No ApartmentState In CoreCLR
-        private ApartmentState apartmentState;  // apartment state for this powershell
+
+        // the server remote host instance
+        // associated with this powershell
+        private ServerRemoteHost _remoteHost;
+
+#if !CORECLR
+        // No ApartmentState In CoreCLR
+        // apartment state for this powershell
+        private ApartmentState apartmentState;
 #endif
 
-        private IRSPDriverInvoke _psDriverInvoker;  // Handles nested invocation of PS drivers.
+        // Handles nested invocation of PS drivers.
+        private IRSPDriverInvoke _psDriverInvoker;
 
         #endregion Private Members
 

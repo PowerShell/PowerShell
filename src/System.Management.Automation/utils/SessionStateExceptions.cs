@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 
 namespace System.Management.Automation

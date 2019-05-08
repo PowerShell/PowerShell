@@ -9,6 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -262,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 dollarUnder: InputObject,
                 input: new object[] { InputObject },
                 scriptThis: AutomationNull.Value,
-                args: Utils.EmptyArray<object>());
+                args: Array.Empty<object>());
         }
 
         private object StepCommand()

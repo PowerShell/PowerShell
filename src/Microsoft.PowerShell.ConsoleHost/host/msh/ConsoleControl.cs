@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
     internal static class ConsoleControl
     {
 #if !UNIX
-#region structs
+        #region structs
 
         internal enum InputRecordEventTypes : ushort
         {
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell
             public byte tmCharSet;
         }
 
-#region SentInput Data Structures
+        #region SentInput Data Structures
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct INPUT
@@ -417,11 +417,11 @@ namespace Microsoft.PowerShell
             ScanCode = 0x0008
         }
 
-#endregion SentInput Data Structures
+        #endregion SentInput Data Structures
 
-#endregion structs
+        #endregion structs
 
-#region Window Visibility
+        #region Window Visibility
         [DllImport(PinvokeDllNames.GetConsoleWindowDllName)]
         internal static extern IntPtr GetConsoleWindow();
 
@@ -473,9 +473,9 @@ namespace Microsoft.PowerShell
             }
         }
 #endif
-#endregion
+        #endregion
 
-#region Input break handler (Ctrl-C, Ctrl-Break)
+        #region Input break handler (Ctrl-C, Ctrl-Break)
 
         /// <summary>
         /// Types of control ConsoleBreakSignals received by break Win32Handler delegates.
@@ -546,9 +546,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion
+        #endregion
 
-#region Win32Handles
+        #region Win32Handles
 
         private static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
             {
@@ -621,9 +621,9 @@ namespace Microsoft.PowerShell
             return _outputHandle.Value;
         }
 
-#endregion
+        #endregion
 
-#region Mode
+        #region Mode
 
         /// <summary>
         /// Flags used by ConsoleControl.GetMode and ConsoleControl.SetMode.
@@ -707,44 +707,57 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion
+        #endregion
 
-#region Input
+        #region Input
 
         /// <summary>
         /// Reads input from the console device according to the mode in effect (see GetMode, SetMode)
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// Handle to the console device returned by GetInputHandle
-        /// <param name="initialContent">
-        /// Initial contents of the edit buffer, if any. charactersToRead should be at least as large as the length of this string.
+        /// <param name="initialContentLength">
+        /// Length of initial content of the edit buffer. Zero if no initial content exists.
+        /// Must be less than editBuffer length.
+        /// </param>
+        /// <param name="editBuffer">
+        /// Edit buffer with optional initial content.
+        /// Caution! Last position in the edit buffer is for a null in native code.
         /// </param>
         /// <param name="charactersToRead">
         /// Number of characters to read from the device.
+        /// Must be less than editBuffer length.
         /// </param>
         /// <param name="endOnTab">
-        /// true to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
+        /// True to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
         /// </param>
         /// <param name="keyState">
-        /// bit mask indicating the state of the control/shift keys at the point input was terminated.
+        /// Bit mask indicating the state of the control/shift keys at the point input was terminated.
+        /// </param>
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsole fails
         /// </exception>
 
-        internal static string ReadConsole(ConsoleHandle consoleHandle, string initialContent,
-            int charactersToRead, bool endOnTab, out uint keyState)
+        internal static string ReadConsole(
+            ConsoleHandle consoleHandle,
+            int initialContentLength,
+            Span<char> editBuffer,
+            int charactersToRead,
+            bool endOnTab,
+            out uint keyState)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-            Dbg.Assert(initialContent != null, "if no initial content is desired, pass string.Empty");
+            Dbg.Assert(initialContentLength < editBuffer.Length, "initialContentLength must be less than editBuffer.Length");
+            Dbg.Assert(charactersToRead < editBuffer.Length, "charactersToRead must be less than editBuffer.Length");
             keyState = 0;
 
             CONSOLE_READCONSOLE_CONTROL control = new CONSOLE_READCONSOLE_CONTROL();
 
             control.nLength = (ULONG)Marshal.SizeOf(control);
-            control.nInitialChars = (ULONG)initialContent.Length;
+            control.nInitialChars = (ULONG)initialContentLength;
             control.dwControlKeyState = 0;
             if (endOnTab)
             {
@@ -753,28 +766,34 @@ namespace Microsoft.PowerShell
                 control.dwCtrlWakeupMask = (1 << TAB);
             }
 
-            DWORD charsReadUnused = 0;
-            StringBuilder buffer = new StringBuilder(initialContent, charactersToRead);
+            DWORD charsReaded = 0;
+
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
-                    out buffer,
+                    editBuffer,
                     (DWORD)charactersToRead,
-                    out charsReadUnused,
+                    out charsReaded,
                     ref control);
             keyState = control.dwControlKeyState;
             if (result == false)
             {
                 int err = Marshal.GetLastWin32Error();
 
-                HostException e = CreateHostException(err, "ReadConsole",
-                    ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleExceptionTemplate);
+                HostException e = CreateHostException(
+                    err,
+                    "ReadConsole",
+                    ErrorCategory.ReadError,
+                    ConsoleControlStrings.ReadConsoleExceptionTemplate);
                 throw e;
             }
 
-            if (charsReadUnused > (uint)buffer.Length)
-                charsReadUnused = (uint)buffer.Length;
-            return buffer.ToString(0, (int)charsReadUnused);
+            if (charsReaded > (uint)charactersToRead)
+            {
+                charsReaded = (uint)charactersToRead;
+            }
+
+            return editBuffer.Slice(0, (int)charsReaded).ToString();
         }
 
         /// <summary>
@@ -924,9 +943,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Input
+        #endregion Input
 
-#region Buffer
+        #region Buffer
 
         /// <summary>
         /// Wraps Win32 GetConsoleScreenBufferInfo
@@ -1159,7 +1178,7 @@ namespace Microsoft.PowerShell
                     firstRightLeadingRow = r;
                 }
 
-                for (;;)
+                for (; ; )
                 {
                     r++;
                     if (r > contentsRegion.Bottom)
@@ -1750,7 +1769,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#region ReadConsoleOutput CJK
+        #region ReadConsoleOutput CJK
         /// <summary>
         /// If an edge cell read is a blank, it is potentially part of a double width character. Hence,
         ///  at least one of the left and right edges should be checked.
@@ -2047,7 +2066,7 @@ namespace Microsoft.PowerShell
                 rowIndex++;
             }
         }
-#endregion ReadConsoleOutput CJK
+        #endregion ReadConsoleOutput CJK
 
         private static void ReadConsoleOutputPlain
         (
@@ -2389,9 +2408,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Buffer
+        #endregion Buffer
 
-#region Window
+        #region Window
 
         /// <summary>
         /// Wraps Win32 SetConsoleWindowInfo.
@@ -2517,67 +2536,97 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Window
+        #endregion Window
 
         /// <summary>
         /// Wrap Win32 WriteConsole.
         /// </summary>
         /// <param name="consoleHandle">
-        /// handle for the console where the string is written
+        /// Handle for the console where the string is written.
         /// </param>
         /// <param name="output">
-        /// string that is written
+        /// String that is written.
+        /// </param>
+        /// <param name="newLine">
+        /// New line is written.
         /// </param>
         /// <exception cref="HostException">
-        /// if the Win32's WriteConsole fails
+        /// If the Win32's WriteConsole fails.
         /// </exception>
-
-        internal static void WriteConsole(ConsoleHandle consoleHandle, string output)
+        internal static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> output, bool newLine)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            if (string.IsNullOrEmpty(output))
+            if (output.Length == 0)
+            {
+                if (newLine)
+                {
+                    WriteConsole(consoleHandle, Environment.NewLine);
+                }
+
                 return;
+            }
 
             // Native WriteConsole doesn't support output buffer longer than 64K.
             // We need to chop the output string if it is too long.
-
             int cursor = 0; // This records the chopping position in output string
-            const int maxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
 
             while (cursor < output.Length)
             {
-                string outBuffer;
+                ReadOnlySpan<char> outBuffer;
 
-                if (cursor + maxBufferSize < output.Length)
+                if (cursor + MaxBufferSize < output.Length)
                 {
-                    outBuffer = output.Substring(cursor, maxBufferSize);
-                    cursor += maxBufferSize;
+                    outBuffer = output.Slice(cursor, MaxBufferSize);
+                    cursor += MaxBufferSize;
+
+                    WriteConsole(consoleHandle, outBuffer);
                 }
                 else
                 {
-                    outBuffer = output.Substring(cursor);
+                    outBuffer = output.Slice(cursor);
                     cursor = output.Length;
+
+                    if (newLine)
+                    {
+                        var endOfLine = Environment.NewLine.AsSpan();
+                        var endOfLineLength = endOfLine.Length;
+                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+                        outBuffer.CopyTo(outBufferLine);
+                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
+                        WriteConsole(consoleHandle, outBufferLine);
+                    }
+                    else
+                    {
+                        WriteConsole(consoleHandle, outBuffer);
+                    }
                 }
+            }
+        }
 
-                DWORD charsWritten;
-                bool result =
-                    NativeMethods.WriteConsole(
-                        consoleHandle.DangerousGetHandle(),
-                        outBuffer,
-                        (DWORD)outBuffer.Length,
-                        out charsWritten,
-                        IntPtr.Zero);
+        private static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> buffer)
+        {
+            DWORD charsWritten;
+            bool result =
+                NativeMethods.WriteConsole(
+                    consoleHandle.DangerousGetHandle(),
+                    buffer,
+                    (DWORD)buffer.Length,
+                    out charsWritten,
+                    IntPtr.Zero);
 
-                if (result == false)
-                {
-                    int err = Marshal.GetLastWin32Error();
+            if (result == false)
+            {
+                int err = Marshal.GetLastWin32Error();
 
-                    HostException e = CreateHostException(err, "WriteConsole",
-                        ErrorCategory.WriteError, ConsoleControlStrings.WriteConsoleExceptionTemplate);
-                    throw e;
-                }
+                HostException e = CreateHostException(
+                    err,
+                    "WriteConsole",
+                    ErrorCategory.WriteError,
+                    ConsoleControlStrings.WriteConsoleExceptionTemplate);
+                throw e;
             }
         }
 
@@ -2612,7 +2661,7 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-#region Dealing with CJK
+        #region Dealing with CJK
 
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
@@ -2699,11 +2748,11 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-#endregion Dealing with CJK
+        #endregion Dealing with CJK
 
 #if !UNIX
 
-#region Cursor
+        #region Cursor
 
         /// <summary>
         /// Wraps Win32 SetConsoleCursorPosition.
@@ -2825,9 +2874,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion Cursor
+        #endregion Cursor
 
-#region helper
+        #region helper
 
         /// <summary>
         /// Helper function to create the proper HostException.
@@ -2846,9 +2895,9 @@ namespace Microsoft.PowerShell
             return e;
         }
 
-#endregion helper
+        #endregion helper
 
-#region
+        #region
 
         internal static int LengthInBufferCells(char c)
         {
@@ -2866,16 +2915,16 @@ namespace Microsoft.PowerShell
                  (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
                  (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
                  (c >= 0xffe0 && c <= 0xffe6));
-                  // We can ignore these ranges because .Net strings use surrogate pairs
-                  // for this range and we do not handle surrogage pairs.
-                  // (c >= 0x20000 && c <= 0x2fffd) ||
-                  // (c >= 0x30000 && c <= 0x3fffd)
+            // We can ignore these ranges because .Net strings use surrogate pairs
+            // for this range and we do not handle surrogage pairs.
+            // (c >= 0x20000 && c <= 0x2fffd) ||
+            // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
         }
 
-#endregion
+        #endregion
 
-#region SendInput
+        #region SendInput
 
         internal static void MimicKeyPress(INPUT[] inputs)
         {
@@ -2892,7 +2941,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion SendInput
+        #endregion SendInput
 
         /// <summary>
         /// Class to hold the Native Methods used in this file enclosing class.
@@ -2904,7 +2953,7 @@ namespace Microsoft.PowerShell
             internal const int FontTypeMask = 0x06;
             internal const int TrueTypeFont = 0x04;
 
-#region CreateFile
+            #region CreateFile
 
             [Flags]
             internal enum AccessQualifiers : uint
@@ -2944,14 +2993,14 @@ namespace Microsoft.PowerShell
                 NakedWin32Handle templateFileWin32Handle
             );
 
-#endregion CreateFile
+            #endregion CreateFile
 
-#region Code Page
+            #region Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleOutputCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetConsoleOutputCP();
 
-#endregion Code Page
+            #endregion Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleWindowDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern HWND GetConsoleWindow();
@@ -2990,14 +3039,29 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.WriteConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool WriteConsole
+            private static extern unsafe bool WriteConsole
             (
                 NakedWin32Handle consoleOutput,
-                string buffer,
+                char* buffer,
                 DWORD numberOfCharsToWrite,
                 out DWORD numberOfCharsWritten,
                 IntPtr reserved
             );
+
+            internal static unsafe bool WriteConsole
+            (
+                NakedWin32Handle consoleOutput,
+                ReadOnlySpan<char> buffer,
+                DWORD numberOfCharsToWrite,
+                out DWORD numberOfCharsWritten,
+                IntPtr reserved
+            )
+            {
+                fixed (char* bufferPtr = &MemoryMarshal.GetReference(buffer))
+                {
+                    return WriteConsole(consoleOutput, bufferPtr, numberOfCharsToWrite, out numberOfCharsWritten, reserved);
+                }
+            }
 
             [DllImport(PinvokeDllNames.GetConsoleTitleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern DWORD GetConsoleTitle(StringBuilder consoleTitle, DWORD size);
@@ -3019,14 +3083,29 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool ReadConsole
+            private static extern unsafe bool ReadConsole
             (
                 NakedWin32Handle consoleInput,
-                out StringBuilder buffer,
+                char* lpBuffer,
                 DWORD numberOfCharsToRead,
                 out DWORD numberOfCharsRead,
                 ref CONSOLE_READCONSOLE_CONTROL controlData
             );
+
+            internal static unsafe bool ReadConsole
+            (
+                NakedWin32Handle consoleInput,
+                Span<char> buffer,
+                DWORD numberOfCharsToRead,
+                out DWORD numberOfCharsRead,
+                ref CONSOLE_READCONSOLE_CONTROL controlData
+            )
+            {
+                fixed (char* bufferPtr = &MemoryMarshal.GetReference(buffer))
+                {
+                    return ReadConsole(consoleInput, bufferPtr, numberOfCharsToRead, out numberOfCharsRead, ref controlData);
+                }
+            }
 
             [DllImport(PinvokeDllNames.PeekConsoleInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]

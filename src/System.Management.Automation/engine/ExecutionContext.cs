@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Host;
@@ -10,11 +11,11 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Runtime.CompilerServices;
-using Microsoft.PowerShell;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security;
-using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
@@ -715,9 +716,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Interface that should be used for interaction with host.
         /// </summary>
-        internal InternalHost EngineHostInterface { get; private set;
-
+        internal InternalHost EngineHostInterface
+        {
             // set not provided: it's not meaningful to change the host post-construction.
+            get; private set;
         }
 
         /// <summary>

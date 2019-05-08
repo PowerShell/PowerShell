@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Diagnostics.CodeAnalysis;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -140,22 +141,22 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (Password == null && !NoPromptForPassword.IsPresent) 
+                        if (Password == null && !NoPromptForPassword.IsPresent)
                         {
-                            try 
+                            try
                             {
                                 cert = GetCertFromPfxFile(resolvedProviderPath, null);
                                 WriteObject(cert);
                                 continue;
-                            } 
-                            catch (CryptographicException) 
+                            }
+                            catch (CryptographicException)
                             {
                                 Password = SecurityUtils.PromptForSecureString(
                                     Host.UI,
                                     CertificateCommands.GetPfxCertPasswordPrompt);
-                            }                            
+                            }
                         }
-                        
+
                         try
                         {
                             cert = GetCertFromPfxFile(resolvedProviderPath, Password);

@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Security;
-using System.Management.Automation.Internal;
-using System.IO;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell
 {

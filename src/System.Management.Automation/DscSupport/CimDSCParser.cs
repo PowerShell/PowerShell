@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Management.Infrastructure;
-using Microsoft.Management.Infrastructure.Generic;
-using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell.Commands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,10 +12,15 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Language;
-using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
+
+using Microsoft.Management.Infrastructure;
+using Microsoft.Management.Infrastructure.Generic;
+using Microsoft.Management.Infrastructure.Serialization;
+using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
@@ -452,7 +453,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
             uint offset = 0;
             byte[] bytes = null;
 
-            if (Platform.IsLinux)
+            if (Platform.IsLinux || Platform.IsMacOS)
             {
                 bytes = System.Text.Encoding.UTF8.GetBytes(classText);
             }
@@ -633,7 +634,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             s_tracer.WriteLine("Initializing DSC class cache force={0}");
 
-            if (System.Management.Automation.Platform.IsLinux)
+            if (Platform.IsLinux || Platform.IsMacOS)
             {
                 //
                 // Load the base schema files.
@@ -684,9 +685,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (!Directory.Exists(systemResourceRoot))
                 {
-                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
-                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
-                     inboxModulePath = InboxDscResourceModulePath;
+                    configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                    systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                    inboxModulePath = InboxDscResourceModulePath;
                 }
 
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -2797,7 +2798,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             else if (!type.IsAbstract)
             {
                 // Must have default constructor, at least 1 public property/field, and no base classes
-                if (type.GetConstructor(PSTypeExtensions.EmptyTypes) == null)
+                if (type.GetConstructor(Type.EmptyTypes) == null)
                 {
                     missingDefaultConstructor = true;
                 }

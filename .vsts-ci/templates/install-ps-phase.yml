@@ -2,11 +2,18 @@ parameters:
   pool: 'Hosted Ubuntu 1604'
   jobName: 'none'
   scriptName: ''
+  container: ''
+  verification: ''
+  continueOnError: false
 
 jobs:
+
 - job: ${{ parameters.jobName }}
   variables:
     scriptName: ${{ parameters.scriptName }}
+
+  ${{ if ne(parameters.container, '') }}:
+    container: ${{ parameters.container }}
 
   pool:
     name: ${{ parameters.pool }}
@@ -27,3 +34,9 @@ jobs:
       $(scriptName)
     displayName: Run Script - $(scriptName)
     condition: succeededOrFailed()
+    continueOnError: ${{ parameters.continueOnError }}
+
+  - ${{ if ne(parameters.verification, '') }}:
+    - powershell: ${{ parameters.verification }}
+      displayName: Verification
+      continueOnError: ${{ parameters.continueOnError }}

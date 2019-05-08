@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -41,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [AllowEmptyCollection]
-        public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
+        public string[] AdditionalChildPath { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Determines if the path should be resolved after being joined.

@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Xml;
 using System.Management.Automation.Internal;
+using System.Xml;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {

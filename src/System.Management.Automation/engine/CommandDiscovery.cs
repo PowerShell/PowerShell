@@ -7,13 +7,15 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Security;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Host;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -735,7 +737,7 @@ namespace System.Management.Automation
 
         internal static CommandInfo LookupCommandInfo(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
-            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.None, commandOrigin, context);
+            return LookupCommandInfo(commandName, CommandTypes.All, SearchResolutionOptions.ResolveLiteralThenPathPatterns, commandOrigin, context);
         }
 
         internal static CommandInfo LookupCommandInfo(
@@ -1420,7 +1422,7 @@ namespace System.Management.Automation
             {
                 s_cachedPathExtCollection = pathExt != null
                     ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-                    : Utils.EmptyArray<string>();
+                    : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
                 Array.Copy(s_cachedPathExtCollection, 0, s_cachedPathExtCollectionWithPs1, 1, s_cachedPathExtCollection.Length);

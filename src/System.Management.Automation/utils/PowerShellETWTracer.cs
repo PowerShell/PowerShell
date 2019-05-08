@@ -11,7 +11,7 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation.Tracing
 {
     // pragma warning disable 16001,16003
-#region Constants
+    #region Constants
 
     /// <summary>
     /// Defines enumerations for event ids.
@@ -682,7 +682,7 @@ namespace System.Management.Automation.Tracing
         UseAlwaysAnalytic = 0x4000000000000000,
     }
 
-#endregion
+    #endregion
 
     /// <summary>
     /// BaseChannelWriter is the abstract base class defines event specific methods that are used to write a trace.

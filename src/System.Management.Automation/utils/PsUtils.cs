@@ -2,18 +2,19 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Xml;
+
 using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Management.Automation.Language;
 
 namespace System.Management.Automation
 {
@@ -187,7 +188,7 @@ namespace System.Management.Automation
             string tempPath = Path.GetTempPath();
             do
             {
-                tempDir = Path.Combine(tempPath,System.Guid.NewGuid().ToString());
+                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
             }
             while (Directory.Exists(tempDir));
 

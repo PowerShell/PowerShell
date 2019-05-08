@@ -5,15 +5,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Host;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -674,180 +675,6 @@ namespace System.Management.Automation
             {
                 return (string)LanguagePrimitives.ConvertTo(suggestion, typeof(string), CultureInfo.CurrentCulture);
             }
-        }
-
-        internal static PSCredential CredUIPromptForCredential(
-            string caption,
-            string message,
-            string userName,
-            string targetName,
-            PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options,
-            IntPtr parentHWND)
-        {
-            PSCredential cred = null;
-
-            // From WinCred.h
-            const int CRED_MAX_USERNAME_LENGTH = (256 + 1 + 256);
-            const int CRED_MAX_CREDENTIAL_BLOB_SIZE = 512;
-            const int CRED_MAX_PASSWORD_LENGTH = CRED_MAX_CREDENTIAL_BLOB_SIZE / 2;
-            const int CREDUI_MAX_MESSAGE_LENGTH = 1024;
-            const int CREDUI_MAX_CAPTION_LENGTH = 128;
-
-            // Populate the UI text with defaults, if required
-            if (string.IsNullOrEmpty(caption))
-            {
-                caption = CredUI.PromptForCredential_DefaultCaption;
-            }
-
-            if (string.IsNullOrEmpty(message))
-            {
-                message = CredUI.PromptForCredential_DefaultMessage;
-            }
-
-            if (caption.Length > CREDUI_MAX_CAPTION_LENGTH)
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
-            }
-
-            if (message.Length > CREDUI_MAX_MESSAGE_LENGTH)
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
-            }
-
-            if (userName != null && userName.Length > CRED_MAX_USERNAME_LENGTH)
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
-            }
-
-            CREDUI_INFO credUiInfo = new CREDUI_INFO();
-            credUiInfo.pszCaptionText = caption;
-            credUiInfo.pszMessageText = message;
-
-            StringBuilder usernameBuilder = new StringBuilder(userName, CRED_MAX_USERNAME_LENGTH);
-            StringBuilder passwordBuilder = new StringBuilder(CRED_MAX_PASSWORD_LENGTH);
-
-            bool save = false;
-            int saveCredentials = Convert.ToInt32(save);
-            credUiInfo.cbSize = Marshal.SizeOf(credUiInfo);
-            credUiInfo.hwndParent = parentHWND;
-
-            CREDUI_FLAGS flags = CREDUI_FLAGS.DO_NOT_PERSIST;
-
-            // Set some of the flags if they have not requested a domain credential
-            if ((allowedCredentialTypes & PSCredentialTypes.Domain) != PSCredentialTypes.Domain)
-            {
-                flags |= CREDUI_FLAGS.GENERIC_CREDENTIALS;
-
-                // If they've asked to always prompt, do so.
-                if ((options & PSCredentialUIOptions.AlwaysPrompt) == PSCredentialUIOptions.AlwaysPrompt)
-                    flags |= CREDUI_FLAGS.ALWAYS_SHOW_UI;
-            }
-
-            // To prevent buffer overrun attack, only attempt call if buffer lengths are within bounds.
-            CredUIReturnCodes result = CredUIReturnCodes.ERROR_INVALID_PARAMETER;
-            if (usernameBuilder.Length <= CRED_MAX_USERNAME_LENGTH && passwordBuilder.Length <= CRED_MAX_PASSWORD_LENGTH)
-            {
-                result = CredUIPromptForCredentials(
-                    ref credUiInfo,
-                    targetName,
-                    IntPtr.Zero,
-                    0,
-                    usernameBuilder,
-                    CRED_MAX_USERNAME_LENGTH,
-                    passwordBuilder,
-                    CRED_MAX_PASSWORD_LENGTH,
-                    ref saveCredentials,
-                    flags);
-            }
-
-            if (result == CredUIReturnCodes.NO_ERROR)
-            {
-                // Extract the username
-                string credentialUsername = null;
-                if (usernameBuilder != null)
-                    credentialUsername = usernameBuilder.ToString();
-
-                // Trim the leading '\' from the username, which CredUI automatically adds
-                // if you don't specify a domain.
-                // This is a really common bug in V1 and V2, causing everybody to have to do
-                // it themselves.
-                // This could be a breaking change for hosts that do hard-coded hacking:
-                // $cred.UserName.SubString(1, $cred.Username.Length - 1)
-                // But that's OK, because they would have an even worse bug when you've
-                // set the host (ConsolePrompting = true) configuration (which does not do this).
-                credentialUsername = credentialUsername.TrimStart('\\');
-
-                // Extract the password into a SecureString, zeroing out the memory
-                // as soon as possible.
-                SecureString password = new SecureString();
-                for (int counter = 0; counter < passwordBuilder.Length; counter++)
-                {
-                    password.AppendChar(passwordBuilder[counter]);
-                    passwordBuilder[counter] = (char)0;
-                }
-
-                if (!string.IsNullOrEmpty(credentialUsername))
-                    cred = new PSCredential(credentialUsername, password);
-                else
-                    cred = null;
-            }
-            else // result is not CredUIReturnCodes.NO_ERROR
-            {
-                cred = null;
-            }
-
-            return cred;
-        }
-
-        [DllImport("credui", EntryPoint = "CredUIPromptForCredentialsW", CharSet = CharSet.Unicode)]
-        private static extern CredUIReturnCodes CredUIPromptForCredentials(ref CREDUI_INFO pUiInfo,
-                  string pszTargetName, IntPtr Reserved, int dwAuthError, StringBuilder pszUserName,
-                  int ulUserNameMaxChars, StringBuilder pszPassword, int ulPasswordMaxChars, ref int pfSave, CREDUI_FLAGS dwFlags);
-
-        [Flags]
-        private enum CREDUI_FLAGS
-        {
-            INCORRECT_PASSWORD = 0x1,
-            DO_NOT_PERSIST = 0x2,
-            REQUEST_ADMINISTRATOR = 0x4,
-            EXCLUDE_CERTIFICATES = 0x8,
-            REQUIRE_CERTIFICATE = 0x10,
-            SHOW_SAVE_CHECK_BOX = 0x40,
-            ALWAYS_SHOW_UI = 0x80,
-            REQUIRE_SMARTCARD = 0x100,
-            PASSWORD_ONLY_OK = 0x200,
-            VALIDATE_USERNAME = 0x400,
-            COMPLETE_USERNAME = 0x800,
-            PERSIST = 0x1000,
-            SERVER_CREDENTIAL = 0x4000,
-            EXPECT_CONFIRMATION = 0x20000,
-            GENERIC_CREDENTIALS = 0x40000,
-            USERNAME_TARGET_CREDENTIALS = 0x80000,
-            KEEP_USERNAME = 0x100000,
-        }
-
-        private struct CREDUI_INFO
-        {
-            public int cbSize;
-            public IntPtr hwndParent;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszMessageText;
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszCaptionText;
-            public IntPtr hbmBanner;
-        }
-
-        private enum CredUIReturnCodes
-        {
-            NO_ERROR = 0,
-            ERROR_CANCELLED = 1223,
-            ERROR_NO_SUCH_LOGON_SESSION = 1312,
-            ERROR_NOT_FOUND = 1168,
-            ERROR_INVALID_ACCOUNT_NAME = 1315,
-            ERROR_INSUFFICIENT_BUFFER = 122,
-            ERROR_INVALID_PARAMETER = 87,
-            ERROR_INVALID_FLAGS = 1004,
         }
 
         /// <summary>

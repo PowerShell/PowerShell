@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
 
                 wtd = Marshal.PtrToStructure<WINTRUST_DATA>(wtdBuffer);
             }
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Security
                     IntPtr.Zero,
                     WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     wtdBuffer);
-#pragma warning enable 56523
+#pragma warning restore 56523
             }
             finally
             {

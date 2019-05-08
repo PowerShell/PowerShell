@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             Adapter staticAdapter = null;
             if (this.Static == true)
             {
-                staticAdapter = PSObject.dotNetStaticAdapter;
+                staticAdapter = PSObject.DotNetStaticAdapter;
                 object baseObject = this.InputObject.BaseObject;
                 baseObjectAsType = baseObject as System.Type ?? baseObject.GetType();
                 typeName = baseObjectAsType.FullName;

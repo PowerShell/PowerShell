@@ -286,7 +286,7 @@ namespace System.Management.Automation.Language
         internal abstract object Accept(ICustomAstVisitor visitor);
         internal abstract AstVisitAction InternalVisit(AstVisitor visitor);
 
-        internal static PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
+        internal static PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
 
         internal bool IsInWorkflow()
         {
@@ -3458,7 +3458,7 @@ namespace System.Management.Automation.Language
             StatementAst statement = null;
             if (type == SpecialMemberFunctionType.DefaultConstructor)
             {
-                var invokeMemberAst = new BaseCtorInvokeMemberExpressionAst(extent, extent, Utils.EmptyArray<ExpressionAst>());
+                var invokeMemberAst = new BaseCtorInvokeMemberExpressionAst(extent, extent, Array.Empty<ExpressionAst>());
                 statement = new CommandExpressionAst(extent, invokeMemberAst, null);
             }
 
@@ -3975,7 +3975,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class DataStatementAst : StatementAst
     {
-        private static readonly ExpressionAst[] s_emptyCommandsAllowed = Utils.EmptyArray<ExpressionAst>();
+        private static readonly ExpressionAst[] s_emptyCommandsAllowed = Array.Empty<ExpressionAst>();
 
         /// <summary>
         /// Construct a data statement.
@@ -4604,7 +4604,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class SwitchStatementAst : LabeledStatementAst
     {
-        private static readonly SwitchClause[] s_emptyClauseArray = Utils.EmptyArray<SwitchClause>();
+        private static readonly SwitchClause[] s_emptyClauseArray = Array.Empty<SwitchClause>();
 
         /// <summary>
         /// Construct a switch statement.
@@ -5415,9 +5415,8 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentException">
         /// If <paramref name="pipelineElements"/> is null or is an empty collection.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, background: false)
+        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) : this(extent, pipelineElements, background: false)
         {
-
         }
 
         /// <summary>
@@ -5450,9 +5449,8 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, background: false)
+        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) : this(extent, commandAst, background: false)
         {
-
         }
 
         /// <summary>

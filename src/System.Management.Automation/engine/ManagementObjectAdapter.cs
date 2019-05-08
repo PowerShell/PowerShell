@@ -4,12 +4,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.ComponentModel;
+using System.Globalization;
 using System.Management.Automation.Internal;
+using System.Text;
+
 using Microsoft.PowerShell;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -193,6 +195,17 @@ namespace System.Management.Automation
                 {
                     return returnValue;
                 }
+            }
+
+            return null;
+        }
+
+        protected override T GetFirstMemberOrDefault<T>(object obj, MemberNamePredicate predicate)
+        {
+            if (obj is ManagementBaseObject wmiObject)
+            {
+                return GetFirstOrDefaultProperty<T>(wmiObject, predicate)
+                    ?? GetFirstOrDefaultMethod<T>(wmiObject, predicate);
             }
 
             return null;
@@ -918,6 +931,16 @@ namespace System.Management.Automation
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);
 
+        /// <summary>
+        /// Returns the first property whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// </summary>
+        protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+
+        /// <summary>
+        /// Returns the first method whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// </summary>
+        protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
+
         #endregion
 
         #region Private Data
@@ -1037,11 +1060,8 @@ namespace System.Management.Automation
                 return null;
             }
 
-            CacheTable typeTable;
-            WMIMethodCacheEntry method;
-
-            typeTable = GetInstanceMethodTable(wmiObject, true);
-            method = (WMIMethodCacheEntry)typeTable[methodName];
+            CacheTable typeTable = GetInstanceMethodTable(wmiObject, true);
+            WMIMethodCacheEntry method = (WMIMethodCacheEntry)typeTable[methodName];
 
             if (method == null)
             {
@@ -1049,6 +1069,46 @@ namespace System.Management.Automation
             }
 
             return new PSMethod(method.Name, this, wmiObject, method) as T;
+        }
+
+        protected override T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSProperty)))
+            {
+                return null;
+            }
+
+            if (wmiObject.SystemProperties != null)
+            {
+                foreach (PropertyData property in wmiObject.SystemProperties)
+                {
+                    if (predicate(property.Name))
+                    {
+                        return new PSProperty(property.Name, this, wmiObject, property) as T;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        protected override T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate)
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
+            {
+                return null;
+            }
+
+            CacheTable table = GetInstanceMethodTable(wmiObject, true);
+            foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
+            {
+                if (predicate(methodEntry.Name))
+                {
+                    return new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T;
+                }
+            }
+
+            return null;
         }
     }
 

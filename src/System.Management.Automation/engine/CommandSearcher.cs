@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -456,52 +457,33 @@ namespace System.Management.Automation
                     "Trying to resolve the path as an PSPath");
 
                 // Find the match if it is.
+                // Try literal path resolution if it is set to run first
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
+                {
+                    var path = GetNextLiteralPathThatExists(_commandName, out _);
+
+                    if (path != null)
+                    {
+                        return GetInfoFromPath(path);
+                    }
+                }
 
                 Collection<string> resolvedPaths = new Collection<string>();
+                if (WildcardPattern.ContainsWildcardCharacters(_commandName))
+                {
+                    resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out _);
+                }
 
-                try
+                // Try literal path resolution if wildcards are enable first and wildcard search failed
+                if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
+                    resolvedPaths.Count == 0)
                 {
-                    Provider.CmdletProvider providerInstance;
-                    ProviderInfo provider;
-                    resolvedPaths =
-                        _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
-                }
-                catch (ItemNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path could not be found: {0}",
-                        _commandName);
-                }
-                catch (DriveNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A drive could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (ProviderNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A provider could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (InvalidOperationException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path specified a home directory, but the provider home directory was not set. {0}",
-                        _commandName);
-                }
-                catch (ProviderInvocationException providerException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' encountered an error: {1}",
-                        _commandName,
-                        providerException.Message);
-                }
-                catch (PSNotSupportedException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                        _commandName);
+                    string path = GetNextLiteralPathThatExists(_commandName, out _);
+
+                    if (path != null)
+                    {
+                        return GetInfoFromPath(path);
+                    }
                 }
 
                 if (resolvedPaths.Count > 1)
@@ -526,6 +508,64 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the next path using WildCards.
+        /// </summary>
+        /// <param name="command">
+        /// The command to search for.
+        /// </param>
+        /// <param name="provider">The provider that the command was found in.</param>
+        /// <returns>
+        /// A collection of full paths to the commands which were found.
+        /// </returns>
+        private Collection<string> GetNextFromPathUsingWildcards(string command, out ProviderInfo provider)
+        {
+            try
+            {
+                return _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(path: command, allowNonexistingPaths: false, provider: out provider, providerInstance: out _);
+            }
+            catch (ItemNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path could not be found: {0}",
+                    command);
+            }
+            catch (DriveNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A drive could not be found for the path: {0}",
+                    command);
+            }
+            catch (ProviderNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A provider could not be found for the path: {0}",
+                    command);
+            }
+            catch (InvalidOperationException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path specified a home directory, but the provider home directory was not set. {0}",
+                    command);
+            }
+            catch (ProviderInvocationException providerException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' encountered an error: {1}",
+                    command,
+                    providerException.Message);
+            }
+            catch (PSNotSupportedException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
+                    command);
+            }
+
+            provider = null;
+            return null;
         }
 
         private static bool checkPath(string path, string commandName)
@@ -1092,15 +1132,21 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if (WildcardPattern.ContainsWildcardCharacters(path))
+
+                // Try literal path resolution if it is set to run first
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
+                {
+                    // Cannot return early as this code path only expects
+                    // The file system provider and the final check for that
+                    // must verify this before we return.
+                    resolvedPath = GetNextLiteralPathThatExists(path, out provider);
+                }
+
+                if (WildcardPattern.ContainsWildcardCharacters(path) &&
+                    ((resolvedPath == null) || (provider == null)))
                 {
                     // Let PowerShell resolve relative path with wildcards.
-                    Provider.CmdletProvider providerInstance;
-                    Collection<string> resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
-                        path,
-                        false,
-                        out provider,
-                        out providerInstance);
+                    Collection<string> resolvedPaths = GetNextFromPathUsingWildcards(path, out provider);
 
                     if (resolvedPaths.Count == 0)
                     {
@@ -1124,14 +1170,15 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Revert to previous path resolver if wildcards produces no results.
-                if ((resolvedPath == null) || (provider == null))
+                // Try literal path resolution if wildcards are enabled first and wildcard search failed
+                if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
+                    ((resolvedPath == null) || (provider == null)))
                 {
-                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
+                    resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
 
                 // Verify the path was resolved to a file system path
-                if (provider.NameEquals(_context.ProviderNames.FileSystem))
+                if (provider != null && provider.NameEquals(_context.ProviderNames.FileSystem))
                 {
                     result = resolvedPath;
 
@@ -1174,6 +1221,32 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the next literal path.
+        /// Filtering to ones that exist for the filesystem.
+        /// </summary>
+        /// <param name="command">
+        /// The command to search for.
+        /// </param>
+        /// <param name="provider">The provider that the command was found in.</param>
+        /// <returns>
+        /// Full path to the command.
+        /// </returns>
+        private string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
+        {
+            string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
+
+            if (provider.NameEquals(_context.ProviderNames.FileSystem)
+                && !File.Exists(resolvedPath)
+                && !Directory.Exists(resolvedPath))
+            {
+                provider = null;
+                return null;
+            }
+
+            return resolvedPath;
         }
 
         /// <summary>
@@ -1609,5 +1682,10 @@ namespace System.Management.Automation
         /// Enable searching for cmdlets/functions by abbreviation expansion.
         /// </summary>
         UseAbbreviationExpansion = 0x20,
+
+        /// <summary>
+        /// Enable resolving wildcard in paths.
+        /// </summary>
+        ResolveLiteralThenPathPatterns = 0x40
     }
 }

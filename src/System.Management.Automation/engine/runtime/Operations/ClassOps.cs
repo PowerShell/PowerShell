@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Management.Automation.Language;
 using System.Threading;
 
 // These APIs are not part of the public contract.
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Internal
     public class ScriptBlockMemberMethodWrapper
     {
         /// <summary>Used in codegen</summary>
-        public static readonly object[] _emptyArgumentArray = Utils.EmptyArray<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
+        public static readonly object[] _emptyArgumentArray = Array.Empty<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
 
         /// <summary>
         /// Indicate the wrapper is for a static member method.

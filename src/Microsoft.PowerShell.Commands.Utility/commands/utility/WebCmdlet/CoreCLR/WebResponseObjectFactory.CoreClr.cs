@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Net.Http;
 using System.IO;
 using System.Management.Automation;
+using System.Net.Http;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands
             if (WebResponseHelper.IsText(response))
             {
                 output = new BasicHtmlWebResponseObject(response, responseStream);
-
             }
             else
             {

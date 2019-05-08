@@ -2,20 +2,21 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
-using System.Diagnostics;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
-using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Security;
+using System.Text;
+using System.Text.RegularExpressions;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
@@ -422,7 +423,7 @@ namespace Microsoft.PowerShell
                 {
                     return _workingDirectory.Remove(_workingDirectory.Length - 1);
                 }
- #endif
+#endif
                 return _workingDirectory;
             }
         }
@@ -529,7 +530,7 @@ namespace Microsoft.PowerShell
         /// </param>
         private static void EarlyParseHelper(string[] args)
         {
-            if(args == null)
+            if (args == null)
             {
                 Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
                 return;
@@ -1043,7 +1044,7 @@ namespace Microsoft.PowerShell
             foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
             {
                 sb.Append(s);
-                sb.Append(ConsoleHostUserInterface.Crlf);
+                sb.Append(Environment.NewLine);
             }
 
             ++i;
@@ -1214,7 +1215,7 @@ namespace Microsoft.PowerShell
                         _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
                         pendingParameter = null;
                     }
-                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]) && arg.Length > 1)
                     {
                         int offset = arg.IndexOf(':');
                         if (offset >= 0)

@@ -3,6 +3,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation.Internal
@@ -232,7 +233,7 @@ namespace System.Management.Automation.Internal
             // This method is used for opening the cab file as well as saving the extracted files.
             // When we are opening the cab file we only need read permissions.
             // We force read permissions so that non-elevated users can extract cab files.
-            if(mode == FileMode.Open || mode == FileMode.OpenOrCreate)
+            if (mode == FileMode.Open || mode == FileMode.OpenOrCreate)
             {
                 access = FileAccess.Read;
                 share = FileShare.Read;

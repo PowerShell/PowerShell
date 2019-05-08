@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -1524,10 +1525,10 @@ namespace System.Management.Automation
                 {
                     // see if there are any path separators before the colon which would mean the
                     // colon is part of a file or folder name and not a drive: ./foo:bar vs foo:bar
-                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index-1);
+                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index - 1);
                     if (separator == -1)
                     {
-                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
+                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index - 1);
                     }
 
                     if (separator == -1 || index < separator)
@@ -1930,13 +1931,13 @@ namespace System.Management.Automation
 
                 string relativePath = string.Empty;
 
-                    relativePath =
-                        GenerateRelativePath(
-                            workingDriveForPath,
-                            path,
-                            escapeCurrentLocation,
-                            providerInstance,
-                            context);
+                relativePath =
+                    GenerateRelativePath(
+                        workingDriveForPath,
+                        path,
+                        escapeCurrentLocation,
+                        providerInstance,
+                        context);
 
                 return relativePath;
             }

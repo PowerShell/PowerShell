@@ -333,7 +333,7 @@ namespace System.Management.Automation.ComInterop
                             BindingFlags.GetProperty,
                             null,
                             RuntimeCallableWrapper,
-                            Utils.EmptyArray<object>(),
+                            Array.Empty<object>(),
                             CultureInfo.InvariantCulture
                         );
                         members.Add(new KeyValuePair<string, object>(method.Name, value));

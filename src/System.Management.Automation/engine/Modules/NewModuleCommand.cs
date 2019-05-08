@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _functionImportList; }
         }
 
-        private string[] _functionImportList = Utils.EmptyArray<string>();
+        private string[] _functionImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the patterns matching the cmdlets to import from the module...
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _cmdletImportList; }
         }
 
-        private string[] _cmdletImportList = Utils.EmptyArray<string>();
+        private string[] _cmdletImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter causes the session state instance to be written...

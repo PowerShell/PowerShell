@@ -2,18 +2,19 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -84,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = Utils.EmptyArray<string>();
+                    value = Array.Empty<string>();
                 }
 
                 _verbs = value;
@@ -92,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _verbs = Utils.EmptyArray<string>();
+        private string[] _verbs = Array.Empty<string>();
 
         /// <summary>
         /// Gets or sets the noun parameter to the cmdlet.
@@ -110,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = Utils.EmptyArray<string>();
+                    value = Array.Empty<string>();
                 }
 
                 _nouns = value;
@@ -118,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _nouns = Utils.EmptyArray<string>();
+        private string[] _nouns = Array.Empty<string>();
 
         /// <summary>
         /// Gets or sets the PSSnapin/Module parameter to the cmdlet.
@@ -137,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = Utils.EmptyArray<string>();
+                    value = Array.Empty<string>();
                 }
 
                 _modules = value;
@@ -147,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] _modules = Utils.EmptyArray<string>();
+        private string[] _modules = Array.Empty<string>();
         private bool _isModuleSpecified = false;
 
         /// <summary>
@@ -173,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ModuleSpecification[] _moduleSpecifications = Utils.EmptyArray<ModuleSpecification>();
+        private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
         private bool _isFullyQualifiedModuleSpecified = false;
 
         /// <summary>
@@ -571,7 +572,6 @@ namespace Microsoft.PowerShell.Commands
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
 #endif
-
         }
 
         /// <summary>
@@ -1496,7 +1496,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (parameterSets == null)
             {
-                return Utils.EmptyArray<PSObject>();
+                return Array.Empty<PSObject>();
             }
 
             List<PSObject> returnParameterSets = new List<PSObject>(cmdInfo.ParameterSets.Count);

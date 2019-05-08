@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Resources;
 
 namespace System.Management.Automation

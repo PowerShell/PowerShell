@@ -183,18 +183,28 @@ namespace System.Management.Automation.Runspaces
             var td19 = new TypeData(@"System.IO.DirectoryInfo", true);
             td19.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
+            td19.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td19.Members.Add("BaseName",
                 new ScriptPropertyData(@"BaseName", GetScriptBlock(@"$this.Name"), null));
             td19.Members.Add("Target",
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td19.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td19.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td19.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td19.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td19.DefaultDisplayProperty = @"Name";
             yield return td19;
 
             var td20 = new TypeData(@"System.IO.FileInfo", true);
             td20.Members.Add("Mode",
                 new CodePropertyData("Mode", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "Mode"), null));
+            td20.Members.Add("ModeWithoutHardLink",
+                new CodePropertyData("ModeWithoutHardLink", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "ModeWithoutHardLink"), null));
             td20.Members.Add("VersionInfo",
                 new ScriptPropertyData(@"VersionInfo", GetScriptBlock(@"[System.Diagnostics.FileVersionInfo]::GetVersionInfo($this.FullName)"), null));
             td20.Members.Add("BaseName",
@@ -203,6 +213,12 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("Target", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetTarget"), null));
             td20.Members.Add("LinkType",
                 new CodePropertyData("LinkType", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), "GetLinkType"), null));
+            td20.Members.Add("NameString",
+                new CodePropertyData("NameString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "NameString"), null) { IsHidden = true });
+            td20.Members.Add("LengthString",
+                new CodePropertyData("LengthString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LengthString"), null) { IsHidden = true });
+            td20.Members.Add("LastWriteTimeString",
+                new CodePropertyData("LastWriteTimeString", GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), "LastWriteTimeString"), null) { IsHidden = true });
             td20.DefaultDisplayPropertySet =
                 new PropertySetData(new[] { "LastWriteTime", "Length", "Name" }) { Name = "DefaultDisplayPropertySet" };
             yield return td20;
@@ -970,7 +986,7 @@ namespace System.Management.Automation.Runspaces
                 new ScriptPropertyData(@"State", GetScriptBlock(@"$this.JobStateInfo.State.ToString()"), null));
             td108.SerializationMethod = "SpecificProperties";
             td108.SerializationDepth = 2;
-            td108.PropertySerializationSet  =
+            td108.PropertySerializationSet =
                 new PropertySetData(new[] { "HasMoreData", "StatusMessage", "Location", "Command", "JobStateInfo", "InstanceId", "Id", "Name", "State", "ChildJobs", "PSJobTypeName", "PSBeginTime", "PSEndTime" }) { Name = "PropertySerializationSet" };
             yield return td108;
 
@@ -997,7 +1013,7 @@ namespace System.Management.Automation.Runspaces
             var td114 = new TypeData(@"System.Globalization.CultureInfo", true);
             td114.SerializationMethod = "SpecificProperties";
             td114.SerializationDepth = 1;
-            td114.PropertySerializationSet  =
+            td114.PropertySerializationSet =
                 new PropertySetData(new[] { "LCID", "Name", "DisplayName", "IetfLanguageTag", "ThreeLetterISOLanguageName", "ThreeLetterWindowsLanguageName", "TwoLetterISOLanguageName" }) { Name = "PropertySerializationSet" };
             yield return td114;
 
@@ -1040,7 +1056,7 @@ namespace System.Management.Automation.Runspaces
             var td124 = new TypeData(@"System.Security.Cryptography.X509Certificates.X509Certificate2", true);
             td124.SerializationMethod = "SpecificProperties";
             td124.SerializationDepth = 1;
-            td124.PropertySerializationSet  =
+            td124.PropertySerializationSet =
                 new PropertySetData(new[] { "RawData" }) { Name = "PropertySerializationSet" };
             yield return td124;
 
@@ -1051,7 +1067,7 @@ namespace System.Management.Automation.Runspaces
             var td126 = new TypeData(@"System.Security.Cryptography.X509Certificates.X500DistinguishedName", true);
             td126.SerializationMethod = "SpecificProperties";
             td126.SerializationDepth = 1;
-            td126.PropertySerializationSet  =
+            td126.PropertySerializationSet =
                 new PropertySetData(new[] { "RawData" }) { Name = "PropertySerializationSet" };
             yield return td126;
 
@@ -1086,7 +1102,7 @@ namespace System.Management.Automation.Runspaces
 
             var td134 = new TypeData(@"System.Management.Automation.ParameterMetadata", true);
             td134.SerializationMethod = "SpecificProperties";
-            td134.PropertySerializationSet  =
+            td134.PropertySerializationSet =
                 new PropertySetData(new[] { "Name", "ParameterType", "Aliases", "IsDynamic", "SwitchParameter" }) { Name = "PropertySerializationSet" };
             yield return td134;
 
@@ -1111,7 +1127,7 @@ namespace System.Management.Automation.Runspaces
             td136.Members.Add("Flags",
                 new CodePropertyData("Flags", GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), "GetParameterSetMetadataFlags"), null) { IsHidden = true });
             td136.SerializationMethod = "SpecificProperties";
-            td136.PropertySerializationSet  =
+            td136.PropertySerializationSet =
                 new PropertySetData(new[] { "Position", "Flags", "HelpMessage" }) { Name = "PropertySerializationSet" };
             yield return td136;
 

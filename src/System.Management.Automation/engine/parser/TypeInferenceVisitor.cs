@@ -124,11 +124,10 @@ namespace System.Management.Automation
 
     internal class TypeInferenceContext
     {
-        public static readonly PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
+        public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
         private readonly PowerShell _powerShell;
 
-        public TypeInferenceContext()
-        : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
+        public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
         }
 
@@ -249,8 +248,8 @@ namespace System.Management.Automation
                 }
 
                 var members = isStatic
-                              ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
-                              : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
+                              ? PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
+                              : PSObject.DotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
 
                 if (filterToCall != null)
                 {
@@ -514,12 +513,23 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
         {
-            return new[] { new PSTypeName(typeof(object[])) };
+            if (arrayExpressionAst.SubExpression.Statements.Count == 0)
+            {
+                return new[] { new PSTypeName(typeof(object[])) };
+            }
+
+            return new[] { GetArrayType(InferTypes(arrayExpressionAst.SubExpression)) };
         }
 
         object ICustomAstVisitor.VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
-            return new[] { new PSTypeName(typeof(object[])) };
+            var inferredElementTypes = new List<PSTypeName>();
+            foreach (ExpressionAst expression in arrayLiteralAst.Elements)
+            {
+                inferredElementTypes.AddRange(InferTypes(expression));
+            }
+
+            return new[] { GetArrayType(inferredElementTypes) };
         }
 
         object ICustomAstVisitor.VisitHashtable(HashtableAst hashtableAst)
@@ -553,12 +563,9 @@ namespace System.Management.Automation
                             switch (expression)
                             {
                                 case ConstantExpressionAst constantExpression:
-                                {
                                     value = constantExpression.Value;
                                     break;
-                                }
                                 default:
-                                {
                                     typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
                                     if (typeName == null)
                                     {
@@ -569,7 +576,6 @@ namespace System.Management.Automation
                                     }
 
                                     break;
-                                }
                             }
                         }
 
@@ -778,7 +784,6 @@ namespace System.Management.Automation
                 switch (attrib)
                 {
                     case TypeConstraintAst typeConstraint:
-                    {
                         if (!typeConstraintAdded)
                         {
                             res.Add(new PSTypeName(typeConstraint.TypeName));
@@ -786,9 +791,7 @@ namespace System.Management.Automation
                         }
 
                         break;
-                    }
                     case AttributeAst attributeAst:
-                    {
                         PSTypeNameAttribute attribute = null;
                         try
                         {
@@ -804,7 +807,6 @@ namespace System.Management.Automation
                         }
 
                         break;
-                    }
                 }
             }
 
@@ -1173,21 +1175,15 @@ namespace System.Management.Automation
                     switch (astPair.Argument)
                     {
                         case StringConstantExpressionAst stringConstant:
-                        {
                             properties = new[] { stringConstant.Value };
                             break;
-                        }
                         case ArrayLiteralAst arrayLiteral:
-                        {
                             properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => c.Value).ToArray();
                             scriptBlockProperty = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Any();
-                                break;
-                        }
+                            break;
                         case CommandElementAst _:
-                        {
                             scriptBlockProperty = true;
                             break;
-                        }
                     }
                 }
             }
@@ -1302,15 +1298,11 @@ namespace System.Management.Automation
                     switch (astPair.Argument)
                     {
                         case StringConstantExpressionAst stringConstant:
-                        {
                             properties = new[] { ToWildCardOrString(stringConstant.Value) };
                             break;
-                        }
                         case ArrayLiteralAst arrayLiteral:
-                        {
                             properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => ToWildCardOrString(c.Value)).ToArray();
                             break;
-                        }
                     }
 
                     if (properties == null)
@@ -1336,23 +1328,19 @@ namespace System.Management.Automation
                             switch (propertyNameOrPattern)
                             {
                                 case string propertyName:
-                                {
                                     if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         return includeMatchedProperties;
                                     }
 
                                     break;
-                                }
                                 case WildcardPattern pattern:
-                                {
                                     if (pattern.IsMatch(name))
                                     {
                                         return includeMatchedProperties;
                                     }
 
                                     break;
-                                }
                             }
                         }
 
@@ -1441,9 +1429,12 @@ namespace System.Management.Automation
         {
             switch (member)
             {
-                case PropertyInfo _: return true;
-                case PSMemberInfo memberInfo: return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
-                default: return false;
+                case PropertyInfo _:
+                    return true;
+                case PSMemberInfo memberInfo:
+                    return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
+                default:
+                    return false;
             }
         }
 
@@ -1496,13 +1487,13 @@ namespace System.Management.Automation
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
             if (memberAsStringConst == null)
             {
-                return Utils.EmptyArray<PSTypeName>();
+                return Array.Empty<PSTypeName>();
             }
 
             var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
             {
-                return Utils.EmptyArray<PSTypeName>();
+                return Array.Empty<PSTypeName>();
             }
 
             var res = new List<PSTypeName>(10);
@@ -1580,7 +1571,6 @@ namespace System.Management.Automation
             switch (member)
             {
                 case PropertyInfo propertyInfo: // .net property
-                {
                     if (propertyInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
                     {
                         result.Add(new PSTypeName(propertyInfo.PropertyType));
@@ -1588,9 +1578,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case FieldInfo fieldInfo: // .net field
-                {
                     if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
                     {
                         result.Add(new PSTypeName(fieldInfo.FieldType));
@@ -1598,9 +1586,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
-                {
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         maybeWantDefaultCtor = false;
@@ -1609,9 +1595,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case MemberAst memberAst: // this is for members defined by PowerShell classes
-                {
                     if (memberAst.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         if (isInvokeMemberExpressionAst)
@@ -1643,9 +1627,7 @@ namespace System.Management.Automation
                     }
 
                     return false;
-                }
                 case PSMemberInfo memberInfo:
-                {
                     if (!memberInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         return false;
@@ -1655,7 +1637,6 @@ namespace System.Management.Automation
                     switch (memberInfo)
                     {
                         case PSMethod m:
-                        {
                             if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                             {
                                 AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
@@ -1663,46 +1644,31 @@ namespace System.Management.Automation
                             }
 
                             return false;
-                        }
                         case PSProperty p:
-                        {
                             result.Add(new PSTypeName(p.Value.GetType()));
                             return true;
-                        }
                         case PSNoteProperty noteProperty:
-                        {
                             result.Add(new PSTypeName(noteProperty.Value.GetType()));
                             return true;
-                        }
                         case PSAliasProperty aliasProperty:
-                        {
                             memberNamesToCheck.Add(aliasProperty.ReferencedMemberName);
                             return true;
-                        }
                         case PSCodeProperty codeProperty:
-                        {
                             if (codeProperty.GetterCodeReference != null)
                             {
                                 result.Add(new PSTypeName(codeProperty.GetterCodeReference.ReturnType));
                             }
 
                             return true;
-                        }
                         case PSScriptProperty scriptProperty:
-                        {
                             scriptBlock = scriptProperty.GetterScript;
                             break;
-                        }
                         case PSScriptMethod scriptMethod:
-                        {
                             scriptBlock = scriptMethod.Script;
                             break;
-                        }
                         case PSInferredProperty inferredProperty:
-                        {
                             result.Add(inferredProperty.TypeName);
                             break;
-                        }
                     }
 
                     if (scriptBlock != null)
@@ -1728,7 +1694,6 @@ namespace System.Management.Automation
                             _context.CurrentThisType = thisToRestore;
                         }
                     }
-                }
 
                     return false;
             }
@@ -1971,9 +1936,22 @@ namespace System.Management.Automation
             int startOffset = variableExpressionAst.Extent.StartOffset;
             var targetAsts = (List<Ast>)AstSearcher.FindAll(
                 parent,
-                ast => (ast is ParameterAst || ast is AssignmentStatementAst || ast is ForEachStatementAst || ast is CommandAst)
-                       && variableExpressionAst.AstAssignsToSameVariable(ast)
-                       && ast.Extent.EndOffset < startOffset,
+                ast =>
+                {
+                    if (ast is ParameterAst || ast is AssignmentStatementAst || ast is CommandAst)
+                    {
+                        return variableExpressionAst.AstAssignsToSameVariable(ast)
+                            && ast.Extent.EndOffset < startOffset;
+                    }
+
+                    if (ast is ForEachStatementAst)
+                    {
+                        return variableExpressionAst.AstAssignsToSameVariable(ast)
+                            && ast.Extent.StartOffset < startOffset;
+                    }
+
+                    return false;
+                },
                 searchNestedScriptBlocks: true);
 
             foreach (var ast in targetAsts)
@@ -2006,7 +1984,8 @@ namespace System.Management.Automation
             var foreachAst = targetAsts.OfType<ForEachStatementAst>().FirstOrDefault();
             if (foreachAst != null)
             {
-                inferredTypes.AddRange(InferTypes(foreachAst.Condition));
+                inferredTypes.AddRange(
+                    GetInferredEnumeratedTypes(InferTypes(foreachAst.Condition)));
                 return;
             }
 
@@ -2038,6 +2017,177 @@ namespace System.Management.Automation
             {
                 inferredTypes.Add(evalTypeName);
             }
+        }
+
+        /// <summary>
+        /// Gets the most specific array type possible from a group of inferred types.
+        /// </summary>
+        /// <param name="inferredTypes">The inferred types all the items in the array.</param>
+        /// <returns>The inferred strongly typed array type.</returns>
+        private PSTypeName GetArrayType(IEnumerable<PSTypeName> inferredTypes)
+        {
+            PSTypeName foundType = null;
+            foreach (PSTypeName inferredType in inferredTypes)
+            {
+                if (inferredType.Type == null)
+                {
+                    return new PSTypeName(typeof(object[]));
+                }
+
+                // IEnumerable<>.GetEnumerator and IDictionary.GetEnumerator will always be
+                // inferred as multiple types due to explicit implementations, so if we find
+                // one then assume the rest are also enumerators.
+                if (typeof(IEnumerator).IsAssignableFrom(inferredType.Type))
+                {
+                    foundType = inferredType;
+                    break;
+                }
+
+                if (foundType == null)
+                {
+                    foundType = inferredType;
+                    continue;
+                }
+
+                // If there are mixed types then fall back to object[].
+                if (foundType.Type != inferredType.Type)
+                {
+                    return new PSTypeName(typeof(object[]));
+                }
+            }
+
+            if (foundType == null)
+            {
+                return new PSTypeName(typeof(object[]));
+            }
+
+            if (foundType.Type.IsArray)
+            {
+                return foundType;
+            }
+
+            Type enumeratedItemType = GetMostSpecificEnumeratedItemType(foundType.Type);
+            if (enumeratedItemType != null)
+            {
+                return new PSTypeName(enumeratedItemType.MakeArrayType());
+            }
+
+            return new PSTypeName(foundType.Type.MakeArrayType());
+        }
+
+        /// <summary>
+        /// Gets the most specific type item type from a type that is potentially enumerable.
+        /// </summary>
+        /// <param name="enumerableType">The type to infer enumerated item type from.</param>
+        /// <returns>The inferred enumerated item type.</returns>
+        private Type GetMostSpecificEnumeratedItemType(Type enumerableType)
+        {
+            if (enumerableType.IsArray)
+            {
+                return enumerableType.GetElementType();
+            }
+
+            // These types implement IEnumerable, but we intentionally do not enumerate them.
+            if (enumerableType == typeof(string) ||
+                typeof(IDictionary).IsAssignableFrom(enumerableType) ||
+                typeof(Xml.XmlNode).IsAssignableFrom(enumerableType))
+            {
+                return enumerableType;
+            }
+
+            if (enumerableType == typeof(Data.DataTable))
+            {
+                return typeof(Data.DataRow);
+            }
+
+            bool hasSeenNonGeneric = false;
+            bool hasSeenDictionaryEnumerator = false;
+            Type collectionInterface = GetGenericCollectionLikeInterface(
+                enumerableType,
+                ref hasSeenNonGeneric,
+                ref hasSeenDictionaryEnumerator);
+
+            if (collectionInterface != null)
+            {
+                return collectionInterface.GetGenericArguments()[0];
+            }
+
+            foreach (Type interfaceType in enumerableType.GetInterfaces())
+            {
+                collectionInterface = GetGenericCollectionLikeInterface(
+                    interfaceType,
+                    ref hasSeenNonGeneric,
+                    ref hasSeenDictionaryEnumerator);
+
+                if (collectionInterface != null)
+                {
+                    return collectionInterface.GetGenericArguments()[0];
+                }
+            }
+
+            if (hasSeenDictionaryEnumerator)
+            {
+                return typeof(DictionaryEntry);
+            }
+
+            if (hasSeenNonGeneric)
+            {
+                return typeof(object);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Determines if the interface can be used to infer a specific enumerated type.
+        /// </summary>
+        /// <param name="interfaceType">The interface to test.</param>
+        /// <param name="hasSeenNonGeneric">
+        /// A reference to a value indicating whether a non-generic enumerable type has been
+        /// seen. If <see paramref="interfaceType" /> is a non-generic enumerable type this
+        /// value will be set to <see langword="true" />.
+        /// </param>
+        /// <param name="hasSeenDictionaryEnumerator">
+        /// A reference to a value indicating whether <see cref="IDictionaryEnumerator" /> has been
+        /// seen. If <paramref name="interfaceType" /> is a <see cref="IDictionaryEnumerator" /> this
+        /// value will be set to <see langword="true" />.
+        /// </param>
+        /// <returns>
+        /// The value of <paramref name="interfaceType" /> if it can be used to infer a specific
+        /// enumerated type, otherwise <see langword="null" />.
+        /// </returns>
+        private Type GetGenericCollectionLikeInterface(
+            Type interfaceType,
+            ref bool hasSeenNonGeneric,
+            ref bool hasSeenDictionaryEnumerator)
+        {
+            if (!interfaceType.IsInterface)
+            {
+                return null;
+            }
+
+            if (interfaceType.IsConstructedGenericType)
+            {
+                Type openGeneric = interfaceType.GetGenericTypeDefinition();
+                if (openGeneric == typeof(IEnumerator<>) ||
+                    openGeneric == typeof(IEnumerable<>))
+                {
+                    return interfaceType;
+                }
+            }
+
+            if (interfaceType == typeof(IDictionaryEnumerator))
+            {
+                hasSeenDictionaryEnumerator = true;
+            }
+
+            if (interfaceType == typeof(IEnumerator) ||
+                interfaceType == typeof(IEnumerable))
+            {
+                hasSeenNonGeneric = true;
+            }
+
+            return null;
         }
 
         private IEnumerable<PSTypeName> InferTypeFrom(IndexExpressionAst indexExpressionAst)
@@ -2099,6 +2249,32 @@ namespace System.Management.Automation
                     // is the inferred type.
                     yield return psType;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Infers the types as if they were enumerated. For example, a <see cref="List{T}" />
+        /// of type <see cref="string" /> would be returned as <see cref="string" />.
+        /// </summary>
+        /// <param name="enumerableTypes">
+        /// The potentially enumerable types to infer enumerated type from.
+        /// </param>
+        /// <returns>The enumerated item types.</returns>
+        private IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
+        {
+            foreach (PSTypeName maybeEnumerableType in enumerableTypes)
+            {
+                Type type = maybeEnumerableType.Type;
+                if (type == null)
+                {
+                    yield return maybeEnumerableType;
+                    continue;
+                }
+
+                Type enumeratedItemType = GetMostSpecificEnumeratedItemType(type);
+                yield return enumeratedItemType == null
+                    ? maybeEnumerableType
+                    : new PSTypeName(enumeratedItemType);
             }
         }
 

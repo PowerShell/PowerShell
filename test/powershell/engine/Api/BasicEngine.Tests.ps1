@@ -49,7 +49,7 @@ write-host should_not_stop_responding_at_exit
 exit
 '@
         $process = Start-Process pwsh -ArgumentList $command -PassThru
-        Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 > $null
+        Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
 
         $expect = "powershell process exits in 5 seconds"
         if (-not $process.HasExited) {

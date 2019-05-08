@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
-using System.Management.Automation.Internal;
 using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation
@@ -128,7 +128,7 @@ namespace System.Management.Automation
             }
             else
             {
-                PipelineIterationInfo = Utils.EmptyArray<int>();
+                PipelineIterationInfo = Array.Empty<int>();
             }
 
             //
@@ -199,7 +199,8 @@ namespace System.Management.Automation
         /// </summary>
         public Dictionary<string, object> BoundParameters
         {
-            get {
+            get
+            {
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
@@ -399,7 +400,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// All the commands in a given pipeline share the same PipelinePositionInfo.
         /// </remarks>
-        internal int[] PipelineIterationInfo { get; set; } = Utils.EmptyArray<int>();
+        internal int[] PipelineIterationInfo { get; set; } = Array.Empty<int>();
 
         /// <summary>
         /// Adds the information about this informational record to a PSObject as note properties.
