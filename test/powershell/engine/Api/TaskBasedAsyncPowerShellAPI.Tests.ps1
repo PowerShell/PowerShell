@@ -205,14 +205,14 @@ try {
         It 'can stop a script that is running asynchronously' {
             $ps = [powershell]::Create()
             try {
-                $ir = $ps.AddScript("[System.Threading.Thread]::Sleep(60000)").InvokeAsync()
+                $ir = $ps.AddScript("Start-Sleep -Seconds 60").InvokeAsync()
                 Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running } | Should -BeTrue
                 $ps.InvocationStateInfo.State | Should -Be 'Running'
+                Start-Sleep -Seconds 1 # add a sleep to wait for pipeline to start executing the command.
                 $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
                 $ps.Streams.Error | Should -HaveCount 0 -Because ($ps.Streams.Error | Out-String)
-                $ps.HadErrors | Should -BeFalse
-                $ps.Commands.Commands.commandtext | Should -Be '[System.Threading.Thread]::Sleep(60000)'
+                $ps.Commands.Commands.commandtext | Should -Be "Start-Sleep -Seconds 60"
                 $sr.IsCompletedSuccessfully | Should -Be $true
                 $ir.IsFaulted | Should -Be $true -Because ($ir | Format-List -Force * | Out-String)
                 $ir.Exception -is [System.AggregateException] | Should -Be $true
