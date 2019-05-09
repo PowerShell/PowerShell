@@ -691,7 +691,7 @@ ZoneId=$FileType
                 $testScript = {Import-Module -Name $module -Force -ErrorAction Stop}
                 if($expectedError)
                 {
-                    $testScript | Should -Throw -ErrorId $expectedError
+                    $testScript | Should -Throw -ErrorId $expectedError -Because "Untrusted modules should not be loaded even on unrestricted execution policy"
                 }
                 else
                 {
