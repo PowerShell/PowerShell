@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Runtime.InteropServices;
+
 using COM = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation

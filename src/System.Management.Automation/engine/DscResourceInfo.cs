@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// </summary>
         public string HelpFile { get; internal set; } = string.Empty;
 
-// HelpFile
+        // HelpFile
     }
 
     /// <summary>

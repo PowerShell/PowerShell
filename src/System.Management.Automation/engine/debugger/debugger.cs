@@ -2,22 +2,23 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
@@ -2680,7 +2681,7 @@ namespace System.Management.Automation
 
         internal override void DebugRunspace(Runspace runspace)
         {
-            DebugRunspace(runspace, disableBreakAll:false);
+            DebugRunspace(runspace, disableBreakAll: false);
         }
 
         /// <summary>
@@ -4028,7 +4029,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) => 
+        public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.GetBreakpoint(id);
 
         /// <summary>

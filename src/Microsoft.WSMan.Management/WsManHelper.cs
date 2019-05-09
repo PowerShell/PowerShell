@@ -2,21 +2,22 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Collections;
-using System.Xml;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Resources;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Win32;
+using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
+
+using Microsoft.Win32;
 
 namespace Microsoft.WSMan.Management
 {
@@ -123,7 +124,7 @@ namespace Microsoft.WSMan.Management
                         // Somehow the object was a null reference. Ignore the error
                     }
 
-                    sessionobj=null;
+                    sessionobj = null;
                 }
 
                 Sessions.SessionObjCache.Clear();
@@ -230,7 +231,6 @@ namespace Microsoft.WSMan.Management
                     Sessions.SessionObjCache.Add(key, value);
                 }
             }
-
         }
 
         internal object RemoveFromDictionary(string computer)
@@ -338,7 +338,6 @@ namespace Microsoft.WSMan.Management
             string strOut = null;
             try
             {
-
                 _fs = new FileStream(path, FileMode.Open, FileAccess.Read);
                 // create stream Reader
                 _sr = new StreamReader(_fs);
@@ -348,7 +347,6 @@ namespace Microsoft.WSMan.Management
             {
                 ErrorRecord er = new ErrorRecord(e, "ArgumentNullException", ErrorCategory.InvalidArgument, null);
                 cmdletname.ThrowTerminatingError(er);
-
             }
             catch (UnauthorizedAccessException e)
             {
@@ -374,7 +372,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (_sr != null)
                 {
-                   // _sr.Close();
+                    // _sr.Close();
                     _sr.Dispose();
                 }
 
@@ -390,7 +388,6 @@ namespace Microsoft.WSMan.Management
 
         internal string ProcessInput(IWSManEx wsman, string filepath, string operation, string root, Hashtable valueset, IWSManResourceLocator resourceUri, IWSManSession sessionObj)
         {
-
             string resultString = null;
 
             // if file path is given
@@ -493,7 +490,6 @@ namespace Microsoft.WSMan.Management
                                     node.InnerText = entry.Value.ToString();
                                 }
                             }
-
                         }
                     }
 
@@ -554,12 +550,10 @@ namespace Microsoft.WSMan.Management
             }
 
             return ConnectionString;
-
         }
 
         internal IWSManResourceLocator InitializeResourceLocator(Hashtable optionset, Hashtable selectorset, string fragment, Uri dialect, IWSManEx wsmanObj, Uri resourceuri)
         {
-
             string resource = null;
             if (resourceuri != null)
             {
@@ -694,7 +688,6 @@ namespace Microsoft.WSMan.Management
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseClientCertificate;
                 }
-
             }
 
             IWSManConnectionOptionsEx2 connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
@@ -707,7 +700,7 @@ namespace Microsoft.WSMan.Management
                     nwCredential = credential.GetNetworkCredential();
                     if (string.IsNullOrEmpty(nwCredential.Domain))
                     {
-                        if ( authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic) )
+                        if (authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic))
                         {
                             connObject.UserName = nwCredential.UserName;
                         }
@@ -738,7 +731,6 @@ namespace Microsoft.WSMan.Management
 
             if (sessionoption != null)
             {
-
                 if (sessionoption.ProxyAuthentication != 0)
                 {
                     int ProxyAccessflags = 0;
@@ -788,7 +780,6 @@ namespace Microsoft.WSMan.Management
                     {
                         connObject.SetProxy((int)sessionoption.ProxyAccessType, (int)sessionoption.ProxyAuthentication, null, null);
                     }
-
                 }
 
                 if (sessionoption.SkipCACheck)
@@ -859,7 +850,6 @@ namespace Microsoft.WSMan.Management
 
         internal void CleanUp()
         {
-
             if (_sr != null)
             {
                 _sr.Dispose();
@@ -871,7 +861,6 @@ namespace Microsoft.WSMan.Management
                 _fs.Dispose();
                 _fs = null;
             }
-
         }
 
         internal string GetFilterString(Hashtable seletorset)
@@ -993,7 +982,6 @@ namespace Microsoft.WSMan.Management
                 {
                     AssertError(m_wsmanObject.Error, true, computername);
                 }
-
             }
         }
 
@@ -1122,10 +1110,8 @@ namespace Microsoft.WSMan.Management
             }
             catch (IOException e)
             {
-
                 throw (e);
             }
-
         }
 
         /// <summary>
@@ -1154,6 +1140,5 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// </summary>
         private static Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
-
     }
 }

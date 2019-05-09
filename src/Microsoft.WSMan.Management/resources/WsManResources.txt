@@ -3,7 +3,7 @@
 # {0} = Delegate
 
 Vendor=Microsoft
-Description=This Windows PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the Windows PowerShell host to manage WSMan operations.
+Description=This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.
 InvalidComputerName=The WinRM client cannot complete the operation.Check if the computer name is valid.
 InvalidFileName=This command cannot be used because file does not exist.Check the file existence and run your command.
 InvalidPath=This command cannot be used because root path does not exist.Check the root path and run your command.

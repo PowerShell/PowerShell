@@ -10,13 +10,15 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Runtime.InteropServices;
 
 // TODO/FIXME: Move this class to src/cimSupport/other directory (to map to the namespace it lives in and functionality it implements [cmdletization independent])
 

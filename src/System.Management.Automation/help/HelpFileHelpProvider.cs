@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 
@@ -166,18 +166,18 @@ namespace System.Management.Automation
             // This is done after the version check filtering to ensure we do not remove later version files.
             HashSet<string> fileNameHash = new HashSet<string>();
 
-            foreach(var file in filesMatched)
+            foreach (var file in filesMatched)
             {
                 string fileName = Path.GetFileName(file);
 
-                if(!fileNameHash.Contains(fileName))
+                if (!fileNameHash.Contains(fileName))
                 {
                     fileNameHash.Add(fileName);
                 }
                 else
                 {
                     // If the file need to be removed, add it to matchedFilesToRemove, if not already present.
-                    if(!matchedFilesToRemove.Contains(file))
+                    if (!matchedFilesToRemove.Contains(file))
                     {
                         matchedFilesToRemove.Add(file);
                     }

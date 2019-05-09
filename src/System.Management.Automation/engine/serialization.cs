@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Net.Mail;
@@ -19,11 +20,12 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Xml;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Remoting;
 
 namespace System.Management.Automation
 {
@@ -1888,7 +1890,8 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
-            get {
+            get
+            {
                 return _extendedMembersCollection ??
                        (_extendedMembersCollection =
                            PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
@@ -1898,7 +1901,8 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get {
+            get
+            {
                 return _allPropertiesCollection ??
                        (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }

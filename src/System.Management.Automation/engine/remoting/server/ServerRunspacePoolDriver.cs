@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -1780,7 +1780,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) => 
+        public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.Value.GetBreakpoint(id);
 
         /// <summary>
@@ -2152,7 +2152,7 @@ namespace System.Management.Automation
                     {
                         _results = WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
-                            () =>_wrappedDebugger.ProcessCommand(_command, _output));
+                            () => _wrappedDebugger.ProcessCommand(_command, _output));
                         return;
                     }
 #endif

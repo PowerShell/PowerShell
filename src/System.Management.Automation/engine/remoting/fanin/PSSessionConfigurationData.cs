@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
-using System.Xml;
-using Microsoft.PowerShell.Commands;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Xml;
+
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {

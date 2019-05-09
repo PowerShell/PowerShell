@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Internal;
-using System.Globalization;
-using System.Diagnostics;
-using System.Text;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Management.Automation.Internal;
+using System.Text;
 
 namespace System.Management.Automation.Help
 {

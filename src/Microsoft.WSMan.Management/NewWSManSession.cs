@@ -2,18 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
 using System.Net;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
@@ -277,7 +277,6 @@ namespace Microsoft.WSMan.Management
             }
 
             WriteObject(objSessionOption);
-
         }
     }
 }

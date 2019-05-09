@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Text;
+
+using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation
 {
@@ -110,15 +111,15 @@ namespace System.Management.Automation
                         ArrayLiteralAst arrayLiteralAst = null;
                         switch (parameter?.ArgumentAst)
                         {
-                        case StringConstantExpressionAst sce:
-                            usedQuotes = sce.StringConstantType != StringConstantType.BareWord;
-                            break;
-                        case ExpandableStringExpressionAst ese:
-                            usedQuotes = ese.StringConstantType != StringConstantType.BareWord;
-                            break;
-                        case ArrayLiteralAst ala:
-                            arrayLiteralAst = ala;
-                            break;
+                            case StringConstantExpressionAst sce:
+                                usedQuotes = sce.StringConstantType != StringConstantType.BareWord;
+                                break;
+                            case ExpandableStringExpressionAst ese:
+                                usedQuotes = ese.StringConstantType != StringConstantType.BareWord;
+                                break;
+                            case ArrayLiteralAst ala:
+                                arrayLiteralAst = ala;
+                                break;
                         }
 
                         appendOneNativeArgument(Context, argValue,
@@ -220,7 +221,7 @@ namespace System.Management.Automation
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
                             _arguments.Append(arg);
-                            for (int i = arg.Length-1; i >= 0 && arg[i] == '\\'; i--)
+                            for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
                             {
                                 _arguments.Append('\\');
                             }
@@ -383,6 +384,6 @@ namespace System.Management.Automation
         /// The native command to bind to.
         /// </summary>
         private NativeCommand _nativeCommand;
-#endregion private members
+        #endregion private members
     }
 }

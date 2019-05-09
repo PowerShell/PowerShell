@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Reflection.Emit;
-using Microsoft.PowerShell;
 using System.Threading;
-using System.Management.Automation.Internal;
+
+using Microsoft.PowerShell;
 
 namespace System.Management.Automation.Language
 {
@@ -1281,7 +1282,8 @@ namespace System.Management.Automation.Language
             var ctor = typeof(DynamicClassImplementationAssemblyAttribute).GetConstructor(Type.EmptyTypes);
             var emptyArgs = Array.Empty<object>();
 
-            if (string.IsNullOrEmpty(scriptFile)) {
+            if (string.IsNullOrEmpty(scriptFile))
+            {
                 yield return new CustomAttributeBuilder(ctor, emptyArgs);
                 yield break;
             }
@@ -1292,7 +1294,6 @@ namespace System.Management.Automation.Language
 
             yield return new CustomAttributeBuilder(ctor, emptyArgs,
                 propertyInfo, propertyArgs, Array.Empty<FieldInfo>(), emptyArgs);
-
         }
 
         private static int counter = 0;

@@ -2,17 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
@@ -191,7 +191,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
-                if ( source != null && source.Equals("GPO"))
+                if (source != null && source.Equals("GPO"))
                 {
                     string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
@@ -260,7 +260,6 @@ namespace Microsoft.WSMan.Management
 
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
-
             }
         }
         #endregion private
@@ -289,7 +288,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
     #endregion Set-WsManQuickConfig
 }

@@ -2,18 +2,20 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Language;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Xml;
+
 using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Management.Automation.Language;
 
 namespace System.Management.Automation
 {
@@ -187,7 +189,7 @@ namespace System.Management.Automation
             string tempPath = Path.GetTempPath();
             do
             {
-                tempDir = Path.Combine(tempPath,System.Guid.NewGuid().ToString());
+                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
             }
             while (Directory.Exists(tempDir));
 
@@ -205,26 +207,16 @@ namespace System.Management.Automation
 
         internal static string GetHostName()
         {
-            // Note: non-windows CoreCLR does not support System.Net yet
-            if (Platform.IsWindows)
-            {
-                return WinGetHostName();
-            }
-            else
-            {
-                return Platform.NonWindowsGetHostName();
-            }
-        }
-
-        internal static string WinGetHostName()
-        {
-            System.Net.NetworkInformation.IPGlobalProperties ipProperties =
-                System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!string.IsNullOrEmpty(ipProperties.DomainName))
+            string domainName = ipProperties.DomainName;
+
+            // CoreFX on Unix calls GLibc getdomainname()
+            // which returns "(none)" if a domain name is not set by setdomainname()
+            if (!string.IsNullOrEmpty(domainName) && !domainName.Equals("(none)", StringComparison.Ordinal))
             {
-                hostname = hostname + "." + ipProperties.DomainName;
+                hostname = hostname + "." + domainName;
             }
 
             return hostname;

@@ -1,21 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Management.Automation.Tracing;
-using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
-using System.Reflection;
-using System.IO;
-using System.Xml;
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
+using System.Reflection;
+using System.Xml;
+
+using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
+
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Collections;
 
 namespace System.Management.Automation.Remoting
 {

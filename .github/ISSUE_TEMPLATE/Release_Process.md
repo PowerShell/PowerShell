@@ -40,3 +40,4 @@ Please **only** use this template if you are a maintainer.
     - [ ] Delete the release branch.
     - [ ] Trigger the Docker image release.
     - [ ] Retain builds.
+    - [ ] Update https://github.com/dotnet/dotnet-docker/tree/master/3.0/sdk with new version and SHA hashes for global tool.

@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.IO;
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Text;
+
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using HRESULT = System.UInt32;
+using Dbg = System.Management.Automation.Diagnostics;
 using DWORD = System.UInt32;
+using HRESULT = System.UInt32;
 using NakedWin32Handle = System.IntPtr;
 
 namespace Microsoft.PowerShell
@@ -39,38 +40,59 @@ namespace Microsoft.PowerShell
         void
         Write(string value)
         {
-            _ui.WriteToConsole(value, true);
+            _ui.WriteToConsole(value, transcribeResult: true);
+        }
+
+        public override
+        void
+        Write(ReadOnlySpan<char> value)
+        {
+            _ui.WriteToConsole(value, transcribeResult: true);
         }
 
         public override
         void
         WriteLine(string value)
         {
-            this.Write(value + ConsoleHostUserInterface.Crlf);
+            _ui.WriteLineToConsole(value, transcribeResult: true);
         }
 
         public override
         void
-        Write(Boolean b)
+        WriteLine(ReadOnlySpan<char> value)
         {
-            this.Write(b.ToString());
+            _ui.WriteLineToConsole(value, transcribeResult: true);
+        }
+
+        public override
+        void
+        Write(bool b)
+        {
+            if (b)
+            {
+                _ui.WriteToConsole(bool.TrueString, transcribeResult: true);
+            }
+            else
+            {
+                _ui.WriteToConsole(bool.FalseString, transcribeResult: true);
+            }
         }
 
         public override
         void
         Write(char c)
         {
-            this.Write(new String(c, 1));
+            ReadOnlySpan<char> c1 = stackalloc char[1] { c };
+            _ui.WriteToConsole(c1, transcribeResult: true);
         }
 
         public override
         void
         Write(char[] a)
         {
-            this.Write(new String(a));
+            _ui.WriteToConsole(a, transcribeResult: true);
         }
 
         private ConsoleHostUserInterface _ui;
     }
-}   // namespace
-
+}

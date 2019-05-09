@@ -15,9 +15,10 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Xml;
-using Dbg = System.Diagnostics.Debug;
 using System.Security.Permissions;
+using System.Xml;
+
+using Dbg = System.Diagnostics.Debug;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -4531,6 +4532,5 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion internal methods
-
     }
 }

@@ -2,21 +2,20 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
-
     #region Test-WSMAN
 
     /// <summary>
@@ -138,7 +137,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-
             WSManHelper helper = new WSManHelper(this);
             IWSManEx wsmanObject = (IWSManEx)new WSManClass();
             string connectionStr = string.Empty;
@@ -152,7 +150,7 @@ namespace Microsoft.WSMan.Management
                 xmldoc.LoadXml(m_SessionObj.Identify(0));
                 WriteObject(xmldoc.DocumentElement);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 try
                 {
@@ -165,8 +163,8 @@ namespace Microsoft.WSMan.Management
                         this.WriteError(er);
                     }
                 }
-                catch(Exception)
-                {}
+                catch (Exception)
+                { }
             }
             finally
             {
@@ -199,7 +197,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
     }
     #endregion
 }

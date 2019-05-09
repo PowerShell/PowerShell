@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure.Options;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim

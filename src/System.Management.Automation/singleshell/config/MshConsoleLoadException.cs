@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime.Serialization;
-using System.Text;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Management.Automation.Runspaces
 {

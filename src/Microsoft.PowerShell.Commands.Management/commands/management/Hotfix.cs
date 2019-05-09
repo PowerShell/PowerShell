@@ -2,27 +2,28 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics; // Process class
 using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-using System.Threading;
+using System.IO;
 using System.Management;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.IO;
+using System.Runtime.Serialization;
 using System.Security;
-using System.Security.Principal;
 using System.Security.AccessControl;
+using System.Security.Permissions;
+using System.Security.Principal;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands

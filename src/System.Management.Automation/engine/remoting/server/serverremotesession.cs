@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.IO;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Server;
+using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -160,9 +160,9 @@ namespace System.Management.Automation.Remoting
             transportManager.ReceivedDataCollection.MaximumReceivedDataSize = null;
         }
 
-#endregion Constructors
+        #endregion Constructors
 
-#region Creation Factory
+        #region Creation Factory
 
         /// <summary>
         /// Creates a server remote session for the supplied <paramref name="configurationProviderId"/>
@@ -241,9 +241,9 @@ namespace System.Management.Automation.Remoting
             return result;
         }
 
-#endregion
+        #endregion
 
-#region Overrides
+        #region Overrides
 
         /// <summary>
         /// This indicates the remote session object is Client, Server or Listener.
@@ -458,9 +458,9 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.StateMachine.RaiseEvent(args);
         }
 
-#endregion Overrides
+        #endregion Overrides
 
-#region Properties
+        #region Properties
 
         /// <summary>
         /// This property returns the ServerRemoteSessionContext object created inside
@@ -474,9 +474,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteSessionDataStructureHandler SessionDataStructureHandler { get; }
 
-#endregion
+        #endregion
 
-#region Private/Internal Methods
+        #region Private/Internal Methods
 
         /// <summary>
         /// Let the session clear its resources.
@@ -1162,6 +1162,6 @@ namespace System.Management.Automation.Remoting
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }
 
-#endregion
+        #endregion
     }
 }

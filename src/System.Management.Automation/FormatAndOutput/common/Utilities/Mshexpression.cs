@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.PowerShell.Commands
@@ -17,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PSPropertyExpressionResult
     {
-
         /// <summary>
         /// Create a property expression result containing the original object, matching property expression
         /// and any exception generated during the match process.
@@ -323,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
                             CallSite<Func<CallSite, object, object>>.Create(
                                     PSGetMemberBinder.Get(
                                         _stringValue,
-                                        classScope: (Type) null,
+                                        classScope: (Type)null,
                                         @static: false));
                     }
 

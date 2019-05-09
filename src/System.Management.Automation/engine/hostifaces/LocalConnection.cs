@@ -1,20 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Runtime.Serialization;
-using System.Management.Automation.Host;
-using System.Management.Automation.Remoting;
-using Microsoft.PowerShell.Commands;
-using System.Management.Automation.Internal;
-using System.Diagnostics.CodeAnalysis; // for fxcop
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis; // for fxcop
+using System.IO;
 using System.Linq;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Runtime.Serialization;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif

@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 #if !UNIX
-using System.Diagnostics.Eventing;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing;
 
 namespace System.Management.Automation.Tracing
 {

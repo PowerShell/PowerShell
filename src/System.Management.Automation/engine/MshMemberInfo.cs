@@ -8,10 +8,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Management.Automation.Language;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Interpreter;
+using System.Management.Automation.Language;
+using System.Reflection;
 using System.Text;
 
 using Microsoft.PowerShell;
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSAliasProperty alias = new PSAliasProperty(name, ReferencedMemberName) {ConversionType = ConversionType};
+            PSAliasProperty alias = new PSAliasProperty(name, ReferencedMemberName) { ConversionType = ConversionType };
             CloneBaseProperties(alias);
             return alias;
         }
@@ -1757,7 +1757,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            var property = new PSScriptProperty(name, this.GetterScript, this.SetterScript) {_shouldCloneOnAccess = _shouldCloneOnAccess};
+            var property = new PSScriptProperty(name, this.GetterScript, this.SetterScript) { _shouldCloneOnAccess = _shouldCloneOnAccess };
             CloneBaseProperties(property);
             return property;
         }
@@ -1824,7 +1824,7 @@ namespace System.Management.Automation
                     dollarUnder: AutomationNull.Value,
                     input: AutomationNull.Value,
                     scriptThis: scriptThis,
-                    args: new[] {value});
+                    args: new[] { value });
                 return value;
             }
             catch (RuntimeException e)
@@ -1985,7 +1985,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return Equals((PSMethodInvocationConstraints) obj);
+            return Equals((PSMethodInvocationConstraints)obj);
         }
 
         public override int GetHashCode()
@@ -2241,7 +2241,7 @@ namespace System.Management.Automation
 
             if (_codeReferenceMethodInformation == null)
             {
-                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] {CodeReference});
+                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
             }
 
             Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
@@ -2420,7 +2420,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<string> retValue = new Collection<string> {this.ToString()};
+                Collection<string> retValue = new Collection<string> { this.ToString() };
                 return retValue;
             }
         }
@@ -2431,7 +2431,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            var method = new PSScriptMethod(this.name, _script) {_shouldCloneOnAccess = _shouldCloneOnAccess};
+            var method = new PSScriptMethod(this.name, _script) { _shouldCloneOnAccess = _shouldCloneOnAccess };
             CloneBaseProperties(method);
             return method;
         }
@@ -2693,13 +2693,13 @@ namespace System.Management.Automation
             var types = new Type[methods.Length];
             for (int i = 0; i < methods.Length; i++)
             {
-                types[i] = GetMethodGroupType((MethodInfo) methods[i].method);
+                types[i] = GetMethodGroupType((MethodInfo)methods[i].method);
             }
 
             var methodGroupType = CreateMethodGroup(types, 0, types.Length);
             Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
             var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
-            return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>) Delegate.CreateDelegate(delegateType,
+            return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType,
                 psMethodType.GetMethod("Create", BindingFlags.NonPublic | BindingFlags.Static));
         }
 
@@ -4780,7 +4780,7 @@ namespace System.Management.Automation
                     foreach (CollectionEntry<T> collection in Collections)
                     {
                         Diagnostics.Assert(delegateOwner != null, "all integrating collections with non empty collections have an associated PSObject");
-                        T memberAsT = collection.GetMember((PSObject) delegateOwner, name);
+                        T memberAsT = collection.GetMember((PSObject)delegateOwner, name);
                         if (memberAsT != null)
                         {
                             return collection.CloneOrReplicateObject(delegateOwner, memberAsT);
@@ -4834,7 +4834,7 @@ namespace System.Management.Automation
                 delegateOwner = PSObject.AsPSObject(delegateOwner);
                 foreach (CollectionEntry<T> collection in Collections)
                 {
-                    PSMemberInfoInternalCollection<T> members = collection.GetMembers((PSObject) delegateOwner);
+                    PSMemberInfoInternalCollection<T> members = collection.GetMembers((PSObject)delegateOwner);
                     foreach (T member in members)
                     {
                         PSMemberInfo previousMember = returnValue[member.Name];
@@ -5066,7 +5066,7 @@ namespace System.Management.Automation
                 }
             }
 
-            object IEnumerator.Current => ((IEnumerator<S>) this).Current;
+            object IEnumerator.Current => ((IEnumerator<S>)this).Current;
 
             void IEnumerator.Reset()
             {

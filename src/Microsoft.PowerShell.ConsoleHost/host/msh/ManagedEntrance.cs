@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Reflection;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
-using System.Globalization;
-using System.Threading;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Microsoft.PowerShell
 {
@@ -55,7 +55,8 @@ namespace Microsoft.PowerShell
             if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Attach the debugger to continue...");
-                while (!System.Diagnostics.Debugger.IsAttached) {
+                while (!System.Diagnostics.Debugger.IsAttached)
+                {
                     Thread.Sleep(100);
                 }
 

@@ -8,6 +8,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Reflection;
@@ -37,7 +38,6 @@ namespace System.Management.Automation.Runspaces
 
         public static IEnumerable<TypeData> Get()
         {
-
             var td1 = new TypeData(@"System.Security.Cryptography.X509Certificates.X509Certificate2", true);
             td1.Members.Add("EnhancedKeyUsageList",
                 new ScriptPropertyData(@"EnhancedKeyUsageList", GetScriptBlock(@",(new-object Microsoft.Powershell.Commands.EnhancedKeyUsageProperty -argumentlist $this).EnhancedKeyUsageList;"), null));
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Runspaces
                 new CodePropertyData("SerializedInvocationInfo", GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), "GetInvocationInfo"), null) { IsHidden = true });
             td14.SerializationMethod = "SpecificProperties";
             td14.SerializationDepth = 2;
-            td14.PropertySerializationSet  =
+            td14.PropertySerializationSet =
                 new PropertySetData(new[] { "Breakpoints", "ResumeAction", "SerializedInvocationInfo" }) { Name = "PropertySerializationSet" };
             yield return td14;
 

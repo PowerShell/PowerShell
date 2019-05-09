@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell
         #region static methods
 
         internal const int ExitCodeSuccess = 0;
-        internal const int ExitCodeCtrlBreak = 128+21; // SIGBREAK
+        internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
 

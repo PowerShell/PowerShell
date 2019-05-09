@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -167,7 +168,6 @@ namespace System.Management.Automation.Remoting
         }
 
         #endregion
-
     }
 
     #endregion IThrottleOperation

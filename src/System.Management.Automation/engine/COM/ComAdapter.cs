@@ -3,8 +3,9 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
+
 using Microsoft.PowerShell;
 
 namespace System.Management.Automation

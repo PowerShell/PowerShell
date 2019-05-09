@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Globalization;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
@@ -70,8 +70,7 @@ namespace Microsoft.PowerShell
                     // Should be a skin lookup
 
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
 
                 if (!string.IsNullOrEmpty(message))
@@ -216,8 +215,7 @@ namespace Microsoft.PowerShell
                 {
                     // Should be a skin lookup
                     WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
+                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
                 // write message
                 if (!string.IsNullOrEmpty(message))

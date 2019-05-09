@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
-using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation.Internal;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -516,7 +517,7 @@ namespace System.Management.Automation
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> or <paramref name="minor"/> is less than 0.
         /// </exception>
-        public SemanticVersion(int major, int minor) : this(major, minor, 0) {}
+        public SemanticVersion(int major, int minor) : this(major, minor, 0) { }
 
         /// <summary>
         /// Construct a SemanticVersion.
@@ -525,7 +526,7 @@ namespace System.Management.Automation
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> is less than 0.
         /// </exception>
-        public SemanticVersion(int major) : this(major, 0, 0) {}
+        public SemanticVersion(int major) : this(major, 0, 0) { }
 
         /// <summary>
         /// Construct a <see cref="SemanticVersion"/> from a <see cref="Version"/>,
@@ -671,9 +672,9 @@ namespace System.Management.Automation
             }
 
             string versionSansLabel = null;
-            var major=0;
-            var minor=0;
-            var patch=0;
+            var major = 0;
+            var minor = 0;
+            var patch = 0;
             string preLabel = null;
             string buildLabel = null;
 
@@ -688,14 +689,14 @@ namespace System.Management.Automation
                 {
                     // No buildLabel: buildLabel == null
                     // Format is 'major.minor.patch-PreReleaseLabel'
-                    preLabel = version.Substring(dashIndex+1);
+                    preLabel = version.Substring(dashIndex + 1);
                     versionSansLabel = version.Substring(0, dashIndex);
                 }
                 else
                 {
                     // No PreReleaseLabel: preLabel == null
                     // Format is 'major.minor.patch+BuildLabel'
-                    buildLabel = version.Substring(plusIndex+1);
+                    buildLabel = version.Substring(plusIndex + 1);
                     versionSansLabel = version.Substring(0, plusIndex);
                     dashIndex = -1;
                 }
@@ -713,13 +714,13 @@ namespace System.Management.Automation
                 else
                 {
                     // Format is 'major.minor.patch-PreReleaseLabel+BuildLabel'
-                    preLabel = version.Substring(dashIndex+1, plusIndex-dashIndex-1);
-                    buildLabel = version.Substring(plusIndex+1);
+                    preLabel = version.Substring(dashIndex + 1, plusIndex - dashIndex - 1);
+                    buildLabel = version.Substring(plusIndex + 1);
                     versionSansLabel = version.Substring(0, dashIndex);
                 }
             }
 
-            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel))   ||
+            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel)) ||
                 (plusIndex != -1 && string.IsNullOrEmpty(buildLabel)) ||
                 string.IsNullOrEmpty(versionSansLabel))
             {

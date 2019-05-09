@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
-using System.Management.Automation.Internal;
 using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation
@@ -199,7 +199,8 @@ namespace System.Management.Automation
         /// </summary>
         public Dictionary<string, object> BoundParameters
         {
-            get {
+            get
+            {
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }

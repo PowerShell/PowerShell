@@ -127,7 +127,7 @@ function Get-EnvironmentInformation
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
-        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
+        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
@@ -594,7 +594,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.4.4"
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.8.0"
 }
 
 function Compress-TestContent {
@@ -842,7 +842,10 @@ function Get-PesterTag {
 
 function Publish-PSTestTools {
     [CmdletBinding()]
-    param()
+    param(
+        [string]
+        $runtime
+    )
 
     Find-Dotnet
 
@@ -859,7 +862,12 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
-            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            if (-not $runtime) {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            } else {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            }
+
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             if ( -not $env:PATH.Contains($toolPath) ) {
@@ -1253,7 +1261,7 @@ function Publish-TestResults
         # If the the "test-case" count is greater than 0, then we have results.
         # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
         if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 -or $Type -eq 'XUnit' ) {
-            Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;]"
+            Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;failTaskOnFailedTests=true]"
         }
 
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
@@ -2974,7 +2982,8 @@ function New-TestPackage
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Destination
+        [string] $Destination,
+        [string] $Runtime
     )
 
     if (Test-Path $Destination -PathType Leaf)
@@ -3002,7 +3011,7 @@ function New-TestPackage
     Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
-    $null = Publish-PSTestTools
+    $null = Publish-PSTestTools -runtime $Runtime
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
     Write-Verbose -Message "Copied test directory"

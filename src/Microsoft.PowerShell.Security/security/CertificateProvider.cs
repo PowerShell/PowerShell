@@ -3155,7 +3155,7 @@ namespace Microsoft.PowerShell.Commands
                 if (extension.Oid.Value == "2.5.29.37")
                 {
                     X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                    if(ext != null)
+                    if (ext != null)
                     {
                         OidCollection oids = ext.EnhancedKeyUsages;
                         foreach (Oid oid in oids)
@@ -3204,21 +3204,21 @@ namespace Microsoft.PowerShell.Commands
             // extract DNS name from subject distinguish name
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
-            if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
-                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture) == -1)
+            if (cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
+                cert.Subject.IndexOf(",", System.StringComparison.InvariantCulture) == -1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try
                 {
                     unicodeName = idnMapping.GetUnicode(name);
                 }
-                catch(System.ArgumentException)
+                catch (System.ArgumentException)
                 {
                     // The name is not valid punyCode, assume it's valid ascii.
                     unicodeName = name;
                 }
 
-                dnsName = new DnsNameRepresentation(name,unicodeName);
+                dnsName = new DnsNameRepresentation(name, unicodeName);
                 _dnsList.Add(dnsName);
             }
 
@@ -3228,26 +3228,26 @@ namespace Microsoft.PowerShell.Commands
                 if (extension.Oid.Value == "2.5.29.17")
                 {
                     string[] names = extension.Format(true).Split(Environment.NewLine);
-                    foreach(string nameLine in names)
+                    foreach (string nameLine in names)
                     {
                         // Get the part after 'DNS Name='
-                        if(nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
+                        if (nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
                         {
                             name = nameLine.Substring(dnsNamePrefix.Length);
                             try
                             {
                                 unicodeName = idnMapping.GetUnicode(name);
                             }
-                            catch(System.ArgumentException)
+                            catch (System.ArgumentException)
                             {
                                 // The name is not valid punyCode, assume it's valid ascii.
                                 unicodeName = name;
                             }
 
-                            dnsName = new DnsNameRepresentation(name,unicodeName);
+                            dnsName = new DnsNameRepresentation(name, unicodeName);
 
                             // Only add the name if it is not the same as an existing name.
-                            if(!_dnsList.Contains(dnsName))
+                            if (!_dnsList.Contains(dnsName))
                             {
                                 _dnsList.Add(dnsName);
                             }

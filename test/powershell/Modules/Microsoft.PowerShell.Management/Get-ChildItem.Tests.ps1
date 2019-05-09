@@ -169,6 +169,11 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
+
+        It "-Filter *. finds extension-less files" {
+            $null = New-Item -Path TestDrive:/noextension -ItemType File
+            (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
+        }
     }
 
     Context 'Env: Provider' {

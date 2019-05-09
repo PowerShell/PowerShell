@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 
@@ -533,7 +533,8 @@ namespace System.Management.Automation
         /// </exception>
         internal override CommandMetadata CommandMetadata
         {
-            get {
+            get
+            {
                 return _cmdletMetadata ??
                        (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }

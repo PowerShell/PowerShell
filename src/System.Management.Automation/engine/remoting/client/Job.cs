@@ -4,17 +4,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Management.Automation.Language;
-using System.Management.Automation.Remoting.Internal;
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
 using System.Runtime.Serialization;
-using System.Threading;
 using System.Text;
+using System.Threading;
+
 using Microsoft.PowerShell.Commands;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 // Stops compiler from warning about unknown warnings
@@ -3920,7 +3922,7 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        public override Breakpoint GetBreakpoint(int id) => 
+        public override Breakpoint GetBreakpoint(int id) =>
             _wrappedDebugger.GetBreakpoint(id);
 
         /// <summary>
