@@ -1634,22 +1634,9 @@ namespace System.Management.Automation
             {
                 throw rte;
             }
-            else
+            else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
             {
-                if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
-                {
-                    preference = InquireForActionPreference(rte.Message, context);
-                }
-
-                // If we don't have any trap handlers and the exception can be stopped,
-                // continued or ignored, check the action preference to ensure it has a
-                // valid value. Ideally this method call can go away entirely once issue
-                // #4348 (https://github.com/PowerShell/PowerShell/issues/4348) is
-                // approved.
-                context.CheckActionPreference(
-                    preference,
-                    SpecialVariables.ErrorActionPreferenceVarPath,
-                    ActionPreference.Continue);
+                preference = InquireForActionPreference(rte.Message, context);
             }
 
             if ((preference == ActionPreference.SilentlyContinue) ||
@@ -1807,7 +1794,7 @@ namespace System.Management.Automation
         internal static ActionPreference GetErrorActionPreference(ExecutionContext context)
         {
             bool defaultUsed;
-            return context.GetEnumPreference(
+            return context.GetEnumPreference<ActionPreference>(
                 SpecialVariables.ErrorActionPreferenceVarPath,
                 ActionPreference.Continue,
                 out defaultUsed);
@@ -1829,7 +1816,7 @@ namespace System.Management.Automation
             // 906264 "$ErrorActionPreference="Inquire" prevents original non-terminating error from being reported to $error"
             bool defaultUsed;
             ActionPreference preference =
-                context.GetAndCheckActionPreference(
+                context.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     ActionPreference.Continue,
                     out defaultUsed);

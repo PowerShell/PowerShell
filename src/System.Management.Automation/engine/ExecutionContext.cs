@@ -650,40 +650,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks that an action preference is an allowed value.
-        /// </summary>
-        /// <param name="currentValue"></param>
-        /// <param name="preferenceVariablePath"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        internal void CheckActionPreference(ActionPreference currentValue, VariablePath preferenceVariablePath, ActionPreference defaultValue)
-        {
-            // We don't want to support "Ignore" as action preferences, as it leads to bad
-            // scripting habits. They are only supported as cmdlet overrides.
-            if ((currentValue == ActionPreference.Ignore) || (currentValue == ActionPreference.Suspend))
-            {
-                // Reset the variable value
-                EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultValue);
-                string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, currentValue);
-                throw new NotSupportedException(message);
-            }
-        }
-
-        /// <summary>
-        /// Gets an action preference and validates that it is an allowed value.
-        /// </summary>
-        /// <param name="preferenceVariablePath"></param>
-        /// <param name="defaultPref"></param>
-        /// <param name="defaultUsed"></param>
-        /// <returns></returns>
-        internal ActionPreference GetAndCheckActionPreference(VariablePath preferenceVariablePath, ActionPreference defaultPref, out bool defaultUsed)
-        {
-            var val = GetEnumPreference(preferenceVariablePath, defaultPref, out defaultUsed);
-            CheckActionPreference(val, preferenceVariablePath, defaultPref);
-            return val;
-        }
-
-        /// <summary>
         /// Same as GetEnumPreference, but for boolean values.
         /// </summary>
         /// <param name="preferenceVariablePath"></param>
@@ -1104,7 +1070,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetAndCheckActionPreference(
+                return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
                     InitialSessionState.defaultDebugPreference,
                     out defaultUsed);
@@ -1125,7 +1091,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetAndCheckActionPreference(
+                return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
                     InitialSessionState.defaultVerbosePreference,
                     out defaultUsed);
@@ -1146,7 +1112,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetAndCheckActionPreference(
+                return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     InitialSessionState.defaultErrorActionPreference,
                     out defaultUsed);
@@ -1167,7 +1133,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetAndCheckActionPreference(
+                return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
                     InitialSessionState.defaultWarningPreference,
                     out defaultUsed);
@@ -1188,7 +1154,7 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetAndCheckActionPreference(
+                return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
                     InitialSessionState.defaultInformationPreference,
                     out defaultUsed);

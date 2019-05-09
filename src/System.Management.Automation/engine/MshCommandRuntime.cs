@@ -2992,7 +2992,7 @@ namespace System.Management.Automation
                 {
                     bool defaultUsed = false;
 
-                    _debugPreference = Context.GetAndCheckActionPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
+                    _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -3051,7 +3051,7 @@ namespace System.Management.Automation
                 if (!_isVerbosePreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _verbosePreference = Context.GetAndCheckActionPreference(
+                    _verbosePreference = Context.GetEnumPreference(
                         SpecialVariables.VerbosePreferenceVarPath,
                         _verbosePreference,
                         out defaultUsed);
@@ -3088,7 +3088,7 @@ namespace System.Management.Automation
                 if (!_isWarningPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _warningPreference = Context.GetAndCheckActionPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
+                    _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
                 }
 
                 return _warningPreference;
@@ -3257,7 +3257,7 @@ namespace System.Management.Automation
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _errorAction = Context.GetAndCheckActionPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
+                    _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
                     _isErrorActionPreferenceCached = true;
                 }
 
@@ -3292,7 +3292,7 @@ namespace System.Management.Automation
                 if (!_isProgressPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _progressPreference = Context.GetAndCheckActionPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
+                    _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
                     _isProgressPreferenceCached = true;
                 }
 
@@ -3324,7 +3324,7 @@ namespace System.Management.Automation
                 if (!_isInformationPreferenceCached)
                 {
                     bool defaultUsed = false;
-                    _informationPreference = Context.GetAndCheckActionPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
+                    _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
                     _isInformationPreferenceCached = true;
                 }
 

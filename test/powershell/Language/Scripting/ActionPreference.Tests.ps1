@@ -33,22 +33,33 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should -BeExactly $errorCount
         }
 
-        It 'action preference of Ignore cannot be set as a preference variable' {
-            $e = {
-                $GLOBAL:errorActionPreference = "Ignore"
-                Get-Process -Name asdfasdfasdf
-            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
-            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
+        It 'action preference of Ignore can be set as a preference variable using a string value' {
+            Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+            $GLOBAL:errorActionPreference = "Ignore"
+            $errorCount = $error.Count
+            Get-Process -Name asdfasdfasdf
+
+            $error.Count | Should -BeExactly $errorCount
 
             $GLOBAL:errorActionPreference = $orgin
         }
 
-        It 'action preference of Suspend cannot be set as a preference variable' {
-            $e = {
-                $GLOBAL:errorActionPreference = "Suspend"
-                Get-Process -Name asdfasdfasdf
-            } | Should -Throw -ErrorId 'RuntimeException' -PassThru
-            $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
+        It 'action preference of Ignore can be set as a preference variable using an enumerated value' {
+            $GLOBAL:errorActionPreference = [actionpreference]::Ignore
+            $errorCount = $error.Count
+            Get-Process -Name asdfasdfasdf
+
+            $error.Count | Should -BeExactly $errorCount
+
+            $GLOBAL:errorActionPreference = $orgin
+        }
+
+        It 'action preference of Suspend can be set as a preference variable' {
+            $errorCount = $error.Count
+            $GLOBAL:errorActionPreference = "Suspend"
+            Get-Process -Name asdfasdfasdf 2>$null
+
+            $error.Count | Should -BeExactly ($errorCount + 1)
 
             $GLOBAL:errorActionPreference = $orgin
         }

@@ -148,7 +148,7 @@ namespace System.Management.Automation
                     if ((!bindingScriptCmdlet) && (!bindingParameters))
                     {
                         // ActionPreference of Suspend is not supported as a preference variable. We can only block "Suspend"
-                        // during variable assignment (here) - "Ignore" is blocked during variable retrieval.
+                        // during variable assignment (here).
                         if (_convertTypes[i] == typeof(ActionPreference))
                         {
                             ActionPreference resultPreference = (ActionPreference)result;
