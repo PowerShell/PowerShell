@@ -568,43 +568,6 @@ namespace System.Management.Automation
             EngineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
         }
 
-        internal bool IsBreakOnErrorEnabled()
-        {
-            // Unlike the GetEnumPreference method, which can throw an exception, this
-            // method  is used to specifically check if ErrorActionPreference is set to
-            // ActionPreference.Break so that it can 
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(SpecialVariables.ErrorActionPreferenceVarPath, out context, out scope);
-            if (val is ActionPreference)
-            {
-                return ((ActionPreference)val) == ActionPreference.Break;
-            }
-
-            if (val != null)
-            {
-                try
-                {
-                    string valString = val as string;
-                    if (valString != null)
-                    {
-                        var result = (ActionPreference)Enum.Parse(typeof(ActionPreference), valString, true);
-                        return (result == ActionPreference.Break);
-                    }
-                }
-                catch (InvalidCastException)
-                {
-                    // default value is used
-                }
-                catch (ArgumentException)
-                {
-                    // default value is used
-                }
-            }
-
-            return false;
-        }
-
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
             CmdletProviderContext context = null;

@@ -1606,7 +1606,11 @@ namespace System.Management.Automation
 
             ActionPreference preference = GetErrorActionPreference(context);
 
-            if (IsExceptionNew(rte, context) &&
+            // If the exception was not rethrown and we are not currently
+            // handling an exception, then the exception is new, and we
+            // can break on it if requested.
+            if (!rte.WasRethrown &&
+                context.CurrentExceptionBeingHandled == null &&
                 preference == ActionPreference.Break)
             {
                 context.Debugger?.Break(rte);
@@ -1637,6 +1641,9 @@ namespace System.Management.Automation
             else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
             {
                 preference = InquireForActionPreference(rte.Message, context);
+
+                // set the value of $? here in case it was reset in inquire.
+                context.QuestionMarkVariableValue = false;
             }
 
             if ((preference == ActionPreference.SilentlyContinue) ||
@@ -1670,12 +1677,6 @@ namespace System.Management.Automation
             {
                 throw rte;
             }
-        }
-
-        private static bool IsExceptionNew(RuntimeException rte, ExecutionContext context)
-        {
-            return !rte.WasRethrown &&
-                   context.CurrentExceptionBeingHandled == null;
         }
 
         private static ActionPreference ProcessTraps(FunctionContext funcContext,

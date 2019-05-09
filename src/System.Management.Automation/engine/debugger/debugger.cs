@@ -2471,11 +2471,14 @@ namespace System.Management.Automation
             SetDebuggerStepMode(true);
 
             // If the debugger is enabled and we are not in a breakpoint, trigger an immediate break in the current location
-            using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
+            if (_context._debuggingMode > 0)
             {
-                if (enumerator.MoveNext() && _context._debuggingMode > 0)
+                using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
                 {
-                    OnSequencePointHit(enumerator.Current.FunctionContext);
+                    if (enumerator.MoveNext())
+                    {
+                        OnSequencePointHit(enumerator.Current.FunctionContext);
+                    }
                 }
             }
         }
