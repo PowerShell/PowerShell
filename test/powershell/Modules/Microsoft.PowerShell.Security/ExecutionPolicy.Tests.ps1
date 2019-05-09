@@ -654,7 +654,7 @@ ZoneId=$FileType
                 Test-UnrestrictedExecutionPolicy $testScript $expected
             }
 
-            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $expectedError = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
 
             $testData = @(
                 @{
@@ -667,7 +667,7 @@ ZoneId=$FileType
                 $testData += @(
                     @{
                         module = $PSHomeUntrustedModule
-                        error = $error
+                        expectedError = $expectedError
                     }
                     @{
                         module = $PSHomeUnsignedModule
@@ -678,14 +678,14 @@ ZoneId=$FileType
 
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
-                param([string]$module, [string]$error)
+                param([string]$module, [string]$expectedError)
 
                 $execPolicy = Get-ExecutionPolicy -List | Out-String
 
                 $testScript = {Import-Module -Name $module -Force -ErrorAction Stop}
-                if($error)
+                if($expectedError)
                 {
-                    $testScript | Should -Throw -ErrorId $error
+                    $testScript | Should -Throw -ErrorId $expectedError
                 }
                 else
                 {
