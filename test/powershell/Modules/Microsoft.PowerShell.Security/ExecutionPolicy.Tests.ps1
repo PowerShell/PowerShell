@@ -666,6 +666,7 @@ ZoneId=$FileType
             if (Test-CanWriteToPsHome) {
                 $testData += @(
                     @{
+                        shouldMarkAsPending = $true
                         module = $PSHomeUntrustedModule
                         expectedError = $expectedError
                     }
@@ -678,7 +679,12 @@ ZoneId=$FileType
 
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
-                param([string]$module, [string]$expectedError)
+                param([string]$module, [string]$expectedError, [bool]$shouldMarkAsPending)
+
+                if ($shouldMarkAsPending)
+                {
+                    Set-ItResult -Pending -Because "Test is unreliable"
+                }
 
                 $execPolicy = Get-ExecutionPolicy -List | Out-String
 
