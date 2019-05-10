@@ -49,7 +49,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
 
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
                 [System.Management.Automation.Platform]::IsNanoServer -or
-                $env:__InContainer -eq 1
+                $env:__INCONTAINER -eq 1
 
     # this code is a workaround for issue: https://github.com/PowerShell/PowerShell/issues/3079
     if((-not ($skipTest)) -and $IsWindows)
