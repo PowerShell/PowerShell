@@ -85,8 +85,9 @@ Describe "Split Operator" -Tags CI {
             $res[3] | Should -Be "d"
 
             $res = " " -split {$_ -like ' '},-4
-            $res.count | Should -Be 1
+            $res.count | Should -Be 2
             $res[0] | Should -Be ""
+            $res[1] | Should -Be ""
 
             $res = "folder/path/to/file" -split {$_ -like '/'}, -2
             $res.count | Should -Be 2

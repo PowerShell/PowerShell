@@ -666,19 +666,18 @@ namespace System.Management.Automation
             {
                 var split = new List<string>();
 
-                var buf = new StringBuilder();
+                // Find out where to start the splitting process.
+                // If it is a reverse split then start at the end
+                // of the item. Else, start at the start of the item.
+                var cursor = (limit < 0)? item.Length - 1: 0;
 
-                for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                // This is used to calculate how much to split from item.
+                var subStringLength = 0;
+
+                // Loop through the entire item 
+                for (int charCount = 0; charCount < item.Length; charCount++)
                 {
-                    int cursor = strIndex;
-
-                    if (limit < 0)
-                    {
-                        // switch the cursor to start at the back of the string
-                        cursor = item.Length - 1 - strIndex;
-                    }
-
-                    // evaluate the predicate
+                    // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
@@ -686,57 +685,75 @@ namespace System.Management.Automation
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
                         args: new object[] { item, cursor });
-
+                    
+                    // If the current character is not a delimiter 
+                    // then it must be included into a substring.
                     if (!LanguagePrimitives.IsTrue(predicateResult))
                     {
-                        // if the current character is not a delimiter 
-                        // then add it to the buffer
-                        buf.Append(item[cursor]);
+                        subStringLength++;
+                        if (limit < 0)
+                        {
+                            cursor -= 1;
+                        }
+                        else
+                        {
+                            cursor += 1;
+                        }
                         continue;
                     }
-                    
-                    if (buf.Length != 0)
+
+                    // Else, if the character is a delimiter
+                    // then add a substring to the split list.
+                    split.Add(item.Substring((limit < 0)? cursor + 1: cursor - subStringLength, subStringLength));
+
+                    subStringLength = 0;
+
+                    if (limit < 0)
                     {
-                        split.Add((limit < 0) ? ReverseStringUtility(buf.ToString()) : buf.ToString());
+                        cursor -= 1;
+                    }
+                    else
+                    {
+                        cursor += 1;
                     }
 
-                    buf.Clear();
-
-                    if (System.Math.Abs(limit) > 0 && split.Count >= (System.Math.Abs(limit) - 1))
+                    if (System.Math.Abs(limit) == (split.Count + 1))
                     {
-                        if ((cursor + 1) < item.Length && limit > 0)
-                        {
-                            // We're one item below the limit. 
-                            // If we have any string left add it
-                            // else add an empty string
-                            split.Add(item.Substring(cursor + 1));
-                        }
-                        else if ((cursor + 1) < item.Length && limit < 0)
-                        {
-                            split.Add(item.Substring(0, cursor));
-                        }
-
                         break;
-                    }
-                    
-                    if (cursor == (item.Length - 1) || cursor == 0)
-                    {
-                        // If this delimiter is at the end of the string,
-                        // add an empty string to denote the item "after"
-                        // it.
-                        split.Add(string.Empty);
-                    }
-                    
-                    // Add any remainder, if we're under the limit.
-                    if (buf.Length > 0 && split.Count <= System.Math.Abs(limit))
-                    {
-                        split.Add(buf.ToString());
                     }
                 }
 
-                if (buf.Length > 0)
+                if (cursor == -1)
                 {
-                    split.Add((limit < 0) ? ReverseStringUtility(buf.ToString()) : buf.ToString());
+                    // Used when the limit is negative
+                    // and the cursor was allowed to go
+                    // all the way to the start of the
+                    // string.
+                    split.Add(item.Substring(0, subStringLength));
+                }
+                else if (limit < 0)
+                {
+                    // Used to get the rest of the string
+                    // when using a negative limit and 
+                    // the cursor doesn't reach the end 
+                    // of the string.
+                    split.Add(item.Substring(0, cursor + 1));
+                }
+                else if (cursor == item.Length)
+                {
+                    // Used to get the rest of the string
+                    // when the limit is not negative and
+                    // the cursor is allowed to make it to 
+                    // the end of the string.
+                    split.Add(item.Substring(cursor - subStringLength, subStringLength));
+                }
+                else
+                {
+                    // Used to get the rest of the string 
+                    // when the limit is not negative and
+                    // the cursor is not at the end of the
+                    // string.
+                    split.Add(item.Substring(cursor, item.Length - cursor));
                 }
 
                 if (limit < 0)
