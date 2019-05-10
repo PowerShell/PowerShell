@@ -5342,6 +5342,122 @@ namespace System.Management.Automation.Language
         #endregion Visitors
     }
 
+    /// <summary>
+    /// Describes the kind of control flow statement chain by the operator used.
+    /// </summary>
+    public enum StatementChainOperator
+    {
+        /// <summary>
+        /// No operator (to be used in place of null)
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// The &amp;&amp; operator.
+        /// </summary>
+        AndAnd,
+
+        /// <summary>
+        /// The || operator.
+        /// </summary>
+        OrOr,
+    }
+
+    /// <summary>
+    /// A command-oriented flow-controlled statement chain.
+    /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
+    /// </summary>
+    public class StatementChainAst : PipelineBaseAst
+    {
+        /// <summary>
+        /// Create a new statement chain AST from two statements and an operator.
+        /// </summary>
+        /// <param name="lhsStatement">The statement to the left of the operator.</param>
+        /// <param name="rhsStatement">The statement to the right of the operator.</param>
+        /// <param name="chainOperator">The operator used.</param>
+        /// <param name="extent">The extent of the chained statement.</param>
+        public StatementChainAst(
+            PipelineBaseAst lhsStatement,
+            PipelineBaseAst rhsStatement,
+            StatementChainOperator chainOperator,
+            IScriptExtent extent)
+            : base(extent)
+        {
+            if (lhsStatement == null)
+            {
+                throw new ArgumentNullException(nameof(lhsStatement));
+            }
+
+            if (rhsStatement == null)
+            {
+                throw new ArgumentNullException(nameof(rhsStatement));
+            }
+
+            LhsStatement = lhsStatement;
+            RhsStatement = rhsStatement;
+            Operator = chainOperator;
+
+            SetParent(LhsStatement);
+            SetParent(RhsStatement);
+        }
+
+        /// <summary>
+        /// The left hand statement in the chain.
+        /// </summary>
+        public StatementAst LhsStatement { get; }
+
+        /// <summary>
+        /// The right hand statement in the chain.
+        /// </summary>
+        public StatementAst RhsStatement { get; }
+
+        /// <summary>
+        /// The chaining operator used.
+        /// </summary>
+        public StatementChainOperator Operator { get; }
+
+        /// <summary>
+        /// Create a copy of this Ast.
+        /// </summary>
+        public override Ast Copy()
+        {
+            return new StatementChainAst((PipelineBaseAst)LhsStatement.Copy(), (PipelineBaseAst)RhsStatement.Copy(), Operator, Extent);
+        }
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            if (!(visitor is ICustomAstVisitor2 visitor2))
+            {
+                return null;
+            }
+
+            return visitor2.VisitStatementChain(this);
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var visitAction = AstVisitAction.Continue;
+            if (visitor is AstVisitor2 visitor2)
+            {
+                visitAction = visitor2.VisitStatementChain(this);
+
+                if (visitAction != AstVisitAction.Continue)
+                {
+                    return visitAction;
+                }
+            }
+
+            visitAction = LhsStatement.InternalVisit(visitor);
+
+            if (visitAction == AstVisitAction.StopVisit)
+            {
+                return visitAction;
+            }
+
+            return RhsStatement.InternalVisit(visitor);
+        }
+    }
+
     #endregion Flow Control Statements
 
     #region Pipelines

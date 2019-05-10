@@ -649,6 +649,7 @@ namespace System.Management.Automation.Language
         internal static readonly ParameterExpression _functionContext;
         internal static readonly ParameterExpression _returnPipe;
         private static readonly Expression s_setDollarQuestionToTrue;
+        private static readonly Expression s_getDollarQuestion;
         private static readonly Expression s_callCheckForInterrupts;
         private static readonly Expression s_getCurrentPipe;
         private static readonly Expression s_currentExceptionBeingHandled;
@@ -670,6 +671,8 @@ namespace System.Management.Automation.Language
             s_setDollarQuestionToTrue = Expression.Assign(
                 Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue),
                 ExpressionCache.TrueConstant);
+
+            s_getDollarQuestion = Expression.Property(_executionContextParameter, CachedReflectionInfo.ExecutionContext_QuestionMarkVariableValue);
 
             s_callCheckForInterrupts = Expression.Call(CachedReflectionInfo.PipelineOps_CheckForInterrupts,
                                                       _executionContextParameter);
@@ -3113,6 +3116,17 @@ namespace System.Management.Automation.Language
                         };
 
             return Expression.Block(exprs);
+        }
+
+        public object VisitStatementChain(StatementChainAst statementChainAst)
+        {
+            Expression condition = statementChainAst.Operator == StatementChainOperator.AndAnd
+                ? s_getDollarQuestion
+                : Expression.Not(s_getDollarQuestion);
+
+            return Expression.Block(
+                Compile(statementChainAst.LhsStatement),
+                Expression.IfThen(condition, Compile(statementChainAst.RhsStatement)));
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)

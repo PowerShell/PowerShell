@@ -2064,7 +2064,7 @@ namespace System.Management.Automation.Language
                     if (attributes != null)
                     {
                         Resync(restorePoint);
-                        statement = PipelineRule();
+                        statement = PipelineChainRule();
                     }
                     else
                     {
@@ -2115,7 +2115,7 @@ namespace System.Management.Automation.Language
                         UngetToken(token);
                     }
 
-                    statement = PipelineRule();
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation.Language
             // G  flow-control-statement:
             // G      'return'   pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
@@ -2240,7 +2240,7 @@ namespace System.Management.Automation.Language
             // G  flow-control-statement:
             // G      'exit'   pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
@@ -2252,7 +2252,7 @@ namespace System.Management.Automation.Language
             // G  flow-control-statement:
             // G      'throw'    pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
@@ -2293,7 +2293,7 @@ namespace System.Management.Automation.Language
                 default:
                     // We can only unget 1 token, but have 2 to unget, so resync on the label.
                     Resync(label);
-                    statement = PipelineRule();
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2394,7 +2394,7 @@ namespace System.Management.Automation.Language
                 }
 
                 SkipNewlines();
-                PipelineBaseAst condition = PipelineRule();
+                PipelineBaseAst condition = PipelineChainRule();
                 if (condition == null)
                 {
                     // ErrorRecovery: assume pipeline just hasn't been entered yet, continue hoping
@@ -2667,7 +2667,7 @@ namespace System.Management.Automation.Language
 
                 needErrorCondition = true; // need to add condition ast to the error statement if the parsing fails
                 SkipNewlines();
-                condition = PipelineRule();
+                condition = PipelineChainRule();
                 if (condition == null)
                 {
                     // ErrorRecovery: pretend we saw the condition and keep parsing.
@@ -3382,7 +3382,7 @@ namespace System.Management.Automation.Language
             else
             {
                 SkipNewlines();
-                pipeline = PipelineRule();
+                pipeline = PipelineChainRule();
                 if (pipeline == null)
                 {
                     // ErrorRecovery: assume the rest of the statement is missing.
@@ -3473,7 +3473,7 @@ namespace System.Management.Automation.Language
             }
 
             SkipNewlines();
-            PipelineBaseAst initializer = PipelineRule();
+            PipelineBaseAst initializer = PipelineChainRule();
             if (initializer != null)
             {
                 endErrorStatement = initializer.Extent;
@@ -3485,7 +3485,7 @@ namespace System.Management.Automation.Language
             }
 
             SkipNewlines();
-            PipelineBaseAst condition = PipelineRule();
+            PipelineBaseAst condition = PipelineChainRule();
             if (condition != null)
             {
                 endErrorStatement = condition.Extent;
@@ -3497,7 +3497,7 @@ namespace System.Management.Automation.Language
             }
 
             SkipNewlines();
-            PipelineBaseAst iterator = PipelineRule();
+            PipelineBaseAst iterator = PipelineChainRule();
             if (iterator != null)
             {
                 endErrorStatement = iterator.Extent;
@@ -3567,7 +3567,7 @@ namespace System.Management.Automation.Language
             }
 
             SkipNewlines();
-            PipelineBaseAst condition = PipelineRule();
+            PipelineBaseAst condition = PipelineChainRule();
             PipelineBaseAst errorCondition = null;
             if (condition == null)
             {
@@ -4075,7 +4075,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         SkipNewlines();
-                        condition = PipelineRule();
+                        condition = PipelineChainRule();
                         if (condition == null)
                         {
                             // ErrorRecovery: try to get the matching close paren, then return an error statement.
@@ -5692,7 +5692,48 @@ namespace System.Management.Automation.Language
 
         #region Pipelines
 
-        private PipelineBaseAst PipelineRule()
+        private PipelineBaseAst PipelineChainRule()
+        {
+            // G  pipeline-chain:
+            // G      pipeline
+            // G      pipeline pipeline-operator pipeline-chain
+            // G
+            // G  pipeline-operator:
+            // G      '||'
+            // G      '&&'
+
+            PipelineBaseAst currentStatement = null;
+            StatementChainOperator previousChainOperator = StatementChainOperator.None;
+            StatementChainOperator currentChainOperator = StatementChainOperator.None;
+            do
+            {
+                PipelineBaseAst nextStatement = PipelineRule(out currentChainOperator);
+
+                if (nextStatement == null)
+                {
+                    break;
+                }
+
+                if (currentStatement == null)
+                {
+                    currentStatement = nextStatement;
+                    previousChainOperator = currentChainOperator;
+                    continue;
+                }
+
+                currentStatement = new StatementChainAst(
+                    currentStatement,
+                    nextStatement,
+                    previousChainOperator,
+                    ExtentOf(currentStatement.Extent, nextStatement.Extent));
+                previousChainOperator = currentChainOperator;
+
+            } while (currentChainOperator != StatementChainOperator.None);
+
+            return currentStatement;
+        }
+
+        private PipelineBaseAst PipelineRule(out StatementChainOperator chainOperator)
         {
             // G  pipeline:
             // G      assignment-expression
@@ -5706,6 +5747,7 @@ namespace System.Management.Automation.Language
             // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
 
             var pipelineElements = new List<CommandBaseAst>();
+            chainOperator = StatementChainOperator.None;
             IScriptExtent startExtent = null;
 
             Token nextToken = null;
@@ -5856,20 +5898,19 @@ namespace System.Management.Automation.Language
                         }
 
                         break;
+
                     case TokenKind.AndAnd:
-                    case TokenKind.OrOr:
-                        // Parse in a manner similar to a pipe, but issue an error (for now, but should implement this for V3.)
+                        chainOperator = StatementChainOperator.AndAnd;
+                        scanning = false;
                         SkipToken();
                         SkipNewlines();
-                        ReportError(nextToken.Extent,
-                            nameof(ParserStrings.InvalidEndOfLine),
-                            ParserStrings.InvalidEndOfLine,
-                            nextToken.Text);
-                        if (PeekToken().Kind == TokenKind.EndOfInput)
-                        {
-                            scanning = false;
-                        }
+                        break;
 
+                    case TokenKind.OrOr:
+                        chainOperator = StatementChainOperator.OrOr;
+                        scanning = false;
+                        SkipToken();
+                        SkipNewlines();
                         break;
 
                     default:
@@ -7329,7 +7370,7 @@ namespace System.Management.Automation.Language
                 _disableCommaOperator = false;
 
                 SkipNewlines();
-                pipelineAst = PipelineRule();
+                pipelineAst = PipelineChainRule();
                 if (pipelineAst == null)
                 {
                     IScriptExtent errorPosition = After(lParen);

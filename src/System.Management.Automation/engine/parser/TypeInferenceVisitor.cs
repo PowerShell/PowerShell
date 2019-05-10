@@ -2337,6 +2337,11 @@ namespace System.Management.Automation
             var i = pipe.PipelineElements.IndexOf(commandAst);
             return i != 0 ? pipe.PipelineElements[i - 1] : null;
         }
+
+        public object VisitStatementChain(StatementChainAst statementChainAst)
+        {
+            return null;
+        }
     }
 
     static class TypeInferenceExtension

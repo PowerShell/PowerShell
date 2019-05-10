@@ -175,6 +175,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+
+        /// <summary/>
+        object VisitStatementChain(StatementChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
 
 #if DEBUG
@@ -552,6 +555,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return Check(ast); }
 
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitStatementChain(StatementChainAst ast) { return Check(ast); }
     }
 
     /// <summary>
@@ -690,5 +695,7 @@ namespace System.Management.Automation.Language
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
         /// <summary/>
         public virtual object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return null; }
+        /// <summary/>
+        public virtual object VisitStatementChain(StatementChainAst statementChainAst) { return null; }
     }
 }

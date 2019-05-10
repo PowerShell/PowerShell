@@ -7080,6 +7080,11 @@ namespace System.Management.Automation
         {
             return parenExpressionAst.Pipeline.Accept(this);
         }
+
+        public object VisitStatementChain(StatementChainAst statementChainAst)
+        {
+            return false;
+        }
     }
 
     /// <summary>
