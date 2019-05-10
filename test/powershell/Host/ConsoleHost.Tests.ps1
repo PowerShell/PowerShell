@@ -826,7 +826,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
         $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
         $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
-        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
+        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell 7"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {

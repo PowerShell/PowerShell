@@ -25,7 +25,7 @@
       xmlns:xs="http://www.w3.org/2001/XMLSchema"
       >
     <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
-      <!--Defines an event provider for PowerShell Core
+      <!--Defines an event provider for PowerShell
           The Guid for this provider should not be changed. If it's
           changed for any reason, then the old manifest needs to be
           first uninstalled and then the changed manifest installed

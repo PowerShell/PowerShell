@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell.GlobalTool.Shim
 {
     /// <summary>
-    /// Shim layer to chose the appropriate runtime for PowerShell Core DotNet Global tool.
+    /// Shim layer to chose the appropriate runtime for PowerShell DotNet Global tool.
     /// </summary>
     public class EntryPoint
     {

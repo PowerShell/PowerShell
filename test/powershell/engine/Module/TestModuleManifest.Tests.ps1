@@ -82,7 +82,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
-        @{rootModuleValue = "foo.xaml"; error = "Modules_WorkflowModuleNotSupported"}   # not supported on PowerShell Core
+        @{rootModuleValue = "foo.xaml"; error = "Modules_WorkflowModuleNotSupported"}   # not supported on PowerShell 6+
     ) {
 
         param($rootModuleValue, $error)

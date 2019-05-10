@@ -13,7 +13,7 @@ try {
 
     #skip all tests on non-windows platform
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -and !$IsInbox) # Only execute for PowerShell Core on Windows
+    $IsNotSkipped = ($IsWindows -and !$IsInbox) # Only execute for PowerShell on Windows
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {

@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Product>PowerShell Core Test</Product>
+    <Product>PowerShell Test</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
@@ -12,7 +12,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
