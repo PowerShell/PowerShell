@@ -644,13 +644,6 @@ namespace System.Management.Automation
             }
         }
 
-        private static string ReverseStringUtility(string str)
-        {
-            var revStr = str.ToCharArray();
-            Array.Reverse(revStr);
-            return new string(revStr);
-        }
-
         private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
             var results = new List<string>();
