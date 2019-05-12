@@ -406,18 +406,13 @@ namespace Microsoft.PowerShell.Commands
 
         private ScopedItemOptions CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
         {
-            ScopedItemOptions options = ScopedItemOptions.None;
-            try 
-            {
-                options = (ScopedItemOptions)Enum.Parse<ScopedItemOptions>(parsedLine[3]);
-            } 
-            catch (ArgumentException argException) 
-            {
+            ScopedItemOptions options;
+            if(!Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options)){
                 // if parsing is no succes
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
                 ErrorRecord errorRecord =
                     new ErrorRecord(
-                        argException,
+                        new ArgumentException(),
                         "ImportAliasOptionsError",
                         ErrorCategory.ReadError,
                         filePath);
