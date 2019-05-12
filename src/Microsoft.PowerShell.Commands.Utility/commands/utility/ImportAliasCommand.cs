@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            
+
             return result;
         }
 
@@ -416,8 +416,8 @@ namespace Microsoft.PowerShell.Commands
             } 
             catch (ArgumentException argException) 
             {
+                // if parsing is no succes
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
-
                 ErrorRecord errorRecord =
                     new ErrorRecord(
                         argException,
@@ -454,8 +454,8 @@ namespace Microsoft.PowerShell.Commands
             if (!optionsParsedSuccesfully)
             {           
                 return false;
-            } 
-            else if (parsedLine.Count != 4)
+            }
+            if (parsedLine.Count != 4)
             {
                 // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
