@@ -393,11 +393,9 @@ namespace Microsoft.PowerShell.Commands
 
                     Collection<string> parsedLine = ParseCsvLine(line);
 
-                    // create options
-                    KeyValuePair<ScopedItemOptions, bool> optionPair = CreateItemOptions(parsedLine, filePath, lineNumber);
-                    ScopedItemOptions options = optionPair.Key;
-                    if (IsValidParsedLine(parsedLine, optionPair.Value, lineNumber, filePath)) 
+                    if (IsValidParsedLine(parsedLine, lineNumber, filePath)) 
                     {
+                        ScopedItemOptions options = CreateItemOptions(parsedLine, filePath, lineNumber);
                         result.Add(ConstructAlias(parsedLine, options));
                     }
                 }
@@ -406,14 +404,12 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private KeyValuePair<ScopedItemOptions, bool> CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
+        private ScopedItemOptions CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
         {
             ScopedItemOptions options = ScopedItemOptions.None;
-            bool succesfullParse = false;
             try 
             {
                 options = (ScopedItemOptions)Enum.Parse<ScopedItemOptions>(parsedLine[3]);
-                succesfullParse = true;
             } 
             catch (ArgumentException argException) 
             {
@@ -430,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(errorRecord);
             }
 
-            return new KeyValuePair<ScopedItemOptions, bool>(options, succesfullParse);
+            return options;
         }
 
         private AliasInfo ConstructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
@@ -450,16 +446,11 @@ namespace Microsoft.PowerShell.Commands
             return newAlias;
         }
 
-        private bool IsValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
+        private bool IsValidParsedLine(Collection<string> parsedLine, long lineNumber, string filePath) 
         {
-            // if (!optionsParsedSuccesfully)
-            // {
-            //     return false;
-            // }
             if (parsedLine.Count != 4)
             {
                 // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
-                //string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
 
                 FormatException formatException =
@@ -478,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            return optionsParsedSuccesfully;
+            return true;
         }
 
         private StreamReader OpenFile(out string filePath, bool isLiteralPath)
