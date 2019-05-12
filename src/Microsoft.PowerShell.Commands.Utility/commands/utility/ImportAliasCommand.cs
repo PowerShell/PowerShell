@@ -412,7 +412,8 @@ namespace Microsoft.PowerShell.Commands
             bool succesfullParse = false;
             try 
             {
-                succesfullParse = Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options);
+                options = (ScopedItemOptions)Enum.Parse<ScopedItemOptions>(parsedLine[3]);
+                succesfullParse = true;
             } 
             catch (ArgumentException argException) 
             {
@@ -451,14 +452,15 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsValidParsedLine(Collection<string> parsedLine, bool optionsParsedSuccesfully, long lineNumber, string filePath) 
         {
-            if (!optionsParsedSuccesfully)
-            {           
-                return false;
-            }
+            // if (!optionsParsedSuccesfully)
+            // {
+            //     return false;
+            // }
             if (parsedLine.Count != 4)
             {
                 // if not four values, do ThrowTerminatingError(errorRecord) with ImportAliasFileFormatError, just like old implementation
-                string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
+                //string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, lineNumber);
+                string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
 
                 FormatException formatException =
                     new FormatException(message);
@@ -476,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            return true;
+            return optionsParsedSuccesfully;
         }
 
         private StreamReader OpenFile(out string filePath, bool isLiteralPath)
