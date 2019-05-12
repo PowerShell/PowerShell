@@ -27,8 +27,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Az\Az.psm1" > $null
 
         $fullyQualifiedPathTestCases = @(
-            # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
-            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 2 }
+            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
@@ -223,5 +222,103 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $result = pwsh -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
             $result | Should -BeExactly "MyModuelTest"
         }
+    }
+}
+
+Describe 'Get-Module -ListAvailable with path' -Tags "CI" {
+    BeforeAll {
+        $moduleName = 'Banana'
+        $modulePath = Join-Path $TestDrive $moduleName
+        $v1 = '1.2.3'
+        $v2 = '4.8.3'
+        $v1DirPath = Join-Path $modulePath $v1
+        $v2DirPath = Join-Path $modulePath $v2
+        $manifestV1Path = Join-Path $v1DirPath "$moduleName.psd1"
+        $manifestV2Path = Join-Path $v2DirPath "$moduleName.psd1"
+
+        New-Item -ItemType Directory $modulePath
+        New-Item -ItemType Directory -Path $v1DirPath
+        New-Item -ItemType Directory -Path $v2DirPath
+        New-ModuleManifest -Path $manifestV1Path -ModuleVersion $v1
+        New-ModuleManifest -Path $manifestV2Path -ModuleVersion $v2
+    }
+
+    It "Gets all versions by path" {
+        $modules = Get-Module -ListAvailable $modulePath | Sort-Object -Property Version
+
+        $modules | Should -HaveCount 2
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $manifestV1Path
+        $modules[0].Version | Should -Be $v1
+        $modules[1].Name | Should -BeExactly $moduleName
+        $modules[1].Path | Should -BeExactly $manifestV2Path
+        $modules[1].Version | Should -Be $v2
+    }
+
+    It "Gets all versions by FullyQualifiedName with path with lower version" {
+        $modules = Get-Module -ListAvailable -FullyQualifiedName @{ ModuleName = $modulePath; ModuleVersion = '0.0' } | Sort-Object -Property Version
+
+        $modules | Should -HaveCount 2
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $manifestV1Path
+        $modules[0].Version | Should -Be $v1
+        $modules[1].Name | Should -BeExactly $moduleName
+        $modules[1].Path | Should -BeExactly $manifestV2Path
+        $modules[1].Version | Should -Be $v2
+    }
+
+    It "Gets high version by FullyQualifiedName with path with high version" {
+        $modules = Get-Module -ListAvailable -FullyQualifiedName @{ ModuleName = $modulePath; ModuleVersion = '2.0' } | Sort-Object -Property Version
+
+        $modules | Should -HaveCount 1
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $manifestV2Path
+        $modules[0].Version | Should -Be $v2
+    }
+
+    It "Gets low version by FullyQualifiedName with path with low maximum version" {
+        $modules = Get-Module -ListAvailable -FullyQualifiedName @{ ModuleName = $modulePath; MaximumVersion = '2.0' } | Sort-Object -Property Version
+
+        $modules | Should -HaveCount 1
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $manifestV1Path
+        $modules[0].Version | Should -Be $v1
+    }
+
+    It "Gets low version by FullyQualifiedName with path with low maximum version and version" {
+        $modules = Get-Module -ListAvailable -FullyQualifiedName @{ ModuleName = $modulePath; MaximumVersion = '2.0'; ModuleVersion = '1.0' } | Sort-Object -Property Version
+
+        $modules | Should -HaveCount 1
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $manifestV1Path
+        $modules[0].Version | Should -Be $v1
+    }
+
+    It "Gets correct version by FullyQualifiedName with path with required version" -TestCases @(
+        @{ Version = $v1 }
+        @{ Version = $v2 }
+    ) {
+        param([version]$Version)
+
+        switch ($Version)
+        {
+            $v1
+            {
+                $expectedPath = $manifestV1Path
+                break
+            }
+
+            $v2
+            {
+                $expectedPath = $manifestV2Path
+            }
+        }
+
+        $modules = Get-Module -ListAvailable -FullyQualifiedName @{ ModuleName = $modulePath; RequiredVersion = $Version }
+
+        $modules | Should -HaveCount 1
+        $modules[0].Name | Should -BeExactly $moduleName
+        $modules[0].Path | Should -BeExactly $expectedPath
+        $modules[0].Version | Should -Be $Version
     }
 }

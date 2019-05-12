@@ -26,6 +26,20 @@
             "TylerLeonhardt"
         ]
     },
+    "failures": {
+        "authorized_users": [
+            "adityapatwardhan",
+            "anmenaga",
+            "daxian-dbw",
+            "iSazonov",
+            "JamesWTruher",
+            "PaulHigin",
+            "rjmholt",
+            "SteveL-MSFT",
+            "TravisEz13",
+            "TylerLeonhardt"
+        ]
+    },
     "reminders": {
         "authorized_users": "*"
     }

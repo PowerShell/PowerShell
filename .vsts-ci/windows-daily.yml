@@ -25,53 +25,61 @@ pr:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+
 variables:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  # Turn off Homebrew analytics
-  HOMEBREW_NO_ANALYTICS: 1
 
 resources:
 - repo: self
   clean: true
+
 jobs:
 - template: templates/ci-build.yml
-  parameters:
-    pool: Hosted macOS
-    jobName: mac_build
-    displayName: macOS Build
 
-- template: templates/nix-test.yml
+- template: templates/windows-test.yml
   parameters:
     purpose: UnelevatedPesterTests
     tagSet: CI
     parentJobs:
-      - mac_build
+      - win_build
 
-- template: templates/nix-test.yml
+- template: templates/windows-test.yml
   parameters:
     purpose: ElevatedPesterTests
     tagSet: CI
     parentJobs:
-      - mac_build
+      - win_build
 
-- template: templates/nix-test.yml
+- template: templates/windows-test.yml
   parameters:
     purpose: UnelevatedPesterTests
     tagSet: Others
     parentJobs:
-      - mac_build
+      - win_build
 
-- template: templates/nix-test.yml
+- template: templates/windows-test.yml
   parameters:
     purpose: ElevatedPesterTests
     tagSet: Others
     parentJobs:
-      - mac_build
+      - win_build
+
+# we wait for all tests to finish as this phase uploads the daily nuget package to MyGet.
+# we want to upload only if tests have passed.
+- template: templates/windows-packaging.yml
+  parameters:
+    parentJobs:
+      - win_test_UnelevatedPesterTests_CI
+      - win_test_ElevatedPesterTests_CI
+      - win_test_UnelevatedPesterTests_Others
+      - win_test_ElevatedPesterTests_Others
+      - verify_xunit
 
 - template: templates/verify-xunit.yml
   parameters:
-    pool: 'Hosted macOS'
-    dependsOn: mac_build
+    pool: 'Hosted VS2017'
+    dependsOn: win_build
