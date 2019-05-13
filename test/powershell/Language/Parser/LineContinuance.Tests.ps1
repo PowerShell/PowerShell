@@ -214,7 +214,7 @@ Describe 'Line Continuance' -Tags 'CI' {
     # You can place comments before continued pipelines
     ForEach-Object {"$_ world"}
 '@
-            ExecuteCommand $script | Should -Be 'Hello world'
+            ExecuteCommand $script | Should -BeExactly 'Hello world'
         }
 
         It 'Longer line continuance using pipes on lines by themselves (with comments)' {
