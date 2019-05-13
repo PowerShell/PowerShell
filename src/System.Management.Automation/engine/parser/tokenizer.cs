@@ -981,6 +981,7 @@ namespace System.Management.Automation.Language
         private void ScanSemicolon()
         {
             _tokenStart = _currentIndex - 1;
+
             // Memory optimization: only create the token if it will be stored
             if (TokenList != null)
             {
