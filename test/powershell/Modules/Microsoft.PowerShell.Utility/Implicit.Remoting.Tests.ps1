@@ -1464,7 +1464,7 @@ try
 
             Get-PSSessionConfiguration ImplicitRemotingRestrictedConfiguration* | Unregister-PSSessionConfiguration -Force
 
-            ## The 'Register-PSSessionConfiguration' call below raises an AssemblyLoadException in powershell core:
+            ## The 'Register-PSSessionConfiguration' call below raises an AssemblyLoadException in powershell:
             ## "Could not load file or assembly 'Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified."
             ## Issue #2555 is created to track this issue and all tests here are skipped for CoreCLR for now.
 

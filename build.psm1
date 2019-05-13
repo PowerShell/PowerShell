@@ -100,7 +100,7 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # PowerShell Core will likely not be built on pre-1709 nanoserver
+    # PowerShell will likely not be built on pre-1709 nanoserver
     if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $IsLinux}
@@ -488,7 +488,7 @@ Fix steps:
         # fxdependent package does not have an executable to set iconPath etc.
         if ($Options.Runtime -ne 'fxdependent') {
             Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell 7" `
                     --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
                     --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
         }
@@ -919,7 +919,7 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests',
+        [string]$Title = 'PowerShell 7 Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
@@ -1737,7 +1737,7 @@ function Start-PSBootstrap {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
-                Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                Write-Log "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }

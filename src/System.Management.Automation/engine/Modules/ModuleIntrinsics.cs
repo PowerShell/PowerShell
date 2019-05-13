@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
                     string psDepsPath = Path.Combine(parentDir, powershellDepsName);
                     if ((File.Exists(psExePath) && File.Exists(psDepsPath)))
                     {
-                        // Path is a PSHome module path from a different powershell core instance. Ignore it.
+                        // Path is a PSHome module path from a different PowerShell instance. Ignore it.
                         continue;
                     }
                 }

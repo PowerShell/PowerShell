@@ -173,28 +173,29 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthMacOS = 104;
 
         internal static string[] validParameters = {
-            "version",
-            "nologo",
-            "noexit",
 #if STAMODE
             "sta",
             "mta",
 #endif
-            "noprofile",
-            "noninteractive",
-            "inputformat",
-            "outputformat",
-            "windowstyle",
-            "encodedcommand",
-            "configurationname",
-            "file",
-            "executionpolicy",
             "command",
-            "settingsfile",
+            "configurationname",
+            "custompipename",
+            "encodedcommand",
+            "executionpolicy",
+            "file",
             "help",
-            "workingdirectory",
+            "inputformat",
+            "loadprofile",
+            "noexit",
+            "nologo",
+            "noninteractive",
+            "noprofile",
+            "outputformat",
             "removeworkingdirectorytrailingcharacter",
-            "custompipename"
+            "settingsfile",
+            "version",
+            "windowstyle",
+            "workingdirectory"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -741,6 +742,10 @@ namespace Microsoft.PowerShell
                 {
                     _noExit = true;
                     noexitSeen = true;
+                }
+                else if (MatchSwitch(switchKey, "loadprofile", "l"))
+                {
+                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {

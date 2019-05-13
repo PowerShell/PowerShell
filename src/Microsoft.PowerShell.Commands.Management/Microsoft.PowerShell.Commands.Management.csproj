@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core's Microsoft.PowerShell.Commands.Management project</Description>
+    <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
   </PropertyGroup>

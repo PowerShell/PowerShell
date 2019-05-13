@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Language;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -206,26 +207,16 @@ namespace System.Management.Automation
 
         internal static string GetHostName()
         {
-            // Note: non-windows CoreCLR does not support System.Net yet
-            if (Platform.IsWindows)
-            {
-                return WinGetHostName();
-            }
-            else
-            {
-                return Platform.NonWindowsGetHostName();
-            }
-        }
-
-        internal static string WinGetHostName()
-        {
-            System.Net.NetworkInformation.IPGlobalProperties ipProperties =
-                System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!string.IsNullOrEmpty(ipProperties.DomainName))
+            string domainName = ipProperties.DomainName;
+
+            // CoreFX on Unix calls GLibc getdomainname()
+            // which returns "(none)" if a domain name is not set by setdomainname()
+            if (!string.IsNullOrEmpty(domainName) && !domainName.Equals("(none)", StringComparison.Ordinal))
             {
-                hostname = hostname + "." + ipProperties.DomainName;
+                hostname = hostname + "." + domainName;
             }
 
             return hostname;
