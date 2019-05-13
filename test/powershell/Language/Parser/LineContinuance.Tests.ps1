@@ -144,7 +144,7 @@ Describe 'Line Continuance' -Tags 'CI' {
 'Hello'
     | ForEach-Object {"$_ world"}
 '@
-            ExecuteCommand $script | Should -Be 'Hello world'
+            ExecuteCommand $script | Should -BeExactly 'Hello world'
         }
 
         It 'Line continuance using a pipe at the start of a subsequent line after a CR (old-style Mac line ending)' {
