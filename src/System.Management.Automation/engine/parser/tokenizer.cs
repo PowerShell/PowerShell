@@ -1349,15 +1349,15 @@ namespace System.Management.Automation.Language
 
         private bool PipeContinuanceAfterExtent(IScriptExtent extent)
         {
-            // If the first non-newline, non-whitespace, non-comment, non-backtick, non-semi-colon character
-            // following the newline is a pipe, we have a pipe continuance.
+            // If the first non-comment (regular or block) character following a newline is a pipe, we have
+            // pipe continuance.
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
 
-            // Since some token pattern matching looks for multiple characters (e.g. newline, block comment,
-            // or line continuance), we stop searching at _script.Length - 1 and perform one additional check
-            // after the while loop. This avoids having to compare i + 1 against the script length in multiple
-            // locations inside the loop.
+            // Since some token pattern matching looks for multiple characters (e.g. newline or block comment)
+            // we stop searching at _script.Length - 1 and perform one additional check after the while loop.
+            // This avoids having to compare i + 1 against the script length in multiple locations inside the
+            // loop.
             while (i < _script.Length - 1)
             {
                 char c = _script[i];
@@ -1407,27 +1407,6 @@ namespace System.Management.Automation.Language
                 {
                     i = SkipBlockComment(i + 2);
                     continue;
-                }
-
-                if (c == '`')
-                {
-                    char c2 = _script[i + 1];
-                    if (c2 == '\n')
-                    {
-                        i += 2;
-                        continue;
-                    }
-                    else if (c2 == '\r')
-                    {
-                        i += i + 2 < _script.Length && _script[i + 2] == '\n' ? 3 : 2;
-                        continue;
-                    }
-
-                    if (char.IsWhiteSpace(c2))
-                    {
-                        i += 2;
-                        continue;
-                    }
                 }
 
                 return c == '|';

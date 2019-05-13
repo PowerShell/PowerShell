@@ -276,5 +276,17 @@ $whitespace
         $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
             $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
         }
+
+        It 'Lines starting with a single pipe that have a line with nothing but a backtick before it' {
+            $script = @'
+'Hello'
+    `
+    | ForEach-Object {"$_ world"}
+
+'@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
+        }
+
     }
 }
