@@ -17,7 +17,7 @@ Describe 'Line Continuance' -Tags 'CI' {
 'Hello' + `
     ' world'
 '@
-            ExecuteCommand $script | Should -Be 'Hello world'
+            ExecuteCommand $script | Should -BeExactly 'Hello world'
         }
 
         It 'Lines ending with a single backtick followed only by a CR (old-style Mac line ending)' {
