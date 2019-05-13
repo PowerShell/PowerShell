@@ -190,7 +190,7 @@ Describe 'Line Continuance' -Tags 'CI' {
     |
     ForEach-Object {"$_ world"}
 '@
-            ExecuteCommand $script | Should -Be 'Hello world'
+            ExecuteCommand $script | Should -BeExactly 'Hello world'
         }
 
 
