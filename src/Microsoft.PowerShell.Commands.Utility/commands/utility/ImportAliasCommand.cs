@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (char c in line)
             {
-                if (char.IsWhiteSpace(c) && c != '\n' && c != '\r')
+                if (ReadOnlySpan.IsWhiteSpace<char>(c) && c != '\n' && c != '\r')
                 {
                     continue;
                 }
@@ -470,8 +470,6 @@ namespace Microsoft.PowerShell.Commands
         private StreamReader OpenFile(out string filePath, bool isLiteralPath)
         {
             StreamReader result = null;
-
-            // so remove this line right
             filePath = null;
             ProviderInfo provider = null;
             Collection<string> paths = null;
