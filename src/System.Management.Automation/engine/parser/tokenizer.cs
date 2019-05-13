@@ -970,6 +970,7 @@ namespace System.Management.Automation.Language
         {
             _tokenStart = _currentIndex - 1;
             NormalizeCRLF(c);
+
             // Memory optimization: only create the token if it will be stored
             if (TokenList != null)
             {
