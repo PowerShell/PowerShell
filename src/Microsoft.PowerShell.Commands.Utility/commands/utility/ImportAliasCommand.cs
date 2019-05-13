@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (char c in line)
             {
-                if (ReadOnlySpan.IsWhiteSpace<char>(c) && c != '\n' && c != '\r')
+                if (char.IsWhiteSpace(c) && c != '\n' && c != '\r')
                 {
                     continue;
                 }
