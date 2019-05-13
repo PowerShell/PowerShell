@@ -150,7 +150,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $specialPath = Join-Path $TestDrive $specialDir
             $null = New-Item -Path $specialPath -Name file1.txt -ItemType File -Force
             $null = New-Item -Path $specialPath -Name file2.txt -ItemType File -Force
-            (Get-ChildItem -Path $specialPath).Count | Should -Be 2
+            Get-ChildItem -Path $specialPath | Should -HaveCount 2
         }
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
