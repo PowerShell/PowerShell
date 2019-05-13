@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool LineShouldBeSkipped(string line)
         {
             // if line is empty or a comment, return true
-            return line.Length == 0 || OnlyContainsWhitespace(line) || line[0] == '#';
+            return line.Length == 0 || line[0] == '#' || OnlyContainsWhitespace(line);
         }
 
         /// <summary>
