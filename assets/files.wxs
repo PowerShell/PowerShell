@@ -1821,6 +1821,9 @@
           <Component Id="cmpC0582B8F392548248FA3DE3080069F68" Guid="{25d67b86-aec7-40fc-8fe9-7b2ecefb4f9c}">
             <File Id="fil1A3F0A1371A643AFAA4F896D9D5CBF70" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.PSReadLine2.dll" />
           </Component>
+          <Component Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" Guid="{87b847aa-23ed-43bb-af15-d6a3e9632e61}">
+            <File Id="fil0A748F74DB0245539BF6ECEBFDB3C884" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.cat" />
+          </Component>
         </Directory>
         <Directory Name="PowerShellGet" Id="dir49159A33EB06456C9C2C971815311A6A">
           <Directory Name="en-US" Id="dirF5EBE6CBD04149359D3582351CB4438D">
@@ -2890,6 +2893,7 @@
       <ComponentRef Id="cmpC1D0D334836C4821B04087DDFE167637" />
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
+      <ComponentRef Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" />
     </ComponentGroup>
   </Fragment>
 </Wix>
