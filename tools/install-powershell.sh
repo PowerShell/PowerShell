@@ -21,7 +21,7 @@ install(){
     # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
     # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
     # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
-    # -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+    # -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -30,8 +30,8 @@ install(){
     local gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
     local gitscriptname="install-powershell.psh"
 
-    echo "Get-PowerShell Core MASTER Installer Version $VERSION"
-    echo "Installs PowerShell Core and Optional The Development Environment"
+    echo "Get-PowerShell MASTER Installer Version $VERSION"
+    echo "Installs PowerShell and Optional The Development Environment"
     echo "  Original script is at: $gitreposcriptroot\\$gitscriptname"
 
     echo "Arguments used: $*"
@@ -128,7 +128,7 @@ install(){
 
 
     if [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
-        echo "Configuring PowerShell Core Environment for: $DistroBasedOn $DIST $REV"
+        echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
         if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
             #Script files were copied local - use them
             # shellcheck source=/dev/null
@@ -148,7 +148,7 @@ install(){
             fi
         fi
     else
-        echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell Core or this installer at this time."
+        echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell or this installer at this time."
     fi
 }
 

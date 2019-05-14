@@ -168,7 +168,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// The declaration of parameters for the Transactions mechanisms. -UseTransaction, and -BypassTransaction.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "These are only exposed by way of the PowerShell core cmdlets that surface them.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "These are only exposed by way of the PowerShell cmdlets that surface them.")]
     public sealed class TransactionParameters
     {
         #region ctor

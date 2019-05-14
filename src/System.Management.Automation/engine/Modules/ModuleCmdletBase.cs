@@ -4610,7 +4610,7 @@ namespace Microsoft.PowerShell.Commands
             //     - moduleBase = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.WSMan.Management'
             //     - name = '..\..\WSMan.format.ps1xml'
             //    Check for combinedPath in this case will get us the normalized rooted path 'C:\Windows\System32\WindowsPowerShell\v1.0\WSMan.format.ps1xml'.
-            // The 'Microsoft.WSMan.Management' module in PowerShell Core was updated to not use the relative path for 'FormatsToProcess' entry,
+            // The 'Microsoft.WSMan.Management' module in PowerShell was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, name);
             string resolvedPath = IsRooted(name)
