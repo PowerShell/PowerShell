@@ -23,7 +23,6 @@ FunctionsToExport = @(
         'Enable-Testhook'
         'Get-RandomFileName'
         'New-RandomHexString'
-        'Resolve-FilePath'
         'Send-VstsLogFile'
         'Set-TesthookResult'
         'Start-NativeExecution'
