@@ -469,20 +469,6 @@ Fix steps:
         if (!$pwshPath.EndsWith("pwsh.exe")) {
             $pwshPath = Join-Path $Options.Output "pwsh.exe"
         }
-
-        if (Test-IsPreview $ReleaseVersion) {
-            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
-        } else {
-            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
-        }
-
-        # fxdependent package does not have an executable to set iconPath etc.
-        if ($Options.Runtime -ne 'fxdependent') {
-            Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell 7" `
-                    --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
-                    --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
-        }
     }
 
     # download modules from powershell gallery.
