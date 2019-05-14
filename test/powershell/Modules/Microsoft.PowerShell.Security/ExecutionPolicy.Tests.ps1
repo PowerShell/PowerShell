@@ -654,7 +654,7 @@ ZoneId=$FileType
                 Test-UnrestrictedExecutionPolicy $testScript $expected
             }
 
-            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $expectedError = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
 
             $testData = @(
                 @{
@@ -666,8 +666,9 @@ ZoneId=$FileType
             if (Test-CanWriteToPsHome) {
                 $testData += @(
                     @{
+                        shouldMarkAsPending = $true
                         module = $PSHomeUntrustedModule
-                        error = $null
+                        expectedError = $expectedError
                     }
                     @{
                         module = $PSHomeUnsignedModule
@@ -678,15 +679,23 @@ ZoneId=$FileType
 
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
-                param([string]$module, [string]$error)
-                $testScript = {Import-Module -Name $module -Force}
-                if($error)
+                param([string]$module, [string]$expectedError, [bool]$shouldMarkAsPending)
+
+                if ($shouldMarkAsPending)
                 {
-                    $testScript | Should -Throw -ErrorId $error
+                    Set-ItResult -Pending -Because "Test is unreliable"
+                }
+
+                $execPolicy = Get-ExecutionPolicy -List | Out-String
+
+                $testScript = {Import-Module -Name $module -Force -ErrorAction Stop}
+                if($expectedError)
+                {
+                    $testScript | Should -Throw -ErrorId $expectedError -Because "Untrusted modules should not be loaded even on unrestricted execution policy"
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw
+                    $testScript | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
                 }
             }
         }

@@ -25,7 +25,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         # Skip these tests in cases when there is no 'pwsh' executable (e.g. when framework dependent PS package is used)
         $skipNoPwsh = -not (Test-Path $powershell)
-        
+
         if ($IsWindows)
         {
             $expectedWindowsPowerShellPSHomePath = Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"
@@ -74,7 +74,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
+    It "ignore pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
@@ -83,7 +83,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         try {
 
-            ## PSHome module path derived from another powershell core instance should be ignored
+            ## PSHome module path derived from another PowerShell instance should be ignored
             $env:PSModulePath = $fakePSHomeModuleDir
             $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
             $paths = $newModulePath -split [System.IO.Path]::PathSeparator
@@ -113,9 +113,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "keep non-pshome module path derived from powershell core instance parent" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
+    It "keep non-pshome module path derived from PowerShell instance parent" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
-        ## non-pshome module path derived from another powershell core instance should be preserved
+        ## non-pshome module path derived from another PowerShell instance should be preserved
         $customeModules = Join-Path -Path $TestDrive -ChildPath 'CustomModules'
         $env:PSModulePath = $fakePSHomeModuleDir, $customeModules -join ([System.IO.Path]::PathSeparator)
         $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
@@ -135,7 +135,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It 'Ensures $PSHOME\Modules is inserted correctly when launched from a different version of PowerShell' -Skip:(!($IsCoreCLR -and $IsWindows) -or $skipNoPwsh) {
         # When launched from a different version of PowerShell, PSModulePath contains the other version's PSHOME\Modules path
-        # and the Windows PowerShell modoule path. THe other version's module path should be removed and this version's
+        # and the Windows PowerShell module path. The other version's module path should be removed and this version's
         # PSHOME\Modules path should be inserted before Windows PowerShell module path.
         $winpwshModulePath = [System.IO.Path]::Combine([System.Environment]::SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
         $pwshModulePath = Join-Path -Path $PSHOME -ChildPath 'Modules'

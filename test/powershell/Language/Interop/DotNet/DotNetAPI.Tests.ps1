@@ -27,6 +27,7 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should access types in System.Console" {
-        [System.Console]::TreatControlCAsInput | Should -BeFalse
+        $type = "System.Console" -as [type]
+        $type.GetTypeInfo().FullName | Should -BeExactly "System.Console"
     }
 }

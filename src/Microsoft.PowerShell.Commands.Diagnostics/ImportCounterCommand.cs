@@ -2,28 +2,29 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.ComponentModel;
-using System.Reflection;
-using System.Globalization;
-using System.Management.Automation.Runspaces;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Security;
 using System.Security.Principal;
-using System.Resources;
+using System.Text;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
-using Microsoft.PowerShell.Commands.GetCounter;
+using System.Xml;
+
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using Microsoft.PowerShell.Commands.GetCounter;
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -200,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell Core requires at least Windows 7,
+            // PowerShell 7 requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
 #else

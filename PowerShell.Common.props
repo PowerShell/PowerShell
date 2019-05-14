@@ -91,7 +91,7 @@
   </Target>
 
   <PropertyGroup>
-    <Product>PowerShell Core</Product>
+    <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 

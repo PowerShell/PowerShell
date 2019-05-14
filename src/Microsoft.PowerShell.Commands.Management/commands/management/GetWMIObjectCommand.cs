@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management;
-using System.Text;
 using System.Collections;
+using System.Globalization;
+using System.Management;
+using System.Management.Automation;
+using System.Text;
 using System.Threading;
 
 namespace Microsoft.PowerShell.Commands

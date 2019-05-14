@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Management.Infrastructure;
-using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -23,6 +21,9 @@ using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
+
+using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation.Language
 {

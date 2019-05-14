@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Management.Automation.Provider;
 using System.Reflection;
-using System.Linq;
 using System.Threading;
+
 using Dbg = System.Management.Automation;
-using System.Collections.Generic;
 
 namespace System.Management.Automation
 {

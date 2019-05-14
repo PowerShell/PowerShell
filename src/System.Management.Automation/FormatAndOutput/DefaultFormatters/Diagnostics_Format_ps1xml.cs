@@ -22,7 +22,7 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("Counter",
                 TableControl.Create()
-                    .AddHeader(Alignment.Left, label: "Timestamp", width: 25)
+                    .AddHeader(Alignment.Left, label: "Timestamp", width: 26)
                     .AddHeader(Alignment.Left, label: "CounterSamples", width: 100)
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("Timestamp")

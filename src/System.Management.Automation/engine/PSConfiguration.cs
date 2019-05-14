@@ -4,11 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation.Internal;
 using System.Text;
 using System.Threading;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {

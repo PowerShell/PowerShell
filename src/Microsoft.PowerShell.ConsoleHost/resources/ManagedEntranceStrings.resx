@@ -131,7 +131,7 @@ Type 'help' to get help.</value>
                   [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
                   [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
-                  [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-Interactive] [-LoadProfile] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
                   [-WorkingDirectory &lt;directoryPath&gt;]
 
@@ -176,11 +176,11 @@ All parameters are case-insensitive.</value>
     Example: pwsh -ConfigurationName AdminRoles
 
 -CustomPipeName
-    Specifies the name to use for an additional IPC server (named pipe) used for debugging 
+    Specifies the name to use for an additional IPC server (named pipe) used for debugging
     and other cross-process communication. This offers a predictable mechanism for connecting
     to other PowerShell instances. Typically used with the CustomPipeName parameter on Enter-PSHostProcess.
 
-    Example: 
+    Example:
     # PowerShell instance 1
     pwsh -CustomPipeName mydebugpipe
     # PowerShell instance 2
@@ -223,6 +223,9 @@ All parameters are case-insensitive.</value>
 
 -Interactive | -i
     Present an interactive prompt to the user. Inverse for NonInteractive parameter.
+
+-LoadProfile | -l
+    Load the PowerShell profiles. This is the default behavior even if this is not specified.
 
 -NoExit | -noe
     Does not exit after running startup commands.

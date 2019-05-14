@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
-using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation.Internal;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Microsoft.Win32;
 
 namespace System.Management.Automation

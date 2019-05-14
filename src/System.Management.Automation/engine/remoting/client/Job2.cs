@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
-using System.Management.Automation.Runspaces;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
 using System.Runtime.Serialization;
 using System.Text;
-using System.ComponentModel;
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Language;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 // Stops compiler from warning about unknown warnings

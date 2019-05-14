@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;

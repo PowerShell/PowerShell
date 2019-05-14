@@ -2,16 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management;
-using System.Text;
-using System.Management.Automation.Provider;
-using System.ComponentModel;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Security.AccessControl;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Management;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {

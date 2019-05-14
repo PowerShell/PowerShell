@@ -4,7 +4,7 @@
 
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core on Windows top-level project</Description>
+    <Description>PowerShell on Windows top-level project</Description>
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>

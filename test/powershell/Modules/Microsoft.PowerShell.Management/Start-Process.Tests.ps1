@@ -90,12 +90,12 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 	    $dirEntry.Length | Should -BeGreaterThan 0
     }
 
-    ## -Verb is supported in PowerShell core on Windows full desktop.
+    ## -Verb is supported in PowerShell on Windows full desktop.
     It "Should give an error when -Verb parameter is used" -Skip:$isFullWin {
         { Start-Process -Verb runas -FilePath $pingCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
-    ## -WindowStyle is supported in PowerShell core on Windows full desktop.
+    ## -WindowStyle is supported in PowerShell on Windows full desktop.
     It "Should give an error when -WindowStyle parameter is used" -Skip:$isFullWin {
         { Start-Process -FilePath $pingCommand -WindowStyle Normal } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
@@ -133,7 +133,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
          $process.Length      | Should -Be 1
          $process.Id          | Should -BeGreaterThan 1
     }
- 
+
     It "Should run without errors when -ArgumentList is @()" {
         $process = Start-Process $pingCommand -ArgumentList @() -PassThru @extraArgs
         $process.Length      | Should -Be 1
@@ -165,9 +165,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
         New-Item $fooFile -ItemType File -Force
         Start-Process $fooFile
 
-        Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-
-        "$testdrive\foo.txt" | Should -Exist
+        Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
         Get-Content $testdrive\foo.txt | Should -BeExactly $fooFile
     }
 }

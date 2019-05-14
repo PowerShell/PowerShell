@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Globalization;
+
 using Microsoft.Win32;
 
 #pragma warning disable 1591, 1572, 1571, 1573, 1587, 1570, 0067

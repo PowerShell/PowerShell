@@ -13,15 +13,17 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
+using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation;
-using System.Runtime.InteropServices;
-using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -83,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _excludeMatcher = null;
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
+            MatchType = MatchType.Win32,
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
@@ -1845,9 +1848,11 @@ namespace Microsoft.PowerShell.Commands
                                 //  a) the user has asked to with the -FollowSymLinks switch parameter and
                                 //  b) the directory pointed to by the symlink has not already been visited,
                                 //     preventing symlink loops.
+                                //  c) it is not a name surrogate making it not a symlink
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory) &&
+                                        InternalSymbolicLinkLinkCodeMethods.IsNameSurrogateReparsePoint(recursiveDirectory.FullName))
                                     {
                                         continue;
                                     }
@@ -7703,6 +7708,8 @@ namespace Microsoft.PowerShell.Commands
 
         private const string NonInterpretedPathPrefix = @"\??\";
 
+        private const int MAX_PATH = 260;
+
         [Flags]
         // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
@@ -7842,6 +7849,39 @@ namespace Microsoft.PowerShell.Commands
             FileCreationDisposition dwCreationDisposition,
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
+
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern SafeFileHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
+
+        internal enum FINDEX_INFO_LEVELS : uint
+        {
+            FindExInfoStandard = 0x0u,
+            FindExInfoBasic = 0x1u,
+            FindExInfoMaxInfoLevel = 0x2u,
+        }
+
+        internal enum FINDEX_SEARCH_OPS : uint
+        {
+            FindExSearchNameMatch = 0x0u,
+            FindExSearchLimitToDirectories = 0x1u,
+            FindExSearchLimitToDevices = 0x2u,
+            FindExSearchMaxSearchOp = 0x3u,
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal unsafe struct WIN32_FIND_DATA
+        {
+            internal uint dwFileAttributes;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+            internal uint nFileSizeHigh;
+            internal uint nFileSizeLow;
+            internal uint dwReserved0;
+            internal uint dwReserved1;
+            internal fixed char cFileName[MAX_PATH];
+            internal fixed char cAlternateFileName[14];
+        }
 
         /// <summary>
         /// Gets the target of the specified reparse point.
@@ -7985,9 +8025,26 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
         {
-            return Platform.IsWindows
-                ? fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint)
-                : Platform.NonWindowsIsSymLink(fileInfo);
+            return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
+        }
+
+        internal static bool IsNameSurrogateReparsePoint(string filePath)
+        {
+#if !UNIX
+            var data = new WIN32_FIND_DATA();
+            using (SafeFileHandle handle = FindFirstFileEx(filePath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            {
+                // Name surrogates are reparse points that point to other named entities local to the filesystem (like symlinks)
+                // In the case of OneDrive, they are not surrogates and would be safe to recurse into.
+                // This code is equivalent to the IsReparseTagNameSurrogate macro: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/ntifs/nf-ntifs-isreparsetagnamesurrogate
+                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0)
+                {
+                    return false;
+                }
+            }
+#endif
+            // true means the reparse point is a symlink
+            return true;
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)
