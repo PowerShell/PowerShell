@@ -23,6 +23,8 @@ Describe "Get-ChildItem" -Tags "CI" {
 
             $specialDirName = "Test[Dir]"
             $specialDir = "Test``[Dir``]"
+            $specialPath = Join-Path $TestDrive $specialDir
+            $null = New-Item -Path $TestDrive -Name $specialDirName -ItemType Directory -Force
 
             $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
             $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
@@ -146,10 +148,8 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should list files in directory contains special char" {
-            $null = New-Item -Path $TestDrive -Name $specialDirName -ItemType Directory -Force
-            $specialPath = Join-Path $TestDrive $specialDir
-            $null = New-Item -Path $specialPath -Name file1.txt -ItemType File -Force
-            $null = New-Item -Path $specialPath -Name file2.txt -ItemType File -Force
+            $null = New-Item -Path $specialPath -Name file1.txt -ItemType File
+            $null = New-Item -Path $specialPath -Name file2.txt -ItemType File
             Get-ChildItem -Path $specialPath | Should -HaveCount 2
         }
 
