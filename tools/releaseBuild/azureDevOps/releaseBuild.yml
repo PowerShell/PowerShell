@@ -91,5 +91,3 @@ jobs:
       - build_windows_x64
       - build_windows_x86
       - build_windows_fxdependent
-
-- template: templates/updateBuildTable.yml
