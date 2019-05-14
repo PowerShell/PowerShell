@@ -831,7 +831,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
         } else {
             $productVersion | Should -Match $PSVersionTable.GitCommitId
         }
-        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell 7"
+        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
