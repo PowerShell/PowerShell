@@ -1437,7 +1437,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp2.1")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp3.0")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1535,7 +1535,7 @@ function New-ILNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp2.1') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp3.0') -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1655,7 +1655,7 @@ function New-ILNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/netcoreapp2.1' folder properly.
+  Copy the generated reference assemblies to the 'ref/netcoreapp3.0' folder properly.
   This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -1892,7 +1892,7 @@ function New-ReferenceAssembly
             Write-Log "Running: dotnet $arguments"
             Start-NativeExecution -sb {dotnet $arguments}
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp2.1/$assemblyName.dll"
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp3.0/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -2746,7 +2746,7 @@ function New-MSIPackage
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.1\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp3.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -3262,7 +3262,7 @@ function New-GlobalToolNupkg
     }
 
     $packageInfo | ForEach-Object {
-        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp2.1/any") -ItemType Directory
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp3.0/any") -ItemType Directory
 
         $packageType = $_.Type
 

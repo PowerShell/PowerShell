@@ -8,6 +8,7 @@
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
