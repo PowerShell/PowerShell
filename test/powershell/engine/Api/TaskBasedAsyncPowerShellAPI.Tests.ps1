@@ -206,11 +206,15 @@ try {
             $ps = [powershell]::Create()
             try {
                 $ir = $ps.AddScript("Start-Sleep -Seconds 60").InvokeAsync()
-                Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running }
+                Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [System.Management.Automation.PSInvocationState]::Running } | Should -BeTrue
+                $ps.InvocationStateInfo.State | Should -Be 'Running'
+                Start-Sleep -Seconds 1 # add a sleep to wait for pipeline to start executing the command.
                 $sr = $ps.StopAsync($null, $null)
                 [System.Threading.Tasks.Task]::WaitAll(@($sr))
+                $ps.Streams.Error | Should -HaveCount 0 -Because ($ps.Streams.Error | Out-String)
+                $ps.Commands.Commands.commandtext | Should -Be "Start-Sleep -Seconds 60"
                 $sr.IsCompletedSuccessfully | Should -Be $true
-                $ir.IsFaulted | Should -Be $true
+                $ir.IsFaulted | Should -Be $true -Because ($ir | Format-List -Force * | Out-String)
                 $ir.Exception -is [System.AggregateException] | Should -Be $true
                 $ir.Exception.InnerException -is [System.Management.Automation.PipelineStoppedException] | Should -Be $true
                 $ps.InvocationStateInfo.State | Should -Be ([System.Management.Automation.PSInvocationState]::Stopped)

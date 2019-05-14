@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 <#
-  Windows PowerShell Diagnostics Module
+  PowerShell Diagnostics Module
   This module contains a set of wrapper scripts that
   enable a user to use ETW tracing in Windows
   PowerShell.

@@ -148,7 +148,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal IEnumerable<string> AvailableDotNetTypeNames
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal HashSet<string> AvailableDotNetAssemblyNames

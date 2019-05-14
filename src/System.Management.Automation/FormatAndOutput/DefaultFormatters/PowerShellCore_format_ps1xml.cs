@@ -983,7 +983,7 @@ namespace System.Management.Automation.Runspaces
                     }
                   ")
                         .AddScriptBlockColumn(@"
-                    if ($_.ConnectionInfo -is [System.Management.Automation.Runspaces.WSManConnectionInfo])
+                    if ($null -ne $_.ConnectionInfo)
                     {
                       ""Remote""
                     }

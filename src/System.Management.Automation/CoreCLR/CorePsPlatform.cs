@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
-using System.IO;
 
 namespace System.Management.Automation
 {
@@ -474,11 +475,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
-        {
-            return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
-        }
-
         internal static string NonWindowsInternalGetTarget(string path)
         {
             return Unix.NativeMethods.FollowSymLink(path);
@@ -491,7 +487,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (NonWindowsIsSymLink(fileInfo))
+            if (fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint))
             {
                 return "SymbolicLink";
             }
@@ -519,12 +515,6 @@ namespace System.Management.Automation
         {
             Unix.NativeMethods.UnixTm tm = Unix.NativeMethods.DateTimeToUnixTm(dateToUse);
             return Unix.NativeMethods.SetDate(&tm) == 0;
-        }
-
-        // Hostname in this context seems to be the FQDN
-        internal static string NonWindowsGetHostName()
-        {
-            return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
         }
 
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
@@ -570,40 +560,6 @@ namespace System.Management.Automation
             internal static ErrorCategory GetErrorCategory(int errno)
             {
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
-            }
-
-            private static string s_userName;
-            public static string UserName
-            {
-                get
-                {
-                    if (string.IsNullOrEmpty(s_userName))
-                    {
-                        s_userName = NativeMethods.GetUserName();
-                    }
-
-                    return s_userName ?? string.Empty;
-                }
-            }
-
-            public static string TemporaryDirectory
-            {
-                get
-                {
-                    // POSIX temporary directory environment variables
-                    string[] environmentVariables = { "TMPDIR", "TMP", "TEMP", "TEMPDIR" };
-                    string dir = string.Empty;
-                    foreach (string s in environmentVariables)
-                    {
-                        dir = System.Environment.GetEnvironmentVariable(s);
-                        if (!string.IsNullOrEmpty(dir))
-                        {
-                            return dir;
-                        }
-                    }
-
-                    return "/tmp";
-                }
             }
 
             public static bool IsHardLink(ref IntPtr handle)
@@ -668,10 +624,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern int GetErrorCategory(int errno);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserName();
-
                 [DllImport(psLib)]
                 internal static extern int GetPPid(int pid);
 
@@ -680,18 +632,10 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetFullyQualifiedName();
 
                 // This is a struct tm from <time.h>
                 [StructLayout(LayoutKind.Sequential)]

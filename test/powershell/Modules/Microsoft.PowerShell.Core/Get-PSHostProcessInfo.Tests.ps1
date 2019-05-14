@@ -33,7 +33,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         # Creation of the named pipe is async
         Wait-UntilTrue {
             Get-PSHostProcessInfo | Where-Object { $_.ProcessId -eq $pwsh.Id }
-        }
+        } | Should -BeTrue
         $pshosts = Get-PSHostProcessInfo
         $pshosts.Count | Should -BeGreaterOrEqual 1
         $pshosts.ProcessId | Should -Contain $pwsh.Id
@@ -43,7 +43,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         # Creation of the named pipe is async
         Wait-UntilTrue {
             Get-PSHostProcessInfo | Where-Object { $_.ProcessId -eq $powershell.Id }
-        }
+        } | Should -BeTrue
         $psProcess = Get-PSHostProcessInfo | Where-Object { $_.ProcessName -eq "powershell" }
         $psProcess.Count | Should -BeGreaterOrEqual 1
         $psProcess.ProcessId | Should -Contain $powershell.id

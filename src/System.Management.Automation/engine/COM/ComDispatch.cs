@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
+
 using COM = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation

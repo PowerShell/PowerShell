@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell.GlobalTool.Shim
 {
     /// <summary>
-    /// Shim layer to chose the appropriate runtime for PowerShell Core DotNet Global tool.
+    /// Shim layer to chose the appropriate runtime for PowerShell DotNet Global tool.
     /// </summary>
     public class EntryPoint
     {

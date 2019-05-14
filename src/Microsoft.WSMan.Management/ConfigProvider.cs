@@ -2,21 +2,21 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Xml;
-using System.Xml.XPath;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.ServiceProcess;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace Microsoft.WSMan.Management
 {

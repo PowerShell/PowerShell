@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections.Generic;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 

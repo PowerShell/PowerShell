@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Tracing;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 

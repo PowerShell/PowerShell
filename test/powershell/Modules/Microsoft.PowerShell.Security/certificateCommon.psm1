@@ -143,7 +143,7 @@ function Install-TestCertificates
 
     if ($IsCoreCLR -and $IsWindows)
     {
-        # PKI module is not available for PowerShell Core, so we need to use Windows PowerShell to import the cert
+        # PKI module is not available for PowerShell, so we need to use Windows PowerShell to import the cert
         $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
 
         try {

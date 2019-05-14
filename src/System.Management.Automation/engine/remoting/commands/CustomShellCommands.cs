@@ -4,12 +4,12 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Globalization;
-using System.Threading;
-using System.Security.AccessControl;
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Security.AccessControl;
+using System.Text;
+using System.Threading;
 
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -1026,7 +1026,7 @@ else
                 // Copy File.
                 string destConfigFileDirectory = System.IO.Path.GetDirectoryName(destConfigFilePath);
 
-                // The directory is not auto-created for PowerShell Core.
+                // The directory is not auto-created for PowerShell.
                 // The call will create it or return its path if it already exists
                 System.IO.Directory.CreateDirectory(destConfigFileDirectory);
 
@@ -1527,7 +1527,7 @@ else
         /// <returns></returns>
         internal static string GetWinrmPluginShellName()
         {
-            // PowerShell Core uses a versioned directory to hold the plugin
+            // PowerShell uses a versioned directory to hold the plugin
             return string.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
@@ -1537,7 +1537,7 @@ else
         /// <returns></returns>
         internal static string GetWinrmPluginDllPath()
         {
-            // PowerShell Core uses its versioned directory instead of system32
+            // PowerShell 6+ uses its versioned directory instead of system32
             string pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
@@ -2539,7 +2539,7 @@ function Unregister-PSSessionConfiguration
                 if (($pluginFileName.Value -match 'system32\\{0}') -OR
                     ($pluginFileName.Value -match 'syswow64\\{0}'))
                 {{
-                    # Filter out WindowsPowerShell endpoints when running as PowerShell Core
+                    # Filter out WindowsPowerShell endpoints when running as PowerShell 6+
                     return
                 }}
            }}
@@ -2773,7 +2773,7 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 
     Get-Details $pluginDir $h
 
-    # Workflow is not supported in PowerShell Core. Attempting to load the
+    # Workflow is not supported in PowerShell 6+. Attempting to load the
     # assembly results in a FileNotFoundException.
     if (![System.Management.Automation.Platform]::IsCoreCLR -AND
         $h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
@@ -2852,11 +2852,11 @@ $args[0] | ForEach-Object {{
         {{
             # Filter the endpoints based on the typeof PowerShell that is
             # executing the cmdlet. {1} in another location indicates that it
-            # is a PowerShell Core endpoint
+            # is a PowerShell 6+ endpoint
             if (!($customPluginObject.FileName -match 'system32\\{1}') -AND # WindowsPowerShell
                 !($customPluginObject.FileName -match 'syswow64\\{1}'))     # WOW64 WindowsPowerShell
             {{
-                # Add the PowerShell Core endpoint when running as PowerShell Core
+                # Add the PowerShell 6+ endpoint when running PowerShell 6+
                 $shellsFound++
                 $customPluginObject
             }}
@@ -3117,7 +3117,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    }}
    else
    {{
-        # Filter out WindowsPowerShell endpoints when running as PowerShell Core
+        # Filter out WindowsPowerShell endpoints when running as PowerShell 6+
         if (($pluginFileName.Value -match 'system32\\{0}') -OR
             ($pluginFileName.Value -match 'syswow64\\{0}'))
         {{
@@ -4905,7 +4905,7 @@ param(
     #   Microsoft.PowerShell
     #   Microsoft.PowerShell32 (wow64)
     #
-    # PowerShell Core:
+    # PowerShell:
     #   PowerShell.<version ID>
     #
     $errorCount = $error.Count
@@ -4972,7 +4972,7 @@ param(
 
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
-            # PowerShell Workflow and WOW are not supported for PowerShell Core
+            # PowerShell Workflow and WOW are not supported for PowerShell 6+
             if (![System.Management.Automation.Platform]::IsCoreCLR)
             {{
                 # Check Microsoft.PowerShell.Workflow endpoint

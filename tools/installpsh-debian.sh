@@ -15,7 +15,7 @@
 # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
 # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -28,7 +28,7 @@ gitscriptname="installpsh-debian.psh"
 powershellpackageid=powershell
 
 echo ;
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $*"
@@ -115,7 +115,7 @@ DISTRIB_ID=$(lowercase "$DISTRIB_ID")
 ##END Check requirements and prerequisites
 
 echo
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO apt-get install -y curl
@@ -130,7 +130,7 @@ fi
 currentversion=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
 
 echo "*** Current version on git is: $currentversion, repo version may differ slightly..."
-echo "*** Setting up PowerShell Core repo..."
+echo "*** Setting up PowerShell repo..."
 # Import the public repository GPG keys
 curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 #Add the Repo
@@ -153,7 +153,7 @@ if [[ "${DISTRIB_ID}" = "linuxmint" ]]; then
             echo "Supported versions: 19" >&2
             echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
             exit 1
-        ;;          
+        ;;
     esac
     echo "Remapping linuxmint version ${LINUXMINT_VERSION} to ubuntu version ${DISTRIB_RELEASE}" >&2
 fi
@@ -230,6 +230,6 @@ fi
 
 if [[ "$repobased" == true ]] ; then
   echo
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 fi
 echo "*** Install Complete"

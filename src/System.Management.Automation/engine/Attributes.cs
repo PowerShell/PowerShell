@@ -2,15 +2,15 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Management.Automation.Internal;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Internal
@@ -1014,7 +1014,12 @@ namespace System.Management.Automation
         /// </summary>
         private Type _promotedType;
 
-        ValidateRangeKind? _rangeKind;
+        /// <summary>
+        /// Gets the name of the predefined range.
+        /// </summary>
+        internal ValidateRangeKind? RangeKind { get => _rangeKind; }
+
+        private ValidateRangeKind? _rangeKind;
 
         /// <summary>
         /// Validates that each parameter argument falls in the range

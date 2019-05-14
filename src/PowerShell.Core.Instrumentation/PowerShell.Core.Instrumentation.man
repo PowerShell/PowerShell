@@ -18,14 +18,14 @@
       version="$(build.version)"
       versionScope="nonSxS"
       />
-  <!--Define the instrumentation for Windows PowerShell-->
+  <!--Define the instrumentation for PowerShell-->
   <instrumentation
       xmlns:trace="http://schemas.microsoft.com/win/2004/08/events/trace"
       xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events"
       xmlns:xs="http://www.w3.org/2001/XMLSchema"
       >
     <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
-      <!--Defines an event provider for PowerShell Core
+      <!--Defines an event provider for PowerShell
           The Guid for this provider should not be changed. If it's
           changed for any reason, then the old manifest needs to be
           first uninstalled and then the changed manifest installed
@@ -2210,7 +2210,7 @@
               />
         </events>
         <channels>
-          <!--There are three channels defined for Windows PowerShell instrumentation
+          <!--There are three channels defined for PowerShell instrumentation
               event provider
                 1. Operational - for high level diagnostic messages
                 2. Analytic - for high volume high performance trace messages
@@ -5655,23 +5655,23 @@
             />
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_LISTENER_START.message"
-            value="Windows PowerShell has started an IPC listening thread on process: %1 in AppDomain: %2."
+            value="PowerShell has started an IPC listening thread on process: %1 in AppDomain: %2."
             />
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_LISTENER_END.message"
-            value="Windows PowerShell has ended an IPC listening thread on process: %1 in AppDomain: %2."
+            value="PowerShell has ended an IPC listening thread on process: %1 in AppDomain: %2."
             />
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_LISTENER_ERROR.message"
-            value="An error has occurred in Windows PowerShell IPC listening thread on process: %1 in AppDomain: %2.  Error Message: %3."
+            value="An error has occurred in PowerShell IPC listening thread on process: %1 in AppDomain: %2.  Error Message: %3."
             />
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_CONNECT.message"
-            value="Windows PowerShell IPC connect on process: %1 in AppDomain: %2 for User: %3."
+            value="PowerShell IPC connect on process: %1 in AppDomain: %2 for User: %3."
             />
         <string
             id="PS_PROVIDER.event.E_O_REMOTE_NAMEDPIPE_DISCONNECT.message"
-            value="Windows PowerShell IPC disconnect on process: %1 in AppDomain: %2 for User: %3."
+            value="PowerShell IPC disconnect on process: %1 in AppDomain: %2 for User: %3."
             />
       </stringTable>
     </resources>

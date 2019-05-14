@@ -2,27 +2,28 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
+using System.Diagnostics; // Process class
 using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
-using Microsoft.Win32.SafeHandles;
-using System.Management.Automation.Internal;
-using Microsoft.PowerShell.Commands.Internal;
+using System.Text;
+using System.Threading;
+
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands.Internal;
+using Microsoft.Win32.SafeHandles;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;

@@ -236,10 +236,11 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
+                $shouldSkip = -not (Test-Path $protectedPath)
             }
         }
 
-        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+        It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
             # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
             # The following test does not consistently work on windows
             # @{cmdline = "Get-Item $protectedPath2 -ErrorAction Stop"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
@@ -1380,7 +1381,7 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
         Set-Acl $protectedPath $acl
 
         runas.exe /trustlevel:0x20000 "$cmdline"
-        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10
+        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10 | Should -BeTrue
         Get-Content $errorFile | Should -BeExactly 'RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand'
     }
 }

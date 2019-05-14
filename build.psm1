@@ -100,7 +100,7 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # PowerShell Core will likely not be built on pre-1709 nanoserver
+    # PowerShell will likely not be built on pre-1709 nanoserver
     if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $IsLinux}
@@ -464,6 +464,11 @@ Fix steps:
             $fileVersion = $ReleaseVersion.Split("-")[0]
         }
 
+        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
+        $pwshPath = $Options.Output
+        if (!$pwshPath.EndsWith("pwsh.exe")) {
+            $pwshPath = Join-Path $Options.Output "pwsh.exe"
+        }
     }
 
     # download modules from powershell gallery.
@@ -895,7 +900,7 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests',
+        [string]$Title = 'PowerShell 7 Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
@@ -1713,7 +1718,7 @@ function Start-PSBootstrap {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
-                Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                Write-Log "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
