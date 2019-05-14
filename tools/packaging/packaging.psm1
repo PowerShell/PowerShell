@@ -2626,7 +2626,6 @@ function New-MSIPackage
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
-        $FilesWxsPath = New-PreviewFileWxs -FilesWxsPath $FilesWxsPath
     }
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
@@ -2678,14 +2677,7 @@ function New-MSIPackage
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    if ($isPreview)
-    {
-        $wixObjFragmentPath = Join-Path $env:Temp "files-preview.wixobj"
-    }
-    else
-    {
-        $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
-    }
+    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
@@ -2706,7 +2698,23 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+
+    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+
+    if ($isPreview)
+    {
+        # Now that we know that the two are functionally the same,
+        # We only need to use $FilesWxsPath for release we want to be able to Path
+        # and two releases shouldn't have the same identifiers,
+        # so we use the generated one for preview
+        $FilesWxsPath = $wixFragmentPath
+
+        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+
+        # cleanup any garbage on the system
+        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    }
 
     Write-Log "running candle..."
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
@@ -2719,11 +2727,6 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-    if ($isPreview)
-    {
-        # remove the temporary generated files.wxs for preview builds
-        Remove-Item -ErrorAction SilentlyContinue $FilesWxsPath -Force
-    }
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -2743,36 +2746,6 @@ function New-MSIPackage
         }
         throw $errorMessage
     }
-}
-
-# generate a files.wxs for preview builds
-# so that the component ids are different than the stable builds
-# the file is created in the temp folder
-function New-PreviewFileWxs
-{
-    param
-    (
-        # File describing the MSI file components from the asset folder
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs"
-    )
-
-    Write-Verbose "Generating new component Ids for Files-Preview.wxs" -Verbose
-    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
-    foreach($component in $filesAssetXml.GetElementsByTagName('Component'))
-    {
-        $component.Id = $component.Id + "_Preview"
-    }
-
-    foreach($componentRef in $filesAssetXml.GetElementsByTagName('ComponentRef'))
-    {
-        $componentRef.Id = $componentRef.Id + "_Preview"
-    }
-
-    $previewFilesWxsPath = Join-Path ([System.IO.Path]::GetTempPath()) "Files-Preview.wxs"
-    $filesAssetXml.Save($previewFilesWxsPath)
-    $previewFilesWxsPath
 }
 
 # verify no files have been added or removed
