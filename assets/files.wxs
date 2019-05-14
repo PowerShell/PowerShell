@@ -1991,11 +1991,11 @@
           <File Id="fil3779A5AC06BDD2A3AB680DBA83FEAFD1" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.resources.dll" />
         </Component>
       </Directory>
-      <Component Id="cmp12392353C58F4F708B7A4B1A8AA39BDA" Guid="{7b5965ed-4870-4fb6-81be-60cc67bb3dd1}">
-        <File Id="fil76544DCE870D4D1AA7DF2C4DCA9D9797" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27317.03.dll" />
+      <Component Id="cmp14D91B675170420DAE2D04EE267FA6EB" Guid="{4b1b29bf-7f15-48e5-bd28-01987e334e26}">
+        <File Id="filECE63618978B43C095EDA113386B291A" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27617.04.dll" />
       </Component>
-      <Component Id="cmpF8E35BF1122540599B8B0621720F7BE5" Guid="{6edce74b-620d-4ab7-8fe4-6a1a1a83ac9e}">
-        <File Id="fil797C735308544F71AB4F7E49EC950BB0" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27317.03.dll" />
+      <Component Id="cmpFA7FF5C3D364433680EA572802182CA7" Guid="{7172947c-0f76-4e26-9035-de120aa0f36a}">
+        <File Id="fil59F014FDABF0426E9B6E5EFF4DE2725F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27617.04.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2636,8 +2636,8 @@
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
       <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
       <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
-      <ComponentRef Id="cmp12392353C58F4F708B7A4B1A8AA39BDA" />
-      <ComponentRef Id="cmpF8E35BF1122540599B8B0621720F7BE5" />
+      <ComponentRef Id="cmp14D91B675170420DAE2D04EE267FA6EB" />
+      <ComponentRef Id="cmpFA7FF5C3D364433680EA572802182CA7" />
     </ComponentGroup>
   </Fragment>
 </Wix>
