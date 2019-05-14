@@ -189,8 +189,7 @@ Describe "Set-Location" -Tags "CI" {
         param($path)
 
         Set-Location $TestDrive
-        # use FileInfo to get the long name if $TestDrive is using 8.3 path
-        $literalPath = [System.IO.FileInfo]::new((Join-Path $TestDrive $path)).FullName
+        $literalPath = Join-Path $TestDrive $path
         New-Item -ItemType Directory -Path $literalPath
         Set-Location -LiteralPath $path
         (Get-Location).Path | Should -BeExactly $literalPath

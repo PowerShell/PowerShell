@@ -272,7 +272,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
                 )
                 "[$Root]"
 '@
-            $tempDir = [System.IO.FileInfo]::new((Join-Path -Path $TestDrive -ChildPath "DefaultValueTest")).FullName
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "DefaultValueTest"
             $test1File = Join-Path -Path $tempDir -ChildPath "test1.ps1"
             $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
 

@@ -683,7 +683,7 @@ namespace StackTest {
                 $out = pwsh -workingdirectory ~ -c '(Get-Location).Path'
                 $out | Should -HaveCount 2
                 $out[0] | Should -BeExactly (Get-Item ~).FullName
-                $out[1] | Should -BeExactly ([System.IO.Path]::GetFullPath($testdrive))
+                $out[1] | Should -BeExactly "$testdrive"
             }
             finally {
                 if ($currentProfile) {
