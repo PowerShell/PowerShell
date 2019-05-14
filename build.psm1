@@ -449,28 +449,6 @@ Fix steps:
         }
     }
 
-    if ($Environment.IsWindows) {
-        $ReleaseVersion = ""
-        if ($ReleaseTagToUse) {
-            $ReleaseVersion = $ReleaseTagToUse
-        } else {
-            $ReleaseVersion = (Get-PSCommitId -WarningAction SilentlyContinue) -replace '^v'
-        }
-        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value
-        if (!$ReleaseVersion) {
-            $ReleaseVersion = "6.0.0"
-            $fileVersion = "6.0.0"
-        } else {
-            $fileVersion = $ReleaseVersion.Split("-")[0]
-        }
-
-        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
-        $pwshPath = $Options.Output
-        if (!$pwshPath.EndsWith("pwsh.exe")) {
-            $pwshPath = Join-Path $Options.Output "pwsh.exe"
-        }
-    }
-
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if ($PSModuleRestore) {
@@ -1828,6 +1806,7 @@ function Start-TypeGen
     </Target>
 </Project>
 '@
+    New-Item -ItemType Directory -Path (Split-Path -Path $GetDependenciesTargetPath -Parent) -Force > $null
     Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
 
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
