@@ -612,7 +612,7 @@ function New-PSOptions {
     Write-Verbose "Using configuration '$Configuration'"
 
     if (-not $Framework) {
-        [xml]$projCommons = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath "PowerSHell.Common.props")
+        [xml]$projCommons = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath "PowerShell.Common.props")
         $xmlns = [System.Xml.XmlNamespaceManager]::new($projCommons.NameTable)
         $xmlns.AddNamespace("x","http://schemas.microsoft.com/developer/msbuild/2003")
         $Framework = $projCommons.SelectSingleNode("//x:TargetFramework", $xmlns)."#text"
