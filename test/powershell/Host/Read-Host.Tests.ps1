@@ -12,10 +12,16 @@ Describe "Read-Host" -Tags "Slow","Feature" {
             } else {
                 $ItArgs = @{ }
             }
+
+            $expectFile = Join-Path $assetsDir "Read-Host.Output.expect"
+
+            if (-not $IsWindows) {
+                chmod a+x $expectFile
+            }
         }
 
         It @ItArgs "Should output correctly" {
-            & (Join-Path $assetsDir "Read-Host.Output.expect") $powershell | Out-Null
+            & $expectFile $powershell | Out-Null
             $LASTEXITCODE | Should -Be 0
         }
     }

@@ -39,6 +39,8 @@ folder "Package Signing and Upload" as PkgSignUpload {
 folder "Build Test Artifacts" as TestArtifacts {
     agent "Windows" as WinTest
     agent "Linux" as LinuxTest
+    agent "Linux-ARM" as LinuxArmTest
+    agent "Linux-ARM64" as LinuxArm64Test
 }
 
 agent "Compliance"  as Compliance
