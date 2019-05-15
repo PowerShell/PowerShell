@@ -67,7 +67,8 @@ End {
         }
 
         $BuildPackagePath = New-PSSignedBuildZip -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath -DestinationFolder $destFolder
-        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name-singed.zip]$BuildPackagePath"
+        Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
+        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"
         $buildPackageName = Split-Path -Path $BuildPackagePath -Leaf
         $additionalFiles += $BuildPackagePath
     }

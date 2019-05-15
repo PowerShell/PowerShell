@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Import-Module HelpersCommon
+
 #
 # These are general tests that verify non-Windows behavior
 #
@@ -650,33 +652,46 @@ ZoneId=$FileType
                 Test-UnrestrictedExecutionPolicy $testScript $expected
             }
 
-            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $expectedError = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+
             $testData = @(
-                @{
-                    module = $PSHomeUntrustedModule
-                    error = $null
-                }
-                @{
-                    module = $PSHomeUnsignedModule
-                    error = $null
-                }
                 @{
                     module = "Microsoft.PowerShell.Archive"
                     error = $null
                 }
             )
 
+            $testData += @(
+                @{
+                    shouldMarkAsPending = $true
+                    module = $PSHomeUntrustedModule
+                    expectedError = $expectedError
+                }
+                @{
+                    module = $PSHomeUnsignedModule
+                    error = $null
+                }
+            )
+
             $TestTypePrefix = "Test 'Unrestricted' execution policy."
             It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
-                param([string]$module, [string]$error)
-                $testScript = {Import-Module -Name $module -Force}
-                if($error)
+                param([string]$module, [string]$expectedError, [bool]$shouldMarkAsPending)
+
+                if ($shouldMarkAsPending)
                 {
-                    $testScript | Should -Throw -ErrorId $error
+                    Set-TestInconclusive -Message "Test is unreliable"
+                }
+
+                $execPolicy = Get-ExecutionPolicy -List | Out-String
+
+                $testScript = {Import-Module -Name $module -Force -ErrorAction Stop}
+                if($expectedError)
+                {
+                    $testScript | Should -Throw -ErrorId $expectedError -Because "Untrusted modules should not be loaded even on unrestricted execution policy"
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw
+                    $testScript | Should -Not -Throw -Because "Execution Policy is set as: $execPolicy"
                 }
             }
         }

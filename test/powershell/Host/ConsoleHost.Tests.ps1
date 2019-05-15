@@ -625,16 +625,20 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
-        $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
-        $startTime = Get-Date
-        $showCmd = "Unknown"
-        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
-        {
-            Start-Sleep -Milliseconds 100
-            $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+
+        try {
+            $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+            $startTime = Get-Date
+            $showCmd = "Unknown"
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle) {
+                Start-Sleep -Milliseconds 100
+                $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+            }
+
+            $showCmd | Should -BeExactly $WindowStyle
+        } finally {
+            $ps | Stop-Process -Force
         }
-        $showCmd | Should -BeExactly $WindowStyle
-        $ps | Stop-Process -Force
     }
 
     It "Invalid -WindowStyle returns error" {
