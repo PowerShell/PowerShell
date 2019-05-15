@@ -413,7 +413,7 @@ Fix steps:
     # publish reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path $incFileName | ForEach-Object { $_.TrimEnd(';') } | Where-Object { $_ -ne "" }
+        $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -573,7 +573,7 @@ function New-PSOptions {
         [string]$Configuration,
 
         [ValidateSet("netcoreapp3.0")]
-        [string]$Framework,
+        [string]$Framework = "netcoreapp3.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -609,16 +609,9 @@ function New-PSOptions {
     if (-not $Configuration) {
         $Configuration = 'Debug'
     }
-    Write-Verbose "Using configuration '$Configuration'"
 
-    if (-not $Framework) {
-        [xml]$projCommons = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath "PowerShell.Common.props")
-        $xmlns = [System.Xml.XmlNamespaceManager]::new($projCommons.NameTable)
-        $xmlns.AddNamespace("x","http://schemas.microsoft.com/developer/msbuild/2003")
-        $Framework = $projCommons.SelectSingleNode("//x:TargetFramework", $xmlns)."#text"
-        $Framework = "netcoreapp3.0"
-        Write-Verbose "Using framework '$Framework'"
-    }
+    Write-Verbose "Using configuration '$Configuration'"
+    Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
@@ -1804,7 +1797,7 @@ function Start-TypeGen
     <Target Name="_GetDependencies"
             DependsOnTargets="ResolveAssemblyReferencesDesignTime">
         <ItemGroup>
-            <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.IsSystemReference)' == 'true' and '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+            <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
         </ItemGroup>
         <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
     </Target>
