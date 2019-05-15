@@ -7,7 +7,7 @@ Describe "Resolve types in additional referenced assemblies" -Tag CI {
         @{ typename = "[Markdig.Markdown]"; name = "Markdown"}
     ){
         param ($typename, $name)
-        $type = Invoke-Expression $typename
+        $type = & ([scriptblock]::Create($typename))
         $type.Name | Should -BeExactly $name
     }
 }
