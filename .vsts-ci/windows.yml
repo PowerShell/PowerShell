@@ -73,7 +73,6 @@ stages:
   - template: templates/verify-xunit.yml
     parameters:
       pool: 'Hosted VS2017'
-      dependsOn: win_build
 
 - stage: PackagingWin
   displayName: Packaging for Windows

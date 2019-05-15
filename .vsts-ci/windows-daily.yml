@@ -80,4 +80,5 @@ jobs:
 - template: templates/verify-xunit.yml
   parameters:
     pool: 'Hosted VS2017'
-    dependsOn: win_build
+    parentJobs:
+      - win_build
