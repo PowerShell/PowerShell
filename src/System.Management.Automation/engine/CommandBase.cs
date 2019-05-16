@@ -291,9 +291,6 @@ namespace System.Management.Automation
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
         Ignore,
 
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
-        Suspend,
-
         /// <summary>Enter the debugger.</summary>
         Break,
     } // enum ActionPreference
