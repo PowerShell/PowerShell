@@ -27,4 +27,4 @@
     - **OR**
     - [ ] [Make sure you've added a new test if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
 - **Experimental**
-    - [X] The use of and testing of this feature requires enabling the following experimental features: <!-- experimental feature name(s) here -->
+    - [ ] The use of and testing of this feature requires enabling the following experimental features: <!-- experimental feature name(s) here -->
