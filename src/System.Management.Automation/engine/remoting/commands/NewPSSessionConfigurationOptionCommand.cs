@@ -23,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
 
         private const string AttribProcessIdleTimeout = "ProcessIdleTimeoutSec";
         internal static readonly int? DefaultProcessIdleTimeout_ForPSRemoting = 0; // in seconds
-        internal static readonly int? DefaultProcessIdleTimeout_ForWorkflow = 1209600; // in seconds
         private int? _processIdleTimeoutSec = null;
 
         internal const string AttribMaxIdleTimeout = "MaxIdleTimeoutms";
@@ -79,10 +78,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!keepAssigned || !_processIdleTimeoutSec.HasValue)
             {
-                _processIdleTimeoutSec
-                    = sessionType == PSSessionType.Workflow
-                    ? DefaultProcessIdleTimeout_ForWorkflow
-                    : DefaultProcessIdleTimeout_ForPSRemoting;
+                _processIdleTimeoutSec = DefaultProcessIdleTimeout_ForPSRemoting;
             }
 
             if (!keepAssigned || !_maxIdleTimeoutSec.HasValue)

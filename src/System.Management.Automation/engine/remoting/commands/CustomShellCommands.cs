@@ -821,28 +821,6 @@ else
             StringBuilder initParameters = new StringBuilder();
 
             bool assemblyAndTypeTokensSet = false;
-            if (sessionType == PSSessionType.Workflow)
-            {
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                    initParamFormat,
-                    ConfigurationDataFromXML.ENDPOINTCONFIGURATIONTYPE,
-                    sessionType,
-                    Environment.NewLine));
-
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                initParamFormat,
-                ConfigurationDataFromXML.ASSEMBLYTOKEN,
-                ConfigurationDataFromXML.WORKFLOWCOREASSEMBLY,
-                Environment.NewLine));
-
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                    initParamFormat,
-                    ConfigurationDataFromXML.SHELLCONFIGTYPETOKEN,
-                    ConfigurationDataFromXML.WORKFLOWCORETYPENAME,
-                    Environment.NewLine));
-
-                assemblyAndTypeTokensSet = true;
-            }
 
             // DISC endpoint
             if (Path != null)
@@ -1169,7 +1147,7 @@ else
                     tempValue);
             }
 
-            if (sessionType == PSSessionType.Workflow && !isUseSharedProcessSpecified)
+            if (!isUseSharedProcessSpecified)
             {
                 UseSharedProcess = true;
             }
@@ -1213,13 +1191,6 @@ else
             }
 
             StringBuilder sessionConfigurationData = new StringBuilder();
-
-            if (sessionType == PSSessionType.Workflow)
-            {
-                List<object> modifiedModulePath = new List<object>(modulesToImport ?? Array.Empty<string>());
-                modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
-                modulesToImport = modifiedModulePath.ToArray();
-            }
 
             if (modulesToImport != null && modulesToImport.Length > 0)
             {
