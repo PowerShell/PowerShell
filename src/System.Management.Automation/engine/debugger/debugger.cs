@@ -1175,6 +1175,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(path != null, "caller to verify path is not null");
 
+            CheckForBreakpointSupport();
             return AddLineBreakpoint(new LineBreakpoint(path, line, action));
         }
 
@@ -1182,6 +1183,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(path != null, "caller to verify path is not null");
 
+            CheckForBreakpointSupport();
             return AddLineBreakpoint(new LineBreakpoint(path, line, column, action));
         }
 
@@ -1201,11 +1203,13 @@ namespace System.Management.Automation
 
         internal Breakpoint NewVariableBreakpoint(string path, string variableName, VariableAccessMode accessMode, ScriptBlock action)
         {
+            CheckForBreakpointSupport();
             return AddVariableBreakpoint(new VariableBreakpoint(path, variableName, accessMode, action));
         }
 
         internal Breakpoint NewVariableBreakpoint(string variableName, VariableAccessMode accessMode, ScriptBlock action)
         {
+            CheckForBreakpointSupport();
             return AddVariableBreakpoint(new VariableBreakpoint(null, variableName, accessMode, action));
         }
 
@@ -1761,12 +1765,6 @@ namespace System.Management.Automation
                 originalLanguageMode = _context.LanguageMode;
                 _context.LanguageMode = PSLanguageMode.FullLanguage;
             }
-            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
-            {
-                // If there is a system lockdown in place, enforce it
-                originalLanguageMode = Utils.EnforceSystemLockDownLanguageMode(this._context);
-            }
 
             // Update the prompt to the debug prompt
             if (hadDefaultPrompt)
@@ -2058,8 +2056,20 @@ namespace System.Management.Automation
         /// <param name="mode">Internal debug mode.</param>
         private void SetInternalDebugMode(InternalDebugMode mode)
         {
+
             lock (_syncObject)
             {
+                // Disable script debugger when in system lock down mode
+                if (IsSystemLockedDown)
+                {
+                    if (_context._debuggingMode != (int)InternalDebugMode.Disabled)
+                    {
+                        _context._debuggingMode = (int)InternalDebugMode.Disabled;
+                    }
+
+                    return;
+                }
+
                 switch (mode)
                 {
                     case InternalDebugMode.InPushedStop:
@@ -2083,6 +2093,24 @@ namespace System.Management.Automation
                 // The debugger can be enabled if we are not in DebugMode.None and if we are
                 // not in a local session set only to RemoteScript.
                 return !((DebugMode == DebugModes.RemoteScript) && IsLocalSession) && (DebugMode != DebugModes.None);
+            }
+        }
+
+        private static bool IsSystemLockedDown
+        {
+            get
+            {
+                return (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                        System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+            }
+        }
+
+        private static void CheckForBreakpointSupport()
+        {
+            if (IsSystemLockedDown)
+            {
+                // Local script debugging is not supported in locked down mode
+                throw new PSNotSupportedException();
             }
         }
 
@@ -2323,6 +2351,15 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
+                // Restrict local script debugger mode when in system lock down.
+                // DebugModes enum flags provide a combination of values.  To disable local script debugging
+                // we have to disallow 'LocalScript' and 'Default' flags and only allow 'None' or 'RemoteScript'
+                // flags exclusively.  This allows only no debugging 'None' or remote debugging 'RemoteScript'.
+                if (IsSystemLockedDown && (mode != DebugModes.None) && (mode != DebugModes.RemoteScript))
+                {
+                    mode = DebugModes.RemoteScript;
+                }
+
                 base.SetDebugMode(mode);
 
                 if (!CanEnableDebugger)
