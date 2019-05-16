@@ -7,14 +7,6 @@ function Run-TestOnWinFull
 
     switch ($name)
     {
-        "ActionPreference:ErrorAction=SuspendOnWorkflow" {
-            workflow TestErrorActionSuspend { "Hello" }
-
-            $r = TestErrorActionSuspend -ErrorAction Suspend
-
-            $r | Should -BeExactly 'Hello'
-            break;   }
-
         "ForeachParallel:ASTOfParallelForeachOnWorkflow" {
             Import-Module PSWorkflow
             $errors = @()
