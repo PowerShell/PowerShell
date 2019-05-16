@@ -86,6 +86,11 @@ namespace System.Management.Automation.Runspaces
         /// endpoint.
         /// </summary>
         DefaultRemoteShell = 0,
+
+        /// <summary>
+        /// Default Workflow endpoint. It is deprecated.
+        /// </summary>
+        Workflow = 1,
     }
 
     /// <summary>
