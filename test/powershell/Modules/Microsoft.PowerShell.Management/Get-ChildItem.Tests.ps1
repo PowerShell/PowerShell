@@ -21,11 +21,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
 
-            $specialDirName = "Test[Dir]"
-            $specialDir = "Test``[Dir``]"
-            $specialPath = Join-Path $TestDrive $specialDir
-            $null = New-Item -Path $TestDrive -Name $specialDirName -ItemType Directory -Force
-
             $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
             $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
             $file2 = Join-Path $searchRoot -ChildPath "File1.txt"
@@ -147,12 +142,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
         }
 
-        It "Should list files in directory contains special char" {
-            $null = New-Item -Path $specialPath -Name file1.txt -ItemType File
-            $null = New-Item -Path $specialPath -Name file2.txt -ItemType File
-            Get-ChildItem -Path $specialPath | Should -HaveCount 2
-        }
-
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
             param($Parameters, $ExpectedCount)
 
@@ -199,6 +188,22 @@ Describe "Get-ChildItem" -Tags "CI" {
                 Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
+    }
+}
+
+Describe "Get-ChildItem with special path" -Tags "CI" {
+
+    BeforeAll {
+        $bracketDirName = "Test[Dir]"
+        $bracketDir = "Test``[Dir``]"
+        $bracketPath = Join-Path $TestDrive $bracketDir
+        $null = New-Item -Path $TestDrive -Name $bracketDirName -ItemType Directory -Force
+    }
+
+    It "Should list files in directory with name containing bracket char" {
+        $null = New-Item -Path $bracketPath -Name file1.txt -ItemType File
+        $null = New-Item -Path $bracketPath -Name file2.txt -ItemType File
+        Get-ChildItem -Path $bracketPath | Should -HaveCount 2
     }
 }
 
