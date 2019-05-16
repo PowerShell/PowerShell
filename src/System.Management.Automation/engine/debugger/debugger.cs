@@ -1132,12 +1132,16 @@ namespace System.Management.Automation
         internal Breakpoint NewCommandBreakpoint(string path, string command, ScriptBlock action)
         {
             WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
+
+            CheckForBreakpointSupport();
             return AddCommandBreakpoint(new CommandBreakpoint(path, pattern, command, action));
         }
 
         internal Breakpoint NewCommandBreakpoint(string command, ScriptBlock action)
         {
             WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
+
+            CheckForBreakpointSupport();
             return AddCommandBreakpoint(new CommandBreakpoint(null, pattern, command, action));
         }
 
@@ -2056,7 +2060,6 @@ namespace System.Management.Automation
         /// <param name="mode">Internal debug mode.</param>
         private void SetInternalDebugMode(InternalDebugMode mode)
         {
-
             lock (_syncObject)
             {
                 // Disable script debugger when in system lock down mode
