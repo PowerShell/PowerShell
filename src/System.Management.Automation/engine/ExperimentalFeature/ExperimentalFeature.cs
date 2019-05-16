@@ -114,6 +114,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+                new ExperimentalFeature(
+                    name: "PSImplicitLineContinuanceForNamedParameters",
+                    description: "Allow commands to span multiple lines automatically when subsequent lines start with named parameters"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

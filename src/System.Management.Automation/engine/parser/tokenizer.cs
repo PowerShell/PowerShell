@@ -569,6 +569,39 @@ namespace System.Management.Automation.Language
         Binary = 0x2
     }
 
+    /// <summary>
+    /// Indicates the type of implicit line continuance that is being checked (bitwise value)
+    /// or the type of implicit line continuance that was found (single value).
+    /// </summary>
+    [Flags]
+    internal enum ImplicitContinuance : byte
+    {
+        /// <summary>
+        /// Indicates no implicit line continuance was found.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Indicates implicit pipeline continuance is being checked or was found.
+        /// </summary>
+        Pipeline = 1,
+
+        /// <summary>
+        /// Indicates implicit named parameter continuance is being checked or was found.
+        /// </summary>
+        NamedParameter = 2,
+
+        /// <summary>
+        /// Indicates implicit splatted collection continuance is being checked or was found.
+        /// </summary>
+        SplattedCollection = 4,
+
+        /// <summary>
+        /// Indicates all implicit line continuance possibilities should be checked.
+        /// </summary>
+        All = byte.MaxValue,
+    }
+
     //
     // Class used to do a partial snapshot of the state of the tokenizer.
     // This is used for nested scans on the same string.
@@ -1342,15 +1375,133 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        internal bool IsPipeContinuance(IScriptExtent extent)
+        internal ImplicitContinuance CheckImplicitContinuance(IScriptExtent extent, ImplicitContinuance implicitContinuanceChecks)
         {
-            return extent.EndOffset < _script.Length && PipeContinuanceAfterExtent(extent);
+            if (extent.EndOffset >= _script.Length)
+            {
+                return ImplicitContinuance.None;
+            }
+
+            bool lastNonWhitespaceIsNewline = true;
+            int i = extent.EndOffset;
+
+            // Since some token pattern matching looks for multiple characters (e.g. newline or block comment)
+            // we stop searching at _script.Length - 1 and perform one additional check after the while loop.
+            // This avoids having to compare i + 1 against the script length in multiple locations inside the
+            // loop.
+            while (i < _script.Length - 1)
+            {
+                char c = _script[i];
+
+                if (c.IsWhitespace())
+                {
+                    i++;
+                    continue;
+                }
+
+                if (c == '\n')
+                {
+                    if (lastNonWhitespaceIsNewline)
+                    {
+                        // blank or whitespace-only lines are not allowed in implicit line continuance
+                        return ImplicitContinuance.None;
+                    }
+
+                    lastNonWhitespaceIsNewline = true;
+                    i++;
+                    continue;
+                }
+                else if (c == '\r')
+                {
+                    if (lastNonWhitespaceIsNewline)
+                    {
+                        // blank or whitespace-only lines are not allowed in implicit line continuance
+                        return ImplicitContinuance.None;
+                    }
+
+                    lastNonWhitespaceIsNewline = true;
+                    i += _script[i + 1] == '\n' ? 2 : 1;
+                    continue;
+                }
+
+                lastNonWhitespaceIsNewline = false;
+
+                if (c == '#')
+                {
+                    // SkipLineComment will return the position after the comment end
+                    // which is either at the end of the file, or a cr or lf.
+                    i = SkipLineComment(i + 1);
+                    continue;
+                }
+
+                if (c == '<' && _script[i + 1] == '#')
+                {
+                    i = SkipBlockComment(i + 2);
+                    continue;
+                }
+
+                switch (c)
+                {
+                    case '|':
+                        if ((implicitContinuanceChecks & ImplicitContinuance.Pipeline) != 0)
+                        {
+                            return ImplicitContinuance.Pipeline;
+                        }
+                        break;
+
+                    case '-':
+                        if ((implicitContinuanceChecks & ImplicitContinuance.NamedParameter) != 0 &&
+                            CheckForNamedParameter(i))
+                        {
+                            return ImplicitContinuance.NamedParameter;
+                        }
+                        break;
+
+                    case '@':
+                        if ((implicitContinuanceChecks & ImplicitContinuance.SplattedCollection) != 0 &&
+                            CheckForSplattedCollection(i))
+                        {
+                            return ImplicitContinuance.SplattedCollection;
+                        }
+                        break;
+                }
+
+                return ImplicitContinuance.None;
+            }
+
+            switch (_script[_script.Length - 1])
+            {
+                case '|':
+                    if ((implicitContinuanceChecks & ImplicitContinuance.Pipeline) != 0)
+                    {
+                        return ImplicitContinuance.Pipeline;
+                    }
+                    break;
+
+                case '-':
+                    if ((implicitContinuanceChecks & ImplicitContinuance.NamedParameter) != 0)
+                    {
+                        return ImplicitContinuance.NamedParameter;
+                    }
+                    break;
+
+                case '@':
+                    if ((implicitContinuanceChecks & ImplicitContinuance.SplattedCollection) != 0)
+                    {
+                        return ImplicitContinuance.SplattedCollection;
+                    }
+                    break;
+            }
+
+            return ImplicitContinuance.None;
         }
 
-        private bool PipeContinuanceAfterExtent(IScriptExtent extent)
+        private bool ImplicitContinuanceAfterExtent(IScriptExtent extent, char characterToLookFor, Func<int, bool> tokenValidator = null)
         {
-            // If the first non-comment (regular or block) character following a newline is a pipe, we have
-            // pipe continuance.
+            // If the first non-comment (regular or block) character following a newline matches the
+            // character we are looking for, we have implicit continuance if the token validator is
+            // null (for single character tokens like a pipe) or if the token validator returns true
+            // (for multiple character tokens like named parameters or a splatted collection).
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
 
@@ -1409,10 +1560,282 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                return c == '|';
+                return c == characterToLookFor &&
+                       (tokenValidator == null || tokenValidator(i));
             }
 
-            return _script[_script.Length - 1] == '|';
+            return _script[_script.Length - 1] == characterToLookFor;
+        }
+
+        private bool CheckForNamedParameter(int i)
+        {
+            for (int j = i + 1; j < _script.Length; j++)
+            {
+                char c = _script[j];
+
+                if (c.IsWhitespace())
+                {
+                    return j > i + 1;
+                }
+
+                switch (c)
+                {
+                    case 'a':
+                    case 'b':
+                    case 'c':
+                    case 'd':
+                    case 'e':
+                    case 'f':
+                    case 'g':
+                    case 'h':
+                    case 'i':
+                    case 'j':
+                    case 'k':
+                    case 'l':
+                    case 'm':
+                    case 'n':
+                    case 'o':
+                    case 'p':
+                    case 'q':
+                    case 'r':
+                    case 's':
+                    case 't':
+                    case 'u':
+                    case 'v':
+                    case 'w':
+                    case 'x':
+                    case 'y':
+                    case 'z':
+                    case 'A':
+                    case 'B':
+                    case 'C':
+                    case 'D':
+                    case 'E':
+                    case 'F':
+                    case 'G':
+                    case 'H':
+                    case 'I':
+                    case 'J':
+                    case 'K':
+                    case 'L':
+                    case 'M':
+                    case 'N':
+                    case 'O':
+                    case 'P':
+                    case 'Q':
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                    case 'V':
+                    case 'W':
+                    case 'X':
+                    case 'Y':
+                    case 'Z':
+                        continue;
+
+                    case '-':
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        if (j == i + 1)
+                        {
+                            // Named parameters may not begin with numbers or dashes
+                            return false;
+                        }
+                        continue;
+
+                    case ':':
+                    case '{':
+                    case '}':
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case '.':
+                    case '&':
+                    case ',':
+                    case ';':
+                    case '|':
+                    case '\r':
+                    case '\n':
+                        return j > i + 1;
+
+                    case '\0':
+                        // If we get to the end of the statement, return true because
+                        // we may be tokenizing an incomplete named parameter as it is
+                        // typed in.
+                        return true;
+
+                    case '\'':
+                    case SpecialChars.QuoteSingleLeft:
+                    case SpecialChars.QuoteSingleRight:
+                    case SpecialChars.QuoteSingleBase:
+                    case SpecialChars.QuoteReversed:
+                    case '"':
+                    case SpecialChars.QuoteDoubleLeft:
+                    case SpecialChars.QuoteDoubleRight:
+                    case SpecialChars.QuoteLowDoubleLeft:
+                        // When quotes are used in a named parameter, PowerShell treats
+                        // the token as an argument.
+                        return false;
+
+                    default:
+                        continue;
+                }
+            }
+
+            // If we get to this point, the named parameters parsed correctly
+            return true;
+        }
+
+        private bool CheckForSplattedCollection(int i)
+        {
+            int maxVarNameLength = int.MaxValue;
+
+            for (int j = i + 1; j < _script.Length; j++)
+            {
+                char c = _script[j];
+
+                if (c.IsWhitespace())
+                {
+                    return j > i + 1;
+                }
+
+                if (j - i > maxVarNameLength)
+                {
+                    return false;
+                }
+
+                switch (c)
+                {
+                    case 'a':
+                    case 'b':
+                    case 'c':
+                    case 'd':
+                    case 'e':
+                    case 'f':
+                    case 'g':
+                    case 'h':
+                    case 'i':
+                    case 'j':
+                    case 'k':
+                    case 'l':
+                    case 'm':
+                    case 'n':
+                    case 'o':
+                    case 'p':
+                    case 'q':
+                    case 'r':
+                    case 's':
+                    case 't':
+                    case 'u':
+                    case 'v':
+                    case 'w':
+                    case 'x':
+                    case 'y':
+                    case 'z':
+                    case 'A':
+                    case 'B':
+                    case 'C':
+                    case 'D':
+                    case 'E':
+                    case 'F':
+                    case 'G':
+                    case 'H':
+                    case 'I':
+                    case 'J':
+                    case 'K':
+                    case 'L':
+                    case 'M':
+                    case 'N':
+                    case 'O':
+                    case 'P':
+                    case 'Q':
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                    case 'V':
+                    case 'W':
+                    case 'X':
+                    case 'Y':
+                    case 'Z':
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                    case '_':
+                        continue;
+
+                    case '?':
+                        if (j == i + 1)
+                        {
+                            maxVarNameLength = 1;
+                        }
+                        continue;
+
+                    case '$':
+                    case '^':
+                        if (j > i + 1)
+                        {
+                            return false;
+                        }
+                        maxVarNameLength = 1;
+                        continue;
+
+                    case ':':
+                        if (j < _script.Length - 1 && _script[j + 1] == ':')
+                        {
+                            return j > i + 1;
+                        }
+                        continue;
+
+                    case '\0':
+                        // If we get to the end of the statement, return true because
+                        // we may be tokenizing an incomplete named parameter as it is
+                        // typed in.
+                        return true;
+
+                    case '{':
+                    case '}':
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case '.':
+                    case '&':
+                    case ',':
+                    case ';':
+                    case '|':
+                    case '\r':
+                    case '\n':
+                        return j > i + 1;
+
+                    default:
+                        if (!char.IsLetterOrDigit(c))
+                        {
+                            return false;
+                        }
+                        continue;
+                }
+            }
+
+            // If we get to this point, the splatted collection parsed correctly
+            return true;
         }
 
         private int SkipLineComment(int i)

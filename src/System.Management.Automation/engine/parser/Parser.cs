@@ -8,7 +8,6 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -5690,7 +5689,7 @@ namespace System.Management.Automation.Language
             // G      expression   assignment-operator   statement
             // G
             // G  pipeline-tail:
-            // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
+            // G      new-line:opt   '|'   new-lines:opt   command   pipeline-tail:opt
 
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
@@ -5725,6 +5724,8 @@ namespace System.Management.Automation.Language
                 {
                     SetTokenizerMode(oldTokenizerMode);
                 }
+
+                bool foundImplicitPipeContinuance = false;
 
                 if (expr != null)
                 {
@@ -5783,7 +5784,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    commandAst = (CommandAst)CommandRule(forDynamicKeyword: false);
+                    commandAst = (CommandAst)CommandRule(forDynamicKeyword: false, out foundImplicitPipeContinuance);
                 }
 
                 if (commandAst != null)
@@ -5811,7 +5812,9 @@ namespace System.Management.Automation.Language
 
                 // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
                 // tokens start the next line of script
-                if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuance(nextToken.Extent))
+                if (nextToken.Kind == TokenKind.NewLine &&
+                    (foundImplicitPipeContinuance ||
+                     _tokenizer.CheckImplicitContinuance(nextToken.Extent, ImplicitContinuance.Pipeline) == ImplicitContinuance.Pipeline))
                 {
                     SkipNewlines();
                     nextToken = PeekToken();
@@ -6166,6 +6169,12 @@ namespace System.Management.Automation.Language
 
         internal Ast CommandRule(bool forDynamicKeyword)
         {
+            bool foundImplicitPipeContinuance;
+            return CommandRule(forDynamicKeyword, out foundImplicitPipeContinuance);
+        }
+
+        internal Ast CommandRule(bool forDynamicKeyword, out bool foundImplicitPipeContinuance)
+        {
             // G  command:
             // G      command-name   command-elements:opt
             // G      command-invocation-operator   command-module:opt  command-name-expr   command-elements:opt
@@ -6185,11 +6194,14 @@ namespace System.Management.Automation.Language
             // G      command-element
             // G      command-elements   command-element
             // G  command-element:
-            // G      command-parameter
+            // G      new-line:opt   command-parameter
+            // G      new-line:opt   splatted-variable
             // G      command-argument
             // G      redirection
             // G  command-argument:
             // G      command-name-expr
+
+            foundImplicitPipeContinuance = false;
 
             Token firstToken;
             bool dotSource, ampersand;
@@ -6232,6 +6244,28 @@ namespace System.Management.Automation.Language
                 bool scanning = true;
                 while (scanning)
                 {
+                    if (ExperimentalFeature.IsEnabled("PSImplicitLineContinuanceForNamedParameters"))
+                    {
+                        // Newlines before named parameters and splatted collections are skipped
+                        // (implicit line continuance)
+                        if (token.Kind == TokenKind.NewLine)
+                        {
+                            switch (_tokenizer.CheckImplicitContinuance(token.Extent, ImplicitContinuance.All))
+                            {
+                                case ImplicitContinuance.NamedParameter:
+                                case ImplicitContinuance.SplattedCollection:
+                                    UngetToken(token);
+                                    SkipNewlines();
+                                    token = NextToken();
+                                    break;
+
+                                case ImplicitContinuance.Pipeline:
+                                    foundImplicitPipeContinuance = true;
+                                    break;
+                            }
+                        }
+                    }
+
                     switch (token.Kind)
                     {
                         case TokenKind.Pipe:
@@ -6337,7 +6371,12 @@ namespace System.Management.Automation.Language
                                 Diagnostics.Assert(elements.Count >= 1, "We should at least have the command name: inlinescript");
                                 endExtent = elements.Last().Extent;
 
-                                if (!scanning) { continue; }
+                                // If the inline script failed to parse, scanning is set to false, allowing us to use
+                                // continue to break out of the loop statement.
+                                if (!scanning)
+                                {
+                                    continue;
+                                }
                             }
                             else
                             {

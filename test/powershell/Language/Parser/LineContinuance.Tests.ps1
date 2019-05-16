@@ -9,6 +9,8 @@ Describe 'Line Continuance' -Tags 'CI' {
         }
 
         $whitespace = "`t `f`v$([char]0x00a0)$([char]0x0085)"
+
+        $implicitContinuanceWithNamedParametersEnabled = $EnabledExperimentalFeatures.Contains('PSImplicitLineContinuanceForNamedParameters')
     }
 
     Context 'Lines ending with a backtick that parse and execute without error' {
@@ -286,6 +288,276 @@ $whitespace
 '@
             $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
             $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'EmptyPipeElement'
+        }
+
+    }
+
+    Context 'Parsing and executing without error while using a named parameter at the beginning of a line to continue the previous line' {
+        BeforeAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                Write-Verbose 'Tests skipped. This set of tests requires the experimental feature ''PSImplicitLineContinuanceForNamedParameters'' to be enabled.' -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+        }
+
+        AfterAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+                return
+            }
+        }
+
+        It 'Line continuance using named parameters at the start of subsequent lines' {
+            $script = @'
+Get-Date
+    -Year 2019
+    -Month 5
+    -Day 15
+    -Hour 11
+    -Minute 22
+    -Second 15
+    -Millisecond 0
+'@
+            ExecuteCommand $script | Should -Be ([DateTime]'2019-05-15T11:22:15')
+        }
+
+        It 'Line continuance using named parameters at the start of subsequent lines after a CR (old-style Mac line ending)' {
+            $script = "Get-Date`r    -Year 2019`r    -Month 5`r    -Day 15`r    -Hour 11`r    -Minute 22`r    -Second 15`r    -Millisecond 0"
+            ExecuteCommand $script | Should -BeExactly ([DateTime]'2019-05-15T11:22:15')
+        }
+
+        It 'Line continuance using named parameters and pipes at the start of subsequent lines' {
+            $script = @'
+Get-Process
+    -Id $PID
+    | ForEach-Object Name
+'@
+            ExecuteCommand $script | Should -BeExactly 'pwsh'
+        }
+
+        It 'Line continuance using a comment line followed by named parameter at the start of a subsequent line' {
+            $script = @'
+Get-Process
+    # You can place comments before named parameters
+    -Id $pid
+'@
+            (ExecuteCommand $script).Id | Should -Be $PID
+        }
+
+        It 'Longer line continuance using named parameters at the start of subsequent lines (with comments)' {
+            $script = @'
+Get-Command
+    # The command type
+    -CommandType Cmdlet
+    # The command name
+    -Name Get-Date
+    # Show verbose output
+    -Verbose
+'@
+            (ExecuteCommand $script).Name | Should -BeExactly 'Get-Date'
+        }
+
+        It 'Hiding a command with line continuance using named parameters at the start of subsequent lines' {
+            $script = @'
+function -Syntax {42}
+Get-Command
+    -Name Get-Date
+    -Syntax
+'@
+            @(ExecuteCommand $script)[-1] | Should -BeOfType string
+        }
+
+        It 'Invoking a command hidden by line continuance using named parameters' {
+            $script = @'
+function -Syntax {42}
+Get-Command
+    -Name Get-Date
+  & -Syntax
+'@
+            @(ExecuteCommand $script)[-1] | Should -BeOfType int
+        }
+    }
+
+    Context 'Lines starting with a named parameter that fail because they are used incorrectly' {
+        BeforeAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                Write-Verbose 'Tests skipped. This set of tests requires the experimental feature ''PSImplicitLineContinuanceForNamedParameters'' to be enabled.' -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+        }
+
+        AfterAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+                return
+            }
+        }
+
+        It 'Lines starting with a named parameter that have the value associated with that parameter on a subsequent line' {
+            $script = @'
+try {
+    Get-Process
+        -Id
+        $PID
+} catch {
+    throw
+}
+'@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParameterBindingException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'MissingArgument,Microsoft.PowerShell.Commands.GetProcessCommand'
+        }
+
+        It 'Lines starting with a named parameter that have a line with whitespace before it' {
+            $script = @"
+try {
+    Get-Date
+    $whitespace
+        -Year 2019
+} catch {
+    throw
+}
+"@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'CommandNotFoundException' -PassThru
+        }
+
+        It 'Lines starting with a named parameter that have a line with nothing but a backtick before it' {
+            $script = @'
+try {
+    Get-Date
+        `
+        -Year 2019
+} catch {
+    throw
+}
+'@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'CommandNotFoundException' -PassThru
+        }
+
+    }
+
+    Context 'Parsing and executing without error while using splatting at the beginning of a line to continue the previous line' {
+        BeforeAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                Write-Verbose 'Tests skipped. This set of tests requires the experimental feature ''PSImplicitLineContinuanceForNamedParameters'' to be enabled.' -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+        }
+
+        AfterAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+                return
+            }
+        }
+
+        It 'Line continuance using splatting at the start a subsequent line' {
+            $script = @'
+$parameters = @{
+    Year = 2019
+    Month = 5
+    Day = 15
+    Hour = 11
+    Minute = 22
+    Second = 15
+    Millisecond = 0
+}
+Get-Date
+    @parameters
+'@
+            ExecuteCommand $script | Should -Be ([DateTime]'2019-05-15T11:22:15')
+        }
+
+        It 'Line continuance using splatting at the start of a subsequent line after a CR (old-style Mac line ending)' {
+            $script = "`$parameters = @{`r    Year = 2019`r    Month = 5`r    Day = 15`r    Hour = 11`r    Minute = 22`r    Second = 15`r    Millisecond = 0`r}`rGet-Date`r    @parameters"
+            ExecuteCommand $script | Should -BeExactly ([DateTime]'2019-05-15T11:22:15')
+        }
+
+        It 'Line continuance using named parameters, splatting and pipes at the start of subsequent lines' {
+            $script = @'
+$parameters = @{
+    Month = 5
+    Day = 15
+    Hour = 11
+    Minute = 22
+    Second = 15
+    Millisecond = 0
+}
+Get-Date
+    -Year 2019
+    @parameters
+    | ForEach-Object Year
+'@
+            ExecuteCommand $script | Should -Be 2019
+        }
+
+        It 'Line continuance using a comment line followed by splatting at the start of a subsequent line' {
+            $script = @'
+$parameters = @{
+    Id = $PID
+}
+Get-Process
+    # You can place comments before splatting
+    @parameters
+'@
+            (ExecuteCommand $script).Id | Should -Be $PID
+        }
+    }
+
+    Context 'Lines starting with splatting that do not parse' {
+        BeforeAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                Write-Verbose 'Tests skipped. This set of tests requires the experimental feature ''PSImplicitLineContinuanceForNamedParameters'' to be enabled.' -Verbose
+                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+        }
+
+        AfterAll {
+            if (!$implicitContinuanceWithNamedParametersEnabled) {
+                $global:PSDefaultParameterValues = $originalDefaultParameterValues
+                return
+            }
+        }
+
+        It 'Lines starting with splatting that have a line with whitespace before it' {
+            $script = @"
+try {
+    $parameters = @{
+        Year = 2019
+    }
+    Get-Date
+    $whitespace
+        @parameters
+} catch {
+    throw
+}
+"@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'SplattingNotPermitted'
+        }
+
+        It 'Lines starting with splatting that have a line with nothing but a backtick before it' {
+            $script = @'
+try {
+    $parameters = @{
+        Year = 2019
+    }
+    Get-Date
+        `
+        @parameters
+} catch {
+    throw
+}
+'@
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'SplattingNotPermitted'
         }
 
     }
