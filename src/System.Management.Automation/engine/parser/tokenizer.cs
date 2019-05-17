@@ -592,9 +592,14 @@ namespace System.Management.Automation.Language
         NamedParameter = 2,
 
         /// <summary>
+        /// Indicates implicit verbatim argument continuance is being checked or was found.
+        /// </summary>
+        VerbatimArgument = 4,
+
+        /// <summary>
         /// Indicates implicit splatted collection continuance is being checked or was found.
         /// </summary>
-        SplattedCollection = 4,
+        SplattedCollection = 8,
 
         /// <summary>
         /// Indicates all implicit line continuance possibilities should be checked.
@@ -1455,6 +1460,11 @@ namespace System.Management.Automation.Language
                         {
                             return ImplicitContinuance.NamedParameter;
                         }
+                        if ((implicitContinuanceChecks & ImplicitContinuance.VerbatimArgument) != 0 &&
+                            CheckForVerbatimArgument(i + 1))
+                        {
+                            return ImplicitContinuance.VerbatimArgument;
+                        }
                         break;
 
                     case '@':
@@ -1694,6 +1704,36 @@ namespace System.Management.Automation.Language
 
             // If we get to this point, the named parameters parsed correctly
             return true;
+        }
+
+        private bool CheckForVerbatimArgument(int i)
+        {
+            const string verbatimArgument = "-%";
+            char c;
+
+            for (int j = 0; i < _script.Length && j < verbatimArgument.Length; i++, j++)
+            {
+                c = _script[i];
+
+                if (c.IsWhitespace() || c == '\r' || c == '\n' || c == '\0')
+                {
+                    return true;
+                }
+
+                if (_script[i] != verbatimArgument[j])
+                {
+                    return false;
+                }
+            }
+
+            if (i == _script.Length)
+            {
+                return true;
+            }
+
+            c = _script[i];
+
+            return c.IsWhitespace() || c == '\r' || c == '\n' || c == '\0';
         }
 
         private bool CheckForSplattedCollection(int i)

@@ -6242,16 +6242,21 @@ namespace System.Management.Automation.Language
                 }
 
                 bool scanning = true;
+                bool checkForImplicitContinuance = true;
                 while (scanning)
                 {
                     if (ExperimentalFeature.IsEnabled("PSImplicitLineContinuanceForNamedParameters"))
                     {
                         // Newlines before named parameters and splatted collections are skipped
                         // (implicit line continuance)
-                        if (token.Kind == TokenKind.NewLine)
+                        if (token.Kind == TokenKind.NewLine && checkForImplicitContinuance)
                         {
                             switch (_tokenizer.CheckImplicitContinuance(token.Extent, ImplicitContinuance.All))
                             {
+                                case ImplicitContinuance.VerbatimArgument:
+                                    checkForImplicitContinuance = false;
+                                    goto case ImplicitContinuance.NamedParameter;
+
                                 case ImplicitContinuance.NamedParameter:
                                 case ImplicitContinuance.SplattedCollection:
                                     UngetToken(token);
