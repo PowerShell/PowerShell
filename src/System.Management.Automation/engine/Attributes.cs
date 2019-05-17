@@ -1600,9 +1600,25 @@ namespace System.Management.Automation
         public string ErrorMessage { get; set; }
 
         /// <summary>
-        /// Gets the valid values in the set.
+        /// Defines the required property names.
         /// </summary>
-        public IList<string> RequiredProperties { get; }
+        public ICollection<string> RequiredPropertyNames
+        {
+            get => RequiredProperties.Keys;
+
+            private set
+            {
+                foreach (string item in value)
+                {
+                    RequiredProperties.Add(item, typeof(object));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Defines the required property names and their types.
+        /// </summary>
+        public IDictionary<string, Type> RequiredProperties { get; } = new Dictionary<string, Type>();
 
         /// <summary>
         /// Validates that each parameter argument possesses the required properties.
@@ -1624,7 +1640,7 @@ namespace System.Management.Automation
             var wrappedObject = PSObject.AsPSObject(element);
             var missingProperties = new List<string>();
 
-            foreach (string property in RequiredProperties)
+            foreach (string property in RequiredPropertyNames)
             {
                 if (wrappedObject.Properties[property] == null)
                 {
@@ -1635,7 +1651,8 @@ namespace System.Management.Automation
             if (missingProperties.Count > 0)
             {
                 var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePropertyFailure : ErrorMessage;
-                throw new ValidationMetadataException("ValidatePropertyFailure", null,
+                throw new ValidationMetadataException(
+                    "ValidatePropertyFailure", null,
                     errorMessageFormat,
                     element.ToString(), PropertySetAsString());
             }
@@ -1643,11 +1660,17 @@ namespace System.Management.Automation
 
         private string PropertySetAsString()
         {
-            return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, RequiredProperties);
+            var propertyStrings = new List<string>();
+            foreach (var key in RequiredProperties.Keys)
+            {
+                propertyStrings.Add(string.Format("[{0}] {1}", RequiredProperties[key], key));
+            }
+
+            return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, propertyStrings);
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateSetAttribute class.
+        /// Initializes a new instance of the ValidatePropertyAttribute class.
         /// </summary>
         /// <param name="requiredProperties">List of valid values.</param>
         /// <exception cref="ArgumentNullException">For null arguments.</exception>
@@ -1664,7 +1687,23 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentOutOfRangeException("validValues", requiredProperties);
             }
 
-            RequiredProperties = requiredProperties;
+            RequiredPropertyNames = requiredProperties;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidatePropertyAttribute class.
+        /// </summary>
+        /// <param name="requiredProperties">A dictionary or hashtable containing the property names and types required.</param>
+        public ValidatePropertyAttribute(IDictionary requiredProperties)
+        {
+            RequiredProperties = new Dictionary<string, Type>();
+            foreach (var key in requiredProperties.Keys)
+            {
+                string propertyName = LanguagePrimitives.ConvertTo<string>(key);
+                Type propertyType = LanguagePrimitives.ConvertTo<Type>(requiredProperties[key]);
+
+                RequiredProperties.Add(propertyName, propertyType);
+            }
         }
     }
 

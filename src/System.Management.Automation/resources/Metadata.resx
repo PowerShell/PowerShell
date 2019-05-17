@@ -178,7 +178,7 @@
     <value>The character length of the {1} argument is too long. Shorten the character length of the argument so it is fewer than or equal to "{0}" characters, and then try the command again.</value>
   </data>
   <data name="ValidatePropertyFailure" xml:space="preserve">
-    <value>The argument "{0}" does contain the necessary properties "{1}" specified by the ValidateProperty attribute. Supply an argument that possesses the correct properties and then try the command again.</value>
+    <value>The argument "{0}" does not contain the required property names or values with types specified by the ValidateProperty attribute: {1}. Supply an argument that possesses the correct properties with the appropriate types and then try the command again.</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
     <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
