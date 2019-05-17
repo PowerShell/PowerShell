@@ -410,7 +410,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             }
 
             $err = { get-fooj -p 2 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,get-fooj' -PassThru
-            $err.Exception.Message | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed 'a,b' property check"
+            $err.Exception.Message | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '[System.Object]a,[System.Object]b' property check"
         }
 
         It "ValidateSet can use custom ErrorMessage" {

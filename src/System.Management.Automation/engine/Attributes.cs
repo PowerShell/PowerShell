@@ -1664,7 +1664,7 @@ namespace System.Management.Automation
             var propertyStrings = new List<string>();
             foreach (var key in RequiredProperties.Keys)
             {
-                propertyStrings.Add(string.Format("[{0}] {1}", RequiredProperties[key], key));
+                propertyStrings.Add(string.Format("[{0}]{1}", RequiredProperties[key], key));
             }
 
             return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, propertyStrings);
