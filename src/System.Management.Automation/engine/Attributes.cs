@@ -1579,6 +1579,96 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Validates that each parameter argument has all of the set property names.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidatePropertyAttribute : ValidateEnumeratedArgumentsAttribute
+    {
+        /// <summary>
+        /// Gets or sets the custom error message that is displayed to the user
+        ///
+        /// The item being validated and a text representation of the required object properties
+        /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
+        /// <example>
+        /// <code>
+        /// [ValidateProperty(
+        ///     "A","B","C",
+        ///     ErrorMessage = "The object '{0}' does not possess all the necessary properties: '{1}'.")
+        /// </code>
+        /// </example>
+        /// </summary>
+        public string ErrorMessage { get; set; }
+
+        /// <summary>
+        /// Gets the valid values in the set.
+        /// </summary>
+        public IList<string> RequiredProperties { get; }
+
+        /// <summary>
+        /// Validates that each parameter argument possesses the required properties.
+        /// </summary>
+        /// <param name="element">Object to validate.</param>
+        /// <exception cref="ValidationMetadataException">
+        /// if argument is missing one or more required properties
+        /// </exception>
+        protected override void ValidateElement(object element)
+        {
+            if (element == null)
+            {
+                throw new ValidationMetadataException(
+                    errorId: "ArgumentIsEmpty",
+                    innerException: null,
+                    resourceStr: Metadata.ValidateNotNullFailure);
+            }
+
+            var wrappedObject = PSObject.AsPSObject(element);
+            var missingProperties = new List<string>();
+
+            foreach (string property in RequiredProperties)
+            {
+                if (wrappedObject.Properties[property] == null)
+                {
+                    missingProperties.Add(property);
+                }
+            }
+
+            if (missingProperties.Count > 0)
+            {
+                var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePropertyFailure : ErrorMessage;
+                throw new ValidationMetadataException("ValidatePropertyFailure", null,
+                    errorMessageFormat,
+                    element.ToString(), PropertySetAsString());
+            }
+        }
+
+        private string PropertySetAsString()
+        {
+            return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, RequiredProperties);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidateSetAttribute class.
+        /// </summary>
+        /// <param name="requiredProperties">List of valid values.</param>
+        /// <exception cref="ArgumentNullException">For null arguments.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
+        public ValidatePropertyAttribute(params string[] requiredProperties)
+        {
+            if (requiredProperties == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("validValues");
+            }
+
+            if (requiredProperties.Length == 0)
+            {
+                throw PSTraceSource.NewArgumentOutOfRangeException("validValues", requiredProperties);
+            }
+
+            RequiredProperties = requiredProperties;
+        }
+    }
+
+    /// <summary>
     /// Optional base class for <see cref="IValidateSetValuesGenerator"/> implementations that want a default implementation to cache valid values.
     /// </summary>
     public abstract class CachedValidValuesGeneratorBase : IValidateSetValuesGenerator
