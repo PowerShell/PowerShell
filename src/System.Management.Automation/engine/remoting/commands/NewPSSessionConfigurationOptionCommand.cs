@@ -67,9 +67,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// LoadFromDefaults.
         /// </summary>
-        /// <param name="sessionType"></param>
         /// <param name="keepAssigned"></param>
-        protected internal override void LoadFromDefaults(PSSessionType sessionType, bool keepAssigned)
+        protected internal override void LoadFromDefaults(bool keepAssigned)
         {
             if (!keepAssigned || !_outputBufferingMode.HasValue)
             {

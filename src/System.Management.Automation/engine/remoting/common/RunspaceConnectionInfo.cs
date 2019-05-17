@@ -76,24 +76,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Specifies the type of session configuration that
-    /// should be used for creating a connection info.
-    /// </summary>
-    public enum PSSessionType
-    {
-        /// <summary>
-        /// Default PowerShell remoting
-        /// endpoint.
-        /// </summary>
-        DefaultRemoteShell = 0,
-
-        /// <summary>
-        /// Default Workflow endpoint. It is deprecated.
-        /// </summary>
-        Workflow = 1,
-    }
-
-    /// <summary>
     /// Specify the type of access mode that should be
     /// used when creating a session configuration.
     /// </summary>
