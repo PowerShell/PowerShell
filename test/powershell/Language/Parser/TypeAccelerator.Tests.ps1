@@ -299,6 +299,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.ValidateSetAttribute]
                 }
                 @{
+                    Accelerator = 'ValidateProperty'
+                    Type        = [System.Management.Automation.ValidateProperty]
+                }
+                @{
                     Accelerator = 'ValidateUserDrive'
                     Type        = [System.Management.Automation.ValidateUserDriveAttribute]
                 }
