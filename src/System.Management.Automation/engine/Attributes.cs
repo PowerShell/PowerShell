@@ -1640,9 +1640,10 @@ namespace System.Management.Automation
             var wrappedObject = PSObject.AsPSObject(element);
             var missingProperties = new List<string>();
 
-            foreach (string property in RequiredPropertyNames)
+            foreach (string property in RequiredProperties.Keys)
             {
-                if (wrappedObject.Properties[property] == null)
+                if (wrappedObject.Properties[property] == null
+                    || wrappedObject.Properties[property].Value.GetType() != RequiredProperties[property])
                 {
                     missingProperties.Add(property);
                 }
