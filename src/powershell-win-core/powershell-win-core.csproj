@@ -1,11 +1,6 @@
 ﻿<Project ToolsVersion="15.0">
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
-
   <Import Project="..\..\PowerShell.Common.props" />
+
   <PropertyGroup>
     <Description>PowerShell on Windows top-level project</Description>
     <AssemblyName>pwsh</AssemblyName>
@@ -18,6 +13,12 @@
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
   </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(RuntimeIdentifier)' == 'win-arm' or '$(RuntimeIdentifier)' == 'win-arm64'" />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(RuntimeIdentifier)' != 'win-arm' and '$(RuntimeIdentifier)' != 'win-arm64'" />
 
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
