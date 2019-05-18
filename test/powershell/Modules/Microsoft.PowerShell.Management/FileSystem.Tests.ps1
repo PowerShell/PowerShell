@@ -23,8 +23,31 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $testContent = "Some Content"
             $testContent2 = "More Content"
             $reservedNamesTests = @(
-                # other formally reserved names work with .Net Core 3.0
-                @{ deviceName = "CLOCK$" }
+                @{ deviceName = 'CON' }
+                @{ deviceName = 'PRN' }
+                @{ deviceName = 'AUX' }
+                @{ deviceName = 'CLOCK$' }
+                @{ deviceName = 'NUL' }
+                @{ deviceName = 'COM0' }
+                @{ deviceName = 'COM1' }
+                @{ deviceName = 'COM2' }
+                @{ deviceName = 'COM3' }
+                @{ deviceName = 'COM4' }
+                @{ deviceName = 'COM5' }
+                @{ deviceName = 'COM6' }
+                @{ deviceName = 'COM7' }
+                @{ deviceName = 'COM8' }
+                @{ deviceName = 'COM9' }
+                @{ deviceName = 'LPT0' }
+                @{ deviceName = 'LPT1' }
+                @{ deviceName = 'LPT2' }
+                @{ deviceName = 'LPT3' }
+                @{ deviceName = 'LPT4' }
+                @{ deviceName = 'LPT5' }
+                @{ deviceName = 'LPT6' }
+                @{ deviceName = 'LPT7' }
+                @{ deviceName = 'LPT8' }
+                @{ deviceName = 'LPT9' }
             )
         }
 
