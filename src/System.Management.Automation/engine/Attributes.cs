@@ -128,7 +128,7 @@ namespace System.Management.Automation
         internal void InternalValidate(object o, EngineIntrinsics engineIntrinsics) => Validate(o, engineIntrinsics);
 
         /// <summary>
-        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute" />
+        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute"/>.
         /// </summary>
         protected ValidateArgumentsAttribute()
         {
