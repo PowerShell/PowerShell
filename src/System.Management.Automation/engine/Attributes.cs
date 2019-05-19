@@ -2141,7 +2141,7 @@ namespace System.Management.Automation
     public abstract class ArgumentTransformationAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentTransformationAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ArgumentTransformationAttribute"/> class.
         /// </summary>
         protected ArgumentTransformationAttribute()
         {
