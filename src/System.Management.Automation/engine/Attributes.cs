@@ -179,7 +179,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// Validate that the value of <paramref name="element"/> is valid, and throw
-        /// <see cref="ValidationMetadataException" /> if it is invalid.
+        /// <see cref="ValidationMetadataException"/> if it is invalid.
         /// </remarks>
         /// <param name="element">One of the parameter arguments.</param>
         /// <exception cref="ValidationMetadataException">Should be thrown for any validation failure.</exception>
