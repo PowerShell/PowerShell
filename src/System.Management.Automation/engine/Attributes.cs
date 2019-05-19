@@ -75,7 +75,6 @@ namespace System.Management.Automation
     /// <see cref="ValidateNotNullOrEmptyAttribute"/>, <see cref="ValidateArgumentsAttribute"/>,
     /// <see cref="ValidateLengthAttribute"/>, <see cref="ValidateRangeAttribute"/>,
     /// <see cref="ValidatePatternAttribute"/>, and <see cref="ValidateSetAttribute"/>.
-    ///
     /// PSSnapins wishing to create custom argument validation attributes should derive from
     /// <see cref="ValidateArgumentsAttribute"/> and override the
     /// <see cref="ValidateArgumentsAttribute.Validate"/> abstract method, after which they can apply the
@@ -83,10 +82,8 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument as a whole. If the argument value may
     /// be an enumerable, you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// which will take care of unrolling the enumerable and validate each element individually.
-    ///
     /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, the string[] command argument will be validated.
     /// </remarks>
@@ -143,19 +140,15 @@ namespace System.Management.Automation
     /// <see cref="ValidateEnumeratedArgumentsAttribute"/> is like <see cref="ValidateArgumentsAttribute"/>,
     /// except that if the argument value is enumerable, <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// will unroll the enumeration and validate each item individually.
-    ///
     /// Existing enumerated validation attributes include
     /// <see cref="ValidateLengthAttribute"/>, <see cref="ValidateRangeAttribute"/>,
     /// <see cref="ValidatePatternAttribute"/>, and <see cref="ValidateSetAttribute"/>.
-    ///
     /// PSSnapins wishing to create custom enumerated argument validation attributes should derive from
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/> and override the
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
     /// abstract method, after which they can apply the attribute to their parameters.
-    ///
     /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, each string command argument will be validated.
     /// </remarks>
@@ -497,9 +490,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Attributes implemented by a provider can use:
-        ///
         ///     [OutputType(ProviderCmdlet='cmdlet', typeof(...))]
-        ///
         /// To specify the provider specific objects returned for a given cmdlet.
         /// </summary>
         public string ProviderCmdlet { get; set; }
@@ -640,7 +631,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the name of the parameter set this parameter belongs to.
-        ///
         /// When it is not specified, <see cref="ParameterAttribute.AllParameterSets"/> is assumed.
         /// </summary>
         public string ParameterSetName
@@ -652,7 +642,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets a flag specifying if this parameter is Mandatory.
-        ///
         /// When it is not specified, false is assumed and the parameter is considered optional.
         /// </summary>
         public bool Mandatory { get; set; } = false;
@@ -660,7 +649,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets a flag that specifies that this parameter can take values from the incoming pipeline
         /// object.
-        ///
         /// When it is not specified, false is assumed.
         /// </summary>
         public bool ValueFromPipeline { get; set; }
@@ -668,7 +656,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets a flag that specifies that this parameter can take values from a property in the
         /// incoming pipeline object with the same name as the parameter or an alias of the parameter.
-        ///
         /// When it is not specified, false is assumed.
         /// </summary>
         public bool ValueFromPipelineByPropertyName { get; set; }
@@ -676,7 +663,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets a flag that specifies that the remaining command line parameters should be
         /// associated with this parameter in the form of an array.
-        ///
         /// When it is not specified, false is assumed.
         /// </summary>
         public bool ValueFromRemainingArguments { get; set; } = false;
@@ -702,7 +688,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the base name of the resource for a help message.
-        ///
         /// When this field is specified, HelpMessageResourceId must also be specified.
         /// </summary>
         /// <exception cref="ArgumentException">For a null or empty value when setting.</exception>
@@ -723,7 +708,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the Id of the resource for a help message.
-        ///
         /// When this field is specified, HelpMessageBaseName must also be specified.
         /// </summary>
         /// <exception cref="ArgumentException">For a null or empty value when setting.</exception>
@@ -1275,7 +1259,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message pattern that is displayed to the user.
-        ///
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
@@ -1343,7 +1326,6 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user.
-        ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
         /// <example>
@@ -1609,7 +1591,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user.
-        ///
         /// The item being validated and a text representation of the validation set is passed as the
         /// first and second formatting argument to the <see cref="ErrorMessage"/> formatting pattern.
         /// <example>
@@ -2123,15 +2104,12 @@ namespace System.Management.Automation
     /// value in some fashion. The transformation might change the object, convert the type, or
     /// even load a file or AD object based on the name. Existing argument transformation attributes
     /// include <see cref="ArgumentTypeConverterAttribute"/>.
-    ///
     /// Custom argument transformation attributes should derive from
     /// <see cref="ArgumentTransformationAttribute"/> and override the
     /// <see cref="ArgumentTransformationAttribute.Transform"/> abstract method, after which they
     /// can apply the attribute to their parameters.
-    ///
     /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable
     /// string similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If multiple transformations are defined on a parameter, they will be invoked in series,
     /// each getting the output of the previous transformation.
     /// </remarks>
