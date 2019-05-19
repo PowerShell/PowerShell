@@ -128,7 +128,7 @@ namespace System.Management.Automation
         internal void InternalValidate(object o, EngineIntrinsics engineIntrinsics) => Validate(o, engineIntrinsics);
 
         /// <summary>
-        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute"/>
+        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute"/>.
         /// </summary>
         protected ValidateArgumentsAttribute()
         {
@@ -634,7 +634,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the parameter position.
-        ///
         /// If not set, the parameter is named.
         /// </summary>
         public int Position { get; set; } = int.MinValue;
