@@ -168,7 +168,7 @@ namespace System.Management.Automation
     public abstract class ValidateEnumeratedArgumentsAttribute : ValidateArgumentsAttribute
     {
         /// <summary>
-        /// Initializes a new instance of a class derived from <see cref="ValidateEnumeratedArgumentsAttribute" />.
+        /// Initializes a new instance of a class derived from <see cref="ValidateEnumeratedArgumentsAttribute"/>.
         /// </summary>
         protected ValidateEnumeratedArgumentsAttribute() : base()
         {
