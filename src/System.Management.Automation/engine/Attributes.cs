@@ -1274,8 +1274,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
-        /// If <paramref name="element"/> is not a string that matches the pattern
-        /// and for invalid arguments
+        /// If <paramref name="element"/> is not a string that matches the pattern, and for invalid arguments.
         /// </exception>
         protected override void ValidateElement(object element)
         {
@@ -2132,7 +2131,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the transformation is being made.
         /// </param>
         /// <param name="inputData">Parameter argument to mutate.</param>
-        /// <returns>The transformed value(s) of <paramref name="inputData"/>..</returns>
+        /// <returns>The transformed value(s) of <paramref name="inputData"/>.</returns>
         /// <exception cref="ArgumentException">Should be thrown for invalid arguments.</exception>
         /// <exception cref="ArgumentTransformationMetadataException">
         /// Should be thrown for any problems during transformation.
