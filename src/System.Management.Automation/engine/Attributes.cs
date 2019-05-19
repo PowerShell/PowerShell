@@ -634,7 +634,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the parameter position.
-        ///
         /// If not set, the parameter is named.
         /// </summary>
         public int Position { get; set; } = int.MinValue;
