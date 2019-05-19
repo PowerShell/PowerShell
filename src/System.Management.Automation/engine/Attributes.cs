@@ -23,7 +23,7 @@ namespace System.Management.Automation.Internal
     /// since it has no public constructor. Only the public subclasses <see cref="ValidateArgumentsAttribute"/>
     /// and <see cref="ArgumentTransformationAttribute"/> are available.
     /// </remarks>
-    /// <seealso cref="CmdletMetadataAttribute" />
+    /// <seealso cref="CmdletMetadataAttribute"/>
     /// <seealso cref="ValidateArgumentsAttribute"/>
     /// <seealso cref="ArgumentTransformationAttribute"/>
     [AttributeUsage(AttributeTargets.All)]
@@ -128,7 +128,7 @@ namespace System.Management.Automation
         internal void InternalValidate(object o, EngineIntrinsics engineIntrinsics) => Validate(o, engineIntrinsics);
 
         /// <summary>
-        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute" />
+        /// Initializes a new instance of a class derived from <see cref="ValidateArgumentsAttribute"/>
         /// </summary>
         protected ValidateArgumentsAttribute()
         {
@@ -168,7 +168,7 @@ namespace System.Management.Automation
     public abstract class ValidateEnumeratedArgumentsAttribute : ValidateArgumentsAttribute
     {
         /// <summary>
-        /// Initializes a new instance of a class derived from <see cref="ValidateEnumeratedArgumentsAttribute" />.
+        /// Initializes a new instance of a class derived from <see cref="ValidateEnumeratedArgumentsAttribute"/>.
         /// </summary>
         protected ValidateEnumeratedArgumentsAttribute() : base()
         {
@@ -179,7 +179,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// Validate that the value of <paramref name="element"/> is valid, and throw
-        /// <see cref="ValidationMetadataException" /> if it is invalid.
+        /// <see cref="ValidationMetadataException"/> if it is invalid.
         /// </remarks>
         /// <param name="element">One of the parameter arguments.</param>
         /// <exception cref="ValidationMetadataException">Should be thrown for any validation failure.</exception>
@@ -642,7 +642,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the name of the parameter set this parameter belongs to.
         ///
-        /// When it is not specified, <see cref="ParameterAttribute.AllParameterSets" /> is assumed.
+        /// When it is not specified, <see cref="ParameterAttribute.AllParameterSets"/> is assumed.
         /// </summary>
         public string ParameterSetName
         {
@@ -826,7 +826,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Validates that the length of each parameter argument's Length falls in the range specified by
-    /// <see cref="MinLength" /> and <see cref="MaxLength" />.
+    /// <see cref="MinLength"/> and <see cref="MaxLength"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateLengthAttribute : ValidateEnumeratedArgumentsAttribute
@@ -843,7 +843,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Validates that the length of each parameter argument's Length falls in the range specified
-        /// by <see cref="MinLength" /> and <see cref="MaxLength" />.
+        /// by <see cref="MinLength"/> and <see cref="MaxLength"/>.
         /// </summary>
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is not a string
@@ -882,7 +882,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateLengthAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateLengthAttribute"/> class.
         /// </summary>
         /// <param name="minLength">Minimum required length.</param>
         /// <param name="maxLength">Maximum required length.</param>
@@ -939,8 +939,8 @@ namespace System.Management.Automation
         NonPositive
     }
     /// <summary>
-    /// Validates that each parameter argument falls in the range specified by <see cref="MinRange" />
-    /// and <see cref="MaxRange" />.
+    /// Validates that each parameter argument falls in the range specified by <see cref="MinRange"/>
+    /// and <see cref="MaxRange"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateRangeAttribute : ValidateEnumeratedArgumentsAttribute
@@ -973,12 +973,12 @@ namespace System.Management.Automation
         private ValidateRangeKind? _rangeKind;
 
         /// <summary>
-        /// Validates that each parameter argument falls in the range specified by <see cref="MinRange" />
-        /// and <see cref="MaxRange" />.
+        /// Validates that each parameter argument falls in the range specified by <see cref="MinRange"/>
+        /// and <see cref="MaxRange"/>.
         /// </summary>
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
-        /// Thrown if the object to be validated does not implement <see cref="IComparable" />,
+        /// Thrown if the object to be validated does not implement <see cref="IComparable"/>,
         /// if the element type is not the same as MinRange/MaxRange, or if the element is not between
         /// MinRange and MaxRange.
         /// </exception>
@@ -1009,15 +1009,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateRangeAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateRangeAttribute"/> class.
         /// </summary>
         /// <param name="minRange">Minimum value of the range allowed.</param>
         /// <param name="maxRange">Maximum value of the range allowed.</param>
         /// <exception cref="ArgumentNullException">For invalid arguments.</exception>
         /// <exception cref="ValidationMetadataException">
-        /// if <paramref name="maxRange" /> has a different type than <paramref name="minRange" />
-        /// if <paramref name="maxRange" /> is smaller than <paramref name="minRange" />
-        /// if <paramref name="maxRange" />, <paramref name="minRange" /> are not <see cref="IComparable" />
+        /// if <paramref name="maxRange"/> has a different type than <paramref name="minRange"/>
+        /// if <paramref name="maxRange"/> is smaller than <paramref name="minRange"/>
+        /// if <paramref name="maxRange"/>, <paramref name="minRange"/> are not <see cref="IComparable"/>
         /// </exception>
         public ValidateRangeAttribute(object minRange, object maxRange) : base()
         {
@@ -1087,8 +1087,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateRangeAttribute" /> class.
-        /// This constructor uses a predefined <see cref="ValidateRangeKind" />.
+        /// Initializes a new instance of the <see cref="ValidateRangeAttribute"/> class.
+        /// This constructor uses a predefined <see cref="ValidateRangeKind"/>.
         /// </summary>
         public ValidateRangeAttribute(ValidateRangeKind kind) : base()
         {
@@ -1259,7 +1259,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that each parameter argument matches the <see cref="RegexPattern" />.
+    /// Validates that each parameter argument matches the <see cref="RegexPattern"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidatePatternAttribute : ValidateEnumeratedArgumentsAttribute
@@ -1322,7 +1322,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidatePatternAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidatePatternAttribute"/> class.
         /// </summary>
         /// <param name="regexPattern">Pattern string to match.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateScriptAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateScriptAttribute"/> class.
         /// </summary>
         /// <param name="scriptBlock">Scriptblock to match.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
@@ -1436,9 +1436,9 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the validation is being evaluated.
         /// </param>
         /// <exception cref="ValidationMetadataException">
-        /// if the element is none of <see cref="ICollection" />, <see cref="IEnumerable" />,
-        /// <see cref="IList" />, <see cref="IEnumerator" />
-        /// if the element's length is not between <see cref="MinLength" /> and <see cref="MaxLength" />
+        /// if the element is none of <see cref="ICollection"/>, <see cref="IEnumerable"/>,
+        /// <see cref="IList"/>, <see cref="IEnumerator"/>
+        /// if the element's length is not between <see cref="MinLength"/> and <see cref="MaxLength"/>
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
@@ -1501,13 +1501,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateCountAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateCountAttribute"/> class.
         /// </summary>
         /// <param name="minLength">Minimum number of values required.</param>
         /// <param name="maxLength">Maximum number of values required.</param>
         /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         /// <exception cref="ValidationMetadataException">
-        /// if <paramref name="minLength" /> is greater than <paramref name="maxLength" />
+        /// if <paramref name="minLength"/> is greater than <paramref name="maxLength"/>
         /// </exception>
         public ValidateCountAttribute(int minLength, int maxLength)
         {
@@ -1545,10 +1545,10 @@ namespace System.Management.Automation
         private int _validValuesCacheExpiration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CachedValidValuesGeneratorBase" /> class.
+        /// Initializes a new instance of the <see cref="CachedValidValuesGeneratorBase"/> class.
         /// </summary>
         /// <param name="cacheExpirationInSeconds">
-        /// Sets a time interval in seconds to reset the <see cref="_validValues" /> dynamic valid values cache.
+        /// Sets a time interval in seconds to reset the <see cref="_validValues"/> dynamic valid values cache.
         /// </param>
         protected CachedValidValuesGeneratorBase(int cacheExpirationInSeconds)
         {
@@ -1612,7 +1612,7 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message that is displayed to the user.
         ///
         /// The item being validated and a text representation of the validation set is passed as the
-        /// first and second formatting argument to the <see cref="ErrorMessage" /> formatting pattern.
+        /// first and second formatting argument to the <see cref="ErrorMessage"/> formatting pattern.
         /// <example>
         /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
         private string SetAsString() => string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, ValidValues);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateSetAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateSetAttribute"/> class.
         /// </summary>
         /// <param name="validValues">List of valid values.</param>
         /// <exception cref="ArgumentNullException">For null arguments.</exception>
@@ -1715,12 +1715,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateSetAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateSetAttribute"/> class.
         /// Valid values are returned dynamically from a custom class implementing
-        /// <see cref="IValidateSetValuesGenerator" />
+        /// <see cref="IValidateSetValuesGenerator"/>
         /// </summary>
         /// <param name="valuesGeneratorType">
-        /// Class that implements the <see cref="IValidateSetValuesGenerator" /> interface.
+        /// Class that implements the <see cref="IValidateSetValuesGenerator"/> interface.
         /// </param>
         /// <exception cref="ArgumentException">For null arguments.</exception>
         public ValidateSetAttribute(Type valuesGeneratorType)
@@ -1741,7 +1741,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute" />
+    /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute"/>
     /// </summary>
     public interface IValidateSetValuesGenerator
     {
@@ -1793,7 +1793,7 @@ namespace System.Management.Automation
     public sealed class AllowNullAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowNullAttribute" /> class.
+        /// Initializes a new instance of the <see cref="AllowNullAttribute"/> class.
         /// </summary>
         public AllowNullAttribute() { }
     }
@@ -1805,7 +1805,7 @@ namespace System.Management.Automation
     public sealed class AllowEmptyStringAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowEmptyStringAttribute" /> class.
+        /// Initializes a new instance of the <see cref="AllowEmptyStringAttribute"/> class.
         /// </summary>
         public AllowEmptyStringAttribute() { }
     }
@@ -1817,7 +1817,7 @@ namespace System.Management.Automation
     public sealed class AllowEmptyCollectionAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowEmptyCollectionAttribute" /> class.
+        /// Initializes a new instance of the <see cref="AllowEmptyCollectionAttribute"/> class.
         /// </summary>
         public AllowEmptyCollectionAttribute() { }
     }
@@ -1840,7 +1840,7 @@ namespace System.Management.Automation
         public IList<string> ValidRootDrives { get => _validRootDrives; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateDriveAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateDriveAttribute"/> class.
         /// </summary>
         /// <param name="validRootDrives">List of approved root drives for path.</param>
         public ValidateDriveAttribute(params string[] validRootDrives)
@@ -1926,7 +1926,7 @@ namespace System.Management.Automation
     public sealed class ValidateUserDriveAttribute : ValidateDriveAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidateUserDriveAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ValidateUserDriveAttribute"/> class.
         /// </summary>
         public ValidateUserDriveAttribute()
             : base(new string[] { "User" })
@@ -2136,19 +2136,19 @@ namespace System.Management.Automation
     /// If multiple transformations are defined on a parameter, they will be invoked in series,
     /// each getting the output of the previous transformation.
     /// </remarks>
-    /// <seealso cref="ArgumentTypeConverterAttribute" />
+    /// <seealso cref="ArgumentTypeConverterAttribute"/>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public abstract class ArgumentTransformationAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentTransformationAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ArgumentTransformationAttribute"/> class.
         /// </summary>
         protected ArgumentTransformationAttribute()
         {
         }
 
         /// <summary>
-        /// Method that will be overridden by the subclasses to transform the <paramref name="inputData" />
+        /// Method that will be overridden by the subclasses to transform the <paramref name="inputData"/>
         /// parameter argument into some other object that will be used for the parameter's value.
         /// </summary>
         /// <param name="engineIntrinsics">
@@ -2163,8 +2163,8 @@ namespace System.Management.Automation
         public abstract object Transform(EngineIntrinsics engineIntrinsics, object inputData);
 
         /// <summary>
-        /// Transform <paramref name="inputData" /> and track the flow of untrusted object.
-        /// NOTE: All internal handling of <see cref="ArgumentTransformationAttribute" /> should use this method to
+        /// Transform <paramref name="inputData"/> and track the flow of untrusted object.
+        /// NOTE: All internal handling of <see cref="ArgumentTransformationAttribute"/> should use this method to
         /// track the trustworthiness of the data input source by default.
         /// </summary>
         /// <remarks>
