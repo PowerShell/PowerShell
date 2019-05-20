@@ -1,5 +1,43 @@
 # Changelog
 
+## v6.2.1 - 05/21/2019
+
+### Engine Updates and Fixes
+
+- Re-enable tab completion for functions (#9383)
+- Disable debugger in System Lock down mode (Internal 8428)
+
+### Code Cleanup
+
+- Update repo for Ubuntu 14.04 EOL (#9324)
+
+### Tests
+
+- Fix skipping of tests in `RemoteSession.Basic.Tests.ps1` (#9304)
+- Update tests to account for when `$PSHOME` is read only (#9279)
+- Mark tests in macOS CI which use `applescript` as pending/inconclusive (#9352)
+- Make sure non-Windows CI fails when a test fails (#9303)
+
+### Build and Packaging Improvements
+
+- Partially revert "Fix the failed test and update `Publish-TestResults` to make `AzDO` fail the task when any tests failed (#9457)"
+- Bump `Markdig.Signed` from `0.16.0` to `0.17.0` (#9595)
+- Bump `Microsoft.PowerShell.Archive` from `1.2.2.0` to `1.2.3.0` in `/src/Modules` (#9594)
+- Enable building on Kali Linux (#9471)
+- Fix the failed test and update `Publish-TestResults` to make `AzDO` fail the task when any tests failed (#9457)
+- Add Preview assets for `msix` (#9375)
+- Create code coverage and test packages for non-windows (#9373)
+- Fix publishing daily `nupkg` to MyGet (#9269)
+- Bump `PackageManagement` from `1.3.1` to `1.3.2` in `/src/Modules` (#9568)
+- Bump `NJsonSchema` from `9.13.27` to `9.13.37` (#9524)
+- Bump `gulp` from `4.0.0` to `4.0.2` in `/test/common/markdown` (#9443)
+- Bump `Newtonsoft.Json` from `12.0.1` to `12.0.2` (#9433)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.2` to `4.5.3` (#9367)
+- Add `AccessToken` variable to jobs that perform signing (#9351)
+- Create test package for macOS on release builds (#9344)
+- Add component detection to all jobs (#8964)
+- Move artifacts to artifact staging directory before uploading (#9273)
+
 ## v6.2.0 - 03/28/2019
 
 ### Breaking Changes
