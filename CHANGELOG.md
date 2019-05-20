@@ -706,6 +706,21 @@
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
 
 ## 6.1.3 - 2019-02-19
+## 6.1.4 - 2019-05-21
+
+### Build and Packaging Improvements
+
+- Disable debugger in System Lock down mode (Internal 8430)
+- Port changes for release automation to `6.1` (Internal 8402)
+- Fix `MSI` `WIX` generation (#9013) (Internal 8385)
+- Update `Microsoft.PowerShell.Archive` version (Internal 8380)
+- Update package version in hosting test (Internal 8374)
+- Bump to `dotnet` `2.1.11` release
+- Remove update build table logic from release build (Internal 8364)
+- Add `AccessToken` variable to jobs that perform signing (#9351)
+- Support release branches based on the forward slash separator (#8903)
+
+## 6.1.3 - 2019-02-14
 
 ### Engine Updates and Fixes
 
