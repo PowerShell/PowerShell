@@ -22,10 +22,10 @@ Describe "Assembly::LoadWithPartialName Validation Test" -Tags "CI" {
     # All existing cases should fail on all platforms either because it doesn't exist or
     # because the assembly is blacklisted
 
-    # This test is currently being skipped because there are no assemblies being blacklisted for .NET Core 3.0
-    # keeping this test in case that changes in the future.
+    # This test is currently being skipped because System.Windows.Forms is part of .NET Core 3.0 so it gets
+    # load and thus no exception is thrown failing this test.
 
-    It "Assembly::LoadWithPartialName should fail to load blacklisted assembly: <Name>" -Skip -TestCases $testcases {
+    It "Assembly::LoadWithPartialName should fail to load blacklisted assembly: <Name>" -Pending -TestCases $testcases {
         param(
             [Parameter(Mandatory)]
             [string]
