@@ -2338,7 +2338,10 @@ function Copy-PSGalleryModules
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
             $matches[1]
-        } else {
+        } elseif ($version -match "^\d+.\d+$") {
+            "$version.0"
+        }
+        else {
             $version
         }
 
@@ -2350,7 +2353,7 @@ function Copy-PSGalleryModules
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
         # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
         $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
-        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest -ErrorAction Stop
     }
 }
 
