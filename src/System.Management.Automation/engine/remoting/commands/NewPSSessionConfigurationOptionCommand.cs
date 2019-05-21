@@ -65,9 +65,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// LoadFromDefaults.
+        /// Override LoadFromDefaults method.
         /// </summary>
-        /// <param name="keepAssigned"></param>
+        /// <param name="keepAssigned">Keep old values.</param>
         protected internal override void LoadFromDefaults(bool keepAssigned)
         {
             if (!keepAssigned || !_outputBufferingMode.HasValue)

@@ -737,7 +737,6 @@ namespace System.Management.Automation
         /// This is primarily to be used in functions that are implementing the logic for dynamic keywords.
         /// </summary>
         public bool DontShow { get; set; }
-
     }
 
     /// <summary>
@@ -1093,7 +1092,8 @@ namespace System.Management.Automation
                     "ValidationRangeElementType",
                     innerException: null,
                     Metadata.ValidateRangeElementType,
-                    element.GetType().Name, typeof(int).Name);
+                    element.GetType().Name,
+                    typeof(int).Name);
             }
 
             object resultValue;
@@ -1114,7 +1114,8 @@ namespace System.Management.Automation
                     "ValidationRangeElementType",
                     null,
                     Metadata.ValidateRangeElementType,
-                    element.GetType().Name, commonType.Name);
+                    element.GetType().Name,
+                    commonType.Name);
             }
 
             switch (rangeKind)
@@ -1181,7 +1182,8 @@ namespace System.Management.Automation
                         "ValidationRangeElementType",
                         null,
                         Metadata.ValidateRangeElementType,
-                        element.GetType().Name, MinRange.GetType().Name);
+                        element.GetType().Name,
+                        MinRange.GetType().Name);
                 }
             }
 
@@ -1192,7 +1194,8 @@ namespace System.Management.Automation
                     "ValidateRangeTooSmall",
                     null,
                     Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                    element.ToString(), MinRange.ToString());
+                    element.ToString(),
+                    MinRange.ToString());
             }
 
             if (_maxComparable.CompareTo(element) < 0)
@@ -1201,7 +1204,8 @@ namespace System.Management.Automation
                     "ValidateRangeTooBig",
                     null,
                     Metadata.ValidateRangeGreaterThanMaxRangeFailure,
-                    element.ToString(), MaxRange.ToString());
+                    element.ToString(),
+                    MaxRange.ToString());
             }
         }
 
