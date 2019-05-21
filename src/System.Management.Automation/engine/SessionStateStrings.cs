@@ -116,11 +116,6 @@ namespace System.Management.Automation
         internal const string PowerShellDataFileExtension = ".psd1";
 
         /// <summary>
-        /// The file extension (including the dot) of an workflow file.
-        /// </summary>
-        internal const string WorkflowFileExtension = ".xaml";
-
-        /// <summary>
         /// The file extension (including the dot) of an workflow dependent assembly.
         /// </summary>
         internal const string PowerShellILAssemblyExtension = ".dll";
