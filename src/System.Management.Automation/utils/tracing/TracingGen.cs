@@ -450,9 +450,9 @@ namespace System.Management.Automation.Tracing
         /// EndpointRegistered (EventId: 0xb041/45121)
         /// </summary>
         [EtwEvent(0xb041)]
-        public void EndpointRegistered(string endpointName, string endpointType, string registeredBy)
+        public void EndpointRegistered(string endpointName, string registeredBy)
         {
-            WriteEvent(M3PEndpointRegisteredEvent, endpointName, endpointType, registeredBy);
+            WriteEvent(M3PEndpointRegisteredEvent, endpointName, registeredBy);
         }
 
         /// <summary>

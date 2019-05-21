@@ -341,26 +341,6 @@ else
         [ValidateSet("x86", "amd64")]
         public string ProcessorArchitecture { get; set; }
 
-        /// <summary>
-        /// SessionType.
-        /// </summary>
-        /// Only want this on non assemblyName parameter set, since assembly decides the sessiontype.
-        [Parameter(ParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName)]
-        public PSSessionType SessionType
-        {
-            get
-            {
-                return sessionType;
-            }
-
-            set
-            {
-                sessionType = value;
-            }
-        }
-
-        internal PSSessionType sessionType = PSSessionType.DefaultRemoteShell;
-
         #endregion
 
         #region Constructors
@@ -648,7 +628,7 @@ else
         protected override void EndProcessing()
         {
             System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
-            tracer.EndpointRegistered(this.Name, this.sessionType.ToString(), WindowsIdentity.GetCurrent().Name);
+            tracer.EndpointRegistered(this.Name, WindowsIdentity.GetCurrent().Name);
         }
 
         #endregion
@@ -821,28 +801,6 @@ else
             StringBuilder initParameters = new StringBuilder();
 
             bool assemblyAndTypeTokensSet = false;
-            if (sessionType == PSSessionType.Workflow)
-            {
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                    initParamFormat,
-                    ConfigurationDataFromXML.ENDPOINTCONFIGURATIONTYPE,
-                    sessionType,
-                    Environment.NewLine));
-
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                initParamFormat,
-                ConfigurationDataFromXML.ASSEMBLYTOKEN,
-                ConfigurationDataFromXML.WORKFLOWCOREASSEMBLY,
-                Environment.NewLine));
-
-                initParameters.Append(string.Format(CultureInfo.InvariantCulture,
-                    initParamFormat,
-                    ConfigurationDataFromXML.SHELLCONFIGTYPETOKEN,
-                    ConfigurationDataFromXML.WORKFLOWCORETYPENAME,
-                    Environment.NewLine));
-
-                assemblyAndTypeTokensSet = true;
-            }
 
             // DISC endpoint
             if (Path != null)
@@ -1169,7 +1127,7 @@ else
                     tempValue);
             }
 
-            if (sessionType == PSSessionType.Workflow && !isUseSharedProcessSpecified)
+            if (!isUseSharedProcessSpecified)
             {
                 UseSharedProcess = true;
             }
@@ -1214,13 +1172,6 @@ else
 
             StringBuilder sessionConfigurationData = new StringBuilder();
 
-            if (sessionType == PSSessionType.Workflow)
-            {
-                List<object> modifiedModulePath = new List<object>(modulesToImport ?? Array.Empty<string>());
-                modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
-                modulesToImport = modifiedModulePath.ToArray();
-            }
-
             if (modulesToImport != null && modulesToImport.Length > 0)
             {
                 sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture,
@@ -1262,7 +1213,7 @@ else
                 transportOption = transportOption.Clone() as PSTransportOption;
             }
 
-            transportOption.LoadFromDefaults(sessionType, true);
+            transportOption.LoadFromDefaults(true);
 
             // If useSharedHost is set to false, we need to set hostIdleTimeout to 0 as well, else WS-Man throws error
             if (isUseSharedProcessSpecified && !UseSharedProcess)
@@ -3783,23 +3734,20 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     StringBuilder sessionConfigurationData = new StringBuilder();
 
                     string modulePathParameter = null;
-                    string unsetModulePathStr = string.Empty;
                     bool unsetModulePath = false;
                     if (modulePathSpecified)
                     {
-                        bool isWorkflowConfiguration = IsWorkflowConfigurationType(ps);
                         if (modulesToImport == null ||
                             modulesToImport.Length == 0 ||
                             (modulesToImport.Length == 1 && modulesToImport[0] is string && ((string)modulesToImport[0]).Equals(string.Empty, StringComparison.OrdinalIgnoreCase)))
                         {
                             unsetModulePath = true;
-                            unsetModulePathStr = isWorkflowConfiguration ? ConfigurationDataFromXML.PSWORKFLOWMODULE : string.Empty;
                         }
                         else
                         {
                             modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(this.modulesToImport).Trim();
                             // Add the built-in module path if it's a workflow config
-                            if (!string.IsNullOrEmpty(modulePathParameter) && isWorkflowConfiguration)
+                            if (!string.IsNullOrEmpty(modulePathParameter))
                             {
                                 List<object> modifiedModulePath = new List<object>(modulesToImport);
                                 modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
@@ -3825,7 +3773,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     {
                         sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture,
                                 initParamFormat,
-                                PSSessionConfigurationData.ModulesToImportToken, unsetModulePathStr));
+                                PSSessionConfigurationData.ModulesToImportToken, string.Empty));
                     }
                     // unsetModulePath is false AND modulePathParameter is not empty.
                     // 1. modulePathSpecified is false. In this case, modulePathParameter will be the original module path.
@@ -3890,30 +3838,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Check if the current configuration is a workflow endpoint.
-        /// </summary>
-        /// <returns></returns>
-        private bool IsWorkflowConfigurationType(System.Management.Automation.PowerShell ps)
-        {
-            // Get the AssemblyName
-            ps.AddScript(string.Format(CultureInfo.InvariantCulture, getAssemblyNameDataFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-            Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-            if (psObjectCollection == null || psObjectCollection.Count != 1)
-            {
-                Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
-            }
-
-            if (psObjectCollection[0] == null)
-            {
-                // Not workflow endpoint, no assembly name
-                return false;
-            }
-
-            string assemblyNameOfCurrentConfiguration = psObjectCollection[0].BaseObject.ToString();
-            return assemblyNameOfCurrentConfiguration.Equals(ConfigurationDataFromXML.WORKFLOWCOREASSEMBLY, StringComparison.OrdinalIgnoreCase);
-        }
 
         private PSObject ConstructPropertiesForUpdate()
         {
@@ -4000,14 +3924,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 {
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
-                        bool isWorkflowConfiguration = IsWorkflowConfigurationType(ps);
-                        if (!string.IsNullOrEmpty(modulePathParameter) && isWorkflowConfiguration)
-                        {
-                            List<object> modifiedModulePath = new List<object>(modulesToImport);
-                            modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
-                            modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(modifiedModulePath.ToArray()).Trim();
-                        }
-
                         // Get the SessionConfigurationDataFormat
                         ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionConfigurationDataSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
                         Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
@@ -4045,10 +3961,9 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                 // ModulesToImport exist in the pssessionConfigurationData
                                 if (scd.ModulesToImportInternal != null && scd.ModulesToImportInternal.Count != 0)
                                 {
-                                    string unsetModulePathStr = isWorkflowConfiguration ? ConfigurationDataFromXML.PSWORKFLOWMODULE : string.Empty;
                                     sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture,
                                         initParamFormat,
-                                        PSSessionConfigurationData.ModulesToImportToken, unsetModulePathStr));
+                                        PSSessionConfigurationData.ModulesToImportToken, string.Empty));
                                     if (!string.IsNullOrEmpty(privateData))
                                     {
                                         sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture, privateDataFormat, privateData));

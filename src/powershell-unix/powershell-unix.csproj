@@ -7,6 +7,7 @@
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 

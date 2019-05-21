@@ -565,7 +565,7 @@ namespace System.Management.Automation
             }
 
             provider = null;
-            return null;
+            return new Collection<string>();
         }
 
         private static bool checkPath(string path, string commandName)
