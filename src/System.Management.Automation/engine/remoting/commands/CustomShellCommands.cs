@@ -3737,13 +3737,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         else
                         {
                             modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(this.modulesToImport).Trim();
-                            // Add the built-in module path if it's a workflow config
-                            if (!string.IsNullOrEmpty(modulePathParameter))
-                            {
-                                List<object> modifiedModulePath = new List<object>(modulesToImport);
-                                modifiedModulePath.Insert(0, ConfigurationDataFromXML.PSWORKFLOWMODULE);
-                                modulePathParameter = PSSessionConfigurationCommandUtilities.GetModulePathAsString(modifiedModulePath.ToArray()).Trim();
-                            }
                         }
                     }
 
