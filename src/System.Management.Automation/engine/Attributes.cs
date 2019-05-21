@@ -71,10 +71,14 @@ namespace System.Management.Automation
     /// Argument validation attributes can be attached to <see cref="Cmdlet"/> and
     /// <see cref="Provider.CmdletProvider"/> parameters to ensure that the Cmdlet or CmdletProvider will
     /// not be invoked with invalid values of the parameter. Existing validation attributes include
-    /// <see cref="ValidateCountAttribute"/>, <see cref="ValidateNotNullAttribute"/>,
-    /// <see cref="ValidateNotNullOrEmptyAttribute"/>, <see cref="ValidateArgumentsAttribute"/>,
-    /// <see cref="ValidateLengthAttribute"/>, <see cref="ValidateRangeAttribute"/>,
-    /// <see cref="ValidatePatternAttribute"/>, and <see cref="ValidateSetAttribute"/>.
+    /// <see cref="ValidateCountAttribute"/>,
+    /// <see cref="ValidateNotNullAttribute"/>,
+    /// <see cref="ValidateNotNullOrEmptyAttribute"/>,
+    /// <see cref="ValidateArgumentsAttribute"/>,
+    /// <see cref="ValidateLengthAttribute"/>,
+    /// <see cref="ValidateRangeAttribute"/>,
+    /// <see cref="ValidatePatternAttribute"/>, and
+    /// <see cref="ValidateSetAttribute"/>.
     /// PSSnapins wishing to create custom argument validation attributes should derive from
     /// <see cref="ValidateArgumentsAttribute"/> and override the
     /// <see cref="ValidateArgumentsAttribute.Validate"/> abstract method, after which they can apply the
@@ -141,8 +145,10 @@ namespace System.Management.Automation
     /// except that if the argument value is enumerable, <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// will unroll the enumeration and validate each item individually.
     /// Existing enumerated validation attributes include
-    /// <see cref="ValidateLengthAttribute"/>, <see cref="ValidateRangeAttribute"/>,
-    /// <see cref="ValidatePatternAttribute"/>, and <see cref="ValidateSetAttribute"/>.
+    /// <see cref="ValidateLengthAttribute"/>,
+    /// <see cref="ValidateRangeAttribute"/>,
+    /// <see cref="ValidatePatternAttribute"/>, and
+    /// <see cref="ValidateSetAttribute"/>.
     /// PSSnapins wishing to create custom enumerated argument validation attributes should derive from
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/> and override the
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
