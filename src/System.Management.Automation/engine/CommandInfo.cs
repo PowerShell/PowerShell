@@ -71,11 +71,6 @@ namespace System.Management.Automation
         Script = 0x0040,
 
         /// <summary>
-        /// A workflow.
-        /// </summary>
-        Workflow = 0x0080,
-
-        /// <summary>
         /// A Configuration.
         /// </summary>
         Configuration = 0x0100,
@@ -87,7 +82,7 @@ namespace System.Management.Automation
         /// Note, a CommandInfo instance will never specify
         /// All as its CommandType but All can be used when filtering the CommandTypes.
         /// </remarks>
-        All = Alias | Function | Filter | Cmdlet | Script | ExternalScript | Application | Workflow | Configuration,
+        All = Alias | Function | Filter | Cmdlet | Script | ExternalScript | Application | Configuration,
     }
 
     /// <summary>

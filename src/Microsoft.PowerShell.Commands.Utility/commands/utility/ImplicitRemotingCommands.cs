@@ -1372,7 +1372,6 @@ namespace Microsoft.PowerShell.Commands
                 case CommandTypes.Filter:
                 case CommandTypes.Function:
                 case CommandTypes.Script:
-                case CommandTypes.Workflow:
                     return 20;
 
                 case CommandTypes.Cmdlet:
