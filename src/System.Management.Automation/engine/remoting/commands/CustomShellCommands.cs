@@ -3432,15 +3432,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     {
                         Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                     }
-
-                    // UseSharedProcess Can not be False for Workflow session type configuration
-                    //
-                    if (UseSharedProcess == false &&
-                        psObjectCollection[0] != null &&
-                        string.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        throw new PSInvalidOperationException(RemotingErrorIdStrings.UseSharedProcessCannotBeFalseForWorkflowSessionType);
-                    }
                 }
             }
 

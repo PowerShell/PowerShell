@@ -760,9 +760,6 @@ Do you want to continue?</value>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
     <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
   </data>
-  <data name="UseSharedProcessCannotBeFalseForWorkflowSessionType" xml:space="preserve">
-    <value>The SharedHost attribute cannot be set to false on a workflow session type configuration.</value>
-  </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
     <value>This operation might restart the WinRM service. Do you want to continue?</value>
   </data>
