@@ -141,15 +141,6 @@
   <data name="ManifestMemberNotFound" xml:space="preserve">
     <value>The module to process '{0}', listed in field '{1}' of module manifest '{2}' was not processed because no valid module was found in any module directory.</value>
   </data>
-  <data name="ScriptsFileNotFound" xml:space="preserve">
-    <value>The specified script file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the script, and then try again.</value>
-  </data>
-  <data name="TypesFileNotFound" xml:space="preserve">
-    <value>The specified type data file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the type data file, and then try again.</value>
-  </data>
-  <data name="FormatsFileNotFound" xml:space="preserve">
-    <value>The specified format data file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the format data file, and then try again.</value>
-  </data>
   <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
     <value>No custom object was returned for module '{0}' because the -AsCustomObject parameter can only be used with script modules.</value>
   </data>
@@ -354,9 +345,6 @@
   <data name="ManifestHeaderLine3" xml:space="preserve">
     <value>Generated on: {0}</value>
   </data>
-  <data name="ModuleToProcess" xml:space="preserve">
-    <value>Script module or binary module file associated with this manifest</value>
-  </data>
   <data name="RootModule" xml:space="preserve">
     <value>Script module or binary module file associated with this manifest.</value>
   </data>
@@ -407,9 +395,6 @@
   </data>
   <data name="PrivateData" xml:space="preserve">
     <value>Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.</value>
-  </data>
-  <data name="PSData" xml:space="preserve">
-    <value>PSData data to pass to the Publish-Module cmdlet</value>
   </data>
   <data name="Tags" xml:space="preserve">
     <value>Tags applied to this module. These help with module discovery in online galleries.</value>
@@ -482,12 +467,6 @@
   </data>
   <data name="HelpInfoURI" xml:space="preserve">
     <value>HelpInfo URI of this module</value>
-  </data>
-  <data name="IncludedItemPathFallsOutsideSaveTree" xml:space="preserve">
-    <value>The item {0} that resolves to {1} is not located in the same directory as the module manifest or any of its subdirectories. PowerShell looks for items referenced in the manifest only in paths relative to the manifest location. To fix this problem, move the item, and use a relative path to identify its location.</value>
-  </data>
-  <data name="InvalidWorkflowExtension" xml:space="preserve">
-    <value>The workflow file name is not valid because it does not have the required .XAML file name extension. Run the New-ModuleManifest command again specifying a value for the WorkflowsToProcess parameter with this extension.</value>
   </data>
   <data name="ModuleDriveInUse" xml:space="preserve">
     <value>Because the {0} module is providing the PSDrive in the current PowerShell session, no modules were removed. Change the current PSDrive provider, and then try removing modules again.</value>
