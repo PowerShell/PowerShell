@@ -120,7 +120,7 @@ namespace System.Management.Automation
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being evaluated.
         /// </param>
-        /// <returns>true if the validate succeeded.</returns>
+        /// <returns>True if the validation succeeded.</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validation.
         /// Additionally, all the system exceptions are wrapped in ValidationMetadataException.
@@ -1719,7 +1719,7 @@ namespace System.Management.Automation
             }
 
             // Add a valid values generator to the cache.
-            // We don't cache valid values; We expect that valid values will be cached in the generator.
+            // We don't cache valid values; we expect that valid values will be cached in the generator.
             validValuesGenerator = s_ValidValuesGeneratorCache.GetOrAdd(
                 valuesGeneratorType, (key) => (IValidateSetValuesGenerator)Activator.CreateInstance(key));
         }
@@ -2018,7 +2018,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the validation is being evaluated.
         /// </param>
         /// <exception cref="ValidationMetadataException">
-        /// if the arguments are not valid
+        /// if the arguments are not valid.
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
