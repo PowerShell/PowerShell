@@ -2339,9 +2339,9 @@ function Copy-PSGalleryModules
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
             $matches[1]
         } elseif ($version -match "^\d+.\d+$") {
+            # Two digit versions are stored as three digit versions
             "$version.0"
-        }
-        else {
+        } else {
             $version
         }
 
