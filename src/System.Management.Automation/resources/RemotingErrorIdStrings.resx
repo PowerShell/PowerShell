@@ -1330,9 +1330,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
     <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
   </data>
-  <data name="JobWasStopped" xml:space="preserve">
-    <value>The workflow job "{0}" was stopped. Receive-Job is only displaying partial results.</value>
-  </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
     <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
   </data>
