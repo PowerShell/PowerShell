@@ -421,7 +421,7 @@ function Get-ReleaseTag
 {
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-    $releaseTag = $metadata.PreviewReleaseTag
+    $releaseTag = $metadata.NextReleaseTag
     if($env:BUILD_BUILID)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
