@@ -6,12 +6,12 @@
   "dependencies": {
     "gulp": "^3.9.1",
     "through2": "^2.0.1",
-    "markdownlint": "^0.2.0"
+    "markdownlint": "^0.14.2"
   },
   "devDependencies": {
     "gulp-concat": "^2.6.1",
     "gulp-debug": "^3.0.0",
-    "markdownlint": "^0.4.0"
+    "markdownlint": "^0.14.2"
   },
   "repository": {
     "type": "git",
