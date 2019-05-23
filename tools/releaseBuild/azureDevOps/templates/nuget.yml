@@ -9,10 +9,15 @@ jobs:
   condition: succeeded()
   pool: PowerShell
   variables:
+    linuxArm32Path: '$(System.ArtifactsDirectory)/linuxArm32'
+    winArm32Path: '$(System.ArtifactsDirectory)/winArm32'
+    linuxX64Path: '$(System.ArtifactsDirectory)/linuxX64'
+    macOSPath: '$(System.ArtifactsDirectory)/macOS'
+    winArm64Path: '$(System.ArtifactsDirectory)/winArm64'
+    winX64Path: '$(System.ArtifactsDirectory)/winX64'
+    winX86Path: '$(System.ArtifactsDirectory)/winX86'
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
-    winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
-    linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
 
@@ -31,9 +36,14 @@ jobs:
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts'
     inputs:
-      buildType: current
-      downloadType: single
-      artifactName: finalResults
+      buildType: specific
+      project: '9d7f7aa4-6f41-480d-a367-82eb278461a1'
+      pipeline: 696
+      downloadType: specific
+      itemPattern: |
+        finalResults/PowerShell-*-win-*.zip
+        finalResults/powershell-*.tar.gz
+        results/powershell-*-osx-x64.tar.gz
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: 'Get-ChildItem $(System.ArtifactsDirectory) -recurse'
@@ -48,16 +58,46 @@ jobs:
     displayName: 'Conflate packages to same folder'
 
   - task: ExtractFiles@1
-    displayName: 'Extract files win-fxdependent'
+    displayName: 'Extract files linuxArm32'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependent.zip'
-      destinationFolder: '$(winFxdPath)'
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-arm32.tar.gz'
+      destinationFolder: '$(linuxArm32Path)'
 
   - task: ExtractFiles@1
-    displayName: 'Extract files linux-fxdependent'
+    displayName: 'Extract files linuxX64'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
-      destinationFolder: '$(linuxFxdPath)'
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64.tar.gz'
+      destinationFolder: '$(linuxX64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files macOS files'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-osx*.tar.gz'
+      destinationFolder: '$(macOSPath)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-arm32'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm32.zip'
+      destinationFolder: '$(winArm32Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-arm64'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-arm64.zip   '
+      destinationFolder: '$(winArm64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-X64'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x64.zip   '
+      destinationFolder: '$(winX64Path)'
+
+  - task: ExtractFiles@1
+    displayName: 'Extract files win-X86'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-x86.zip   '
+      destinationFolder: '$(winX86Path)'
 
   - task: PkgESInstallNuGetToolsPackage@10
     displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
@@ -79,31 +119,15 @@ jobs:
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
+      New-UnifiedNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -winx86BinPath "$(winX86Path)" -winx64BinPath "$(winX64Path)" -winArm32BinPath "$(winArm32Path)" -winArm64BinPath "$(winArm64Path)" -linuxArm32BinPath "$(linuxArm32Path)" -linuxBinPath "$(linuxX64Path)" -osxBinPath "$(macOSPath)" -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
-
-  - powershell: |
-      Get-ChildItem $(linuxFxdPath)
-      Get-ChildItem $(winFxdPath)
-    displayName: Capture fxd folders
-
-  - powershell: |
-      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
-      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-
-      # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-
-      # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-    displayName: 'Create Global tool packages'
 
   - powershell: |
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
   - powershell: |
-      $packages = Get-ChildItem "$(PackagePath)\*.nupkg", "$(PackagePath)\globaltool\*.nupkg" | Select-Object -ExpandProperty FullName
+      $packages = Get-ChildItem "$(PackagePath)\*.nupkg" | Select-Object -ExpandProperty FullName
 
       if($packages.Count -lt 1)
       {
@@ -141,33 +165,6 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
-
-  - powershell: |
-      $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
-      Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
-      Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
-    displayName: Move global tool packages to subfolder and capture
-
-  - task: AzureFileCopy@1
-    displayName: 'Upload NuGet packages to Azure'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\signed\'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)-nuget'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
-
-  - task: AzureFileCopy@1
-    displayName: 'Upload global tool packages to Azure'
-    inputs:
-      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
-      azureSubscription: '$(GlobalToolSubscription)'
-      Destination: AzureBlob
-      storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
-      blobPrefix: '$(Version)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
