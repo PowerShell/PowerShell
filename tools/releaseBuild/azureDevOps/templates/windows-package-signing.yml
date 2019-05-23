@@ -34,7 +34,14 @@ jobs:
     continueOnError: true
 
   - powershell: |
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi" -path "$(System.ArtifactsDirectory)\package.xml"
+      $authenticodefiles = @(
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
+        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
+      )
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |
@@ -56,6 +63,7 @@ jobs:
     parameters:
       architecture: x86
       version: $(version)
+      msix: no
 
   - template: upload.yml
     parameters:
@@ -79,6 +87,7 @@ jobs:
       architecture: fxdependent
       version: $(version)
       msi: no
+      msix: no
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
