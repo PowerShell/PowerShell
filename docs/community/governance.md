@@ -27,7 +27,6 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 
 * Bruce Payette ([BrucePay](https://github.com/BrucePay))
 * Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Hemant Mahawar ([HemantMahawar](https://github.com/HemantMahawar))
 * Jim Truher ([JamesWTruher](https://github.com/JamesWTruher))
 * Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
 * Kenneth Hansen ([khansen00](https://github.com/khansen00))

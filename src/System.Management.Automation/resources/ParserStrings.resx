@@ -1203,7 +1203,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell Core.</value>
+    <value>Workflow is not supported in PowerShell 6+.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
     <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
@@ -1272,7 +1272,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Variant.GetAccessor cannot handle {0}.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell Core.</value>
+    <value>Configuration keyword is not supported in PowerShell 6+.</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
     <value>Not all code path returns value within method.</value>
@@ -1369,7 +1369,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
 '{1}'.</value>
   </data>
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
-    <value>Cannot run a document in PowerShell Core: {0}.</value>
+    <value>Cannot run a document in PowerShell: {0}.</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
     <value>Multiple type constraints are not allowed on a method parameter.</value>

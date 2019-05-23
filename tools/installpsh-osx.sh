@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -14,7 +14,7 @@
 #Switches
 # -includeide         - installs vscode and vscode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of vscode (only relevant when used with -includeide)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -27,7 +27,7 @@ repobased=true
 gitscriptname="installpsh-osx.sh"
 powershellpackageid=powershell
 
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo "*** Arguments used: $*"
 
@@ -83,7 +83,7 @@ fi
 
 ## Check requirements and prerequisites
 
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 
 if [[ "'$*'" =~ preview ]] ; then
     echo
@@ -173,6 +173,6 @@ if [[ "$success" != 0 ]]; then
 fi
 
 if [[ "$repobased" == true ]] ; then
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 fi
 echo "*** Install Complete"

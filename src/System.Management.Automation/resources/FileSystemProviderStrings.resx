@@ -232,7 +232,7 @@
     <value>The property {0} does not exist or was not found.</value>
   </data>
   <data name="PermissionError" xml:space="preserve">
-    <value>You do not have sufficient access rights to perform this operation.</value>
+    <value>You do not have sufficient access rights to perform this operation or the item is hidden, system, or read only.</value>
   </data>
   <data name="AttributesNotSupported" xml:space="preserve">
     <value>The attribute cannot be set because attributes are not supported. Only the following attributes can be set: Archive, Hidden, Normal, ReadOnly, or System.</value>

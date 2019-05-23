@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region LoadAssembly
 
-        // We now ship .Net Core's reference assemblies with PowerShell Core, so that Add-Type can work
+        // We now ship .Net Core's reference assemblies with PowerShell, so that Add-Type can work
         // in a predictable way and won't be broken when we move to newer version of .NET Core.
         // The reference assemblies are located at '$PSHOME\ref'.
         private static readonly string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
@@ -663,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // netcoreapp2.1 currently comes with 144 reference assemblies (maybe more in future), so we use a capacity of '150'.
+            // netcoreapp3.0 currently comes with 148 reference assemblies (maybe more in future), so we use a capacity of '150'.
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
 
             // We look up in reference/framework only when it's for resolving reference assemblies.
             // In case of 'Add-Type -AssemblyName' scenario, we don't attempt to resolve against framework assemblies because
-            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell Core.
+            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell 6+.
             //   2. A user should use assembly name instead of path if they want to explicitly load a framework assembly.
             if (isForReferenceAssembly)
             {

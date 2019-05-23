@@ -3,7 +3,7 @@
 
 <#
 .SYNOPSIS
-  Idempotently removes extra PowerShell Core paths from the machine, user and/or process environment scope with no reordering.
+  Idempotently removes extra PowerShell paths from the machine, user and/or process environment scope with no reordering.
 
 .DESCRIPTION
   Defaults to machine scope and leaving the last sorted path alone.
@@ -17,21 +17,21 @@
   Default: machine
 
 .PARAMETER RemoveAllOccurences
-  By default the cleanup leaves the highest sorted PowerShell Core path alone.
+  By default the cleanup leaves the highest sorted PowerShell path alone.
   This switch causes it to be cleaned up as well.
   Default: false
 
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1
 
-  Removes all PowerShell core paths but the very last one when sorted in ascending order from the Machine level path.
+  Removes all PowerShell paths but the very last one when sorted in ascending order from the Machine level path.
   Good for running on systems that already has at least one valid PowerShell install.
 
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -RemoveAllOccurences
 
-  Removes ALL PowerShell core paths from the Machine level path.
-  Good for running right before upgrading PowerShell core.
+  Removes ALL PowerShell paths from the Machine level path.
+  Good for running right before upgrading PowerShell.
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process
 
@@ -52,11 +52,11 @@ param (
 ForEach ($PathScopeItem in $PathScope)
 {
   $AssembledNewPath = $NewPath = ''
-  #From the current path scope. retrieve the array of paths that match the pathspec of PowerShell Core (to use as a filter)
+  #From the current path scope. retrieve the array of paths that match the pathspec of PowerShell (to use as a filter)
   $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | Where { $_ -ilike "*\Program Files\Powershell\6*"})
   If (!$RemoveAllOccurences)
   {
-    #If we are not removing all occurances of powershell core paths, then remove the highest sorted path from the filter
+    #If we are not removing all occurances of PowerShell paths, then remove the highest sorted path from the filter
     $pathstoremove = @($pathstoremove | sort-object | Select-Object -skiplast 1)
   }
   Write-Verbose "Reset-PWSHSystemPath: Found $($pathstoremove.count) paths to remove from $PathScopeItem path scope: $($Pathstoremove -join ', ' | out-string)"

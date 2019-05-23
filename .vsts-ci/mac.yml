@@ -79,7 +79,8 @@ jobs:
 - template: templates/verify-xunit.yml
   parameters:
     pool: 'Hosted macOS'
-    dependsOn: mac_build
+    parentJobs:
+      - mac_build
 
 - job: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core's Microsoft.PowerShell.Commands.Diagnostics project</Description>
+    <Description>PowerShell's Microsoft.PowerShell.Commands.Diagnostics project</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Diagnostics</AssemblyName>
   </PropertyGroup>
