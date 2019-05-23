@@ -92,6 +92,8 @@ function Invoke-CIBuild
         throw "Tags must be CI, Feature, Scenario, or Slow"
     }
 
+    Start-PSBootstrap
+
     if(Test-DailyBuild)
     {
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
