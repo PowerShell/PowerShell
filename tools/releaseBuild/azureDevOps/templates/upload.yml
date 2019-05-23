@@ -2,6 +2,7 @@ parameters:
   architecture: x86
   version: 6.2.0
   msi: yes
+  msix: yes
 
 steps:
 - template: upload-final-results.yml
@@ -34,3 +35,19 @@ steps:
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(Build.StagingDirectory)\signedPackages
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix
+    condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
+
+- task: AzureFileCopy@1
+  displayName: 'upload signed msix to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))

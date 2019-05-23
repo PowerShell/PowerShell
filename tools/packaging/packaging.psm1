@@ -2835,30 +2835,19 @@ function New-MSIXPackage
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(
-        'Square150x150Logo'
-        'Square44x44Logo'
-        'Square44x44Logo.targetsize-48'
-        'Square44x44Logo.targetsize-48_altform-unplated'
-        'StoreLogo'
+        'Square150x150Logo.png'
+        'Square44x44Logo.png'
+        'Square44x44Logo.targetsize-48.png'
+        'Square44x44Logo.targetsize-48_altform-unplated.png'
+        'StoreLogo.png'
     )
 
     if (!(Test-Path "$ProductSourcePath\assets")) {
         $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
     }
 
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview) {
-        Write-Verbose "Using Preview assets" -Verbose
-    }
-
     $assets | ForEach-Object {
-        if ($isPreview) {
-            Copy-Item -Path "$RepoRoot\assets\$_-Preview.png" -Destination "$ProductSourcePath\assets\$_.png"
-        }
-        else {
-            Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
-        }
-
+        Copy-Item -Path "$RepoRoot\assets\$_" -Destination "$ProductSourcePath\assets\"
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
