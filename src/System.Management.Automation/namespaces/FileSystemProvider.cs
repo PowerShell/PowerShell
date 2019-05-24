@@ -5340,13 +5340,13 @@ namespace Microsoft.PowerShell.Commands
         {
             string testPath = path.Replace('/', '\\');
             if (
-                (testPath.IndexOf("\\", StringComparison.OrdinalIgnoreCase) < 0) ||
+                !testPath.Contains('\\') ||
                 testPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
                 testPath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 testPath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 testPath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
-                (testPath.IndexOf("\\.\\", StringComparison.OrdinalIgnoreCase) > 0) ||
-                (testPath.IndexOf("\\..\\", StringComparison.OrdinalIgnoreCase) > 0))
+                testPath.Contains("\\.\\", StringComparison.OrdinalIgnoreCase) ||
+                testPath.Contains("\\..\\", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {

@@ -1808,7 +1808,7 @@ $result
             }
             else
             {
-                int dotIndex = computerName.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+                int dotIndex = computerName.IndexOf('.');
                 if (dotIndex == -1)
                 {
                     localUserName = computerName + "\\" + psLocalCredential.UserName;
