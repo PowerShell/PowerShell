@@ -5341,12 +5341,12 @@ namespace Microsoft.PowerShell.Commands
             string testPath = path.Replace('/', '\\');
             if (
                 !testPath.Contains('\\') ||
-                testPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                testPath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
-                testPath.Contains("\\.\\", StringComparison.OrdinalIgnoreCase) ||
-                testPath.Contains("\\..\\", StringComparison.OrdinalIgnoreCase))
+                testPath.StartsWith(".\\", StringComparison.Ordinal) ||
+                testPath.StartsWith("..\\", StringComparison.Ordinal) ||
+                testPath.EndsWith("\\.", StringComparison.Ordinal) ||
+                testPath.EndsWith("\\..", StringComparison.Ordinal) ||
+                testPath.Contains("\\.\\", StringComparison.Ordinal) ||
+                testPath.Contains("\\..\\", StringComparison.Ordinal))
             {
                 try
                 {
