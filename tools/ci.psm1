@@ -339,6 +339,8 @@ function New-CodeCoverageAndTestPackage
 
     if (Test-DailyBuild)
     {
+        Start-PSBootstrap -Verbose
+
         Start-PSBuild -Configuration 'CodeCoverage' -Clean
 
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
