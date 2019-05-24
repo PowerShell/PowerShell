@@ -1311,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a language name from a language identifier.
         /// </summary>
-        /// <param name="language">
+        /// <param name="lcid">
         /// A nullable integer containing the language ID for the desired language.
         /// </param>
         /// <returns>
@@ -1319,13 +1319,13 @@ namespace Microsoft.PowerShell.Commands
         /// the language parameter. If the language parameter is null or has a
         /// value that is not a valid language ID, the method returns null.
         /// </returns>
-        protected static string GetLanguageName(uint? language)
+        protected static string GetLanguageName(uint? lcid)
         {
-            if (language != null)
+            if (lcid != null && lcid >= 0)
             {
                 try
                 {
-                    return CultureInfo.GetCultureInfo((int)language.Value).Name;
+                    return CultureInfo.GetCultureInfo((int)lcid.Value).Name;
                 }
                 catch
                 {
