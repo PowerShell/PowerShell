@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 using Microsoft.Management.Infrastructure;
 
@@ -36,17 +37,90 @@ namespace Microsoft.PowerShell.Commands
         internal const string MicrosoftNetworkAdapterNamespace = "root/StandardCimv2";
         internal const string DefaultQueryDialect = "WQL";
 
+        internal static Dictionary<string, CIMHelper.QueryInfo> QueryableProperties = new Dictionary<string, CIMHelper.QueryInfo>(){
+            // Bios properties
+            { "BiosCharacteristics", new CIMHelper.QueryInfo("BiosCharacteristics", "BiosCharacteristics", CIMHelper.ClassNames.Bios) },
+            { "BiosBIOSVersion", new CIMHelper.QueryInfo("BiosBIOSVersion", "BIOSVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosBuildNumber", new CIMHelper.QueryInfo("BiosBuildNumber", "BuildNumber", CIMHelper.ClassNames.Bios) },
+            { "BiosCaption", new CIMHelper.QueryInfo("BiosCaption", "Caption", CIMHelper.ClassNames.Bios) },
+            { "BiosCodeSet", new CIMHelper.QueryInfo("BiosCodeSet", "CodeSet", CIMHelper.ClassNames.Bios) },
+            { "BiosCurrentLanguage", new CIMHelper.QueryInfo("BiosCurrentLanguage", "CurrentLanguage", CIMHelper.ClassNames.Bios) },
+            { "BiosDescription", new CIMHelper.QueryInfo("BiosDescription", "Description", CIMHelper.ClassNames.Bios) },
+            { "BiosEmbeddedControllerMajorVersion", new CIMHelper.QueryInfo("BiosEmbeddedControllerMajorVersion", "EmbeddedControllerMajorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosEmbeddedControllerMinorVersion", new CIMHelper.QueryInfo("BiosEmbeddedControllerMinorVersion", "EmbeddedControllerMinorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosIdentificationCode", new CIMHelper.QueryInfo("BiosIdentificationCode", "IdentificationCode", CIMHelper.ClassNames.Bios) },
+            { "BiosInstallableLanguages", new CIMHelper.QueryInfo("BiosInstallableLanguages", "InstallableLanguages", CIMHelper.ClassNames.Bios) },
+            { "BiosInstallDate", new CIMHelper.QueryInfo("BiosInstallDate", "InstallDate", CIMHelper.ClassNames.Bios) },
+            { "BiosLanguageEdition", new CIMHelper.QueryInfo("BiosLanguageEdition", "LanguageEdition", CIMHelper.ClassNames.Bios) },
+            { "BiosListOfLanguages", new CIMHelper.QueryInfo("BiosListOfLanguages", "ListOfLanguages", CIMHelper.ClassNames.Bios) },
+            { "BiosManufacturer", new CIMHelper.QueryInfo("BiosManufacturer", "Manufacturer", CIMHelper.ClassNames.Bios) },
+            { "BiosName", new CIMHelper.QueryInfo("BiosName", "Name", CIMHelper.ClassNames.Bios) },
+            { "BiosOtherTargetOS", new CIMHelper.QueryInfo("BiosOtherTargetOS", "OtherTargetOS", CIMHelper.ClassNames.Bios) },
+            { "BiosPrimaryBIOS", new CIMHelper.QueryInfo("BiosPrimaryBIOS", "PrimaryBIOS", CIMHelper.ClassNames.Bios) },
+            { "BiosReleaseDate", new CIMHelper.QueryInfo("BiosReleaseDate", "ReleaseDate", CIMHelper.ClassNames.Bios) },
+            { "BiosSerialNumber", new CIMHelper.QueryInfo("BiosSerialNumber", "SerialNumber", CIMHelper.ClassNames.Bios) },
+            { "BiosSMBIOSBIOSVersion", new CIMHelper.QueryInfo("BiosSMBIOSBIOSVersion", "SMBIOSBIOSVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosSMBIOSMajorVersion", new CIMHelper.QueryInfo("BiosSMBIOSMajorVersion", "SMBIOSMajorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosSMBIOSMinorVersion", new CIMHelper.QueryInfo("BiosSMBIOSMinorVersion", "SMBIOSMinorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosSMBIOSPresent", new CIMHelper.QueryInfo("BiosSMBIOSPresent", "SMBIOSPresent", CIMHelper.ClassNames.Bios) },
+            { "BiosSoftwareElementState", new CIMHelper.QueryInfo("BiosSoftwareElementState", "SoftwareElementState", CIMHelper.ClassNames.Bios) },
+            { "BiosStatus", new CIMHelper.QueryInfo("BiosStatus", "Status", CIMHelper.ClassNames.Bios) },
+            { "BiosSystemBiosMajorVersion", new CIMHelper.QueryInfo("BiosSystemBiosMajorVersion", "SystemBiosMajorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosSystemBiosMinorVersion", new CIMHelper.QueryInfo("BiosSystemBiosMinorVersion", "SystemBiosMinorVersion", CIMHelper.ClassNames.Bios) },
+            { "BiosTargetOperatingSystem", new CIMHelper.QueryInfo("BiosTargetOperatingSystem", "TargetOperatingSystem", CIMHelper.ClassNames.Bios) },
+            { "BiosVersion", new CIMHelper.QueryInfo("BiosVersion", "Version", CIMHelper.ClassNames.Bios) },
+            // Operating system properties
+            { "OsName", new CIMHelper.QueryInfo("OsName", "Name", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsBootDevice", new CIMHelper.QueryInfo("OsBootDevice", "BootDevice", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsBuildNumber", new CIMHelper.QueryInfo("OsBuildNumber", "BuildNumber", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsBuildType", new CIMHelper.QueryInfo("OsBuildType", "BuildType", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsCodeSet", new CIMHelper.QueryInfo("OsCodeSet", "CodeSet", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsCountryCode", new CIMHelper.QueryInfo("OsCountryCode", "CountryCode", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsCSDVersion", new CIMHelper.QueryInfo("OsCSDVersion", "CSDVersion", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsCurrentTimeZone", new CIMHelper.QueryInfo("OsCurrentTimeZone", "CurrentTimeZone", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDataExecutionPreventionAvailable", new CIMHelper.QueryInfo("OsDataExecutionPreventionAvailable", "DataExecutionPrevention_Available", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDataExecutionPrevention32BitApplications", new CIMHelper.QueryInfo("OsDataExecutionPrevention32BitApplications", "DataExecutionPrevention_32BitApplications", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDataExecutionPreventionDrivers", new CIMHelper.QueryInfo("OsDataExecutionPreventionDrivers", "DataExecutionPrevention_Drivers", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDataExecutionPreventionSupportPolicy", new CIMHelper.QueryInfo("OsDataExecutionPreventionSupportPolicy", "DataExecutionPrevention_SupportPolicy", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDebug", new CIMHelper.QueryInfo("OsDebug", "Debug", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsDistributed", new CIMHelper.QueryInfo("OsDistributed", "Distributed", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsEncryptionLevel", new CIMHelper.QueryInfo("OsEncryptionLevel", "EncryptionLevel", CIMHelper.ClassNames.OperatingSystem) },
+            { "OsForegroundApplicationBoost", new CIMHelper.QueryInfo("OsForegroundApplicationBoost", "ForegroundApplicationBoost", CIMHelper.ClassNames.OperatingSystem) }
+        };
+
+        internal struct QueryInfo {
+            public QueryInfo(string psObjectPropertyName, string property, string wmiClass)
+            {
+                this.psObjectPropertyName = psObjectPropertyName;
+                this.wmiPropertyName = property;
+                this.wmiClass = wmiClass;
+            }
+
+            public string psObjectPropertyName;
+            public string wmiPropertyName;
+            public string wmiClass;
+
+            public int HashCode() {
+                return (wmiPropertyName + wmiClass).GetHashCode();
+            }
+        }
+
         /// <summary>
-        /// Create a WQL query string to retrieve all properties from
+        /// Create a WQL query string to retrieve requested properties from
         /// the specified WMI class.
         /// </summary>
         /// <param name="from">A string containing the WMI class name.</param>
+        /// <param name="requestedProperties">A set of properties to query.</param>
         /// <returns>
         /// A string containing the WQL query string
         /// </returns>
-        internal static string WqlQueryAll(string from)
+        internal static string WqlQueryProperties(string from, List<string> requestedProperties)
         {
-            return "SELECT * from " + from;
+            var wmiPropertiesToQuery = requestedProperties
+            .Where(property => CIMHelper.QueryableProperties.ContainsKey(property) && CIMHelper.QueryableProperties[property].wmiClass == from)
+            .Select(property => CIMHelper.QueryableProperties[property].wmiPropertyName)
+            .ToList();
+            return wmiPropertiesToQuery.Count != 0 ? "SELECT " + string.Join(",", wmiPropertiesToQuery) + " from " + from : null;
         }
 
         /// <summary>
@@ -69,6 +143,9 @@ namespace Microsoft.PowerShell.Commands
         /// A string containing the name of the WMI class from which to populate
         /// the resultant object.
         /// </param>
+        /// <param name="requestedProperties">
+        /// A set containing the properties to query
+        /// </param>
         /// <returns>
         /// A new object of type T if successful, null otherwise.
         /// </returns>
@@ -77,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// named properties in the WMI class instance. The WMI property is converted
         /// to the type of T's property or field.
         /// </remarks>
-        internal static T GetFirst<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
+        internal static T GetFirst<T>(CimSession session, string nameSpace, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
             if (string.IsNullOrEmpty(wmiClassName))
                 throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
@@ -88,9 +165,11 @@ namespace Microsoft.PowerShell.Commands
                 var binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
                 T rv = new T();
 
-                using (var instance = session.QueryFirstInstance(nameSpace, CIMHelper.WqlQueryAll(wmiClassName)))
+                using (var instance = session.QueryFirstInstance(nameSpace, CIMHelper.WqlQueryProperties(wmiClassName, requestedProperties)))
                 {
-                    SetObjectDataMembers(rv, binding, instance);
+                    if (instance != null) {
+                        SetObjectDataMembers(rv, binding, instance);
+                    }
                 }
 
                 return rv;
@@ -122,6 +201,9 @@ namespace Microsoft.PowerShell.Commands
         /// A string containing the name of the WMI class from which to populate
         /// the resultant array elements.
         /// </param>
+        /// <param name="requestedProperties">
+        /// A set containing the properties to query
+        /// </param>
         /// <returns>
         /// An array of new objects of type T if successful, null otherwise.
         /// </returns>
@@ -130,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         /// named properties in the WMI class instance. The WMI property is converted
         /// to the type of T's property or field.
         /// </remarks>
-        internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
+        internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
             if (string.IsNullOrEmpty(wmiClassName))
                 throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
@@ -139,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var instances = session.QueryInstances(nameSpace, CIMHelper.WqlQueryAll(wmiClassName));
+                var instances = session.QueryInstances(nameSpace, CIMHelper.WqlQueryProperties(wmiClassName, requestedProperties));
 
                 if (instances != null)
                 {
@@ -183,6 +265,9 @@ namespace Microsoft.PowerShell.Commands
         /// A string containing the name of the WMI class from which to populate
         /// the resultant array elements.
         /// </param>
+        /// <param name="requestedProperties">
+        /// A set containing the properties to query
+        /// </param>
         /// <returns>
         /// An array of new objects of type T if successful, null otherwise.
         /// </returns>
@@ -191,9 +276,9 @@ namespace Microsoft.PowerShell.Commands
         /// named properties in the WMI class instance. The WMI property is converted
         /// to the type of T's property or field.
         /// </remarks>
-        internal static T[] GetAll<T>(CimSession session, string wmiClassName) where T : class, new()
+        internal static T[] GetAll<T>(CimSession session, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
-            return GetAll<T>(session, DefaultNamespace, wmiClassName);
+            return GetAll<T>(session, DefaultNamespace, wmiClassName, requestedProperties);
         }
 
         internal static void SetObjectDataMember(object obj, BindingFlags binding, CimProperty cimProperty)
@@ -276,6 +361,9 @@ namespace Extensions
         /// </returns>
         internal static CimInstance QueryFirstInstance(this CimSession session, string nameSpace, string query)
         {
+            if (query == null)
+                return null;
+
             try
             {
                 var instances = session.QueryInstances(nameSpace, query);
@@ -307,24 +395,24 @@ namespace Extensions
             return session.QueryFirstInstance(CIMHelper.DefaultNamespace, query);
         }
 
-        internal static T GetFirst<T>(this CimSession session, string wmiClassName) where T : class, new()
+        internal static T GetFirst<T>(this CimSession session, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
-            return session.GetFirst<T>(CIMHelper.DefaultNamespace, wmiClassName);
+            return session.GetFirst<T>(CIMHelper.DefaultNamespace, wmiClassName, requestedProperties);
         }
 
-        internal static T GetFirst<T>(this CimSession session, string wmiNamespace, string wmiClassName) where T : class, new()
+        internal static T GetFirst<T>(this CimSession session, string wmiNamespace, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
-            return CIMHelper.GetFirst<T>(session, wmiNamespace, wmiClassName);
+            return CIMHelper.GetFirst<T>(session, wmiNamespace, wmiClassName, requestedProperties);
         }
 
-        internal static T[] GetAll<T>(this CimSession session, string wmiClassName) where T : class, new()
+        internal static T[] GetAll<T>(this CimSession session, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
-            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiClassName);
+            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiClassName, requestedProperties);
         }
 
-        internal static T[] GetAll<T>(this CimSession session, string wmiNamespace, string wmiClassName) where T : class, new()
+        internal static T[] GetAll<T>(this CimSession session, string wmiNamespace, string wmiClassName, List<string> requestedProperties) where T : class, new()
         {
-            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiNamespace, wmiClassName);
+            return Microsoft.PowerShell.Commands.CIMHelper.GetAll<T>(session, wmiNamespace, wmiClassName, requestedProperties);
         }
     }
 }

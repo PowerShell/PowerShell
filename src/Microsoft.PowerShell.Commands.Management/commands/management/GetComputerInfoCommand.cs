@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
-
+using System.Linq;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Win32;
 
@@ -139,6 +139,11 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(ex, "WildcardPattern", ErrorCategory.InvalidArgument, this));
                 }
             }
+            else if (Property == null)
+            {
+                // This is the case for Get-ComputerInfo (no specified properties)
+                _namedProperties = CollectPropertyNames(new string[]{"*"});
+            }
         }
 
         /// <summary>
@@ -163,8 +168,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 UpdateProgress(ComputerInfoResources.LoadingOperationSystemInfo);
 
-                osInfo.os = session.GetFirst<WmiOperatingSystem>(CIMHelper.ClassNames.OperatingSystem);
-                osInfo.pageFileUsage = session.GetAll<WmiPageFileUsage>(CIMHelper.ClassNames.PageFileUsage);
+                osInfo.os = session.GetFirst<WmiOperatingSystem>(CIMHelper.ClassNames.OperatingSystem, _namedProperties);
+                osInfo.pageFileUsage = session.GetAll<WmiPageFileUsage>(CIMHelper.ClassNames.PageFileUsage, _namedProperties);
 
                 if (osInfo.os != null)
                 {
@@ -175,19 +180,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 UpdateProgress(ComputerInfoResources.LoadingHotPatchInfo);
-                osInfo.hotFixes = session.GetAll<HotFix>(CIMHelper.ClassNames.HotFix);
+                osInfo.hotFixes = session.GetAll<HotFix>(CIMHelper.ClassNames.HotFix, _namedProperties);
 
                 UpdateProgress(ComputerInfoResources.LoadingRegistryInfo);
                 osInfo.regCurVer = RegistryInfo.GetWinNtCurrentVersion();
 
                 UpdateProgress(ComputerInfoResources.LoadingBiosInfo);
-                systemInfo.bios = session.GetFirst<WmiBios>(CIMHelper.ClassNames.Bios);
+                systemInfo.bios = session.GetFirst<WmiBios>(CIMHelper.ClassNames.Bios, _namedProperties);
 
                 UpdateProgress(ComputerInfoResources.LoadingMotherboardInfo);
-                systemInfo.baseboard = session.GetFirst<WmiBaseBoard>(CIMHelper.ClassNames.BaseBoard);
+                systemInfo.baseboard = session.GetFirst<WmiBaseBoard>(CIMHelper.ClassNames.BaseBoard, _namedProperties);
 
                 UpdateProgress(ComputerInfoResources.LoadingComputerInfo);
-                systemInfo.computer = session.GetFirst<WmiComputerSystem>(CIMHelper.ClassNames.ComputerSystem);
+                systemInfo.computer = session.GetFirst<WmiComputerSystem>(CIMHelper.ClassNames.ComputerSystem, _namedProperties);
                 miscInfo = GetOtherInfo(session);
 
                 UpdateProgress(ComputerInfoResources.LoadingProcessorInfo);
@@ -199,19 +204,12 @@ namespace Microsoft.PowerShell.Commands
                 UpdateProgress(null);   // close the progress bar
             }
 
-            var infoOutput = CreateFullOutputObject(systemInfo, osInfo, miscInfo);
-
-            if (_namedProperties != null)
-            {
-                // var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
-                var output = CreateCustomOutputObject(infoOutput, _namedProperties);
-
-                WriteObject(output);
-            }
-            else
-            {
-                WriteObject(infoOutput);
-            }
+            WriteObject(
+                CreateCustomOutputObject(
+                    CreateFullOutputObject(systemInfo, osInfo, miscInfo),
+                    _namedProperties
+                )
+            );
         }
         #endregion Cmdlet Overrides
 
@@ -276,11 +274,15 @@ namespace Microsoft.PowerShell.Commands
         /// This method matches network adapters associated network adapter configurations.
         /// The returned array contains entries only for matched adapter/configuration objects.
         /// </remarks>
-        private static NetworkAdapter[] GetNetworkAdapters(CimSession session)
+        private NetworkAdapter[] GetNetworkAdapters(CimSession session)
         {
-            var adaptersMsft = session.GetAll<WmiMsftNetAdapter>(CIMHelper.MicrosoftNetworkAdapterNamespace, CIMHelper.ClassNames.MicrosoftNetworkAdapter);
-            var adapters = session.GetAll<WmiNetworkAdapter>(CIMHelper.ClassNames.NetworkAdapter);
-            var configs = session.GetAll<WmiNetworkAdapterConfiguration>(CIMHelper.ClassNames.NetworkAdapterConfiguration);
+            var adaptersMsft = session.GetAll<WmiMsftNetAdapter>(
+                CIMHelper.MicrosoftNetworkAdapterNamespace,
+                CIMHelper.ClassNames.MicrosoftNetworkAdapter,
+                _namedProperties
+            );
+            var adapters = session.GetAll<WmiNetworkAdapter>(CIMHelper.ClassNames.NetworkAdapter, _namedProperties);
+            var configs = session.GetAll<WmiNetworkAdapterConfiguration>(CIMHelper.ClassNames.NetworkAdapterConfiguration, _namedProperties);
 
             var list = new List<NetworkAdapter>();
 
@@ -339,9 +341,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        private static Processor[] GetProcessors(CimSession session)
+        private Processor[] GetProcessors(CimSession session)
         {
-            var processors = session.GetAll<WmiProcessor>(CIMHelper.ClassNames.Processor);
+            var processors = session.GetAll<WmiProcessor>(CIMHelper.ClassNames.Processor, _namedProperties);
 
             if (processors != null)
             {
@@ -418,15 +420,18 @@ namespace Microsoft.PowerShell.Commands
         /// A <see cref="DeviceGuard"/> object containing information related to
         /// the Device Guard feature
         /// </returns>
-        private static DeviceGuardInfo GetDeviceGuard(CimSession session)
+        private DeviceGuardInfo GetDeviceGuard(CimSession session)
         {
             DeviceGuard guard = null;
             var status = DeviceGuardSmartStatus.Off;
 
             if (CheckDeviceGuardLicense())
             {
-                var wmiGuard = session.GetFirst<WmiDeviceGuard>(CIMHelper.DeviceGuardNamespace,
-                                                                CIMHelper.ClassNames.DeviceGuard);
+                var wmiGuard = session.GetFirst<WmiDeviceGuard>(
+                    CIMHelper.DeviceGuardNamespace,
+                    CIMHelper.ClassNames.DeviceGuard,
+                    _namedProperties
+                );
 
                 if (wmiGuard != null)
                 {
@@ -483,13 +488,13 @@ namespace Microsoft.PowerShell.Commands
         /// A <see cref="HyperVInfo"/> object containing information related to
         /// HyperVisor
         /// </returns>
-        private static HyperVInfo GetHyperVisorInfo(CimSession session)
+        private HyperVInfo GetHyperVisorInfo(CimSession session)
         {
             HyperVInfo info = new HyperVInfo();
             bool ok = false;
             CimInstance instance = null;
 
-            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.ComputerSystem)))
+            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryProperties(CIMHelper.ClassNames.ComputerSystem, _namedProperties)))
             {
                 if (instance != null)
                 {
@@ -503,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
             if (ok && info.Present != null && info.Present.Value)
                 return info;
 
-            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.OperatingSystem)))
+            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryProperties(CIMHelper.ClassNames.OperatingSystem, _namedProperties)))
             {
                 if (instance != null)
                 {
@@ -512,7 +517,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.Processor)))
+            using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryProperties(CIMHelper.ClassNames.Processor, _namedProperties)))
             {
                 if (instance != null)
                 {
@@ -537,7 +542,7 @@ namespace Microsoft.PowerShell.Commands
         /// A <see cref="MiscInfoGroup"/> object containing miscellaneous
         /// system information
         /// </returns>
-        private static MiscInfoGroup GetOtherInfo(CimSession session)
+        private MiscInfoGroup GetOtherInfo(CimSession session)
         {
             var rv = new MiscInfoGroup();
 
@@ -573,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
 
             rv.logonServer = RegistryInfo.GetLogonServer();
 
-            rv.keyboards = session.GetAll<WmiKeyboard>(CIMHelper.ClassNames.Keyboard);
+            rv.keyboards = session.GetAll<WmiKeyboard>(CIMHelper.ClassNames.Keyboard, _namedProperties);
 
             rv.hyperV = GetHyperVisorInfo(session);
 
@@ -880,7 +885,7 @@ namespace Microsoft.PowerShell.Commands
                 output.LogonServer = otherInfo.logonServer;
                 output.PowerPlatformRole = otherInfo.powerPlatformRole;
 
-                if (otherInfo.keyboards.Length > 0)
+                if (otherInfo.keyboards != null && otherInfo.keyboards.Length > 0)
                 {
                     // TODO: handle multiple keyboards?
                     // there might be several keyboards found. For the moment
@@ -1014,21 +1019,10 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static List<string> CollectPropertyNames(string[] requestedProperties)
         {
-            // A quick scan through the requested properties to make sure
-            // we want to use user-specified properties
-            foreach (var name in requestedProperties)
-            {
-                if (WildcardPattern.ContainsWildcardCharacters(name))
-                {
-                    if (name == "*")
-                        return null;    // we treat a wild-card pattern of "*" as if no properties were named
-                }
-            }
-
             var availableProperties = GetComputerInfoPropertyNames();
             var rv = new List<string>();
 
-            // walk though the requested properties again, expanding and collecting property names
+            // walk through the requested properties again, expanding and collecting property names
             foreach (var name in requestedProperties)
             {
                 if (WildcardPattern.ContainsWildcardCharacters(name))
