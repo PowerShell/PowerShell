@@ -333,7 +333,10 @@ namespace System.Management.Automation
         /// Get a steppable pipeline object.
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable",
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1704:IdentifiersShouldBeSpelledCorrectly",
+            MessageId = "Steppable",
             Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline() => GetSteppablePipelineImpl(CommandOrigin.Internal, null);
 
@@ -342,7 +345,10 @@ namespace System.Management.Automation
         /// Get a steppable pipeline object.
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable",
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1704:IdentifiersShouldBeSpelledCorrectly",
+            MessageId = "Steppable",
             Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin)
             => GetSteppablePipelineImpl(commandOrigin, null);
@@ -351,7 +357,10 @@ namespace System.Management.Automation
         /// Get a steppable pipeline object.
         /// </summary>
         /// <returns>A steppable pipeline object.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable",
+        [SuppressMessage(
+            "Microsoft.Naming",
+            "CA1704:IdentifiersShouldBeSpelledCorrectly",
+            MessageId = "Steppable",
             Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin, object[] args)
             => GetSteppablePipelineImpl(commandOrigin, args);
@@ -443,7 +452,7 @@ namespace System.Management.Automation
                 }
 
                 located = variablesToDefine.FirstOrDefault(
-                    v => string.Equals(v.Name, "_", StringComparison.OrdinalIgnoreCase));
+                    v => string.Equals(v.Name, "_", StringComparison.Ordinal));
                 if (located != null)
                 {
                     dollarUnder = located.Value;
@@ -549,7 +558,7 @@ namespace System.Management.Automation
         public List<Attribute> Attributes { get => GetAttributes(); }
 
         /// <summary>
-        /// The script file that defined this script block...
+        /// The script file that defined this script block.
         /// </summary>
         public string File { get => GetFileName(); }
 
@@ -658,7 +667,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The internal session state object associated with this scriptblock...
+        /// The internal session state object associated with this scriptblock.
         /// </summary>
         internal SessionStateInternal SessionStateInternal { get; set; }
 
@@ -1043,7 +1052,10 @@ namespace System.Management.Automation
     /// <summary>
     /// A steppable pipeline wrapper object...
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable",
+    [SuppressMessage(
+        "Microsoft.Naming",
+        "CA1704:IdentifiersShouldBeSpelledCorrectly",
+        MessageId = "Steppable",
         Justification = "Consider Name change during API review")]
     public sealed class SteppablePipeline : IDisposable
     {
