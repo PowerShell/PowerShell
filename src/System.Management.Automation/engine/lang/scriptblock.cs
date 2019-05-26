@@ -761,7 +761,9 @@ namespace System.Management.Automation
             if (returnsSomething)
             {
                 call = DynamicExpression.Dynamic(
-                    PSConvertBinder.Get(invokeMethod.ReturnType), invokeMethod.ReturnType, call);
+                    PSConvertBinder.Get(invokeMethod.ReturnType),
+                    invokeMethod.ReturnType,
+                    call);
             }
 
             return Expression.Lambda(delegateType, call, parameterExprs).Compile();
@@ -931,7 +933,7 @@ namespace System.Management.Automation
             bool oldPropagateExceptions = false;
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
 
-            if (SessionStateInternal?.ExecutionContext != context)
+            if (SessionStateInternal != null && SessionStateInternal.ExecutionContext != context)
             {
                 context = SessionStateInternal.ExecutionContext;
                 shouldGenerateEvent = true;
