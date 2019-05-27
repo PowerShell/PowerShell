@@ -90,7 +90,7 @@ namespace System.Management.Automation
         internal static ScriptBlock Create(ExecutionContext context, string script)
         {
             ScriptBlock sb = Create(context.Engine.EngineParser, null, script);
-            if (context.EngineSessionState?.Module != null)
+            if (context.EngineSessionState != null && context.EngineSessionState.Module != null)
             {
                 sb.SessionStateInternal = context.EngineSessionState;
             }
