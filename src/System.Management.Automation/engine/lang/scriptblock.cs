@@ -103,7 +103,10 @@ namespace System.Management.Automation
         /// context is provided.
         /// </summary>
         /// <param name="script">The string to compile.</param>
-        public static ScriptBlock Create(string script) => Create(new Language.Parser(), null, script);
+        public static ScriptBlock Create(string script) => Create(
+            parser: new Language.Parser(),
+            fileName: null,
+            fileContents: script);
 
         internal static ScriptBlock CreateDelayParsedScriptBlock(string script, bool isProductCode)
             => new ScriptBlock(new CompiledScriptBlockData(script, isProductCode));
@@ -160,8 +163,13 @@ namespace System.Management.Automation
         /// <exception cref="InvalidOperationException">
         /// Thrown when there is no ExecutionContext associated with this ScriptBlock object.
         /// </exception>
-        public PowerShell GetPowerShell(params object[] args)
-            => GetPowerShellImpl(LocalPipeline.GetExecutionContextFromTLS(), null, false, false, null, args);
+        public PowerShell GetPowerShell(params object[] args) => GetPowerShellImpl(
+            context: LocalPipeline.GetExecutionContextFromTLS(),
+            variables: null,
+            isTrustedInput: false,
+            filterNonUsingVariables: false,
+            createLocalScope: null,
+            args);
 
         /// <summary>
         /// Returns PowerShell object representing the pipeline contained in this ScriptBlock,
@@ -179,7 +187,13 @@ namespace System.Management.Automation
         /// can be null
         /// </param>
         public PowerShell GetPowerShell(bool isTrustedInput, params object[] args)
-            => GetPowerShellImpl(LocalPipeline.GetExecutionContextFromTLS(), null, isTrustedInput, false, null, args);
+            => GetPowerShellImpl(
+                context: LocalPipeline.GetExecutionContextFromTLS(),
+                variables: null,
+                isTrustedInput,
+                filterNonUsingVariables: false,
+                createLocalScope: null,
+                args);
 
         /// <summary>
         /// Returns PowerShell object representing the pipeline contained in this ScriptBlock, using variables
@@ -262,7 +276,7 @@ namespace System.Management.Automation
             Dictionary<string, object> variables,
             out Dictionary<string, object> usingVariables,
             params object[] args)
-            => GetPowerShell(variables, out usingVariables, false, args);
+            => GetPowerShell(variables, out usingVariables, isTrustedInput: false, args);
 
         /// <summary>
         /// Returns PowerShell object representing the pipeline contained in this ScriptBlock, using variables
@@ -327,7 +341,13 @@ namespace System.Management.Automation
             bool isTrustedInput,
             bool? useLocalScope,
             object[] args)
-            => GetPowerShellImpl(context, null, isTrustedInput, false, useLocalScope, args);
+            => GetPowerShellImpl(
+                context,
+                variables: null,
+                isTrustedInput,
+                filterNonUsingVariables: false,
+                useLocalScope,
+                args);
 
         /// <summary>
         /// Get a steppable pipeline object.
@@ -338,7 +358,8 @@ namespace System.Management.Automation
             "CA1704:IdentifiersShouldBeSpelledCorrectly",
             MessageId = "Steppable",
             Justification = "Review this during API naming")]
-        public SteppablePipeline GetSteppablePipeline() => GetSteppablePipelineImpl(CommandOrigin.Internal, null);
+        public SteppablePipeline GetSteppablePipeline()
+            => GetSteppablePipelineImpl(commandOrigin: CommandOrigin.Internal, args: null);
 
 
         /// <summary>
@@ -351,7 +372,7 @@ namespace System.Management.Automation
             MessageId = "Steppable",
             Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin)
-            => GetSteppablePipelineImpl(commandOrigin, null);
+            => GetSteppablePipelineImpl(commandOrigin, args: null);
 
         /// <summary>
         /// Get a steppable pipeline object.
@@ -375,7 +396,7 @@ namespace System.Management.Automation
         /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred.</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement.</exception>
         public Collection<PSObject> Invoke(params object[] args) =>
-            DoInvoke(AutomationNull.Value, AutomationNull.Value, args);
+            DoInvoke(dollarUnder: AutomationNull.Value, input: AutomationNull.Value, args);
 
         /// <summary>
         /// A method that allows a scriptblock to be invoked with additional context in the form of a
@@ -955,8 +976,17 @@ namespace System.Management.Automation
                 {
                     var runspace = (RunspaceBase)context.CurrentRunspace;
                     shouldGenerateEvent = !runspace.RunActionIfNoRunningPipelinesWithThreadCheck(() =>
-                        InvokeWithPipeImpl(useLocalScope, functionsToDefine, variablesToDefine, errorHandlingBehavior,
-                            dollarUnder, input, scriptThis, outputPipe, invocationInfo, args));
+                        InvokeWithPipeImpl(
+                            useLocalScope,
+                            functionsToDefine,
+                            variablesToDefine,
+                            errorHandlingBehavior,
+                            dollarUnder,
+                            input,
+                            scriptThis,
+                            outputPipe,
+                            invocationInfo,
+                            args));
                 }
                 finally
                 {
@@ -1085,7 +1115,7 @@ namespace System.Management.Automation
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
         /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
-        public void Begin(bool expectInput) => Begin(expectInput, (ICommandRuntime)null);
+        public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
