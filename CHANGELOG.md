@@ -705,7 +705,6 @@
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
 
-## 6.1.3 - 2019-02-19
 ## 6.1.4 - 2019-05-21
 
 ### Build and Packaging Improvements
