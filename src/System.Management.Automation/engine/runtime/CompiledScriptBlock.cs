@@ -2192,9 +2192,9 @@ namespace System.Management.Automation
             if (_scriptBlock.HasBeginBlock)
             {
                 RunClause(
-                    _runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
-                    AutomationNull.Value,
-                    _input);
+                    clause: _runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
+                    dollarUnderbar: AutomationNull.Value,
+                    inputToProcess: _input);
             }
         }
 
@@ -2219,9 +2219,9 @@ namespace System.Management.Automation
             if (_scriptBlock.HasProcessBlock)
             {
                 RunClause(
-                    _runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock,
-                    dollarUnder,
-                    _input);
+                    clause: _runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock,
+                    dollarUnderbar: dollarUnder,
+                    inputToProcess: _input);
                 _input.Clear();
             }
         }
@@ -2236,9 +2236,9 @@ namespace System.Management.Automation
             if (_scriptBlock.HasEndBlock)
             {
                 RunClause(
-                    _runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock,
-                    AutomationNull.Value,
-                    _input.ToArray());
+                    clause: _runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock,
+                    dollarUnderbar: AutomationNull.Value,
+                    inputToProcess: _input.ToArray());
             }
         }
 
@@ -2347,9 +2347,9 @@ namespace System.Management.Automation
                 Diagnostics.Assert(_functionContext._outputPipe == null, "Output pipe should not be set yet.");
                 _functionContext._outputPipe = new Pipe(resultList);
                 RunClause(
-                    _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
-                    AutomationNull.Value,
-                    AutomationNull.Value);
+                    clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
+                    dollarUnderbar: AutomationNull.Value,
+                    inputToProcess: AutomationNull.Value);
                 if (resultList.Count > 1)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
@@ -2386,11 +2386,9 @@ namespace System.Management.Automation
         {
             _localsTuple.SetAutomaticVariable(
                 AutomaticVariable.PSBoundParameters,
-                commandLineParameters.GetValueToBindToPSBoundParameters(),
+                value: commandLineParameters.GetValueToBindToPSBoundParameters(),
                 this.Context);
-            _localsTuple.SetAutomaticVariable(
-                AutomaticVariable.MyInvocation,
-                MyInvocation, this.Context);
+            _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, value: MyInvocation, this.Context);
         }
 
         private void SetPreferenceVariables()
