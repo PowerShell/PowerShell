@@ -227,12 +227,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 Int64 charCounter = 0;
 
+                // Simple unicode detection
+                bool isUnicode = (Bytes.Length >= 2) && ((Bytes[0] == 0xFF) && (Bytes[1] == 0xFE));
+
                 // ToString() in invoked thrice by the F&O for the same content.
                 // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
                 var currentOffset = Offset64;
 
                 nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
 
+                bool unicodeSkipCharTracker = false;
                 foreach (byte currentByte in Bytes)
                 {
                     // Display each byte, in 2-digit hexadecimal, and add that to the left-hand side.
@@ -240,14 +244,29 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the character is printable, add its ascii representation to
                     // the right-hand side.  Otherwise, add a dot to the right hand side.
-                    if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                    // If the byte array has been detected as Unicode, every 2nd character is forced to display as '.'
+                    char charToAppend = '.';
+                    if (isUnicode)
                     {
-                        asciiEnd.Append((char)currentByte);
+                        if (!unicodeSkipCharTracker)
+                        {
+                            if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                            {
+                                charToAppend = (char)currentByte;
+                            }
+                        }
+                        // Toggle the Unicode character skip flag
+                        unicodeSkipCharTracker = !unicodeSkipCharTracker;
                     }
                     else
                     {
-                        asciiEnd.Append('.');
+                        // Not Unicode, so presume ANSI
+                        if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                        {
+                            charToAppend = (char)currentByte;
+                        }
                     }
+                    asciiEnd.Append(charToAppend);
 
                     charCounter++;
 
