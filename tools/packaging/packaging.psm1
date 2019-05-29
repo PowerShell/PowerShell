@@ -2608,7 +2608,7 @@ function New-MSIPackage
     $wixPaths = Get-WixPath
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $simpleProductVersion = '6'
+    $simpleProductVersion = '7'
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview)
     {
