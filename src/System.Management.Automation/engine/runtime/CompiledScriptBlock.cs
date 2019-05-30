@@ -716,13 +716,15 @@ namespace System.Management.Automation
             bool filterNonUsingVariables,
             bool? createLocalScope,
             params object[] args)
-            => AstInternal.GetPowerShell(
+        {
+            return AstInternal.GetPowerShell(
                 context,
                 variables,
                 isTrustedInput,
                 filterNonUsingVariables,
                 createLocalScope,
                 args);
+        }
 
 
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
@@ -1132,9 +1134,7 @@ namespace System.Management.Automation
 
                             string name = psvar.Name;
                             Diagnostics.Assert(
-                                !(string.Equals(name, "this")
-                                    || string.Equals(name, "_")
-                                    || string.Equals(name, "input")),
+                                !(string.Equals(name, "this") || string.Equals(name, "_") || string.Equals(name, "input")),
                                 "The list of variables to set in the scriptblock's scope cannot contain 'this', '_' or 'input'. These variables should be removed before passing the collection to this routine.");
                             index++;
                             newScope.Variables.Add(name, psvar);
@@ -1475,12 +1475,12 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    // If we have recipients to encrypt to, then do so. Otherwise, we'll just log the plain text
-                    // version.
+                    // If we have recipients to encrypt to, then do so.
+                    // Otherwise, we'll just log the plain text version.
                     if (s_encryptionRecipients != null)
                     {
-                        // Encrypt the raw Text from the scriptblock.  The user may have to deal with any control
-                        // characters in the data.
+                        // Encrypt the raw text from the scriptblock.
+                        // The user may have to deal with any control characters in the data.
                         ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                         ErrorRecord error = null;
                         byte[] contentBytes = System.Text.Encoding.UTF8.GetBytes(textToLog);
