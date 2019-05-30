@@ -1614,9 +1614,6 @@ namespace System.Management.Automation
                 preference == ActionPreference.Break)
             {
                 context.Debugger?.Break(rte);
-
-                // set the value of $? here in case it was reset in the debugger.
-                context.QuestionMarkVariableValue = false;
             }
 
             // Item2 in the trap tuples is the action (script) for the trap.
@@ -1630,9 +1627,6 @@ namespace System.Management.Automation
                 // update the action preference according to how the exception is
                 // handled in the trap statement(s).
                 preference = ProcessTraps(funcContext, rte);
-
-                // set the value of $? here in case it was reset in trap handling.
-                context.QuestionMarkVariableValue = false;
             }
             else if (ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
@@ -1641,9 +1635,6 @@ namespace System.Management.Automation
             else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
             {
                 preference = InquireForActionPreference(rte.Message, context);
-
-                // set the value of $? here in case it was reset in inquire.
-                context.QuestionMarkVariableValue = false;
             }
 
             if ((preference == ActionPreference.SilentlyContinue) ||
@@ -1668,12 +1659,7 @@ namespace System.Management.Automation
                 throw rte;
             }
 
-            bool errorReportedSuccessfully = ReportErrorRecord(extent, rte, context);
-
-            // set the value of $? here in case it is reset in error reporting
-            context.QuestionMarkVariableValue = false;
-
-            if (!errorReportedSuccessfully)
+            if (!ReportErrorRecord(extent, rte, context))
             {
                 throw rte;
             }
@@ -1711,10 +1697,12 @@ namespace System.Management.Automation
             if (handler != -1)
             {
                 Diagnostics.Assert(exception != null, "Exception object can't be null.");
+
+                var context = funcContext._executionContext;
+
                 try
                 {
                     ErrorRecord err = rte.ErrorRecord;
-                    var context = funcContext._executionContext;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
                     if (context.CurrentCommandProcessor != null)
@@ -1777,6 +1765,13 @@ namespace System.Management.Automation
                 {
                     // Terminate this block of statements.
                     return ActionPreference.Stop;
+                }
+                finally
+                {
+                    // The questionmark variable will always be false when we process a trap, so
+                    // set it to false to ensure it didn't change as a result of anything done
+                    // inside the trap
+                    context.QuestionMarkVariableValue = false;
                 }
             }
 
@@ -1860,10 +1855,12 @@ namespace System.Management.Automation
             string caption = ParserStrings.ExceptionActionPromptCaption;
 
             int choice;
+            bool oldQuestionMarkVariableValue = context.QuestionMarkVariableValue;
             while ((choice = ui.PromptForChoice(caption, message, choices, 0)) == 3)
             {
                 context.EngineHostInterface.EnterNestedPrompt();
             }
+            context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
             if (choice == 0)
                 return ActionPreference.Continue;
@@ -1951,6 +1948,9 @@ namespace System.Management.Automation
             }
 
             context.ShellFunctionErrorOutputPipe.Add(errorWrap);
+
+            // set the value of $? here in case it is reset in error reporting.
+            context.QuestionMarkVariableValue = false;
 
             return true;
         }

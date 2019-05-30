@@ -34,24 +34,28 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 
         It 'action preference of Ignore can be set as a preference variable using a string value' {
-            Remove-Variable -Name ErrorActionPreference -Scope Global -Force
-            $GLOBAL:errorActionPreference = "Ignore"
-            $errorCount = $error.Count
-            Get-Process -Name asdfasdfasdf
+            try {
+                Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+                $GLOBAL:errorActionPreference = "Ignore"
+                $errorCount = $error.Count
+                Get-Process -Name asdfasdfasdf
 
-            $error.Count | Should -BeExactly $errorCount
-
-            $GLOBAL:errorActionPreference = $orgin
+                $error.Count | Should -BeExactly $errorCount
+            } finally {
+                $GLOBAL:errorActionPreference = $orgin
+            }
         }
 
         It 'action preference of Ignore can be set as a preference variable using an enumerated value' {
-            $GLOBAL:errorActionPreference = [actionpreference]::Ignore
-            $errorCount = $error.Count
-            Get-Process -Name asdfasdfasdf
+            try {
+                $GLOBAL:errorActionPreference = [actionpreference]::Ignore
+                $errorCount = $error.Count
+                Get-Process -Name asdfasdfasdf
 
-            $error.Count | Should -BeExactly $errorCount
-
-            $GLOBAL:errorActionPreference = $orgin
+                $error.Count | Should -BeExactly $errorCount
+            } finally {
+                $GLOBAL:errorActionPreference = $orgin
+            }
         }
 
         It 'enum disambiguation works' {

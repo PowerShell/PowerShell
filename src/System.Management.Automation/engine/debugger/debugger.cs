@@ -1748,6 +1748,8 @@ namespace System.Management.Automation
                 return;
             }
 
+            bool oldQuestionMarkVariableValue = _context.QuestionMarkVariableValue;
+
             _context.SetVariable(SpecialVariables.PSDebugContextVarPath, new PSDebugContext(invocationInfo, breakpoints, TriggerObject));
 
             FunctionInfo defaultPromptInfo = null;
@@ -1861,6 +1863,8 @@ namespace System.Management.Automation
 
                 DebuggerStopEventArgs oldArgs;
                 _debuggerStopEventArgs.TryPop(out oldArgs);
+
+                _context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
                 _inBreakpoint = false;
             }
