@@ -818,13 +818,22 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
+            $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
+            $objPath = Join-Path -Path $tool.Path -ChildPath "obj"
+
+            if (Test-Path $toolPath) {
+                Remove-Item -Path $toolPath -Recurse -Force
+            }
+
+            if (Test-Path $objPath) {
+                Remove-Item -Path $objPath -Recurse -Force
+            }
+
             if (-not $runtime) {
                 dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             } else {
                 dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
             }
-
-            $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
