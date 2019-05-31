@@ -39,7 +39,7 @@ Describe "Read-Host Test" -tag "CI" {
     }
 
     It "Read-Host doesn't enter command prompt mode" {
-        $result = "!1" | pwsh -nop -c "Read-host -Prompt 'foo'"
+        $result = "!1" | pwsh -NoProfile -c "Read-host -Prompt 'foo'"
         $result | should -BeExactly @('foo: !1','!1')
     }
 }
