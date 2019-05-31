@@ -8,6 +8,9 @@ jobs:
   displayName: Build NuGet packages
   condition: succeeded()
   pool: PowerShell
+
+  timeoutInMinutes: 90
+
   variables:
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'

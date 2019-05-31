@@ -78,7 +78,7 @@ Describe "Test-Connection" -tags "CI" {
             { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } | Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
             if (!$isWindows) {
-                $Error[0].Exception.InnerException.ErrorCode | Should -Be 6
+                $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
             } else {
                 $Error[0].Exception.InnerException.ErrorCode | Should -Be 11001
             }
@@ -113,8 +113,9 @@ Describe "Test-Connection" -tags "CI" {
                 $result2.Replies[0].Status               | Should -BeIn "TtlExpired","TimedOut","Success"
             } else {
                 $result1.Replies[0].Options.DontFragment | Should -BeFalse
-                # We expect 'TtlExpired' but if a router don't reply we get `TimeOut`
-                $result2.Replies[0].Status               | Should -BeIn "TtlExpired","TimedOut"
+                # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
+                # AzPipelines returns $null
+                $result2.Replies[0].Status               | Should -BeIn "TtlExpired","TimedOut",$null
             }
         }
 

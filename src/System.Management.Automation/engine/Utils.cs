@@ -1182,8 +1182,6 @@ namespace System.Management.Automation
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            // See if it's the correct length. If it's shorter than CON, AUX, etc, it can't be a device name.
-            // Likewise, if it's longer than 'CLOCK$', it can't be a device name.
             if (((compareName.Length < 3) || (compareName.Length > 6)) &&
                 ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
             {

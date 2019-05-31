@@ -1,5 +1,5 @@
 parameters:
-  dependsOn: 'win_build'
+  parentJobs: []
   pool: 'Hosted VS2017'
   jobName: 'xunit_verify'
 
@@ -9,7 +9,7 @@ jobs:
   pool:
     name: ${{ parameters.pool }}
   dependsOn:
-    - ${{ parameters.dependsOn }}
+    ${{ parameters.parentJobs }}
   steps:
   - task: DownloadBuildArtifacts@0
     displayName: 'Download build artifacts'

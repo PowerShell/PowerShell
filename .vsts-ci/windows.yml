@@ -11,7 +11,6 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
@@ -25,7 +24,6 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
@@ -41,41 +39,43 @@ resources:
 - repo: self
   clean: true
 
-jobs:
-- template: templates/ci-build.yml
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - template: templates/ci-build.yml
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - win_build
+- stage: TestWin
+  displayName: Test for Windows
+  jobs:
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-# Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
-- template: templates/windows-packaging.yml
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: 'Hosted VS2017'
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: 'Hosted VS2017'
-    dependsOn: win_build
+- stage: PackagingWin
+  displayName: Packaging for Windows
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
+  - template: templates/windows-packaging.yml
+
