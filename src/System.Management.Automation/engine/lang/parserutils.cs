@@ -634,23 +634,27 @@ namespace System.Management.Automation
                 options |= SplitOptions.IgnoreCase;
             }
 
-            if (predicate != null)
+            if (predicate == null)
+            {
+                return SplitWithPattern(context, errorPosition, content, separatorPattern, limit, options);
+            }
+            else if (limit >= 0)
             {
                 return SplitWithPredicate(context, errorPosition, content, predicate, limit);
             }
             else
             {
-                return SplitWithPattern(context, errorPosition, content, separatorPattern, limit, options);
+                return NegativeSplitWithPredicate(context, errorPosition, content, predicate, limit);
             }
         }
 
-        private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        private static object NegativeSplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
             var results = new List<string>();
 
-            if (limit == 1 || limit == -1) 
+            if (limit == -1)
             {
-                // if the user just wants 1 string 
+                // if the user just wants 1 string
                 // then just return the content
                 return new List<string>(content);
             }
@@ -659,17 +663,12 @@ namespace System.Management.Automation
             {
                 var split = new List<string>();
 
-                // Find out where to start the splitting process.
-                // If it is a reverse split then start at the end
-                // of the item. Else, start at the start of the item.
-                var cursor = (limit < 0)? item.Length - 1: 0;
+                // Used to traverse through the item
+                var cursor = item.Length - 1;
 
-                // This is used to calculate how much to split from item.
                 var subStringLength = 0;
 
-                // Loop through the entire item 
-                for (int charCount = 0; charCount < item.Length; charCount++)
-                {
+                for (var charCount = 0; charCount < item.Length; charCount++) {
                     // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
@@ -678,37 +677,19 @@ namespace System.Management.Automation
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
                         args: new object[] { item, cursor });
-                    
-                    // If the current character is not a delimiter 
-                    // then it must be included into a substring.
+
                     if (!LanguagePrimitives.IsTrue(predicateResult))
                     {
                         subStringLength++;
-                        if (limit < 0)
-                        {
-                            cursor -= 1;
-                        }
-                        else
-                        {
-                            cursor += 1;
-                        }
+                        cursor -= 1;
                         continue;
                     }
 
-                    // Else, if the character is a delimiter
-                    // then add a substring to the split list.
-                    split.Add(item.Substring((limit < 0)? cursor + 1: cursor - subStringLength, subStringLength));
+                    split.Add(item.Substring(cursor + 1, subStringLength));
 
                     subStringLength = 0;
 
-                    if (limit < 0)
-                    {
-                        cursor -= 1;
-                    }
-                    else
-                    {
-                        cursor += 1;
-                    }
+                    cursor -= 1;
 
                     if (System.Math.Abs(limit) == (split.Count + 1))
                     {
@@ -724,34 +705,95 @@ namespace System.Management.Automation
                     // string.
                     split.Add(item.Substring(0, subStringLength));
                 }
-                else if (limit < 0)
+                else
                 {
                     // Used to get the rest of the string
-                    // when using a negative limit and 
-                    // the cursor doesn't reach the end 
+                    // when using a negative limit and
+                    // the cursor doesn't reach the end
                     // of the string.
                     split.Add(item.Substring(0, cursor + 1));
                 }
-                else if (cursor == item.Length)
+
+                split.Reverse();
+
+                results.AddRange(split);
+            }
+
+            return results.ToArray();
+        }
+
+        private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        {
+            var results = new List<string>();
+
+            if (limit == 1)
+            {
+                // if the user just wants 1 string
+                // then just return the content
+                return new List<string>(content);
+            }
+
+            foreach (string item in content)
+            {
+                var split = new List<string>();
+
+                // Used to traverse through the item
+                var cursor = 0;
+
+                // This is used to calculate how much to split from item.
+                var subStringLength = 0;
+
+                for (var charCount = 0; charCount < item.Length; charCount++)
+                {
+                    // Evaluate the predicate using the character at cursor.
+                    object predicateResult = predicate.DoInvokeReturnAsIs(
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                        dollarUnder: CharToString(item[cursor]),
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { item, cursor });
+
+                    // If the current character is not a delimiter
+                    // then it must be included into a substring.
+                    if (!LanguagePrimitives.IsTrue(predicateResult))
+                    {
+                        subStringLength++;
+
+                        cursor += 1;
+
+                        continue;
+                    }
+
+                    // Else, if the character is a delimiter
+                    // then add a substring to the split list.
+                    split.Add(item.Substring(cursor - subStringLength, subStringLength));
+
+                    subStringLength = 0;
+
+                    cursor += 1;
+
+                    if (limit == (split.Count + 1))
+                    {
+                        break;
+                    }
+                }
+
+                if (cursor == item.Length)
                 {
                     // Used to get the rest of the string
                     // when the limit is not negative and
-                    // the cursor is allowed to make it to 
+                    // the cursor is allowed to make it to
                     // the end of the string.
                     split.Add(item.Substring(cursor - subStringLength, subStringLength));
                 }
                 else
                 {
-                    // Used to get the rest of the string 
+                    // Used to get the rest of the string
                     // when the limit is not negative and
                     // the cursor is not at the end of the
                     // string.
                     split.Add(item.Substring(cursor, item.Length - cursor));
-                }
-
-                if (limit < 0)
-                {
-                    split.Reverse();
                 }
 
                 results.AddRange(split);
@@ -788,7 +830,7 @@ namespace System.Management.Automation
             int calculatedLimit = limit;
 
             // if the limit is negative then set Regex to read from right to left
-            if (calculatedLimit < 0) 
+            if (calculatedLimit < 0)
             {
                 regexOptions |= RegexOptions.RightToLeft;
                 calculatedLimit *= -1;
