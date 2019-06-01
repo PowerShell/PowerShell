@@ -584,7 +584,7 @@ namespace System.Management.Automation
             return SplitOperatorImpl(context, errorPosition, lval, rval, SplitImplOptions.None, ignoreCase);
         }
 
-        private static object SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)
+        private static IReadOnlyList<string> SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)
         {
             IEnumerable<string> content = enumerateContent(context, errorPosition, implOptions, lval);
 
@@ -648,13 +648,13 @@ namespace System.Management.Automation
             }
         }
 
-        private static object NegativeSplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        private static IReadOnlyList<string> NegativeSplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
             var results = new List<string>();
 
             if (limit == -1)
             {
-                // if the user just wants 1 string
+                // If the user just wants 1 string
                 // then just return the content
                 return new List<string>(content);
             }
@@ -722,13 +722,13 @@ namespace System.Management.Automation
             return results.ToArray();
         }
 
-        private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        private static IReadOnlyList<string> SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
             var results = new List<string>();
 
             if (limit == 1)
             {
-                // if the user just wants 1 string
+                // If the user just wants 1 string
                 // then just return the content
                 return new List<string>(content);
             }
@@ -802,7 +802,7 @@ namespace System.Management.Automation
             return results.ToArray();
         }
 
-        private static object SplitWithPattern(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, string separatorPattern, int limit, SplitOptions options)
+        private static IReadOnlyList<string> SplitWithPattern(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, string separatorPattern, int limit, SplitOptions options)
         {
             // Default to Regex matching if no match specified.
             if ((options & SplitOptions.SimpleMatch) == 0 &&
