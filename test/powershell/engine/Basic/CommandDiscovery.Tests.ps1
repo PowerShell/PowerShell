@@ -207,8 +207,8 @@ Describe "Command Discovery tests" -Tags "CI" {
     }
 
     Context "error cases" {
-        It 'Get-Command "less `"-PsPage %db?B of %DoesNotExist:`"" should throw Drive not found' {
-            {Get-Command -Name "less `"-PsPage %db?B of %DoesNotExist:`""} | Should -Throw -ErrorId 'DriveNotFound' -Because "The drive 'DoesNotExist:' should not exist"
+        It 'Get-Command "less `"-PsPage %db?B of %DoesNotExist:`"" should return nothing' {
+            Get-Command -Name "less `"-PsPage %db?B of %DoesNotExist:`"" | Should -BeNullOrEmpty
         }
     }
 }
