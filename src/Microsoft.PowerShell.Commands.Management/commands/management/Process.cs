@@ -795,9 +795,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    // TODO: Use Concat() from .Net Core 3.0
-                    // public static string Concat(ReadOnlySpan<char> str0, ReadOnlySpan<char> str1, ReadOnlySpan<char> str2)
-                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength).ToString(), "\\", userNameStr.Slice(0, userNameLength).ToString());
+                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
                 } while (false);
             }
             catch (NotSupportedException)
