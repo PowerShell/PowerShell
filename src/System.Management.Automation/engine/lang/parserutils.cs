@@ -664,7 +664,7 @@ namespace System.Management.Automation
                 var split = new List<string>();
 
                 // Used to traverse through the item
-                var cursor = item.Length - 1;
+                int cursor = item.Length - 1;
 
                 int subStringLength = 0;
 
