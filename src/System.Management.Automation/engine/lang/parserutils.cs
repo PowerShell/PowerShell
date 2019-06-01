@@ -829,7 +829,7 @@ namespace System.Management.Automation
 
             int calculatedLimit = limit;
 
-            // if the limit is negative then set Regex to read from right to left
+            // If the limit is negative then set Regex to read from right to left
             if (calculatedLimit < 0)
             {
                 regexOptions |= RegexOptions.RightToLeft;
