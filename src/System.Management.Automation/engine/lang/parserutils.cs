@@ -666,7 +666,7 @@ namespace System.Management.Automation
                 // Used to traverse through the item
                 var cursor = item.Length - 1;
 
-                var subStringLength = 0;
+                int subStringLength = 0;
 
                 for (int charCount = 0; charCount < item.Length; charCount++) {
                     // Evaluate the predicate using the character at cursor.
