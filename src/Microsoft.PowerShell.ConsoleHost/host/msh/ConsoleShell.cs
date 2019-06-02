@@ -14,10 +14,10 @@ namespace Microsoft.PowerShell
     public static
     class ConsoleShell
     {
-        /// <summary>Entry point in to ConsoleShell.</summary>
+        /// <summary>Entry point in to ConsoleShell. Used to create a custom Powershell console application</summary>
         /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost.</param>
         /// <param name="bannerText">Banner text to be displayed by ConsoleHost.</param>
-        /// <param name="helpText">Help text for minishell. This is displayed on 'minishell -?'.</param>
+        /// <param name="helpText">Help text for the shell.</param>
         /// <param name="args">Commandline parameters specified by user.</param>
         /// <returns>An integer value which should be used as exit code for the process.</returns>
         public static int Start(InitialSessionState initialSessionState, string bannerText, string helpText, string[] args)
