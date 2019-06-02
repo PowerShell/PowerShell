@@ -14,8 +14,8 @@ namespace Microsoft.PowerShell
     public static
     class ConsoleShell
     {
-        /// <summary>Entry point in to ConsoleShell. This method is called by main of minishell.</summary>
-        /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost</param>
+        /// <summary>Entry point in to ConsoleShell.</summary>
+        /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost.</param>
         /// <param name="bannerText">Banner text to be displayed by ConsoleHost.</param>
         /// <param name="helpText">Help text for minishell. This is displayed on 'minishell -?'.</param>
         /// <param name="args">Commandline parameters specified by user.</param>
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             ConsoleHost.DefaultInitialSessionState = initialSessionState;
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell
         {
             if (args == null)
             {
-                throw PSTraceSource.NewArgumentNullException("args");
+                throw PSTraceSource.NewArgumentNullException(nameof(args));
             }
 
             return ConsoleHost.Start(bannerText, helpText, args);
