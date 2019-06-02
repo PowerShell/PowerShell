@@ -738,12 +738,12 @@ namespace System.Management.Automation
                 var split = new List<string>();
 
                 // Used to traverse through the item
-                var cursor = 0;
+                int cursor = 0;
 
                 // This is used to calculate how much to split from item.
-                var subStringLength = 0;
+                int subStringLength = 0;
 
-                for (var charCount = 0; charCount < item.Length; charCount++)
+                for (int charCount = 0; charCount < item.Length; charCount++)
                 {
                     // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
