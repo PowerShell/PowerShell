@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell
                     firstRightLeadingRow = r;
                 }
 
-                for (; ;)
+                while (true)
                 {
                     r++;
                     if (r > contentsRegion.Bottom)
