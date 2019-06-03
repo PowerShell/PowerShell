@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
         $functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
@@ -1061,11 +1062,11 @@ foo``u{2195}abc
             }
             @{
                 Script   = "(20 %
-                6 *
-                4  +
-                2 ) /
-                2 -
-                3"
+                    6 *
+                    4  +
+                    2 ) /
+                    2 -
+                    3"
                 Expected = "2"
             }
         )
