@@ -2341,6 +2341,9 @@
       <Component Id="cmpA78AF1C0B05D44AA86076041D075483E" Guid="{dd27b89b-842d-424d-868d-399e8d71c1ef}">
         <File Id="filAF861E3F0C1C4AB58D0B3F403C155724" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27622.75.dll" />
       </Component>
+      <Component Id="cmp8E8AE88416D44A4CA39F23E9C825A899" Guid="{9635d266-8657-4c7e-8a9b-81d2c2b6456d}">
+        <File Id="fil4954FEF58A894EA7B701DFCA7D11AF08" KeyPath="yes" Source="$(env.ProductSourcePath)\Namotion.Reflection.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2940,6 +2943,7 @@
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
       <ComponentRef Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" />
+      <ComponentRef Id="cmp8E8AE88416D44A4CA39F23E9C825A899" />
     </ComponentGroup>
   </Fragment>
 </Wix>
