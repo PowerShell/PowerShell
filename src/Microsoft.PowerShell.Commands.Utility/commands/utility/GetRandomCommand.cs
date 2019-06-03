@@ -286,6 +286,19 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int Count { get; set; } = 1;
 
+        /// <summary>
+        /// Returns unique output values.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Unique
+        {
+            get { return _unique; }
+
+            set { _unique = value; }
+        }
+
+        private bool _unique;
+
         #endregion
 
         #region Cmdlet processing methods
@@ -532,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(_chosenListItems[j]);
 
                     // remove the output object from consideration in the next iteration.
-                    if (i != j)
+                    if (i != j && ! _unique)
                     {
                         _chosenListItems[j] = _chosenListItems[i];
                     }
