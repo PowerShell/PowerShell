@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns unique output values.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Unique
         {
             get { return _unique; }
