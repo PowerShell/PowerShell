@@ -4867,15 +4867,15 @@ namespace System.Management.Automation
         public DebuggerCommandProcessor()
         {
             _commandTable = new Dictionary<string, DebuggerCommand>(StringComparer.OrdinalIgnoreCase);
-            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, true, false);
-            _commandTable[StepOutCommand] = _commandTable[StepOutShortcut] = new DebuggerCommand(StepOutCommand, DebuggerResumeAction.StepOut, false, false);
-            _commandTable[StepOverCommand] = _commandTable[StepOverShortcut] = new DebuggerCommand(StepOverCommand, DebuggerResumeAction.StepOver, true, false);
-            _commandTable[ContinueCommand] = _commandTable[ContinueShortcut] = new DebuggerCommand(ContinueCommand, DebuggerResumeAction.Continue, false, false);
-            _commandTable[StopCommand] = _commandTable[StopShortcut] = new DebuggerCommand(StopCommand, DebuggerResumeAction.Stop, false, false);
-            _commandTable[GetStackTraceShortcut] = new DebuggerCommand("get-pscallstack", null, false, false);
-            _commandTable[HelpCommand] = _commandTable[HelpShortcut] = _helpCommand = new DebuggerCommand(HelpCommand, null, false, true);
-            _commandTable[ListCommand] = _commandTable[ListShortcut] = _listCommand = new DebuggerCommand(ListCommand, null, true, true);
-            _commandTable[string.Empty] = new DebuggerCommand(string.Empty, null, false, true);
+            _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, repeatOnEnter:true, executedByDebugger:false);
+            _commandTable[StepOutCommand] = _commandTable[StepOutShortcut] = new DebuggerCommand(StepOutCommand, DebuggerResumeAction.StepOut, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[StepOverCommand] = _commandTable[StepOverShortcut] = new DebuggerCommand(StepOverCommand, DebuggerResumeAction.StepOver, repeatOnEnter: true, executedByDebugger: false);
+            _commandTable[ContinueCommand] = _commandTable[ContinueShortcut] = new DebuggerCommand(ContinueCommand, DebuggerResumeAction.Continue, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[StopCommand] = _commandTable[StopShortcut] = new DebuggerCommand(StopCommand, DebuggerResumeAction.Stop, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[GetStackTraceShortcut] = new DebuggerCommand("get-pscallstack", null, repeatOnEnter: false, executedByDebugger: false);
+            _commandTable[HelpCommand] = _commandTable[HelpShortcut] = _helpCommand = new DebuggerCommand(HelpCommand, null, repeatOnEnter: false, executedByDebugger: true);
+            _commandTable[ListCommand] = _commandTable[ListShortcut] = _listCommand = new DebuggerCommand(ListCommand, null, repeatOnEnter: true, executedByDebugger: true);
+            _commandTable[string.Empty] = new DebuggerCommand(string.Empty, null, repeatOnEnter: false, executedByDebugger: true);
         }
 
         /// <summary>
