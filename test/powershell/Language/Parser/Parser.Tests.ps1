@@ -4,9 +4,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     BeforeAll {
         $functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
         $functionDefinition = @'
-		function testcmd-parserbvt {
-		[CmdletBinding()]
-			param (
+        function testcmd-parserbvt {
+        [CmdletBinding()]
+            param (
                 [Parameter(Position = 0)]
                 [string] $Property1 = "unset",
 
@@ -19,54 +19,54 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
                 [Parameter()]
                 [ValidateSet("default","array","object","nestedobject","struct","mshobject","nulltostring")]
                 [string]$ReturnType = "default"
-			)
+            )
 
-			BEGIN {}
+            BEGIN {}
 
-			PROCESS {
-				if ( ! $ReturnType ) {
-					$ReturnType = "default"
-				}
+            PROCESS {
+                if ( ! $ReturnType ) {
+                    $ReturnType = "default"
+                }
 
-				switch ( $ReturnType ) {
-					"default" {
-						$result = "$Property1;$Property2;$Property3"
-						break
-					}
-					"array" {
-						$result = 1,2,3
-						break
-					}
-					"object" {
-						$result = new-object psobject
-						break
-					}
-					"nestedobject" {
-						$result = [pscustomobject]@{Name="John";Person=[pscustomobject]@{Name="John";Age=30}}
-						break
-					}
-					"struct" {
-						$result = [pscustomobject]@{Name="John";Age=30}
-						break
-					}
-					"mshobject" {
-						$result = new-object psobject
-						break
-					}
-					"nulltostring" {
-						$result = $null
-						break
-					}
-					default {
-						throw ([invalidoperationexception]::new("ReturnType parameter wasn't of any Expected value!"))
-						break
-					}
-				}
-				return $result
-			}
+                switch ( $ReturnType ) {
+                    "default" {
+                        $result = "$Property1;$Property2;$Property3"
+                        break
+                    }
+                    "array" {
+                        $result = 1,2,3
+                        break
+                    }
+                    "object" {
+                        $result = new-object psobject
+                        break
+                    }
+                    "nestedobject" {
+                        $result = [pscustomobject]@{Name="John";Person=[pscustomobject]@{Name="John";Age=30}}
+                        break
+                    }
+                    "struct" {
+                        $result = [pscustomobject]@{Name="John";Age=30}
+                        break
+                    }
+                    "mshobject" {
+                        $result = new-object psobject
+                        break
+                    }
+                    "nulltostring" {
+                        $result = $null
+                        break
+                    }
+                    default {
+                        throw ([invalidoperationexception]::new("ReturnType parameter wasn't of any Expected value!"))
+                        break
+                    }
+                }
+                return $result
+            }
 
-			END {}
-		}
+            END {}
+        }
 '@
         $functionDefinition>$functionDefinitionFile
 
