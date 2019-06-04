@@ -240,14 +240,14 @@ namespace Microsoft.PowerShell.Commands
 
                     // Add its ascii representation to the right-hand side.
                     // If the byte represents a control character, replace with a space for byte value 0   
-                    // and /uFFFD for all others.
+                    // and the Unicode replacement character ('/uFFFD') for all others.
                     char charToAppend = (char)currentByte;
                     if (char.IsControl(charToAppend)) {
-                        // 
+                        // replace all 0 value bytes with spaces for better visualisation of any surrounding ascii text
                         if (currentByte == 0) {
-                            charToAppend = ' ';
+                            charToAppend = ' ';      
                         } else {
-                            charToAppend = '\uFFFD';
+                            charToAppend = '\uFFFD';      // Standard Unicode replacement character for all other control chars
                         }
                     }
                     asciiEnd.Append(charToAppend);
