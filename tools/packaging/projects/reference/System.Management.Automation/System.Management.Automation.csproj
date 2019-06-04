@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Version>$(RefAsmVersion)</Version>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
