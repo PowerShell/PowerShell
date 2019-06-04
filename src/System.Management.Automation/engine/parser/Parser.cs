@@ -6647,6 +6647,10 @@ namespace System.Management.Automation.Language
 
                     return expr;
                 }
+                else if (token.Kind == TokenKind.AndAnd || token.Kind == TokenKind.OrOr)
+                {
+                    return expr;
+                }
 
                 SkipToken();
 
