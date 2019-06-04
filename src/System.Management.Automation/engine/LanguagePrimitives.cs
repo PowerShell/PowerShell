@@ -4711,10 +4711,11 @@ namespace System.Management.Automation
         {
             PSObject valueAsPsObj;
             Type originalType;
-            if (valueToConvert == null || valueToConvert == AutomationNull.Value)
+
+            if (IsNull(valueToConvert))
             {
-                valueAsPsObj = null;
                 originalType = typeof(Null);
+                valueAsPsObj = null;
             }
             else
             {

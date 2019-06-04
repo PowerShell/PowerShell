@@ -3028,13 +3028,22 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    arg.Value == null ? ExpressionCache.BoxedTrue : ExpressionCache.BoxedFalse,
+                    arg.Value == null || arg.Value == DBNull.Value || arg.Value == NullString.Value
+                        ? ExpressionCache.BoxedTrue
+                        : ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
             }
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null && arg.Value == null)
             {
+                if (target.Value == DBNull.Value || target.Value == NullString.Value)
+                {
+                    return new DynamicMetaObject(
+                        ExpressionCache.BoxedTrue,
+                        target.CombineRestrictions(arg));
+                }
+
                 return new DynamicMetaObject(
                     ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
@@ -3051,13 +3060,22 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    arg.Value == null ? ExpressionCache.BoxedFalse : ExpressionCache.BoxedTrue,
+                    arg.Value == null || arg.Value == DBNull.Value || arg.Value == NullString.Value
+                        ? ExpressionCache.BoxedFalse
+                        : ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null && arg.Value == null)
             {
+                if (target.Value == DBNull.Value || target.Value == NullString.Value)
+                {
+                    return new DynamicMetaObject(
+                        ExpressionCache.BoxedFalse,
+                        target.CombineRestrictions(arg));
+                }
+
                 return new DynamicMetaObject(ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
