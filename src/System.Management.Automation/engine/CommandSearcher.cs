@@ -478,15 +478,7 @@ namespace System.Management.Automation
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
-                    string path = null;
-                    try
-                    {
-                        path = GetNextLiteralPathThatExists(_commandName, out _);
-                    }
-                    catch (DriveNotFoundException)
-                    {
-                        // Don't do anything if it looks like a drive, but is a URL
-                    }
+                    string path = GetNextLiteralPathThatExists(_commandName, out _);
 
                     if (path != null)
                     {
