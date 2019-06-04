@@ -84,15 +84,6 @@ Describe "Command Discovery tests" -Tags "CI" {
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }
-    
-    It "Should find command in the global scope" {
-            $commands = @(Get-Command -Name 'global:help')
-            $commands.Count | Should -Be 1
-            if($expectedCommandCount -gt 0)
-            {
-                $commands.Name | Should -BeExactly 'help'
-            }    
-    }
 
     Context "Use literal path first when executing scripts" {
         BeforeAll {
@@ -218,6 +209,10 @@ Describe "Command Discovery tests" -Tags "CI" {
     Context "error cases" {
         It 'Get-Command "less `"-PsPage %db?B of %DoesNotExist:`"" should return nothing' {
             Get-Command -Name "less `"-PsPage %db?B of %DoesNotExist:`"" | Should -BeNullOrEmpty
+        }
+
+        It "Should return command not found for commands in the global scope" {
+            {Get-Command -Name 'global:help' -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException'
         }
     }
 }
