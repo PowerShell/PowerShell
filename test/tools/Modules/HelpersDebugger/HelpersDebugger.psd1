@@ -15,9 +15,9 @@
     Description = 'Helper module for Pester tests that automate the debugger'
 
     FunctionsToExport = @(
-        'Get-DebuggerExtent'
         'Register-DebuggerHandler'
         'ShouldHaveExtent'
+        'ShouldHaveSameExtentAs'
         'Test-Debugger'
         'Unregister-DebuggerHandler'
     )

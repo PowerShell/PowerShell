@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe 'Simple debugger command tests' -tag 'CI' {
+Describe 'Basic debugger command tests' -tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -16,9 +16,7 @@ Describe 'Simple debugger command tests' -tag 'CI' {
             $testScript = {
                 try {
                     $bp = Set-PSBreakpoint -Command Get-Process
-                    & {
-                        Get-Process -Id $PID
-                    } > $null
+                    Get-Process -Id $PID > $null
                 } finally {
                     Remove-PSBreakPoint -Breakpoint $bp
                 }
@@ -60,9 +58,7 @@ Describe 'Simple debugger command tests' -tag 'CI' {
             $testScript = {
                 try {
                     $bp = Set-PSBreakpoint -Command Get-Process
-                    & {
-                        Get-Process -Id $PID
-                    } > $null
+                    Get-Process -Id $PID > $null
                 } finally {
                     Remove-PSBreakPoint -Breakpoint $bp
                 }
@@ -72,13 +68,11 @@ Describe 'Simple debugger command tests' -tag 'CI' {
     1:
     2:                  try {
     3:                      $bp = Set-PSBreakpoint -Command Get-Process
-    4:                      & {
-    5:*                         Get-Process -Id $PID
-    6:                      } > $null
-    7:                  } finally {
-    8:                      Remove-PSBreakPoint -Breakpoint $bp
-    9:                  }
-   10:
+    4:*                     Get-Process -Id $PID > $null
+    5:                  } finally {
+    6:                      Remove-PSBreakPoint -Breakpoint $bp
+    7:                  }
+    8:
 '@
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l','list')
@@ -105,14 +99,95 @@ Describe 'Simple debugger command tests' -tag 'CI' {
         }
     }
 
+    Context 'List (l, list) command should support a start position' {
+        BeforeAll {
+            $testScript = {
+                try {
+                    $bp = Set-PSBreakpoint -Command Get-Process
+                    Get-Process -Id $PID > $null
+                } finally {
+                    Remove-PSBreakPoint -Breakpoint $bp
+                }
+            }
+
+            $testScriptList = @'
+    4:*                     Get-Process -Id $PID > $null
+    5:                  } finally {
+    6:                      Remove-PSBreakPoint -Breakpoint $bp
+    7:                  }
+    8:
+'@
+
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 4','list 4')
+            $resultl = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            $resultlist = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+        }
+
+        It 'Should show 3 debugger commands were invoked' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $results.Count | Should -Be 3
+        }
+
+        It 'Should only have non-empty string output from the list command' {
+            $results[0].Output | Should -BeOfType string
+            $resultl | Should -Match '\S'
+        }
+
+        It '''l 4'' and ''list 4'' should show identical script listings' {
+            $resultl | Should -BeExactly $resultlist
+        }
+
+        It 'Should show a partial script listing starting on line 4 with the current position on line 5' {
+            $resultl | Should -BeExactly $testScriptList
+        }
+    }
+
+    Context 'List (l, list) command should support a start position and a line count' {
+        BeforeAll {
+            $testScript = {
+                try {
+                    $bp = Set-PSBreakpoint -Command Get-Process
+                    Get-Process -Id $PID > $null
+                } finally {
+                    Remove-PSBreakPoint -Breakpoint $bp
+                }
+            }
+
+            $testScriptList = @'
+    3:                      $bp = Set-PSBreakpoint -Command Get-Process
+    4:*                     Get-Process -Id $PID > $null
+'@
+
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 3 2','list 3 2')
+            $resultl = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            $resultlist = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+        }
+
+        It 'Should show 3 debugger commands were invoked' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $results.Count | Should -Be 3
+        }
+
+        It 'Should only have non-empty string output from the list command' {
+            $results[0].Output | Should -BeOfType string
+            $resultl | Should -Match '\S'
+        }
+
+        It '''l 3 2'' and ''list 3 2'' should show identical script listings' {
+            $resultl | Should -BeExactly $resultlist
+        }
+
+        It 'Should show a partial script listing showing 3 lines starting on line 4 with the current position on line 5' {
+            $resultl | Should -BeExactly $testScriptList
+        }
+    }
+
     Context 'Callstack (k, Get-PSCallStack) command should show the current call stack' {
         BeforeAll {
             $testScript = {
                 try {
                     $bp = Set-PSBreakpoint -Command Get-Process
-                    & {
-                        Get-Process -Id $PID
-                    } > $null
+                    Get-Process -Id $PID > $null
                 } finally {
                     Remove-PSBreakPoint -Breakpoint $bp
                 }
@@ -139,7 +214,7 @@ Describe 'Simple debugger command tests' -tag 'CI' {
 
 }
 
-Describe 'Debugger stepping command tests' -tag 'CI' {
+Describe 'Simple debugger stepping command tests' -tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -154,12 +229,9 @@ Describe 'Debugger stepping command tests' -tag 'CI' {
             $testScript = {
                 try {
                     $bp = Set-PSBreakpoint -Command ForEach-Object
-                    $sb = {
+                    Get-Process -Id $PID | ForEach-Object {
                         'One fish, two fish'
                         'Red fish, blue fish'
-                    }
-                    & {
-                        Get-Process -Id $PID | ForEach-Object -Process $sb
                     } *> $null
                 } finally {
                     Remove-PSBreakPoint -Breakpoint $bp
@@ -178,148 +250,175 @@ Describe 'Debugger stepping command tests' -tag 'CI' {
 
         It '''s'' and ''stepInto'' should have identical behaviour' {
             for ($i = 0; $i -lt 3; $i++) {
-                Get-DebuggerExtent -DebuggerCommandResult $results[$i] | Should -Be (Get-DebuggerExtent -DebuggerCommandResult $resultstepinto[$i])
+                $results[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepinto[$i]
             }
         }
 
         It 'The first extent should be the statement containing ForEach-Object' {
-            $results[0] | ShouldHaveExtent -Line 9 -FromColumn 25 -ToColumn 75
+            $results[0] | ShouldHaveExtent -FromLine 4 -FromColumn 21 -ToLine 7 -ToColumn 31
         }
 
         It 'The second extent should be in the nested scriptblock' {
-            $results[1] | ShouldHaveExtent -Line 4 -FromColumn 27 -ToColumn 28
+            $results[1] | ShouldHaveExtent -Line 4 -FromColumn 59 -ToColumn 60
         }
 
-        It 'The third extent should be on Write-Object' {
+        It 'The third extent should be on ''One fish, two fish''' {
             $results[2] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 45
         }
 
-        It 'The fourth extent should be on ''Hello''' {
+        It 'The fourth extent should be on ''Red fish, blue fish''' {
             $results[3] | ShouldHaveExtent -Line 6 -FromColumn 25 -ToColumn 46
+        }
+    }
+
+    Context 'StepOver steps over the current command, unless it contains a triggerable breakpoint' {
+        BeforeAll {
+            $testScript = {
+                try {
+                    $bp1 = Set-PSBreakpoint -Command ForEach-Object
+                    $bp2 = Set-PSBreakpoint -Command ConvertTo-Csv | Disable-PSBreakpoint -PassThru
+                    Get-Process -Id $PID | ForEach-Object -Process {
+                        $_ | ConvertTo-Csv
+                    } *> $null
+                    Enable-PSBreakpoint -Breakpoint $bp2
+                    & {
+                        Get-Date | ConvertTo-Csv
+                    } *> $null
+                } finally {
+                    Remove-PSBreakPoint -Breakpoint $bp1,$bp2
+                }
+            }
+
+            $resultv = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v','v')
+            $resultstepover = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOver','stepOver','stepOver','stepOver')
+        }
+
+        It 'Should show 4 debugger commands were invoked twice' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $resultv.Count | Should -Be 5
+             $resultstepover.Count | Should -Be 5
+        }
+
+        It '''v'' and ''stepOver'' should have identical behaviour' {
+            for ($i = 0; $i -lt 3; $i++) {
+                $resultv[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepover[$i]
+            }
+        }
+
+        It 'The first extent should be the statement containing ForEach-Object' {
+            $resultv[0] | ShouldHaveExtent -FromLine 5 -FromColumn 21 -ToLine 7 -ToColumn 31
+        }
+
+        It 'The second extent should be on Enable-PSBreakpoint' {
+            $resultv[1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 57
+        }
+
+        It 'The third extent should be on the script block invoked with the call operator' {
+            $resultv[2] | ShouldHaveExtent -FromLine 9 -FromColumn 21 -ToLine 11 -ToColumn 31
+        }
+
+        It 'The fourth extent should be on the ConvertTo-Csv breakpoint inside the script block' {
+            $resultv[3] | ShouldHaveExtent -Line 10 -FromColumn 25 -ToColumn 49
+        }
+    }
+
+    Context 'StepOut steps out of the current command, unless it contains a triggerable breakpoint after the current location' {
+        BeforeAll {
+            $testScript = {
+                try {
+                    $bps = Set-PSBreakpoint -Command Get-Process,ConvertTo-Csv
+                    & {
+                        $process = Get-Process -Id $PID
+                        $process.Id
+                    }
+                    $date = Get-Date
+                    $date | ConvertTo-Csv
+                } finally {
+                    Remove-PSBreakPoint -Breakpoint $bps
+                }
+            }
+
+            $resulto = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o','o')
+            $resultstepout = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOut','stepOut','stepOut')
+        }
+
+        It 'Should show 3 debugger commands were invoked twice' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $resulto.Count | Should -Be 4
+             $resultstepout.Count | Should -Be 4
+        }
+
+        It '''o'' and ''stepOut'' should have identical behaviour' {
+            for ($i = 0; $i -lt 3; $i++) {
+                $resulto[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepout[$i]
+            }
+        }
+
+        It 'The first extent should be on Get-Process' {
+            $resulto[0] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 56
+        }
+
+        It 'The second extent should be on Get-Date' {
+            $resulto[1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 37
+        }
+
+        It 'The third extent should be on the ConvertTo-Csv breakpoint' {
+            $resulto[2] | ShouldHaveExtent -Line 9 -FromColumn 21 -ToColumn 42
         }
     }
 }
 
-        <#
-        It '-ErrorAction Break enters the debugger on a terminating error' {
+Describe 'Debugger bug fix tests' -tag 'CI' {
+
+    BeforeAll {
+        Register-DebuggerHandler
+    }
+
+    AfterAll {
+        Unregister-DebuggerHandler
+    }
+
+    Context 'Stepping works beyond Remove-PSBreakpoint (Issue #9824)' {
+        BeforeAll {
             $testScript = {
-                & {
-                    [CmdletBinding()]
-                    param()
-                    'Hello'
-                    Get-Process -Id ([int]::MaxValue + 1)
-                    'Goodbye'
-                } -ErrorAction Break
+                function Test-Issue9824 {
+                    $bp = Set-PSBreakpoint -Command Remove-PSBreakpoint
+                    Remove-PSBreakPoint -Breakpoint $bp
+                }
+                Test-Issue9824
+                1 + 1
             }
 
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 1
-            $results[0] | ShouldHaveExtent -Line 6 -FromColumn 21 -ToColumn 58
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s')
+            $resultv = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v')
+            $resulto = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o')
         }
 
-        It '-ErrorAction Break does NOT enter the debugger on a naked rethrow' {
-            $testScript = {
-                & {
-                    [CmdletBinding()]
-                    param()
-                    try {
-                        'Hello'
-                        Get-Process -Id ([int]::MaxValue) -ErrorAction Stop
-                        'Goodbye'
-                    } catch {
-                        throw
-                    }
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 1
-            $results[0] | ShouldHaveExtent -Line 7 -FromColumn 25 -ToColumn 76
+        It 'Should show 3 debugger commands were invoked for stepInto' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $results.Count | Should -Be 4
         }
 
-        It '-ErrorAction Break does enter the debugger on a new throw' {
-            $testScript = {
-                & {
-                    [CmdletBinding()]
-                    param()
-                    try {
-                        'Hello'
-                        Get-Process -Id ([int]::MaxValue) -ErrorAction Stop
-                        'Goodbye'
-                    } catch {
-                        throw $_
-                    }
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 2
-            $results[0] | ShouldHaveExtent -Line 7 -FromColumn 25 -ToColumn 76
-            $results[1] | ShouldHaveExtent -Line 10 -FromColumn 25 -ToColumn 33
+        It 'Should show 3 debugger commands were invoked for stepOver' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $resultv.Count | Should -Be 4
         }
 
-        It '-ErrorAction Break does NOT enter the debugger for errors inside a DebuggerHidden block' {
-            $testScript = {
-                & {
-                    [System.Diagnostics.DebuggerHidden()]
-                    [CmdletBinding()]
-                    param()
-                    1/0 # We shouldn't be able to break here with -ErrorAction Break
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 0
+        It 'Should show 2 debugger commands were invoked for stepOut' {
+             # One extra for the implicit 'c' command that keeps the debugger automation moving
+             $resulto.Count | Should -Be 3
         }
 
-        It '-ErrorAction Break does NOT enter the debugger for errors in a nested function context under a DebuggerHidden block' {
-            $testScript = {
-                & {
-                    [System.Diagnostics.DebuggerHidden()]
-                    [CmdletBinding()]
-                    param()
-                    & {
-                        [CmdletBinding()]
-                        param()
-                        1/0 # We shouldn't be able to break here with -ErrorAction Break
-                    }
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 0
+        It 'The last extent for stepInto should be on 1 + 1' {
+            $results[2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
 
-        It '-ErrorAction Break does NOT enter the debugger for errors inside a DebuggerStepThrough block' {
-            $testScript = {
-                & {
-                    [System.Diagnostics.DebuggerStepThrough()]
-                    [CmdletBinding()]
-                    param()
-                    1/0 # We shouldn't be able to break here with -ErrorAction Break
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 0
+        It 'The last extent for stepOver should be on 1 + 1' {
+            $resultv[2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
 
-        It '-ErrorAction Break does enter the debugger for in a nested function context under a DebuggerStepThrough block' {
-            $testScript = {
-                & {
-                    [System.Diagnostics.DebuggerStepThrough()]
-                    [CmdletBinding()]
-                    param()
-                    & {
-                        [CmdletBinding()]
-                        param()
-                        1/0 # We should be able to break here with -ErrorAction Break
-                    }
-                } -ErrorAction Break
-            }
-
-            $results = Test-Debugger -ScriptBlock $testScript
-            $results.Count | Should -Be 1
-            $results[0] | ShouldHaveExtent -Line 9 -FromColumn 25 -ToColumn 28
+        It 'The last extent for stepOut should be on 1 + 1' {
+            $resulto[1] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
-        #>
+    }
+}

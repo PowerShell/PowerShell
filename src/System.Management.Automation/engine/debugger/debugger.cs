@@ -1237,12 +1237,6 @@ namespace System.Management.Automation
 
             breakpoint.RemoveSelf(this);
 
-            if (_idToBreakpoint.Count == 0)
-            {
-                // The last breakpoint was removed, turn off debugging.
-                SetInternalDebugMode(InternalDebugMode.Disabled);
-            }
-
             OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Removed, _idToBreakpoint.Count));
         }
 

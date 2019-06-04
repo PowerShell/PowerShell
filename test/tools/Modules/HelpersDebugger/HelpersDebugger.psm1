@@ -110,7 +110,17 @@ function Test-Debugger {
         # We also suppress any exceptions and silence any output because this
         # invocation is about the debugger output, not the output of the script
         # itself
-        try { [ScriptBlock]::Create($ScriptBlock).Invoke() *> $null } catch {}
+        & {
+            [System.Diagnostics.DebuggerStepThrough()]
+            [CmdletBinding()]
+            param()
+            try {
+                $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+                [ScriptBlock]::Create($ScriptBlock).Invoke() > $null
+            } catch {
+                Write-Error -ErrorRecord $_ -ErrorAction Stop
+            }
+        }
         $script:dbgResults
     } catch {
         Write-Error -ErrorRecord $_ -ErrorAction $callerEAP
@@ -138,7 +148,6 @@ function Get-DebuggerExtent {
         }
     }
 }
-Export-ModuleMember -Function Get-DebuggerExtent
 
 function ShouldHaveExtent {
     [CmdletBinding(DefaultParameterSetName='SingleLineExtent')]
@@ -174,7 +183,6 @@ function ShouldHaveExtent {
         $ToColumn
     )
     process {
-        $callerEAP = $ErrorActionPreference
         $extent = Get-DebuggerExtent -DebuggerCommandResult $DebuggerCommandResult
         $extent.StartLineNumber | Should -Be $(if ($PSCmdlet.ParameterSetName -eq 'SingleLineExtent') {$Line} else {$FromLine})
         $extent.StartColumnNumber | Should -Be $FromColumn
@@ -183,3 +191,27 @@ function ShouldHaveExtent {
     }
 }
 Export-ModuleMember -Function ShouldHaveExtent
+
+function ShouldHaveSameExtentAs {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position=0, Mandatory, ValueFromPipeline)]
+        [ValidateNotNull()]
+        [PSTypeName('DebuggerCommandResult')]
+        $SourceDebuggerCommandResult,
+
+        [Parameter(Position=1, Mandatory)]
+        [ValidateNotNull()]
+        [Alias('DebuggerCommandResult')]
+        [PSTypeName('DebuggerCommandResult')]
+        $TargetDebuggerCommandResult
+    )
+    begin {
+        $targetExtent = Get-DebuggerExtent -DebuggerCommandResult $TargetDebuggerCommandResult
+    }
+    process {
+        $sourceExtent = Get-DebuggerExtent -DebuggerCommandResult $SourceDebuggerCommandResult
+        $sourceExtent | Should -Be $targetExtent
+    }
+}
+Export-ModuleMember -Function ShouldHaveSameExtentAs
