@@ -84,6 +84,15 @@ Describe "Command Discovery tests" -Tags "CI" {
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }
+    
+    It "Should find command in the global scope" {
+            $commands = @(Get-Command -Name 'global:help')
+            $commands.Count | Should -Be 1
+            if($expectedCommandCount -gt 0)
+            {
+                $commands.Name | Should -BeExactly 'help'
+            }    
+    }
 
     Context "Use literal path first when executing scripts" {
         BeforeAll {
