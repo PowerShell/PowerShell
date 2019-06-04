@@ -4514,8 +4514,11 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (token.Kind == TokenKind.Identifier)
+            if (token.Kind == TokenKind.Identifier
+                || token.TokenFlags.HasFlag(TokenFlags.Keyword))
             {
+                token.TokenFlags = TokenFlags.None;
+
                 SkipToken();
                 var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
 
