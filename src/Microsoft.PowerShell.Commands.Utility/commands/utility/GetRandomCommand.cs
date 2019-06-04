@@ -290,14 +290,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns unique output values.
         /// </summary>
         [Parameter]
-        public SwitchParameter Unique
-        {
-            get { return _unique; }
-
-            set { _unique = value; }
-        }
-
-        private bool _unique;
+        public SwitchParameter Unique { get; set; }
 
         #endregion
 
@@ -545,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(_chosenListItems[j]);
 
                     // remove the output object from consideration in the next iteration.
-                    if (i != j && ! _unique)
+                    if (i != j && Unique)
                     {
                         _chosenListItems[j] = _chosenListItems[i];
                     }
