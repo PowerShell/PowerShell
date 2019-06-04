@@ -1236,17 +1236,21 @@ namespace System.Management.Automation
         /// </returns>
         private string GetNextLiteralPathThatExistsAndHandleExceptions(string command, out ProviderInfo provider)
         {
-            try {
+            try
+            {
                 return GetNextLiteralPathThatExists(command, out provider);
             }
             catch (ItemNotFoundException)
             {
                 CommandDiscovery.discoveryTracer.TraceError(
                     "The path could not be found: {0}",
-                        _commandName);
+                    _commandName);
             }
             catch (DriveNotFoundException)
             {
+                // This can be because we think a scope or a url is a drive
+                // and need to continue searching.
+                // Although, scope does not work through get-command
                 CommandDiscovery.discoveryTracer.TraceError(
                     "A drive could not be found for the path: {0}",
                     _commandName);
@@ -1274,7 +1278,7 @@ namespace System.Management.Automation
             {
                 CommandDiscovery.discoveryTracer.TraceError(
                     "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                        _commandName);
+                    _commandName);
             }
 
             provider = null;
