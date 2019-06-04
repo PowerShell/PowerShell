@@ -478,17 +478,7 @@ namespace System.Management.Automation
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
-                    string path = null;
-                    try {
-                        path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
-                    }
-                    catch (DriveNotFoundException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "A drive could not be found for the path: {0}",
-                            _commandName);
-                    }
-
+                    string path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
                     if (path != null)
                     {
