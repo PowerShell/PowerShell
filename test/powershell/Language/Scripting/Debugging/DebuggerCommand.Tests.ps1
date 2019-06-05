@@ -23,8 +23,10 @@ Describe 'Basic debugger command tests' -tag 'CI' {
             }
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '?','h')
-            $result? = if ($results.Count -gt 0) {$results[0].Output -join [Environment]::NewLine}
-            $resulth = if ($results.Count -gt 1) {$results[1].Output -join [Environment]::NewLine}
+            $result = @{
+                '?' = if ($results.Count -gt 0) {$results[0].Output -join [Environment]::NewLine}
+                'h' = if ($results.Count -gt 1) {$results[1].Output -join [Environment]::NewLine}
+            }
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -32,25 +34,25 @@ Describe 'Basic debugger command tests' -tag 'CI' {
              $results.Count | Should -Be 3
         }
 
+        It '''h'' and ''?'' should show identical help messages' {
+            $result['?'] | Should -BeExactly $result['h']
+        }
+
         It 'Should only have non-empty string output from the help command' {
             $results[0].Output | Should -BeOfType string
-            $result? | Should -Match '\S'
+            $result['?'] | Should -Match '\S'
         }
 
-        It '''h'' and ''?'' should show identical help messages' {
-            $result? | Should -BeExactly $resulth
-        }
-
-        It 'Should show help for stepInto' {$result? | Should -Match '\ss, stepInto\s+'}
-        It 'Should show help for stepOver' {$result? | Should -Match '\sv, stepOver\s+'}
-        It 'Should show help for stepOut' {$result? | Should -Match '\so, stepOut\s+'}
-        It 'Should show help for continue' {$result? | Should -Match '\sc, continue\s+'}
-        It 'Should show help for quit' {$result? | Should -Match '\sq, quit\s+'}
-        It 'Should show help for detach' {$result? | Should -Match '\sd, detach\s+'}
-        It 'Should show help for Get-PSCallStack' {$result? | Should -Match '\sk, Get-PSCallStack\s+'}
-        It 'Should show help for list' {$result? | Should -Match '\sl, list\s+'}
-        It 'Should show help for <enter>' {$result? | Should -Match '\s<enter>\s+'}
-        It 'Should show help for help' {$result? | Should -Match '\s\?, h\s+'}
+        It 'Should show help for stepInto' {$result['?'] | Should -Match '\ss, stepInto\s+'}
+        It 'Should show help for stepOver' {$result['?'] | Should -Match '\sv, stepOver\s+'}
+        It 'Should show help for stepOut' {$result['?'] | Should -Match '\so, stepOut\s+'}
+        It 'Should show help for continue' {$result['?'] | Should -Match '\sc, continue\s+'}
+        It 'Should show help for quit' {$result['?'] | Should -Match '\sq, quit\s+'}
+        It 'Should show help for detach' {$result['?'] | Should -Match '\sd, detach\s+'}
+        It 'Should show help for Get-PSCallStack' {$result['?'] | Should -Match '\sk, Get-PSCallStack\s+'}
+        It 'Should show help for list' {$result['?'] | Should -Match '\sl, list\s+'}
+        It 'Should show help for <enter>' {$result['?'] | Should -Match '\s<enter>\s+'}
+        It 'Should show help for help' {$result['?'] | Should -Match '\s\?, h\s+'}
     }
 
     Context 'List (l, list) command should show the script and the current position' {
@@ -76,8 +78,10 @@ Describe 'Basic debugger command tests' -tag 'CI' {
 '@
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l','list')
-            $resultl = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
-            $resultlist = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            $result = @{
+                'l' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+                'list' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            }
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -85,17 +89,17 @@ Describe 'Basic debugger command tests' -tag 'CI' {
              $results.Count | Should -Be 3
         }
 
-        It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType string
-            $resultl | Should -Match '\S'
+        It '''l'' and ''list'' should show identical script listings' {
+            $result['l'] | Should -BeExactly $result['list']
         }
 
-        It '''l'' and ''list'' should show identical script listings' {
-            $resultl | Should -BeExactly $resultlist
+        It 'Should only have non-empty string output from the list command' {
+            $results[0].Output | Should -BeOfType string
+            $result['l'] | Should -Match '\S'
         }
 
         It 'Should show the entire script listing with the current position on line 5' {
-            $resultl | Should -BeExactly $testScriptList
+            $result['l'] | Should -BeExactly $testScriptList
         }
     }
 
@@ -119,8 +123,10 @@ Describe 'Basic debugger command tests' -tag 'CI' {
 '@
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 4','list 4')
-            $resultl = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
-            $resultlist = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            $result = @{
+                'l 4' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+                'list 4' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            }
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -128,17 +134,17 @@ Describe 'Basic debugger command tests' -tag 'CI' {
              $results.Count | Should -Be 3
         }
 
-        It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType string
-            $resultl | Should -Match '\S'
+        It '''l 4'' and ''list 4'' should show identical script listings' {
+            $result['l 4'] | Should -BeExactly $result['list 4']
         }
 
-        It '''l 4'' and ''list 4'' should show identical script listings' {
-            $resultl | Should -BeExactly $resultlist
+        It 'Should only have non-empty string output from the list command' {
+            $results[0].Output | Should -BeOfType string
+            $result['l 4'] | Should -Match '\S'
         }
 
         It 'Should show a partial script listing starting on line 4 with the current position on line 5' {
-            $resultl | Should -BeExactly $testScriptList
+            $result['l 4'] | Should -BeExactly $testScriptList
         }
     }
 
@@ -159,8 +165,10 @@ Describe 'Basic debugger command tests' -tag 'CI' {
 '@
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 3 2','list 3 2')
-            $resultl = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
-            $resultlist = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            $result = @{
+                'l 3 2' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+                'list 3 2' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
+            }
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -168,17 +176,17 @@ Describe 'Basic debugger command tests' -tag 'CI' {
              $results.Count | Should -Be 3
         }
 
-        It 'Should only have non-empty string output from the list command' {
-            $results[0].Output | Should -BeOfType string
-            $resultl | Should -Match '\S'
+        It '''l 3 2'' and ''list 3 2'' should show identical script listings' {
+            $result['l 3 2'] | Should -BeExactly $result['list 3 2']
         }
 
-        It '''l 3 2'' and ''list 3 2'' should show identical script listings' {
-            $resultl | Should -BeExactly $resultlist
+        It 'Should only have non-empty string output from the list command' {
+            $results[0].Output | Should -BeOfType string
+            $result['l 3 2'] | Should -Match '\S'
         }
 
         It 'Should show a partial script listing showing 3 lines starting on line 4 with the current position on line 5' {
-            $resultl | Should -BeExactly $testScriptList
+            $result['l 3 2'] | Should -BeExactly $testScriptList
         }
     }
 
@@ -194,8 +202,10 @@ Describe 'Basic debugger command tests' -tag 'CI' {
             }
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'k','Get-PSCallStack')
-            $resultk = if ($results.Count -gt 0) {$results[0].Output}
-            $resultgcs = if ($results.Count -gt 1) {$results[1].Output}
+            $result = @{
+                'k' = if ($results.Count -gt 0) {$results[0].Output}
+                'Get-PSCallStack' = if ($results.Count -gt 1) {$results[1].Output}
+            }
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -208,7 +218,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It '''k'' and ''Get-PSCallStack'' should show identical script listings' {
-            [string[]]$resultk -join [Environment]::NewLine | Should -BeExactly ([string[]]$resultgcs -join [Environment]::NewLine)
+            [string[]]$result['k'] -join [Environment]::NewLine | Should -BeExactly ([string[]]$result['Get-PSCallStack'] -join [Environment]::NewLine)
         }
     }
 
@@ -238,36 +248,38 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                 }
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s','s')
-            $resultstepinto = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepInto','stepInto','stepInto','stepInto')
+            $result = @{
+                's' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s','s')
+                'stepInto' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepInto','stepInto','stepInto','stepInto')
+            }
         }
 
         It 'Should show 4 debugger commands were invoked twice' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 5
-             $resultstepinto.Count | Should -Be 5
+             $result['s'].Count | Should -Be 5
+             $result['stepInto'].Count | Should -Be 5
         }
 
         It '''s'' and ''stepInto'' should have identical behaviour' {
             for ($i = 0; $i -lt 3; $i++) {
-                $results[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepinto[$i]
+                $result['s'][$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $result['stepInto'][$i]
             }
         }
 
         It 'The first extent should be the statement containing ForEach-Object' {
-            $results[0] | ShouldHaveExtent -FromLine 4 -FromColumn 21 -ToLine 7 -ToColumn 31
+            $result['s'][0] | ShouldHaveExtent -FromLine 4 -FromColumn 21 -ToLine 7 -ToColumn 31
         }
 
         It 'The second extent should be in the nested scriptblock' {
-            $results[1] | ShouldHaveExtent -Line 4 -FromColumn 59 -ToColumn 60
+            $result['s'][1] | ShouldHaveExtent -Line 4 -FromColumn 59 -ToColumn 60
         }
 
         It 'The third extent should be on ''One fish, two fish''' {
-            $results[2] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 45
+            $result['s'][2] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 45
         }
 
         It 'The fourth extent should be on ''Red fish, blue fish''' {
-            $results[3] | ShouldHaveExtent -Line 6 -FromColumn 25 -ToColumn 46
+            $result['s'][3] | ShouldHaveExtent -Line 6 -FromColumn 25 -ToColumn 46
         }
     }
 
@@ -289,36 +301,38 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                 }
             }
 
-            $resultv = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v','v')
-            $resultstepover = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOver','stepOver','stepOver','stepOver')
+            $result = @{
+                'v' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v','v')
+                'stepOver' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOver','stepOver','stepOver','stepOver')
+            }
         }
 
         It 'Should show 4 debugger commands were invoked twice' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $resultv.Count | Should -Be 5
-             $resultstepover.Count | Should -Be 5
+             $result['v'].Count | Should -Be 5
+             $result['stepOver'].Count | Should -Be 5
         }
 
         It '''v'' and ''stepOver'' should have identical behaviour' {
             for ($i = 0; $i -lt 3; $i++) {
-                $resultv[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepover[$i]
+                $result['v'][$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $result['stepOver'][$i]
             }
         }
 
         It 'The first extent should be the statement containing ForEach-Object' {
-            $resultv[0] | ShouldHaveExtent -FromLine 5 -FromColumn 21 -ToLine 7 -ToColumn 31
+            $result['v'][0] | ShouldHaveExtent -FromLine 5 -FromColumn 21 -ToLine 7 -ToColumn 31
         }
 
         It 'The second extent should be on Enable-PSBreakpoint' {
-            $resultv[1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 57
+            $result['v'][1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 57
         }
 
         It 'The third extent should be on the script block invoked with the call operator' {
-            $resultv[2] | ShouldHaveExtent -FromLine 9 -FromColumn 21 -ToLine 11 -ToColumn 31
+            $result['v'][2] | ShouldHaveExtent -FromLine 9 -FromColumn 21 -ToLine 11 -ToColumn 31
         }
 
         It 'The fourth extent should be on the ConvertTo-Csv breakpoint inside the script block' {
-            $resultv[3] | ShouldHaveExtent -Line 10 -FromColumn 25 -ToColumn 49
+            $result['v'][3] | ShouldHaveExtent -Line 10 -FromColumn 25 -ToColumn 49
         }
     }
 
@@ -338,32 +352,34 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                 }
             }
 
-            $resulto = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o','o')
-            $resultstepout = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOut','stepOut','stepOut')
+            $result = @{
+                'o' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o','o')
+                'stepOut' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOut','stepOut','stepOut')
+            }
         }
 
         It 'Should show 3 debugger commands were invoked twice' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $resulto.Count | Should -Be 4
-             $resultstepout.Count | Should -Be 4
+             $result['o'].Count | Should -Be 4
+             $result['stepOut'].Count | Should -Be 4
         }
 
         It '''o'' and ''stepOut'' should have identical behaviour' {
             for ($i = 0; $i -lt 3; $i++) {
-                $resulto[$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $resultstepout[$i]
+                $result['o'][$i] | ShouldHaveSameExtentAs -DebuggerCommandResult $result['stepOut'][$i]
             }
         }
 
         It 'The first extent should be on Get-Process' {
-            $resulto[0] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 56
+            $result['o'][0] | ShouldHaveExtent -Line 5 -FromColumn 25 -ToColumn 56
         }
 
         It 'The second extent should be on Get-Date' {
-            $resulto[1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 37
+            $result['o'][1] | ShouldHaveExtent -Line 8 -FromColumn 21 -ToColumn 37
         }
 
         It 'The third extent should be on the ConvertTo-Csv breakpoint' {
-            $resulto[2] | ShouldHaveExtent -Line 9 -FromColumn 21 -ToColumn 42
+            $result['o'][2] | ShouldHaveExtent -Line 9 -FromColumn 21 -ToColumn 42
         }
     }
 }
@@ -389,36 +405,38 @@ Describe 'Debugger bug fix tests' -tag 'CI' {
                 1 + 1
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s')
-            $resultv = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v')
-            $resulto = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o')
+            $result = @{
+                's' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s')
+                'v' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v')
+                'o' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o')
+            }
         }
 
         It 'Should show 3 debugger commands were invoked for stepInto' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 4
+             $result['s'].Count | Should -Be 4
         }
 
         It 'Should show 3 debugger commands were invoked for stepOver' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $resultv.Count | Should -Be 4
+             $result['v'].Count | Should -Be 4
         }
 
         It 'Should show 2 debugger commands were invoked for stepOut' {
              # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $resulto.Count | Should -Be 3
+             $result['o'].Count | Should -Be 3
         }
 
         It 'The last extent for stepInto should be on 1 + 1' {
-            $results[2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
+            $result['s'][2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
 
         It 'The last extent for stepOver should be on 1 + 1' {
-            $resultv[2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
+            $result['v'][2] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
 
         It 'The last extent for stepOut should be on 1 + 1' {
-            $resulto[1] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
+            $result['o'][1] | ShouldHaveExtent -Line 7 -FromColumn 17 -ToColumn 22
         }
     }
 }
