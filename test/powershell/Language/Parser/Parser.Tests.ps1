@@ -160,12 +160,12 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         { ExecuteCommand "testcmd-parserbvt | 'abc'" } | Should -Throw -ErrorId "ParseException"
     }
 
-    $TestCases = @(
+    $PipeIntoValueTests = @(
         @{ Command = '1;2;3|3' }
         @{ Command = '1;2;3|$(1+1)' }
         @{ Command = "1;2;3|'abc'" }
     )
-    It "Throws when you pipe into a value expression (line 238)" -TestCases $TestCases {
+    It "Throws when you pipe into a value expression (line 238)" -TestCases $PipeIntoValueTests {
         param($Command)
 
         { ExecuteCommand $command } | Should -Throw -ErrorId "ParseException"
@@ -365,7 +365,7 @@ foo``u{2195}abc
         $result[4] | Should -BeExactly "script"
     }
 
-    $TestCases = @(
+    $BreakNestedLoopTests = @(
         @{
             Command        = '
                 while ($true) {
@@ -409,14 +409,14 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "4"
         }
     )
-    It "Use break inside of a loop that is inside another loop. (line 945)" -TestCases $TestCases {
+    It "Use break inside of a loop that is inside another loop. (line 945)" -TestCases $BreakNestedLoopTests {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
     }
 
-    $TestCases = @(
+    $BreakLabelWithNestedLabels = @(
         @{
             Command        = '
                 :foo while ($true) {
@@ -460,14 +460,14 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "4"
         }
     )
-    It "Use break in two loops with same label. (line 967)" -TestCases $TestCases {
+    It "Use break in two loops with same label. (line 967)" -TestCases $BreakLabelWithNestedLabels {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
     }
 
-    $TestCases = @(
+    $ContinueTests = @(
         @{
             Command        = '
                 $a = 0
@@ -496,14 +496,14 @@ foo``u{2195}abc
             ExpectedResult = "0", "1"
         }
     )
-    It "Try continue inside of different loop statements. (line 1039)" -TestCases $TestCases {
+    It "Try continue inside of different loop statements. (line 1039)" -TestCases $ContinueTests {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
     }
 
-    $TestCases = @(
+    $LabelledContinueTests = @(
         @{
             Command        = '
                 $x = 0
@@ -548,14 +548,14 @@ foo``u{2195}abc
             ExpectedResult = "1", "1", "2", "4"
         }
     )
-    It "Use a label to continue an inner loop. (line 1059)" -TestCases $TestCases {
+    It "Use a label to continue an inner loop. (line 1059)" -TestCases $LabelledContinueTests {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
     }
 
-    $TestCases = @(
+    $ContinueFromInnerWithLabelTests = @(
         @{
             Command        = '
                 $x = 0
@@ -600,7 +600,7 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "1", "2"
         }
     )
-    It "Use continue with a label on a nested loop. (line 1059)" -TestCases $TestCases {
+    It "Use continue with a label on a nested loop. (line 1059)" -TestCases $ContinueFromInnerWithLabelTests {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
@@ -1256,7 +1256,7 @@ foo``u{2195}abc
     }
 
     Context "Mathematical Operations Tests (starting at line 2975 to line 3036)" {
-        $TestCases = @(
+        $ArithmeticTests = @(
             @{
                 Script   = '$a=6; $a -= 2;$a'
                 Expected = 4
@@ -1276,7 +1276,7 @@ foo``u{2195}abc
                 Expected = "2"
             }
         )
-        It "<Script> should return <Expected>" -TestCases $TestCases {
+        It "<Script> should return <Expected>" -TestCases $ArithmeticTests {
             param ( $Script, $Expected )
 
             ExecuteCommand $Script | Should -Be $Expected
@@ -1297,12 +1297,12 @@ foo``u{2195}abc
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
     }
 
-    $TestCases = @(
+    $TestErrorMisplacedStatement = @(
         @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
         @{ script = "{ begin {} Hi"; name = "script-block" }
         @{ script = "begin {} Hi"; name = "script-file" }
     )
-    It "Throw better error when statement should be put in named blocks - <name>" -TestCases $TestCases {
+    It "Throw better error when statement should be put in named blocks - <name>" -TestCases $TestErrorMisplacedStatement {
         param($script)
 
         $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
@@ -1330,14 +1330,14 @@ foo``u{2195}abc
             $ps.Commands.Clear()
         }
 
-        $testCases = @(
+        $TokenResetTests = @(
             @{ script = "#requires"; firstToken = $null; lastToken = $null },
             @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
             @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
             @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
         )
 
-        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $testCases {
+        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {
             param($script, $firstToken, $lastToken)
 
             $ps.AddScript($script)
