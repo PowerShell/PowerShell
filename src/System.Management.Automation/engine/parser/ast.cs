@@ -5364,10 +5364,10 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// A command-oriented flow-controlled statement chain.
+    /// A command-oriented flow-controlled pipeline chain.
     /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
     /// </summary>
-    public class StatementChainAst : PipelineBaseAst
+    public class StatementChainAst : StatementAst
     {
         /// <summary>
         /// Create a new statement chain AST from two statements and an operator.
@@ -5377,10 +5377,10 @@ namespace System.Management.Automation.Language
         /// <param name="chainOperator">The operator used.</param>
         /// <param name="extent">The extent of the chained statement.</param>
         public StatementChainAst(
+            IScriptExtent extent,
             PipelineBaseAst lhsStatement,
-            PipelineBaseAst rhsStatement,
-            StatementChainOperator chainOperator,
-            IScriptExtent extent)
+            StatementAst rhsStatement,
+            StatementChainOperator chainOperator)
             : base(extent)
         {
             if (lhsStatement == null)
@@ -5404,7 +5404,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The left hand statement in the chain.
         /// </summary>
-        public StatementAst LhsStatement { get; }
+        public PipelineBaseAst LhsStatement { get; }
 
         /// <summary>
         /// The right hand statement in the chain.
@@ -5421,7 +5421,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            return new StatementChainAst((PipelineBaseAst)LhsStatement.Copy(), (PipelineBaseAst)RhsStatement.Copy(), Operator, Extent);
+            return new StatementChainAst(Extent, CopyElement(LhsStatement), CopyElement(RhsStatement), Operator);
         }
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5455,6 +5455,110 @@ namespace System.Management.Automation.Language
             }
 
             return RhsStatement.InternalVisit(visitor);
+        }
+    }
+
+    /// <summary>
+    /// A command-oriented flow-controlled pipeline chain.
+    /// E.g. <c>npm build &amp;&amp; npm test</c> or <c>Get-Content -Raw ./file.txt || "default"</c>.
+    /// </summary>
+    public class PipelineChainAst : PipelineBaseAst
+    {
+        /// <summary>
+        /// Create a new statement chain AST from two statements and an operator.
+        /// </summary>
+        /// <param name="extent">The extent of the chained statement.</param>
+        /// <param name="lhsPipeline">The statement to the left of the operator.</param>
+        /// <param name="rhsPipeline">The statement to the right of the operator.</param>
+        /// <param name="chainOperator">The operator used.</param>
+        /// <param name="background">If true, the pipeline chain should be backgrounded</param>
+        public PipelineChainAst(
+            IScriptExtent extent,
+            PipelineBaseAst lhsPipeline,
+            PipelineBaseAst rhsPipeline,
+            StatementChainOperator chainOperator,
+            bool background = false)
+            : base(extent)
+        {
+            if (lhsPipeline == null)
+            {
+                throw new ArgumentNullException(nameof(lhsPipeline));
+            }
+
+            if (rhsPipeline == null)
+            {
+                throw new ArgumentNullException(nameof(rhsPipeline));
+            }
+
+            LhsPipeline = lhsPipeline;
+            RhsPipeline = rhsPipeline;
+            Operator = chainOperator;
+            Background = background;
+
+            SetParent(LhsPipeline);
+            SetParent(RhsPipeline);
+        }
+
+        /// <summary>
+        /// The left hand statement in the chain.
+        /// </summary>
+        public PipelineBaseAst LhsPipeline { get; }
+
+        /// <summary>
+        /// The right hand statement in the chain.
+        /// </summary>
+        public PipelineBaseAst RhsPipeline { get; }
+
+        /// <summary>
+        /// The chaining operator used.
+        /// </summary>
+        public StatementChainOperator Operator { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public bool Background { get; }
+
+        /// <summary>
+        /// Create a copy of this Ast.
+        /// </summary>
+        public override Ast Copy()
+        {
+            return new PipelineChainAst(Extent, CopyElement(LhsPipeline), CopyElement(RhsPipeline), Operator, Background);
+        }
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            if (!(visitor is ICustomAstVisitor2 visitor2))
+            {
+                return null;
+            }
+
+            return visitor2.VisitPipelineChain(this);
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var visitAction = AstVisitAction.Continue;
+            if (visitor is AstVisitor2 visitor2)
+            {
+                visitAction = visitor2.VisitPipelineChain(this);
+
+                if (visitAction != AstVisitAction.Continue)
+                {
+                    return visitAction;
+                }
+            }
+
+            visitAction = LhsPipeline.InternalVisit(visitor);
+
+            if (visitAction == AstVisitAction.StopVisit)
+            {
+                return visitAction;
+            }
+
+            return RhsPipeline.InternalVisit(visitor);
         }
     }
 
@@ -5577,7 +5681,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicates that this pipeline should be run in the background.
         /// </summary>
-        public bool Background { get; private set; }
+        public bool Background { get; internal set; }
 
         /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.

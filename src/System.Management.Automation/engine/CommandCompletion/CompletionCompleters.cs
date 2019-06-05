@@ -7085,6 +7085,11 @@ namespace System.Management.Automation
         {
             return false;
         }
+
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
+        {
+            return false;
+        }
     }
 
     /// <summary>

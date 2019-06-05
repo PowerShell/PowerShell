@@ -3129,6 +3129,17 @@ namespace System.Management.Automation.Language
                 Expression.IfThen(condition, Compile(statementChainAst.RhsStatement)));
         }
 
+        public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
+        {
+            Expression condition = pipelineChainAst.Operator == StatementChainOperator.AndAnd
+                ? s_getDollarQuestion
+                : Expression.Not(s_getDollarQuestion);
+
+            return Expression.Block(
+                Compile(pipelineChainAst.LhsPipeline),
+                Expression.IfThen(condition, Compile(pipelineChainAst.RhsPipeline)));
+        }
+
         public object VisitPipeline(PipelineAst pipelineAst)
         {
             var temps = new List<ParameterExpression>();
