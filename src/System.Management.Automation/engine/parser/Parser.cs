@@ -35,6 +35,8 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
+        private static bool s_bashOperatorsEnabled = ExperimentalFeature.IsEnabled("PSBashCommandOperators");
+
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
@@ -5702,38 +5704,77 @@ namespace System.Management.Automation.Language
             // G      '||'
             // G      '&&'
 
+            // If this feature is not enabled, just use the traditional pipeline rule
+            if (!s_bashOperatorsEnabled)
+            {
+                return PipelineRule();
+            }
+
             PipelineBaseAst currentStatement = null;
-            StatementChainOperator previousChainOperator = StatementChainOperator.None;
             StatementChainOperator currentChainOperator = StatementChainOperator.None;
+            StatementChainOperator nextChainOperator = StatementChainOperator.None;
             do
             {
-                PipelineBaseAst nextStatement = PipelineRule(out currentChainOperator);
+                // Remember the last operator to chain the coming pipeline
+                currentChainOperator = nextChainOperator;
 
+                // Read the pipeline invocation
+                PipelineBaseAst nextStatement = PipelineRule();
+
+                // If there's no next statement, return the statement chain currently parsed
+                // TODO: Determine the correct action here
                 if (nextStatement == null)
                 {
                     break;
                 }
 
-                if (currentStatement == null)
+                // Assemble the new chain statement AST
+                currentStatement = currentStatement == null
+                    ? nextStatement
+                    : new StatementChainAst(
+                        currentStatement,
+                        nextStatement,
+                        currentChainOperator,
+                        ExtentOf(currentStatement.Extent, nextStatement.Extent));
+
+                // Look ahead for a chain operator
+                Token nextToken = PeekToken();
+                switch (nextToken.Kind)
                 {
-                    currentStatement = nextStatement;
-                    previousChainOperator = currentChainOperator;
-                    continue;
+                    case TokenKind.AndAnd:
+                        nextChainOperator = StatementChainOperator.AndAnd;
+                        break;
+
+                    case TokenKind.OrOr:
+                        nextChainOperator = StatementChainOperator.OrOr;
+                        break;
+
+                    // No more chain operators -- return
+                    default:
+                        nextChainOperator = StatementChainOperator.None;
+                        continue;
                 }
 
-                currentStatement = new StatementChainAst(
-                    currentStatement,
-                    nextStatement,
-                    previousChainOperator,
-                    ExtentOf(currentStatement.Extent, nextStatement.Extent));
-                previousChainOperator = currentChainOperator;
+                // We've seen a chain operator, now skip it and any newlines
+                SkipToken();
+                SkipNewlines();
 
-            } while (currentChainOperator != StatementChainOperator.None);
+                // Look ahead to report incomplete input if needed
+                if (PeekToken().Kind == TokenKind.EndOfInput)
+                {
+                    ReportIncompleteInput(
+                        After(nextToken),
+                        nameof(ParserStrings.EmptyChainElement),
+                        ParserStrings.EmptyChainElement);
+
+                    break;
+                }
+            } while (nextChainOperator != StatementChainOperator.None);
 
             return currentStatement;
         }
 
-        private PipelineBaseAst PipelineRule(out StatementChainOperator chainOperator)
+        private PipelineBaseAst PipelineRule()
         {
             // G  pipeline:
             // G      assignment-expression
@@ -5747,7 +5788,6 @@ namespace System.Management.Automation.Language
             // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
 
             var pipelineElements = new List<CommandBaseAst>();
-            chainOperator = StatementChainOperator.None;
             IScriptExtent startExtent = null;
 
             Token nextToken = null;
@@ -5879,13 +5919,38 @@ namespace System.Management.Automation.Language
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
                     case TokenKind.EndOfInput:
+                        // Handled by invoking rule
                         scanning = false;
                         continue;
+
+                    case TokenKind.AndAnd:
+                    case TokenKind.OrOr:
+                        // PSBashCommandOperators experimental feature
+                        if (s_bashOperatorsEnabled)
+                        {
+                            // Handled by invoking rule
+                            scanning = false;
+                            continue;
+                        }
+
+                        SkipToken();
+                        SkipNewlines();
+                        ReportError(pipeToken.Extent,
+                            nameof(ParserStrings.InvalidEndOfLine),
+                            ParserStrings.InvalidEndOfLine,
+                            pipeToken.Text);
+                        if (PeekToken().Kind == TokenKind.EndOfInput)
+                        {
+                            scanning = false;
+                        }
+                        break;
+
                     case TokenKind.Ampersand:
                         SkipToken();
                         scanning = false;
                         background = true;
                         break;
+
                     case TokenKind.Pipe:
                         SkipToken();
                         SkipNewlines();
@@ -5897,20 +5962,6 @@ namespace System.Management.Automation.Language
                                 ParserStrings.EmptyPipeElement);
                         }
 
-                        break;
-
-                    case TokenKind.AndAnd:
-                        chainOperator = StatementChainOperator.AndAnd;
-                        scanning = false;
-                        SkipToken();
-                        SkipNewlines();
-                        break;
-
-                    case TokenKind.OrOr:
-                        chainOperator = StatementChainOperator.OrOr;
-                        scanning = false;
-                        SkipToken();
-                        SkipNewlines();
                         break;
 
                     default:

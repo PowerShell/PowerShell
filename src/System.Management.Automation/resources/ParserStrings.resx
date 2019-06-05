@@ -1503,4 +1503,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
     <value>Missing ':' in the ternary expression.</value>
   </data>
+  <data name="EmptyChainElement" xml:space="preserve">
+    <value>A statement chain operator must be followed by a statement.</value>
+  </data>
 </root>
