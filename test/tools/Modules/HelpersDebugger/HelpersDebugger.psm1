@@ -48,6 +48,7 @@ $debuggerStopHandlerRegistered = $false
 
 function Register-DebuggerHandler {
     [CmdletBinding()]
+    [OutputType([System.Void])]
     param()
     try {
         $callerEAP = $ErrorActionPreference
@@ -65,6 +66,7 @@ Export-ModuleMember -Function Register-DebuggerHandler
 
 function Unregister-DebuggerHandler {
     [CmdletBinding()]
+    [OutputType([System.Void])]
     param()
     try {
         $callerEAP = $ErrorActionPreference
@@ -79,6 +81,7 @@ Export-ModuleMember -Function Unregister-DebuggerHandler
 
 function Test-Debugger {
     [CmdletBinding()]
+    [OutputType('DebuggerCommandResult')]
     param(
         [Parameter(Position=0, Mandatory)]
         [ValidateNotNullOrEmpty()]
