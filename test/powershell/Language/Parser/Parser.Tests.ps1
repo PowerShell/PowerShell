@@ -31,7 +31,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 
                 switch ( $ReturnType ) {
                     "default" {
-                        $result = "$Property1;$Property2;$Property3"
+                        $result = "$Property1; $Property2; $Property3"
                         break
                     }
                     "array" {
