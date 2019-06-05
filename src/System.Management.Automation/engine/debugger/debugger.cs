@@ -1237,6 +1237,18 @@ namespace System.Management.Automation
 
             breakpoint.RemoveSelf(this);
 
+            if (_idToBreakpoint.Count == 0 &&
+                _currentDebuggerAction != DebuggerResumeAction.StepInto &&
+                _currentDebuggerAction != DebuggerResumeAction.StepOver &&
+                _currentDebuggerAction != DebuggerResumeAction.StepOut)
+            {
+                // Turn off debugging if the last breakpoint was removed,
+                // and if we are not currently stepping in the debugger.
+                // This allows the remainder of the script to run more
+                // efficiently.
+                SetInternalDebugMode(InternalDebugMode.Disabled);
+            }
+
             OnBreakpointUpdated(new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Removed, _idToBreakpoint.Count));
         }
 
