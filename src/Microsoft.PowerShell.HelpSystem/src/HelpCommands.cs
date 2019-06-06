@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            HelpSystem helpSystem = this.Context.HelpSystem;
+            HelpSystem helpSystem = (HelpSystem)this.Context.HelpSystem;
             try
             {
                 helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
