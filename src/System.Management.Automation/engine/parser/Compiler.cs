@@ -3131,6 +3131,14 @@ namespace System.Management.Automation.Language
 
         public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
         {
+            if (pipelineChainAst.Background)
+            {
+                return Expression.Call(
+                    CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
+                    Expression.Constant(pipelineChainAst),
+                    _functionContext);
+            }
+
             Expression condition = pipelineChainAst.Operator == StatementChainOperator.AndAnd
                 ? s_getDollarQuestion
                 : Expression.Not(s_getDollarQuestion);

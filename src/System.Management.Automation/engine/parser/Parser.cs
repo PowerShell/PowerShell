@@ -5694,7 +5694,7 @@ namespace System.Management.Automation.Language
 
         #region Pipelines
 
-        private StatementAst StatementChainRule()
+        private StatementAst StatementChainRule(bool mustBePipeline = false)
         {
             // G  statement-chain:
             // G      flow-control-statement
@@ -5719,46 +5719,69 @@ namespace System.Management.Automation.Language
                 // Remember the last operator to chain the coming pipeline
                 currentChainOperator = nextChainOperator;
 
-                // Look ahead for a control flow keyword
-                Token nextToken = NextToken();
                 StatementAst nextStatement;
-                bool mustReturn = true;
-                switch (nextToken.Kind)
+                Token nextToken;
+                if (mustBePipeline)
                 {
-                    case TokenKind.Throw:
-                        nextStatement = ThrowStatementRule(nextToken);
-                        break;
-
-                    case TokenKind.Return:
-                        nextStatement = ReturnStatementRule(nextToken);
-                        break;
-
-                    case TokenKind.Exit:
-                        nextStatement = ExitStatementRule(nextToken);
-                        break;
-
-                    case TokenKind.Break:
-                        nextStatement = BreakStatementRule(nextToken);
-                        break;
-
-                    case TokenKind.Continue:
-                        nextStatement = ContinueStatementRule(nextToken);
-                        break;
-
-                    default:
-                        UngetToken(nextToken);
-                        nextStatement = PipelineRule();
-                        mustReturn = false;
-                        break;
+                    nextStatement = PipelineRule();
                 }
-
-                if (mustReturn)
+                else
                 {
-                    return new StatementChainAst(
-                        ExtentOf(currentPipelineChain, nextStatement),
-                        currentPipelineChain,
-                        nextStatement,
-                        currentChainOperator);
+                    // Look ahead for a control flow keyword
+                    nextToken = NextToken();
+                    bool usedControlFlowStatement = true;
+                    switch (nextToken.Kind)
+                    {
+                        case TokenKind.Throw:
+                            nextStatement = ThrowStatementRule(nextToken);
+                            break;
+
+                        case TokenKind.Return:
+                            nextStatement = ReturnStatementRule(nextToken);
+                            break;
+
+                        case TokenKind.Exit:
+                            nextStatement = ExitStatementRule(nextToken);
+                            break;
+
+                        case TokenKind.Break:
+                            nextStatement = BreakStatementRule(nextToken);
+                            break;
+
+                        case TokenKind.Continue:
+                            nextStatement = ContinueStatementRule(nextToken);
+                            break;
+
+                        default:
+                            UngetToken(nextToken);
+                            nextStatement = PipelineRule();
+                            usedControlFlowStatement = false;
+                            break;
+                    }
+
+                    if (usedControlFlowStatement)
+                    {
+                        nextToken = PeekToken();
+                        switch (nextToken.Kind)
+                        {
+                            case TokenKind.AndAnd:
+                            case TokenKind.OrOr:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.ControlFlowInStatementChain), ParserStrings.ControlFlowInStatementChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
+
+                            case TokenKind.Ampersand:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorAfterControlFlow), ParserStrings.BackgroundOperatorAfterControlFlow);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
+                        }
+
+                        return new StatementChainAst(
+                            ExtentOf(currentPipelineChain, nextStatement),
+                            currentPipelineChain,
+                            nextStatement,
+                            currentChainOperator);
+                    }
                 }
 
                 // If there's no next statement, return the statement chain currently parsed
@@ -5774,15 +5797,28 @@ namespace System.Management.Automation.Language
                 {
                     case TokenKind.AndAnd:
                         nextChainOperator = StatementChainOperator.AndAnd;
+                        SkipToken();
+                        SkipNewlines();
                         break;
 
                     case TokenKind.OrOr:
                         nextChainOperator = StatementChainOperator.OrOr;
+                        SkipToken();
+                        SkipNewlines();
                         break;
 
                     // Background operators may also occur here
                     case TokenKind.Ampersand:
                         SkipToken();
+                        nextToken = PeekToken();
+                        switch (nextToken.Kind)
+                        {
+                            case TokenKind.AndAnd:
+                            case TokenKind.OrOr:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInStatementChain), ParserStrings.BackgroundOperatorInStatementChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain, nextToken.Extent));
+                        }
                         background = true;
                         goto default;
 
@@ -5805,7 +5841,8 @@ namespace System.Management.Automation.Language
                             ExtentOf(currentPipelineChain.Extent, nextStatement.Extent),
                             currentPipelineChain,
                             (PipelineBaseAst)nextStatement,
-                            currentChainOperator);
+                            currentChainOperator,
+                            background);
                 }
 
                 // Assemble the new chain statement AST
@@ -5817,11 +5854,6 @@ namespace System.Management.Automation.Language
                         currentPipelineChain,
                         nextPipelineChain,
                         currentChainOperator);
-
-
-                // We've seen a chain operator, now skip it and any newlines
-                SkipToken();
-                SkipNewlines();
 
                 // Look ahead to report incomplete input if needed
                 if (PeekToken().Kind == TokenKind.EndOfInput)
@@ -5846,101 +5878,7 @@ namespace System.Management.Automation.Language
             // G      '||'
             // G      '&&'
 
-            // If this feature is not enabled, just use the traditional pipeline rule
-            if (!s_bashOperatorsEnabled)
-            {
-                return PipelineRule();
-            }
-
-            PipelineBaseAst currentPipelineChain = null;
-            StatementChainOperator currentChainOperator = StatementChainOperator.None;
-            StatementChainOperator nextChainOperator = StatementChainOperator.None;
-            bool background = false;
-            while (true)
-            {
-                // Remember the last operator to chain the coming pipeline
-                currentChainOperator = nextChainOperator;
-
-                // Read the pipeline invocation
-                PipelineBaseAst nextPipeline = PipelineRule();
-
-                // If there's no next statement, return the statement chain currently parsed
-                // TODO: Determine the correct action here
-                if (nextPipeline == null)
-                {
-                    return null;
-                }
-
-                // Look ahead for a chain operator
-                Token nextToken = PeekToken();
-                switch (nextToken.Kind)
-                {
-
-                    case TokenKind.AndAnd:
-                        nextChainOperator = StatementChainOperator.AndAnd;
-                        break;
-
-                    case TokenKind.OrOr:
-                        nextChainOperator = StatementChainOperator.OrOr;
-                        break;
-
-                    // Backgrounding may also occur here
-                    case TokenKind.Ampersand:
-                        SkipToken();
-                        background = true;
-                        goto default;
-
-                    // No more chain operators -- return
-                    default:
-                        // Assemble the final chain statement AST
-
-                        // If we haven't seen a chain yet, pass through the first pipeline
-                        if (currentPipelineChain == null)
-                        {
-                            if (!background)
-                            {
-                                return nextPipeline;
-                            }
-
-                            // Set background on the pipeline AST
-                            ((PipelineAst)nextPipeline).Background = true;
-                            return nextPipeline;
-                        }
-
-                        return currentPipelineChain == null
-                            ? nextPipeline
-                            : new PipelineChainAst(
-                                ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
-                                currentPipelineChain,
-                                nextPipeline,
-                                currentChainOperator,
-                                background);
-                }
-
-                // Assemble the new chain statement AST
-                currentPipelineChain = currentPipelineChain == null
-                    ? nextPipeline
-                    : new PipelineChainAst(
-                        ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
-                        currentPipelineChain,
-                        nextPipeline,
-                        currentChainOperator);
-
-                // We've seen a chain operator, now skip it and any newlines
-                SkipToken();
-                SkipNewlines();
-
-                // Look ahead to report incomplete input if needed
-                if (PeekToken().Kind == TokenKind.EndOfInput)
-                {
-                    ReportIncompleteInput(
-                        After(nextToken),
-                        nameof(ParserStrings.EmptyChainElement),
-                        ParserStrings.EmptyChainElement);
-
-                    return currentPipelineChain;
-                }
-            }
+            return (PipelineBaseAst)StatementChainRule(mustBePipeline: true);
         }
 
         private PipelineBaseAst PipelineRule()
@@ -6104,10 +6042,11 @@ namespace System.Management.Automation.Language
 
                         SkipToken();
                         SkipNewlines();
-                        ReportError(pipeToken.Extent,
+                        ReportError(nextToken.Extent,
                             nameof(ParserStrings.InvalidEndOfLine),
                             ParserStrings.InvalidEndOfLine,
-                            pipeToken.Text);
+                            nextToken.Text);
+
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;

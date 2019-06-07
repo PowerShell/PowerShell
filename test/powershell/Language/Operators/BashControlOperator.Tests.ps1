@@ -71,6 +71,9 @@ Describe "&& and || operators" -Tag CI {
             @{ Statement = 'testexe -returncode 1 && "Hi"'; Output = @('1') }
             @{ Statement = 'testexe -returncode 1 || "hi"'; Output = @('1', 'hi') }
 
+            # Assignment with expression
+            @{ Statement = '$x = testexe -returncode 0 && $y = testexe -returncode 0 && $x + $y'; Output = @('00') }
+
             # Pipeline and native command
             @{ Statement = '1,2,3 | % { $_ + 1 } && testexe -returncode 0'; Output = @('2','3','4','0') }
             @{ Statement = 'testexe -returncode 0 && 1,2,3 | % { $_ + 1 }'; Output = @('0','2','3','4') }
@@ -97,6 +100,13 @@ Describe "&& and || operators" -Tag CI {
             # Throw directly
             @{ Statement = "testexe -returncode 0 && throw 'Bad'"; Output = @('0'); ErrorID = 'Bad' }
             @{ Statement = "testexe -returncode 0 || throw 'Bad'"; Output = @('0') }
+
+            # Confusing edge case in PS syntax
+            @{ Statement = 'testexe -returncode 0 && throw "Bad" &'; ErrorID = 'System.Management.Automation.PSRemotingJob' }
+
+            # Where pipeline is subordinate to `throw`
+            @{ Statement = 'throw "Bad" || testexe -returncode 0'; ErrorId = 'Bad' }
+            @{ Statement = 'throw "Bad" && testexe -returncode 0'; ErrorId = 'Bad 0' }
         )
 
         $variableTestCases = @(
@@ -104,15 +114,20 @@ Describe "&& and || operators" -Tag CI {
             @{ Statement = '$x = testexe -returncode 0 || $y = testexe -returncode 1'; Variables = @{ x = '0'; y = $null } }
             @{ Statement = '$x = testexe -returncode 1 || $y = testexe -returncode 0'; Variables = @{ x = '1'; y = '0' } }
             @{ Statement = '$x = testexe -returncode 1 && $y = testexe -returncode 0'; Variables = @{ x = '1'; y = $null } }
+            @{ Statement = '$x = testexe -returncode 10 || $y = testexe -returncode 0 && $z = testexe -returncode 7'; Variables = @{ x = '10'; y = '0'; z = '7' } }
             @{ Statement = '$x = (testexe -returncode 0 && testexe -returncode 0)'; Variables = @{ x = '0','0' } }
             @{ Statement = '$x = (testexe -returncode 0 && $y = testexe -returncode 0)'; Variables = @{ x = '0'; y = '0' } }
         )
 
+        $jobTestCases = @(
+            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 &'; Output = @('0', '1') }
+            @{ Statement = 'testexe -returncode 1 && testexe -returncode 0 &'; Output = @('1') }
+            @{ Statement = '$x = testexe -returncode 0 && $y = Write-Output " mice" && $x + $y &'; Output = @('0 mice') }
+        )
+
         $invalidSyntaxCases = @(
-            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = '' }
-            @{ Statement = 'throw "Bad" || testexe -returncode 0'; ErrorID = '' }
-            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = '' }
-            @{ Statement = 'testexe -returncode 0 && throw "Bad" &'; ErrorID = '' }
+            @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'X' }
+            @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'X' }
         )
     }
 
@@ -147,25 +162,20 @@ Describe "&& and || operators" -Tag CI {
         }
     }
 
+    It "Runs the statement chain '<Statement>' as a job" -TestCases $jobTestCases {
+        param($Statement, $Output)
+
+        Wait-Debugger
+
+        $resultJob = Invoke-Expression -Command $Statement
+
+        $resultJob | Wait-Job | Receive-Job | Should -Be $Output
+    }
+
     It "Rejects invalid syntax usage in '<Statement>'" -TestCases $invalidSyntaxCases {
         param($Statement, $ErrorID)
 
         { Invoke-Expression -Command $Statement } | Should -Throw -ErrorId $ErrorID
-    }
-
-    Context "Jobs with && and ||" {
-        BeforeAll {
-            $jobTestCases = @(
-                @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 &'; Output = @('0', '1') }
-                @{ Statement = 'testexe -returncode 1 && testexe -returncode 0 &'; Output = @('1') }
-            )
-        }
-
-        It "Runs the statement chain '<Statement>' as a job" -TestCases $jobTestCases {
-            param($Statement, $Output)
-
-            Invoke-Expression -Command $Statement | Wait-Job | Receive-Job | Should -Be $Output
-        }
     }
 
     Context "File redirection with && and ||" {

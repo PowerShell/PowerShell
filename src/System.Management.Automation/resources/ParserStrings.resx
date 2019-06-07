@@ -1506,4 +1506,13 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="EmptyChainElement" xml:space="preserve">
     <value>A statement chain operator must be followed by a statement.</value>
   </data>
+  <data name="ControlFlowInStatementChain" xml:space="preserve">
+    <value>Statement chains may only use control flow statements as the last element.</value>
+  </data>
+  <data name="BackgroundOperatorAfterControlFlow" xml:space="preserve">
+    <value>Statement chains ending with a control flow statement cannot be backgrounded.</value>
+  </data>
+  <data name="BackgroundOperatorInStatementChain" xml:space="preserve">
+    <value>Background operators can only be used at the end of a statement chain.</value>
+  </data>
 </root>
