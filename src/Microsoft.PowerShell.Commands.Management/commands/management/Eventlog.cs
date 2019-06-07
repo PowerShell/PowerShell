@@ -5,8 +5,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel; // Win32Exception
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics; // Eventlog class
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
