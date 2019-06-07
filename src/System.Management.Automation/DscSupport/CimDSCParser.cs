@@ -648,10 +648,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     throw new DirectoryNotFoundException("Unable to find DSC schema store at " + dscConfigurationDirectory + ". Please ensure PS DSC for Linux is installed.");
                 }
 
-                var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "baseregistration/baseresource.schema.mof");
+                var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/BaseResource.schema.mof");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
 
-                var metaConfigFile = Path.Combine(dscConfigurationDirectory, "baseregistration/MSFT_DSCMetaConfiguration.mof");
+                var metaConfigFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/MSFT_DSCMetaConfiguration.mof");
                 ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
 
                 var allResourceRoots = new string[] { dscConfigurationDirectory };
@@ -699,13 +699,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // Load the base schema files.
                 //
                 ClearCache();
-                var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.Schema.mof");
+                var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.schema.mof");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
 
                 var metaConfigFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_DSCMetaConfiguration.mof");
                 ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
 
-                var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.Schema.mof");
+                var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.schema.mof");
                 ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
 
                 //
@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (!Directory.Exists(moduleDir)) continue;
 
-                var dscResourcesPath = Path.Combine(moduleDir, "DSCResources");
+                var dscResourcesPath = Path.Combine(moduleDir, "DscResources");
                 if (Directory.Exists(dscResourcesPath))
                 {
                     foreach (string resourceDir in Directory.EnumerateDirectories(dscResourcesPath))
@@ -3156,8 +3156,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException("resourceName");
             }
 
-            string dscResourcesPath = Path.Combine(module.ModuleBase, "DSCResources");
-            schemaFilePath = Path.Combine(Path.Combine(dscResourcesPath, resourceName), resourceName + ".Schema.mof");
+            string dscResourcesPath = Path.Combine(module.ModuleBase, "DscResources");
+            schemaFilePath = Path.Combine(Path.Combine(dscResourcesPath, resourceName), resourceName + ".schema.mof");
 
             if (File.Exists(schemaFilePath))
             {
@@ -3180,14 +3180,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 //
                 // Cannot find the schema file, then resourceName may be a friendly name,
-                // try to search all DSCResources' schemas under DSCResources folder
+                // try to search all DscResources' schemas under DscResources folder
                 //
                 try
                 {
                     var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
                     foreach (var directory in dscResourceDirectories)
                     {
-                        var schemaFiles = Directory.GetFiles(directory, "*.Schema.mof", SearchOption.TopDirectoryOnly);
+                        var schemaFiles = Directory.GetFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
                         if (schemaFiles.Length > 0)
                         {
                             Debug.Assert(schemaFiles.Length == 1, "A valid DSCResource module can have only one schema mof file");
@@ -3251,7 +3251,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException("resourceName");
             }
 
-            schemaFilePath = Path.Combine(Path.Combine(Path.Combine(module.ModuleBase, "DSCResources"), resourceName), resourceName + ".Schema.psm1");
+            schemaFilePath = Path.Combine(Path.Combine(Path.Combine(module.ModuleBase, "DscResources"), resourceName), resourceName + ".Schema.psm1");
 
             if (File.Exists(schemaFilePath) && !s_currentImportingScriptFiles.Contains(schemaFilePath))
             {
