@@ -29,14 +29,14 @@ namespace System.Management.Automation
     {
         #region PSRP
 
-        private static Collection<string> RehydrateHashtableKeys(PSObject pso, string propertyName)
+        private static ConcurrentBag<string> RehydrateHashtableKeys(PSObject pso, string propertyName)
         {
             var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             Hashtable hashtable = DeserializingTypeConverter.GetPropertyValue<Hashtable>(pso, propertyName, rehydrationFlags);
             if (hashtable == null)
             {
-                return new Collection<string>();
+                return new ConcurrentBag<string>();
             }
             else
             {
@@ -47,7 +47,7 @@ namespace System.Management.Automation
                     .Select(k => k.ToString())
                     .Where(s => s != null)
                     .ToList();
-                return new Collection<string>(list);
+                return new ConcurrentBag<string>(list);
             }
         }
 

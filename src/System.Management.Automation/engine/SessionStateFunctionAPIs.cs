@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
@@ -102,7 +103,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of functions/filters to export from this session state object...
         /// </summary>
-        internal List<FunctionInfo> ExportedFunctions { get; } = new List<FunctionInfo>();
+        internal ConcurrentBag<FunctionInfo> ExportedFunctions { get; } = new ConcurrentBag<FunctionInfo>();
 
         internal bool UseExportList { get; set; } = false;
 

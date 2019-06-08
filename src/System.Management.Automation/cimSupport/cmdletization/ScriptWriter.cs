@@ -20,6 +20,7 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace Microsoft.PowerShell.Cmdletization
 {
@@ -2194,8 +2195,8 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 return;
             }
 
-            moduleInfo.DeclaredAliasExports = new Collection<string>();
-            moduleInfo.DeclaredFunctionExports = new Collection<string>();
+            moduleInfo.DeclaredAliasExports = new ConcurrentBag<string>();
+            moduleInfo.DeclaredFunctionExports = new ConcurrentBag<string>();
 
             IEnumerable<CommonCmdletMetadata> cmdletMetadatas = Enumerable.Empty<CommonCmdletMetadata>();
             if (_cmdletizationMetadata.Class.InstanceCmdlets != null)

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
@@ -1871,7 +1872,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of variables to export from this session state object...
         /// </summary>
-        internal List<PSVariable> ExportedVariables { get; } = new List<PSVariable>();
+        internal ConcurrentBag<PSVariable> ExportedVariables { get; } = new ConcurrentBag<PSVariable>();
 
         #endregion variables
     }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -520,10 +521,10 @@ namespace System.Management.Automation
             internal set;
         }
 
-        internal Collection<string> DeclaredFunctionExports = null;
-        internal Collection<string> DeclaredCmdletExports = null;
-        internal Collection<string> DeclaredAliasExports = null;
-        internal Collection<string> DeclaredVariableExports = null;
+        internal ConcurrentBag<string> DeclaredFunctionExports = null;
+        internal ConcurrentBag<string> DeclaredCmdletExports = null;
+        internal ConcurrentBag<string> DeclaredAliasExports = null;
+        internal ConcurrentBag<string> DeclaredVariableExports = null;
 
         internal List<string> DetectedFunctionExports = new List<string>();
         internal List<string> DetectedCmdletExports = new List<string>();
@@ -806,7 +807,7 @@ namespace System.Management.Automation
         /// some cmdlets come from the module and others come from the nested
         /// module. We need to consolidate the list so it can properly be constrained.
         /// </summary>
-        internal List<CmdletInfo> CompiledExports
+        internal ConcurrentBag<CmdletInfo> CompiledExports
         {
             get
             {
@@ -828,7 +829,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly List<CmdletInfo> _compiledExports = new List<CmdletInfo>();
+        private readonly ConcurrentBag<CmdletInfo> _compiledExports = new ConcurrentBag<CmdletInfo>();
 
         /// <summary>
         /// Add AliasInfo to the fixed exports list...

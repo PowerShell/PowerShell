@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -2680,7 +2681,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exportedFunctions != null)
                 {
-                    manifestInfo.DeclaredFunctionExports = new Collection<string>();
+                    manifestInfo.DeclaredFunctionExports = new ConcurrentBag<string>();
 
                     if (exportedFunctions.Count > 0)
                     {
@@ -2708,7 +2709,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exportedCmdlets != null)
                 {
-                    manifestInfo.DeclaredCmdletExports = new Collection<string>();
+                    manifestInfo.DeclaredCmdletExports = new ConcurrentBag<string>();
 
                     if (exportedCmdlets.Count > 0)
                     {
@@ -2736,7 +2737,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exportedAliases != null)
                 {
-                    manifestInfo.DeclaredAliasExports = new Collection<string>();
+                    manifestInfo.DeclaredAliasExports = new ConcurrentBag<string>();
 
                     if (exportedAliases.Count > 0)
                     {
@@ -2764,7 +2765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exportedVariables != null)
                 {
-                    manifestInfo.DeclaredVariableExports = new Collection<string>();
+                    manifestInfo.DeclaredVariableExports = new ConcurrentBag<string>();
 
                     if (exportedVariables.Count > 0)
                     {
@@ -3500,7 +3501,10 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             ss.Internal.ExportedVariables.Clear();
-                            ss.Internal.ExportedVariables.AddRange(updated);
+                            foreach(var psVariable in updated)
+                            {
+                                ss.Internal.ExportedVariables.Add(psVariable);
+                            }
                         }
                     }
                 }
@@ -3618,7 +3622,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static void UpdateCommandCollection<T>(List<T> list, List<WildcardPattern> patterns) where T : CommandInfo
+        private static void UpdateCommandCollection<T>(ConcurrentBag<T> list, List<WildcardPattern> patterns) where T : CommandInfo
         {
             List<T> updated = new List<T>();
             foreach (T element in list)
@@ -3630,10 +3634,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             list.Clear();
-            list.AddRange(updated);
+            foreach (T updatedElement in updated)
+            {
+                list.Add(updatedElement);
+            }
         }
 
-        private static void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
+        private static void UpdateCommandCollection(ConcurrentBag<string> list, List<WildcardPattern> patterns)
         {
             if (list == null)
             {

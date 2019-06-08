@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 
@@ -110,7 +111,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of aliases to export from this session state object...
         /// </summary>
-        internal List<AliasInfo> ExportedAliases { get; } = new List<AliasInfo>();
+        internal ConcurrentBag<AliasInfo> ExportedAliases { get; } = new ConcurrentBag<AliasInfo>();
 
         /// <summary>
         /// Gets the value of the specified alias from the alias table.

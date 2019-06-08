@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1501,14 +1502,18 @@ namespace System.Management.Automation
             }
 
             input.Clear();
-            input.AddRange(output);
+            foreach (var fnInfo in output)
+            {
+                input.Add(fnInfo);
+            }
         }
 
-        private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
+        private static void SortAndRemoveDuplicates<T>(ConcurrentBag<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
-            input.Sort(
+            var inputList = new List<T>(input);
+            inputList.Sort(
                 delegate (T x, T y)
                 {
                     string kx = keyGetter(x);
@@ -1519,8 +1524,8 @@ namespace System.Management.Automation
 
             bool firstItem = true;
             string previousKey = null;
-            List<T> output = new List<T>(input.Count);
-            foreach (T item in input)
+            List<T> output = new List<T>(inputList.Count);
+            foreach (T item in inputList)
             {
                 string currentKey = keyGetter(item);
                 if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
@@ -1532,8 +1537,13 @@ namespace System.Management.Automation
                 firstItem = false;
             }
 
+            inputList.Clear();
+            inputList.AddRange(output);
             input.Clear();
-            input.AddRange(output);
+            foreach(T inputItem in inputList)
+            {
+                input.Add(inputItem);
+            }
         }
 
         /// <summary>
