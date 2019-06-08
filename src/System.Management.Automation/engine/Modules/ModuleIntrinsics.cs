@@ -1540,7 +1540,7 @@ namespace System.Management.Automation
             inputList.Clear();
             inputList.AddRange(output);
             input.Clear();
-            foreach(T inputItem in inputList)
+            foreach (T inputItem in inputList)
             {
                 input.Add(inputItem);
             }

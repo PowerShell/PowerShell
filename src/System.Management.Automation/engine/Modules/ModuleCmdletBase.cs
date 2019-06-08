@@ -3501,7 +3501,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             ss.Internal.ExportedVariables.Clear();
-                            foreach(var psVariable in updated)
+                            foreach (var psVariable in updated)
                             {
                                 ss.Internal.ExportedVariables.Add(psVariable);
                             }
