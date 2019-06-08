@@ -521,10 +521,10 @@ namespace System.Management.Automation
             internal set;
         }
 
-        internal ConcurrentBag<string> DeclaredFunctionExports = null;
-        internal ConcurrentBag<string> DeclaredCmdletExports = null;
-        internal ConcurrentBag<string> DeclaredAliasExports = null;
-        internal ConcurrentBag<string> DeclaredVariableExports = null;
+        internal ConcurrentBag<string> DeclaredFunctionExports;
+        internal ConcurrentBag<string> DeclaredCmdletExports;
+        internal ConcurrentBag<string> DeclaredAliasExports;
+        internal ConcurrentBag<string> DeclaredVariableExports;
 
         internal List<string> DetectedFunctionExports = new List<string>();
         internal List<string> DetectedCmdletExports = new List<string>();
