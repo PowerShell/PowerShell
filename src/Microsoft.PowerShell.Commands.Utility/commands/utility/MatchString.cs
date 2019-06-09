@@ -92,43 +92,36 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating whether the matched portion of the string is highlighted.
         /// </summary>
         /// <value>Whether the matched portion of the string is highlighted with the negative VT sequence.</value>
-        private bool Emphasize { get; set; }
+        private readonly bool _emphasize;
 
         /// <summary>
         /// Stores the starting index of each match within the line.
         /// </summary>
-        private readonly List<int> _matchIndexes;
+        private readonly IReadOnlyList<int> _matchIndexes;
 
         /// <summary>
         /// Stores the length of each match within the line.
         /// </summary>
-        private readonly List<int> _matchLengths;
-
-        /// <summary>
-        /// Stores a values indicating whether or not the terminal supports VT.
-        /// </summary>
-        private readonly bool _supportsVirtualTerminal;
+        private readonly IReadOnlyList<int> _matchLengths;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchInfo"/> class.
         /// </summary>
         public MatchInfo()
         {
+            this._emphasize = false;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatchInfo"/> class.
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class when the Emphasize parameter is set.
         /// </summary>
         /// <param name="matchIndexes">Sets the matchIndexes.</param>
         /// <param name="matchLengths">Sets the matchLengths.</param>
-        /// <param name="emphasize">Used for implementing -Emphasize.</param>
-        /// <param name="vt">Sets a value indicating whether or not virtual terminal is supported.</param>
-        public MatchInfo(List<int> matchIndexes, List<int> matchLengths, bool emphasize, bool vt)
+        public MatchInfo(IReadOnlyList<int> matchIndexes, IReadOnlyList<int> matchLengths)
         {
-            this.Emphasize = emphasize;
+            this._emphasize = true;
             this._matchIndexes = matchIndexes;
             this._matchLengths = matchLengths;
-            this._supportsVirtualTerminal = vt;
         }
 
         /// <summary>
@@ -294,15 +287,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The colored string representation of the match object.</returns>
         public string ToEmphasizedString(string directory)
         {
-            if (!Emphasize || ! _supportsVirtualTerminal) {
+            if (!_emphasize) {
                 return ToString(directory);
             }
 
             string originalLine = Line;
-            string open = "\u001b[7m";
-            string close = "\u001b[0m";
+            string beginInvertedColorsVT100 = "\u001b[7m";
+            string resetVT100 = "\u001b[0m";
 
-            Line = string.Create((_matchIndexes.Count * (open.Length + close.Length)) + Line.Length, Line, (chars, buf) =>
+            Line = string.Create((_matchIndexes.Count * (beginInvertedColorsVT100.Length + resetVT100.Length)) + Line.Length, Line, (chars, buf) =>
             {
                 int lineIndex = 0;
                 int charsIndex = 0;
@@ -317,9 +310,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     
                     // Adds opening vt sequence
-                    for (int j = 0; j < open.Length; j++)
+                    for (int j = 0; j < beginInvertedColorsVT100.Length; j++)
                     {
-                        chars[charsIndex] = open[j];
+                        chars[charsIndex] = beginInvertedColorsVT100[j];
                         charsIndex++;
                     }
                     
@@ -328,13 +321,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         chars[charsIndex] = Line[lineIndex];
                         lineIndex++;
-                        charsIndex++; 
+                        charsIndex++;
                     }
 
                     // Adds closing vt sequence
-                    for (int j = 0; j < close.Length; j++)
+                    for (int j = 0; j < resetVT100.Length; j++)
                     {
-                        chars[charsIndex] = close[j];
+                        chars[charsIndex] = resetVT100[j];
                         charsIndex++;
                     }
                 }
@@ -1658,8 +1651,17 @@ namespace Microsoft.PowerShell.Commands
             int patternIndex = 0;
             matchResult = null;
 
-            var indexes = new List<int>();
-            var lengths = new List<int>();
+            List<int> indexes = null;
+            List<int> lengths = null;
+
+            // If Emphasize is set and VT is supported, 
+            // the lengths and starting indexes of regex matches
+            // need to be passed in to the matchInfo object.
+            if (Emphasize && Host.UI.SupportsVirtualTerminal)
+            {
+                indexes = new List<int>();
+                lengths = new List<int>();
+            }
 
             if (!SimpleMatch)
             {
@@ -1677,10 +1679,14 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
-                            foreach (Match match in matches)
+
+                            if (Emphasize && Host.UI.SupportsVirtualTerminal)
                             {
-                                indexes.Add(match.Index);
-                                lengths.Add(match.Length);
+                                foreach (Match match in matches)
+                                {
+                                    indexes.Add(match.Index);
+                                    lengths.Add(match.Length);
+                                }
                             }
 
                             gotMatch = true;
@@ -1693,8 +1699,11 @@ namespace Microsoft.PowerShell.Commands
 
                         if (match.Success)
                         {
-                            indexes.Add(match.Index);
-                            lengths.Add(match.Length);
+                            if (Emphasize && Host.UI.SupportsVirtualTerminal)
+                            {
+                                indexes.Add(match.Index);
+                                lengths.Add(match.Length);
+                            }
                             matches = new Match[] { match };
                         }
                     }
@@ -1718,8 +1727,11 @@ namespace Microsoft.PowerShell.Commands
                     int index = operandString.IndexOf(pat, compareOption);
                     if (index >= 0)
                     {
-                        indexes.Add(index);
-                        lengths.Add(pat.Length);
+                        if (Emphasize && Host.UI.SupportsVirtualTerminal)
+                        {
+                            indexes.Add(index);
+                            lengths.Add(pat.Length);
+                        }
                         gotMatch = true;
                         break;
                     }
@@ -1768,12 +1780,12 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo(indexes, lengths, Emphasize.IsPresent, Host.UI.SupportsVirtualTerminal)
-                {
-                    IgnoreCase = !CaseSensitive,
-                    Line = operandString,
-                    Pattern = Pattern[patternIndex]
-                };
+                matchResult = Emphasize && Host.UI.SupportsVirtualTerminal
+                    ? new MatchInfo(indexes, lengths)
+                    : new MatchInfo();
+                matchResult.IgnoreCase = !CaseSensitive;
+                matchResult.Line = operandString;
+                matchResult.Pattern = Pattern[patternIndex];
 
                 if (_preContext > 0 || _postContext > 0)
                 {
