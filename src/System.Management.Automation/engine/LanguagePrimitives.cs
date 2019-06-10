@@ -591,9 +591,7 @@ namespace System.Management.Automation
         /// <param name="second">Object to compare first to.</param>
         /// <returns>True if first is equal to the second.</returns>
         public static new bool Equals(object first, object second)
-        {
-            return Equals(first, second, false, CultureInfo.InvariantCulture);
-        }
+            => Equals(first, second, false, CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
@@ -604,9 +602,7 @@ namespace System.Management.Automation
         /// to specify the type of string comparison </param>
         /// <returns>True if first is equal to the second.</returns>
         public static bool Equals(object first, object second, bool ignoreCase)
-        {
-            return Equals(first, second, ignoreCase, CultureInfo.InvariantCulture);
-        }
+            => Equals(first, second, ignoreCase, CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
@@ -644,25 +640,38 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (second == null) return true;
+                if (second == null || second == DBNull.Value || second == NullString.Value)
+                {
+                    return true;
+                }
+
                 return false;
             }
 
             if (second == null)
             {
+                if (first == DBNull.Value || first == NullString.Value)
+                {
+                    return true;
+                }
+
                 return false; // first is not null
             }
 
-            string firstString = first as string;
             string secondString;
-            if (firstString != null)
+            if (first is string firstString)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                return (culture.CompareInfo.Compare(firstString, secondString,
-                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
+                return culture.CompareInfo.Compare(
+                    firstString,
+                    secondString,
+                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
             }
 
-            if (first.Equals(second)) return true;
+            if (first.Equals(second))
+            {
+                return true;
+            }
 
             Type firstType = first.GetType();
             Type secondType = second.GetType();
@@ -713,17 +722,17 @@ namespace System.Management.Automation
 
             // If it's a positive number, including 0, it's greater than null
             // for everything else it's less than zero...
-            switch (value)
+            return value switch
             {
-                case Int16 i16: return Math.Sign(i16) < 0 ? -i : i;
-                case Int32 i32: return Math.Sign(i32) < 0 ? -i : i;
-                case Int64 i64: return Math.Sign(i64) < 0 ? -i : i;
-                case sbyte sby: return Math.Sign(sby) < 0 ? -i : i;
-                case float f: return Math.Sign(f) < 0 ? -i : i;
-                case double d: return Math.Sign(d) < 0 ? -i : i;
-                case decimal de: return Math.Sign(de) < 0 ? -i : i;
-                default: return i;
-            }
+                Int16 i16 => Math.Sign(i16) < 0 ? -i : i,
+                Int32 i32 => Math.Sign(i32) < 0 ? -i : i,
+                Int64 i64 => Math.Sign(i64) < 0 ? -i : i,
+                sbyte s => Math.Sign(s) < 0 ? -i : i,
+                float f => Math.Sign(f) < 0 ? -i : i,
+                double d => Math.Sign(d) < 0 ? -i : i,
+                decimal m => Math.Sign(m) < 0 ? -i : i,
+                _ => value == DBNull.Value || value == NullString.Value ? 0 : i
+            };
         }
 
         /// <summary>
@@ -739,9 +748,7 @@ namespace System.Management.Automation
         /// to the type of <paramref name="first"/>.
         /// </exception>
         public static int Compare(object first, object second)
-        {
-            return LanguagePrimitives.Compare(first, second, false, CultureInfo.InvariantCulture);
-        }
+            => LanguagePrimitives.Compare(first, second, false, CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Compare first and second, converting second to the
@@ -757,9 +764,7 @@ namespace System.Management.Automation
         /// to the type of <paramref name="first"/>.
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase)
-        {
-            return LanguagePrimitives.Compare(first, second, ignoreCase, CultureInfo.InvariantCulture);
-        }
+            => LanguagePrimitives.Compare(first, second, ignoreCase, CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Compare first and second, converting second to the
@@ -777,15 +782,11 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -793,7 +794,7 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                return second == null ? 0 : CompareObjectToNull(second, true);
+                return CompareObjectToNull(second, true);
             }
 
             if (second == null)
@@ -803,8 +804,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                string secondString = second as string;
-                if (secondString == null)
+                if (!(second is string secondString))
                 {
                     try
                     {
@@ -812,19 +812,26 @@ namespace System.Management.Automation
                     }
                     catch (PSInvalidCastException e)
                     {
-                        throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
-                                                                 first.ToString(), second.ToString(), e.Message);
+                        throw PSTraceSource.NewArgumentException(
+                            nameof(second),
+                            ExtendedTypeSystem.ComparisonFailure,
+                            first.ToString(),
+                            second.ToString(),
+                            e.Message);
                     }
                 }
 
-                return culture.CompareInfo.Compare(firstString, secondString,
-                                                   ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                return culture.CompareInfo.Compare(
+                    firstString,
+                    secondString,
+                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
             }
 
             Type firstType = first.GetType();
             Type secondType = second.GetType();
             int firstIndex = LanguagePrimitives.TypeTableIndex(firstType);
             int secondIndex = LanguagePrimitives.TypeTableIndex(secondType);
+
             if ((firstIndex != -1) && (secondIndex != -1))
             {
                 return LanguagePrimitives.NumericCompare(first, second, firstIndex, secondIndex);
@@ -837,8 +844,12 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException e)
             {
-                throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
-                                                         first.ToString(), second.ToString(), e.Message);
+                throw PSTraceSource.NewArgumentException(
+                    nameof(second),
+                    ExtendedTypeSystem.ComparisonFailure,
+                    first.ToString(),
+                    second.ToString(),
+                    e.Message);
             }
 
             if (first is IComparable firstComparable)
@@ -853,7 +864,7 @@ namespace System.Management.Automation
 
             // At this point, we know that they aren't equal but we have no way of
             // knowing which should compare greater than the other so we throw an exception.
-            throw PSTraceSource.NewArgumentException("first", ExtendedTypeSystem.NotIcomparable, first.ToString());
+            throw PSTraceSource.NewArgumentException(nameof(first), ExtendedTypeSystem.NotIcomparable, first.ToString());
         }
 
         /// <summary>
@@ -866,9 +877,7 @@ namespace System.Management.Automation
         /// zero if it is greater or zero if they are the same.</param>
         /// <returns>True if the comparison was successful, false otherwise.</returns>
         public static bool TryCompare(object first, object second, out int result)
-        {
-            return TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
-        }
+            => TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
 
         /// <summary>
         /// Tries to compare first and second, converting second to the type of the first, if necessary.
@@ -880,9 +889,7 @@ namespace System.Management.Automation
         /// <param name="result">Less than zero if first is smaller than second, more than zero if it is greater or zero if they are the same.</param>
         /// <returns>True if the comparison was successful, false otherwise.</returns>
         public static bool TryCompare(object first, object second, bool ignoreCase, out int result)
-        {
-            return TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
-        }
+            => TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
 
         /// <summary>
         /// Tries to compare first and second, converting second to the type of the first, if necessary.
@@ -898,10 +905,7 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -1013,8 +1017,7 @@ namespace System.Management.Automation
             if (objType == typeof(SwitchParameter))
                 return ((SwitchParameter)obj).ToBool();
 
-            IList objectArray = obj as IList;
-            if (objectArray != null)
+            if (obj is IList objectArray)
             {
                 return IsTrue(objectArray);
             }
@@ -1064,10 +1067,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        internal static bool IsNull(object obj)
-        {
-            return (obj == null || obj == AutomationNull.Value);
-        }
+        internal static bool IsNull(object obj) => obj == null || obj == AutomationNull.Value;
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
