@@ -1,8 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "&& and || operators" -Tag CI {
+Describe "Experimental Feature: && and || operators" -Tag CI {
     BeforeAll {
+        $configFilePath = Join-Path $testdrive "experimentalfeature.json"
+
+        @"
+        {
+            "ExperimentalFeatures": [
+              "PSBashCommandOperators"
+            ]
+        }
+"@ > $configFilePath
+
         function Test-SuccessfulCommand
         {
             Write-Output "SUCCESS"
