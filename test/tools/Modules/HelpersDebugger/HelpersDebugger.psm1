@@ -99,8 +99,8 @@ function Test-Debugger {
         #  If the debugger is not set up properly, notify the user with an error message
         if (-not $script:debuggerStopHandlerRegistered -or $host.DebuggerEnabled) {
             $message = 'You must invoke Register-DebuggerHandler before invoking Test-Debugger, and Unregister-DebuggerHandler after invoking Test-Debugger. As a best practice, invoke Register-DebuggerHandler in the BeforeAll block and Unregister-DebuggerHandler in the AfterAll block of your test script.'
-            $exception = New-Object -TypeName System.InvalidOperationException -ArgumentList $message
-            $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $exception,$exception.GetType().Name,'InvalidOperation'
+            $exception = [System.InvalidOperationException]::new($message)
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidOperation', $null)
             throw $errorRecord
         }
         $script:dbgResults = @()
@@ -110,9 +110,8 @@ function Test-Debugger {
         }
         # We re-create the script block before invoking it to ensure that it will
         # work regardless of where the script itself was defined in the test file.
-        # We also suppress any exceptions and silence any output because this
-        # invocation is about the debugger output, not the output of the script
-        # itself
+        # We also silence any standard output because this invocation is about the
+        # debugger output, not the output of the script itself.
         & {
             [System.Diagnostics.DebuggerStepThrough()]
             [CmdletBinding()]

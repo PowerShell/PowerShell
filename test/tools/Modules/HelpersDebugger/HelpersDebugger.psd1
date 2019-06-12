@@ -14,6 +14,8 @@
 
     Description = 'Helper module for Pester tests that automate the debugger'
 
+    PowerShellVersion = '5.0'
+
     FunctionsToExport = @(
         'Register-DebuggerHandler'
         'ShouldHaveExtent'
