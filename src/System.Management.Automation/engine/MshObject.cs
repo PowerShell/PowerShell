@@ -1269,6 +1269,53 @@ namespace System.Management.Automation
         /// </exception>
         internal static string ToString(ExecutionContext context, object obj, string separator, string format, IFormatProvider formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
         {
+            bool TryFastTrackPrimitiveTypes(object obj, out string str)
+            {
+                str = null;
+                bool success = true;
+
+                Type valueType = obj.GetType();
+                TypeCode code = valueType.GetTypeCode();
+
+                switch (code)
+                {
+                    case TypeCode.String:
+                        str = (string)obj;
+                        break;
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16:
+                    case TypeCode.Int32:
+                    case TypeCode.UInt32:
+                    case TypeCode.Int64:
+                    case TypeCode.UInt64:
+                        str = obj.ToString();
+                        break;
+                    case TypeCode.DateTime:
+                        DateTime dt = (DateTime)obj;
+                        str = dt.ToString(formatProvider);
+                        break;
+                    case TypeCode.Decimal:
+                        Decimal dec = (Decimal)obj;
+                        str = dec.ToString(formatProvider);
+                        break;
+                    case TypeCode.Double:
+                        double dbl = (double)obj;
+                        str = dbl.ToString(LanguagePrimitives.DoublePrecision, formatProvider);
+                        break;
+                    case TypeCode.Single:
+                        float sgl = (float)obj;
+                        str = sgl.ToString(LanguagePrimitives.SinglePrecision, formatProvider);
+                        break;
+                    default:
+                        success = false;
+                        break;
+                }
+
+                return success;
+            }
+
             PSObject mshObj = obj as PSObject;
 
             #region plain object
@@ -1280,34 +1327,9 @@ namespace System.Management.Automation
                 }
 
                 // Fast-track the primitive types...
-                Type objType = obj.GetType();
-                TypeCode code = objType.GetTypeCode();
-                switch (code)
+                if (TryFastTrackPrimitiveTypes(obj, out string objString))
                 {
-                    case TypeCode.String:
-                        return (string)obj;
-                    case TypeCode.Byte:
-                    case TypeCode.SByte:
-                    case TypeCode.Int16:
-                    case TypeCode.UInt16:
-                    case TypeCode.Int32:
-                    case TypeCode.UInt32:
-                    case TypeCode.Int64:
-                    case TypeCode.UInt64:
-                        return obj.ToString();
-                    case TypeCode.DateTime:
-                        DateTime dt = (DateTime)obj;
-                        return dt.ToString(formatProvider);
-                    case TypeCode.Decimal:
-                        Decimal dec = (Decimal)obj;
-                        return dec.ToString(formatProvider);
-                    case TypeCode.Double:
-                        double dbl = (double)obj;
-                        return dbl.ToString(formatProvider);
-
-                    case TypeCode.Single:
-                        float sgl = (float)obj;
-                        return sgl.ToString(formatProvider);
+                    return objString;
                 }
 
                 #region recurse
@@ -1482,6 +1504,13 @@ namespace System.Management.Automation
             // Since we don't have a brokered ToString and the enumerations were not necessary or failed
             // we try the BaseObject's ToString
             object baseObject = mshObj._immediateBaseObject;
+
+            // Fast-track the primitive types...
+            if (TryFastTrackPrimitiveTypes(baseObject, out string baseObjString))
+            {
+                return baseObjString;
+            }
+
             IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
