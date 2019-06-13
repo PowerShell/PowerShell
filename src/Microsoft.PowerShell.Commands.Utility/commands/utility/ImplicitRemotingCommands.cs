@@ -19,6 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 
 // FxCop suppressions for resource strings:

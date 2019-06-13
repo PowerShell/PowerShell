@@ -12,6 +12,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
 using System.Text.RegularExpressions;
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {

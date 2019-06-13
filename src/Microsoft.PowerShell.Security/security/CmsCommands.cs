@@ -10,6 +10,7 @@ using System.Management.Automation;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {

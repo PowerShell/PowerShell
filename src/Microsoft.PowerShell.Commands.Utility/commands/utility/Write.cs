@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {

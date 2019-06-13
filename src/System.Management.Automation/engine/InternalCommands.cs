@@ -14,7 +14,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands

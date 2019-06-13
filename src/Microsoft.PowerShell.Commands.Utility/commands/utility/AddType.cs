@@ -21,7 +21,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using PathType = System.IO.Path;
 
 namespace Microsoft.PowerShell.Commands

@@ -13,7 +13,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Text;
-
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 
 //

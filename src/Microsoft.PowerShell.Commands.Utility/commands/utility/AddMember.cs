@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {

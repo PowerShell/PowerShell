@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Security.AccessControl;
 using System.Text;
-using System.Threading;
 
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -17,11 +16,11 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Language;
 
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 using WSManNativeApi = System.Management.Automation.Remoting.Client.WSManNativeApi;
 using PowerShellApi = System.Management.Automation.PowerShell;
 
-using Microsoft.Win32;
 using System.Security;
 using System.Collections.Generic;
 using System.Security.Principal;

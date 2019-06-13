@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Threading;
 
 using Newtonsoft.Json;
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {

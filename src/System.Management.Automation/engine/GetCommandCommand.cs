@@ -13,8 +13,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Reflection;
-
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands

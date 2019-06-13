@@ -13,7 +13,7 @@ using System.Management.Automation.Internal;
 using System.Security;
 using System.Text;
 using System.Xml;
-
+using AllowNullAttribute = System.Management.Automation.AllowNullAttribute;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
