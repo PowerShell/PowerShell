@@ -417,30 +417,31 @@ Describe 'Property Attributes Test' -Tags "CI" {
 }
 
 Describe 'Method Name Test' -Tags "CI" {
+    BeforeAll {
+        class TestMethodNames : IDisposable {
+            [string] Begin() { return "Begin" }
+
+            [string] Process() { return "Process" }
+
+            [string] End() { return "End" }
+
+            hidden $Data = "Secrets"
+
+            Dispose() {
+                $this.Data = [string]::Empty
+            }
+        }
+    }
     It 'Permits class methods to be named after keywords' {
-        $ClassDefinition = @'
-            try {
-                class TestMethodNames : IDisposable {
-                    [string] Begin() { return "Begin" }
+        $Object = [TestMethodNames]::new()
 
-                    [string] Process() { return "Process" }
+        $Object.Begin() | Should -BeExactly 'Begin'
+        $Object.Process() | Should -BeExactly 'Process'
+        $Object.End() | Should -BeExactly 'End'
 
-                    [string] End() { return "End" }
-
-                    hidden $Data = "Secrets"
-
-                    Dispose() {
-                        $this.Data = [string]::Empty
-                    }
-                }
-
-                $a = [TestMethodNames]::new()
-            }
-            finally {
-                $a.Dispose()
-            }
-'@
-        { ExecuteCommand $ClassDefinition } | Should -Not -Throw
+        $Object.Data | Should -BeExactly 'Secrets'
+        $Object.Dispose()
+        $Object.Data | Should -BeNullOrEmpty
     }
 }
 
