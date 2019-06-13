@@ -416,6 +416,34 @@ Describe 'Property Attributes Test' -Tags "CI" {
         It "second value should be b" { $v.ValidValues[1] | Should -Be 'b' }
 }
 
+Describe 'Method Name Test' -Tags "CI" {
+    It 'Permits class methods to be named after keywords' {
+        $ClassDefinition = @'
+            try {
+                class TestMethodNames : IDisposable {
+                    [string] Begin() { return "Begin" }
+
+                    [string] Process() { return "Process" }
+
+                    [string] End() { return "End" }
+
+                    hidden $Data = "Secrets"
+
+                    Dispose() {
+                        $this.Data = [string]::Empty
+                    }
+                }
+
+                $a = [TestMethodNames]::new()
+            }
+            finally {
+                $a.Dispose()
+            }
+'@
+        { ExecuteCommand $ClassDefinition } | Should -Not -Throw
+    }
+}
+
 Describe 'Method Attributes Test' -Tags "CI" {
         class C { [Obsolete("aaa")][int]f() { return 1 } }
 
