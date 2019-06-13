@@ -1271,9 +1271,6 @@ namespace System.Management.Automation
         {
             bool TryFastTrackPrimitiveTypes(object obj, out string str)
             {
-                str = null;
-                bool success = true;
-
                 Type valueType = obj.GetType();
                 TypeCode code = valueType.GetTypeCode();
 
@@ -1309,11 +1306,11 @@ namespace System.Management.Automation
                         str = sgl.ToString(LanguagePrimitives.SinglePrecision, formatProvider);
                         break;
                     default:
-                        success = false;
-                        break;
+                        str = null;
+                        return false;
                 }
 
-                return success;
+                return true;
             }
 
             PSObject mshObj = obj as PSObject;
@@ -1326,7 +1323,6 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // Fast-track the primitive types...
                 if (TryFastTrackPrimitiveTypes(obj, out string objString))
                 {
                     return objString;
@@ -1505,7 +1501,6 @@ namespace System.Management.Automation
             // we try the BaseObject's ToString
             object baseObject = mshObj._immediateBaseObject;
 
-            // Fast-track the primitive types...
             if (TryFastTrackPrimitiveTypes(baseObject, out string baseObjString))
             {
                 return baseObjString;
