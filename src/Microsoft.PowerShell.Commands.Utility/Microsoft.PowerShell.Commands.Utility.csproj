@@ -57,7 +57,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="4.5.0" />
-    <PackageReference Include="NJsonSchema" Version="10.0.18" />
+    <PackageReference Include="NJsonSchema" Version="10.0.19" />
   </ItemGroup>
 
 </Project>
