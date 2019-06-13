@@ -109,7 +109,7 @@ namespace System.Management.Automation
             fileContents: script);
 
         internal static ScriptBlock CreateDelayParsedScriptBlock(string script, bool isProductCode)
-            => new ScriptBlock(new CompiledScriptBlockData(script, isProductCode));
+            => new ScriptBlock(new CompiledScriptBlockData(script, isProductCode)) { DebuggerHidden = true };
 
         /// <summary>
         /// Returns a new scriptblock bound to a module. Any local variables in the
