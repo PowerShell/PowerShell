@@ -63,8 +63,6 @@ namespace Microsoft.PowerShell
                 System.Diagnostics.Debugger.Break();
             }
 #endif
-            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-
             int exitCode = 0;
             try
             {

@@ -1251,9 +1251,8 @@ namespace System.Management.Automation
 
             breakpoint.RemoveSelf(this);
 
-            if (_idToBreakpoint.Count == 0)
+            if (CanDisableDebugger)
             {
-                // The last breakpoint was removed, turn off debugging.
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
 
@@ -2114,6 +2113,19 @@ namespace System.Management.Automation
                 // The debugger can be enabled if we are not in DebugMode.None and if we are
                 // not in a local session set only to RemoteScript.
                 return !((DebugMode == DebugModes.RemoteScript) && IsLocalSession) && (DebugMode != DebugModes.None);
+            }
+        }
+
+        private bool CanDisableDebugger
+        {
+            get
+            {
+                // The debugger can be disbled if there are no breakpoints
+                // left and if we are not currently stepping in the debugger.
+                return _idToBreakpoint.Count == 0 &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepInto &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepOver &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepOut;
             }
         }
 
@@ -3908,9 +3920,8 @@ namespace System.Management.Automation
             _context.IgnoreScriptDebug = _savedIgnoreScriptDebug;
             _context.PSDebugTraceLevel = 0;
             _context.PSDebugTraceStep = false;
-            if (!_idToBreakpoint.Any())
+            if (CanDisableDebugger)
             {
-                // Only disable debug mode if there are no breakpoints.
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
         }

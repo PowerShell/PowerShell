@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
                 else
-                if (rawInputString.StartsWith(PromptCommandPrefix, StringComparison.Ordinal))
+                if (!string.IsNullOrEmpty(desc.Label) && rawInputString.StartsWith(PromptCommandPrefix, StringComparison.Ordinal))
                 {
                     processedInputString = PromptCommandMode(rawInputString, desc, out inputDone);
                 }
