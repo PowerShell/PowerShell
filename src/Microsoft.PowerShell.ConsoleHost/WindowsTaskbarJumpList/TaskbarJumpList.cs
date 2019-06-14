@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell
             // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
             // This check is fast (less than 1ms) and allows for quick-exit
             GetStartupInfo(out StartUpInfo startupInfo);
+            Console.WriteLine("GetStartupInfo");
             var STARTF_USESHOWWINDOW = 0x00000001;
             var SW_HIDE = 0;
             if (((startupInfo.dwFlags & STARTF_USESHOWWINDOW) == 1) && (startupInfo.wShowWindow != SW_HIDE))
@@ -27,16 +28,20 @@ namespace Microsoft.PowerShell
                 const uint CLSCTX_INPROC_SERVER = 1;
                 var IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
                 var hResult = CoCreateInstance(ref CLSID_DestinationList, null, CLSCTX_INPROC_SERVER, ref IID_IUnknown, out object pCustDestListobj);
+                Console.WriteLine("CoCreateInstance");
                 if (hResult < 0)
                 {
+                    Console.WriteLine($"Creating ICustomDestinationList failed with HResult '{hResult}'.");
                     Debug.Fail($"Creating ICustomDestinationList failed with HResult '{hResult}'.");
                     return;
                 }
 
                 var pCustDestList = (ICustomDestinationList)pCustDestListobj;
+                Console.WriteLine("BeginList");
                 hResult = pCustDestList.BeginList(out uint uMaxSlots, new Guid(@"92CA9DCD-5622-4BBA-A805-5E9F541BD8C9"), out object pRemovedItems);
                 if (hResult < 0)
                 {
+                    Console.WriteLine($"BeginList on ICustomDestinationList failed with HResult '{hResult}'.");
                     Debug.Fail($"BeginList on ICustomDestinationList failed with HResult '{hResult}'.");
                     return;
                 }
@@ -55,16 +60,20 @@ namespace Microsoft.PowerShell
                     shellLinkDataList.SetFlags(flags);
                     var PKEY_TITLE = new PropertyKey(new Guid("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}"), 2);
                     hResult = nativePropertyStore.SetValue(ref PKEY_TITLE, new PropVariant(title));
+                    Console.WriteLine("SetValue");
                     if (hResult < 0)
                     {
+                        Console.WriteLine($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult}'.");
                         pCustDestList.AbortList();
                         Debug.Fail($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult}'.");
                         return;
                     }
 
                     hResult = nativePropertyStore.Commit();
+                    Console.WriteLine("Commit");
                     if (hResult < 0)
                     {
+                        Console.WriteLine($"Commit on IPropertyStore failed with HResult '{hResult}'.");
                         pCustDestList.AbortList();
                         Debug.Fail($"Commit on IPropertyStore failed with HResult '{hResult}'.");
                         return;
@@ -76,8 +85,10 @@ namespace Microsoft.PowerShell
                     const uint CLSCTX_INPROC = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
                     var ComSvrInterface_GUID = new Guid(@"555E2D2B-EE00-47AA-AB2B-39F953F6B339");
                     hResult = CoCreateInstance(ref CLSID_EnumerableObjectCollection, null, CLSCTX_INPROC, ref IID_IUnknown, out object instance);
+                    Console.WriteLine("CoCreateInstance");
                     if (hResult < 0)
                     {
+                        Console.WriteLine($"Creating IObjectCollection failed with HResult '{hResult}'.");
                         pCustDestList.AbortList();
                         Debug.Fail($"Creating IObjectCollection failed with HResult '{hResult}'.");
                         return;
@@ -85,17 +96,21 @@ namespace Microsoft.PowerShell
 
                     var pShortCutCollection = (IObjectCollection)instance;
                     pShortCutCollection.AddObject((IShellLinkW)nativePropertyStore);
+                    Console.WriteLine("AddObject");
 
                     // Add collection to custom destination list and commit the result
                     hResult = pCustDestList.AddUserTasks((IObjectArray)pShortCutCollection);
+                    Console.WriteLine("AddUserTasks");
                     if (hResult < 0)
                     {
+                        Console.WriteLine($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult}'.");
                         pCustDestList.AbortList();
                         Debug.Fail($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult}'.");
                         return;
                     }
 
                     pCustDestList.CommitList();
+                    Console.WriteLine("CommitList");
                 }
             }
         }
