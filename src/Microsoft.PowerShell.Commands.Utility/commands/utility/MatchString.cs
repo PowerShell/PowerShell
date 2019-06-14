@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
-    [OutputType(typeof(MatchInfo), typeof(bool))]
+    [OutputType(typeof(MatchInfo), typeof(bool), typeof(string))]
     public sealed class SelectStringCommand : PSCmdlet
     {
         /// <summary>
@@ -1020,6 +1020,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath;
 
         /// <summary>
+        /// Gets or sets a value indicating if only string values containing matched lines should be returned.
+        /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Raw { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating if a pattern string should be matched literally.
         /// If not (default) search using pattern as a Regular Expression.
         /// </summary>
@@ -1168,7 +1175,8 @@ namespace Microsoft.PowerShell.Commands
 
         private int _postContext = 0;
 
-        private IContextTracker GetContextTracker() => (_preContext == 0 && _postContext == 0) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
+        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
+        private IContextTracker GetContextTracker() => (Raw || _preContext == 0 && _postContext == 0) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
         // directly into the cmdlet. File processing doesn't need
@@ -1433,8 +1441,16 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
+            // Quiet should override Raw
+            if (!Quiet && Raw)
+            {
+                foreach (MatchInfo match in contextTracker.EmitQueue)
+                {
+                    WriteObject(match.Line);
+                }
+            }
             // If -quiet is specified but not -list return true on first match
-            if (Quiet && !List)
+            else if (Quiet && !List)
             {
                 WriteObject(true);
             }
