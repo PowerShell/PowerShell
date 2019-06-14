@@ -58,7 +58,9 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.Encoding.dll'
+            'System.Security.Cryptography.Primitives.dll'
             'System.Security.Cryptography.X509Certificates.dll'
+            'System.Security.Principal.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
@@ -78,8 +80,6 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
-                'System.Security.Cryptography.Primitives.dll'
-                'System.Security.Principal.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
