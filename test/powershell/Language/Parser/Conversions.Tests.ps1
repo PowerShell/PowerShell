@@ -524,8 +524,12 @@ Describe 'float/double precision when converting to string' -Tags "CI" {
     It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format>" -TestCases @(
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 3 }; StringConversionResult = "3.3"; ToStringResult = "3.3000000000000003" }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 6 }; StringConversionResult = "6.6"; ToStringResult = "6.6000000000000005" }
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::E }; StringConversionResult = [System.Math]::E.ToString("G15"); ToStringResult = [System.Math]::E.ToString() }
+        @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::PI }; StringConversionResult = [System.Math]::PI.ToString("G15"); ToStringResult = [System.Math]::PI.ToString() }
         @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 3).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "3.3"; ToStringResult = "3.3000002" }
         @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 6).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "6.6"; ToStringResult = "6.6000004" }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MaxValue }; StringConversionResult = [float]::MaxValue.ToString("G7"); ToStringResult = [float]::MaxValue.ToString() }
+        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MinValue }; StringConversionResult = [float]::MinValue.ToString("G7"); ToStringResult = [float]::MinValue.ToString() }
     ) {
         param($SourceType, $ValueScript, $StringConversionResult, $ToStringResult)
 
