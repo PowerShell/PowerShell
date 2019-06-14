@@ -4514,11 +4514,8 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (token.Kind == TokenKind.Identifier
-                || token.TokenFlags.HasFlag(TokenFlags.Keyword))
+            if (CanBeSimpleNameToken(ref token))
             {
-                token.TokenFlags = TokenFlags.None;
-
                 SkipToken();
                 var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
 
@@ -4561,6 +4558,19 @@ namespace System.Management.Automation.Language
             }
 
             return null;
+        }
+
+        private bool CanBeSimpleNameToken(ref Token token)
+        {
+            if (token.Kind == TokenKind.Identifier
+                || token.Kind == TokenKind.DynamicKeyword
+                || token.TokenFlags.HasFlag(TokenFlags.Keyword))
+            {
+                token.TokenFlags = TokenFlags.None;
+                return true;
+            }
+
+            return false;
         }
 
         private void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
