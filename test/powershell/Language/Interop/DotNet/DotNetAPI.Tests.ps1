@@ -9,19 +9,17 @@ Describe "DotNetAPI" -Tags "CI" {
     }
 
     It "Should be able to invoke a method" {
-	    [System.Environment]::GetEnvironmentVariable("PATH") | Should -Be $env:PATH
+        [System.Environment]::GetEnvironmentVariable("PATH") | Should -Be $env:PATH
     }
 
     It "Should not require 'system' in front of static classes" {
-	    [Environment]::CommandLine | Should -Be ([System.Environment]::CommandLine)
-
-	    [Math]::E | Should -Be ([System.Math]::E)
+        [Environment]::CommandLine | Should -Be ([System.Environment]::CommandLine)
+        [Math]::E | Should -Be ([System.Math]::E)
     }
 
     It "Should be able to create a new instance of a .Net object" {
-	    [System.Guid]$guidVal = [System.Guid]::NewGuid()
-
-	    $guidVal | Should -BeOfType Guid
+        [System.Guid]$guidVal = [System.Guid]::NewGuid()
+        $guidVal | Should -BeOfType Guid
     }
 
     It "Should access types in System.Console" {
