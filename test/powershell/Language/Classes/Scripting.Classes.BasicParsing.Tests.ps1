@@ -416,7 +416,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
         It "second value should be b" { $v.ValidValues[1] | Should -Be 'b' }
 }
 
-Describe 'Method Name Test' -Tags "CI" {
+Describe 'Testing Method Names can be Keywords' -Tags "CI" {
     BeforeAll {
         class TestMethodNames : IDisposable {
             [string] Begin() { return "Begin" }
