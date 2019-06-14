@@ -514,6 +514,8 @@ namespace Microsoft.PowerShell
         /// </param>
         internal static void EarlyParse(string[] args)
         {
+            loginArgIndex = -1;
+
             if (args == null)
             {
                 Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
@@ -530,6 +532,12 @@ namespace Microsoft.PowerShell
                 }
 
                 string switchKey = switchKeyResults.SwitchKey;
+
+                if (MatchSwitch(switchKey, match: "login", smallestUnambiguousMatch: "l"))
+                {
+                    loginArgIndex = i;
+                    return;
+                }
 
                 if (MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
