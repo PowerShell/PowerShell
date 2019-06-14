@@ -113,7 +113,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatchInfo"/> class when the Emphasize parameter is set.
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasized matched text.
+        /// Used when the Emphasize parameter is set and virtual terminal sequences are supported.
         /// </summary>
         /// <param name="matchIndexes">Sets the matchIndexes.</param>
         /// <param name="matchLengths">Sets the matchLengths.</param>
@@ -251,13 +252,26 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of the match object.</returns>
         public string ToString(string directory)
         {
+            return ToString(directory, Line);
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object with the matched line passed 
+        /// in as <paramref name="line"/> and trims the path to be relative to
+        /// the<paramref name="directory"/> argument.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <param name="line">Line that the match occurs in.</param>
+        /// <returns>The string representation of the match object.</returns>
+        private string ToString(string directory, string line)
+        {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
 
             // Just return a single line if the user didn't
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                return FormatLine(line, this.LineNumber, displayPath, EmptyPrefix);
             }
 
             // Otherwise, render the full context.
@@ -269,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
             }
 
-            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            lines.Add(FormatLine(line, displayLineNumber++, displayPath, MatchPrefix));
 
             foreach (string contextLine in Context.DisplayPostContext)
             {
@@ -281,34 +295,42 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the string representation of the match object same format as ToString()
-        /// and adds color to the matched text if virtual terminal is supported.
+        /// and inverts the color of the matched text if virtual terminal is supported.
         /// </summary>
         /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
-        /// <returns>The colored string representation of the match object.</returns>
+        /// <returns>The string representation of the match object with matched text inverted.</returns>
         public string ToEmphasizedString(string directory)
         {
             if (!_emphasize) {
                 return ToString(directory);
             }
 
-            string originalLine = Line;
-            string beginInvertedColorsVT100 = "\u001b[7m";
-            string resetVT100 = "\u001b[0m";
+            return ToString(directory, EmphasizeLine());
+        }
 
-            char[] chars = new char[(_matchIndexes.Count * (beginInvertedColorsVT100.Length + resetVT100.Length)) + Line.Length];
+        /// <summary>
+        /// Surrounds the matched text with virtual terminal sequences to invert it's color. Used in ToEmphasizedString.
+        /// </summary>
+        /// <returns>The matched line with matched text inverted.</returns>
+        private string EmphasizeLine()
+        {
+            const string invertColorsVT100 = "\u001b[7m";
+            const string resetVT100 = "\u001b[0m";
+
+            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
-            for (int i = 0; i < _matchIndexes.Count; i++) 
+            for (int i = 0; i < _matchIndexes.Count; i++)
             {
                 // Adds characters before match
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i]-lineIndex);
                 charsIndex += _matchIndexes[i]-lineIndex;
                 lineIndex = _matchIndexes[i];
-                
+
                 // Adds opening vt sequence
-                beginInvertedColorsVT100.CopyTo(0, chars, charsIndex, beginInvertedColorsVT100.Length);
-                charsIndex += beginInvertedColorsVT100.Length;
-                
+                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
+                charsIndex += invertColorsVT100.Length;
+
                 // Adds characters being emphasized
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
                 lineIndex += _matchLengths[i];
@@ -322,11 +344,7 @@ namespace Microsoft.PowerShell.Commands
             // Adds remaining characters in line
             Line.CopyTo(lineIndex, chars, charsIndex, Line.Length - lineIndex);
 
-            Line = new string(chars);
-            string modifiedLine = ToString(directory);
-            Line = originalLine;
-
-            return modifiedLine;
+            return new string(chars);
         }
 
         /// <summary>
