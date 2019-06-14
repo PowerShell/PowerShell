@@ -413,7 +413,7 @@ namespace System.Management.Automation.Runspaces
 
             // Execution completed successfully
             // 2004/06/30-JonN was ReadAll() which was non-blocking
-            return Output.Read(Int32.MaxValue);
+            return Output.NonBlockingRead(Int32.MaxValue);
         }
 
         /// <summary>
