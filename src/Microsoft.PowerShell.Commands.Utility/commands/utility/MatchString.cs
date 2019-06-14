@@ -295,52 +295,34 @@ namespace Microsoft.PowerShell.Commands
             string beginInvertedColorsVT100 = "\u001b[7m";
             string resetVT100 = "\u001b[0m";
 
-            Line = string.Create((_matchIndexes.Count * (beginInvertedColorsVT100.Length + resetVT100.Length)) + Line.Length, Line, (chars, buf) =>
+            char[] chars = new char[(_matchIndexes.Count * (beginInvertedColorsVT100.Length + resetVT100.Length)) + Line.Length];
+            int lineIndex = 0;
+            int charsIndex = 0;
+            for (int i = 0; i < _matchIndexes.Count; i++) 
             {
-                int lineIndex = 0;
-                int charsIndex = 0;
-                for (int i = 0; i < _matchIndexes.Count; i++) 
-                {
-                    // Adds characters before match
-                    while (lineIndex < _matchIndexes[i])
-                    {
-                        chars[charsIndex] = Line[lineIndex];
-                        lineIndex++;
-                        charsIndex++;
-                    }
-                    
-                    // Adds opening vt sequence
-                    for (int j = 0; j < beginInvertedColorsVT100.Length; j++)
-                    {
-                        chars[charsIndex] = beginInvertedColorsVT100[j];
-                        charsIndex++;
-                    }
-                    
-                    // Adds characters being emphasized
-                    for (int j = 0; j < _matchLengths[i]; j++)
-                    {
-                        chars[charsIndex] = Line[lineIndex];
-                        lineIndex++;
-                        charsIndex++;
-                    }
+                // Adds characters before match
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i]-lineIndex);
+                charsIndex += _matchIndexes[i]-lineIndex;
+                lineIndex = _matchIndexes[i];
+                
+                // Adds opening vt sequence
+                beginInvertedColorsVT100.CopyTo(0, chars, charsIndex, beginInvertedColorsVT100.Length);
+                charsIndex += beginInvertedColorsVT100.Length;
+                
+                // Adds characters being emphasized
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
+                lineIndex += _matchLengths[i];
+                charsIndex += _matchLengths[i];
 
-                    // Adds closing vt sequence
-                    for (int j = 0; j < resetVT100.Length; j++)
-                    {
-                        chars[charsIndex] = resetVT100[j];
-                        charsIndex++;
-                    }
-                }
+                // Adds closing vt sequence
+                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
+                charsIndex += resetVT100.Length;
+            }
 
-                // Adds remaining characters in line
-                while (lineIndex < Line.Length)
-                {
-                    chars[charsIndex] = Line[lineIndex];
-                    lineIndex++;
-                    charsIndex++;
-                }
-            });
+            // Adds remaining characters in line
+            Line.CopyTo(lineIndex, chars, charsIndex, Line.Length - lineIndex);
 
+            Line = new string(chars);
             string modifiedLine = ToString(directory);
             Line = originalLine;
 
@@ -1654,7 +1636,7 @@ namespace Microsoft.PowerShell.Commands
             List<int> indexes = null;
             List<int> lengths = null;
 
-            // If Emphasize is set and VT is supported, 
+            // If Emphasize is set and VT is supported,
             // the lengths and starting indexes of regex matches
             // need to be passed in to the matchInfo object.
             if (Emphasize && Host.UI.SupportsVirtualTerminal)
