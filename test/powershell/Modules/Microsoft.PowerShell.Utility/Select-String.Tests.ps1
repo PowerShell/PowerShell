@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Select-String" -Tags "CI" {
+Describe "Select-String" -Tags "CI","SLS" {
     $nl = [Environment]::NewLine
     $currentDirectory = $pwd.Path
     Context "String actions" {
@@ -77,6 +77,11 @@ Describe "Select-String" -Tags "CI" {
 
 	    $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
 	    $equal | Should -Be True
+	}
+
+	it "Should return a string type when -Raw is used" {
+		$result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive -Raw
+		,$result | Should -BeOfType "System.String"
 	}
     }
 
@@ -174,6 +179,24 @@ Describe "Select-String" -Tags "CI" {
 	    $expected  = "testfile1.txt:5:No matches"
 
 	    Select-String 'matc*' $testInputFile -ca | Should -Match $expected
+	}
+
+	It "Should return all strings where 'in' is found in testfile1, when -Raw is used." {
+	    $expected1 = "This is a text string, and another string"
+	    $expected2 = "This is the second line"
+	    $expected3 = "This is the third line"
+	    $expected4 = "This is the fourth line"
+
+	    (Select-String in $testInputFile -Raw)[0] | Should -Be $expected1
+	    (Select-String in $testInputFile -Raw)[1] | Should -Be $expected2
+	    (Select-String in $testInputFile -Raw)[2] | Should -Be $expected3
+	    (Select-String in $testInputFile -Raw)[3] | Should -Be $expected4
+	    (Select-String in $testInputFile -Raw)[4] | Should -BeNullOrEmpty
+	}
+
+	It "Should ignore -Context parameter when -Raw is used." {
+		$expected = "This is the second line"
+		Select-String second $testInputFile -Raw -Context 2,2 | Should -Be $expected
 	}
     }
     Push-Location $currentDirectory
