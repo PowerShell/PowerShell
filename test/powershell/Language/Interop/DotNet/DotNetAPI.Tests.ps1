@@ -6,8 +6,8 @@ Describe "DotNetAPI" -Tags "CI" {
     $posh_pi = 3.14159265358979
 
     It "Should be able to use static .NET classes and get a constant" {
-	[System.Math]::E  | Should -Match $posh_E.ToString()
-	[System.Math]::PI | Should -Match $posh_pi.ToString()
+	[System.Math]::E  | Should -Match $posh_E.ToString("G15")
+	[System.Math]::PI | Should -Match $posh_pi.ToString("G15")
     }
 
     It "Should be able to invoke a method" {

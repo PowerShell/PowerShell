@@ -650,8 +650,8 @@ foo``u{2195}abc
             @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
             @{ Script = "9.12"; ExpectedValue = "9.12"; ExpectedType = [double] }
             @{ Script = ".01"; ExpectedValue = "0.01"; ExpectedType = [double] }
-            @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString(); ExpectedType = [double] }
-            @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString(); ExpectedType = [double] }
+            @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString("G7"); ExpectedType = [double] }
+            @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString("G7"); ExpectedType = [double] }
             #Exponential
             @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
             @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }

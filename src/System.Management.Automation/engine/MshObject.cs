@@ -1269,15 +1269,12 @@ namespace System.Management.Automation
         /// </exception>
         internal static string ToString(ExecutionContext context, object obj, string separator, string format, IFormatProvider formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
         {
-            bool TryFastTrackPrimitiveTypes(object obj, out string str)
+            bool TryFastTrackPrimitiveTypes(object value, out string str)
             {
-                Type valueType = obj.GetType();
-                TypeCode code = valueType.GetTypeCode();
-
-                switch (code)
+                switch (Convert.GetTypeCode(value))
                 {
                     case TypeCode.String:
-                        str = (string)obj;
+                        str = (string)value;
                         break;
                     case TypeCode.Byte:
                     case TypeCode.SByte:
@@ -1287,23 +1284,18 @@ namespace System.Management.Automation
                     case TypeCode.UInt32:
                     case TypeCode.Int64:
                     case TypeCode.UInt64:
-                        str = obj.ToString();
-                        break;
                     case TypeCode.DateTime:
-                        DateTime dt = (DateTime)obj;
-                        str = dt.ToString(formatProvider);
-                        break;
                     case TypeCode.Decimal:
-                        Decimal dec = (Decimal)obj;
-                        str = dec.ToString(formatProvider);
+                        var formattable = (IFormattable)value;
+                        str = formattable.ToString(format, formatProvider);
                         break;
                     case TypeCode.Double:
-                        double dbl = (double)obj;
-                        str = dbl.ToString(LanguagePrimitives.DoublePrecision, formatProvider);
+                        var dbl = (double)value;
+                        str = dbl.ToString(format ?? LanguagePrimitives.DoublePrecision, formatProvider);
                         break;
                     case TypeCode.Single:
-                        float sgl = (float)obj;
-                        str = sgl.ToString(LanguagePrimitives.SinglePrecision, formatProvider);
+                        var sgl = (float)value;
+                        str = sgl.ToString(format ?? LanguagePrimitives.SinglePrecision, formatProvider);
                         break;
                     default:
                         str = null;
