@@ -1,5 +1,6 @@
 {
   "name": "powershell.common.markdown.tests",
+  "private": true,
   "version": "1.0.0",
   "description": "The PowerShell Common Markdown Tests.",
   "main": "gulpfile.js",
