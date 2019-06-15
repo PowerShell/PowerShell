@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
-    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
+    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "FileQuiet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
     [OutputType(typeof(MatchInfo), typeof(bool), typeof(string))]
     public sealed class SelectStringCommand : PSCmdlet
     {
@@ -972,7 +972,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "ObjectQuiet")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "ObjectRaw")]
         [AllowNull]
         [AllowEmptyString]
         public PSObject InputObject
@@ -995,7 +996,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets files to read from.
         /// Globbing is done on these.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FileQuiet")]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FileRaw")]
         [FileinfoToString]
         public string[] Path { get; set; }
 
@@ -1003,7 +1005,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets literal files to read from.
         /// Globbing is not done on these.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFileQuiet")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFileRaw")]
         [FileinfoToString]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1023,7 +1026,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if only string values containing matched lines should be returned.
         /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true, ParameterSetName = "ObjectRaw")]
+        [Parameter(Mandatory = true, ParameterSetName = "FileRaw")]
+        [Parameter(Mandatory = true, ParameterSetName = "LiteralFileRaw")]
         public SwitchParameter Raw { get; set; }
 
         /// <summary>
@@ -1043,7 +1048,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if the cmdlet will stop processing at the first successful match and
         /// return true.  If both List and Quiet parameters are given, an exception is thrown.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "ObjectQuiet")]
+        [Parameter(ParameterSetName = "FileQuiet")]
+        [Parameter(ParameterSetName = "LiteralFileQuiet")]
         public SwitchParameter Quiet { get; set; }
 
         /// <summary>
@@ -1441,8 +1448,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // Quiet should override Raw
-            if (!Quiet && Raw)
+            if (Raw)
             {
                 foreach (MatchInfo match in contextTracker.EmitQueue)
                 {

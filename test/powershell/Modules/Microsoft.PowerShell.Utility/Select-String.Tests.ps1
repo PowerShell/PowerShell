@@ -83,6 +83,10 @@ Describe "Select-String" -Tags "CI" {
 		$result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive -Raw
 		$result | Should -BeOfType "System.String"
 	}
+
+	It "Should return ParameterBindingException when -Raw and -Quiet are used together" {
+		{ $testinputone | Select-String -Pattern "hello" -Raw -Quiet -ErrorAction Stop } | Should -Throw -ExceptionType ([System.Management.Automation.ParameterBindingException])
+	}
     }
 
     Context "Filesystem actions" {
