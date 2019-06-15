@@ -79,9 +79,9 @@ Describe "Select-String" -Tags "CI" {
 	    $equal | Should -Be True
 	}
 
-	it "Should return a string type when -Raw is used" {
+	It "Should return a string type when -Raw is used" {
 		$result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive -Raw
-		,$result | Should -BeOfType "System.String"
+		$result | Should -BeOfType "System.String"
 	}
     }
 
