@@ -576,16 +576,10 @@ namespace System.Management.Automation
         }
 
         private static bool IsDynamicKeyword(Ast ast)
-        {
-            var cmdAst = ast as CommandAst;
-            return cmdAst?.DefiningKeyword != null;
-        }
+            => ast is CommandAst cmdAst && cmdAst.DefiningKeyword != null;
 
         private static bool IsUsingTypes(Ast ast)
-        {
-            var cmdAst = ast as UsingStatementAst;
-            return cmdAst?.IsUsingModuleOrAssembly() == true;
-        }
+            => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly() == true;
 
         internal static void CacheScriptBlock(ScriptBlock scriptBlock, string fileName, string fileContents)
         {
@@ -939,8 +933,9 @@ namespace System.Management.Automation
             Pipe outputPipe,
             InvocationInfo invocationInfo,
             params object[] args)
-            => InvokeWithPipeImpl(
-                clauseToInvoke: ScriptBlockClauseToInvoke.ProcessBlockOnly,
+        {
+            InvokeWithPipeImpl(
+                ScriptBlockClauseToInvoke.ProcessBlockOnly,
                 createLocalScope,
                 functionsToDefine,
                 variablesToDefine,
@@ -951,6 +946,7 @@ namespace System.Management.Automation
                 outputPipe,
                 invocationInfo,
                 args);
+        }
 
         internal void InvokeWithPipeImpl(
             ScriptBlockClauseToInvoke clauseToInvoke,
