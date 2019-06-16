@@ -32,21 +32,10 @@ Describe "Get-Command Feature tests" -Tag Feature {
 
             Set-Content -Path (Join-Path $testModulesPath "test1/test1.psm1") -Value "function Import-FooZedZed {}"
             Set-Content -Path (Join-Path $testModulesPath "test2/test2.psm1") -Value "function Invoke-FooZedZed {}"
-
-            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
-
-            @"
-            {
-                "ExperimentalFeatures": [
-                  "PSUseAbbreviationExpansion"
-                ]
-            }
-"@ > $configFilePath
-
         }
 
         It "Can return multiple results relying on auto module loading" {
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
+            $results = pwsh -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
             $results | Should -HaveCount 2
             $results.Name | Should -Contain "Invoke-FooZedZed"
             $results.Name | Should -Contain "Import-FooZedZed"
@@ -60,20 +49,23 @@ Describe "Get-Command Feature tests" -Tag Feature {
         ) {
             param($name, $expected, $module)
 
-            $command = "Get-Command $name -UseAbbreviationExpansion"
-
-            if ($module) {
-                $command += " -Module $module"
+            $params = @{
+                UseAbbreviationExpansion = $true;
+                Name = $name;
             }
 
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "$command"
+            if ($module) {
+                $params += @{ Module = $module }
+            }
+
+            $results = Get-Command @params
             $results | Should -HaveCount 1
             $results.Name | Should -BeExactly $expected
         }
 
         It "Can return multiple results for cmdlets matching abbreviation" {
             # use mixed casing to validate case insensitivity
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Get-Command i-C -UseAbbreviationExpansion"
+            $results = Get-Command i-C -UseAbbreviationExpansion
             $results.Name | Should -Contain "Invoke-Command"
             $results.Name | Should -Contain "Import-Clixml"
             $results.Name | Should -Contain "Import-Csv"
@@ -89,18 +81,25 @@ Describe "Get-Command Feature tests" -Tag Feature {
             function Get-FB { "fb" }
 "@ > $modulePath
 
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Import-Module $manifestPath; Get-Command g-fb -UseAbbreviationExpansion"
-            $results | Should -HaveCount 2
-            $results[0].Name | Should -BeExactly "Get-FB"
-            $results[1].Name | Should -BeExactly "Get-FooBar"
+            try {
+                Import-Module $manifestPath
+                $results = Get-Command g-fb -UseAbbreviationExpansion
+                $results | Should -HaveCount 2
+                $results[0].Name | Should -BeIn "Get-FB","Get-FooBar"
+                $results[1].Name | Should -BeIn "Get-FB","Get-FooBar"
+                $results[0].Name | Should -Not -Be $results[1].Name
+            }
+            finally {
+                Remove-Module test
+            }
         }
 
         It "Non-existing cmdlets returns non-terminating error" {
-            pwsh -settingsfile $configFilePath -command 'try { get-command g-adf -ea stop } catch { $_.fullyqualifiederrorid }' | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+            { get-command g-adf -ErrorAction Stop } | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
         }
 
         It "No results if wildcard is used" {
-            pwsh -settingsfile $configFilePath -command Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
+            Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
         }
     }
 }
