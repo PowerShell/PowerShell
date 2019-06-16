@@ -604,7 +604,7 @@ namespace System.Management.Automation
 
             if (s_cachedScripts.Count > 1024)
             {
-                ClearScriptBlockCache();
+                s_cachedScripts.Clear();
             }
 
             var key = Tuple.Create(fileName, fileContents);
@@ -630,8 +630,7 @@ namespace System.Management.Automation
                 return scriptBlock;
             }
 
-            ParseError[] errors;
-            var ast = parser.Parse(fileName, fileContents, null, out errors, ParseMode.Default);
+            var ast = parser.Parse(fileName, fileContents, null, out ParseError[] errors, ParseMode.Default);
             if (errors.Length != 0)
             {
                 throw new ParseException(errors);
