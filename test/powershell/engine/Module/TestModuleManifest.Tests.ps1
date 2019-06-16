@@ -141,7 +141,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $module.NestedModules.Name | Should -BeExactly "Foo"
     }
 
-    It "module manifest containing Special Variables" {
+    It "module manifest containing some Special Variables are allowed" {
         
         Set-Content -Path $testModulePath -Value @'
 @{
