@@ -1718,8 +1718,7 @@ namespace System.Management.Automation
                 Ast foundAst = scriptBlockAst.Find(
                     ast =>
                     {
-                        // Try to find the lowest AST that was not considered suspicious, but its parent
-                        // was.
+                        // Try to find the lowest AST that was not considered suspicious, but its parent was.
                         return (!ast.HasSuspiciousContent) && ast.Parent.HasSuspiciousContent;
                     }, true);
 
