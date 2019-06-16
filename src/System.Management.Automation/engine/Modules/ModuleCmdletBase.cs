@@ -447,7 +447,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Extra variables that are allowed to be referenced in module manifest file.
         /// </summary>
-        private static readonly string[] s_extraAllowedVariables = new string[] { SpecialVariables.PSScriptRoot, SpecialVariables.PSEdition, SpecialVariables.EnabledExperimentalFeatures };
+        private static readonly string[] s_extraAllowedVariables = new string[] {
+            SpecialVariables.PSScriptRoot,
+            SpecialVariables.PSHome,
+            SpecialVariables.PSEdition,
+            SpecialVariables.PSCulture,
+            SpecialVariables.PSUICulture,
+            SpecialVariables.IsCoreCLR,
+            SpecialVariables.IsLinux,
+            SpecialVariables.IsMacOS,
+            SpecialVariables.IsWindows,
+            SpecialVariables.EnabledExperimentalFeatures
+        };
 
         /// <summary>
         /// Load and execute the manifest psd1 file or a localized manifest psd1 file.

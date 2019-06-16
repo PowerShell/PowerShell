@@ -140,6 +140,38 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $module.NestedModules | Should -HaveCount 1
         $module.NestedModules.Name | Should -BeExactly "Foo"
     }
+
+    It "module manifest containing Special Variables" {
+        
+        Set-Content -Path $testModulePath -Value @'
+@{
+    ModuleVersion     = "1.2.3"
+    PrivateData = @{
+        PSScriptRoot = "$PSScriptRoot"
+        PSHome = "$PSHome"
+        PSEdition = "$PSEdition"
+        PSCulture  = "$PSCulture"
+        PSUICulture = "$PSUICulture"
+        IsCoreCLR = "$IsCoreCLR"
+        IsWindows = "$IsWindows"
+        IsLinux = "$IsLinux"
+        IsMacOS = "$IsMacOS"
+        EnabledExperimentalFeatures = "$EnabledExperimentalFeatures"
+    }
+}
+'@
+        $module = Test-ModuleManifest -Path $testModulePath
+        $module.PrivateData.PSScriptRoot | Should -Not -BeNullOrEmpty
+        $module.PrivateData.PSHome | Should -Not -BeNullOrEmpty
+        $module.PrivateData.PSEdition | Should -BeExactly "$PSEdition"
+        $module.PrivateData.PSCulture | Should -BeExactly "$PSCulture"
+        $module.PrivateData.PSUICulture | Should -BeExactly "$PSUICulture"
+        $module.PrivateData.IsCoreCLR | Should -BeExactly "$IsCoreCLR"
+        $module.PrivateData.IsWindows | Should -BeExactly "$IsWindows"
+        $module.PrivateData.IsLinux | Should -BeExactly "$IsLinux"
+        $module.PrivateData.IsMacOS | Should -BeExactly "$IsMacOS"
+        $module.PrivateData.EnabledExperimentalFeatures | Should -BeExactly "$EnabledExperimentalFeatures"
+    }
 }
 
 Describe "Tests for circular references in required modules" -tags "CI" {
