@@ -3289,7 +3289,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="module"></param>
         /// <param name="cimClass"></param>
-        public static void ClearImplicitlyImportedFlagFromResourceInClassCache(PSModuleInfo module, CimClass cimClass)
+        private static void ClearImplicitlyImportedFlagFromResourceInClassCache(PSModuleInfo module, CimClass cimClass)
         {
             var className = cimClass.CimSystemProperties.ClassName;
             var alias = GetFriendlyName(cimClass);
