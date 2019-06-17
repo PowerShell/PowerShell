@@ -363,7 +363,6 @@ namespace Microsoft.PowerShell.Commands
         /// This means it matches cmdlets where the uppercase characters for the noun match
         /// the given characters.  i.e., g-sgc would match Get-SomeGreatCmdlet.
         /// </summary>
-        [Experimental("PSUseAbbreviationExpansion", ExperimentAction.Show)]
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseAbbreviationExpansion { get; set; }
 

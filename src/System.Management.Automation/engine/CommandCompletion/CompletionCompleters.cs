@@ -173,12 +173,8 @@ namespace System.Management.Automation
                     powershell
                         .AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
                         .AddParameter("All")
-                        .AddParameter("Name", commandName);
-
-                    if (ExperimentalFeature.IsEnabled("PSUseAbbreviationExpansion"))
-                    {
-                        powershell.AddParameter("UseAbbreviationExpansion");
-                    }
+                        .AddParameter("Name", commandName)
+                        .AddParameter("UseAbbreviationExpansion");
 
                     if (moduleName != null)
                     {

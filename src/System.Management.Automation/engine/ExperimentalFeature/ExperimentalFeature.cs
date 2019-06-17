@@ -106,12 +106,6 @@ namespace System.Management.Automation
                     name: "PSImplicitRemotingBatching",
                     description: "Batch implicit remoting proxy commands to improve performance"),
                 new ExperimentalFeature(
-                    name: "PSUseAbbreviationExpansion",
-                    description: "Allow tab completion of cmdlets and functions by abbreviation"),
-                new ExperimentalFeature(
-                    name: "PSTempDrive",
-                    description: "Create TEMP: PS Drive mapped to user's temporary directory path"),
-                new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
             };
