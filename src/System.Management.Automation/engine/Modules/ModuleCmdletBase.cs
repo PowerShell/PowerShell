@@ -585,7 +585,6 @@ namespace Microsoft.PowerShell.Commands
                     // Check for PowerShell Version before checking other keys
                     // If a PowerShellVersion exists and does not match the requirements, then the error is InsufficientPowerShellVersion
                     // Else, the error is InvalidManifestMember
-
                     Version powerShellVersion;
                     Version currentPowerShellVersion = PSVersionInfo.PSVersion;
                     if (GetScalarFromData<Version>(data, moduleManifestPath, "PowerShellVersion", manifestProcessingFlags, out powerShellVersion) &&
@@ -1482,7 +1481,6 @@ namespace Microsoft.PowerShell.Commands
 
             // START: Check if the ModuleToProcess is already loaded..if it is, ignore the this load manifest
             // call and return
-
             string moduleToProcess = null;
 
             if (
@@ -1495,8 +1493,10 @@ namespace Microsoft.PowerShell.Commands
 
             string rootModule = null;
             if (
-                !GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags,
-                    out rootModule))
+                !GetScalarFromData<string>(
+                    data, moduleManifestPath, "RootModule", manifestProcessingFlags, out rootModule
+                )
+            )
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -1651,7 +1651,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // END: Check if the ModuleToProcess is already loaded..
-
             string author = string.Empty;
             if (!GetScalarFromData(data, moduleManifestPath, "Author", manifestProcessingFlags, out author))
             {
@@ -4474,9 +4473,7 @@ namespace Microsoft.PowerShell.Commands
             // After input from GP team for this behavior, need to revisit the commented out part
             // if ((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0)
             // {
-
             // }
-
             if (((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0) && moduleNames != null)
             {
                 foreach (string currentGPModuleName in moduleNames)
@@ -4927,7 +4924,6 @@ namespace Microsoft.PowerShell.Commands
                     // First remove cmdlets from the session state
                     // (can't just go through module.ExportedCmdlets
                     //  because the names of the cmdlets might have been changed by the -Prefix parameter of Import-Module)
-
                     List<string> keysToRemoveFromCmdletCache = new List<string>();
                     foreach (KeyValuePair<string, List<CmdletInfo>> cmdlet in Context.EngineSessionState.GetCmdletTable())
                     {
@@ -6009,7 +6005,6 @@ namespace Microsoft.PowerShell.Commands
 
             // If we are in module analysis and the parent module declares non-wildcarded exports, then we don't need to
             // actually process the script module.
-
             if (parentModule != null)
             {
                 if (shouldProcessModule && (parentModule.DeclaredFunctionExports != null) && (parentModule.DeclaredFunctionExports.Count > 0))
@@ -6545,7 +6540,6 @@ namespace Microsoft.PowerShell.Commands
                     // Passing module as a parameter here so that the providers can have the module property populated.
                     // For engine providers, the module should point to top-level module name
                     // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
-
                     if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
                     {
                         iss.ImportCmdletsFromAssembly(assemblyToLoad, parentModule);
@@ -6653,7 +6647,6 @@ namespace Microsoft.PowerShell.Commands
                         // Passing module as a parameter here so that the providers can have the module property populated.
                         // For engine providers, the module should point to top-level module name
                         // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
-
                         if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
                         {
                             iss.ImportCmdletsFromAssembly(assembly, parentModule);
@@ -6696,7 +6689,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the types table entries
-
             List<string> typesFileNames = new List<string>();
             foreach (SessionStateTypeEntry sste in iss.Types)
             {
@@ -6709,7 +6701,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the format file entries
-
             List<string> formatsFileNames = new List<string>();
             foreach (SessionStateFormatEntry ssfe in iss.Formats)
             {
