@@ -43,4 +43,27 @@ Describe 'Null Representatives' -Tags 'CI' {
             $RHS.InvokeReturnAsIs() -eq $RHS.InvokeReturnAsIs() | Should -BeFalse
         }
     }
+
+    Context 'Casting Behaviour' {
+        BeforeAll {
+            $TestValues = @(
+                @{ Value = $null }
+                @{ Value = [DBNull]::Value }
+                @{ Value = [NullString]::Value }
+                @{ Value = [System.Management.Automation.AutomationNull]::Value }
+            )
+        }
+
+        It '<Value> should cast to $false' -TestCases $TestValues {
+            param($Value)
+
+            [bool]$Value | Should -BeFalse
+        }
+
+        It '<Value> should be treated as $false by Where-Object' -TestCases $TestValues {
+            param($Value)
+
+            100 | Where-Object { $Value } | Should -BeNullOrEmpty
+        }
+    }
 }

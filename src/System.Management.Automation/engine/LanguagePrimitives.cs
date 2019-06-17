@@ -990,8 +990,10 @@ namespace System.Management.Automation
         public static bool IsTrue(object obj)
         {
             // null is a valid argument - it converts to false...
-            if (obj == null || obj == AutomationNull.Value)
+            if (IsNull(obj) || obj == DBNull.Value || obj == NullString.Value)
+            {
                 return false;
+            }
 
             obj = PSObject.Base(obj);
 
