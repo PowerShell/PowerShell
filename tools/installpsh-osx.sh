@@ -103,7 +103,7 @@ if ! hash brew 2>/dev/null; then
     exit 3
 fi
 
-# Suppress output, it's very noisy on travis-ci
+# Suppress output, it's very noisy on Azure DevOps
 echo "Refreshing Homebrew cache..."
 for count in {1..2}; do
     # Try the update twice if the first time fails
@@ -123,7 +123,7 @@ for count in {1..2}; do
     sleep 5
 done
 
-# Suppress output, it's very noisy on travis-ci
+# Suppress output, it's very noisy on Azure DevOps
 if [[ ! -d $(brew --prefix cask) ]]; then
     echo "Installing cask..."
     if ! brew tap caskroom/cask >/dev/null; then
