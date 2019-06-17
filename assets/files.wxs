@@ -1964,6 +1964,11 @@
             <File Id="fil6B026F6D5210498B99E5F14386F4F90B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\Microsoft.PowerShell.ThreadJob.dll" />
           </Component>
         </Directory>
+        <Directory Name="Microsoft.PowerShell.AccountManagement" Id="dir4289FEACBE1F4E4FA23EAD4444519B68">
+          <Component Id="cmp95D7A116B7DA414E9523D62857970D7E" Guid="{3bfbcd45-4145-4e27-bfbd-728e59c3a77c}">
+            <File Id="fil775887F2B9B74EEBA525B5F1393DC86E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.AccountManagement\Microsoft.PowerShell.AccountManagement.psd1" />
+          </Component>
+        </Directory>
       </Directory>
       <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
         <Component Id="cmpF877117B22A73BEA3855701E9BEB20D2" Guid="{14AFE4AD-F727-4154-9FC0-BCB8E238E6F4}">
@@ -3074,6 +3079,15 @@
       <Component Id="cmp391B9B0E71AF4A99BFE7260F811AFAC4" Guid="{2d8c929e-37e0-488c-8793-246b36559bd3}">
         <File Id="filB279809149164F37A0C48A01D092529A" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.56402.dll" />
       </Component>
+      <Component Id="cmpF5B68E7720D142DA9A0C902F1A0C8119" Guid="{e2886651-5d4b-484f-ab7f-25fae8004d29}">
+        <File Id="fil3507409BA9A9472DB7986B4E4052C1FF" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.AccountManagement.dll" />
+      </Component>
+      <Component Id="cmp6C9E3FD6DEC340B9A07917F40769166A" Guid="{b086b0cd-fa90-4d32-8dbe-ff7fab2f1723}">
+        <File Id="fil56B0C12D3CCB4E919D20321706A9BF0A" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.AccountManagement.xml" />
+      </Component>
+      <Component Id="cmp6C18B4BA345540A19A6FF05D1FD6295C" Guid="{fe6151d2-b699-459e-8f86-86484bec9a13}">
+        <File Id="fil7C5FB850347B466FB6765046348CD437" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.AccountManagement.pdb" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4064,6 +4078,12 @@
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
       <ComponentRef Id="cmp391B9B0E71AF4A99BFE7260F811AFAC4" />
+      <ComponentRef Id="cmpDF735CE07E554BE982062B4CDF560E5A" />
+      <ComponentRef Id="cmp6696252F9CA14F6A9ECAFA30B97209A3" />
+      <ComponentRef Id="cmp95D7A116B7DA414E9523D62857970D7E" />
+      <ComponentRef Id="cmpF5B68E7720D142DA9A0C902F1A0C8119" />
+      <ComponentRef Id="cmp6C9E3FD6DEC340B9A07917F40769166A" />
+      <ComponentRef Id="cmp6C18B4BA345540A19A6FF05D1FD6295C" />
     </ComponentGroup>
   </Fragment>
 </Wix>
