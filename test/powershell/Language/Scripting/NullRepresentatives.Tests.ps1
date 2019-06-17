@@ -28,19 +28,17 @@ Describe 'Null Representatives' -Tags 'CI' {
     }
 
     Context 'Comparisons with other null representatives' {
-        BeforeAll {
-            $TestValues = @(
-                @{ LHS = { [AutomationNull]::Value }; RHS = { [DBNull]::Value } }
-                @{ LHS = { [AutomationNull]::Value }; RHS = { [NullString]::Value } }
-                @{ LHS = { [DBNull]::Value }; RHS = { [NullString]::Value } }
-            )
-        }
+        <#
+            The only unequal null-representatives are NullString and DBNull.
+            AutomationNull and $null are always considered equal already, so therefore NullString compares as
+            true with both of them, as does DBNull.
 
-        It '<LHS> should not be equal to <RHS>' -TestCases $TestValues {
-            param($LHS, $RHS)
-
-            $LHS.InvokeReturnAsIs() -eq $RHS.InvokeReturnAsIs() | Should -BeFalse
-            $RHS.InvokeReturnAsIs() -eq $RHS.InvokeReturnAsIs() | Should -BeFalse
+            However, as NullString and DBNull have different purposes, it makes more sense to consider them unequal
+            when directly compared with each other.
+        #>
+        It 'DBNull should not be equal to NullString' {
+            [DBNull]::Value -eq [NullString]::Value | Should -BeFalse
+            [NullString]::Value -eq [DBNull]::Value | Should -BeFalse
         }
     }
 
