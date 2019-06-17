@@ -48,7 +48,7 @@ Describe 'Null Representatives' -Tags 'CI' {
                 @{ Value = $null }
                 @{ Value = [DBNull]::Value }
                 @{ Value = [NullString]::Value }
-                @{ Value = [System.Management.Automation.AutomationNull]::Value }
+                @{ Value = [AutomationNull]::Value }
             )
         }
 
