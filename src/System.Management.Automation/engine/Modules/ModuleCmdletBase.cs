@@ -448,16 +448,14 @@ namespace Microsoft.PowerShell.Commands
         /// Extra variables that are allowed to be referenced in module manifest file.
         /// </summary>
         private static readonly string[] s_extraAllowedVariables = new string[] {
-            SpecialVariables.PSScriptRoot,
-            SpecialVariables.PSHome,
-            SpecialVariables.PSEdition,
-            SpecialVariables.PSCulture,
-            SpecialVariables.PSUICulture,
-            SpecialVariables.IsCoreCLR,
+            SpecialVariables.EnabledExperimentalFeatures,
+            SpecialVariables.Home,
             SpecialVariables.IsLinux,
             SpecialVariables.IsMacOS,
             SpecialVariables.IsWindows,
-            SpecialVariables.EnabledExperimentalFeatures
+            SpecialVariables.PSEdition,
+            SpecialVariables.PSHome,
+            SpecialVariables.PSScriptRoot
         };
 
         /// <summary>
