@@ -3108,15 +3108,17 @@ namespace System.Management.Automation
             return AutomationNull.Value;
         }
 
-        private static bool ConvertClassToBool(object valueToConvert,
-                                               Type resultType,
-                                               bool recursion,
-                                               PSObject originalValueToConvert,
-                                               IFormatProvider formatProvider,
-                                               TypeTable backupTable)
+        private static bool ConvertClassToBool(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting ref to boolean.");
-            return valueToConvert != null;
+            // Both NullString and DBNull should be treated the same as true nulls for the purposes of this conversion.
+            return !IsNullLike(valueToConvert);
         }
 
         private static bool ConvertValueToBool(object valueToConvert,
