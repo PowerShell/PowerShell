@@ -158,10 +158,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Destination - computer name or IP address.
         /// </summary>
-        [Parameter(Mandatory = true,
-                   Position = 0,
-                   ValueFromPipeline = true,
-                   ValueFromPipelineByPropertyName = true)]
+        [Parameter(
+            Mandatory = true,
+            Position = 0,
+            ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("ComputerName")]
         public string[] TargetName { get; set; }
@@ -290,10 +291,11 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteConnectionTestProgress(string targetNameOrAddress, string targetAddress, int timeout)
         {
-            var msg = StringUtil.Format(TestConnectionResources.ConnectionTestDescription,
-                                        targetNameOrAddress,
-                                        targetAddress,
-                                        timeout);
+            var msg = StringUtil.Format(
+                TestConnectionResources.ConnectionTestDescription,
+                targetNameOrAddress,
+                targetAddress,
+                timeout);
             ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
         }
@@ -348,14 +350,16 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (PingException ex)
                     {
-                        string message = StringUtil.Format(TestConnectionResources.NoPingResult,
-                                                           resolvedTargetName,
-                                                           ex.Message);
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            ex.Message);
                         Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
-                        ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                                  TestConnectionExceptionId,
-                                                                  ErrorCategory.ResourceUnavailable,
-                                                                  resolvedTargetName);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
                         WriteError(errorRecord);
 
                         continue;
@@ -415,9 +419,10 @@ namespace Microsoft.PowerShell.Commands
                 var routerName = traceRouteReply.ReplyRouterName ?? routerAddress;
                 var roundtripTime0 = traceRouteReply.PingReplies[0].Status == IPStatus.TimedOut ? "*" : traceRouteReply.PingReplies[0].RoundtripTime.ToString();
                 var roundtripTime1 = traceRouteReply.PingReplies[1].Status == IPStatus.TimedOut ? "*" : traceRouteReply.PingReplies[1].RoundtripTime.ToString();
-                msg = StringUtil.Format(TestConnectionResources.TraceRouteReply,
-                                        traceRouteReply.Hop, roundtripTime0, roundtripTime1, traceRouteReply.PingReplies[2].RoundtripTime.ToString(),
-                                        routerName, routerAddress);
+                msg = StringUtil.Format(
+                    TestConnectionResources.TraceRouteReply,
+                    traceRouteReply.Hop, roundtripTime0, roundtripTime1, traceRouteReply.PingReplies[2].RoundtripTime.ToString(),
+                    routerName, routerAddress);
             }
             else
             {
@@ -536,7 +541,6 @@ namespace Microsoft.PowerShell.Commands
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
                     WriteMTUSizeProgress(CurrentMTUSize, retry);
-
                     WriteDebug(StringUtil.Format("LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}", LowMTUSize, CurrentMTUSize, HighMTUSize));
 
                     reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
@@ -558,14 +562,16 @@ namespace Microsoft.PowerShell.Commands
                         // Target host don't reply - try again up to 'Count'.
                         if (retry >= Count)
                         {
-                            string message = StringUtil.Format(TestConnectionResources.NoPingResult,
-                                                               targetAddress,
-                                                               reply.Status.ToString());
+                            string message = StringUtil.Format(
+                                TestConnectionResources.NoPingResult,
+                                targetAddress,
+                                reply.Status.ToString());
                             Exception pingException = new System.Net.NetworkInformation.PingException(message);
-                            ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                                      TestConnectionExceptionId,
-                                                                      ErrorCategory.ResourceUnavailable,
-                                                                      targetAddress);
+                            ErrorRecord errorRecord = new ErrorRecord(
+                                pingException,
+                                TestConnectionExceptionId,
+                                ErrorCategory.ResourceUnavailable,
+                                targetAddress);
                             WriteError(errorRecord);
                             return;
                         }
@@ -586,10 +592,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = StringUtil.Format(TestConnectionResources.NoPingResult, targetAddress, ex.Message);
                 Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
-                ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                          TestConnectionExceptionId,
-                                                          ErrorCategory.ResourceUnavailable,
-                                                          targetAddress);
+                ErrorRecord errorRecord = new ErrorRecord(
+                    pingException,
+                    TestConnectionExceptionId,
+                    ErrorCategory.ResourceUnavailable,
+                    targetAddress);
                 WriteError(errorRecord);
                 return;
             }
@@ -618,10 +625,11 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteMTUSizeHeader(string resolvedTargetName, string targetAddress)
         {
-            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
-                                                                  resolvedTargetName,
-                                                                  targetAddress,
-                                                                  BufferSize);
+            _testConnectionProgressBarActivity = StringUtil.Format(
+                TestConnectionResources.MTUSizeDetectStart,
+                resolvedTargetName,
+                targetAddress,
+                BufferSize);
 
             ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             WriteProgress(record);
@@ -680,10 +688,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string message = StringUtil.Format(TestConnectionResources.NoPingResult, resolvedTargetName, ex.Message);
                     Exception pingException = new System.Net.NetworkInformation.PingException(message, ex.InnerException);
-                    ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                              TestConnectionExceptionId,
-                                                              ErrorCategory.ResourceUnavailable,
-                                                              resolvedTargetName);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        pingException,
+                        TestConnectionExceptionId,
+                        ErrorCategory.ResourceUnavailable,
+                        resolvedTargetName);
                     WriteError(errorRecord);
 
                     quietResult = false;
@@ -733,16 +742,18 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingHeader(string resolvedTargetName, string targetAddress)
         {
-            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
-                                                                  resolvedTargetName,
-                                                                  targetAddress,
-                                                                  BufferSize);
+            _testConnectionProgressBarActivity = StringUtil.Format(
+                TestConnectionResources.MTUSizeDetectStart,
+                resolvedTargetName,
+                targetAddress,
+                BufferSize);
 
             WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId,
-                                                       _testConnectionProgressBarActivity,
-                                                       ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(
+                s_ProgressId,
+                _testConnectionProgressBarActivity,
+                ProgressRecordSpace);
             WriteProgress(record);
         }
 
@@ -755,11 +766,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                msg = StringUtil.Format(TestConnectionResources.PingReply,
-                                        reply.Address.ToString(),
-                                        reply.Buffer.Length,
-                                        reply.RoundtripTime,
-                                        reply.Options?.Ttl);
+                msg = StringUtil.Format(
+                    TestConnectionResources.PingReply,
+                    reply.Address.ToString(),
+                    reply.Buffer.Length,
+                    reply.RoundtripTime,
+                    reply.Options?.Ttl);
             }
 
             WriteInformation(msg, s_PSHostTag);
@@ -836,14 +848,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    string message = StringUtil.Format(TestConnectionResources.NoPingResult,
-                                                       resolvedTargetName,
-                                                       TestConnectionResources.CannotResolveTargetName);
+                    string message = StringUtil.Format(
+                        TestConnectionResources.NoPingResult,
+                        resolvedTargetName,
+                        TestConnectionResources.CannotResolveTargetName);
                     Exception pingException = new System.Net.NetworkInformation.PingException(message, ex);
-                    ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                              TestConnectionExceptionId,
-                                                              ErrorCategory.ResourceUnavailable,
-                                                              resolvedTargetName);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        pingException,
+                        TestConnectionExceptionId,
+                        ErrorCategory.ResourceUnavailable,
+                        resolvedTargetName);
                     WriteError(errorRecord);
                     return false;
                 }
@@ -863,14 +877,16 @@ namespace Microsoft.PowerShell.Commands
 
                     if (targetAddress == null)
                     {
-                        string message = StringUtil.Format(TestConnectionResources.NoPingResult,
-                                                           resolvedTargetName,
-                                                           TestConnectionResources.TargetAddressAbsent);
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            TestConnectionResources.TargetAddressAbsent);
                         Exception pingException = new System.Net.NetworkInformation.PingException(message, null);
-                        ErrorRecord errorRecord = new ErrorRecord(pingException,
-                                                                  TestConnectionExceptionId,
-                                                                  ErrorCategory.ResourceUnavailable,
-                                                                  resolvedTargetName);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
                         WriteError(errorRecord);
                         return false;
                     }
