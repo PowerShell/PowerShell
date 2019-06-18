@@ -638,6 +638,8 @@ namespace System.Management.Automation
             Streams = new PSDataStreams(this);
             _endInvokeMethod = EndInvoke;
             _endStopMethod = EndStop;
+            // Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(Microsoft.PowerShell.AITelemetryType.PowerShellStart, "PowerShellStart");
+            // Telemetry here
         }
 
         /// <summary>

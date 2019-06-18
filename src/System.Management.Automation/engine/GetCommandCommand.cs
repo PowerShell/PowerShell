@@ -554,6 +554,8 @@ namespace Microsoft.PowerShell.Commands
 
             _timer.Stop();
 
+            // No telemetry here - capturing the name of a command which we are not familiar with
+            // is HBI 
 #if LEGACYTELEMETRY
             // We want telementry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.

@@ -123,12 +123,8 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string profileDir;
-#if UNIX
-                profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
-#else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-
+                string profileDir = Platform.CacheDirectory;
+#if ! UNIX
                 if (!Directory.Exists(profileDir))
                 {
                     Directory.CreateDirectory(profileDir);
@@ -242,7 +238,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
+                    Microsoft.PowerShell.ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry();
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }

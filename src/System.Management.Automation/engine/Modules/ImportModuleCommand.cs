@@ -1785,6 +1785,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
+                        // Telemetry here - report module load
+                        Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(AITelemetryType.ModuleLoad, foundModule.Name);
+                        // if it's in our known list, report the name, otherwise "anonymousmodule"
 #if LEGACYTELEMETRY
                         TelemetryAPI.ReportModuleLoad(foundModule);
 #endif

@@ -591,6 +591,7 @@ namespace System.Management.Automation
 
                     var completionResults = results ?? EmptyCompletionResult;
                     sw.Stop();
+                    // no telemetry here
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);

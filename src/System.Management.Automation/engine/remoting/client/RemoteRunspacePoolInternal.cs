@@ -854,6 +854,8 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
+            Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(Microsoft.PowerShell.AITelemetryType.RemoteSessionOpen, _connectionInfo.ComputerName);
+            // Telemetry here - remote session
 #if LEGACYTELEMETRY
             TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
 #endif
