@@ -2154,6 +2154,7 @@ function Start-CrossGen {
 
     # Common PowerShell libraries to crossgen
     $psCoreAssemblyList = @(
+        "pwsh.dll",
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",

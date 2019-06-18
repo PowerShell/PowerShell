@@ -361,24 +361,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        /// <summary>
-        /// Facade for ProfileOptimization.SetProfileRoot.
-        /// </summary>
-        /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
-        internal static void SetProfileOptimizationRoot(string directoryPath)
-        {
-            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
-        }
-
-        /// <summary>
-        /// Facade for ProfileOptimization.StartProfile.
-        /// </summary>
-        /// <param name="profile">The file name of the profile to use.</param>
-        internal static void StartProfileOptimization(string profile)
-        {
-            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
-        }
-
         #endregion Misc
 
         /// <summary>

@@ -194,22 +194,6 @@ namespace System.Management.Automation
             return null;
         }
 
-        /// <summary>
-        /// Set the profile optimization root on the appropriate load context.
-        /// </summary>
-        internal void SetProfileOptimizationRootImpl(string directoryPath)
-        {
-            AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
-        }
-
-        /// <summary>
-        /// Start the profile optimization on the appropriate load context.
-        /// </summary>
-        internal void StartProfileOptimizationImpl(string profile)
-        {
-            AssemblyLoadContext.Default.StartProfileOptimization(profile);
-        }
-
         #endregion Internal_Methods
 
         #region Private_Methods

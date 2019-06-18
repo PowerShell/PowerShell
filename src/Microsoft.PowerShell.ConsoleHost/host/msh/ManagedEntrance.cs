@@ -31,9 +31,9 @@ namespace Microsoft.PowerShell
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
 #pragma warning restore 1573
         {
+            System.Management.Automation.Runspaces.EarlyStartup.Init();
             // We need to read the settings file before we create the console host
             Microsoft.PowerShell.CommandLineParameterParser.EarlyParse(args);
-            System.Management.Automation.Runspaces.EarlyStartup.Init();
 
 #if !UNIX
             // NOTE: On Unix, logging has to be deferred until after command-line parsing
