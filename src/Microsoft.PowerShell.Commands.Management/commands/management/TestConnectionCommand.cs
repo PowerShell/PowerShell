@@ -232,10 +232,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(String targetNameOrAddress)
         {
-            string resolvedTargetName = null;
-            IPAddress targetAddress = null;
 
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -302,8 +300,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteConnectionTestFooter()
         {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
+            {
+                RecordType = ProgressRecordType.Completed
+            };
             WriteProgress(record);
         }
 
@@ -312,11 +312,9 @@ namespace Microsoft.PowerShell.Commands
         #region TracerouteTest
         private void ProcessTraceroute(String targetNameOrAddress)
         {
-            string resolvedTargetName = null;
-            IPAddress targetAddress = null;
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -406,12 +404,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _testConnectionProgressBarActivity;
-        private static string[] s_PSHostTag = new string[] { "PSHOST" };
+        private static readonly string[] s_PSHostTag = new string[] { "PSHOST" };
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
-            string msg = string.Empty;
-
+            string msg;
             if (traceRouteReply.PingReplies[2].Status == IPStatus.TtlExpired || traceRouteReply.PingReplies[2].Status == IPStatus.Success)
             {
                 var routerAddress = traceRouteReply.ReplyRouterAddress.ToString();
@@ -437,8 +434,10 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
+            {
+                RecordType = ProgressRecordType.Completed
+            };
             WriteProgress(record);
         }
 
@@ -513,10 +512,7 @@ namespace Microsoft.PowerShell.Commands
         {
             PingReply reply, replyResult = null;
 
-            string resolvedTargetName = null;
-            IPAddress targetAddress = null;
-
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -641,8 +637,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteMTUSizeFooter()
         {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
+            {
+                RecordType = ProgressRecordType.Completed
+            };
             WriteProgress(record);
         }
 
@@ -652,10 +650,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(String targetNameOrAddress)
         {
-            string resolvedTargetName = null;
-            IPAddress targetAddress = null;
-
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
             {
                 return;
             }
@@ -670,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
 
             Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
-            PingReply reply = null;
+            PingReply reply;
             PingReport pingReport = new PingReport(Source, resolvedTargetName);
             Int32 timeout = TimeoutSeconds * 1000;
             Int32 delay = Delay * 1000;
@@ -753,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingProgress(PingReply reply)
         {
-            string msg = string.Empty;
+            string msg;
             if (reply.Status != IPStatus.Success)
             {
                 msg = TestConnectionResources.PingTimeOut;
@@ -777,8 +772,10 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteInformation(TestConnectionResources.PingComplete, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
+            {
+                RecordType = ProgressRecordType.Completed
+            };
             WriteProgress(record);
         }
 
@@ -814,10 +811,9 @@ namespace Microsoft.PowerShell.Commands
 
         private bool InitProcessPing(String targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
         {
-            IPHostEntry hostEntry = null;
-
             resolvedTargetName = targetNameOrAddress;
 
+            IPHostEntry hostEntry;
             if (IPAddress.TryParse(targetNameOrAddress, out targetAddress))
             {
                 if (ResolveDestination)
