@@ -1483,20 +1483,14 @@ namespace Microsoft.PowerShell.Commands
             // call and return
             string moduleToProcess = null;
 
-            if (
-                !GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags,
-                    out moduleToProcess))
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags, out moduleToProcess))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
 
             string rootModule = null;
-            if (
-                !GetScalarFromData<string>(
-                    data, moduleManifestPath, "RootModule", manifestProcessingFlags, out rootModule
-                )
-            )
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags, out rootModule))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
