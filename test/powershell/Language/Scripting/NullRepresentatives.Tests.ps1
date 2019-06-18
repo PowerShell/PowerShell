@@ -45,23 +45,23 @@ Describe 'Null Representatives' -Tags 'CI' {
     Context 'Casting Behaviour' {
         BeforeAll {
             $TestValues = @(
-                @{ Value = $null }
-                @{ Value = [DBNull]::Value }
-                @{ Value = [NullString]::Value }
-                @{ Value = [AutomationNull]::Value }
+                @{ Value = { $null } }
+                @{ Value = { [DBNull]::Value } }
+                @{ Value = { [NullString]::Value } }
+                @{ Value = { [AutomationNull]::Value } }
             )
         }
 
         It '<Value> should cast to $false' -TestCases $TestValues {
             param($Value)
 
-            [bool]$Value | Should -BeFalse
+            [bool]($Value.InvokeReturnAsIs()) | Should -BeFalse
         }
 
         It '<Value> should be treated as $false by Where-Object' -TestCases $TestValues {
             param($Value)
 
-            100 | Where-Object { $Value } | Should -BeNullOrEmpty
+            100 | Where-Object { $Value.InvokeReturnAsIs() } | Should -BeNullOrEmpty
         }
     }
 }
