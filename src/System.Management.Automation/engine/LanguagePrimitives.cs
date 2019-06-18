@@ -629,8 +629,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException("formatProvider");
             }
@@ -640,7 +639,7 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (second == null || second == DBNull.Value || second == NullString.Value)
+                if (IsNullLike(second))
                 {
                     return true;
                 }
@@ -650,7 +649,7 @@ namespace System.Management.Automation
 
             if (second == null)
             {
-                if (first == DBNull.Value || first == NullString.Value)
+                if (IsNullLike(first))
                 {
                     return true;
                 }
@@ -731,7 +730,7 @@ namespace System.Management.Automation
                 float f => Math.Sign(f) < 0 ? -i : i,
                 double d => Math.Sign(d) < 0 ? -i : i,
                 decimal m => Math.Sign(m) < 0 ? -i : i,
-                _ => value == DBNull.Value || value == NullString.Value ? 0 : i
+                _ => IsNullLike(value) ? 0 : i
             };
         }
 
@@ -990,7 +989,7 @@ namespace System.Management.Automation
         public static bool IsTrue(object obj)
         {
             // null is a valid argument - it converts to false...
-            if (IsNull(obj) || obj == DBNull.Value || obj == NullString.Value)
+            if (IsNullLike(obj))
             {
                 return false;
             }
@@ -1077,7 +1076,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        internal static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
+        internal static bool IsNullLike(object obj) => obj == DBNull.Value || obj == NullString.Value || IsNull(obj);
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
