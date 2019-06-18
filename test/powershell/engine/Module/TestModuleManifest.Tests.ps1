@@ -147,30 +147,30 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 @{
     ModuleVersion     = "1.2.3"
     PrivateData = @{
-        PSScriptRoot = "$PSScriptRoot"
-        PSHome = "$PSHome"
-        PSEdition = "$PSEdition"
-        PSCulture  = "$PSCulture"
-        PSUICulture = "$PSUICulture"
-        IsCoreCLR = "$IsCoreCLR"
-        IsWindows = "$IsWindows"
+        EnabledExperimentalFeatures = "$EnabledExperimentalFeatures"
+        Home = "$Home"
         IsLinux = "$IsLinux"
         IsMacOS = "$IsMacOS"
-        EnabledExperimentalFeatures = "$EnabledExperimentalFeatures"
+        IsWindows = "$IsWindows"
+        PSCulture  = "$PSCulture"
+        PSUICulture = "$PSUICulture"
+        PSEdition = "$PSEdition"
+        PSHome = "$PSHome"
+        PSScriptRoot = "$PSScriptRoot"
     }
 }
 '@
         $module = Test-ModuleManifest -Path $testModulePath
-        $module.PrivateData.PSScriptRoot | Should -Not -BeNullOrEmpty
-        $module.PrivateData.PSHome | Should -Not -BeNullOrEmpty
-        $module.PrivateData.PSEdition | Should -BeExactly "$PSEdition"
-        $module.PrivateData.PSCulture | Should -BeExactly "$PSCulture"
-        $module.PrivateData.PSUICulture | Should -BeExactly "$PSUICulture"
-        $module.PrivateData.IsCoreCLR | Should -BeExactly "$IsCoreCLR"
-        $module.PrivateData.IsWindows | Should -BeExactly "$IsWindows"
+        $module.PrivateData.EnabledExperimentalFeatures | Should -BeExactly "$EnabledExperimentalFeatures"
+        $module.PrivateData.Home | Should -Not -BeNullOrEmpty
         $module.PrivateData.IsLinux | Should -BeExactly "$IsLinux"
         $module.PrivateData.IsMacOS | Should -BeExactly "$IsMacOS"
-        $module.PrivateData.EnabledExperimentalFeatures | Should -BeExactly "$EnabledExperimentalFeatures"
+        $module.PrivateData.IsWindows | Should -BeExactly "$IsWindows"
+        $module.PrivateData.PSCulture | Should -BeExactly "$PSCulture"
+        $module.PrivateData.PSUICulture | Should -BeExactly "$PSUICulture"
+        $module.PrivateData.PSEdition | Should -BeExactly "$PSEdition"
+        $module.PrivateData.PSHome | Should -Not -BeNullOrEmpty
+        $module.PrivateData.PSScriptRoot | Should -Not -BeNullOrEmpty
     }
 }
 
