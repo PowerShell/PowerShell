@@ -465,70 +465,6 @@ namespace Microsoft.PowerShell.Commands
             WriteProgress(record);
         }
 
-        /// <summary>
-        /// The class contains an information about a trace route attempt.
-        /// </summary>
-        public class TraceRouteReply
-        {
-            internal TraceRouteReply()
-            {
-                PingReplies = new List<PingReply>(DefaultTraceRoutePingCount);
-            }
-
-            /// <summary>
-            /// Number of current hop (router).
-            /// </summary>
-            public int Hop;
-
-            /// <summary>
-            /// List of ping replies for current hop (router).
-            /// </summary>
-            public List<PingReply> PingReplies;
-
-            /// <summary>
-            /// Router IP address.
-            /// </summary>
-            public IPAddress ReplyRouterAddress;
-
-            /// <summary>
-            /// Resolved router name.
-            /// </summary>
-            public string ReplyRouterName;
-        }
-
-        /// <summary>
-        /// The class contains an information about the source, the destination and trace route results.
-        /// </summary>
-        public class TraceRouteResult
-        {
-            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost)
-            {
-                Source = source;
-                DestinationAddress = destinationAddress;
-                DestinationHost = destinationHost;
-                Replies = new List<TraceRouteReply>();
-            }
-
-            /// <summary>
-            /// Source from which to trace route.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Destination to which to trace route.
-            /// </summary>
-            public IPAddress DestinationAddress { get; }
-
-            /// <summary>
-            /// Destination to which to trace route.
-            /// </summary>
-            public string DestinationHost { get; }
-
-            /// <summary>
-            /// </summary>
-            public List<TraceRouteReply> Replies { get; }
-        }
-
         #endregion TracerouteTest
 
         #region MTUSizeTest
@@ -820,34 +756,6 @@ namespace Microsoft.PowerShell.Commands
             WriteProgress(record);
         }
 
-        /// <summary>
-        /// The class contains an information about the source, the destination and ping results.
-        /// </summary>
-        public class PingReport
-        {
-            internal PingReport(string source, string destination)
-            {
-                Source = source;
-                Destination = destination;
-                Replies = new List<PingReply>();
-            }
-
-            /// <summary>
-            /// Source from which to ping.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Destination to which to ping.
-            /// </summary>
-            public string Destination { get; }
-
-            /// <summary>
-            /// Ping results for every ping attempt.
-            /// </summary>
-            public List<PingReply> Replies { get; }
-        }
-
         #endregion PingTest
 
         private bool InitProcessPing(
@@ -954,6 +862,136 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return sendBuffer;
+        }
+
+        /// <summary>
+        /// IDisposable implementation.
+        /// </summary>
+        public void Dispose()
+        {
+            _sender?.Dispose();
+        }
+
+        /// <summary>
+        /// The class contains an information about a trace route attempt.
+        /// </summary>
+        public class TraceRouteReply
+        {
+            internal TraceRouteReply()
+            {
+                PingReplies = new List<PingReply>(DefaultTraceRoutePingCount);
+            }
+
+            /// <summary>
+            /// Number of current hop (router).
+            /// </summary>
+            public int Hop;
+
+            /// <summary>
+            /// List of ping replies for current hop (router).
+            /// </summary>
+            public List<PingReply> PingReplies;
+
+            /// <summary>
+            /// Router IP address.
+            /// </summary>
+            public IPAddress ReplyRouterAddress;
+
+            /// <summary>
+            /// Resolved router name.
+            /// </summary>
+            public string ReplyRouterName;
+        }
+
+        /// <summary>
+        /// The class contains an information about the source, the destination and trace route results.
+        /// </summary>
+        public class TraceRouteResult
+        {
+            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost)
+            {
+                Source = source;
+                DestinationAddress = destinationAddress;
+                DestinationHost = destinationHost;
+                Replies = new List<TraceRouteReply>();
+            }
+
+            /// <summary>
+            /// Source from which to trace route.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Destination to which to trace route.
+            /// </summary>
+            public IPAddress DestinationAddress { get; }
+
+            /// <summary>
+            /// Destination to which to trace route.
+            /// </summary>
+            public string DestinationHost { get; }
+
+            /// <summary>
+            /// </summary>
+            public List<TraceRouteReply> Replies { get; }
+        }
+
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingStatus
+        {
+            internal PingStatus(string source, string destination, uint mtuSize, PingReply reply)
+                : this(source, destination, reply) => MtuSize = mtuSize;
+
+            internal PingStatus(string source, string destination, PingReply reply)
+            {
+                _reply = reply;
+                Source = source;
+                Destination = destination;
+            }
+
+            private readonly PingReply _reply;
+
+            /// <summary>
+            /// Source from which to ping.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// The target address of the ping.
+            /// </summary>
+            /// <value></value>
+            public IPAddress Address { get => _reply.Address; }
+
+            /// <summary>
+            /// Destination to which to ping.
+            /// </summary>
+            public string Destination { get; }
+
+            /// <summary>
+            /// The roundtrip time of the ping in milliseconds.
+            /// </summary>
+            /// <value></value>
+            public long Latency { get => _reply.RoundtripTime; }
+
+            /// <summary>
+            /// The size in bytes of the buffer data sent in the ping.
+            /// </summary>
+            /// <value></value>
+            public int BufferSize { get => _reply.Buffer.Length; }
+
+            /// <summary>
+            /// The options used when sending the ping.
+            /// </summary>
+            /// <value></value>
+            public PingOptions Options { get => _reply.Options; }
+
+            /// <summary>
+            /// The maximum transmission unit size on the network path between the source and destination.
+            /// </summary>
+            /// <value></value>
+            public uint? MtuSize { get; }
         }
 
         // Count of pings sent per each trace route hop.
