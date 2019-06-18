@@ -18,18 +18,19 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPingCount,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingReport), ParameterSetName = new[] { ParameterSetPingCount })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new[] { ParameterSetPingCount })]
     [OutputType(typeof(PingReply), ParameterSetName = new[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(bool), ParameterSetName = new[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new[] { ParameterSetTraceRoute })]
-    public class TestConnectionCommand : PSCmdlet
+    public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         private const string ParameterSetPingCount = "PingCount";
         private const string ParameterSetPingContinues = "PingContinues";
         private const string ParameterSetTraceRoute = "TraceRoute";
         private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
         private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
+        private const int sMaxHops = 128;
 
         #region Parameters
 
@@ -93,8 +94,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, sMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
-
-        private const int sMaxHops = 128;
 
         /// <summary>
         /// Count of attempts.
@@ -188,6 +187,8 @@ namespace Microsoft.PowerShell.Commands
         public int TCPPort { get; set; }
 
         #endregion Parameters
+
+        private readonly Ping _sender = new Ping();
 
         /// <summary>
         /// Init the cmdlet.
@@ -330,7 +331,6 @@ namespace Microsoft.PowerShell.Commands
             var traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
 
             int currentHop = 1;
-            var sender = new Ping();
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
             PingReply reply = null;
             int timeout = TimeoutSeconds * 1000;
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                         traceRouteReply.PingReplies.Add(reply);
                     }
@@ -487,7 +487,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var sender = new Ping();
                 var pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
 
@@ -502,7 +501,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -525,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
                                 TestConnectionResources.NoPingResult,
                                 targetAddress,
                                 reply.Status.ToString());
-                            var pingException = new System.Net.NetworkInformation.PingException(message);
+                            var pingException = new PingException(message);
                             var errorRecord = new ErrorRecord(
                                 pingException,
                                 TestConnectionExceptionId,
@@ -631,9 +630,8 @@ namespace Microsoft.PowerShell.Commands
             byte[] buffer = GetSendBuffer(BufferSize);
 
             PingReply reply;
-            var sender = new Ping();
             var pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
-            var pingReport = new PingReport(Source, resolvedTargetName);
+            var pingReport = new PingStatus(Source, resolvedTargetName);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
@@ -641,7 +639,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
