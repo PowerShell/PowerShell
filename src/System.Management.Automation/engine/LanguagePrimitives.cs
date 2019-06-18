@@ -1065,11 +1065,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal routine that determines if an object meets any of our criteria for null.
+        /// Internal routine that determines if an object meets any of our criteria for true null.
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
         internal static bool IsNull(object obj) => obj == null || obj == AutomationNull.Value;
+
+        /// <summary>
+        /// Internal routine that determines if an object meets any of our criteria for null.
+        /// This method additionally checks for <see cref="NullString.Value"/> and <see cref="DBNull.Value"/>
+        /// </summary>
+        /// <param name="obj">The object to test.</param>
+        /// <returns>True if the object is null.</returns>
+        internal static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
