@@ -5,7 +5,7 @@ Describe "Verify Markdown Spelling" {
     BeforeAll {
         if(!(Get-Command -Name 'mdspell' -ErrorAction SilentlyContinue)) {
             start-nativeExecution {
-                sudo npm install -g markdown-spellcheck@0.11.0
+                sudo yarn global add markdown-spellcheck@0.11.0
             }
         }
 
