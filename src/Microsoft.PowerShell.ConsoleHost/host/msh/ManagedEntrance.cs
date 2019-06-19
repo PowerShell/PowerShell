@@ -27,11 +27,12 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// Command line arguments to the managed MSH
         /// </param>
-#pragma warning disable 1573
+        /// <param name="argc" />
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
-#pragma warning restore 1573
         {
+            // Warm up some components concurrently on background threads.
             System.Management.Automation.Runspaces.EarlyStartup.Init();
+
             // We need to read the settings file before we create the console host
             Microsoft.PowerShell.CommandLineParameterParser.EarlyParse(args);
 

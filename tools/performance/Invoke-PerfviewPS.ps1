@@ -8,8 +8,8 @@ param(
     $ScriptBlock,
 
     $LogFileName = '.\perfview.log',
-    $PowerShellPath = $(Get-Command pwsh.exe).Source,
-    $PerfViewPath = $(Get-Command PerfView.exe).Source
+    $PowerShellPath = $(Get-Command -Name pwsh.exe).Source,
+    $PerfViewPath = $(Get-Command -Name PerfView.exe).Source
 )
 
 $EncodedScriptBlock = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($ScriptBlock.ToString()))
