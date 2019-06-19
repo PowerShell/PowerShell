@@ -3,15 +3,14 @@
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     BeforeAll {
-        $configFilePath = Join-Path $testdrive "experimentalfeature.json"
-
-        @"
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSBashCommandOperators')
+        if ($skipTest)
         {
-            "ExperimentalFeatures": [
-              "PSBashCommandOperators"
-            ]
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints' to be enabled." -Verbose
+            $global:originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
         }
-"@ > $configFilePath
 
         function Test-SuccessfulCommand
         {
@@ -133,6 +132,12 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = 'testexe -returncode 0 & && testexe -returncode 1'; ErrorID = 'X' }
             @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 && &'; ErrorID = 'X' }
         )
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
     }
 
     It "Gets the correct output with statement '<Statement>'" -TestCases $simpleTestCases {
