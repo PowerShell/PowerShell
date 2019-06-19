@@ -863,19 +863,13 @@ vongrippen
 yurko7
 zhenggu
 analytics
- - docs/debugging/README.md
 corehost
- - docs/testing-guidelines/CodeCoverageAnalysis.md
 de5f69c
- - docs/testing-guidelines/TestRoadmap.md
 _on_
- - docs/testing-guidelines/WritingPesterTests.md
 _no_
 nGet-ContentOut-String
 nGet-MultiLineString
 PSDefaultParameterValues-skip
-ShouldShouldIt
- - tools/performance/README.md
 Invoke-PerfviewPS
 JIT.Regions.xml
 PowerShell.Regions.xml
@@ -884,7 +878,6 @@ PowerShell.wpaProfile
 PowerShell.wprp
 wpa
 wpaProfile
- - demos/WindowsPowerShellModules/README.md
 2.x.
 2.x
 .NET
