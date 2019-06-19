@@ -29,7 +29,7 @@ if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or $env:BUILD_REASON -eq 'Schedule')
+    if($env:PS_DAILY_BUILD -eq 'True')
     {
         return $true
     }
@@ -122,14 +122,6 @@ function Invoke-CIInstall
     )
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-
-    if(Test-DailyBuild)
-    {
-        if ($env:BUILD_REASON -eq 'Schedule')
-        {
-            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
-        }
-    }
 
     if ($env:TF_BUILD -and !$SkipUser.IsPresent)
     {
