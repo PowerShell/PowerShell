@@ -1,8 +1,6 @@
 # markdown-spellcheck spelling configuration file
 # Format - lines beginning # are comments
-# global dictionary is at the start, file overrides afterwards
-# one word per line, to define a file override use ' - filename'
-# where filename is relative to this configuration file
+# one word per line
 0-powershell-crossplatform
 0xfeeddeadbeef
 100ms
@@ -838,7 +836,6 @@ CodeFormatter
 StyleCop
 SytzeAndr
 yashrajbharti
- - CHANGELOG.md
 aavdberg
 azkarmoulana
 chucklu
