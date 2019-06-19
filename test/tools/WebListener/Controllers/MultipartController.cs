@@ -17,9 +17,9 @@ namespace mvc.Controllers
 {
     public class MultipartController : Controller
     {
-        private IHostingEnvironment _environment;
+        private IWebHostEnvironment _environment;
 
-        public MultipartController(IHostingEnvironment environment)
+        public MultipartController(IWebHostEnvironment environment)
         {
             _environment = environment;
         }

@@ -6,22 +6,23 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Management.Automation.Language;
-using System.Reflection;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Xml;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using System.Xml;
+
 using Microsoft.Management.Infrastructure;
 #if !UNIX
 using System.DirectoryServices;
@@ -1268,6 +1269,42 @@ namespace System.Management.Automation
         /// </exception>
         internal static string ToString(ExecutionContext context, object obj, string separator, string format, IFormatProvider formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
         {
+            bool TryFastTrackPrimitiveTypes(object value, out string str)
+            {
+                switch (Convert.GetTypeCode(value))
+                {
+                    case TypeCode.String:
+                        str = (string)value;
+                        break;
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16:
+                    case TypeCode.Int32:
+                    case TypeCode.UInt32:
+                    case TypeCode.Int64:
+                    case TypeCode.UInt64:
+                    case TypeCode.DateTime:
+                    case TypeCode.Decimal:
+                        var formattable = (IFormattable)value;
+                        str = formattable.ToString(format, formatProvider);
+                        break;
+                    case TypeCode.Double:
+                        var dbl = (double)value;
+                        str = dbl.ToString(format ?? LanguagePrimitives.DoublePrecision, formatProvider);
+                        break;
+                    case TypeCode.Single:
+                        var sgl = (float)value;
+                        str = sgl.ToString(format ?? LanguagePrimitives.SinglePrecision, formatProvider);
+                        break;
+                    default:
+                        str = null;
+                        return false;
+                }
+
+                return true;
+            }
+
             PSObject mshObj = obj as PSObject;
 
             #region plain object
@@ -1278,35 +1315,9 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // Fast-track the primitive types...
-                Type objType = obj.GetType();
-                TypeCode code = objType.GetTypeCode();
-                switch (code)
+                if (TryFastTrackPrimitiveTypes(obj, out string objString))
                 {
-                    case TypeCode.String:
-                        return (string)obj;
-                    case TypeCode.Byte:
-                    case TypeCode.SByte:
-                    case TypeCode.Int16:
-                    case TypeCode.UInt16:
-                    case TypeCode.Int32:
-                    case TypeCode.UInt32:
-                    case TypeCode.Int64:
-                    case TypeCode.UInt64:
-                        return obj.ToString();
-                    case TypeCode.DateTime:
-                        DateTime dt = (DateTime)obj;
-                        return dt.ToString(formatProvider);
-                    case TypeCode.Decimal:
-                        Decimal dec = (Decimal)obj;
-                        return dec.ToString(formatProvider);
-                    case TypeCode.Double:
-                        double dbl = (double)obj;
-                        return dbl.ToString(formatProvider);
-
-                    case TypeCode.Single:
-                        float sgl = (float)obj;
-                        return sgl.ToString(formatProvider);
+                    return objString;
                 }
 
                 #region recurse
@@ -1481,6 +1492,12 @@ namespace System.Management.Automation
             // Since we don't have a brokered ToString and the enumerations were not necessary or failed
             // we try the BaseObject's ToString
             object baseObject = mshObj._immediateBaseObject;
+
+            if (TryFastTrackPrimitiveTypes(baseObject, out string baseObjString))
+            {
+                return baseObjString;
+            }
+
             IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {

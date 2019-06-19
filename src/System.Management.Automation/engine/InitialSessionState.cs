@@ -9,17 +9,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Provider;
 using System.Management.Automation.Language;
+using System.Management.Automation.Provider;
 using System.Management.Automation.Security;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using Microsoft.PowerShell.Commands;
-using System.Management.Automation.Host;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.PowerShell.Commands;
+
 using Debug = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
@@ -54,13 +56,13 @@ namespace System.Management.Automation.Runspaces
             {
                 // Loading the resources for System.Management.Automation can be expensive, so force that to
                 // happen early on a background thread.
-                var unused0 = RunspaceInit.OutputEncodingDescription;
+                _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                var unused1 = TypeAccelerators.builtinTypeAccelerators;
+                _ = TypeAccelerators.builtinTypeAccelerators;
 
                 // This will init some tables and could load some assemblies.
-                var unused2 = LanguagePrimitives.GetEnumerator(null);
+                LanguagePrimitives.GetEnumerator(null);
             });
         }
     }
@@ -2766,9 +2768,9 @@ namespace System.Management.Automation.Runspaces
                 ? this.UserDriveUserName
                 // domain\user on Windows, just user on Unix
 #if UNIX
-                : Platform.Unix.UserName;
+                : Environment.UserName;
 #else
-                : System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                : Environment.UserDomainName + "_" + Environment.UserName;
 #endif
 
             // Ensure that user name contains no invalid path characters.
@@ -2779,7 +2781,7 @@ namespace System.Management.Automation.Runspaces
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }
 
-            return userName.Replace("\\", "_");
+            return userName;
         }
 
         private Exception ProcessStartupScripts(Runspace initializedRunspace)

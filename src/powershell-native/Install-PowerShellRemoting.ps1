@@ -67,7 +67,7 @@ function Register-WinRmPlugin
     SDKVersion="2" XmlRenderingType="text" Enabled="True" OutputBufferingMode="Block" ProcessIdleTimeoutSec="0" Architecture="{2}"
     UseSharedProcess="false" RunAsUser="" RunAsPassword="" AutoRestart="false">
     <InitializationParameters>
-        <Param Name="PSVersion" Value="6.0"/>
+        <Param Name="PSVersion" Value="7.0"/>
     </InitializationParameters>
     <Resources>
         <Resource ResourceUri="http://schemas.microsoft.com/powershell/{0}" SupportsOptions="true" ExactMatch="true">

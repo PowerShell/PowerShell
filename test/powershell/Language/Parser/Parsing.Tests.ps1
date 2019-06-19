@@ -270,7 +270,9 @@ Describe 'splatting parsing' -Tags "CI" {
 }
 
 Describe 'Pipes parsing' -Tags "CI" {
+    ShouldBeParseError '|gps' EmptyPipeElement 0
     ShouldBeParseError 'gps|' EmptyPipeElement 4
+    ShouldBeParseError 'gps| |foreach name' EmptyPipeElement 4
     ShouldBeParseError '1|1' ExpressionsMustBeFirstInPipeline 2
     ShouldBeParseError '$a=' ExpectedValueExpression 3
 }

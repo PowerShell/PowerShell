@@ -12,13 +12,14 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Loader;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Security;
+
 using Microsoft.Win32.SafeHandles;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation
 {
@@ -63,13 +64,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal static IEnumerable<string> AvailableDotNetTypeNames => PSAssemblyLoadContext.AvailableDotNetTypeNames;
 
         /// <summary>
-        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
@@ -358,24 +359,6 @@ namespace System.Management.Automation
 #else
             return ManagementDateTimeConverter.ToDmtfDateTime(date);
 #endif
-        }
-
-        /// <summary>
-        /// Facade for ProfileOptimization.SetProfileRoot.
-        /// </summary>
-        /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
-        internal static void SetProfileOptimizationRoot(string directoryPath)
-        {
-            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
-        }
-
-        /// <summary>
-        /// Facade for ProfileOptimization.StartProfile.
-        /// </summary>
-        /// <param name="profile">The file name of the profile to use.</param>
-        internal static void StartProfileOptimization(string profile)
-        {
-            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
         }
 
         #endregion Misc

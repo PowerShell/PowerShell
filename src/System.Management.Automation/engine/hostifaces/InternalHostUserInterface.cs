@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Language;
-using System.Management.Automation.Host;
-using System.Management.Automation.Runspaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Host;
+using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;

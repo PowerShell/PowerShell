@@ -1,24 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Net;
-using System.Net.Sockets;
+using System.Collections.Generic;
+using System.ComponentModel; // Win32Exception
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
-using System.ComponentModel; // Win32Exception
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
+using System.Management.Automation.Tracing;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Security.AccessControl;
+using System.Threading;
+
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using WSManAuthenticationMechanism = System.Management.Automation.Remoting.Client.WSManNativeApi.WSManAuthenticationMechanism;
 
@@ -71,24 +73,6 @@ namespace System.Management.Automation.Runspaces
         /// Use Kerberos authentication for establishing a remote connection.
         /// </summary>
         Kerberos = 0x6,
-    }
-
-    /// <summary>
-    /// Specifies the type of session configuration that
-    /// should be used for creating a connection info.
-    /// </summary>
-    public enum PSSessionType
-    {
-        /// <summary>
-        /// Default PowerShell remoting
-        /// endpoint.
-        /// </summary>
-        DefaultRemoteShell = 0,
-
-        /// <summary>
-        /// Default Workflow endpoint.
-        /// </summary>
-        Workflow = 1,
     }
 
     /// <summary>
@@ -1501,44 +1485,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion Internal members
-
-        #region V3 Extensions
-
-        private const string DefaultM3PShellName = "Microsoft.PowerShell.Workflow";
-        private const string DefaultM3PEndpoint = Remoting.Client.WSManNativeApi.ResourceURIPrefix + DefaultM3PShellName;
-
-        /// <summary>
-        /// Constructor that constructs the configuration name from its type.
-        /// </summary>
-        /// <param name="configurationType">Type of configuration to construct.</param>
-        public WSManConnectionInfo(PSSessionType configurationType) : this()
-        {
-            ComputerName = string.Empty;
-            switch (configurationType)
-            {
-                case PSSessionType.DefaultRemoteShell:
-                    {
-                        // it is already the default
-                    }
-
-                    break;
-
-                case PSSessionType.Workflow:
-                    {
-                        ShellUri = DefaultM3PEndpoint;
-                    }
-
-                    break;
-                default:
-                    {
-                        Diagnostics.Assert(false, "Unknown value for PSSessionType");
-                    }
-
-                    break;
-            }
-        }
-
-        #endregion V3 Extensions
     }
 
     /// <summary>
@@ -3324,7 +3270,7 @@ namespace System.Management.Automation.Runspaces
                     // Hyper-V container (i.e., RuntimeId is not empty) uses Hyper-V socket transport.
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
                     // This code executes `pwsh.exe` as it exists in the container which currently is
-                    // expected to be PowerShell Core as it's inbox in the container.
+                    // expected to be PowerShell 6+ as it's inbox in the container.
                     // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
                     foreach (string executableToTry in Executables)

@@ -305,7 +305,15 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
 }
 
 Describe "Hashtable is case insensitive" -Tag CI {
-    It "When LANG is C.UTF-8" -Skip:($IsWindows) {
-        sh -c 'LANG=C.UTF-8 pwsh -NoProfile -Command ''$h=@{p=1};$h.P''' | Should -Be 1
+    It "When current culture is en-US-POSIX" -Skip:($IsWindows) {
+        try {
+            $oldCulture = [System.Globalization.CultureInfo]::CurrentCulture
+            [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::new('en-US-POSIX')
+
+            @{h=1}.H | Should -Be 1 -Because 'hashtables should be case insensitive in en-US-POSIX culture'
+        }
+        finally {
+            [System.Globalization.CultureInfo]::CurrentCulture = $oldCulture
+        }
     }
 }

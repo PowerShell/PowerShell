@@ -169,6 +169,11 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
+
+        It "-Filter *. finds extension-less files" {
+            $null = New-Item -Path TestDrive:/noextension -ItemType File
+            (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
+        }
     }
 
     Context 'Env: Provider' {
@@ -188,6 +193,22 @@ Describe "Get-ChildItem" -Tags "CI" {
                 Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
+    }
+}
+
+Describe "Get-ChildItem with special path" -Tags "CI" {
+
+    BeforeAll {
+        $bracketDirName = "Test[Dir]"
+        $bracketDir = "Test``[Dir``]"
+        $bracketPath = Join-Path $TestDrive $bracketDir
+        $null = New-Item -Path $TestDrive -Name $bracketDirName -ItemType Directory -Force
+    }
+
+    It "Should list files in directory with name containing bracket char" {
+        $null = New-Item -Path $bracketPath -Name file1.txt -ItemType File
+        $null = New-Item -Path $bracketPath -Name file2.txt -ItemType File
+        Get-ChildItem -Path $bracketPath | Should -HaveCount 2
     }
 }
 

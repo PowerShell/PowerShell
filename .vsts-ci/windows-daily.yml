@@ -6,23 +6,27 @@ trigger:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'
     exclude:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 pr:
   branches:
     include:
     - master
     - release*
+    - feature*
   paths:
     include:
     - '*'
     exclude:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -35,49 +39,42 @@ resources:
 - repo: self
   clean: true
 
-jobs:
-- template: templates/ci-build.yml
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - template: templates/ci-build.yml
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - win_build
+- stage: TestWin
+  displayName: Test for Windows
+  jobs:
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/windows-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - win_build
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-# we wait for all tests to finish as this phase uploads the daily nuget package to MyGet.
-# we want to upload only if tests have passed.
-- template: templates/windows-packaging.yml
-  parameters:
-    parentJobs:
-      - win_test_UnelevatedPesterTests_CI
-      - win_test_ElevatedPesterTests_CI
-      - win_test_UnelevatedPesterTests_Others
-      - win_test_ElevatedPesterTests_Others
-      - verify_xunit
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: 'Hosted VS2017'
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: 'Hosted VS2017'
-    dependsOn: win_build
+- stage: PackagingWin
+  displayName: Packaging for Windows
+  jobs:
+  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
+  - template: templates/windows-packaging.yml
+

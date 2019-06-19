@@ -207,13 +207,12 @@ Categories=Application;
             # Validate on Linux by reassociating default app for text file
             & $TestFile
             # It may take time for handler to start
-            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
+            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
             Get-Content $HOME/nativeCommandProcessor.Success | Should -BeExactly $TestFile
         }
         else {
             & $TestFile
-            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-            "$TestDrive\foo.txt" | Should -Exist
+            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
             Get-Content $TestDrive\foo.txt | Should -BeExactly $TestFile
         }
     }

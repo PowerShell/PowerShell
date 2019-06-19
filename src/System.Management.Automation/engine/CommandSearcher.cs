@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -459,7 +460,7 @@ namespace System.Management.Automation
                 // Try literal path resolution if it is set to run first
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
                 {
-                    var path = GetNextLiteralPathThatExists(_commandName, out _);
+                    var path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
                     if (path != null)
                     {
@@ -477,7 +478,7 @@ namespace System.Management.Automation
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
-                    string path = GetNextLiteralPathThatExists(_commandName, out _);
+                    string path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
                     if (path != null)
                     {
@@ -564,7 +565,7 @@ namespace System.Management.Automation
             }
 
             provider = null;
-            return null;
+            return new Collection<string>();
         }
 
         private static bool checkPath(string path, string commandName)
@@ -1220,6 +1221,68 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+        /// <summary>
+        /// Gets the next literal path.
+        /// Filtering to ones that exist for the filesystem.
+        /// Handles Exceptions
+        /// </summary>
+        /// <param name="command">
+        /// The command to search for.
+        /// </param>
+        /// <param name="provider">The provider that the command was found in.</param>
+        /// <returns>
+        /// Full path to the command.
+        /// </returns>
+        private string GetNextLiteralPathThatExistsAndHandleExceptions(string command, out ProviderInfo provider)
+        {
+            try
+            {
+                return GetNextLiteralPathThatExists(command, out provider);
+            }
+            catch (ItemNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path could not be found: {0}",
+                    _commandName);
+            }
+            catch (DriveNotFoundException)
+            {
+                // This can be because we think a scope or a url is a drive
+                // and need to continue searching.
+                // Although, scope does not work through get-command
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A drive could not be found for the path: {0}",
+                    _commandName);
+            }
+            catch (ProviderNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A provider could not be found for the path: {0}",
+                    _commandName);
+            }
+            catch (InvalidOperationException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The path specified a home directory, but the provider home directory was not set. {0}",
+                    _commandName);
+            }
+            catch (ProviderInvocationException providerException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' encountered an error: {1}",
+                    _commandName,
+                    providerException.Message);
+            }
+            catch (PSNotSupportedException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
+                    _commandName);
+            }
+
+            provider = null;
+            return null;
         }
 
         /// <summary>

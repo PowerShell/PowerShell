@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading;
-using PSHost = System.Management.Automation.Host.PSHost;
+using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces.Internal;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Threading;
+
+using PSHost = System.Management.Automation.Host.PSHost;
 
 namespace System.Management.Automation.Runspaces
 {

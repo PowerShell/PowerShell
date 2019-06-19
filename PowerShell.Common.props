@@ -62,6 +62,8 @@
             Tracking Issue https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
 
@@ -89,13 +91,12 @@
   </Target>
 
   <PropertyGroup>
-    <Product>PowerShell Core</Product>
+    <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.8</RuntimeFrameworkVersion>
-    <LangVersion>Latest</LangVersion>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

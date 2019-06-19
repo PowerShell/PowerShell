@@ -6,20 +6,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.IO;
-using System.Text;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Diagnostics.CodeAnalysis;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
@@ -304,6 +305,8 @@ namespace System.Management.Automation
         internal delegate void MemberSetValueError(SetValueException e);
 
         internal const string OrderedAttribute = "ordered";
+        internal const string DoublePrecision = "G15";
+        internal const string SinglePrecision = "G7";
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
@@ -3310,6 +3313,17 @@ namespace System.Management.Automation
             try
             {
                 // Ignore formatProvider here, the conversion should be culture invariant.
+                var numberFormat = CultureInfo.InvariantCulture.NumberFormat;
+                if (valueToConvert is double dbl)
+                {
+                    return dbl.ToString(DoublePrecision, numberFormat);
+                }
+
+                if (valueToConvert is float sgl)
+                {
+                    return sgl.ToString(SinglePrecision, numberFormat);
+                }
+
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)

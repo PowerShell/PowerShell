@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Xml;
-using System.Management.Automation.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
 

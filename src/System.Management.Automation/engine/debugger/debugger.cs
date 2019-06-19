@@ -2,22 +2,23 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
@@ -1131,12 +1132,16 @@ namespace System.Management.Automation
         internal Breakpoint NewCommandBreakpoint(string path, string command, ScriptBlock action)
         {
             WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
+
+            CheckForBreakpointSupport();
             return AddCommandBreakpoint(new CommandBreakpoint(path, pattern, command, action));
         }
 
         internal Breakpoint NewCommandBreakpoint(string command, ScriptBlock action)
         {
             WildcardPattern pattern = WildcardPattern.Get(command, WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
+
+            CheckForBreakpointSupport();
             return AddCommandBreakpoint(new CommandBreakpoint(null, pattern, command, action));
         }
 
@@ -1174,6 +1179,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(path != null, "caller to verify path is not null");
 
+            CheckForBreakpointSupport();
             return AddLineBreakpoint(new LineBreakpoint(path, line, action));
         }
 
@@ -1181,6 +1187,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(path != null, "caller to verify path is not null");
 
+            CheckForBreakpointSupport();
             return AddLineBreakpoint(new LineBreakpoint(path, line, column, action));
         }
 
@@ -1200,11 +1207,13 @@ namespace System.Management.Automation
 
         internal Breakpoint NewVariableBreakpoint(string path, string variableName, VariableAccessMode accessMode, ScriptBlock action)
         {
+            CheckForBreakpointSupport();
             return AddVariableBreakpoint(new VariableBreakpoint(path, variableName, accessMode, action));
         }
 
         internal Breakpoint NewVariableBreakpoint(string variableName, VariableAccessMode accessMode, ScriptBlock action)
         {
+            CheckForBreakpointSupport();
             return AddVariableBreakpoint(new VariableBreakpoint(null, variableName, accessMode, action));
         }
 
@@ -1228,9 +1237,8 @@ namespace System.Management.Automation
 
             breakpoint.RemoveSelf(this);
 
-            if (_idToBreakpoint.Count == 0)
+            if (CanDisableDebugger)
             {
-                // The last breakpoint was removed, turn off debugging.
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
 
@@ -1760,12 +1768,6 @@ namespace System.Management.Automation
                 originalLanguageMode = _context.LanguageMode;
                 _context.LanguageMode = PSLanguageMode.FullLanguage;
             }
-            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
-            {
-                // If there is a system lockdown in place, enforce it
-                originalLanguageMode = Utils.EnforceSystemLockDownLanguageMode(this._context);
-            }
 
             // Update the prompt to the debug prompt
             if (hadDefaultPrompt)
@@ -2059,6 +2061,17 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
+                // Disable script debugger when in system lock down mode
+                if (IsSystemLockedDown)
+                {
+                    if (_context._debuggingMode != (int)InternalDebugMode.Disabled)
+                    {
+                        _context._debuggingMode = (int)InternalDebugMode.Disabled;
+                    }
+
+                    return;
+                }
+
                 switch (mode)
                 {
                     case InternalDebugMode.InPushedStop:
@@ -2082,6 +2095,37 @@ namespace System.Management.Automation
                 // The debugger can be enabled if we are not in DebugMode.None and if we are
                 // not in a local session set only to RemoteScript.
                 return !((DebugMode == DebugModes.RemoteScript) && IsLocalSession) && (DebugMode != DebugModes.None);
+            }
+        }
+
+        private bool CanDisableDebugger
+        {
+            get
+            {
+                // The debugger can be disbled if there are no breakpoints
+                // left and if we are not currently stepping in the debugger.
+                return _idToBreakpoint.Count == 0 &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepInto &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepOver &&
+                       _currentDebuggerAction != DebuggerResumeAction.StepOut;
+            }
+        }
+
+        private static bool IsSystemLockedDown
+        {
+            get
+            {
+                return (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                        System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+            }
+        }
+
+        private static void CheckForBreakpointSupport()
+        {
+            if (IsSystemLockedDown)
+            {
+                // Local script debugging is not supported in locked down mode
+                throw new PSNotSupportedException();
             }
         }
 
@@ -2322,6 +2366,15 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
+                // Restrict local script debugger mode when in system lock down.
+                // DebugModes enum flags provide a combination of values.  To disable local script debugging
+                // we have to disallow 'LocalScript' and 'Default' flags and only allow 'None' or 'RemoteScript'
+                // flags exclusively.  This allows only no debugging 'None' or remote debugging 'RemoteScript'.
+                if (IsSystemLockedDown && (mode != DebugModes.None) && (mode != DebugModes.RemoteScript))
+                {
+                    mode = DebugModes.RemoteScript;
+                }
+
                 base.SetDebugMode(mode);
 
                 if (!CanEnableDebugger)
@@ -3816,9 +3869,8 @@ namespace System.Management.Automation
             _context.IgnoreScriptDebug = _savedIgnoreScriptDebug;
             _context.PSDebugTraceLevel = 0;
             _context.PSDebugTraceStep = false;
-            if (!_idToBreakpoint.Any())
+            if (CanDisableDebugger)
             {
-                // Only disable debug mode if there are no breakpoints.
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
         }

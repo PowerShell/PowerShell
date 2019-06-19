@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
-using System.Collections.ObjectModel;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces.Internal
 {
@@ -192,7 +193,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 return;
             }
 
-            // powershell CoreStop would have handled cases
+            // PowerShell CoreStop would have handled cases
             // for NotStarted, Stopping and already Stopped
             // so at this point, there is no need to make any
             // check. The message simply needs to be sent

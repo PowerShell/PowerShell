@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim

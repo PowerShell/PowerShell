@@ -3,8 +3,9 @@
 
 using System;
 using System.Management.Automation;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Threading;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {

@@ -44,10 +44,7 @@ jobs:
     displayName: Install Dependencies
 
   - bash: |
-      # Installing globally with yarn is a pain, please don't try
-      sudo npm install -g markdown-spellcheck@0.11.0
-      # Sometimes this folder is left behind with root permissions and is needed by later npm installs which don't need sudo
-      sudo rm -rf ~/.npm/_cacache
+      sudo yarn global add markdown-spellcheck@0.11.0
     displayName: Install mdspell
     condition: succeededOrFailed()
 

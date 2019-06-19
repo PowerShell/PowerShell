@@ -4,12 +4,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Management;
+using System.Management.Automation;
 using System.Text;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {

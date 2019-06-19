@@ -2,20 +2,21 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Configuration;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
-using System.Diagnostics;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
-using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Security;
+using System.Text;
+using System.Text.RegularExpressions;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
@@ -172,28 +173,29 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthMacOS = 104;
 
         internal static string[] validParameters = {
-            "version",
-            "nologo",
-            "noexit",
 #if STAMODE
             "sta",
             "mta",
 #endif
-            "noprofile",
-            "noninteractive",
-            "inputformat",
-            "outputformat",
-            "windowstyle",
-            "encodedcommand",
-            "configurationname",
-            "file",
-            "executionpolicy",
             "command",
-            "settingsfile",
+            "configurationname",
+            "custompipename",
+            "encodedcommand",
+            "executionpolicy",
+            "file",
             "help",
-            "workingdirectory",
+            "inputformat",
+            "loadprofile",
+            "noexit",
+            "nologo",
+            "noninteractive",
+            "noprofile",
+            "outputformat",
             "removeworkingdirectorytrailingcharacter",
-            "custompipename"
+            "settingsfile",
+            "version",
+            "windowstyle",
+            "workingdirectory"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -496,21 +498,6 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-        /// <summary>
-        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
-        /// Success to indicate that the program should continue running.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        internal static void EarlyParse(string[] args)
-        {
-            // indicates that we've called this method on this instance, and that when it's done, the state variables
-            // will reflect the parse.
-
-            EarlyParseHelper(args);
-        }
-
         private static string GetConfigurationNameFromGroupPolicy()
         {
             // Current user policy takes precedence.
@@ -527,7 +514,7 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// The command line parameters to be processed.
         /// </param>
-        private static void EarlyParseHelper(string[] args)
+        internal static void EarlyParse(string[] args)
         {
             if (args == null)
             {
@@ -740,6 +727,10 @@ namespace Microsoft.PowerShell
                 {
                     _noExit = true;
                     noexitSeen = true;
+                }
+                else if (MatchSwitch(switchKey, "loadprofile", "l"))
+                {
+                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -1214,7 +1205,7 @@ namespace Microsoft.PowerShell
                         _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
                         pendingParameter = null;
                     }
-                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]) && arg.Length > 1)
                     {
                         int offset = arg.IndexOf(':');
                         if (offset >= 0)

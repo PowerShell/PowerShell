@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {

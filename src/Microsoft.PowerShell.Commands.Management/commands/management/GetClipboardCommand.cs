@@ -2,18 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Drawing;
+using System.Management.Automation;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections.Specialized;
+using System.Windows.Forms;
 
 namespace Microsoft.PowerShell.Commands
 {

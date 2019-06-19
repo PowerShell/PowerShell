@@ -21,12 +21,12 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
         $client = docker run -d $imageName powershell -c Start-Sleep -Seconds $timeout
 
         # get fullpath to installed core powershell
-        Write-Verbose -verbose "Getting path to PowerShell core"
+        Write-Verbose -verbose "Getting path to PowerShell"
         $powershellcorepath = docker exec $server powershell -c "(get-childitem 'c:\program files\powershell\*\pwsh.exe').fullname"
         if ( ! $powershellcorepath )
         {
             $pending = $true
-            write-warning "Cannot find powershell core executable, not running tests"
+            write-warning "Cannot find powershell executable, not running tests"
             return
         }
         $powershellcoreversion = ($powershellcorepath -split "[\\/]")[-2]
@@ -49,12 +49,12 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
             return
         }
 
-        write-verbose -verbose "getting powershell core version"
+        write-verbose -verbose "getting powershell version"
         $coreVersion = docker exec $client "$powershellcorepath" -c "`$psversiontable.psversion.tostring()"
         if ( ! $coreVersion )
         {
             $pending = $true
-            write-warning "Cannot determine PowerShell core version, not running tests"
+            write-warning "Cannot determine PowerShell version, not running tests"
             return
         }
     }
@@ -67,7 +67,7 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
         }
     }
 
-    It "Full powershell can get correct remote powershell core version" -pending:$pending {
+    It "Full powershell can get correct remote powershell version" -pending:$pending {
         $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
         $result | should be $coreVersion
     }
@@ -77,7 +77,7 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
         $result | should be $fullVersion
     }
 
-    It "Core powershell can get correct remote powershell core version" -pending:$pending {
+    It "Core powershell can get correct remote powershell version" -pending:$pending {
         $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
         $result | should be $coreVersion
     }

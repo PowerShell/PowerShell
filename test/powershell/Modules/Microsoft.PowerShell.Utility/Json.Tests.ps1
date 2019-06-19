@@ -1210,13 +1210,13 @@ Describe "Validate Json serialization" -Tags "CI" {
             # Single
             @{
                 TestInput = '[single]::MaxValue'
-                FromJson = "3.40282347E+38"
-                ToJson = "3.40282347E+38"
+                FromJson = "3.4028235E+38"
+                ToJson = "3.4028235E+38"
             }
             @{
                 TestInput = '[single]::MinValue'
-                FromJson = "-3.40282347E+38"
-                ToJson = "-3.40282347E+38"
+                FromJson = "-3.4028235E+38"
+                ToJson = "-3.4028235E+38"
             }
 
             # Double

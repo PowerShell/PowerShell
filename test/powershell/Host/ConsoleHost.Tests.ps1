@@ -217,7 +217,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolValue
         }
 
-        It "-File '<filename>' should return exit code from script"  -TestCases @(
+        It "-File '<filename>' should return exit code from script" -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -226,7 +226,60 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
         }
+
+        It "A single dash should be passed as an arg" {
+            $testScript = @'
+    [CmdletBinding()]param(
+        [string]$p1,
+        [string]$p2,
+        [Parameter(ValueFromPipeline)][string]$InputObject
+    )
+    process{
+        $input.replace($p1, $p2)
     }
+'@
+            $testFilePath = Join-Path $TestDrive "test.ps1"
+            Set-Content -Path $testFilePath -Value $testScript
+            $observed = echo hello | pwsh $testFilePath e -
+            $observed | Should -BeExactly "h-llo"
+        }
+    }
+
+    Context "-LoadProfile Commandline switch" {
+        BeforeAll {
+            if (Test-Path $profile) {
+                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
+                Rename-Item -Path $profile -NewName "$profile.backup"
+            }
+
+            Set-Content -Path $profile -Value "'profile-loaded'" -Force
+        }
+
+        AfterAll {
+            Remove-Item -Path $profile -ErrorAction SilentlyContinue
+
+            if (Test-Path "$profile.backup") {
+                Rename-Item -Path "$profile.backup" -NewName $profile
+            }
+        }
+
+        It "Verifies pwsh will accept <switch> switch" -TestCases @(
+            @{ switch = "-l"},
+            @{ switch = "-loadprofile"}
+        ){
+            param($switch)
+
+            if (Test-Path $profile) {
+                & pwsh $switch -command exit | Should -BeExactly "profile-loaded"
+            }
+            else {
+                # In CI, may not be able to write to $profile location, so just verify that the switch is accepted
+                # and no error message is in the output
+                & pwsh $switch -command exit *>&1 | Should -BeNullOrEmpty
+            }
+        }
+    }
+
 
     Context "-SettingsFile Commandline switch" {
 
@@ -719,16 +772,20 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
-        $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
-        $startTime = Get-Date
-        $showCmd = "Unknown"
-        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
-        {
-            Start-Sleep -Milliseconds 100
-            $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+
+        try {
+            $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+            $startTime = Get-Date
+            $showCmd = "Unknown"
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle) {
+                Start-Sleep -Milliseconds 100
+                $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+            }
+
+            $showCmd | Should -BeExactly $WindowStyle
+        } finally {
+            $ps | Stop-Process -Force
         }
-        $showCmd | Should -BeExactly $WindowStyle
-        $ps | Stop-Process -Force
     }
 
     It "Invalid -WindowStyle returns error" {
@@ -767,9 +824,14 @@ Describe "Console host api tests" -Tag CI {
 Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
-        $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
-        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
-        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
+        $pwsh.VersionInfo.FileVersion | Should -Match $PSVersionTable.PSVersion.ToString().Split("-")[0]
+        $productVersion = $pwsh.VersionInfo.ProductVersion.Replace("-dirty","").Replace(" Commits: ","-").Replace(" SHA: ","-g")
+        if ($PSVersionTable.GitCommitId.Contains("-g")) {
+            $productVersion | Should -BeExactly $PSVersionTable.GitCommitId
+        } else {
+            $productVersion | Should -Match $PSVersionTable.GitCommitId
+        }
+        $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {

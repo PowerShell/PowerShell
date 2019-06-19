@@ -5,7 +5,7 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-$dotnetCLIChannel = "release"
+$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 3.0 goes RTM
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -100,7 +100,7 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # PowerShell Core will likely not be built on pre-1709 nanoserver
+    # PowerShell will likely not be built on pre-1709 nanoserver
     if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $IsLinux}
@@ -127,7 +127,7 @@ function Get-EnvironmentInformation
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
-        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
+        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
@@ -410,7 +410,7 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.1 reference assemblies
+    # publish reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -446,51 +446,6 @@ Fix steps:
         }
         if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
             $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
-        }
-    }
-
-    if ($Environment.IsWindows) {
-        ## need RCEdit to modify the binaries embedded resources
-        $rcedit = "~/.rcedit/rcedit-x64.exe"
-        if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction Ignore | Select-Object -First 1 | ForEach-Object Name
-        }
-        if (-not $rcedit) {
-            throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
-        }
-
-        $ReleaseVersion = ""
-        if ($ReleaseTagToUse) {
-            $ReleaseVersion = $ReleaseTagToUse
-        } else {
-            $ReleaseVersion = (Get-PSCommitId -WarningAction SilentlyContinue) -replace '^v'
-        }
-        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value
-        if (!$ReleaseVersion) {
-            $ReleaseVersion = "6.0.0"
-            $fileVersion = "6.0.0"
-        } else {
-            $fileVersion = $ReleaseVersion.Split("-")[0]
-        }
-
-        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
-        $pwshPath = $Options.Output
-        if (!$pwshPath.EndsWith("pwsh.exe")) {
-            $pwshPath = Join-Path $Options.Output "pwsh.exe"
-        }
-
-        if (Test-IsPreview $ReleaseVersion) {
-            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
-        } else {
-            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
-        }
-
-        # fxdependent package does not have an executable to set iconPath etc.
-        if ($Options.Runtime -ne 'fxdependent') {
-            Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-                    --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
-                    --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
         }
     }
 
@@ -594,7 +549,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.4.4"
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.8.0"
 }
 
 function Compress-TestContent {
@@ -617,8 +572,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.1")]
-        [string]$Framework,
+        [ValidateSet("netcoreapp3.0")]
+        [string]$Framework = "netcoreapp3.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -656,6 +611,7 @@ function New-PSOptions {
     }
 
     Write-Verbose "Using configuration '$Configuration'"
+    Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
@@ -842,7 +798,10 @@ function Get-PesterTag {
 
 function Publish-PSTestTools {
     [CmdletBinding()]
-    param()
+    param(
+        [string]
+        $runtime
+    )
 
     Find-Dotnet
 
@@ -859,8 +818,22 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
-            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
+            $objPath = Join-Path -Path $tool.Path -ChildPath "obj"
+
+            if (Test-Path $toolPath) {
+                Remove-Item -Path $toolPath -Recurse -Force
+            }
+
+            if (Test-Path $objPath) {
+                Remove-Item -Path $objPath -Recurse -Force
+            }
+
+            if (-not $runtime) {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            } else {
+                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            }
 
             if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
@@ -911,7 +884,7 @@ function Start-PSPester {
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
         [Parameter(HelpMessage='Title to publish the results as.')]
-        [string]$Title = 'PowerShell Core Tests',
+        [string]$Title = 'PowerShell 7 Tests',
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
@@ -1729,22 +1702,9 @@ function Start-PSBootstrap {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
-                Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                Write-Log "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
-            }
-
-            ## need RCEdit to modify the binaries embedded resources
-            if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-            {
-                Write-Log "Install RCEdit for modifying exe resources"
-                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-                New-Item -Path "~/.rcedit" -Type Directory -Force > $null
-
-                ## need to specify TLS version 1.2 since GitHub API requires it
-                [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-
-                Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
             }
         }
     } finally {
@@ -1846,12 +1806,13 @@ function Start-TypeGen
     <Target Name="_GetDependencies"
             DependsOnTargets="ResolveAssemblyReferencesDesignTime">
         <ItemGroup>
-            <_RefAssemblyPath Include="%(_ReferencesFromRAR.HintPath)%3B"  Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+            <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
         </ItemGroup>
         <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
     </Target>
 </Project>
 '@
+    New-Item -ItemType Directory -Path (Split-Path -Path $GetDependenciesTargetPath -Parent) -Force > $null
     Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
 
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
@@ -2193,6 +2154,7 @@ function Start-CrossGen {
 
     # Common PowerShell libraries to crossgen
     $psCoreAssemblyList = @(
+        "pwsh.dll",
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
@@ -2298,6 +2260,9 @@ function Copy-PSGalleryModules
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
             $matches[1]
+        } elseif ($version -match "^\d+.\d+$") {
+            # Two digit versions are stored as three digit versions
+            "$version.0"
         } else {
             $version
         }
@@ -2309,8 +2274,8 @@ function Copy-PSGalleryModules
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
         # Exclude files/folders that are not needed. The fullclr folder is coming from the PackageManagement module
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
-        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+        $dontCopy = '*.nupkg', '*.nupkg.metadata', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll', 'fullclr'
+        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest -ErrorAction Stop
     }
 }
 
@@ -2974,7 +2939,8 @@ function New-TestPackage
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Destination
+        [string] $Destination,
+        [string] $Runtime
     )
 
     if (Test-Path $Destination -PathType Leaf)
@@ -3002,7 +2968,7 @@ function New-TestPackage
     Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
-    $null = Publish-PSTestTools
+    $null = Publish-PSTestTools -runtime $Runtime
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
     Write-Verbose -Message "Copied test directory"

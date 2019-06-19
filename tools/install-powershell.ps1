@@ -2,14 +2,14 @@
 # Licensed under the MIT License.
 <#
 .Synopsis
-    Install PowerShell Core on Windows, Linux or macOS.
+    Install PowerShell on Windows, Linux or macOS.
 .DESCRIPTION
-    By default, the latest PowerShell Core release package will be installed.
-    If '-Daily' is specified, then the latest PowerShell Core daily package will be installed.
+    By default, the latest PowerShell release package will be installed.
+    If '-Daily' is specified, then the latest PowerShell daily package will be installed.
 .Parameter Destination
-    The destination path to install PowerShell Core to.
+    The destination path to install PowerShell to.
 .Parameter Daily
-    Install PowerShell Core from the daily build.
+    Install PowerShell from the daily build.
     Note that the 'PackageManagement' module is required to install a daily package.
 .Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
@@ -245,7 +245,7 @@ try {
 
     if ($Daily) {
         if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
-            throw "PackageManagement module is required to install daily PowerShell Core."
+            throw "PackageManagement module is required to install daily PowerShell."
         }
 
         if ($architecture -ne "x64") {
@@ -423,7 +423,7 @@ try {
     }
 
     if (-not $UseMSI) {
-        Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
+        Write-Host "PowerShell has been installed at $Destination" -ForegroundColor Green
         if ($Destination -eq $PSHome) {
             Write-Host "Please restart pwsh" -ForegroundColor Magenta
         }
