@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
@@ -22,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PingReply), ParameterSetName = new[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(bool), ParameterSetName = new[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
-    [OutputType(typeof(TraceRouteReply), ParameterSetName = new[] { ParameterSetTraceRoute })]
+    [OutputType(typeof(TraceStatus), ParameterSetName = new[] { ParameterSetTraceRoute })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         private const string ParameterSetPingCount = "PingCount";
@@ -326,31 +327,44 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
-
-            var traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
+            //WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
 
             int currentHop = 1;
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
-            PingReply reply = null;
+            var replies = new List<PingStatus>(DefaultTraceRoutePingCount);
             int timeout = TimeoutSeconds * 1000;
+            string hostname = null;
+            var timer = new Stopwatch();
+            PingReply reply;
 
             do
             {
-                TraceRouteReply traceRouteReply = new TraceRouteReply();
+                reply = null;
+                pingOptions.Ttl = currentHop;
 
-                pingOptions.Ttl = traceRouteReply.Hop = currentHop;
-                currentHop++;
-
-                // In the specific case we don't use 'Count' property.
+                // We don't allow -Count parameter for -TraceRoute.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
+                        timer.Start();
                         reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        timer.Stop();
 
-                        traceRouteReply.PingReplies.Add(reply);
+                        if (ResolveDestination && reply.Status == IPStatus.Success)
+                        {
+                            hostname = Dns.GetHostEntry(reply.Address).HostName;
+                        }
+
+                        replies.Add(new PingStatus(
+                            Source,
+                            hostname,
+                            reply,
+                            pingOptions,
+                            timer.ElapsedMilliseconds,
+                            buffer.Length));
+                        timer.Reset();
                     }
                     catch (PingException ex)
                     {
@@ -377,30 +391,24 @@ namespace Microsoft.PowerShell.Commands
                     Thread.Sleep(200);
                 }
 
-                if (ResolveDestination && reply.Status == IPStatus.Success)
+                if (!Quiet.IsPresent)
                 {
-                    traceRouteReply.ReplyRouterName = Dns.GetHostEntry(reply.Address).HostName;
+                    WriteObject(new TraceStatus(currentHop, replies, Source, targetNameOrAddress, targetAddress));
                 }
 
-                traceRouteReply.ReplyRouterAddress = reply.Address;
-
-                WriteTraceRouteProgress(traceRouteReply);
-
-                traceRouteResult.Replies.Add(traceRouteReply);
-            } while (
-                reply != null
+                currentHop++;
+                replies.Clear();
+                //WriteTraceRouteProgress(traceRouteReply);
+            }
+            while (reply != null
                 && currentHop <= sMaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
-            WriteTraceRouteFooter();
+            //WriteTraceRouteFooter();
 
             if (Quiet.IsPresent)
             {
                 WriteObject(currentHop <= sMaxHops);
-            }
-            else
-            {
-                WriteObject(traceRouteResult);
             }
         }
 
@@ -421,26 +429,26 @@ namespace Microsoft.PowerShell.Commands
         private string _testConnectionProgressBarActivity;
         private static readonly string[] s_PSHostTag = new string[] { "PSHOST" };
 
-        private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
+        private void WriteTraceRouteProgress(TraceStatus traceRouteReply)
         {
             string msg;
-            if (traceRouteReply.PingReplies[2].Status == IPStatus.TtlExpired
-                || traceRouteReply.PingReplies[2].Status == IPStatus.Success)
+            if (traceRouteReply.Replies[2].Status == IPStatus.TtlExpired
+                || traceRouteReply.Replies[2].Status == IPStatus.Success)
             {
                 var routerAddress = traceRouteReply.ReplyRouterAddress.ToString();
                 var routerName = traceRouteReply.ReplyRouterName ?? routerAddress;
-                var roundtripTime0 = traceRouteReply.PingReplies[0].Status == IPStatus.TimedOut
+                var roundtripTime0 = traceRouteReply.Replies[0].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceRouteReply.PingReplies[0].RoundtripTime.ToString();
-                var roundtripTime1 = traceRouteReply.PingReplies[1].Status == IPStatus.TimedOut
+                    : traceRouteReply.Replies[0].RoundtripTime.ToString();
+                var roundtripTime1 = traceRouteReply.Replies[1].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceRouteReply.PingReplies[1].RoundtripTime.ToString();
+                    : traceRouteReply.Replies[1].RoundtripTime.ToString();
                 msg = StringUtil.Format(
                     TestConnectionResources.TraceRouteReply,
                     traceRouteReply.Hop,
                     roundtripTime0,
                     roundtripTime1,
-                    traceRouteReply.PingReplies[2].RoundtripTime.ToString(),
+                    traceRouteReply.Replies[2].RoundtripTime.ToString(),
                     routerName, routerAddress);
             }
             else
@@ -873,65 +881,70 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The class contains an information about a trace route attempt.
         /// </summary>
-        public class TraceRouteReply
+        public class TraceStatus
         {
-            internal TraceRouteReply()
+            internal TraceStatus(
+                int hop,
+                IList<PingStatus> replies,
+                string source,
+                string destination,
+                IPAddress destinationAddress)
             {
-                PingReplies = new List<PingReply>(DefaultTraceRoutePingCount);
+                Hop = hop;
+                Replies = (PingStatus[])replies;
+                Source = source;
+                Destination = destination;
+                DestinationAddress = destinationAddress;
+
+                Latency = new long[replies.Count];
+                for (int index = 0; index < replies.Count; index++)
+                {
+                    Latency[index] = replies[index].Latency;
+                }
             }
 
             /// <summary>
             /// Number of current hop (router).
             /// </summary>
-            public int Hop;
+            public int Hop { get; }
 
             /// <summary>
-            /// List of ping replies for current hop (router).
+            /// The source address of the trace route command.
             /// </summary>
-            public List<PingReply> PingReplies;
-
-            /// <summary>
-            /// Router IP address.
-            /// </summary>
-            public IPAddress ReplyRouterAddress;
-
-            /// <summary>
-            /// Resolved router name.
-            /// </summary>
-            public string ReplyRouterName;
-        }
-
-        /// <summary>
-        /// The class contains an information about the source, the destination and trace route results.
-        /// </summary>
-        public class TraceRouteResult
-        {
-            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost)
-            {
-                Source = source;
-                DestinationAddress = destinationAddress;
-                DestinationHost = destinationHost;
-                Replies = new List<TraceRouteReply>();
-            }
-
-            /// <summary>
-            /// Source from which to trace route.
-            /// </summary>
+            /// <value></value>
             public string Source { get; }
 
             /// <summary>
-            /// Destination to which to trace route.
+            /// The latency values of each ping to the current hop point.
+            /// </summary>
+            public long[] Latency { get; }
+
+            /// <summary>
+            /// List of ping replies from the current hop point.
+            /// </summary>
+            public PingStatus[] Replies { get; }
+
+            /// <summary>
+            /// The hostname of the current hop point.
+            /// </summary>
+            /// <value></value>
+            public string HopName { get => Replies[0].Destination; }
+
+            /// <summary>
+            /// The IP address of the current hop point.
+            /// </summary>
+            public IPAddress HopAddress { get => Replies[0].Address; }
+
+            /// <summary>
+            /// The final destination hostname of the trace.
+            /// </summary>
+            /// <value></value>
+            public string Destination { get; }
+
+            /// <summary>
+            /// The final destination IP address of the trace.
             /// </summary>
             public IPAddress DestinationAddress { get; }
-
-            /// <summary>
-            /// Destination to which to trace route.
-            /// </summary>
-            public string DestinationHost { get; }
-
-            /// <summary>
-            /// </summary>
-            public List<TraceRouteReply> Replies { get; }
         }
 
         /// <summary>
@@ -942,11 +955,25 @@ namespace Microsoft.PowerShell.Commands
             internal PingStatus(string source, string destination, uint mtuSize, PingReply reply)
                 : this(source, destination, reply) => MtuSize = mtuSize;
 
+            internal PingStatus(
+                string source,
+                string destination,
+                PingReply reply,
+                PingOptions options,
+                long latency,
+                int bufferSize)
+                : this(source, destination, reply)
+            {
+                _options = options;
+                _latency = latency;
+                _bufferSize = bufferSize;
+            }
+
             internal PingStatus(string source, string destination, PingReply reply)
             {
                 _reply = reply;
                 Source = source;
-                Destination = destination;
+                Destination = destination ?? reply.Address.ToString();
             }
 
             private readonly PingReply _reply;
@@ -967,23 +994,25 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             public string Destination { get; }
 
+            private readonly long _latency = -1;
             /// <summary>
             /// The roundtrip time of the ping in milliseconds.
             /// </summary>
             /// <value></value>
-            public long Latency { get => _reply.RoundtripTime; }
+            public long Latency { get => _latency >= 0 ? _latency : _reply.RoundtripTime; }
 
+            private readonly int _bufferSize = -1;
             /// <summary>
             /// The size in bytes of the buffer data sent in the ping.
             /// </summary>
-            /// <value></value>
-            public int BufferSize { get => _reply.Buffer.Length; }
+            public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : _reply.Buffer.Length; }
 
+            private readonly PingOptions _options;
             /// <summary>
             /// The options used when sending the ping.
             /// </summary>
             /// <value></value>
-            public PingOptions Options { get => _reply.Options; }
+            public PingOptions Options { get => _options ?? _reply.Options; }
 
             /// <summary>
             /// The maximum transmission unit size on the network path between the source and destination.
