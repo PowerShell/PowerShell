@@ -555,7 +555,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Number of active operations.
         /// </summary>
-        private uint operationCount = 0;
+        private uint operationCount;
 
         /// <summary>
         /// Event to notify ps thread that more action is available.
