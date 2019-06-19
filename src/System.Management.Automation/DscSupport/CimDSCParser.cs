@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     internal class DscClassCacheEntry
     {
         /// <summary>
-        /// Store the RunAs Credentials that this DSC resource will use
+        /// Store the RunAs Credentials that this DSC resource will use.
         /// </summary>
         public DSCResourceRunAsCredential DscResRunAsCred;
 
@@ -487,17 +487,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public bool IsImportedImplicitly;
 
         /// <summary>
-        /// A CimClass instance for this resource
+        /// A CimClass instance for this resource.
         /// </summary>
         public Microsoft.Management.Infrastructure.CimClass CimClassInstance;
 
         /// <summary>
-        /// Default constructor to initiale variables with default values
+        /// Initializes variables with default values.
         /// </summary>
         public DscClassCacheEntry() : this(DSCResourceRunAsCredential.Default, false, null) { }
 
         /// <summary>
-        /// Constructor used in code to initialze all values
+        /// Initializes all values.
         /// </summary>
         /// <param name="aDSCResourceRunAsCredential"></param>
         /// <param name="aIsImportedImplicitly"></param>
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// DSC class cache for this runspace.
-        /// Cache stores the DSCRunAsBehavior, cim class and boolean to indicate if an Inbox resource has been implicitly imported. 
+        /// Cache stores the DSCRunAsBehavior, cim class and boolean to indicate if an Inbox resource has been implicitly imported.
         /// </summary>
         private static Dictionary<string, DscClassCacheEntry> ClassCache
         {
@@ -977,6 +977,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if (ClassCache.TryGetValue(moduleQualifiedResourceName, out cimClassInfo))
                     {
                         CimClass cimClass = cimClassInfo.CimClassInstance;
+
                         // If this is a nested object and we already have exactly same nested object, we will
                         // allow sharing of nested objects.
                         if (!IsSameNestedObject(cimClass, c))
@@ -1005,6 +1006,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         if (resourceList.Count > 0 && !string.IsNullOrEmpty(resourceList[0].Key))
                         {
                             ClassCache.Remove(resourceList[0].Key);
+
                             // keyword is already defined and it is a Inbox resource, remove it
                             if (DynamicKeyword.ContainsKeyword(friendlyName) && resourceList[0].Value.IsImportedImplicitly)
                             {
@@ -1077,7 +1079,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
         }
 
         /// <summary>
@@ -1085,7 +1087,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="className">Resource type name.</param>
-        /// <param name="resourceName">Resource friendly name</param>
+        /// <param name="resourceName">Resource friendly name.</param>
         /// <returns>List of found resources in the form of Dictionary{moduleQualifiedName, cimClass}, otherwise empty list.</returns>
         private static List<KeyValuePair<string, DscClassCacheEntry>> FindResourceInCache(string moduleName, string className, string resourceName)
         {
@@ -1119,7 +1121,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var dscClassCacheEntry in ClassCache)
             {
-                if(dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
+                if (dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
                 {
                     cachedClasses.Add(dscClassCacheEntry.Value.CimClassInstance);
                 }
@@ -3154,6 +3156,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if (resourceList.Count > 0 && !string.IsNullOrEmpty(resourceList[0].Key))
                     {
                         ClassCache.Remove(resourceList[0].Key);
+
                         // keyword is already defined and it is a Inbox resource, remove it
                         if (DynamicKeyword.ContainsKeyword(friendlyName) && resourceList[0].Value.IsImportedImplicitly)
                         {
@@ -3283,9 +3286,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             return false;
         }
-        
+
         /// <summary>
-        /// Clear the 'IsImportedImplicitly' flag when explicitly importing a resource
+        /// Clear the 'IsImportedImplicitly' flag when explicitly importing a resource.
         /// </summary>
         /// <param name="module"></param>
         /// <param name="cimClass"></param>
