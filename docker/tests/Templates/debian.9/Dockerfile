@@ -14,7 +14,8 @@ RUN apt-get update \
         curl \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8
