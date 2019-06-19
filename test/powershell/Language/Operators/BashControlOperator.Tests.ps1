@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Experimental Feature: && and || operators" -Tag CI {
+Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     BeforeAll {
         $configFilePath = Join-Path $testdrive "experimentalfeature.json"
 
@@ -81,9 +81,6 @@ Describe "Experimental Feature: && and || operators" -Tag CI {
             @{ Statement = 'testexe -returncode 1 && "Hi"'; Output = @('1') }
             @{ Statement = 'testexe -returncode 1 || "hi"'; Output = @('1', 'hi') }
 
-            # Assignment with expression
-            @{ Statement = '$x = testexe -returncode 0 && $y = testexe -returncode 0 && $x + $y'; Output = @('00') }
-
             # Pipeline and native command
             @{ Statement = '1,2,3 | % { $_ + 1 } && testexe -returncode 0'; Output = @('2','3','4','0') }
             @{ Statement = 'testexe -returncode 0 && 1,2,3 | % { $_ + 1 }'; Output = @('0','2','3','4') }
@@ -120,19 +117,16 @@ Describe "Experimental Feature: && and || operators" -Tag CI {
         )
 
         $variableTestCases = @(
-            @{ Statement = '$x = testexe -returncode 0 && $y = testexe -returncode 1'; Variables = @{ x = '0'; y = '1' } }
-            @{ Statement = '$x = testexe -returncode 0 || $y = testexe -returncode 1'; Variables = @{ x = '0'; y = $null } }
-            @{ Statement = '$x = testexe -returncode 1 || $y = testexe -returncode 0'; Variables = @{ x = '1'; y = '0' } }
-            @{ Statement = '$x = testexe -returncode 1 && $y = testexe -returncode 0'; Variables = @{ x = '1'; y = $null } }
-            @{ Statement = '$x = testexe -returncode 10 || $y = testexe -returncode 0 && $z = testexe -returncode 7'; Variables = @{ x = '10'; y = '0'; z = '7' } }
-            @{ Statement = '$x = (testexe -returncode 0 && testexe -returncode 0)'; Variables = @{ x = '0','0' } }
-            @{ Statement = '$x = (testexe -returncode 0 && $y = testexe -returncode 0)'; Variables = @{ x = '0'; y = '0' } }
+            @{ Statement = '$x = testexe -returncode 0 && testexe -returncode 1'; Variables = @{ x = '0','1' } }
+            @{ Statement = '$x = testexe -returncode 0 || testexe -returncode 1'; Variables = @{ x = '0' } }
+            @{ Statement = '$x = testexe -returncode 1 || testexe -returncode 0'; Variables = @{ x = '1','0' } }
+            @{ Statement = '$x = testexe -returncode 1 && testexe -returncode 0'; Variables = @{ x = '1' } }
         )
 
         $jobTestCases = @(
             @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 &'; Output = @('0', '1') }
             @{ Statement = 'testexe -returncode 1 && testexe -returncode 0 &'; Output = @('1') }
-            @{ Statement = '$x = testexe -returncode 0 && $y = Write-Output " mice" && $x + $y &'; Output = @('0 mice') }
+            @{ Statement = '$x = testexe -returncode 0 && Write-Output "mice" &'; Output = '0','mice'; Variable = 'x' }
         )
 
         $invalidSyntaxCases = @(
@@ -173,11 +167,14 @@ Describe "Experimental Feature: && and || operators" -Tag CI {
     }
 
     It "Runs the statement chain '<Statement>' as a job" -TestCases $jobTestCases {
-        param($Statement, $Output)
-
-        Wait-Debugger
+        param($Statement, $Output, $Variable)
 
         $resultJob = Invoke-Expression -Command $Statement
+
+        if ($Variable)
+        {
+            $resultJob = (Get-Variable $Variable).Value
+        }
 
         $resultJob | Wait-Job | Receive-Job | Should -Be $Output
     }

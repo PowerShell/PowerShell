@@ -5710,9 +5710,65 @@ namespace System.Management.Automation.Language
                 return PipelineRule();
             }
 
+            /*
+            while (!System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Console.WriteLine($"{System.Diagnostics.Process.GetCurrentProcess().Id}");
+                Threading.Thread.Sleep(1000);
+            }
+            */
+
+            Token assignToken = null;
+            ExpressionAst expr;
+
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
+            {
+                SetTokenizerMode(TokenizerMode.Expression);
+                expr = ExpressionRule();
+                if (expr != null)
+                {
+                    // We peek here because we are in expression mode, otherwise =0 will get scanned
+                    // as a single token.
+                    var token = PeekToken();
+                    if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
+                    {
+                        SkipToken();
+                        assignToken = token;
+                    }
+                }
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
+            }
+
+            if (expr != null && assignToken != null)
+            {
+                SkipNewlines();
+                StatementAst statement = StatementRule();
+
+                if (statement == null)
+                {
+                    // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
+                    // pipeline, so just keep parsing.
+
+                    IScriptExtent errorExtent = After(assignToken);
+                    ReportIncompleteInput(errorExtent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        assignToken.Kind.Text());
+                    statement = new ErrorStatementAst(errorExtent);
+                }
+
+                return new AssignmentStatementAst(ExtentOf(expr, statement),
+                    expr, assignToken.Kind, statement, assignToken.Extent);
+            }
+
             PipelineBaseAst currentPipelineChain = null;
             StatementChainOperator currentChainOperator = StatementChainOperator.None;
             StatementChainOperator nextChainOperator = StatementChainOperator.None;
+            ExpressionAst startExpression = expr;
             bool background = false;
             while (true)
             {
@@ -5721,9 +5777,10 @@ namespace System.Management.Automation.Language
 
                 StatementAst nextStatement;
                 Token nextToken;
-                if (mustBePipeline)
+                if (mustBePipeline || startExpression != null)
                 {
-                    nextStatement = PipelineRule();
+                    nextStatement = PipelineRule(startExpression);
+                    startExpression = null;
                 }
                 else
                 {
@@ -5881,7 +5938,7 @@ namespace System.Management.Automation.Language
             return (PipelineBaseAst)StatementChainRule(mustBePipeline: true);
         }
 
-        private PipelineBaseAst PipelineRule()
+        private PipelineBaseAst PipelineRule(ExpressionAst startExpression = null)
         {
             // G  pipeline:
             // G      assignment-expression
@@ -5900,32 +5957,35 @@ namespace System.Management.Automation.Language
             Token nextToken = null;
             bool scanning = true;
             bool background = false;
+            ExpressionAst expr = startExpression;
             while (scanning)
             {
                 CommandBaseAst commandAst;
                 Token assignToken = null;
-                ExpressionAst expr;
 
-                var oldTokenizerMode = _tokenizer.Mode;
-                try
+                if (expr == null)
                 {
-                    SetTokenizerMode(TokenizerMode.Expression);
-                    expr = ExpressionRule();
-                    if (expr != null)
+                    var oldTokenizerMode = _tokenizer.Mode;
+                    try
                     {
-                        // We peek here because we are in expression mode, otherwise =0 will get scanned
-                        // as a single token.
-                        var token = PeekToken();
-                        if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
+                        SetTokenizerMode(TokenizerMode.Expression);
+                        expr = ExpressionRule();
+                        if (!s_bashOperatorsEnabled && expr != null)
                         {
-                            SkipToken();
-                            assignToken = token;
+                            // We peek here because we are in expression mode, otherwise =0 will get scanned
+                            // as a single token.
+                            var token = PeekToken();
+                            if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
+                            {
+                                SkipToken();
+                                assignToken = token;
+                            }
                         }
                     }
-                }
-                finally
-                {
-                    SetTokenizerMode(oldTokenizerMode);
+                    finally
+                    {
+                        SetTokenizerMode(oldTokenizerMode);
+                    }
                 }
 
                 if (expr != null)
@@ -5939,7 +5999,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
                     }
 
-                    if (assignToken != null)
+                    if (!s_bashOperatorsEnabled && assignToken != null)
                     {
                         SkipNewlines();
                         StatementAst statement = StatementRule();
@@ -6009,6 +6069,8 @@ namespace System.Management.Automation.Language
                         ParserStrings.EmptyPipeElement);
                 }
 
+                // Reset the expression for the next loop
+                expr = null;
                 nextToken = PeekToken();
 
                 // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
