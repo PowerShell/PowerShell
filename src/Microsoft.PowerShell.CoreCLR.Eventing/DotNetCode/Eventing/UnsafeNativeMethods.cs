@@ -1,4 +1,3 @@
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -18,7 +17,6 @@ namespace System.Diagnostics.Eventing
         private static readonly IntPtr s_NULL = IntPtr.Zero;
 
         // WinError.h codes:
-
         internal const int ERROR_SUCCESS = 0x0;
         internal const int ERROR_FILE_NOT_FOUND = 0x2;
         internal const int ERROR_PATH_NOT_FOUND = 0x3;
@@ -62,7 +60,6 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_RESOURCE_LANG_NOT_FOUND = 0x717;  // 1815
 
         // Event log specific codes:
-
         internal const int ERROR_EVT_MESSAGE_NOT_FOUND = 15027;
         internal const int ERROR_EVT_MESSAGE_ID_NOT_FOUND = 15028;
         internal const int ERROR_EVT_UNRESOLVED_VALUE_INSERT = 15029;
@@ -71,10 +68,7 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND = 15033;
         internal const int ERROR_MUI_FILE_NOT_FOUND = 15100;
 
-        //
         // ErrorCode & format
-        //
-
         // for win32 error message formatting
         private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
         private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
@@ -108,12 +102,8 @@ namespace System.Diagnostics.Eventing
             }
         }
 
-        //
         // ETW Methods
-        //
-        //
         // Callback
-        //
         [SecurityCritical]
         internal unsafe delegate void EtwEnableCallback(
             [In] ref Guid sourceId,
@@ -125,9 +115,7 @@ namespace System.Diagnostics.Eventing
             [In] void* callbackContext
             );
 
-        //
         // Registration APIs
-        //
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventRegister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern unsafe uint EventRegister(
@@ -141,9 +129,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern int EventUnregister([In] long registrationHandle);
 
-        //
         // Control (Is Enabled) APIs
-        //
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventEnabled", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern int EventEnabled([In] long registrationHandle, [In] ref System.Diagnostics.Eventing.EventDescriptor eventDescriptor);
@@ -152,9 +138,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern int EventProviderEnabled([In] long registrationHandle, [In] byte level, [In] long keywords);
 
-        //
         // Writing (Publishing/Logging) APIs
-        //
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWrite", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern unsafe uint EventWrite(
@@ -164,9 +148,7 @@ namespace System.Diagnostics.Eventing
                 [In] void* userData
                 );
 
-        //
         // Writing (Publishing/Logging) APIs
-        //
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventWrite", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern unsafe uint EventWrite(
@@ -195,16 +177,12 @@ namespace System.Diagnostics.Eventing
                 [In] long keywords,
                 [In] char* message
                 );
-        //
         // ActivityId Control APIs
-        //
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventActivityIdControl", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern unsafe uint EventActivityIdControl([In] int ControlCode, [In][Out] ref Guid ActivityId);
 
-        //
         // EventLog
-        //
         [Flags]
         internal enum EvtQueryFlags
         {
@@ -384,7 +362,7 @@ namespace System.Diagnostics.Eventing
             EvtPublisherMetadataKeywords = 25,               // EvtVarTypeEvtHandle, ObjectArray
             EvtPublisherMetadataKeywordName = 26,            // EvtVarTypeString
             EvtPublisherMetadataKeywordValue = 27,           // EvtVarTypeUInt64
-            EvtPublisherMetadataKeywordMessageID = 28//,       // EvtVarTypeUInt32
+            EvtPublisherMetadataKeywordMessageID = 28        // EvtVarTypeUInt32
             // EvtPublisherMetadataPropertyIdEND
         }
 
@@ -631,7 +609,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         // NEW
-
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -682,7 +659,6 @@ namespace System.Diagnostics.Eventing
                                    );
 
         // Channel Configuration Native Api
-
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         internal static extern EventLogHandle EvtOpenChannelEnum(
@@ -756,8 +732,7 @@ namespace System.Diagnostics.Eventing
                             out int propertyValueBufferUsed
                                    );
 
-        // Log Information Native Api
-
+        // Log Information Native API
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         internal static extern EventLogHandle EvtOpenLog(
@@ -778,7 +753,6 @@ namespace System.Diagnostics.Eventing
                                     );
 
         // LOG MANIPULATION
-
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
