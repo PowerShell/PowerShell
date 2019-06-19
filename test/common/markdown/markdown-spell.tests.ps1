@@ -61,6 +61,7 @@ Describe "Verify Markdown Spelling" {
                 if($trueFailures) {
                     it "<spell>!" -TestCases $trueFailures {
                         param($spell)
+                        Write-Warning $spell
                         throw "Tool reported spelling as wrong."
                     }
                 }
