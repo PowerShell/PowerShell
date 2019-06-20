@@ -741,13 +741,13 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="destinationAddress">The target IPAddress of the overall traceroute.</param>
             internal TraceStatus(
                 int hop,
-                IList<PingStatus> replies,
+                List<PingStatus> replies,
                 string source,
                 string destination,
                 IPAddress destinationAddress)
             {
                 Hop = hop;
-                Replies = (PingStatus[])replies;
+                Replies = replies.ToArray();
                 Source = source;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
