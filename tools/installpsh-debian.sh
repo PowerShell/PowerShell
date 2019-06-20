@@ -111,7 +111,7 @@ fi
 
 #Collect any variation details if required for this distro
 # shellcheck disable=SC1091
-if [[ -f /etc/lsb_release ]]; then
+if [[ -f /etc/lsb-release ]]; then
     . /etc/lsb-release
     DISTRIB_ID=$(lowercase "$DISTRIB_ID")
 elif [[ -f /etc/debian_version ]]; then
