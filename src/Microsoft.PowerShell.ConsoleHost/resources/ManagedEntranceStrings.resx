@@ -137,7 +137,7 @@ Type 'help' to get help.</value>
 
        pwsh[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://aka.ms/pscore6-docs
+PowerShell Online Help https://aka.ms/powershell-docs
 
 All parameters are case-insensitive.</value>
   </data>
