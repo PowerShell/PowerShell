@@ -982,6 +982,11 @@ namespace Microsoft.PowerShell.Commands
             private readonly PingReply _reply;
 
             /// <summary>
+            /// The returned status of the ping.
+            /// </summary>
+            public IPStatus Status { get => _reply.Status; }
+
+            /// <summary>
             /// Source from which to ping.
             /// </summary>
             public string Source { get; }
@@ -993,7 +998,7 @@ namespace Microsoft.PowerShell.Commands
             public IPAddress Address { get => _reply.Address; }
 
             /// <summary>
-            /// Destination to which to ping.
+            /// Destination which was pinged.
             /// </summary>
             public string Destination { get; }
 
