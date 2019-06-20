@@ -19,13 +19,16 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPing,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingStatus), ParameterSetName = new[] { ParameterSetPing, ParameterSetDetectionOfMTUSize })]
+    [OutputType(typeof(PingStatus),
+        ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new[] { ParameterSetTraceRoute })]
-    [OutputType(typeof(bool), ParameterSetName = new[] { ParameterSetPing, ParameterSetConnectionByTCPPort })]
+    [OutputType(typeof(bool),
+        ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         private const string ParameterSetPing = "PingCount";
+        private const string ParameterSetPingContinue = "PingContinue";
         private const string ParameterSetTraceRoute = "TraceRoute";
         private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
         private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
@@ -37,12 +40,14 @@ namespace Microsoft.PowerShell.Commands
         /// Do ping test.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
         /// Force using IPv4 protocol.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
         [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
@@ -52,6 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// Force using IPv6 protocol.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
         [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
@@ -61,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// Do reverse DNS lookup to get names for IP addresses.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
         [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
@@ -72,6 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
         public string Source { get; } = Dns.GetHostName();
@@ -83,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [ValidateRange(0, sMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
@@ -101,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 1 second.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Delay { get; set; } = 1;
 
@@ -110,6 +120,7 @@ namespace Microsoft.PowerShell.Commands
         /// Max value is 65500 (limit from Windows API).
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         [Alias("Size", "Bytes", "BS")]
         [ValidateRange(0, 65500)]
         public int BufferSize { get; set; } = DefaultSendBufferSize;
@@ -119,13 +130,14 @@ namespace Microsoft.PowerShell.Commands
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
         /// Continue ping until user press Ctrl-C
         /// or Int.MaxValue threshold reached.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = ParameterSetPingContinue)]
         public SwitchParameter Continues { get; set; }
 
         /// <summary>
@@ -187,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (ParameterSetName == ParameterSetPing && Continues.IsPresent)
+            if (ParameterSetName == ParameterSetPingContinue)
             {
                 Count = int.MaxValue;
             }
@@ -203,6 +215,7 @@ namespace Microsoft.PowerShell.Commands
                 switch (ParameterSetName)
                 {
                     case ParameterSetPing:
+                    case ParameterSetPingContinue:
                         ProcessPing(targetName);
                         break;
                     case ParameterSetDetectionOfMTUSize:
