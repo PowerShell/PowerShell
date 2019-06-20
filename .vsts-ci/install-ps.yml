@@ -85,6 +85,13 @@ phases:
     jobName: InstallPowerShellCentOS
     pool: Hosted Ubuntu 1604
     container: mcr.microsoft.com/powershell/test-deps:centos-7
+    
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: ./tools/install-powershell.sh
+    jobName: InstallPowerShellDebian9
+    pool: Hosted Ubuntu 1604
+    container: mcr.microsoft.com/powershell/test-deps:debian-9
 
 
 # VSTS could not find pwsh in:
