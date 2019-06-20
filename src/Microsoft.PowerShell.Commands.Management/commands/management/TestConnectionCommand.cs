@@ -421,7 +421,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _testConnectionProgressBarActivity;
-        private static readonly string[] s_PSHostTag = new string[] { "PSHOST" };
 
         private void WriteTraceRouteProgress(TraceStatus traceStatus)
         {
