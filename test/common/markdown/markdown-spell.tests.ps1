@@ -9,7 +9,6 @@ Describe "Verify Markdown Spelling" {
             }
         }
 
-        # Cleanup jobs for reliability
         Get-Job | Remove-Job -Force
     }
 
