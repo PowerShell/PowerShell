@@ -327,13 +327,19 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
+            WriteVerbose(StringUtil.Format(
+                TestConnectionResources.TraceRouteStart,
+                resolvedTargetName,
+                targetAddress,
+                MaxHops));
 
             int currentHop = 1;
-            var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
-            var replies = new List<PingStatus>(DefaultTraceRoutePingCount);
             int timeout = TimeoutSeconds * 1000;
             string hostname = null;
+
+            var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
+            var replies = new List<PingStatus>(DefaultTraceRoutePingCount);
+
             var timer = new Stopwatch();
             PingReply reply;
 
@@ -352,25 +358,19 @@ namespace Microsoft.PowerShell.Commands
                         reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
                         timer.Stop();
 
-                        if (ResolveDestination && reply.Status == IPStatus.Success)
+                        if (ResolveDestination
+                            && (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired))
                         {
                             hostname = Dns.GetHostEntry(reply.Address).HostName;
                         }
 
-                        if (currentHop == sMaxHops)
-                        {
-                            replies.Add(new PingStatus(Source, hostname, reply));
-                        }
-                        else
-                        {
-                            replies.Add(new PingStatus(
-                                Source,
-                                hostname,
-                                reply,
-                                pingOptions,
-                                timer.ElapsedMilliseconds,
-                                buffer.Length));
-                        }
+                        replies.Add(new PingStatus(
+                            Source,
+                            hostname,
+                            reply,
+                            pingOptions,
+                            timer.ElapsedMilliseconds,
+                            buffer.Length));
                         timer.Reset();
                     }
                     catch (PingException ex)
@@ -409,24 +409,15 @@ namespace Microsoft.PowerShell.Commands
                 replies.Clear();
             }
             while (reply != null
-                && currentHop <= sMaxHops
+                && currentHop <= MaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
-            WriteTraceRouteFooter();
+            WriteVerbose(TestConnectionResources.TraceRouteComplete);
 
             if (Quiet.IsPresent)
             {
-                WriteObject(currentHop <= sMaxHops);
+                WriteObject(currentHop <= MaxHops);
             }
-        }
-
-        private void WriteConsoleTraceRouteHeader(string resolvedTargetName, string targetAddress)
-        {
-            WriteVerbose(StringUtil.Format(
-                TestConnectionResources.TraceRouteStart,
-                resolvedTargetName,
-                targetAddress,
-                MaxHops));
         }
 
         private string _testConnectionProgressBarActivity;
@@ -438,20 +429,20 @@ namespace Microsoft.PowerShell.Commands
             if (traceStatus.Replies[2].Status == IPStatus.TtlExpired
                 || traceStatus.Replies[2].Status == IPStatus.Success)
             {
-                var routerAddress = traceStatus.ReplyRouterAddress.ToString();
-                var routerName = traceStatus.ReplyRouterName ?? routerAddress;
+                var routerAddress = traceStatus.HopAddress.ToString();
+                var routerName = traceStatus.HopName;
                 var roundtripTime0 = traceStatus.Replies[0].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceStatus.Replies[0].RoundtripTime.ToString();
+                    : traceStatus.Replies[0].Latency.ToString();
                 var roundtripTime1 = traceStatus.Replies[1].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceStatus.Replies[1].RoundtripTime.ToString();
+                    : traceStatus.Replies[1].Latency.ToString();
                 msg = StringUtil.Format(
                     TestConnectionResources.TraceRouteReply,
                     traceStatus.Hop,
                     roundtripTime0,
                     roundtripTime1,
-                    traceStatus.Replies[2].RoundtripTime.ToString(),
+                    traceStatus.Replies[2].Latency.ToString(),
                     routerName, routerAddress);
             }
             else
@@ -459,21 +450,7 @@ namespace Microsoft.PowerShell.Commands
                 msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceStatus.Hop);
             }
 
-            WriteInformation(msg, s_PSHostTag);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteTraceRouteFooter()
-        {
-            WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
+            WriteVerbose(msg);
         }
 
         #endregion TracerouteTest
@@ -984,7 +961,13 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The returned status of the ping.
             /// </summary>
-            public IPStatus Status { get => _reply.Status; }
+            public IPStatus Status
+            {
+                get => Options.Ttl < 128 && _reply.Status == IPStatus.TtlExpired
+                    // Treat "TtlExpired" as "Success" when this is a traceroute hop as that is the expected outcome.
+                    ? IPStatus.Success
+                    : _reply.Status;
+            }
 
             /// <summary>
             /// Source from which to ping.
