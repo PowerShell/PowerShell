@@ -381,8 +381,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _testConnectionProgressBarActivity;
-
         private void WriteVerboseTraceEntry(TraceStatus traceStatus)
         {
             if (traceStatus.Replies[2].Status == IPStatus.TtlExpired
@@ -933,12 +931,6 @@ namespace Microsoft.PowerShell.Commands
         /// Create the default send buffer once and cache it.
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
-
-        // Random value for WriteProgress Activity Id.
-        private static readonly int s_ProgressId = 174593053;
-
-        // Empty message string for Progress Bar.
-        private const string ProgressRecordSpace = " ";
 
         private const string TestConnectionExceptionId = "TestConnectionException";
     }
