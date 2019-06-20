@@ -498,21 +498,6 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-        /// <summary>
-        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
-        /// Success to indicate that the program should continue running.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        internal static void EarlyParse(string[] args)
-        {
-            // indicates that we've called this method on this instance, and that when it's done, the state variables
-            // will reflect the parse.
-
-            EarlyParseHelper(args);
-        }
-
         private static string GetConfigurationNameFromGroupPolicy()
         {
             // Current user policy takes precedence.
@@ -529,7 +514,7 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// The command line parameters to be processed.
         /// </param>
-        private static void EarlyParseHelper(string[] args)
+        internal static void EarlyParse(string[] args)
         {
             if (args == null)
             {

@@ -26,6 +26,7 @@ RUN apt-get update \
 	apt-transport-https \
 	locales \
 	wget \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY PowerShellPackage.ps1 /
