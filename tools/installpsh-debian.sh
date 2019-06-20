@@ -113,11 +113,11 @@ fi
 # shellcheck disable=SC1091
 if [[ -f /etc/lsb_release ]]; then
     . /etc/lsb-release
+    DISTRIB_ID=$(lowercase "$DISTRIB_ID")
 elif [[ -f /etc/debian_version ]]; then
     DISTRIB_ID="debian"
     DISTRIB_RELEASE=$(cat /etc/debian_version)
 fi
-DISTRIB_ID=$(lowercase "$DISTRIB_ID")
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
