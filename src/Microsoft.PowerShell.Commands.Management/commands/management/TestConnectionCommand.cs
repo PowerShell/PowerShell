@@ -780,6 +780,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public class TraceStatus
         {
+            /// <summary>
+            /// Creates a new instance of the TraceStatus class.
+            /// </summary>
+            /// <param name="hop">The hop number of this trace hop.</param>
+            /// <param name="replies">The PingStatus replies received from this trace hop.</param>
+            /// <param name="source">The source computer name or IP address of the traceroute.</param>
+            /// <param name="destination">The target destination of the traceroute.</param>
+            /// <param name="destinationAddress">The target IPAddress of the overall traceroute.</param>
             internal TraceStatus(
                 int hop,
                 IList<PingStatus> replies,
@@ -801,45 +809,43 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Number of current hop (router).
+            /// Gets the number of the current hop / router.
             /// </summary>
             public int Hop { get; }
 
             /// <summary>
-            /// The source address of the trace route command.
+            /// Gets the source address of the traceroute command.
             /// </summary>
-            /// <value></value>
             public string Source { get; }
 
             /// <summary>
-            /// The latency values of each ping to the current hop point.
+            /// Gets the latency values of each ping to the current hop point.
             /// </summary>
             public long[] Latency { get; }
 
             /// <summary>
-            /// List of ping replies from the current hop point.
+            /// Gets the ping replies from the current hop point.
             /// </summary>
             public PingStatus[] Replies { get; }
 
             /// <summary>
-            /// The hostname of the current hop point.
+            /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
             public string HopName { get => Replies[0].Destination; }
 
             /// <summary>
-            /// The IP address of the current hop point.
+            /// Gets the IP address of the current hop point.
             /// </summary>
             public IPAddress HopAddress { get => Replies[0].Address; }
 
             /// <summary>
-            /// The final destination hostname of the trace.
+            /// Gets the final destination hostname of the trace.
             /// </summary>
-            /// <value></value>
             public string Destination { get; }
 
             /// <summary>
-            /// The final destination IP address of the trace.
+            /// Gets the final destination IP address of the trace.
             /// </summary>
             public IPAddress DestinationAddress { get; }
         }
