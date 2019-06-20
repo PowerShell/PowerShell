@@ -370,7 +370,8 @@ namespace Microsoft.PowerShell.Commands
                             reply,
                             pingOptions,
                             timer.ElapsedMilliseconds,
-                            buffer.Length));
+                            buffer.Length,
+                            isTraceHop: true));
                         timer.Reset();
                     }
                     catch (PingException ex)
@@ -932,9 +933,29 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public class PingStatus
         {
-            internal PingStatus(string source, string destination, uint mtuSize, PingReply reply)
-                : this(source, destination, reply) => MtuSize = mtuSize;
+            internal PingStatus(string source, string destination, int mtuSize, PingReply reply)
+                : this(source, destination, reply)
+            {
+                if (mtuSize <= 0)
+                {
+                    throw new PSArgumentException(nameof(mtuSize));
+                }
 
+                MtuSize = mtuSize;
+            }
+
+            /// <summary>
+            /// Creates a new instance of the PingStatus class.
+            /// This constructor allows manually specifying the initial values for the cases where the PingReply
+            /// object may be missing some information, specifically in the instances where PingReply objects are
+            /// utilised to perform a traceroute.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="options">The PingOptions specified when the ping was sent.</param>
+            /// <param name="latency">The manually measured latency of the ping attempt.</param>
+            /// <param name="bufferSize">The buffer size </param>
             internal PingStatus(
                 string source,
                 string destination,
@@ -949,67 +970,76 @@ namespace Microsoft.PowerShell.Commands
                 _bufferSize = bufferSize;
             }
 
+            /// <summary>
+            /// Creates a new instance of the PingStatus class.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
             internal PingStatus(string source, string destination, PingReply reply)
             {
-                _reply = reply;
+                Reply = reply;
                 Source = source;
                 Destination = destination ?? reply.Address.ToString();
             }
 
-            private readonly PingReply _reply;
+            // These values should only be set if this PingStatus was created as part of a traceroute.
+            private readonly int _bufferSize = -1;
+            private readonly long _latency = -1;
+            private readonly PingOptions _options;
 
             /// <summary>
-            /// The returned status of the ping.
+            /// Gets the reply object from this ping.
+            /// </summary>
+            public PingReply Reply { get; }
+
+            /// <summary>
+            /// Gets the returned status of the ping.
             /// </summary>
             public IPStatus Status
             {
-                get => Options.Ttl < 128 && _reply.Status == IPStatus.TtlExpired
-                    // Treat "TtlExpired" as "Success" when this is a traceroute hop as that is the expected outcome.
+                // Treat "TtlExpired" as "Success" when this is a traceroute hop, as that is the expected outcome.
+                get => _options != null && Reply.Status == IPStatus.TtlExpired
                     ? IPStatus.Success
-                    : _reply.Status;
+                    : Reply.Status;
             }
 
             /// <summary>
-            /// Source from which to ping.
+            /// Gets the source from which the ping was sent.
             /// </summary>
             public string Source { get; }
 
             /// <summary>
-            /// The target address of the ping.
+            /// Gets the target address of the ping.
             /// </summary>
             /// <value></value>
-            public IPAddress Address { get => _reply.Address; }
+            public IPAddress Address { get => Reply.Address; }
 
             /// <summary>
-            /// Destination which was pinged.
+            /// Gets the destination which was pinged.
             /// </summary>
             public string Destination { get; }
 
-            private readonly long _latency = -1;
             /// <summary>
-            /// The roundtrip time of the ping in milliseconds.
+            /// Gets the roundtrip time of the ping in milliseconds.
             /// </summary>
             /// <value></value>
-            public long Latency { get => _latency >= 0 ? _latency : _reply.RoundtripTime; }
-
-            private readonly int _bufferSize = -1;
-            /// <summary>
-            /// The size in bytes of the buffer data sent in the ping.
-            /// </summary>
-            public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : _reply.Buffer.Length; }
-
-            private readonly PingOptions _options;
-            /// <summary>
-            /// The options used when sending the ping.
-            /// </summary>
-            /// <value></value>
-            public PingOptions Options { get => _options ?? _reply.Options; }
+            public long Latency { get => _latency >= 0 ? _latency : Reply.RoundtripTime; }
 
             /// <summary>
-            /// The maximum transmission unit size on the network path between the source and destination.
+            /// Gets the size in bytes of the buffer data sent in the ping.
             /// </summary>
-            /// <value></value>
-            public uint? MtuSize { get; }
+            public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : Reply.Buffer.Length; }
+
+            /// <summary>
+            /// Gets the options used when sending the ping.
+            /// </summary>
+            public PingOptions Options { get => _options ?? Reply.Options; }
+
+            /// <summary>
+            /// Gets the maximum transmission unit size on the network path between the source and destination.
+            /// </summary>
+            public int MtuSize { get; } = -1;
         }
 
         // Count of pings sent per each trace route hop.
