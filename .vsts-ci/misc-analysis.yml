@@ -52,12 +52,6 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  # Sometimes this folder is left behind with root permissions and causes many problems
-  - bash: |
-      sudo rm -rf ~/.npm/_cacache
-    displayName: Remove Old npm Caches
-    condition: succeededOrFailed()
-
   - powershell: |
       Import-module ./build.psm1
       $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
