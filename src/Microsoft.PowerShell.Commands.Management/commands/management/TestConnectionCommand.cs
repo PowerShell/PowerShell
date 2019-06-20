@@ -197,8 +197,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            base.BeginProcessing();
-
             if (ParameterSetName == ParameterSetPingContinue)
             {
                 Count = int.MaxValue;
@@ -235,7 +233,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-
             if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress targetAddress))
             {
                 return;
