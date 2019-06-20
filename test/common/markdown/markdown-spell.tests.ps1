@@ -43,7 +43,7 @@ Describe "Verify Markdown Spelling" {
     {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
-        Remove-job -job $Job
+        Remove-job -Job $Job
         foreach($jobResult in $results)
         {
             $file = $jobResult.file
