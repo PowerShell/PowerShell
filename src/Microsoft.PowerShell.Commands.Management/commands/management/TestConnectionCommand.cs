@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
+            WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
 
             int currentHop = 1;
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
@@ -357,13 +357,20 @@ namespace Microsoft.PowerShell.Commands
                             hostname = Dns.GetHostEntry(reply.Address).HostName;
                         }
 
-                        replies.Add(new PingStatus(
-                            Source,
-                            hostname,
-                            reply,
-                            pingOptions,
-                            timer.ElapsedMilliseconds,
-                            buffer.Length));
+                        if (currentHop == sMaxHops)
+                        {
+                            replies.Add(new PingStatus(Source, hostname, reply));
+                        }
+                        else
+                        {
+                            replies.Add(new PingStatus(
+                                Source,
+                                hostname,
+                                reply,
+                                pingOptions,
+                                timer.ElapsedMilliseconds,
+                                buffer.Length));
+                        }
                         timer.Reset();
                     }
                     catch (PingException ex)
@@ -393,18 +400,19 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!Quiet.IsPresent)
                 {
-                    WriteObject(new TraceStatus(currentHop, replies, Source, targetNameOrAddress, targetAddress));
+                    var traceStatus = new TraceStatus(currentHop, replies, Source, targetNameOrAddress, targetAddress);
+                    WriteObject(traceStatus);
+                    WriteTraceRouteProgress(traceStatus);
                 }
 
                 currentHop++;
                 replies.Clear();
-                //WriteTraceRouteProgress(traceRouteReply);
             }
             while (reply != null
                 && currentHop <= sMaxHops
                 && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
-            //WriteTraceRouteFooter();
+            WriteTraceRouteFooter();
 
             if (Quiet.IsPresent)
             {
@@ -414,46 +422,41 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteConsoleTraceRouteHeader(string resolvedTargetName, string targetAddress)
         {
-            _testConnectionProgressBarActivity = StringUtil.Format(
+            WriteVerbose(StringUtil.Format(
                 TestConnectionResources.TraceRouteStart,
                 resolvedTargetName,
                 targetAddress,
-                MaxHops);
-
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
+                MaxHops));
         }
 
         private string _testConnectionProgressBarActivity;
         private static readonly string[] s_PSHostTag = new string[] { "PSHOST" };
 
-        private void WriteTraceRouteProgress(TraceStatus traceRouteReply)
+        private void WriteTraceRouteProgress(TraceStatus traceStatus)
         {
             string msg;
-            if (traceRouteReply.Replies[2].Status == IPStatus.TtlExpired
-                || traceRouteReply.Replies[2].Status == IPStatus.Success)
+            if (traceStatus.Replies[2].Status == IPStatus.TtlExpired
+                || traceStatus.Replies[2].Status == IPStatus.Success)
             {
-                var routerAddress = traceRouteReply.ReplyRouterAddress.ToString();
-                var routerName = traceRouteReply.ReplyRouterName ?? routerAddress;
-                var roundtripTime0 = traceRouteReply.Replies[0].Status == IPStatus.TimedOut
+                var routerAddress = traceStatus.ReplyRouterAddress.ToString();
+                var routerName = traceStatus.ReplyRouterName ?? routerAddress;
+                var roundtripTime0 = traceStatus.Replies[0].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceRouteReply.Replies[0].RoundtripTime.ToString();
-                var roundtripTime1 = traceRouteReply.Replies[1].Status == IPStatus.TimedOut
+                    : traceStatus.Replies[0].RoundtripTime.ToString();
+                var roundtripTime1 = traceStatus.Replies[1].Status == IPStatus.TimedOut
                     ? "*"
-                    : traceRouteReply.Replies[1].RoundtripTime.ToString();
+                    : traceStatus.Replies[1].RoundtripTime.ToString();
                 msg = StringUtil.Format(
                     TestConnectionResources.TraceRouteReply,
-                    traceRouteReply.Hop,
+                    traceStatus.Hop,
                     roundtripTime0,
                     roundtripTime1,
-                    traceRouteReply.Replies[2].RoundtripTime.ToString(),
+                    traceStatus.Replies[2].RoundtripTime.ToString(),
                     routerName, routerAddress);
             }
             else
             {
-                msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceRouteReply.Hop);
+                msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceStatus.Hop);
             }
 
             WriteInformation(msg, s_PSHostTag);
