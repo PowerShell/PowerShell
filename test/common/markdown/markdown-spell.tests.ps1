@@ -14,7 +14,6 @@ Describe "Verify Markdown Spelling" {
     }
 
     AfterAll {
-        # Cleanup jobs to leave the process the same
         get-job | remove-job -force
     }
 
