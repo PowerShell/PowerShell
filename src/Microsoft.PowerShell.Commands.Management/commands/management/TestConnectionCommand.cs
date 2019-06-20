@@ -366,12 +366,11 @@ namespace Microsoft.PowerShell.Commands
 
                         replies.Add(new PingStatus(
                             Source,
-                            hostname,
+                            hostname ?? resolvedTargetName,
                             reply,
                             pingOptions,
                             timer.ElapsedMilliseconds,
-                            buffer.Length,
-                            isTraceHop: true));
+                            buffer.Length));
                         timer.Reset();
                     }
                     catch (PingException ex)
@@ -461,14 +460,12 @@ namespace Microsoft.PowerShell.Commands
         {
             PingReply reply, replyResult = null;
 
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress))
+            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress targetAddress))
             {
                 return;
             }
 
-            WriteMTUSizeHeader(resolvedTargetName, targetAddress.ToString());
-
-            // Cautious! Algorithm is sensitive to changing boundary values.
+            // Caution! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
@@ -483,7 +480,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
-                    WriteMTUSizeProgress(CurrentMTUSize, retry);
                     WriteDebug(StringUtil.Format(
                         "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
                         LowMTUSize,
@@ -548,55 +544,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteMTUSizeFooter();
-
             if (Quiet.IsPresent)
             {
                 WriteObject(CurrentMTUSize);
             }
             else
             {
-                var res = PSObject.AsPSObject(replyResult);
-
-                PSMemberInfo sourceProperty = new PSNoteProperty("Source", Source);
-                res.Members.Add(sourceProperty);
-                PSMemberInfo destinationProperty = new PSNoteProperty("Destination", targetNameOrAddress);
-                res.Members.Add(destinationProperty);
-                PSMemberInfo mtuSizeProperty = new PSNoteProperty("MTUSize", CurrentMTUSize);
-                res.Members.Add(mtuSizeProperty);
-                res.TypeNames.Insert(0, "PingReply#MTUSize");
-
-                WriteObject(res);
+                WriteObject(new PingStatus(Source, targetNameOrAddress, CurrentMTUSize, replyResult));
             }
-        }
-
-        private void WriteMTUSizeHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress,
-                BufferSize);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeProgress(int currentMTUSize, int retry)
-        {
-            var msg = StringUtil.Format(TestConnectionResources.MTUSizeDetectDescription, currentMTUSize, retry);
-
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeFooter()
-        {
-            var record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
         }
 
         #endregion MTUSizeTest
@@ -612,7 +567,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (!Continues.IsPresent)
             {
-                WritePingHeader(resolvedTargetName, targetAddress.ToString());
+                WriteVerbose(StringUtil.Format(
+                    TestConnectionResources.MTUSizeDetectStart,
+                    resolvedTargetName,
+                    targetAddress,
+                    BufferSize));
             }
 
             bool quietResult = true;
@@ -620,7 +579,6 @@ namespace Microsoft.PowerShell.Commands
 
             PingReply reply;
             var pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
-            var pingReport = new PingStatus(Source, resolvedTargetName);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
@@ -661,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        pingReport.Replies.Add(reply);
+                        WriteObject(new PingStatus(Source, resolvedTargetName, reply));
                     }
 
                     WritePingProgress(reply);
@@ -676,71 +634,30 @@ namespace Microsoft.PowerShell.Commands
 
             if (!Continues.IsPresent)
             {
-                WritePingFooter();
+                WriteVerbose(TestConnectionResources.PingComplete);
             }
 
             if (Quiet.IsPresent)
             {
                 WriteObject(quietResult);
             }
-            else
-            {
-                WriteObject(pingReport);
-            }
-        }
-
-        private void WritePingHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(
-                TestConnectionResources.MTUSizeDetectStart,
-                resolvedTargetName,
-                targetAddress,
-                BufferSize);
-
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
-
-            var record = new ProgressRecord(
-                s_ProgressId,
-                _testConnectionProgressBarActivity,
-                ProgressRecordSpace);
-            WriteProgress(record);
         }
 
         private void WritePingProgress(PingReply reply)
         {
-            string msg;
             if (reply.Status != IPStatus.Success)
             {
-                msg = TestConnectionResources.PingTimeOut;
+                WriteVerbose(TestConnectionResources.PingTimeOut);
             }
             else
             {
-                msg = StringUtil.Format(
+                WriteVerbose(StringUtil.Format(
                     TestConnectionResources.PingReply,
                     reply.Address.ToString(),
                     reply.Buffer.Length,
                     reply.RoundtripTime,
-                    reply.Options?.Ttl);
+                    reply.Options?.Ttl));
             }
-
-            WriteInformation(msg, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WritePingFooter()
-        {
-            WriteInformation(TestConnectionResources.PingComplete, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(
-                s_ProgressId,
-                _testConnectionProgressBarActivity,
-                ProgressRecordSpace)
-            {
-                RecordType = ProgressRecordType.Completed
-            };
-            WriteProgress(record);
         }
 
         #endregion PingTest
@@ -789,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                if (IPv6 || IPv4)
+                if (IPv6.IsPresent || IPv4.IsPresent)
                 {
                     var addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
 
@@ -933,6 +850,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public class PingStatus
         {
+            /// <summary>
+            /// Creates a new instance of the PingStatus class.
+            /// This constructor permits setting the MtuSize.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="mtuSize">The maximum transmission unit size determined.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
             internal PingStatus(string source, string destination, int mtuSize, PingReply reply)
                 : this(source, destination, reply)
             {
