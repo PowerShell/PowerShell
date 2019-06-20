@@ -10,7 +10,7 @@ Describe "Verify Markdown Spelling" {
         }
 
         # Cleanup jobs for reliability
-        get-job | remove-job -force
+        Get-Job | Remove-Job -Force
     }
 
     AfterAll {
