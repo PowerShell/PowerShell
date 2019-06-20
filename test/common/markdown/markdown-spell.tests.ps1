@@ -13,7 +13,7 @@ Describe "Verify Markdown Spelling" {
     }
 
     AfterAll {
-        get-job | remove-job -force
+        Get-Job | Remove-Job -Force
     }
 
     $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | 
