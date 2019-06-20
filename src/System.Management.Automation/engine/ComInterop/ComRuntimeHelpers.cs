@@ -569,6 +569,11 @@ namespace System.Management.Automation.ComInterop
 
         #region non-public members
 
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
+        static UnsafeMethods()
+        {
+        }
+
         private static void EmitLoadArg(ILGenerator il, int index)
         {
             switch (index)
