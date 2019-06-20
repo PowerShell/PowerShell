@@ -4514,7 +4514,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (CanBeSimpleNameToken(ref token))
+            if (TryUseTokenAsSimpleName(token))
             {
                 SkipToken();
                 var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
@@ -4560,7 +4560,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        private bool CanBeSimpleNameToken(ref Token token)
+        private bool TryUseTokenAsSimpleName(Token token)
         {
             if (token.Kind == TokenKind.Identifier
                 || token.Kind == TokenKind.DynamicKeyword
