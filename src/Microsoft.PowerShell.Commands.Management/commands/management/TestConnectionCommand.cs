@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
 
                         replies.Add(new PingStatus(
                             Source,
-                            hostname ?? resolvedTargetName,
+                            hostname,
                             reply,
                             pingOptions,
                             timer.ElapsedMilliseconds,
