@@ -255,6 +255,48 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, label: "Source")
+                    .AddHeader(Alignment.Left, label: "Destination")
+                    .AddHeader(Alignment.Left, label: "Address")
+                    .AddHeader(Alignment.Right, label: "Latency\n(ms)")
+                    .AddHeader(Alignment.Right, label: "BufferSize\n(B)")
+                    .AddHeader(Alignment.Left, label: "Status")
+                    .AddHeader(Alignment.Right, label: "MtuSize\n(B)")
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Destination")
+                        .AddPropertyColumn("Address")
+                        .AddPropertyColumn("Latency")
+                        .AddPropertyColumn("BufferSize")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("MtuSize")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus()
+        {
+            yield return new FormatViewDefinition("TraceStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, label: "Timestamp", width: 26)
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("Timestamp")
+                    .EndRowDefinition()
+                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
