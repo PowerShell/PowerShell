@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(bool),
         ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
-    public class TestConnectionCommand : PSCmdlet, IDisposable
+    public class TestConnectionCommand : PSCmdlet
     {
         private const string ParameterSetPing = "PingCount";
         private const string ParameterSetPingContinue = "PingContinue";
@@ -190,8 +190,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
-        private readonly Ping _sender = new Ping();
-
         /// <summary>
         /// Init the cmdlet.
         /// </summary>
@@ -302,6 +300,7 @@ namespace Microsoft.PowerShell.Commands
 
             var timer = new Stopwatch();
             PingReply reply;
+            using var sender = new Ping();
 
             do
             {
@@ -315,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         timer.Start();
-                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
                         timer.Stop();
 
                         if (ResolveDestination
@@ -341,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
                                 timer.ElapsedMilliseconds,
                                 buffer.Length),
                             Source,
-                            targetNameOrAddress,
+                            hostname ?? targetNameOrAddress,
                             targetAddress);
 
                         WriteObject(status);
@@ -363,10 +362,6 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
 
                         continue;
-                    }
-                    catch
-                    {
-                        // Ignore host resolve exceptions.
                     }
 
                     // We use short delay because it is impossible DoS with trace route.
@@ -393,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 || traceStatus.Reply.Status == IPStatus.Success)
             {
                 var routerAddress = traceStatus.HopAddress.ToString();
-                var routerName = traceStatus.HopName;
+                var routerName = traceStatus.Hostname;
                 var roundtripTime0 = traceStatus.Reply.Status == IPStatus.TimedOut
                     ? "*"
                     : traceStatus.Latency.ToString();
@@ -431,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
             int timeout = TimeoutSeconds * 1000;
+            using var sender = new Ping();
 
             try
             {
@@ -447,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -542,12 +538,13 @@ namespace Microsoft.PowerShell.Commands
             var pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
+            using var sender = new Ping();
 
             for (int i = 1; i <= Count; i++)
             {
                 try
                 {
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -643,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        hostEntry = Dns.GetHostEntry(hostEntry.HostName);
+                        //hostEntry = Dns.GetHostEntry(hostEntry.HostName);
                     }
                 }
                 catch (Exception ex)
@@ -725,14 +722,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IDisposable implementation.
-        /// </summary>
-        public void Dispose()
-        {
-            _sender?.Dispose();
-        }
-
-        /// <summary>
         /// The class contains an information about a trace route attempt.
         /// </summary>
         public class TraceStatus
@@ -770,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string HopName { get => _status.Destination; }
+            public string Hostname { get => _status.Destination; }
 
             /// <summary>
             /// Gets the IP address of the current hop point.
