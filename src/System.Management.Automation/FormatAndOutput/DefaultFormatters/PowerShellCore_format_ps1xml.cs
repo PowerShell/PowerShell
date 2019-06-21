@@ -261,6 +261,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus());
+
+            yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
                 ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus());
         }
@@ -268,6 +272,26 @@ namespace System.Management.Automation.Runspaces
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
         {
             yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, label: "Source")
+                    .AddHeader(Alignment.Left, label: "Address")
+                    .AddHeader(Alignment.Right, label: "Latency\n(ms)")
+                    .AddHeader(Alignment.Right, label: "BufferSize\n(B)")
+                    .AddHeader(Alignment.Left, label: "Status")
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Address")
+                        .AddPropertyColumn("Latency")
+                        .AddPropertyColumn("BufferSize")
+                        .AddPropertyColumn("Status")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
                 TableControl.Create()
                     .AddHeader(Alignment.Left, label: "Source")
                     .AddHeader(Alignment.Left, label: "Address")
