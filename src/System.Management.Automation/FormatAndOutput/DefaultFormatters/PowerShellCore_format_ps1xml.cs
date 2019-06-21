@@ -278,7 +278,6 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "MtuSize\n(B)")
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("Source")
-                        .AddPropertyColumn("Destination")
                         .AddPropertyColumn("Address")
                         .AddPropertyColumn("Latency")
                         .AddPropertyColumn("BufferSize")
