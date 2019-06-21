@@ -321,7 +321,14 @@ namespace Microsoft.PowerShell.Commands
                         if (ResolveDestination
                             && (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired))
                         {
-                            hostname = Dns.GetHostEntry(reply.Address).HostName;
+                            try
+                            {
+                                hostname = Dns.GetHostEntry(reply.Address).HostName;
+                            }
+                            catch
+                            {
+                                // Swallow hostname resolve exceptions and continue with trace
+                            }
                         }
 
                         var status = new TraceStatus(
