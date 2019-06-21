@@ -307,7 +307,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 reply = null;
                 pingOptions.Ttl = currentHop;
-                timer.Reset();
 
                 // We don't allow -Count parameter for -TraceRoute.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -340,6 +339,7 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteObject(status);
                         WriteVerboseTraceEntry(status);
+                        timer.Reset();
                     }
                     catch (PingException ex)
                     {
@@ -779,7 +779,12 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the status of the traceroute hop.
             /// It is considered successful if the individual pings report either Success or TtlExpired.
             /// </summary>
-            public IPStatus Status { get => _status.Status; }
+            public IPStatus Status
+            {
+                get => _status.Status == IPStatus.TtlExpired
+                    ? IPStatus.Success
+                    : _status.Status;
+            }
 
             /// <summary>
             /// Gets the source address of the traceroute command.
