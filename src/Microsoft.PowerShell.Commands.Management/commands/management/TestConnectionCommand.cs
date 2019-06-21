@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
                             targetNameOrAddress,
                             targetAddress);
 
-                        WriteOutput(status);
+                        WriteObject(status);
                         WriteVerboseTraceEntry(status);
                     }
                     catch (PingException ex)
@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 var routerName = traceStatus.HopName;
                 var roundtripTime0 = traceStatus.Reply.Status == IPStatus.TimedOut
                     ? "*"
-                    : traceStatus.Reply.Latency.ToString();
+                    : traceStatus.Latency.ToString();
                 /*var roundtripTime1 = traceStatus.Replies[1].Status == IPStatus.TimedOut
                     ? "*"
                     : traceStatus.Replies[1].Latency.ToString();*/
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(new PingStatus(Source, targetNameOrAddress, CurrentMTUSize, replyResult));
+                WriteObject(new PingMtuStatus(Source, targetNameOrAddress, CurrentMTUSize, replyResult));
             }
         }
 
@@ -745,8 +745,8 @@ namespace Microsoft.PowerShell.Commands
                 string destination,
                 IPAddress destinationAddress)
             {
+                _status = status;
                 Hop = hop;
-                Status = status;
                 Source = source;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
