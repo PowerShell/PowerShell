@@ -4,34 +4,34 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
+using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
-using System.Management.Automation.Security;
-using System.Threading;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
+using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Management.Automation.Language;
-
-using Dbg = System.Management.Automation.Diagnostics;
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using System.Management.Automation.Tracing;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
-using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
