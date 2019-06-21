@@ -315,19 +315,21 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
                 TableControl.Create()
-                    .AddHeader(Alignment.Left, label: "HopName")
+                    .AddHeader(Alignment.Right, label: "Hop")
+                    .AddHeader(Alignment.Left, label: "Hostname")
                     .AddHeader(Alignment.Right, label: "Latency\n(ms)")
                     .AddHeader(Alignment.Left, label: "Status")
                     .AddHeader(Alignment.Left, label: "Source")
-                    .AddHeader(Alignment.Left, label: "Destination")
-                    .StartRowDefinition(wrap: true)
-                        .AddPropertyColumn("HopName")
+                    .AddHeader(Alignment.Left, label: "DestinationAddress")
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Hop")
+                        .AddPropertyColumn("Hostname")
                         .AddPropertyColumn("Latency")
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("Source")
-                        .AddPropertyColumn("Destination")
+                        .AddPropertyColumn("DestinationAddress")
                     .EndRowDefinition()
-                    .GroupByProperty("Hop")
+                    .GroupByProperty("Destination")
                 .EndTable());
         }
 
