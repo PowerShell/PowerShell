@@ -299,7 +299,6 @@ namespace Microsoft.PowerShell.Commands
             string hostname = null;
 
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
-            var replies = new List<PingStatus>(DefaultTraceRoutePingCount);
 
             var timer = new Stopwatch();
             PingReply reply;
@@ -308,6 +307,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 reply = null;
                 pingOptions.Ttl = currentHop;
+                timer.Reset();
 
                 // We don't allow -Count parameter for -TraceRoute.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
@@ -325,14 +325,21 @@ namespace Microsoft.PowerShell.Commands
                             hostname = Dns.GetHostEntry(reply.Address).HostName;
                         }
 
-                        replies.Add(new PingStatus(
+                        var status = new TraceStatus(
+                            currentHop,
+                            new PingStatus(
+                                Source,
+                                hostname,
+                                reply,
+                                pingOptions,
+                                timer.ElapsedMilliseconds,
+                                buffer.Length),
                             Source,
-                            hostname,
-                            reply,
-                            pingOptions,
-                            timer.ElapsedMilliseconds,
-                            buffer.Length));
-                        timer.Reset();
+                            targetNameOrAddress,
+                            targetAddress);
+
+                        WriteOutput(status);
+                        WriteVerboseTraceEntry(status);
                     }
                     catch (PingException ex)
                     {
@@ -357,13 +364,6 @@ namespace Microsoft.PowerShell.Commands
 
                     // We use short delay because it is impossible DoS with trace route.
                     Thread.Sleep(200);
-                }
-
-                if (!Quiet.IsPresent)
-                {
-                    var traceStatus = new TraceStatus(currentHop, replies, Source, targetNameOrAddress, targetAddress);
-                    WriteObject(traceStatus);
-                    WriteVerboseTraceEntry(traceStatus);
                 }
 
                 currentHop++;
