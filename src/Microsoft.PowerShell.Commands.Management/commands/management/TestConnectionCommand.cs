@@ -872,16 +872,6 @@ namespace Microsoft.PowerShell.Commands
             public int Hop { get; }
 
             /// <summary>
-            /// Gets the source address of the traceroute command.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Gets the latency values of each ping to the current hop point.
-            /// </summary>
-            public long Latency { get => _status.Latency; }
-
-            /// <summary>
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
@@ -893,6 +883,22 @@ namespace Microsoft.PowerShell.Commands
             public IPAddress HopAddress { get => _status.Address; }
 
             /// <summary>
+            /// Gets the latency values of each ping to the current hop point.
+            /// </summary>
+            public long Latency { get => _status.Latency; }
+
+            /// <summary>
+            /// Gets the status of the traceroute hop.
+            /// It is considered successful if the individual pings report either Success or TtlExpired.
+            /// </summary>
+            public IPStatus Status { get => _status.Status; }
+
+            /// <summary>
+            /// Gets the source address of the traceroute command.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
             /// Gets the final destination hostname of the trace.
             /// </summary>
             public string Destination { get; }
@@ -901,12 +907,6 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the final destination IP address of the trace.
             /// </summary>
             public IPAddress DestinationAddress { get; }
-
-            /// <summary>
-            /// Gets the status of the traceroute hop.
-            /// It is considered successful if the individual pings report either Success or TtlExpired.
-            /// </summary>
-            public IPStatus Status { get => _status.Status; }
 
             /// <summary>
             /// Gets the raw PingReply object received from the ping to this hop point.

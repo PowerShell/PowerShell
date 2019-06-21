@@ -313,12 +313,21 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus()
         {
-            yield return new FormatViewDefinition("TraceStatus",
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
                 TableControl.Create()
-                    .AddHeader(Alignment.Left, label: "Timestamp", width: 26)
+                    .AddHeader(Alignment.Left, label: "HopName")
+                    .AddHeader(Alignment.Right, label: "Latency\n(ms)")
+                    .AddHeader(Alignment.Left, label: "Status")
+                    .AddHeader(Alignment.Left, label: "Source")
+                    .AddHeader(Alignment.Left, label: "Destination")
                     .StartRowDefinition(wrap: true)
-                        .AddPropertyColumn("Timestamp")
+                        .AddPropertyColumn("HopName")
+                        .AddPropertyColumn("Latency")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Destination")
                     .EndRowDefinition()
+                    .GroupByProperty("Hop")
                 .EndTable());
         }
 
