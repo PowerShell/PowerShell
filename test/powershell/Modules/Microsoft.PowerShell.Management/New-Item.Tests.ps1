@@ -303,18 +303,21 @@ Describe "New-Item -Force allows to create an item even if the directories in th
         $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testFolder -AdditionalChildPath $testFile
     }
 	
-	It "Should error correctly when -Force is not used and folder in the path doesn't exist" {
-	    # Explicitly removing folder first
+	BeforeEach {
+	    # Explicitly removing folder and the file before tests
 	    Remove-Item $FullyQualifiedFolder -ErrorAction SilentlyContinue
+	    Remove-Item $FullyQualifiedFile   -ErrorAction SilentlyContinue
 	    Test-Path -Path $FullyQualifiedFolder | Should -BeFalse
-		
+	    Test-Path -Path $FullyQualifiedFile   | Should -BeFalse
+	}
+
+	It "Should error correctly when -Force is not used and folder in the path doesn't exist" {
         { New-Item $FullyQualifiedFile -ErrorAction Stop } | Should -Throw -ErrorId 'NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand'
+		$FullyQualifiedFile | Should -Not -Exist
     }
 	It "Should create new file correctly when -Force is used and folder in the path doesn't exist" {
-	    # Explicitly removing folder first
-	    Remove-Item $FullyQualifiedFolder -ErrorAction SilentlyContinue
-	    Test-Path -Path $FullyQualifiedFolder | Should -BeFalse
-		
         { New-Item $FullyQualifiedFile -Force -ErrorAction Stop } | Should -Not -Throw
+		$FullyQualifiedFile | Should -Exist
     }
 }
+
