@@ -62,6 +62,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -104,8 +111,13 @@ fi
 
 #Collect any variation details if required for this distro
 # shellcheck disable=SC1091
-. /etc/lsb-release
-DISTRIB_ID=$(lowercase "$DISTRIB_ID")
+if [[ -f /etc/lsb-release ]]; then
+    . /etc/lsb-release
+    DISTRIB_ID=$(lowercase "$DISTRIB_ID")
+elif [[ -f /etc/debian_version ]]; then
+    DISTRIB_ID="debian"
+    DISTRIB_RELEASE=$(cat /etc/debian_version)
+fi
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
