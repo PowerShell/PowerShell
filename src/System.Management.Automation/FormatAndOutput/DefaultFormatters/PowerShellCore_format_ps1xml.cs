@@ -285,6 +285,7 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("MtuSize")
                     .EndRowDefinition()
+                    .GroupByProperty("Destination")
                 .EndTable());
         }
 
