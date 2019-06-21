@@ -199,7 +199,19 @@ namespace Microsoft.PowerShell
                 // The JumpList does persist as long as the filepath of the executable does not change but there
                 // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
                 // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                    }
+                    catch
+                    {
+                        // Sporadic failures have been observed in some environments. Since the JumpList persists once it
+                        // has been registered, there is no harm suppressing the occasional failure.
+                    }
+                }
+                );
 #endif
 
                 // First check for and handle PowerShell running in a server mode.
