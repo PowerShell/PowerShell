@@ -250,7 +250,7 @@
     <value>The Export-ModuleMember cmdlet can only be called from inside a module.</value>
   </data>
   <data name="InvalidModuleExtension" xml:space="preserve">
-    <value>The extension '{0}' is not a valid module extension. The supported module extensions are '.dll', '.ps1', '.psm1', '.psd1', '.cdxml' and '.xaml'. Correct the extension then try adding the file '{1}' again.</value>
+    <value>The extension '{0}' is not a valid module extension. The supported module extensions are '.dll', '.ps1', '.psm1', '.psd1' and '.cdxml'. Correct the extension then try adding the file '{1}' again.</value>
   </data>
   <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
     <value>This operation cannot be performed on a binary module. It can only be performed on a script module.</value>
