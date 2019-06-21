@@ -751,12 +751,35 @@ namespace Microsoft.PowerShell.Commands
                 Source = source;
                 Destination = destination;
                 DestinationAddress = destinationAddress;
-
+                Status = IPStatus.Unknown;
                 Latency = new long[replies.Count];
+
                 for (int index = 0; index < replies.Count; index++)
                 {
                     Latency[index] = replies[index].Latency;
+
+                    // Only one ping needs to successfully get back a Success or TtlExpired status for this trace hop
+                    // to be considered successful.
+                    if (Status != IPStatus.Success)
+                    {
+                        Status = GetTraceStatus(Status, replies[index].Status);
+                    }
                 }
+            }
+
+            private IPStatus GetTraceStatus(IPStatus currentStatus, IPStatus newStatus)
+            {
+                if (currentStatus == IPStatus.Success)
+                {
+                    return currentStatus;
+                }
+
+                if (newStatus == IPStatus.Success || newStatus == IPStatus.TtlExpired)
+                {
+                    return IPStatus.Success;
+                }
+
+                return newStatus;
             }
 
             /// <summary>
@@ -799,6 +822,13 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the final destination IP address of the trace.
             /// </summary>
             public IPAddress DestinationAddress { get; }
+
+            /// <summary>
+            /// Gets the status of the traceroute hop.
+            /// It is considered successful if the individual pings report either Success or TtlExpired.
+            /// </summary>
+            /// <value></value>
+            public IPStatus Status { get; }
         }
 
         /// <summary>
@@ -870,25 +900,14 @@ namespace Microsoft.PowerShell.Commands
             private readonly PingOptions _options;
 
             /// <summary>
-            /// Gets the reply object from this ping.
-            /// </summary>
-            public PingReply Reply { get; }
-
-            /// <summary>
-            /// Gets the returned status of the ping.
-            /// </summary>
-            public IPStatus Status
-            {
-                // Treat "TtlExpired" as "Success" when this is a traceroute hop, as that is the expected outcome.
-                get => _options != null && Reply.Status == IPStatus.TtlExpired
-                    ? IPStatus.Success
-                    : Reply.Status;
-            }
-
-            /// <summary>
             /// Gets the source from which the ping was sent.
             /// </summary>
             public string Source { get; }
+
+            /// <summary>
+            /// Gets the destination which was pinged.
+            /// </summary>
+            public string Destination { get; }
 
             /// <summary>
             /// Gets the target address of the ping.
@@ -897,20 +916,25 @@ namespace Microsoft.PowerShell.Commands
             public IPAddress Address { get => Reply.Address; }
 
             /// <summary>
-            /// Gets the destination which was pinged.
-            /// </summary>
-            public string Destination { get; }
-
-            /// <summary>
             /// Gets the roundtrip time of the ping in milliseconds.
             /// </summary>
             /// <value></value>
             public long Latency { get => _latency >= 0 ? _latency : Reply.RoundtripTime; }
 
             /// <summary>
+            /// Gets the returned status of the ping.
+            /// </summary>
+            public IPStatus Status { get => Reply.Status; }
+
+            /// <summary>
             /// Gets the size in bytes of the buffer data sent in the ping.
             /// </summary>
             public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : Reply.Buffer.Length; }
+
+            /// <summary>
+            /// Gets the reply object from this ping.
+            /// </summary>
+            public PingReply Reply { get; }
 
             /// <summary>
             /// Gets the options used when sending the ping.
