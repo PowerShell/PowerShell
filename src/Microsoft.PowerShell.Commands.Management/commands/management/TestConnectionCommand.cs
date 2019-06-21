@@ -798,11 +798,6 @@ namespace Microsoft.PowerShell.Commands
             public long[] Latency { get; }
 
             /// <summary>
-            /// Gets the ping replies from the current hop point.
-            /// </summary>
-            public PingStatus[] Replies { get; }
-
-            /// <summary>
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
@@ -829,6 +824,11 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <value></value>
             public IPStatus Status { get; }
+
+            /// <summary>
+            /// Gets the ping replies from the current hop point.
+            /// </summary>
+            public PingStatus[] Replies { get; }
         }
 
         /// <summary>
