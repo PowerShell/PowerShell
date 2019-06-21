@@ -270,7 +270,6 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
                 TableControl.Create()
                     .AddHeader(Alignment.Left, label: "Source")
-                    .AddHeader(Alignment.Left, label: "Destination")
                     .AddHeader(Alignment.Left, label: "Address")
                     .AddHeader(Alignment.Right, label: "Latency\n(ms)")
                     .AddHeader(Alignment.Right, label: "BufferSize\n(B)")
