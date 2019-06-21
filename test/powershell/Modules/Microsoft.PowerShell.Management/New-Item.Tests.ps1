@@ -299,7 +299,7 @@ Describe "New-Item -Force allows to create an item even if the directories in th
     BeforeAll {
         $testFile             = 'testfile.txt'
         $testFolder           = 'testfolder'
-		$FullyQualifiedFolder = Join-Path -Path TestDrive -ChildPath $testFolder
+		$FullyQualifiedFolder = Join-Path -Path $TestDrive -ChildPath $testFolder
         $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testFolder -AdditionalChildPath $testFile
     }
 	
