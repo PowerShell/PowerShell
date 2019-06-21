@@ -79,7 +79,7 @@ namespace System.Management.Automation.Language
 
         internal static BindingRestrictions GetSimpleTypeRestriction(this DynamicMetaObject obj)
         {
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Language
                 return obj.Restrictions;
             }
 
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Language
                 return obj.Restrictions;
             }
 
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -6876,14 +6876,6 @@ namespace System.Management.Automation.Language
             {
                 object arg = args[i].Value;
                 argValues[i] = arg == AutomationNull.Value ? null : arg;
-            }
-
-            if (ClrFacade.IsTransparentProxy(target.Value) && (psMethodInvocationConstraints == null || psMethodInvocationConstraints.MethodTargetType == null))
-            {
-                var argTypes = (psMethodInvocationConstraints == null)
-                    ? new Type[numArgs]
-                    : psMethodInvocationConstraints.ParameterTypes.ToArray();
-                psMethodInvocationConstraints = new PSMethodInvocationConstraints(target.Value.GetType(), argTypes);
             }
 
             var result = Adapter.FindBestMethod(
