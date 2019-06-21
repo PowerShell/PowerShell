@@ -4,34 +4,34 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
+using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
-using System.Management.Automation.Security;
-using System.Threading;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Tracing;
+using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Management.Automation.Language;
-
-using Dbg = System.Management.Automation.Diagnostics;
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using System.Management.Automation.Tracing;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
+
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
-using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -200,7 +200,19 @@ namespace Microsoft.PowerShell
                 // The JumpList does persist as long as the filepath of the executable does not change but there
                 // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
                 // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                    }
+                    catch
+                    {
+                        // Sporadic failures have been observed in some environments. Since the JumpList persists once it
+                        // has been registered, there is no harm suppressing the occasional failure.
+                    }
+                }
+                );
 #endif
 
                 // First check for and handle PowerShell running in a server mode.

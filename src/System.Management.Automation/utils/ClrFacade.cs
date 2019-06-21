@@ -281,19 +281,6 @@ namespace System.Management.Automation
         #region Misc
 
         /// <summary>
-        /// Facade for RemotingServices.IsTransparentProxy(object)
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsTransparentProxy(object obj)
-        {
-#if CORECLR // Namespace System.Runtime.Remoting is not in CoreCLR
-            return false;
-#else
-            return System.Runtime.Remoting.RemotingServices.IsTransparentProxy(obj);
-#endif
-        }
-
-        /// <summary>
         /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)
         /// </summary>
         internal static string ToDmtfDateTime(DateTime date)
