@@ -666,9 +666,9 @@ namespace Microsoft.PowerShell.Commands
                                                                 Modules.ManifestMemberNotValid,
                                                                 moduleSpecification.Name,
                                                                 "NestedModules",
-                                                                parentModule.Path,
+                                                                parentModule?.Path,
                                                                 StringUtil.Format(Modules.InvalidModuleExtension, extension, moduleSpecification.Name),
-                                                                                    ModuleIntrinsics.GetModuleName(parentModule.Path));
+                                                                                    ModuleIntrinsics.GetModuleName(parentModule?.Path));
                         invalidOperation.SetErrorId("Modules_InvalidModuleExtension");
                         throw invalidOperation;
                     }
