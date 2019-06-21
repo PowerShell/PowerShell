@@ -727,111 +727,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The class contains an information about a trace route attempt.
-        /// </summary>
-        public class TraceStatus
-        {
-            /// <summary>
-            /// Creates a new instance of the TraceStatus class.
-            /// </summary>
-            /// <param name="hop">The hop number of this trace hop.</param>
-            /// <param name="replies">The PingStatus replies received from this trace hop.</param>
-            /// <param name="source">The source computer name or IP address of the traceroute.</param>
-            /// <param name="destination">The target destination of the traceroute.</param>
-            /// <param name="destinationAddress">The target IPAddress of the overall traceroute.</param>
-            internal TraceStatus(
-                int hop,
-                List<PingStatus> replies,
-                string source,
-                string destination,
-                IPAddress destinationAddress)
-            {
-                Hop = hop;
-                Replies = replies.ToArray();
-                Source = source;
-                Destination = destination;
-                DestinationAddress = destinationAddress;
-                Status = IPStatus.Unknown;
-                Latency = new long[replies.Count];
-
-                for (int index = 0; index < replies.Count; index++)
-                {
-                    Latency[index] = replies[index].Latency;
-
-                    // Only one ping needs to successfully get back a Success or TtlExpired status for this trace hop
-                    // to be considered successful.
-                    if (Status != IPStatus.Success)
-                    {
-                        Status = GetTraceStatus(Status, replies[index].Status);
-                    }
-                }
-            }
-
-            private IPStatus GetTraceStatus(IPStatus currentStatus, IPStatus newStatus)
-            {
-                if (currentStatus == IPStatus.Success)
-                {
-                    return currentStatus;
-                }
-
-                if (newStatus == IPStatus.Success || newStatus == IPStatus.TtlExpired)
-                {
-                    return IPStatus.Success;
-                }
-
-                return newStatus;
-            }
-
-            /// <summary>
-            /// Gets the number of the current hop / router.
-            /// </summary>
-            public int Hop { get; }
-
-            /// <summary>
-            /// Gets the source address of the traceroute command.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Gets the latency values of each ping to the current hop point.
-            /// </summary>
-            public long[] Latency { get; }
-
-            /// <summary>
-            /// Gets the hostname of the current hop point.
-            /// </summary>
-            /// <value></value>
-            public string HopName { get => Replies[0].Destination; }
-
-            /// <summary>
-            /// Gets the IP address of the current hop point.
-            /// </summary>
-            public IPAddress HopAddress { get => Replies[0].Address; }
-
-            /// <summary>
-            /// Gets the final destination hostname of the trace.
-            /// </summary>
-            public string Destination { get; }
-
-            /// <summary>
-            /// Gets the final destination IP address of the trace.
-            /// </summary>
-            public IPAddress DestinationAddress { get; }
-
-            /// <summary>
-            /// Gets the status of the traceroute hop.
-            /// It is considered successful if the individual pings report either Success or TtlExpired.
-            /// </summary>
-            /// <value></value>
-            public IPStatus Status { get; }
-
-            /// <summary>
-            /// Gets the ping replies from the current hop point.
-            /// </summary>
-            public PingStatus[] Replies { get; }
-        }
-
-        /// <summary>
         /// The class contains information about the source, the destination and ping results.
         /// </summary>
         public class PingStatus
@@ -940,6 +835,108 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the options used when sending the ping.
             /// </summary>
             public PingOptions Options { get => _options ?? Reply.Options; }
+        }
+
+        /// <summary>
+        /// The class contains an information about a trace route attempt.
+        /// </summary>
+        public class TraceStatus
+        {
+            /// <summary>
+            /// Creates a new instance of the TraceStatus class.
+            /// </summary>
+            /// <param name="hop">The hop number of this trace hop.</param>
+            /// <param name="status">The PingStatus response from this trace hop.</param>
+            /// <param name="source">The source computer name or IP address of the traceroute.</param>
+            /// <param name="destination">The target destination of the traceroute.</param>
+            /// <param name="destinationAddress">The target IPAddress of the overall traceroute.</param>
+            internal TraceStatus(
+                int hop,
+                PingStatus status,
+                string source,
+                string destination,
+                IPAddress destinationAddress)
+            {
+                Hop = hop;
+                Status = status;
+                Source = source;
+                Destination = destination;
+                DestinationAddress = destinationAddress;
+            }
+
+            private readonly PingStatus _status;
+
+            /// <summary>
+            /// Gets the number of the current hop / router.
+            /// </summary>
+            public int Hop { get; }
+
+            /// <summary>
+            /// Gets the source address of the traceroute command.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the latency values of each ping to the current hop point.
+            /// </summary>
+            public long Latency { get => _status.Latency; }
+
+            /// <summary>
+            /// Gets the hostname of the current hop point.
+            /// </summary>
+            /// <value></value>
+            public string HopName { get => _status.Destination; }
+
+            /// <summary>
+            /// Gets the IP address of the current hop point.
+            /// </summary>
+            public IPAddress HopAddress { get => _status.Address; }
+
+            /// <summary>
+            /// Gets the final destination hostname of the trace.
+            /// </summary>
+            public string Destination { get; }
+
+            /// <summary>
+            /// Gets the final destination IP address of the trace.
+            /// </summary>
+            public IPAddress DestinationAddress { get; }
+
+            /// <summary>
+            /// Gets the status of the traceroute hop.
+            /// It is considered successful if the individual pings report either Success or TtlExpired.
+            /// </summary>
+            public IPStatus Status { get => _status.Status; }
+
+            /// <summary>
+            /// Gets the raw PingReply object received from the ping to this hop point.
+            /// </summary>
+            public PingReply Reply { get => _status.Reply; }
+        }
+
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingMtuStatus : PingStatus
+        {
+            /// <summary>
+            /// Creates a new instance of the PingStatus class.
+            /// This constructor permits setting the MtuSize.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="mtuSize">The maximum transmission unit size determined.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            internal PingMtuStatus(string source, string destination, int mtuSize, PingReply reply)
+                : base(source, destination, reply)
+            {
+                if (mtuSize <= 0)
+                {
+                    throw new PSArgumentException(nameof(mtuSize));
+                }
+
+                MtuSize = mtuSize;
+            }
 
             /// <summary>
             /// Gets the maximum transmission unit size on the network path between the source and destination.
