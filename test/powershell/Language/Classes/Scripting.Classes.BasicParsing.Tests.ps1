@@ -418,30 +418,64 @@ Describe 'Property Attributes Test' -Tags "CI" {
 
 Describe 'Testing Method Names can be Keywords' -Tags "CI" {
     BeforeAll {
-        class TestMethodNames : IDisposable {
-            [string] Begin() { return "Begin" }
+        [powershell] $ps = $null
 
-            [string] Process() { return "Process" }
+        function Invoke-PowerShell {
+            [CmdletBinding()]
+            param([string] $Script)
 
-            [string] End() { return "End" }
-
-            hidden $Data = "Secrets"
-
-            Dispose() {
-                $this.Data = [string]::Empty
+            try {
+                $ps.AddScript($Script).Invoke()
+            }
+            finally {
+                $ps.Commands.Clear()
             }
         }
+
+        function Reset-PowerShell {
+            if ($ps) {
+                $ps.Dispose()
+            }
+
+            $ps = [powershell]::Create()
+        }
     }
+
+    BeforeEach {
+        Reset-PowerShell
+    }
+
     It 'Permits class methods to be named after keywords' {
-        $Object = [TestMethodNames]::new()
+        $TestScript = @'
+            class TestMethodNames : IDisposable {
+                [string] Begin() { return "Begin" }
 
-        $Object.Begin() | Should -BeExactly 'Begin'
-        $Object.Process() | Should -BeExactly 'Process'
-        $Object.End() | Should -BeExactly 'End'
+                [string] Process() { return "Process" }
 
-        $Object.Data | Should -BeExactly 'Secrets'
-        $Object.Dispose()
-        $Object.Data | Should -BeNullOrEmpty
+                [string] End() { return "End" }
+
+                hidden $Data = "Secrets"
+
+                Dispose() {
+                    $this.Data = [string]::Empty
+                }
+            }
+            $Object = [TestMethodNames]::new()
+            [PSCustomObject]@{
+                BeginTest   = $Object.Begin()
+                ProcessTest = $Object.Process()
+                EndTest     = $Object.End()
+                CheckData1  = $Object.Data
+                CheckData2  = $( $Object.Dispose(); $Object.Data )
+            }
+'@
+        $Results = Invoke-PowerShell -Script $TestScript
+
+        $Results.BeginTest | Should -BeExactly 'Begin'
+        $Results.ProcessTest | Should -BeExactly 'Process'
+        $Results.EndTest | Should -BeExactly 'End'
+        $Results.CheckData1 | Should -BeExactly 'Secrets'
+        $Results.CheckData2 | Should -BeNullOrEmpty
     }
 }
 
