@@ -629,7 +629,8 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            if (!(formatProvider is CultureInfo culture))
+            var culture = formatProvider as CultureInfo;
+            if (culture == null)
             {
                 throw PSTraceSource.NewArgumentException("formatProvider");
             }
@@ -639,22 +640,12 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (IsNullLike(second))
-                {
-                    return true;
-                }
-
-                return false;
+                return IsNullLike(second);
             }
 
             if (second == null)
             {
-                if (IsNullLike(first))
-                {
-                    return true;
-                }
-
-                return false; // first is not null
+                return IsNullLike(first);
             }
 
             string secondString;
@@ -714,7 +705,7 @@ namespace System.Management.Automation
         /// Helper method for [Try]Compare to determine object ordering with null.
         /// </summary>
         /// <param name="value">The numeric value to compare to null.</param>
-        /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side if the comparison.</param>
+        /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side in the comparison.</param>
         private static int CompareObjectToNull(object value, bool numberIsRightHandSide)
         {
             var i = numberIsRightHandSide ? -1 : 1;
@@ -783,7 +774,8 @@ namespace System.Management.Automation
         {
             formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            var culture = formatProvider as CultureInfo;
+            if (culture == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -803,7 +795,8 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                if (!(second is string secondString))
+                var secondString = second as string;
+                if (secondString == null)
                 {
                     try
                     {
