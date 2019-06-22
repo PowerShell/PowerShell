@@ -64,6 +64,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then

@@ -325,9 +325,6 @@
       <Component Id="cmp7F0E91316B501D5C0C5FDC147C91981E" Guid="{E3D382A4-8DC4-4BD1-816B-9ADB12A83412}">
         <File Id="filB2058AD00ED3F7C051D3F6A4705F37C6" KeyPath="yes" Source="$(env.ProductSourcePath)\System.IO.FileSystem.DriveInfo.dll" />
       </Component>
-      <Component Id="cmp03B6932DD9DCA3B838936482F6C72DF5" Guid="{4D708BC6-412F-482A-867C-4D2EF354900E}">
-        <File Id="fil3FC478E85DC9718A496BC8FA9D2AFE3E" KeyPath="yes" Source="$(env.ProductSourcePath)\pwsh.pdb" />
-      </Component>
       <Component Id="cmp49EA2B6077C3CFE16C87CE6C69B211FB" Guid="{04C22CA0-2365-4E40-9B4B-6B42AA205BCD}">
         <File Id="filDB9405064AEB93B55BA7A5608BBBFA97" KeyPath="yes" Source="$(env.ProductSourcePath)\Install-PowerShellRemoting.ps1" />
       </Component>
@@ -3125,7 +3122,6 @@
       <ComponentRef Id="cmp9568B438265B4B9537FB278425E51F9D" />
       <ComponentRef Id="cmp96F5D79C2A39A3FCE2832C9F0DA1FFB9" />
       <ComponentRef Id="cmp7F0E91316B501D5C0C5FDC147C91981E" />
-      <ComponentRef Id="cmp03B6932DD9DCA3B838936482F6C72DF5" />
       <ComponentRef Id="cmp49EA2B6077C3CFE16C87CE6C69B211FB" />
       <ComponentRef Id="cmpFD2810C7EB4AE4047C456491CE5AABA5" />
       <ComponentRef Id="cmpCB73A07CE8A738AA1591F9E7C13B0DC6" />

@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (adapters != null && configs != null)
             {
-                var configDict = new Dictionary<UInt32, WmiNetworkAdapterConfiguration>();
+                var configDict = new Dictionary<uint, WmiNetworkAdapterConfiguration>();
 
                 foreach (var config in configs)
                 {
