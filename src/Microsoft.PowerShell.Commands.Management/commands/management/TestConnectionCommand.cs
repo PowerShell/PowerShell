@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
             int currentHop = 1;
             int timeout = TimeoutSeconds * 1000;
-            string hostname = null;
+            string hostname;
 
             var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
 
@@ -305,6 +305,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 reply = null;
+                hostname = null;
                 pingOptions.Ttl = currentHop;
 
                 // We don't allow -Count parameter for -TraceRoute.
@@ -317,7 +318,8 @@ namespace Microsoft.PowerShell.Commands
                         reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
                         timer.Stop();
 
-                        if (ResolveDestination
+                        if (hostname == null
+                            && ResolveDestination
                             && (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired))
                         {
                             try
@@ -340,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                                 timer.ElapsedMilliseconds,
                                 buffer.Length),
                             Source,
-                            hostname ?? targetNameOrAddress,
+                            resolvedTargetName ?? targetNameOrAddress,
                             targetAddress);
 
                         WriteObject(status);
