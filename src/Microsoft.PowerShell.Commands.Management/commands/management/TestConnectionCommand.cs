@@ -799,8 +799,8 @@ namespace Microsoft.PowerShell.Commands
                 _status = status;
                 Hop = hop;
                 Source = source;
-                Destination = destination;
-                DestinationAddress = destinationAddress;
+                Target = destination;
+                TargetAddress = destinationAddress;
             }
 
             private readonly PingStatus _status;
@@ -845,12 +845,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the final destination hostname of the trace.
             /// </summary>
-            public string Destination { get; }
+            public string Target { get; }
 
             /// <summary>
             /// Gets the final destination IP address of the trace.
             /// </summary>
-            public IPAddress DestinationAddress { get; }
+            public IPAddress TargetAddress { get; }
 
             /// <summary>
             /// Gets the raw PingReply object received from the ping to this hop point.

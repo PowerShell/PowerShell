@@ -320,16 +320,16 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
                     .AddHeader(Alignment.Center, label: "Status", width: 16)
                     .AddHeader(Alignment.Left, label: "Source", width: 16)
-                    .AddHeader(Alignment.Left, label: "DestinationAddress", width: 18)
+                    .AddHeader(Alignment.Left, label: "TargetAddress", width: 18)
                     .StartRowDefinition()
                         .AddPropertyColumn("Hop")
                         .AddPropertyColumn("Hostname")
                         .AddPropertyColumn("Latency")
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("Source")
-                        .AddPropertyColumn("DestinationAddress")
+                        .AddPropertyColumn("TargetAddress")
                     .EndRowDefinition()
-                    .GroupByProperty("Destination")
+                    .GroupByProperty("Target")
                 .EndTable());
         }
 
