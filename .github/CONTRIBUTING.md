@@ -41,6 +41,32 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
+#### Quick steps if you're changing an existing cmdlet
+
+If you made a change to an existing cmdlet and would like to update the documentation using PlatyPS,
+here are the quick steps:
+
+1. Install 
+`PlatyPS`
+if you don't have it -
+`Install-Module PlatyPS`.
+2. Clone the
+[`MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs)
+repo if you don't already have it.
+3. Start your local build of PowerShell
+(with the change to the cmdlet you made).
+4. Find the cmdlet's markdown file in PowerShell Docs - usually under
+`PowerShell-Docs/reference/<latest powershell version>/<module cmdlet is a part of>/<your changed cmdlet>.md`
+(Ex. `PowerShell-Docs/reference/7/Microsoft.PowerShell.Utility/Select-String.md`)
+5. Run
+`Update-MarkdownHelp -Path <path to cmdlet markdown file>`
+which will update the documentation for you.
+6. Make any additional changes needed for the cmdlet to be properly documented.
+7. Send a Pull Request to the PowerShell Docs repo with the changes that
+`PlatyPS`
+made.
+8. Link your Docs PR to your original change PR.
+
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
