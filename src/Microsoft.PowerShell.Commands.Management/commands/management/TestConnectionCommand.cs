@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(bool),
         ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
-    public class TestConnectionCommand : PSCmdlet
+    public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         private const string ParameterSetPing = "PingCount";
         private const string ParameterSetPingContinue = "PingContinue";
@@ -33,6 +33,10 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
         private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
         private const int sMaxHops = 128;
+
+        private readonly Ping _sender = new Ping();
+        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
+        private PingCompletedEventArgs _pingCompleteArgs;
 
         #region Parameters
 
@@ -195,6 +199,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            _sender.PingCompleted += OnPingCompleted;
+
             if (ParameterSetName == ParameterSetPingContinue)
             {
                 Count = int.MaxValue;
@@ -225,6 +231,14 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// StopProcessing implementation so we can handle Ctrl+C properly.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _sender?.SendAsyncCancel();
         }
 
         #region ConnectionTest
@@ -300,7 +314,6 @@ namespace Microsoft.PowerShell.Commands
 
             var timer = new Stopwatch();
             PingReply reply;
-            using var sender = new Ping();
 
             do
             {
@@ -314,9 +327,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        timer.Start();
-                        reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
-                        timer.Stop();
+                        reply = DoPing(targetAddress, timeout, buffer, pingOptions, timer);
 
                         if (hostname == null
                             && ResolveDestination
@@ -428,7 +439,6 @@ namespace Microsoft.PowerShell.Commands
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
             int timeout = TimeoutSeconds * 1000;
-            using var sender = new Ping();
 
             try
             {
@@ -445,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = DoPing(targetAddress, timeout, buffer, pingOptions);
 
                     // Cautious! Algorithm is sensitive to changing boundary values.
                     if (reply.Status == IPStatus.PacketTooBig)
@@ -540,13 +550,12 @@ namespace Microsoft.PowerShell.Commands
             var pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
-            using var sender = new Ping();
 
             for (int i = 1; i <= Count; i++)
             {
                 try
                 {
-                    reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = DoPing(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -721,6 +730,50 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return sendBuffer;
+        }
+
+        private PingReply DoPing(
+            IPAddress targetAddress,
+            int timeout,
+            byte[] buffer,
+            PingOptions pingOptions,
+            Stopwatch timer = null)
+        {
+            timer?.Start();
+            _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
+            _pingComplete.Wait();
+            timer?.Stop();
+            // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
+            Thread.Sleep(1);
+            _pingComplete.Reset();
+
+            if (_pingCompleteArgs.Cancelled)
+            {
+                // The only cancellation we have implemented is on pipeline stops.
+                throw new PipelineStoppedException();
+            }
+
+            if (_pingCompleteArgs.Error != null)
+            {
+                throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
+            }
+
+            return _pingCompleteArgs.Reply;
+        }
+
+        private static void OnPingCompleted(object sender, PingCompletedEventArgs e)
+        {
+            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
+            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
+        }
+
+        /// <summary>
+        /// IDisposable implementation.
+        /// </summary>
+        public void Dispose()
+        {
+            _sender?.Dispose();
+            _pingComplete?.Dispose();
         }
 
         /// <summary>
