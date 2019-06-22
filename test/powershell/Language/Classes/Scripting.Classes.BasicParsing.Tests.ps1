@@ -418,26 +418,26 @@ Describe 'Property Attributes Test' -Tags "CI" {
 
 Describe 'Testing Method Names can be Keywords' -Tags "CI" {
     BeforeAll {
-        [powershell] $ps = $null
+        [powershell] $script:PowerShell = $null
 
         function Invoke-PowerShell {
             [CmdletBinding()]
             param([string] $Script)
 
             try {
-                $ps.AddScript($Script).Invoke()
+                $script:PowerShell.AddScript($Script).Invoke()
             }
             finally {
-                $ps.Commands.Clear()
+                $script:PowerShell.Commands.Clear()
             }
         }
 
         function Reset-PowerShell {
-            if ($ps) {
-                $ps.Dispose()
+            if ($script:PowerShell) {
+                $script:PowerShell.Dispose()
             }
 
-            $ps = [powershell]::Create()
+            $script:PowerShell = [powershell]::Create()
         }
     }
 
