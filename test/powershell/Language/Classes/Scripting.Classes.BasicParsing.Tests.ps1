@@ -477,6 +477,51 @@ Describe 'Testing Method Names can be Keywords' -Tags "CI" {
         $Results.CheckData1 | Should -BeExactly 'Secrets'
         $Results.CheckData2 | Should -BeNullOrEmpty
     }
+
+    It 'Permits class methods to be named after DynamicKeywords' {
+        $DefineKeyword = @'
+            function GetData {
+                param(
+                    $KeywordData,
+                    $Name,
+                    $Value,
+                    $SourceMetadata
+                )
+                end {
+                    return $PSBoundParameters
+                }
+            }
+
+            $keyword = [System.Management.Automation.Language.DynamicKeyword]::new()
+            $keyword.NameMode = [System.Management.Automation.Language.DynamicKeywordNameMode]::SimpleNameRequired
+            $keyword.Keyword = 'GetData'
+            $keyword.BodyMode = [System.Management.Automation.Language.DynamicKeywordBodyMode]::Hashtable
+
+            $property = [System.Management.Automation.Language.DynamicKeywordProperty]::new()
+            $property.Name = 'Hey'
+            $property.TypeConstraint = 'int'
+            $keyword.Properties.Add('Hey', $property)
+
+            [System.Management.Automation.Language.DynamicKeyword]::AddKeyword($keyword)
+'@
+        $DefineClass = @'
+            class Test {
+                hidden $Data = 'TOP SECRET'
+
+                [string] GetData() {
+                    return $this.Data
+                }
+            }
+'@
+        $TestScript = @'
+            $Object = [Test]::new()
+            $Object.GetData()
+'@
+        Invoke-PowerShell -Script $DefineKeyword
+        Invoke-PowerShell -Script $DefineClass
+
+        Invoke-PowerShell -Script $TestScript | Should -BeExactly 'TOP SECRET'
+    }
 }
 
 Describe 'Method Attributes Test' -Tags "CI" {
