@@ -621,15 +621,15 @@ foo``u{2195}abc
     }
 
     It "This test will check that the parser throws a syntax error when a foreach loop is not complete. (line 1238)" {
-        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -filter *.txt ); foreach ($i ; $count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i ; $count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "This test will check that the parser throws a syntax error if the foreach loop is not complete. (line 1248)" {
-        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -filter *.txt ); foreach ($i in ;$count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i in ;$count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "This will test that the parser throws a syntax error if the foreach loop is missing a closing parentheses. (line 1258)" {
-        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -filter *.txt ); foreach ($i in $files ;$count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i in $files ;$count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
@@ -677,7 +677,7 @@ foo``u{2195}abc
     It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
         $result | Should -Be "3"
-        $result.GetType() | Should -Be ([int])
+        $result | Should -BeOfType [int]
     }
 
     It "This test will check that an msh script can be run without invoking. (line 1641)" {
