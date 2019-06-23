@@ -160,16 +160,15 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         { ExecuteCommand "testcmd-parserbvt | 'abc'" } | Should -Throw -ErrorId "ParseException"
     }
 
-    $PipeIntoValueTests = @(
+    It "Throws when you pipe into a value expression (line 238)" {
+        param($Command)
+
+        { ExecuteCommand $command } | Should -Throw -ErrorId "ParseException"
+    } -TestCases @(
         @{ Command = '1;2;3|3' }
         @{ Command = '1;2;3|$(1+1)' }
         @{ Command = "1;2;3|'abc'" }
     )
-    It "Throws when you pipe into a value expression (line 238)" -TestCases $PipeIntoValueTests {
-        param($Command)
-
-        { ExecuteCommand $command } | Should -Throw -ErrorId "ParseException"
-    }
 
     It "Throws an incomplete parse exception when a comma follows an expression (line 247)" {
         { ExecuteCommand "(1+ 1)," } | Should -Throw -ErrorId "IncompleteParseException"
@@ -301,7 +300,11 @@ foo``u{2195}abc
     Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
         # the first two sequences are tricky, because we need to provide something to
         # execute without causing an incomplete parse error
-        $Escapes = @(
+        It 'C# escape sequence <sequence> is supported using ` instead of \. (line 613)' {
+            param ( $Sequence, $Expected )
+            $result = ExecuteCommand $Sequence
+            $result | Should -BeExactly $Expected
+        } -TestCases @(
             @{ Sequence = "write-output ""`'"""; Expected = [char]39 }
             @{ Sequence = 'write-output "`""'; Expected = [char]34 }
             # this is a string, of 2 "\", the initial backtick should essentially be ignored
@@ -316,11 +319,6 @@ foo``u{2195}abc
             @{ Sequence = '"`t"'; Expected = [char]9 } # tab
             @{ Sequence = '"`v"'; Expected = [char]11 }
         )
-        It 'C# escape sequence <sequence> is supported using ` instead of \. (line 613)' -TestCases $Escapes {
-            param ( $Sequence, $Expected )
-            $result = ExecuteCommand $Sequence
-            $result | Should -BeExactly $Expected
-        }
     }
 
     It "This test checks that array substitution occurs inside double quotes. (line 646)" {
@@ -416,7 +414,12 @@ foo``u{2195}abc
         $result | Should -Be $ExpectedResult
     }
 
-    $BreakLabelWithNestedLabels = @(
+    It "Use break in two loops with same label. (line 967)" {
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
         @{
             Command        = '
                 :foo while ($true) {
@@ -460,14 +463,13 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "4"
         }
     )
-    It "Use break in two loops with same label. (line 967)" -TestCases $BreakLabelWithNestedLabels {
+
+    It "Try continue inside of different loop statements. (line 1039)" {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
-    }
-
-    $ContinueTests = @(
+    } -TestCases @(
         @{
             Command        = '
                 $a = 0
@@ -496,14 +498,13 @@ foo``u{2195}abc
             ExpectedResult = "0", "1"
         }
     )
-    It "Try continue inside of different loop statements. (line 1039)" -TestCases $ContinueTests {
+
+    It "Use a label to continue an inner loop. (line 1059)" {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
-    }
-
-    $LabelledContinueTests = @(
+    } -TestCases @(
         @{
             Command        = '
                 $x = 0
@@ -548,14 +549,13 @@ foo``u{2195}abc
             ExpectedResult = "1", "1", "2", "4"
         }
     )
-    It "Use a label to continue an inner loop. (line 1059)" -TestCases $LabelledContinueTests {
+
+    It "Use continue with a label on a nested loop. (line 1059)" {
         param($Command, $ExpectedResult)
 
         $result = ExecuteCommand $Command
         $result | Should -Be $ExpectedResult
-    }
-
-    $ContinueFromInnerWithLabelTests = @(
+    } -TestCases @(
         @{
             Command        = '
                 $x = 0
@@ -600,12 +600,6 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "1", "2"
         }
     )
-    It "Use continue with a label on a nested loop. (line 1059)" -TestCases $ContinueFromInnerWithLabelTests {
-        param($Command, $ExpectedResult)
-
-        $result = ExecuteCommand $Command
-        $result | Should -Be $ExpectedResult
-    }
 
     It "This test will check that it is a syntax error to use if without a code block. (line 1141)" {
         { ExecuteCommand 'if ("true")' } | Should -Throw -ErrorId "IncompleteParseException"
