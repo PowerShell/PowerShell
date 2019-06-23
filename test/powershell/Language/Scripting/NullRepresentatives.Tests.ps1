@@ -64,4 +64,20 @@ Describe 'Null Representatives' -Tags 'CI' {
             100 | Where-Object { $Value.InvokeReturnAsIs() } | Should -BeNullOrEmpty
         }
     }
+
+    Context 'Collection Comparisons' {
+        BeforeAll {
+            $NullArray = $null, $null, [DBNull]::Value, $null, $null, [NullString]::Value
+        }
+
+        It '<Value> should correctly filter the array and return <ExpectedCount> results' {
+            param($Value, $ExpectedCount)
+
+            $NullArray -eq $Value | Should -HaveCount $ExpectedCount
+        } -TestCases @(
+            @{ Value = $null; ExpectedCount = 6 }
+            @{ Value = [DBNull]::Value; ExpectedCount = 5 }
+            @{ Value = [NullString]::Value; ExpectedCount = 5 }
+        )
+    }
 }
