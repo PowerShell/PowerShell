@@ -363,7 +363,12 @@ foo``u{2195}abc
         $result[4] | Should -BeExactly "script"
     }
 
-    $BreakNestedLoopTests = @(
+    It "Use break inside of a loop that is inside another loop. (line 945)" {
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
         @{
             Command        = '
                 while ($true) {
@@ -407,12 +412,6 @@ foo``u{2195}abc
             ExpectedResult = "1", "2", "4"
         }
     )
-    It "Use break inside of a loop that is inside another loop. (line 945)" -TestCases $BreakNestedLoopTests {
-        param($Command, $ExpectedResult)
-
-        $result = ExecuteCommand $Command
-        $result | Should -Be $ExpectedResult
-    }
 
     It "Use break in two loops with same label. (line 967)" {
         param($Command, $ExpectedResult)
