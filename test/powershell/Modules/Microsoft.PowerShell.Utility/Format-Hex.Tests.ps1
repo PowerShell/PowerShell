@@ -23,10 +23,10 @@ Describe "FormatHex" -tags "CI" {
         $inputText2 = 'More text'
         $inputText3 = 'Literal path'
         $inputText4 = 'Now is the winter of our discontent'
-        $inputFile1 = setup -f "FormatHexDataDir/SourceFile-1.txt" -content $inputText1 -pass
-        $inputFile2 = setup -f "FormatHexDataDir/SourceFile-2.txt" -content $inputText2 -pass
-        $inputFile3 = setup -f "FormatHexDataDir/SourceFile literal [3].txt" -content $inputText3 -pass
-        $inputFile4 = setup -f "FormatHexDataDir/SourceFile-4.txt" -content $inputText4 -pass
+        $inputFile1 = Setup -f "FormatHexDataDir/SourceFile-1.txt" -content $inputText1 -pass
+        $inputFile2 = Setup -f "FormatHexDataDir/SourceFile-2.txt" -content $inputText2 -pass
+        $inputFile3 = Setup -f "FormatHexDataDir/SourceFile literal [3].txt" -content $inputText3 -pass
+        $inputFile4 = Setup -f "FormatHexDataDir/SourceFile-4.txt" -content $inputText4 -pass
 
         $certificateProvider = Get-ChildItem Cert:\CurrentUser\My\ -ErrorAction SilentlyContinue
         $thumbprint = $null
@@ -292,7 +292,8 @@ public enum TestSByteEnum : sbyte {
 
             if ($PathCase) {
                 $result = Format-Hex -Path $Path
-            } else {
+            }
+            else {
                 # LiteralPath
                 $result = Format-Hex -LiteralPath $Path
             }
@@ -312,12 +313,14 @@ public enum TestSByteEnum : sbyte {
 
             $result = $FileObject | Format-Hex
             if ($IsWindows) {
-                $ExpectedResult = "00000000000000000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0D 0A        Hello World!.."
-            } else {
-                $ExpectedResult = "00000000000000000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0A           Hello World!."
+                $Result.Bytes[-1] | Should -Be 0x0A
+                $Result.Bytes[-2] | Should -Be 0x0D
+                $Result.Bytes.Length | Should -Be 14
             }
-
-            $result[0].ToString() | Should -MatchExactly $ExpectedResult
+            else {
+                $Result.Bytes[-1] | Should -Be 0x0A
+                $Result.Bytes.Length | Should -Be 13
+            }
         }
     }
 
@@ -405,154 +408,155 @@ public enum TestSByteEnum : sbyte {
                     $result = Format-Hex -InputObject $InputObject -ErrorAction Stop
                 }
             } | Should -Throw -ErrorId $ExpectedFullyQualifiedErrorId
+    }
+}
+
+Context "Continues to Process Valid Paths" {
+
+    $testCases = @(
+        @{
+            Name                          = "If given invalid path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
+            PathCase                      = $true
+            InvalidPath                   = "$($inputFile1.DirectoryName)\fakefile8888845345345348709.txt"
+            ExpectedFullyQualifiedErrorId = "FileNotFound,Microsoft.PowerShell.Commands.FormatHex"
         }
+        @{
+            Name                          = "If given a non FileSystem path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
+            PathCase                      = $true
+            InvalidPath                   = "Cert:\CurrentUser\My\$thumbprint"
+            ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
+        }
+        @{
+            Name                          = "If given a non FileSystem path in array (with LiteralPath), continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
+            InvalidPath                   = "Cert:\CurrentUser\My\$thumbprint"
+            ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
+        }
+    )
+
+    It "<Name>" -Skip:$skipTest -TestCase $testCases {
+
+        param ($Name, $PathCase, $InvalidPath, $ExpectedFullyQualifiedErrorId)
+
+        $output = $null
+        $errorThrown = $null
+
+        if ($PathCase) {
+            $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
+        }
+        else {
+            # LiteralPath
+            $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
+        }
+
+        $errorThrown.FullyQualifiedErrorId | Should -MatchExactly $ExpectedFullyQualifiedErrorId
+
+        $output.Length | Should -Be 1
+        $output[0].ToString() | Should -MatchExactly $inputText1
+    }
+}
+
+Context "Cmdlet Functionality" {
+
+    It "Path is default Parameter Set 'fhx `$inputFile1'" {
+
+        $result = Format-Hex $inputFile1
+
+        $result | Should -Not -BeNullOrEmpty
+        , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $actualResult = $result.ToString()
+        $actualResult | Should -MatchExactly $inputText1
     }
 
-    Context "Continues to Process Valid Paths" {
+    It "Validate file input from Pipeline 'Get-ChildItem `$inputFile1 | Format-Hex'" {
 
-        $testCases = @(
-            @{
-                Name                          = "If given invalid path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
-                PathCase                      = $true
-                InvalidPath                   = "$($inputFile1.DirectoryName)\fakefile8888845345345348709.txt"
-                ExpectedFullyQualifiedErrorId = "FileNotFound,Microsoft.PowerShell.Commands.FormatHex"
-            }
-            @{
-                Name                          = "If given a non FileSystem path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
-                PathCase                      = $true
-                InvalidPath                   = "Cert:\CurrentUser\My\$thumbprint"
-                ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
-            }
-            @{
-                Name                          = "If given a non FileSystem path in array (with LiteralPath), continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
-                InvalidPath                   = "Cert:\CurrentUser\My\$thumbprint"
-                ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
-            }
-        )
+        $result = Get-ChildItem $inputFile1 | Format-Hex
 
-        It "<Name>" -Skip:$skipTest -TestCase $testCases {
-
-            param ($Name, $PathCase, $InvalidPath, $ExpectedFullyQualifiedErrorId)
-
-            $output = $null
-            $errorThrown = $null
-
-            if ($PathCase) {
-                $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-            } else {
-                # LiteralPath
-                $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-            }
-
-            $errorThrown.FullyQualifiedErrorId | Should -MatchExactly $ExpectedFullyQualifiedErrorId
-
-            $output.Length | Should -Be 1
-            $output[0].ToString() | Should -MatchExactly $inputText1
-        }
+        $result | Should -Not -BeNullOrEmpty
+        , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $actualResult = $result.ToString()
+        $actualResult | Should -MatchExactly $inputText1
     }
 
-    Context "Cmdlet Functionality" {
+    It "Validate that streamed text does not have buffer underrun problems ''a' * 30 | Format-Hex'" {
 
-        It "Path is default Parameter Set 'fhx `$inputFile1'" {
+        $result = "a" * 30 | Format-Hex
 
-            $result = Format-Hex $inputFile1
-
-            $result | Should -Not -BeNullOrEmpty
-            , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $actualResult = $result.ToString()
-            $actualResult | Should -MatchExactly $inputText1
-        }
-
-        It "Validate file input from Pipeline 'Get-ChildItem `$inputFile1 | Format-Hex'" {
-
-            $result = Get-ChildItem $inputFile1 | Format-Hex
-
-            $result | Should -Not -BeNullOrEmpty
-            , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $actualResult = $result.ToString()
-            $actualResult | Should -MatchExactly $inputText1
-        }
-
-        It "Validate that streamed text does not have buffer underrun problems ''a' * 30 | Format-Hex'" {
-
-            $result = "a" * 30 | Format-Hex
-
-            $result | Should -Not -BeNullOrEmpty
-            , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result.ToString() | Should -MatchExactly "00000000000000000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa$($newline)00000000000000000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
-        }
-
-        It "Validate that files do not have buffer underrun problems 'Format-Hex -Path `$InputFile4'" {
-
-            $result = Format-Hex -Path $InputFile4
-
-            $result | Should -Not -BeNullOrEmpty
-            $result.Count | Should -Be 3
-            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
-            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
-            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
-        }
+        $result | Should -Not -BeNullOrEmpty
+        , $result | Should -BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $result.ToString() | Should -MatchExactly "00000000000000000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa$($newline)00000000000000000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
     }
 
-    Context "Count and Offset parameters" {
-        It "Count = length" {
+    It "Validate that files do not have buffer underrun problems 'Format-Hex -Path `$InputFile4'" {
 
-            $result = Format-Hex -Path $InputFile4 -Count $inputText4.Length
+        $result = Format-Hex -Path $InputFile4
 
-            $result | Should -Not -BeNullOrEmpty
-            $result.Count | Should -Be 3
-            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
-            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
-            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
-        }
-
-        It "Count = 1" {
-            $result = Format-Hex -Path $inputFile4 -Count 1
-            $result.ToString() | Should -MatchExactly    "00000000000000000000   4E                                               N               "
-        }
-
-        It "Offset = length" {
-
-            $result = Format-Hex -Path $InputFile4 -Offset $inputText4.Length
-            $result | Should -BeNullOrEmpty
-
-            $result = Format-Hex -InputObject $inputText4 -Offset $inputText4.Length
-            $result.Bytes | Should -HaveCount 0
-        }
-
-        It "Offset = 1" {
-
-            $result = Format-Hex -Path $InputFile4 -Offset 1
-
-            $result | Should -Not -BeNullOrEmpty
-            $result.Count | Should -Be 3
-            $result[0].ToString() | Should -MatchExactly "00000000000000000001   6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65 72  ow is the winter"
-            $result[1].ToString() | Should -MatchExactly "00000000000000000011   20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74 65   of our disconte"
-            $result[2].ToString() | Should -MatchExactly "00000000000000000021   6E 74                                            nt              "
-        }
-
-        It "Count = 1 and Offset = 1" {
-            $result = Format-Hex -Path $inputFile4 -Count 1 -Offset 1
-            $result.ToString() | Should -MatchExactly    "00000000000000000001   6F                                               o               "
-        }
-
-        It "Count should be > 0" {
-            { Format-Hex -Path $inputFile4 -Count 0 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
-        }
-
-        It "Offset should be >= 0" {
-            { Format-Hex -Path $inputFile4 -Offset -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
-        }
-
-        It "Offset = 0" {
-
-            $result = Format-Hex -Path $InputFile4 -Offset 0
-
-            $result | Should -Not -BeNullOrEmpty
-            $result.Count | Should -Be 3
-            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
-            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
-            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
-        }
+        $result | Should -Not -BeNullOrEmpty
+        $result.Count | Should -Be 3
+        $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+        $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+        $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
     }
+}
+
+Context "Count and Offset parameters" {
+    It "Count = length" {
+
+        $result = Format-Hex -Path $InputFile4 -Count $inputText4.Length
+
+        $result | Should -Not -BeNullOrEmpty
+        $result.Count | Should -Be 3
+        $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+        $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+        $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+    }
+
+    It "Count = 1" {
+        $result = Format-Hex -Path $inputFile4 -Count 1
+        $result.ToString() | Should -MatchExactly    "00000000000000000000   4E                                               N               "
+    }
+
+    It "Offset = length" {
+
+        $result = Format-Hex -Path $InputFile4 -Offset $inputText4.Length
+        $result | Should -BeNullOrEmpty
+
+        $result = Format-Hex -InputObject $inputText4 -Offset $inputText4.Length
+        $result.Bytes | Should -HaveCount 0
+    }
+
+    It "Offset = 1" {
+
+        $result = Format-Hex -Path $InputFile4 -Offset 1
+
+        $result | Should -Not -BeNullOrEmpty
+        $result.Count | Should -Be 3
+        $result[0].ToString() | Should -MatchExactly "00000000000000000001   6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65 72  ow is the winter"
+        $result[1].ToString() | Should -MatchExactly "00000000000000000011   20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74 65   of our disconte"
+        $result[2].ToString() | Should -MatchExactly "00000000000000000021   6E 74                                            nt              "
+    }
+
+    It "Count = 1 and Offset = 1" {
+        $result = Format-Hex -Path $inputFile4 -Count 1 -Offset 1
+        $result.ToString() | Should -MatchExactly    "00000000000000000001   6F                                               o               "
+    }
+
+    It "Count should be > 0" {
+        { Format-Hex -Path $inputFile4 -Count 0 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+    }
+
+    It "Offset should be >= 0" {
+        { Format-Hex -Path $inputFile4 -Offset -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+    }
+
+    It "Offset = 0" {
+
+        $result = Format-Hex -Path $InputFile4 -Offset 0
+
+        $result | Should -Not -BeNullOrEmpty
+        $result.Count | Should -Be 3
+        $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+        $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+        $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+    }
+}
 }
