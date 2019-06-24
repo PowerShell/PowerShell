@@ -427,7 +427,7 @@ namespace System.Management.Automation
             var result = new List<CompletionResult>();
             var quote = HandleDoubleAndSingleQuote(ref moduleName);
 
-            if (!moduleName.EndsWith("*", StringComparison.Ordinal))
+            if (!moduleName.EndsWith('*'))
             {
                 moduleName += "*";
             }
@@ -1228,7 +1228,7 @@ namespace System.Management.Automation
                     secondToLastMemberAst.Extent.EndLineNumber == pathAst.Extent.StartLineNumber &&
                     secondToLastMemberAst.Extent.EndColumnNumber == pathAst.Extent.StartColumnNumber)
                 {
-                    var memberName = pathAst.Value.EndsWith("*", StringComparison.Ordinal)
+                    var memberName = pathAst.Value.EndsWith('*')
                                          ? pathAst.Value
                                          : pathAst.Value + "*";
                     var targetExpr = secondToLastMemberAst.Expression;
@@ -2911,7 +2911,7 @@ namespace System.Management.Automation
                 var logName = context.WordToComplete ?? string.Empty;
                 var quote = HandleDoubleAndSingleQuote(ref logName);
 
-                if (!logName.EndsWith("*", StringComparison.Ordinal))
+                if (!logName.EndsWith('*'))
                 {
                     logName += "*";
                 }
@@ -2962,7 +2962,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3049,7 +3049,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3183,7 +3183,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3274,7 +3274,7 @@ namespace System.Management.Automation
             var providerName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref providerName);
 
-            if (!providerName.EndsWith("*", StringComparison.Ordinal))
+            if (!providerName.EndsWith('*'))
             {
                 providerName += "*";
             }
@@ -3318,7 +3318,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3365,7 +3365,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3451,7 +3451,7 @@ namespace System.Management.Automation
 
             var variableName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref variableName);
-            if (!variableName.EndsWith("*", StringComparison.Ordinal))
+            if (!variableName.EndsWith('*'))
             {
                 variableName += "*";
             }
@@ -3511,7 +3511,7 @@ namespace System.Management.Automation
                 var commandName = context.WordToComplete ?? string.Empty;
                 var quote = HandleDoubleAndSingleQuote(ref commandName);
 
-                if (!commandName.EndsWith("*", StringComparison.Ordinal))
+                if (!commandName.EndsWith('*'))
                 {
                     commandName += "*";
                 }
@@ -3572,7 +3572,7 @@ namespace System.Management.Automation
             var traceSourceName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref traceSourceName);
 
-            if (!traceSourceName.EndsWith("*", StringComparison.Ordinal))
+            if (!traceSourceName.EndsWith('*'))
             {
                 traceSourceName += "*";
             }

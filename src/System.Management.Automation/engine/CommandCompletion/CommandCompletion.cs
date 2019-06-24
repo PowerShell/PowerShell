@@ -887,7 +887,7 @@ namespace System.Management.Automation
 
                 lastWord = lastWord ?? string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
-                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
+                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
                 string wildWord = lastWord + "*";
