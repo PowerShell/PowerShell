@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 drivePath = driveName;
             }
-            else if (driveName.EndsWith(":", StringComparison.OrdinalIgnoreCase))
+            else if (driveName.EndsWith(':'))
             {
                 drivePath = driveName + "\\";
             }

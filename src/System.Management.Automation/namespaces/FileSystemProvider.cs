@@ -855,7 +855,7 @@ namespace Microsoft.PowerShell.Commands
                                 associatedPath = associatedPath.Remove(0, 3);
                                 associatedPath = "\\" + associatedPath;
                             }
-                            else if (associatedPath.EndsWith(":", StringComparison.OrdinalIgnoreCase))
+                            else if (associatedPath.EndsWith(':'))
                             {
                                 // The substed path is the root path of a drive. For example: subst Y: C:\
                                 associatedPath += Path.DirectorySeparatorChar;
