@@ -871,7 +871,7 @@ namespace System.Management.Automation
                     {
                         // We ignore the exception.
                         if (Name != null &&
-                            Name.StartsWith("[", StringComparison.OrdinalIgnoreCase) &&
+                            Name.StartsWith('[') &&
                             Name.EndsWith(']'))
                         {
                             string tmp = Name.Substring(1, Name.Length - 2);

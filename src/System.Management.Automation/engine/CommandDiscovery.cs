@@ -1668,7 +1668,7 @@ namespace System.Management.Automation
             {
                 string path = this[index];
                 if (!string.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.Ordinal))
+                    path.StartsWith('.'))
                 {
                     result.Add(index);
                 }
