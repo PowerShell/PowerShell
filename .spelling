@@ -170,6 +170,7 @@ disable-pswsmancombinedtrace
 disable-runspacedebug
 disable-wsmantrace
 disconnect-pssession
+discord
 displaydataquery
 distro
 distros
