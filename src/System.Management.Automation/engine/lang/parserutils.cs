@@ -50,11 +50,6 @@ namespace System.Management.Automation
             return (c == quoteSingleLeft || c == quoteSingleRight || c == quoteSingleBase ||
                 c == quoteReversed || c == '\'');
         }
-
-        public static bool IsCurlyBracket(char c)
-        {
-            return (c == '{' || c == '}');
-        }
     };
 
     #endregion SpecialChars
