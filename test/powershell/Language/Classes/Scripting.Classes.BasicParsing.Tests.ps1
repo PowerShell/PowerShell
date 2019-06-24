@@ -418,7 +418,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
 
 Describe 'Testing Method Names can be Keywords' -Tags "CI" {
     BeforeAll {
-        [powershell] $script:PowerShell = $null
+        [powershell] $script:PowerShell = [powershell]::Create()
 
         function Invoke-PowerShell {
             [CmdletBinding()]
@@ -441,7 +441,7 @@ Describe 'Testing Method Names can be Keywords' -Tags "CI" {
         }
     }
 
-    BeforeEach {
+    AfterEach {
         Reset-PowerShell
     }
 
@@ -521,6 +521,11 @@ Describe 'Testing Method Names can be Keywords' -Tags "CI" {
         Invoke-PowerShell -Script $DefineClass
 
         Invoke-PowerShell -Script $TestScript | Should -BeExactly 'TOP SECRET'
+    }
+
+    AfterAll {
+        # Ensure we don't leave any dynamic keywords in the session.
+        [System.Management.Automation.Language.DynamicKeyword]::Reset()
     }
 }
 
