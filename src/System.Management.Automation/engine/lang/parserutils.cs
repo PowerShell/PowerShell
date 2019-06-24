@@ -51,38 +51,9 @@ namespace System.Management.Automation
                 c == quoteReversed || c == '\'');
         }
 
-        public static bool IsDoubleQuote(char c)
-        {
-            return (c == '"' || c == quoteDoubleLeft || c == quoteDoubleRight || c == quoteLowDoubleLeft);
-        }
-
-        public static bool IsQuote(char c)
-        {
-            return (IsSingleQuote(c) || IsDoubleQuote(c));
-        }
-
-        public static bool IsDelimiter(char c, char delimiter)
-        {
-            if (delimiter == '"') return IsDoubleQuote(c);
-            if (delimiter == '\'') return IsSingleQuote(c);
-            return (c == delimiter);
-        }
-
         public static bool IsCurlyBracket(char c)
         {
             return (c == '{' || c == '}');
-        }
-        /// <summary>
-        /// Canonicalize the quote character - map all of the aliases for " or '
-        /// into their ascii equivalent.
-        /// </summary>
-        /// <param name="c">The character to map.</param>
-        /// <returns>The mapped character.</returns>
-        public static char AsQuote(char c)
-        {
-            if (IsSingleQuote(c)) return '\'';
-            if (IsDoubleQuote(c)) return '"';
-            return (c);
         }
     };
 
