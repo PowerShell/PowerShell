@@ -44,12 +44,6 @@ namespace System.Management.Automation
         {
             return (c == enDash || c == emDash || c == horizontalBar || c == '-');
         }
-
-        public static bool IsSingleQuote(char c)
-        {
-            return (c == quoteSingleLeft || c == quoteSingleRight || c == quoteSingleBase ||
-                c == quoteReversed || c == '\'');
-        }
     };
 
     #endregion SpecialChars
