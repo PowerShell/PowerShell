@@ -427,7 +427,7 @@ namespace System.Management.Automation
             var result = new List<CompletionResult>();
             var quote = HandleDoubleAndSingleQuote(ref moduleName);
 
-            if (!moduleName.EndsWith("*", StringComparison.Ordinal))
+            if (!moduleName.EndsWith('*'))
             {
                 moduleName += "*";
             }
@@ -507,7 +507,7 @@ namespace System.Management.Automation
             // If parent is DynamicKeywordStatementAst - 'Import-DscResource',
             // then customize the auto completion results
             if (keywordAst != null && string.Equals(keywordAst.Keyword.Keyword, "Import-DscResource", StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith("-", StringComparison.OrdinalIgnoreCase))
+                && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith('-'))
             {
                 var lastAst = context.RelatedAsts.Last();
                 var wordToMatch = context.WordToComplete.Substring(1) + "*";
@@ -536,7 +536,7 @@ namespace System.Management.Automation
                 // Parent must be a command
                 commandAst = (CommandAst)parameterAst.Parent;
                 partialName = parameterAst.ParameterName;
-                withColon = context.WordToComplete.EndsWith(":", StringComparison.Ordinal);
+                withColon = context.WordToComplete.EndsWith(':');
             }
             else
             {
@@ -807,7 +807,7 @@ namespace System.Management.Automation
         /// <returns>A list of completion results.</returns>
         public static List<CompletionResult> CompleteOperator(string wordToComplete)
         {
-            if (wordToComplete.StartsWith("-", StringComparison.Ordinal))
+            if (wordToComplete.StartsWith('-'))
             {
                 wordToComplete = wordToComplete.Substring(1);
             }
@@ -846,7 +846,7 @@ namespace System.Management.Automation
                 {
                     commandAst = (CommandAst)expressionAst.Parent;
 
-                    if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(",", StringComparison.Ordinal))
+                    if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(','))
                     {
                         context.WordToComplete = string.Empty;
                         // BUGBUG context.CursorPosition = expressionAst.Extent.StartScriptPosition;
@@ -978,7 +978,7 @@ namespace System.Management.Automation
                 else if (expressionAst.Parent is CommandParameterAst && expressionAst.Parent.Parent is CommandAst)
                 {
                     commandAst = (CommandAst)expressionAst.Parent.Parent;
-                    if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(",", StringComparison.Ordinal))
+                    if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(','))
                     {
                         // dir -Path: a.txt,<tab>
                         context.WordToComplete = string.Empty;
@@ -1228,7 +1228,7 @@ namespace System.Management.Automation
                     secondToLastMemberAst.Extent.EndLineNumber == pathAst.Extent.StartLineNumber &&
                     secondToLastMemberAst.Extent.EndColumnNumber == pathAst.Extent.StartColumnNumber)
                 {
-                    var memberName = pathAst.Value.EndsWith("*", StringComparison.Ordinal)
+                    var memberName = pathAst.Value.EndsWith('*')
                                          ? pathAst.Value
                                          : pathAst.Value + "*";
                     var targetExpr = secondToLastMemberAst.Expression;
@@ -2911,7 +2911,7 @@ namespace System.Management.Automation
                 var logName = context.WordToComplete ?? string.Empty;
                 var quote = HandleDoubleAndSingleQuote(ref logName);
 
-                if (!logName.EndsWith("*", StringComparison.Ordinal))
+                if (!logName.EndsWith('*'))
                 {
                     logName += "*";
                 }
@@ -2962,7 +2962,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3049,7 +3049,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3183,7 +3183,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3274,7 +3274,7 @@ namespace System.Management.Automation
             var providerName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref providerName);
 
-            if (!providerName.EndsWith("*", StringComparison.Ordinal))
+            if (!providerName.EndsWith('*'))
             {
                 providerName += "*";
             }
@@ -3318,7 +3318,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3365,7 +3365,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!wordToComplete.EndsWith("*", StringComparison.Ordinal))
+            if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
@@ -3451,7 +3451,7 @@ namespace System.Management.Automation
 
             var variableName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref variableName);
-            if (!variableName.EndsWith("*", StringComparison.Ordinal))
+            if (!variableName.EndsWith('*'))
             {
                 variableName += "*";
             }
@@ -3511,7 +3511,7 @@ namespace System.Management.Automation
                 var commandName = context.WordToComplete ?? string.Empty;
                 var quote = HandleDoubleAndSingleQuote(ref commandName);
 
-                if (!commandName.EndsWith("*", StringComparison.Ordinal))
+                if (!commandName.EndsWith('*'))
                 {
                     commandName += "*";
                 }
@@ -3572,7 +3572,7 @@ namespace System.Management.Automation
             var traceSourceName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref traceSourceName);
 
-            if (!traceSourceName.EndsWith("*", StringComparison.Ordinal))
+            if (!traceSourceName.EndsWith('*'))
             {
                 traceSourceName += "*";
             }
@@ -4008,7 +4008,7 @@ namespace System.Management.Automation
                     if (!prev.ParameterSpecified)
                         return new ArgumentLocation() { Argument = null, IsPositional = true, Position = position };
 
-                    return prev.Parameter.Extent.Text.EndsWith(":", StringComparison.Ordinal)
+                    return prev.Parameter.Extent.Text.EndsWith(':')
                         ? new ArgumentLocation() { Argument = prev, IsPositional = false, Position = -1 }
 
                         : new ArgumentLocation() { Argument = null, IsPositional = true, Position = position };
@@ -4520,7 +4520,7 @@ namespace System.Management.Automation
 
                     if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
                         continue;
-                    if (ignoreHidden && shareInfo.netname.EndsWith("$", StringComparison.Ordinal))
+                    if (ignoreHidden && shareInfo.netname.EndsWith('$'))
                         continue;
                     shares.Add(shareInfo.netname);
                 }
@@ -6122,7 +6122,7 @@ namespace System.Management.Automation
 
                     Diagnostics.Assert(!string.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
                     wordToComplete = wordToComplete.Substring(1);
-                    bool withColon = wordToComplete.EndsWith(":", StringComparison.Ordinal);
+                    bool withColon = wordToComplete.EndsWith(':');
                     wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;
 
                     string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(typeof(SwitchFlags));

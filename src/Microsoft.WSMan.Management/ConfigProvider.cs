@@ -2969,7 +2969,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            if (filter.ToString().EndsWith("+", StringComparison.OrdinalIgnoreCase))
+            if (filter.ToString().EndsWith('+'))
                 filter.Remove(filter.ToString().Length - 1, 1);
             return filter.ToString();
         }

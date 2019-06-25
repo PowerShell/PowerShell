@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
-                                !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                                !adjustedPath.StartsWith('.'))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }

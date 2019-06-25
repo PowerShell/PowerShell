@@ -2287,7 +2287,7 @@ namespace System.Management.Automation
                 comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
+                comparePath.StartsWith('~'));
         }
 
         /// <summary>

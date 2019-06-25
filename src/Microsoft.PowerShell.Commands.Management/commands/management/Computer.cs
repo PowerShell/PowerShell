@@ -1898,7 +1898,7 @@ $result
             string driveApp;
             foreach (string drive in drives)
             {
-                if (!drive.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
+                if (!drive.EndsWith('\\'))
                 {
                     driveApp = string.Concat(drive, "\\");
                 }

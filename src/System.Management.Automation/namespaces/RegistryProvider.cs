@@ -2965,7 +2965,7 @@ namespace Microsoft.PowerShell.Commands
                 path.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("~", StringComparison.OrdinalIgnoreCase));
+                path.StartsWith('~'));
         }
 
         private void GetFilteredRegistryKeyProperties(string path,
