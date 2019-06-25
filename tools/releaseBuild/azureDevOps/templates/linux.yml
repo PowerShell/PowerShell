@@ -1,5 +1,6 @@
 parameters:
   buildName: ''
+  uploadDisplayName: 'Upload'
 
 jobs:
 - job: build_${{ parameters.buildName }}
@@ -42,7 +43,7 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
 - job: upload_${{ parameters.buildName }}
-  displayName: Upload ${{ parameters.buildName }}
+  displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
   pool: Package ES CodeHub Lab E
