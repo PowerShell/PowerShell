@@ -1700,10 +1700,20 @@ namespace System.Management.Automation.Language
                             //
                             // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
                             // about 4.45 ms with the more simplistic algorithm.
-                            //
-                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
 
-                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
+                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
+                            if (_beginTokenSimilarity2dArray == null)
+                            {
+                                // Create the 2 dimensional array for edit distance calculation if it hasn't been created yet.
+                                _beginTokenSimilarity2dArray = new int[beginTokenSimilarityUpperBound + 1, beginSignatureTextNoSpace.Length + 1];
+                            }
+                            else
+                            {
+                                // Zero out the 2 dimensional array before using it.
+                                Array.Clear(_beginTokenSimilarity2dArray, 0, _beginTokenSimilarity2dArray.Length);
+                            }
+
+                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace, _beginTokenSimilarity2dArray);
                             sawBeginSig = sawBeginTokenSimilarity < beginTokenSimilarityThreshold;
                         }
 
@@ -1719,6 +1729,9 @@ namespace System.Management.Automation.Language
         #endregion Utilities
 
         #region Object reuse
+
+        // A two-dimensional integer array reused for calculating string similarity.
+        private int[,] _beginTokenSimilarity2dArray;
 
         private readonly Queue<StringBuilder> _stringBuilders = new Queue<StringBuilder>();
 
@@ -1799,14 +1812,14 @@ namespace System.Management.Automation.Language
 
         // Implementation of the Levenshtein Distance algorithm
         // https://en.wikipedia.org/wiki/Levenshtein_distance
-        private static int GetStringSimilarity(string first, string second)
+        private static int GetStringSimilarity(string first, string second, int[,] distanceMap = null)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(first) && !string.IsNullOrEmpty(second), "Caller never calls us with empty strings");
 
             // Store a distance map to store the number of edits required to
             // convert the first <row> letters of First to the first <column>
             // letters of Second.
-            int[,] distanceMap = new int[first.Length + 1, second.Length + 1];
+            distanceMap ??= new int[first.Length + 1, second.Length + 1];
 
             // Initialize the first row and column of the matrix - the number
             // of edits required when one of the strings is empty is just
