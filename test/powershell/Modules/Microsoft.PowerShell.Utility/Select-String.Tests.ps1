@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Select-String" -Tags "CI" {
     $nl = [Environment]::NewLine
     $currentDirectory = $pwd.Path
@@ -140,7 +141,7 @@ Describe "Select-String" -Tags "CI" {
 	    New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
 	}
 
-	AfterEach {
+	AfterEach 
 	    Remove-Item $testInputFile -Force
 	}
 
