@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         public string Schema { get; set; }
 
-        private JsonSchema4 _jschema;
+        private JsonSchema _jschema;
 
         /// <summary>
         /// Prepare an JSON schema.
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    _jschema = JsonSchema4.FromJsonAsync(Schema).Result;
+                    _jschema = JsonSchema.FromJsonAsync(Schema).Result;
                 }
                 catch (Exception exc)
                 {

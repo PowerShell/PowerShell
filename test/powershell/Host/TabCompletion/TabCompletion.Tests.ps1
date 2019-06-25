@@ -10,33 +10,16 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-Command'
     }
 
-    Context "ExperimentalFeatures" {
+    It 'Should complete abbreviated cmdlet' {
+        $res = (TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        $res | Should -HaveCount 1
+        $res | Should -BeExactly 'Import-PowerShellDataFile'
+    }
 
-        BeforeAll {
-            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
-
-            @"
-            {
-                "ExperimentalFeatures": [
-                  "PSUseAbbreviationExpansion"
-                ]
-            }
-"@ > $configFilePath
-
-        }
-
-        It 'Should complete abbreviated cmdlet' {
-            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
-            $res | Should -HaveCount 1
-            $res | Should -BeExactly 'Import-PowerShellDataFile'
-        }
-
-        It 'Should complete abbreviated function' {
-            $res = pwsh -noprofile -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
-            $res.Count | Should -BeGreaterOrEqual 1
-            $res | Should -BeExactly 'PSConsoleHostReadLine'
-        }
-
+    It 'Should complete abbreviated function' {
+        $res = (TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText
+        $res.Count | Should -BeGreaterOrEqual 1
+        $res | Should -BeExactly 'PSConsoleHostReadLine'
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
@@ -483,7 +466,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
                 @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
-                @{ inputStr = 'try { 1/0 } catch {};$error[0].'; expected = 'CategoryInfo'; setup = $null }
+                @{ inputStr = '$e=$null;try { 1/0 } catch {$e=$_};$e.'; expected = 'CategoryInfo'; setup = $null }
                 @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
                 @{ inputStr = 'function Get-ScrumData {}; Get-Scrum'; expected = 'Get-ScrumData'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }

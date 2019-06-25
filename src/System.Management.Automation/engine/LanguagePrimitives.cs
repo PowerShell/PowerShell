@@ -305,6 +305,8 @@ namespace System.Management.Automation
         internal delegate void MemberSetValueError(SetValueException e);
 
         internal const string OrderedAttribute = "ordered";
+        internal const string DoublePrecision = "G15";
+        internal const string SinglePrecision = "G7";
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
@@ -3311,6 +3313,17 @@ namespace System.Management.Automation
             try
             {
                 // Ignore formatProvider here, the conversion should be culture invariant.
+                var numberFormat = CultureInfo.InvariantCulture.NumberFormat;
+                if (valueToConvert is double dbl)
+                {
+                    return dbl.ToString(DoublePrecision, numberFormat);
+                }
+
+                if (valueToConvert is float sgl)
+                {
+                    return sgl.ToString(SinglePrecision, numberFormat);
+                }
+
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)

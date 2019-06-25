@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// If keepAssigned is true only those values are set
         /// which are unassigned.
         /// </summary>
-        /// <param name="keepAssigned"></param>
+        /// <param name="keepAssigned">Keep old values.</param>
         protected internal virtual void LoadFromDefaults(bool keepAssigned)
         {
             throw new NotImplementedException();

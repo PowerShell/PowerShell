@@ -4624,6 +4624,7 @@ namespace System.Management.Automation.Language
                     {
                         NormalizeCRLF(c1);
                     }
+
                     if (c1 == '\n' || c1 == '\r')
                     {
                         NewToken(TokenKind.LineContinuation);

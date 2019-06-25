@@ -4370,49 +4370,49 @@ namespace System.Management.Automation.Language
                 switch (token.Kind)
                 {
 #if SUPPORT_PUBLIC_PRIVATE
-                case TokenKind.Public:
-                    if (publicToken != null)
-                    {
-                        ReportError(token.Extent,
-                            nameof(ParserStrings.DuplicateQualifier),
-                            ParserStrings.DuplicateQualifier,
-                            token.Text);
-                    }
+                    case TokenKind.Public:
+                        if (publicToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
+                        }
 
-                    if (privateToken != null)
-                    {
-                        ReportError(token.Extent,
-                            nameof(ParserStrings.ModifiersCannotBeCombined),
-                            ParserStrings.ModifiersCannotBeCombined,
-                            privateToken.Text,
-                            token.Text);
-                    }
+                        if (privateToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.ModifiersCannotBeCombined),
+                                ParserStrings.ModifiersCannotBeCombined,
+                                privateToken.Text,
+                                token.Text);
+                        }
 
-                    publicToken = token;
-                    SkipToken();
-                    break;
+                        publicToken = token;
+                        SkipToken();
+                        break;
 
-                case TokenKind.Private:
-                    if (privateToken != null)
-                    {
-                        ReportError(token.Extent,
-                            nameof(ParserStrings.DuplicateQualifier),
-                            ParserStrings.DuplicateQualifier,
-                            token.Text);
-                    }
+                    case TokenKind.Private:
+                        if (privateToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
+                        }
 
-                    if (publicToken != null)
-                    {
-                        ReportError(token.Extent,
-                            nameof(ParserStrings.ModifiersCannotBeCombined),
-                            ParserStrings.ModifiersCannotBeCombined,
-                            publicToken.Text,
-                            token.Text);
-                    }
+                        if (publicToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.ModifiersCannotBeCombined),
+                                ParserStrings.ModifiersCannotBeCombined,
+                                publicToken.Text,
+                                token.Text);
+                        }
 
-                    privateToken = token;
-                    SkipToken();
-                    break;
+                        privateToken = token;
+                        SkipToken();
+                        break;
 #endif
 
                     case TokenKind.Hidden:
@@ -4529,7 +4529,7 @@ namespace System.Management.Automation.Language
                     return null;
                 }
 
-#if FALSE
+#if SUPPORT_PUBLIC_PRIVATE
                 MethodAttributes attributes = privateToken != null ? MethodAttributes.Private : MethodAttributes.Public;
 #else
                 MethodAttributes attributes = MethodAttributes.Public;

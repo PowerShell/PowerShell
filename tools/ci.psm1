@@ -468,9 +468,9 @@ function Invoke-CIFinish
         foreach ($package in $packages) {
             if (Test-Path $package)
             {
-	            Write-Log "Package found: $package"
+                Write-Log "Package found: $package"
             }
-	        else
+            else
             {
                 Write-Warning -Message "Package NOT found: $package"
             }
@@ -723,12 +723,12 @@ function New-LinuxPackage
         {
             if ($package -isnot [System.IO.FileInfo])
             {
-                 $packageObj = Get-Item $package
-                 Write-Error -Message "The PACKAGE is not a FileInfo object"
+                $packageObj = Get-Item $package
+                Write-Error -Message "The PACKAGE is not a FileInfo object"
             }
             else
             {
-                    $packageObj = $package
+                $packageObj = $package
             }
 
             Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
