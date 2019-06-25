@@ -1923,8 +1923,8 @@
           <Component Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" Guid="{4ba93428-ae32-4a1d-9f84-0989a2da8eab}">
             <File Id="fil210136B9F56F455E885569F7E5566199" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.psd1" />
           </Component>
-          <Component Id="cmp709F3BBEA37940E880346DAA83642B50" Guid="{c8605893-9335-4bf7-a3a8-d852a3e4197f}">
-            <File Id="filFF877991123D49A58FD15CB83AD44BA7" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.dll" />
+          <Component Id="cmpCC4657AEF2A7400D984E1CE6418EF589" Guid="{8fc2d467-18ae-4bc2-912c-be93ab9526e1}">
+            <File Id="fil6B026F6D5210498B99E5F14386F4F90B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\Microsoft.PowerShell.ThreadJob.dll" />
           </Component>
         </Directory>
       </Directory>
@@ -2807,7 +2807,6 @@
       <ComponentRef Id="cmpF297CB46D5944DC38C68B376140BDF5C" />
       <ComponentRef Id="cmpC2EEED1CA2094DB1B760297F2374216A" />
       <ComponentRef Id="cmpE9DB812405C44652B6BEF707AFDC345E" />
-      <ComponentRef Id="cmp709F3BBEA37940E880346DAA83642B50" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
       <ComponentRef Id="cmp06639B424B054D12A42F24F28FB682E7" />
       <ComponentRef Id="cmp8B763D3852654517B3E25C9CA5247D5F" />
@@ -2940,6 +2939,7 @@
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
       <ComponentRef Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" />
       <ComponentRef Id="cmp8E8AE88416D44A4CA39F23E9C825A899" />
+      <ComponentRef Id="cmpCC4657AEF2A7400D984E1CE6418EF589" />
     </ComponentGroup>
   </Fragment>
 </Wix>
