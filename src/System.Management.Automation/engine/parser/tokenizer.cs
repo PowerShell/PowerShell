@@ -1683,9 +1683,12 @@ namespace System.Management.Automation.Language
                         const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
                         const int beginTokenSimilarityThreshold = 10;
 
-                        // Quick exit - the comment line is more than 'threshold' longer. Therefore,
+                        const int beginTokenSimilarityUpperBound = 34; // beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold
+                        const int beginTokenSimilarityLowerBound = 14; // beginSignatureTextNoSpace.Length - beginTokenSimilarityThreshold
+
+                        // Quick exit - the comment line is more than 'threshold' longer, or is less than 'threshold' shorter. Therefore,
                         // its similarity will be over the threshold.
-                        if (commentLine.Length > (beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold))
+                        if (commentLine.Length > beginTokenSimilarityUpperBound || commentLine.Length < beginTokenSimilarityLowerBound)
                         {
                             sawBeginSig = false;
                         }
