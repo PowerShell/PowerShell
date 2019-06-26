@@ -86,7 +86,7 @@ foreach ($file in $MacDeveloperFiles) {
 }
 
 foreach ($file in $LinuxFiles) {
-    New-FileElement -File $file -SignType 'Linux' -XmlDoc $signingXml -Job $job
+    New-FileElement -File $file -SignType 'LinuxPack' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)
