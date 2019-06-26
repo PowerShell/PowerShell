@@ -1667,6 +1667,38 @@
           <Component Id="cmp9723892C7119DFDFD3A6FAE8027B053F" Guid="{C3A2E60E-7F0F-44D0-B54E-2E4B73CE7602}">
             <File Id="fil52D468AAC368F8F9427B5AB0D5DF94F3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" />
           </Component>
+          <Directory Name="Configuration" Id="dir709A20AD6F5242A1805E8C5D775F584C">
+            <Directory Name="BaseRegistration" Id="dir46B77C0AFD5642C9A8A00107796F3AF0">
+              <Directory Name="en-US" Id="dirDC3198AB09D84802BC00C697A113698B">
+                <Component Id="cmp2CA89A2376A848BE849FBD5ECFD6738B" Guid="{5aa07e78-aa1e-45ba-9458-53c955a1cad0}">
+                  <File Id="filB354FF41265E43498774FB1E8F86A3EE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\en-US\MSFT_MetaConfigurationExtensionClasses.Schema.mfl" />
+                </Component>
+                <Component Id="cmp0E915393766B4DC6A9A83EBA0C218BF4" Guid="{f34c5baa-ebd7-4387-8278-c6e08c7e0cd3}">
+                  <File Id="fil426E09F768D94A1DA8B4B91B68926493" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\en-US\MSFT_DSCMetaConfiguration.mfl" />
+                </Component>
+                <Component Id="cmp5DF3BF3BEEE34C329E690E094A3CAFA2" Guid="{83c41b13-ee86-4b79-bb10-9bd72c7c46b6}">
+                  <File Id="filCEE0C3D2C1134C59921EE338A9F10BCA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\en-US\BaseResource.Schema.mfl" />
+                </Component>
+              </Directory>
+              <Component Id="cmp19F1175335B14CA5AC6F7ABA06E4DD34" Guid="{70007188-47ad-4fb0-9058-0695437d4072}">
+                <File Id="fil0BF7A56B763E4CAA8195E7E886484FCD" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\MSFT_DSCMetaConfiguration.mof" />
+              </Component>
+              <Component Id="cmpF8DA47047FBD4A7B8F876059F4EDB73D" Guid="{51cd6ef2-adaa-4bb5-bd6d-56afe7d42fe8}">
+                <File Id="fil86FCEEBF9FE145D9BAA7D19769959F70" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\BaseResource.schema.mof" />
+              </Component>
+              <Component Id="cmp44977EB99C0647F4941AA2711A81651F" Guid="{995f0d01-7810-4721-946d-3c9129f35cbc}">
+                <File Id="fil5909011A884C453C92EBDB5550791B6C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\Configuration\BaseRegistration\MSFT_MetaConfigurationExtensionClasses.schema.mof" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Component Id="cmp3AF5C6350FE04033B037554EA5060135" Guid="{6dcfea10-23b6-45b2-af13-3ecc336be073}">
+            <File Id="fil58E456DF33A141DFA4B165479510EA95" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psd1" />
+          </Component>
+          <Directory Name="helpers" Id="dir4774426A44B041E1A377AE889D3FFB19">
+            <Component Id="cmp0125D538DA2E4396BC1D595250B69263" Guid="{fa08a658-e2ff-4789-867f-72a234aa58bb}">
+              <File Id="fil98D6A2CAE08A408BB0215CD1DD6C7A0F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\helpers\DscResourceInfo.psm1" />
+            </Component>
+          </Directory>
         </Directory>
         <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
           <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495" Guid="{D4374EC0-26FC-4607-AF6B-35721698E8A5}">
@@ -2940,6 +2972,14 @@
       <ComponentRef Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" />
       <ComponentRef Id="cmp8E8AE88416D44A4CA39F23E9C825A899" />
       <ComponentRef Id="cmpCC4657AEF2A7400D984E1CE6418EF589" />
+      <ComponentRef Id="cmp2CA89A2376A848BE849FBD5ECFD6738B" />
+      <ComponentRef Id="cmp0E915393766B4DC6A9A83EBA0C218BF4" />
+      <ComponentRef Id="cmp19F1175335B14CA5AC6F7ABA06E4DD34" />
+      <ComponentRef Id="cmpF8DA47047FBD4A7B8F876059F4EDB73D" />
+      <ComponentRef Id="cmp3AF5C6350FE04033B037554EA5060135" />
+      <ComponentRef Id="cmp0125D538DA2E4396BC1D595250B69263" />
+      <ComponentRef Id="cmp44977EB99C0647F4941AA2711A81651F" />
+      <ComponentRef Id="cmp5DF3BF3BEEE34C329E690E094A3CAFA2" />
     </ComponentGroup>
   </Fragment>
 </Wix>
