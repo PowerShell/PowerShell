@@ -191,7 +191,7 @@ Describe "Select-String" -Tags "CI" {
 	    $expected3 = "This is the third line"
 	    $expected4 = "This is the fourth line"
 
-	    (Select-String in $testInputFile -Raw)[0] | Should -Be $expected1
+	    (Select-String in $testInputFile -Raw)[0] | Should -BeExactly $expected1
 	    (Select-String in $testInputFile -Raw)[1] | Should -Be $expected2
 	    (Select-String in $testInputFile -Raw)[2] | Should -Be $expected3
 	    (Select-String in $testInputFile -Raw)[3] | Should -Be $expected4
