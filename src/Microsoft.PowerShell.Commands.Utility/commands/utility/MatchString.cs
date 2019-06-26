@@ -1455,7 +1455,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(match.Line);
                 }
             }
-            // If -quiet is specified but not -list return true on first match
             else if (Quiet && !List)
             {
                 WriteObject(true);
