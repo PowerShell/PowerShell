@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell
             }
             string pwshInvocation = sb.ToString();
 
-            string[] execArgs = new string[] { "-l", "-i", "-c", pwshInvocation, null };
+            string[] execArgs = new string[] { "-l", "-c", pwshInvocation, null };
 
             return Exec("/bin/sh", execArgs);
         }
