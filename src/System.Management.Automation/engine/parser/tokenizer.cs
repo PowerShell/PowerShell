@@ -1661,6 +1661,9 @@ namespace System.Management.Automation.Language
                     case '\n':
                         UngetChar();
 
+                        // Detect a line comment that disguises itself to look like the beginning of a signature block.
+                        // This could be used to hide code at the bottom of a script, since people might assume there is nothing else after the signature.
+                        //
                         // The token similarity threshold was chosen by instrumenting the tokenizer and
                         // analyzing every comment from PoshCode, Technet Script Center, and Windows.
                         //
@@ -1677,8 +1680,6 @@ namespace System.Management.Automation.Language
                         //
                         // There were only 279 (out of 269,387) comments with a similarity of 11,12,13,14, or 15.
                         // At a similarity of 16-77, there were thousands of comments per similarity bucket.
-                        //
-                        // System.IO.File.AppendAllText(@"c:\temp\signature_similarity.txt", "" + sawBeginTokenSimilarity + ":" + commentLineComparison);
 
                         const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
                         const int beginTokenSimilarityThreshold = 10;
