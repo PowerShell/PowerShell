@@ -76,7 +76,7 @@ Describe "Select-String" -Tags "CI" {
 	    $secondMatch = $testinputone | Select-String -pattern "goodbye" -n
 
 	    $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
-	    $equal | Should -Be True
+	    $equal | Should -BeTrue
 	}
 
 	It "Should return a string type when -Raw is used" {
