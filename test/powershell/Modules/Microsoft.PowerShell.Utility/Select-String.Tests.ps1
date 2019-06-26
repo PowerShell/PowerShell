@@ -68,7 +68,7 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
-	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -Be "hello", "hello"
+	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -BeExactly "hello", "Hello"
 	}
 
 	it "Should return the same as NotMatch" {
@@ -115,13 +115,13 @@ Describe "Select-String" -Tags "CI" {
 	It "Should return the name of the file and the string that 'string' is found if there is only one lines that has a match" {
 	    $expected = $testInputFile + ":1:This is a text string, and another string"
 
-	    Select-String $testInputFile -Pattern "string" | Should -Be $expected
+	    Select-String $testInputFile -Pattern "string" | Should -BeExactly $expected
 	}
 
 	It "Should return all strings where 'second' is found in testfile1 if there is only one lines that has a match" {
 	    $expected = $testInputFile + ":2:This is the second line"
 
-	    Select-String $testInputFile  -Pattern "second"| Should -Be $expected
+	    Select-String $testInputFile  -Pattern "second"| Should -BeExactly $expected
 	}
 
 	It "Should return all strings where 'in' is found in testfile1 pattern switch is not required" {
@@ -130,10 +130,10 @@ Describe "Select-String" -Tags "CI" {
 	    $expected3 = "This is the third line"
 	    $expected4 = "This is the fourth line"
 
-	    (Select-String in $testInputFile)[0].Line | Should -Be $expected1
-	    (Select-String in $testInputFile)[1].Line | Should -Be $expected2
-	    (Select-String in $testInputFile)[2].Line | Should -Be $expected3
-	    (Select-String in $testInputFile)[3].Line | Should -Be $expected4
+	    (Select-String in $testInputFile)[0].Line | Should -BeExactly $expected1
+	    (Select-String in $testInputFile)[1].Line | Should -BeExactly $expected2
+	    (Select-String in $testInputFile)[2].Line | Should -BeExactly $expected3
+	    (Select-String in $testInputFile)[3].Line | Should -BeExactly $expected4
 	    (Select-String in $testInputFile)[4].Line | Should -BeNullOrEmpty
 	}
 
@@ -192,15 +192,15 @@ Describe "Select-String" -Tags "CI" {
 	    $expected4 = "This is the fourth line"
 
 	    (Select-String in $testInputFile -Raw)[0] | Should -BeExactly $expected1
-	    (Select-String in $testInputFile -Raw)[1] | Should -Be $expected2
-	    (Select-String in $testInputFile -Raw)[2] | Should -Be $expected3
-	    (Select-String in $testInputFile -Raw)[3] | Should -Be $expected4
+	    (Select-String in $testInputFile -Raw)[1] | Should -BeExactly $expected2
+	    (Select-String in $testInputFile -Raw)[2] | Should -BeExactly $expected3
+	    (Select-String in $testInputFile -Raw)[3] | Should -BeExactly $expected4
 	    (Select-String in $testInputFile -Raw)[4] | Should -BeNullOrEmpty
 	}
 
 	It "Should ignore -Context parameter when -Raw is used." {
 		$expected = "This is the second line"
-		Select-String second $testInputFile -Raw -Context 2,2 | Should -Be $expected
+		Select-String second $testInputFile -Raw -Context 2,2 | Should -BeExactly $expected
 	}
     }
     Push-Location $currentDirectory
