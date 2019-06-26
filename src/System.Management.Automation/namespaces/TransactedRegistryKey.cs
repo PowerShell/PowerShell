@@ -2037,7 +2037,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 throw new ArgumentNullException(RegistryProviderStrings.Arg_Name);
             }
 
-            int nextSlash = name.IndexOf("\\", StringComparison.OrdinalIgnoreCase);
+            int nextSlash = name.IndexOf('\\');
             int current = 0;
             while (nextSlash != -1)
             {
@@ -2045,7 +2045,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     throw new ArgumentException(RegistryProviderStrings.Arg_RegKeyStrLenBug);
 
                 current = nextSlash + 1;
-                nextSlash = name.IndexOf("\\", current, StringComparison.OrdinalIgnoreCase);
+                nextSlash = name.IndexOf('\\', current);
             }
 
             if ((name.Length - current) > MaxKeyLength)

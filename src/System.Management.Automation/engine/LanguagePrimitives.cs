@@ -1505,7 +1505,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            int typeSeparator = assemblyQualifiedTypeName.IndexOf(",", StringComparison.Ordinal);
+            int typeSeparator = assemblyQualifiedTypeName.IndexOf(',');
             if (typeSeparator == -1)
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);

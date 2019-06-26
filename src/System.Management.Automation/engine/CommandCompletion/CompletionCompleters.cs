@@ -6600,7 +6600,7 @@ namespace System.Management.Automation
                     }
 
                     string tooltip = memberInfo.ToString();
-                    if (tooltip.IndexOf("),", StringComparison.OrdinalIgnoreCase) != -1)
+                    if (tooltip.IndexOf("),", StringComparison.Ordinal) != -1)
                     {
                         var overloads = tooltip.Split(new[] { ")," }, StringSplitOptions.RemoveEmptyEntries);
                         var newTooltip = new StringBuilder();
