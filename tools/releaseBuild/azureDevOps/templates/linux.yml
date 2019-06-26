@@ -140,6 +140,12 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\rpm\release
+      condition: and(and(succeeded(), ne(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: '$(Build.StagingDirectory)\signedPackages'
+      condition: and(and(succeeded(), eq(variables['Build.Reason'], 'Manual')),eq(variables['buildName'], 'RPM'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
