@@ -98,42 +98,6 @@ namespace Microsoft.PowerShell
 
             return exitCode;
         }
-
-        private static int StartLoginShell(string[] args, int loginArgIndex)
-        {
-            string pwshPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-
-            var sb = new System.Text.StringBuilder("exec ", capacity: 256).Append(pwshPath);
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (i == loginArgIndex)
-                {
-                    continue;
-                }
-
-                sb.Append(' ');
-
-                string arg = args[i];
-
-                if (arg.StartsWith('-'))
-                {
-                    sb.Append(arg);
-                    continue;
-                }
-
-                sb.Append('\'').Append(arg.Replace("'", "'\\''")).Append('\'');
-            }
-            string pwshInvocation = sb.ToString();
-
-            return Exec("/bin/sh", new string[] { "-l", "-i", "-c", pwshInvocation, null });
-        }
-
-        [DllImport("libc",
-            EntryPoint = "execv",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi,
-            SetLastError = true)]
-        private static extern int Exec(string path, string[] args);
     }
 }
 
