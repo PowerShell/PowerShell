@@ -61,6 +61,16 @@ namespace System.Management.Automation
         private Predicate<string> _isMatch;
 
         //
+        // chars that are considered special in a wildcard pattern
+        //
+        private readonly static char[] s_specialChars = new char[] { '*', '?', '[', ']', '`' };
+
+        //
+        // static match-all delegate that is shared by all WildcardPattern instances
+        //
+        private readonly static Predicate<string> s_matchAll = _ => true;
+
+        //
         // wildcard pattern
         //
         internal string Pattern { get; }
@@ -149,7 +159,26 @@ namespace System.Management.Automation
             {
                 if (Pattern.Length == 1 && Pattern[0] == '*')
                 {
-                    _isMatch = _ => true;
+                    _isMatch = s_matchAll;
+                }
+                else if (Pattern.IndexOfAny(s_specialChars) == -1)
+                {
+                    // No special characters present in the pattern, so we can just do a string comparison.
+                    StringComparison stringComparison;
+                    if (Options.HasFlag(WildcardOptions.IgnoreCase))
+                    {
+                        stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                            ? StringComparison.InvariantCultureIgnoreCase
+                            : StringComparison.CurrentCultureIgnoreCase;
+                    }
+                    else
+                    {
+                        stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                            ? StringComparison.InvariantCulture
+                            : StringComparison.CurrentCulture;
+                    }
+
+                    _isMatch = str => string.Equals(str, Pattern, stringComparison);
                 }
                 else
                 {
@@ -181,8 +210,6 @@ namespace System.Management.Automation
         /// </returns>
         internal static string Escape(string pattern, char[] charsNotToEscape)
         {
-#pragma warning disable 56506
-
             if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pattern");
@@ -223,8 +250,6 @@ namespace System.Management.Automation
             }
 
             return s;
-
-#pragma warning restore 56506
         }
 
         /// <summary>
