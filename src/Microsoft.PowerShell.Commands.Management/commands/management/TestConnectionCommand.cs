@@ -856,6 +856,11 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the raw PingReply object received from the ping to this hop point.
             /// </summary>
             public PingReply Reply { get => _status.Reply; }
+
+            /// <summary>
+            /// Retrieves the PingOptions used to send the ping to the trace hop.
+            /// </summary>
+            public PingOptions Options { get => _status.Options; }
         }
 
         /// <summary>
