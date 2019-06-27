@@ -53,13 +53,12 @@ namespace System.Management.Automation.Internal
                 // If the key doesn't exist yet, add it
                 _stateMap.Add(rsToUse, ssToUse);
             }
-            else if (!ssInMap.Equals(ssToUse))
+            else if (!Object.ReferenceEquals(ssInMap, ssToUse))
             {
                 // If the key exists but the corresponding value is not what we should use, then remove the key/value pair and add the new pair.
                 // This could happen when a powershell class is defined in a module and the module gets reloaded. In such case, the same TypeDefinitionAst
                 // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
-                _stateMap.Remove(rsToUse);
-                _stateMap.Add(rsToUse, ssToUse);
+                _stateMap.AddOrUpdate(rsToUse, ssToUse);
             }
             // If the key exists and the corresponding value is the one we should use, then do nothing.
         }
