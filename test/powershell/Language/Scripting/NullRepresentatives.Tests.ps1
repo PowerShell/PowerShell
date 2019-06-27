@@ -58,6 +58,12 @@ Describe 'Null Representatives' -Tags 'CI' {
             [bool]($Value.InvokeReturnAsIs()) | Should -BeFalse
         }
 
+        It '-not <Value> should be $true' -TestCases $TestValues {
+            param($Value)
+
+            -not $Value.InvokeReturnAsIs() | Should -BeTrue
+        }
+
         It '<Value> should be treated as $false by Where-Object' -TestCases $TestValues {
             param($Value)
 
