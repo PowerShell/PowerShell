@@ -50,34 +50,22 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class WildcardPattern
     {
-        //
         // char that escapes special chars
-        //
         private const char escapeChar = '`';
 
-        //
         // we convert a wildcard pattern to a predicate
-        //
         private Predicate<string> _isMatch;
 
-        //
         // chars that are considered special in a wildcard pattern
-        //
-        private readonly static char[] s_specialChars = new char[] { '*', '?', '[', ']', '`' };
+        private static readonly char[] s_specialChars = new char[] { '*', '?', '[', ']', '`' };
 
-        //
         // static match-all delegate that is shared by all WildcardPattern instances
-        //
-        private readonly static Predicate<string> s_matchAll = _ => true;
+        private static readonly Predicate<string> s_matchAll = _ => true;
 
-        //
         // wildcard pattern
-        //
         internal string Pattern { get; }
 
-        //
         // options that control match behavior
-        //
         internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
