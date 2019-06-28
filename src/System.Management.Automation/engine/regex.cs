@@ -143,37 +143,40 @@ namespace System.Management.Automation
         /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
-            if (_isMatch == null)
+            if (_isMatch != null)
             {
-                if (Pattern.Length == 1 && Pattern[0] == '*')
-                {
-                    _isMatch = s_matchAll;
-                }
-                else if (Pattern.IndexOfAny(s_specialChars) == -1)
-                {
-                    // No special characters present in the pattern, so we can just do a string comparison.
-                    StringComparison stringComparison;
-                    if (Options.HasFlag(WildcardOptions.IgnoreCase))
-                    {
-                        stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
-                            ? StringComparison.InvariantCultureIgnoreCase
-                            : StringComparison.CurrentCultureIgnoreCase;
-                    }
-                    else
-                    {
-                        stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
-                            ? StringComparison.InvariantCulture
-                            : StringComparison.CurrentCulture;
-                    }
+                return;
+            }
 
-                    _isMatch = str => string.Equals(str, Pattern, stringComparison);
+            if (Pattern.Length == 1 && Pattern[0] == '*')
+            {
+                _isMatch = s_matchAll;
+                return;
+            }
+
+            if (Pattern.IndexOfAny(s_specialChars) == -1)
+            {
+                // No special characters present in the pattern, so we can just do a string comparison.
+                StringComparison stringComparison;
+                if (Options.HasFlag(WildcardOptions.IgnoreCase))
+                {
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCultureIgnoreCase
+                        : StringComparison.CurrentCultureIgnoreCase;
                 }
                 else
                 {
-                    var matcher = new WildcardPatternMatcher(this);
-                    _isMatch = matcher.IsMatch;
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCulture
+                        : StringComparison.CurrentCulture;
                 }
+
+                _isMatch = str => string.Equals(str, Pattern, stringComparison);
+                return;
             }
+
+            var matcher = new WildcardPatternMatcher(this);
+            _isMatch = matcher.IsMatch;
         }
 
         /// <summary>
