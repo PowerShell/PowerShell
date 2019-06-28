@@ -60,8 +60,8 @@ namespace System.Management.Automation
         private static readonly Version s_psV5Version = new Version(5, 0);
         private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
         private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, null, null);
-        private static readonly SemanticVersion s_psV7Version;
-        private static Version s_psVersionCache;
+        private static readonly SemanticVersion s_psCurrentVersion;
+        private static readonly Version s_psVersionCache;
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
@@ -100,12 +100,13 @@ namespace System.Management.Automation
                 rawGitCommitId = mainVersion;
             }
 
-            s_psV7Version = new SemanticVersion(mainVersion);
+            s_psCurrentVersion = new SemanticVersion(mainVersion);
+            s_psVersionCache = (Version)s_psCurrentVersion;
 
-            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV7Version;
+            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psCurrentVersion;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV7Version };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psVersionCache };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
@@ -173,13 +174,6 @@ namespace System.Management.Automation
         {
             get
             {
-                if (s_psVersionCache == null)
-                {
-                    // Ideally, we only do one conversion for 'PSVersion' and use the cached value afterwards.
-                    var version = (Version)(SemanticVersion)s_psVersionTable[PSVersionInfo.PSVersionName];
-                    Interlocked.CompareExchange(ref s_psVersionCache, version, null);
-                }
-
                 return s_psVersionCache;
             }
         }
@@ -279,9 +273,9 @@ namespace System.Management.Automation
 
         internal static bool IsValidPSVersion(Version version)
         {
-            if (version.Major == s_psV7Version.Major)
+            if (version.Major == s_psCurrentVersion.Major)
             {
-                return version.Minor == s_psV7Version.Minor;
+                return version.Minor == s_psCurrentVersion.Minor;
             }
 
             if (version.Major == s_psV6Version.Major)
@@ -334,9 +328,9 @@ namespace System.Management.Automation
             get { return s_psV6Version; }
         }
 
-        internal static SemanticVersion PSV7Version
+        internal static SemanticVersion PSCurrentVersion
         {
-            get { return s_psV7Version; }
+            get { return s_psCurrentVersion; }
         }
 
         #endregion
