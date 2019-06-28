@@ -375,44 +375,13 @@ namespace System.Management.Automation.Provider
 
                     // Joins the paths
 
-                    StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
-
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
+                    ReadOnlySpan<char> appendChild = child.AsSpan();
+                    if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            builder.Append(child, 1, child.Length - 1);
-                        }
-                        else
-                        {
-                            builder.Append(child);
-                        }
-                    }
-                    else
-                    {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            if (parent.Length == 0)
-                            {
-                                builder.Append(child, 1, child.Length - 1);
-                            }
-                            else
-                            {
-                                builder.Append(child);
-                            }
-                        }
-                        else
-                        {
-                            if (parent.Length > 0 && child.Length > 0)
-                            {
-                                builder.Append(StringLiterals.DefaultPathSeparator);
-                            }
-
-                            builder.Append(child);
-                        }
+                        appendChild = appendChild.Slice(1, child.Length - 1);
                     }
 
-                    result = builder.ToString();
+                    result = IO.Path.Join(parent.AsSpan(), appendChild);
                 }
 
                 return result;
