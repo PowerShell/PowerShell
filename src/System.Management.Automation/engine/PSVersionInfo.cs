@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 using Microsoft.Win32;
 
