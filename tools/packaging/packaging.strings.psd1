@@ -127,7 +127,7 @@ open {0}
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <contentFiles>
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
@@ -163,7 +163,7 @@ open {0}
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <packageTypes>
             <packageType name="DotnetTool" />
         </packageTypes>
