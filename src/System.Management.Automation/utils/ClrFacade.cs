@@ -60,7 +60,7 @@ namespace System.Management.Automation
         {
             return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
                    AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-                       !a.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyName, StringComparison.Ordinal));
+                       !a.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullName, StringComparison.Ordinal));
         }
 
         /// <summary>
