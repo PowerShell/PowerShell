@@ -57,7 +57,7 @@ namespace System.Management.Automation
         private Predicate<string> _isMatch;
 
         // chars that are considered special in a wildcard pattern
-        private static readonly char[] s_specialChars = new char[] { '*', '?', '[', ']', '`' };
+        private static readonly char[] s_specialChars = new[] { '*', '?', '[', ']', '`' };
 
         // static match-all delegate that is shared by all WildcardPattern instances
         private static readonly Predicate<string> s_matchAll = _ => true;
