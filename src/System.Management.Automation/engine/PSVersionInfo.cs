@@ -122,7 +122,7 @@ namespace System.Management.Automation
         {
             var result = (Hashtable)s_psVersionTable.Clone();
             // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
-            result[PSVersionInfo.PSVersionName] = PSVersion;
+            result[PSVersionInfo.PSVersionName] = s_psVersionCache;
             return result;
         }
 
