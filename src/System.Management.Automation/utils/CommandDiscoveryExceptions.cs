@@ -27,6 +27,14 @@ namespace System.Management.Automation
             [System.Diagnostics.DebuggerHiddenAttribute()]
             param([string] $formatString, [string] $commandName)
 
+            if ($commandName.StartsWith('./', 'Ordinal') -or $commandName.StartsWith('.\', 'Ordinal')) {
+                return
+            }
+
+            if ($ExecutionContext.SessionState.Path.IsPSAbsolute($commandName, [ref] $null)) {
+                return
+            }
+
             $foundSuggestion = $false
 
             $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($commandName)
