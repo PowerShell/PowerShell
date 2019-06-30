@@ -355,7 +355,7 @@ namespace System.Management.Automation.Runspaces
                                 }
                                 elseif ($_.Duration.TotalMinutes -ge 1) {
                                     $formatString = ""m\:ss\.fff""
-                                } 
+                                }
                                 else {
                                     $formatString = ""s\.fff""
                                 }
@@ -844,18 +844,21 @@ namespace System.Management.Automation.Runspaces
                                             $Reset = ""`e[0m""
                                             $Count = 0
 
-                                            $NewLine
-                                            '{0}Suggestions:{1}' -f $Green, $Reset
-
-                                            foreach ($Item in $_.Suggestions) {
+                                            $SuggestionResults = foreach ($Item in $_.Suggestions) {
                                                 if (-not [string]::IsNullOrEmpty($Item)) {
                                                     $Count++
                                                     '{0}{1,3}. {2}{3}' -f $Green, $Count, $Item, $Reset
                                                 }
                                             }
+
+                                            if ($SuggestionResults.Count -gt 0) {
+                                                $NewLine
+                                                '{0}Suggestions:{1}' -f $Green, $Reset
+                                                $SuggestionResults
+                                            }
                                         }
 
-                                        ""$NewLine""
+                                        $NewLine
                                     )
 
                                     $FormattedErrorStrings -join ""`n""
