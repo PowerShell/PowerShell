@@ -906,7 +906,7 @@ namespace System.Management.Automation
             // as it needs to handle much of its OutVariable support itself.
             if (
                 (!string.IsNullOrEmpty(this.OutVariable)) &&
-                (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
+                (!(this.OutVariable.StartsWith('+'))) &&
                 string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
@@ -2492,7 +2492,7 @@ namespace System.Management.Automation
             if (_state == null)
                 _state = new SessionState(Context.EngineSessionState);
 
-            if (variableName.StartsWith("+", StringComparison.Ordinal))
+            if (variableName.StartsWith('+'))
             {
                 variableName = variableName.Substring(1);
                 object oldValue = PSObject.Base(_state.PSVariable.GetValue(variableName));

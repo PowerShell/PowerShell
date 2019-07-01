@@ -4680,7 +4680,7 @@ namespace Microsoft.PowerShell.Commands
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.IndexOf(":", StringComparison.Ordinal) >= 0);
+                filePath.Contains(':'));
         }
 
         /// <summary>

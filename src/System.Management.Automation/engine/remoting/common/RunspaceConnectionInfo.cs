@@ -1285,8 +1285,8 @@ namespace System.Management.Automation.Runspaces
                                                     (RemotingErrorIdStrings.RelativeUriForRunspacePathNotSupported));
             }
 
-            if (uri.OriginalString.LastIndexOf(":", StringComparison.OrdinalIgnoreCase) >
-                uri.AbsoluteUri.IndexOf("//", StringComparison.OrdinalIgnoreCase))
+            if (uri.OriginalString.LastIndexOf(':') >
+                uri.AbsoluteUri.IndexOf("//", StringComparison.Ordinal))
             {
                 UseDefaultWSManPort = false;
             }
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Runspaces
             // http://localhost , http://127.0.0.1 etc.
             string appname;
 
-            if (uri.AbsolutePath.Equals("/", StringComparison.OrdinalIgnoreCase) &&
+            if (uri.AbsolutePath.Equals("/", StringComparison.Ordinal) &&
                 string.IsNullOrEmpty(uri.Query) && string.IsNullOrEmpty(uri.Fragment))
             {
                 appname = s_defaultAppName;

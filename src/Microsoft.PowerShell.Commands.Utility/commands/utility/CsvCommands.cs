@@ -1301,7 +1301,7 @@ namespace Microsoft.PowerShell.Commands
                     values[0] = values[0].Substring(9);
                     Header = values;
                 }
-                else if (values.Count != 0 && values[0].StartsWith("#"))
+                else if (values.Count != 0 && values[0].StartsWith('#'))
                 {
                     // Skip all lines starting with '#'
                 }

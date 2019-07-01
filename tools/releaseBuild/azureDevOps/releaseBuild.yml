@@ -27,6 +27,7 @@ jobs:
 - template: templates/linux.yml
   parameters:
     buildName: rpm
+    uploadDisplayName: Upload and Sign
 
 - template: templates/linux.yml
   parameters:

@@ -294,3 +294,30 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
         $TestFilePath | Should -Exist
     }
 }
+
+Describe "New-Item -Force allows to create an item even if the directories in the path don't exist" -Tags "CI" {
+    BeforeAll {
+        $testFile             = 'testfile.txt'
+        $testFolder           = 'testfolder'
+        $FullyQualifiedFolder = Join-Path -Path $TestDrive -ChildPath $testFolder
+        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testFolder -AdditionalChildPath $testFile
+    }
+
+    BeforeEach {
+        # Explicitly removing folder and the file before tests
+        Remove-Item $FullyQualifiedFolder -ErrorAction SilentlyContinue
+        Remove-Item $FullyQualifiedFile   -ErrorAction SilentlyContinue
+        Test-Path -Path $FullyQualifiedFolder | Should -BeFalse
+        Test-Path -Path $FullyQualifiedFile   | Should -BeFalse
+    }
+
+    It "Should error correctly when -Force is not used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -ErrorAction Stop } | Should -Throw -ErrorId 'NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand'
+        $FullyQualifiedFile | Should -Not -Exist
+    }
+    It "Should create new file correctly when -Force is used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -Force -ErrorAction Stop } | Should -Not -Throw
+        $FullyQualifiedFile | Should -Exist
+    }
+}
+
