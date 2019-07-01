@@ -916,27 +916,43 @@ namespace System.Management.Automation.Provider
             // For example: path HKCU:\Test\/ is pointing to a subkey '/' of 'HKCU:\Test', if we
             // normalize it, then we will get a wrong path.
             bool pathHasForwardSlash = path.IndexOf(StringLiterals.AlternatePathSeparator) != -1;
-            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
-            bool pathHasMixedSlashes = pathHasForwardSlash && pathHasBackSlash;
-            bool shouldNormalizePath = true;
 
-            string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            if (!pathHasForwardSlash)
+            {
+                return path;
+            }
+
+            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
+            string normalizedPath;
 
             // There is a mix of slashes & the path is rooted & the path exists without normalization.
             // In this case, we might want to skip the normalization to the path.
-            if (pathHasMixedSlashes && IsAbsolutePath(path) && ItemExists(path))
+            if (pathHasBackSlash && IsAbsolutePath(path) && ItemExists(path))
             {
                 // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
                 //    make sense to the underlying provider, so we skip normalization
                 // 2. The path exists, but not anymore after normalization, then we skip normalization
                 bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
-                if (parentEndsWithForwardSlash || !ItemExists(normalizedPath))
+                if (parentEndsWithForwardSlash)
                 {
-                    shouldNormalizePath = false;
+                    return path;
+                }
+
+                normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                if (!ItemExists(normalizedPath))
+                {
+                    return path;
+                }
+                else
+                {
+                    return normalizedPath;
                 }
             }
 
-            return shouldNormalizePath ? normalizedPath : path;
+            normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+            return normalizedPath;
         }
 
         /// <summary>
