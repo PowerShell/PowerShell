@@ -905,19 +905,19 @@ namespace System.Management.Automation.Provider
         /// those errors.
         /// </summary>
         /// <param name="path">
-        /// The path to normalize
+        /// The path to normalize.
         /// </param>
         /// <returns>
-        /// Normalized path or the original path
+        /// Normalized path or the original path.
         /// </returns>
         private string NormalizePath(string path)
         {
             // If we have a mix of slashes, then we may introduce an error by normalizing the path.
             // For example: path HKCU:\Test\/ is pointing to a subkey '/' of 'HKCU:\Test', if we
             // normalize it, then we will get a wrong path.
-            bool pathHasForwardSlash = path.IndexOf(StringLiterals.AlternatePathSeparator) != -1;
-
-            if (!pathHasForwardSlash)
+            //
+            // Fast return if nothing to normalize.
+            if (path.IndexOf(StringLiterals.AlternatePathSeparator) == -1)
             {
                 return path;
             }
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Provider
                 // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
                 //    make sense to the underlying provider, so we skip normalization
                 // 2. The path exists, but not anymore after normalization, then we skip normalization
-                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
+                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparator);
                 if (parentEndsWithForwardSlash)
                 {
                     return path;
