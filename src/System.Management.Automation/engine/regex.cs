@@ -236,6 +236,7 @@ namespace System.Management.Automation
             {
                 s = string.Empty;
             }
+
             if (tempIndex == pattern.Length)
             {
                 s = pattern;
@@ -372,6 +373,7 @@ namespace System.Management.Automation
             {
                 s = string.Empty;
             }
+
             if (tempIndex == pattern.Length)
             {
                 s = pattern;
