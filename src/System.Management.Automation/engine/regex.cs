@@ -203,12 +203,12 @@ namespace System.Management.Automation
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             if (charsNotToEscape == null)
             {
-                throw PSTraceSource.NewArgumentNullException("charsNotToEscape");
+                throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
 
             const int StackAllocThreshold = 256;
