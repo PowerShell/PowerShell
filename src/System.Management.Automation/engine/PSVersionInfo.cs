@@ -59,8 +59,8 @@ namespace System.Management.Automation
         private static readonly Version s_psV5Version = new Version(5, 0);
         private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
         private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, null, null);
-        private static readonly SemanticVersion s_psCurrentVersion;
-        private static readonly Version s_psVersionCache;
+        private static readonly SemanticVersion s_psSemVersion;
+        private static readonly Version s_psVersion;
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
@@ -99,13 +99,13 @@ namespace System.Management.Automation
                 rawGitCommitId = mainVersion;
             }
 
-            s_psCurrentVersion = new SemanticVersion(mainVersion);
-            s_psVersionCache = (Version)s_psCurrentVersion;
+            s_psSemVersion = new SemanticVersion(mainVersion);
+            s_psVersion = (Version)s_psSemVersion;
 
-            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psCurrentVersion;
+            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psSemVersion;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psVersionCache };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psVersion };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
@@ -122,7 +122,7 @@ namespace System.Management.Automation
         {
             var result = (Hashtable)s_psVersionTable.Clone();
             // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
-            result[PSVersionInfo.PSVersionName] = s_psVersionCache;
+            result[PSVersionInfo.PSVersionName] = s_psVersion;
             return result;
         }
 
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return s_psVersionCache;
+                return s_psVersion;
             }
         }
 
@@ -272,9 +272,9 @@ namespace System.Management.Automation
 
         internal static bool IsValidPSVersion(Version version)
         {
-            if (version.Major == s_psCurrentVersion.Major)
+            if (version.Major == s_psSemVersion.Major)
             {
-                return version.Minor == s_psCurrentVersion.Minor;
+                return version.Minor == s_psSemVersion.Minor;
             }
 
             if (version.Major == s_psV6Version.Major)
@@ -329,7 +329,7 @@ namespace System.Management.Automation
 
         internal static SemanticVersion PSCurrentVersion
         {
-            get { return s_psCurrentVersion; }
+            get { return s_psSemVersion; }
         }
 
         #endregion
