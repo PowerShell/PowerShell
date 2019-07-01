@@ -932,8 +932,7 @@ namespace System.Management.Automation.Provider
                 // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
                 //    make sense to the underlying provider, so we skip normalization
                 // 2. The path exists, but not anymore after normalization, then we skip normalization
-                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparator);
-                if (parentEndsWithForwardSlash)
+                if (path.EndsWith(StringLiterals.AlternatePathSeparator))
                 {
                     return path;
                 }
