@@ -35,6 +35,8 @@ namespace Microsoft.PowerShell
             ReadOnlySpan<char> loginParamUpper = stackalloc char[] { 'L', 'O', 'G', 'I', 'N' };
             ReadOnlySpan<char> fileParam = stackalloc char[] { 'f', 'i', 'l', 'e' };
             ReadOnlySpan<char> fileParamUpper = stackalloc char[] { 'F', 'I', 'L', 'E' };
+            ReadOnlySpan<char> commandParam = stackalloc char[] { 'c', 'o', 'm', 'm', 'a', 'n', 'd' };
+            ReadOnlySpan<char> commandParamUpper = stackalloc char[] { 'C', 'O', 'M', 'M', 'A', 'N', 'D' };
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -52,7 +54,8 @@ namespace Microsoft.PowerShell
                         return true;
                     }
 
-                    if (IsParam(arg, in fileParam, in fileParamUpper))
+                    if (IsParam(arg, in fileParam, in fileParamUpper)
+                        || IsParam(arg, in commandParam, in commandParamUpper))
                     {
                         return false;
                     }
@@ -72,7 +75,7 @@ namespace Microsoft.PowerShell
                 return false;
             }
 
-            for (int i = 1; i < paramToCheck.Length; i++)
+            for (int i = 1; i < arg.Length - 1; i++)
             {
                 if (arg[i] != paramToCheck[i-1]
                     && arg[i] != paramToCheckUpper[i-1])
@@ -88,31 +91,93 @@ namespace Microsoft.PowerShell
         {
             string pwshPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
-            var sb = new System.Text.StringBuilder("exec ", capacity: 256).Append(pwshPath);
-            for (int i = 0; i < args.Length; i++)
+            int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
+            string pwshInvocation = string.Create(
+                10 + quotedPwshPathLength, // exec '{pwshPath}' "$@"
+                (pwshPath, quotedPwshPathLength),
+                CreatePwshInvocation);
+
+            var execArgs = new string[args.Length + 4];
+            execArgs[0] = "-l";
+            execArgs[1] = "-c";
+            execArgs[2] = pwshInvocation;
+            execArgs[3] = "";
+
+            int i = 0;
+            int j = 4;
+            for (; i < args.Length; i++)
             {
-                if (i == loginArgIndex)
-                {
-                    continue;
-                }
+                if (i == loginArgIndex) { continue; }
 
-                sb.Append(' ');
-
-                string arg = args[i];
-
-                if (arg.StartsWith('-'))
-                {
-                    sb.Append(arg);
-                    continue;
-                }
-
-                sb.Append('\'').Append(arg.Replace("'", "'\\''")).Append('\'');
+                execArgs[j] = args[i];
+                j++;
             }
-            string pwshInvocation = sb.ToString();
 
-            string[] execArgs = new string[] { "-l", "-c", pwshInvocation, null };
+            execArgs[execArgs.Length - 1] = null;
 
-            return Exec("/bin/sh", execArgs);
+            int exitCode = Exec("/bin/sh", execArgs);
+
+            if (exitCode != 0)
+            {
+                int errno = Marshal.GetLastWin32Error();
+                Console.WriteLine($"Error: {errno}");
+                return errno;
+            }
+
+            return 0;
+        }
+
+        private static int GetQuotedPathLength(string str)
+        {
+            int length = 2;
+            foreach (char c in str)
+            {
+                length++;
+                if (c == '\'') { length++; }
+            }
+
+            return length;
+        }
+
+        private static void CreatePwshInvocation(Span<char> strBuf, (string path, int quotedLength) pwshPath)
+        {
+            strBuf[0] = 'e';
+            strBuf[1] = 'x';
+            strBuf[2] = 'e';
+            strBuf[3] = 'c';
+            strBuf[4] = ' ';
+            
+            Span<char> pathSpan = strBuf.Slice(5, pwshPath.quotedLength);
+            QuoteAndWriteToSpan(pwshPath.path, pathSpan);
+
+            int argIndex = 5 + pwshPath.quotedLength;
+            strBuf[argIndex]     = ' ';
+            strBuf[argIndex + 1] = '"';
+            strBuf[argIndex + 2] = '$';
+            strBuf[argIndex + 3] = '@';
+            strBuf[argIndex + 4] = '"';
+        }
+
+        private static void QuoteAndWriteToSpan(string arg, Span<char> span)
+        {
+            span[0] = '\'';
+
+            int i = 0;
+            int j = 1;
+            for (; i < arg.Length; i++, j++)
+            {
+                char c = arg[i];
+
+                if (c == '\'')
+                {
+                    span[j] = '\\';
+                    j++;
+                }
+
+                span[j] = c;
+            }
+
+            span[j] = '\'';
         }
 
         [DllImport("libc",
