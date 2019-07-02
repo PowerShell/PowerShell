@@ -120,20 +120,11 @@
   <data name="TraceRouteStart" xml:space="preserve">
     <value>Tracing route to {0} [{1}] over a maximum of {2} hops:</value>
   </data>
-  <data name="TraceRouteReply" xml:space="preserve">
-    <value>{0,3}   {1} ms   {2} ms   {3} ms   {4} [{5}]</value>
-  </data>
-  <data name="TraceRouteTimeOut" xml:space="preserve">
-    <value>{0,3}   * ms   * ms   * ms   Request timed out.</value>
-  </data>
   <data name="TraceRouteComplete" xml:space="preserve">
     <value>Trace complete.</value>
   </data>
   <data name="ConnectionTestStart" xml:space="preserve">
     <value>Trying to connect to {0} [{1}]:</value>
-  </data>
-  <data name="ConnectionTestDescription" xml:space="preserve">
-    <value>Target: {0} [{1}]. Seconds: {2}</value>
   </data>
   <data name="MTUSizeDetectStart" xml:space="preserve">
     <value>Pinging {0} [{1}] with {2} bytes of data:</value>
@@ -152,12 +143,6 @@
   </data>
   <data name="PingStart" xml:space="preserve">
     <value>Pinging {0} [{1}] with {2} bytes of data:</value>
-  </data>
-  <data name="PingTimeOut" xml:space="preserve">
-    <value>Request timed out.</value>
-  </data>
-  <data name="PingReply" xml:space="preserve">
-    <value>Reply from {0}: bytes={1} time={2}ms TTL={3}</value>
   </data>
   <data name="PingComplete" xml:space="preserve">
     <value>Ping complete.</value>

@@ -358,7 +358,6 @@ namespace Microsoft.PowerShell.Commands
                             targetAddress);
 
                         WriteObject(status);
-                        WriteVerboseTraceEntry(status);
                         timer.Reset();
                     }
                     catch (PingException ex)
@@ -590,20 +589,6 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
-                    }
-
-                    if (reply.Status != IPStatus.Success)
-                    {
-                        WriteVerbose(TestConnectionResources.PingTimeOut);
-                    }
-                    else
-                    {
-                        WriteVerbose(StringUtil.Format(
-                            TestConnectionResources.PingReply,
-                            reply.Address.ToString(),
-                            reply.Buffer.Length,
-                            reply.RoundtripTime,
-                            reply.Options?.Ttl));
                     }
                 }
 
