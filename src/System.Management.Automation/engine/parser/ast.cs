@@ -8349,7 +8349,7 @@ namespace System.Management.Automation.Language
         {
             if (generic == null || !generic.ContainsGenericParameters)
             {
-                if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
+                if (!TypeName.FullName.Contains('`'))
                 {
                     var newTypeName = new TypeName(Extent,
                         string.Format(CultureInfo.InvariantCulture, "{0}`{1}", TypeName.FullName, GenericArguments.Count));
@@ -8376,7 +8376,7 @@ namespace System.Management.Automation.Language
                 Type generic = TypeName.GetReflectionAttributeType();
                 if (generic == null || !generic.ContainsGenericParameters)
                 {
-                    if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
+                    if (!TypeName.FullName.Contains('`'))
                     {
                         var newTypeName = new TypeName(Extent,
                             string.Format(CultureInfo.InvariantCulture, "{0}Attribute`{1}", TypeName.FullName, GenericArguments.Count));

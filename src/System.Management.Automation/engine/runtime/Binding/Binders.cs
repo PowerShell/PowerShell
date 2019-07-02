@@ -3028,7 +3028,9 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    arg.Value == null ? ExpressionCache.BoxedTrue : ExpressionCache.BoxedFalse,
+                    LanguagePrimitives.IsNullLike(arg.Value)
+                        ? ExpressionCache.BoxedTrue
+                        : ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
             }
 
@@ -3036,7 +3038,9 @@ namespace System.Management.Automation.Language
             if (enumerable == null && arg.Value == null)
             {
                 return new DynamicMetaObject(
-                    ExpressionCache.BoxedFalse,
+                    LanguagePrimitives.IsNullLike(target.Value)
+                        ? ExpressionCache.BoxedTrue
+                        : ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
             }
 
@@ -3051,14 +3055,19 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    arg.Value == null ? ExpressionCache.BoxedFalse : ExpressionCache.BoxedTrue,
+                    LanguagePrimitives.IsNullLike(arg.Value)
+                        ? ExpressionCache.BoxedFalse
+                        : ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null && arg.Value == null)
             {
-                return new DynamicMetaObject(ExpressionCache.BoxedTrue,
+                return new DynamicMetaObject(
+                    LanguagePrimitives.IsNullLike(target.Value)
+                        ? ExpressionCache.BoxedFalse
+                        : ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
 

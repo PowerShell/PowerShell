@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
                     string query = queriedLogsQueryMap[keyLogName];
                     result.Append(query);
 
-                    if (query.EndsWith("*", StringComparison.OrdinalIgnoreCase))
+                    if (query.EndsWith('*'))
                     {
                         //
                         // No provider predicate: just add the XPath string

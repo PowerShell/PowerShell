@@ -922,7 +922,7 @@ namespace Microsoft.WSMan.Management
             if (operation.Equals("remove", StringComparison.OrdinalIgnoreCase))
             {
                 sburi.Append(GetFilterString(selectorset));
-                if (sburi.ToString().EndsWith("?", StringComparison.OrdinalIgnoreCase))
+                if (sburi.ToString().EndsWith('?'))
                 {
                     sburi.Remove(sburi.Length - 1, 1);
                 }

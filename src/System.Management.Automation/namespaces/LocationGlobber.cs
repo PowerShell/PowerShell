@@ -1506,7 +1506,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.Ordinal);
+                int index = path.IndexOf(':');
 
                 if (index == -1)
                 {
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.Ordinal);
+                int index = path.IndexOf(':');
 
                 if (index == -1)
                 {
@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-                    if (normalizedRoot.IndexOf(":", StringComparison.Ordinal) >= 0)
+                    if (normalizedRoot.Contains(':'))
                     {
                         string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
@@ -2287,7 +2287,7 @@ namespace System.Management.Automation
                 comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
+                comparePath.StartsWith('~'));
         }
 
         /// <summary>
@@ -3160,7 +3160,7 @@ namespace System.Management.Automation
 
             // Find the drive separator only if it's before a path separator
 
-            int index = path.IndexOf(":", StringComparison.Ordinal);
+            int index = path.IndexOf(':');
             if (index != -1)
             {
                 int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);

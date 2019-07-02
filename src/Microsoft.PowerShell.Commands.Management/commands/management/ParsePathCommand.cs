@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
 
                     case qualifierSet:
-                        int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
+                        int separatorIndex = pathsToParse[index].IndexOf(':');
 
                         if (separatorIndex < 0)
                         {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SessionState.Path.IsProviderQualified(path))
             {
-                int index = path.IndexOf("::", StringComparison.CurrentCulture);
+                int index = path.IndexOf("::", StringComparison.Ordinal);
 
                 if (index != -1)
                 {

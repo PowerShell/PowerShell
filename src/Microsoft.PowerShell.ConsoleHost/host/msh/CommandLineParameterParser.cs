@@ -11,10 +11,10 @@ using System.Management.Automation;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell
                 return (SwitchKey: null, ShouldBreak: false);
             }
 
-            if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
+            if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
             {
                 // then its a file
                 if (parser != null)
@@ -590,7 +590,7 @@ namespace Microsoft.PowerShell
             switchKey = switchKey.Substring(1);
 
             // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!string.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
+            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(switchKey[0]))
             {
                 switchKey = switchKey.Substring(1);
             }
@@ -889,7 +889,7 @@ namespace Microsoft.PowerShell
                     {
                         string arg = args[i];
 
-                        if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                        if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]))
                         {
                             break;
                         }
@@ -1160,7 +1160,7 @@ namespace Microsoft.PowerShell
 
                 if (!System.IO.File.Exists(_file))
                 {
-                    if (args[i].StartsWith("-") && args[i].Length > 1)
+                    if (args[i].StartsWith('-') && args[i].Length > 1)
                     {
                         string param = args[i].Substring(1, args[i].Length - 1).ToLower();
                         StringBuilder possibleParameters = new StringBuilder();
@@ -1205,7 +1205,7 @@ namespace Microsoft.PowerShell
                         _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
                         pendingParameter = null;
                     }
-                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]) && arg.Length > 1)
+                    else if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]) && arg.Length > 1)
                     {
                         int offset = arg.IndexOf(':');
                         if (offset >= 0)
