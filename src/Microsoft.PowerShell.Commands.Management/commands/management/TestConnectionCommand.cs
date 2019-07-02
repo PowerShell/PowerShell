@@ -17,21 +17,21 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPing,
+    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = PingSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
     [OutputType(typeof(PingStatus),
-        ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetDetectionOfMTUSize })]
-    [OutputType(typeof(TraceStatus), ParameterSetName = new[] { ParameterSetTraceRoute })]
+        ParameterSetName = new[] { PingSet, RepeatPingSet, MtuSizeDetectSet })]
+    [OutputType(typeof(TraceStatus), ParameterSetName = new[] { TraceRouteSet })]
     [OutputType(typeof(bool),
-        ParameterSetName = new[] { ParameterSetPing, ParameterSetPingContinue, ParameterSetConnectionByTCPPort })]
-    [OutputType(typeof(int), ParameterSetName = new[] { ParameterSetDetectionOfMTUSize })]
+        ParameterSetName = new[] { PingSet, RepeatPingSet, TcpPortSet })]
+    [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
-        private const string ParameterSetPing = "PingCount";
-        private const string ParameterSetPingContinue = "PingContinue";
-        private const string ParameterSetTraceRoute = "TraceRoute";
-        private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
-        private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
+        private const string PingSet = "Ping";
+        private const string RepeatPingSet = "RepeatPing";
+        private const string TraceRouteSet = "TraceRoute";
+        private const string TcpPortSet = "TcpPort";
+        private const string MtuSizeDetectSet = "MtuSizeDetect";
         private const int sMaxHops = 128;
 
         private readonly Ping _sender = new Ping();
@@ -43,38 +43,38 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Do ping test.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
         /// Force using IPv4 protocol.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        [Parameter(ParameterSetName = ParameterSetTraceRoute)]
-        [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
-        [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = TraceRouteSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectSet)]
+        [Parameter(ParameterSetName = TcpPortSet)]
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
         /// Force using IPv6 protocol.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        [Parameter(ParameterSetName = ParameterSetTraceRoute)]
-        [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
-        [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = TraceRouteSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectSet)]
+        [Parameter(ParameterSetName = TcpPortSet)]
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
         /// Do reverse DNS lookup to get names for IP addresses.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        [Parameter(ParameterSetName = ParameterSetTraceRoute)]
-        [Parameter(ParameterSetName = ParameterSetDetectionOfMTUSize)]
-        [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = TraceRouteSet)]
+        [Parameter(ParameterSetName = MtuSizeDetectSet)]
+        [Parameter(ParameterSetName = TcpPortSet)]
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
@@ -82,10 +82,10 @@ namespace Microsoft.PowerShell.Commands
         /// The default is Local Host.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        [Parameter(ParameterSetName = ParameterSetTraceRoute)]
-        [Parameter(ParameterSetName = ParameterSetConnectionByTCPPort)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = TraceRouteSet)]
+        [Parameter(ParameterSetName = TcpPortSet)]
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
@@ -94,9 +94,9 @@ namespace Microsoft.PowerShell.Commands
         /// they decrement the Time-to-Live (TTL) value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        [Parameter(ParameterSetName = ParameterSetTraceRoute)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(ParameterSetName = TraceRouteSet)]
         [ValidateRange(0, sMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// Count of attempts.
         /// The default (from Windows) is 4 times.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
+        [Parameter(ParameterSetName = PingSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Count { get; set; } = 4;
 
@@ -113,8 +113,8 @@ namespace Microsoft.PowerShell.Commands
         /// Delay between attempts.
         /// The default (from Windows) is 1 second.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Delay { get; set; } = 1;
 
@@ -123,8 +123,8 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 32 bites.
         /// Max value is 65500 (limit from Windows API).
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
         [Alias("Size", "Bytes", "BS")]
         [ValidateRange(0, 65500)]
         public int BufferSize { get; set; } = DefaultSendBufferSize;
@@ -133,15 +133,15 @@ namespace Microsoft.PowerShell.Commands
         /// Don't fragment ICMP packages.
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPing)]
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
+        [Parameter(ParameterSetName = PingSet)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
         /// Continue ping until user press Ctrl-C
         /// or Int.MaxValue threshold reached.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetPingContinue)]
+        [Parameter(ParameterSetName = RepeatPingSet)]
         [Alias("Continues")]
         public SwitchParameter Repeat { get; set; }
 
@@ -177,20 +177,20 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Detect MTU size.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = ParameterSetDetectionOfMTUSize)]
+        [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
         public SwitchParameter MTUSizeDetect { get; set; }
 
         /// <summary>
         /// Do traceroute test.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = ParameterSetTraceRoute)]
+        [Parameter(Mandatory = true, ParameterSetName = TraceRouteSet)]
         public SwitchParameter Traceroute { get; set; }
 
         /// <summary>
         /// Do tcp connection test.
         /// </summary>
         [ValidateRange(0, 65535)]
-        [Parameter(Mandatory = true, ParameterSetName = ParameterSetConnectionByTCPPort)]
+        [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
         public int TCPPort { get; set; }
 
         #endregion Parameters
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _sender.PingCompleted += OnPingCompleted;
 
-            if (ParameterSetName == ParameterSetPingContinue)
+            if (ParameterSetName == RepeatPingSet)
             {
                 Count = int.MaxValue;
             }
@@ -217,17 +217,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 switch (ParameterSetName)
                 {
-                    case ParameterSetPing:
-                    case ParameterSetPingContinue:
+                    case PingSet:
+                    case RepeatPingSet:
                         ProcessPing(targetName);
                         break;
-                    case ParameterSetDetectionOfMTUSize:
+                    case MtuSizeDetectSet:
                         ProcessMTUSize(targetName);
                         break;
-                    case ParameterSetTraceRoute:
+                    case TraceRouteSet:
                         ProcessTraceroute(targetName);
                         break;
-                    case ParameterSetConnectionByTCPPort:
+                    case TcpPortSet:
                         ProcessConnectionByTCPPort(targetName);
                         break;
                 }
