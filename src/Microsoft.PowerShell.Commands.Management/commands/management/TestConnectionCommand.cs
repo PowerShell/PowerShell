@@ -818,6 +818,11 @@ namespace Microsoft.PowerShell.Commands
             public string Hostname { get => _status.Destination; }
 
             /// <summary>
+            /// Gets the sequence number of the ping in the sequence of pings to the hop point.
+            /// </summary>
+            public uint Ping { get => _status.Ping; }
+
+            /// <summary>
             /// Gets the IP address of the current hop point.
             /// </summary>
             public IPAddress HopAddress { get => _status.Address; }
