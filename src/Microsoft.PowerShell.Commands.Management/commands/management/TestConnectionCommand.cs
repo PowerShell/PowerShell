@@ -418,13 +418,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 var pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
+                int pingCount = 0;
 
                 while (LowMTUSize < (HighMTUSize - 1))
                 {
+                    pingCount++;
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
-                    WriteDebug(StringUtil.Format(
-                        "LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}",
+                    WriteVerbose(StringUtil.Format(
+                        TestConnectionResources.MtuSizeDetectDebug,
                         LowMTUSize,
                         CurrentMTUSize,
                         HighMTUSize));
@@ -511,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Repeat.IsPresent)
             {
                 WriteVerbose(StringUtil.Format(
-                    TestConnectionResources.MTUSizeDetectStart,
+                    TestConnectionResources.PingStart,
                     resolvedTargetName,
                     targetAddress,
                     BufferSize));

@@ -126,11 +126,8 @@
   <data name="ConnectionTestStart" xml:space="preserve">
     <value>Trying to connect to {0} [{1}]:</value>
   </data>
-  <data name="MTUSizeDetectStart" xml:space="preserve">
-    <value>Pinging {0} [{1}] with {2} bytes of data:</value>
-  </data>
-  <data name="MTUSizeDetectDescription" xml:space="preserve">
-    <value>MTU size: {0}. Attempt: {1}</value>
+  <data name="MtuSizeDetectDebug" xml:space="preserve">
+    <value>LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}</value>
   </data>
   <data name="NoPingResult" xml:space="preserve">
     <value>Testing connection to computer '{0}' failed: {1}</value>
