@@ -3039,9 +3039,6 @@
       <Component Id="cmp6CA4372CB65443518E03D97DA4C867D4" Guid="{9dfb563f-6c15-4f56-ad64-32e80559a568}">
         <File Id="filDABBEB1897954C7ABA74CD8BA75750C3" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.30373.dll" />
       </Component>
-      <Component Id="cmpEE0890525491400F9D0F035D3D77CA16" Guid="{5829cab6-e7fd-4dfc-844d-2cd344aebf56}">
-        <File Id="fil823AB225AEC849E387FBEE515EB1334A" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Data.OleDb.dll" />
-      </Component>
       <Component Id="cmp48B6C7290D58407D9EA6361C312634E8" Guid="{44cb3106-ac59-46c8-b70d-76dc6a7c80fa}">
         <File Id="filCBECF5F54CAB4041A0AF415D22AD6C29" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.19.30373.dll" />
       </Component>
@@ -3736,7 +3733,6 @@
       <ComponentRef Id="cmpC78F08AA5C9A43F083917993155898A4" />
       <ComponentRef Id="cmpCF64B5A8F4084F819D866B3C559490FB" />
       <ComponentRef Id="cmp9380BAD17B60408A8BB72DDE8966E88F" />
-      <ComponentRef Id="cmpEE0890525491400F9D0F035D3D77CA16" />
       <ComponentRef Id="cmp2742C513F61F4B41A7DE526E5636213A" />
       <ComponentRef Id="cmp5AB8DC138D864A6FAC308856E4951BD9" />
       <ComponentRef Id="cmp6BF547EC12C643BA8B5855652CCE8D2C" />
