@@ -880,7 +880,8 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="reply">The response from the ping attempt.</param>
             /// <param name="options">The PingOptions specified when the ping was sent.</param>
             /// <param name="latency">The manually measured latency of the ping attempt.</param>
-            /// <param name="bufferSize">The buffer size </param>
+            /// <param name="bufferSize">The buffer size.</param>
+            /// <param name="pingNum">The sequence number in the sequence of pings to the hop point.</param>
             internal PingStatus(
                 string source,
                 string destination,
@@ -902,6 +903,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
             /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="pingNum">The sequence number of the ping in the sequence of pings to the target.</param>
             internal PingStatus(string source, string destination, PingReply reply, uint pingNum)
             {
                 Ping = pingNum;
