@@ -56,13 +56,13 @@ namespace System.Management.Automation.Runspaces
             {
                 // Loading the resources for System.Management.Automation can be expensive, so force that to
                 // happen early on a background thread.
-                var unused0 = RunspaceInit.OutputEncodingDescription;
+                _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                var unused1 = TypeAccelerators.builtinTypeAccelerators;
+                _ = TypeAccelerators.builtinTypeAccelerators;
 
                 // This will init some tables and could load some assemblies.
-                var unused2 = LanguagePrimitives.GetEnumerator(null);
+                LanguagePrimitives.GetEnumerator(null);
             });
         }
     }

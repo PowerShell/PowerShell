@@ -3,6 +3,7 @@
 
 #pragma warning disable 1634, 1691
 
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -49,24 +50,22 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class WildcardPattern
     {
-        //
         // char that escapes special chars
-        //
         private const char escapeChar = '`';
 
-        //
         // we convert a wildcard pattern to a predicate
-        //
         private Predicate<string> _isMatch;
 
-        //
+        // chars that are considered special in a wildcard pattern
+        private static readonly char[] s_specialChars = new[] { '*', '?', '[', ']', '`' };
+
+        // static match-all delegate that is shared by all WildcardPattern instances
+        private static readonly Predicate<string> s_matchAll = _ => true;
+
         // wildcard pattern
-        //
         internal string Pattern { get; }
 
-        //
         // options that control match behavior
-        //
         internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
@@ -144,18 +143,40 @@ namespace System.Management.Automation
         /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
-            if (_isMatch == null)
+            if (_isMatch != null)
             {
-                if (Pattern.Length == 1 && Pattern[0] == '*')
+                return;
+            }
+
+            if (Pattern.Length == 1 && Pattern[0] == '*')
+            {
+                _isMatch = s_matchAll;
+                return;
+            }
+
+            if (Pattern.IndexOfAny(s_specialChars) == -1)
+            {
+                // No special characters present in the pattern, so we can just do a string comparison.
+                StringComparison stringComparison;
+                if (Options.HasFlag(WildcardOptions.IgnoreCase))
                 {
-                    _isMatch = _ => true;
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCultureIgnoreCase
+                        : StringComparison.CurrentCultureIgnoreCase;
                 }
                 else
                 {
-                    var matcher = new WildcardPatternMatcher(this);
-                    _isMatch = matcher.IsMatch;
+                    stringComparison = Options.HasFlag(WildcardOptions.CultureInvariant)
+                        ? StringComparison.InvariantCulture
+                        : StringComparison.CurrentCulture;
                 }
+
+                _isMatch = str => string.Equals(str, Pattern, stringComparison);
+                return;
             }
+
+            var matcher = new WildcardPatternMatcher(this);
+            _isMatch = matcher.IsMatch;
         }
 
         /// <summary>
@@ -180,8 +201,6 @@ namespace System.Management.Automation
         /// </returns>
         internal static string Escape(string pattern, char[] charsNotToEscape)
         {
-#pragma warning disable 56506
-
             if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pattern");
@@ -222,8 +241,6 @@ namespace System.Management.Automation
             }
 
             return s;
-
-#pragma warning restore 56506
         }
 
         /// <summary>
@@ -914,43 +931,51 @@ namespace System.Management.Automation
             var patternPositionsForNextStringPosition =
                     new PatternPositionsVisitor(_patternElements.Length);
 
-            for (int currentStringPosition = 0;
-                 currentStringPosition < str.Length;
-                 currentStringPosition++)
+            try
             {
-                char currentStringCharacter = _characterNormalizer.Normalize(str[currentStringPosition]);
-                patternPositionsForCurrentStringPosition.StringPosition = currentStringPosition;
-                patternPositionsForNextStringPosition.StringPosition = currentStringPosition + 1;
-
-                int patternPosition;
-                while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
+                for (int currentStringPosition = 0;
+                    currentStringPosition < str.Length;
+                    currentStringPosition++)
                 {
-                    _patternElements[patternPosition].ProcessStringCharacter(
-                        currentStringCharacter,
-                        patternPosition,
-                        patternPositionsForCurrentStringPosition,
-                        patternPositionsForNextStringPosition);
+                    char currentStringCharacter = _characterNormalizer.Normalize(str[currentStringPosition]);
+                    patternPositionsForCurrentStringPosition.StringPosition = currentStringPosition;
+                    patternPositionsForNextStringPosition.StringPosition = currentStringPosition + 1;
+
+                    int patternPosition;
+                    while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
+                    {
+                        _patternElements[patternPosition].ProcessStringCharacter(
+                            currentStringCharacter,
+                            patternPosition,
+                            patternPositionsForCurrentStringPosition,
+                            patternPositionsForNextStringPosition);
+                    }
+
+                    // swap patternPositionsForCurrentStringPosition
+                    // with patternPositionsForNextStringPosition
+                    var tmp = patternPositionsForCurrentStringPosition;
+                    patternPositionsForCurrentStringPosition = patternPositionsForNextStringPosition;
+                    patternPositionsForNextStringPosition = tmp;
                 }
 
-                // swap patternPositionsForCurrentStringPosition
-                // with patternPositionsForNextStringPosition
-                var tmp = patternPositionsForCurrentStringPosition;
-                patternPositionsForCurrentStringPosition = patternPositionsForNextStringPosition;
-                patternPositionsForNextStringPosition = tmp;
-            }
+                int patternPosition2;
+                while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
+                {
+                    _patternElements[patternPosition2].ProcessEndOfString(
+                        patternPosition2,
+                        patternPositionsForCurrentStringPosition);
+                }
 
-            int patternPosition2;
-            while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
+                return patternPositionsForCurrentStringPosition.ReachedEndOfPattern;
+            }
+            finally
             {
-                _patternElements[patternPosition2].ProcessEndOfString(
-                    patternPosition2,
-                    patternPositionsForCurrentStringPosition);
+                patternPositionsForCurrentStringPosition.Dispose();
+                patternPositionsForNextStringPosition.Dispose();
             }
-
-            return patternPositionsForCurrentStringPosition.ReachedEndOfPattern;
         }
 
-        private class PatternPositionsVisitor
+        private class PatternPositionsVisitor : IDisposable
         {
             private readonly int _lengthOfPattern;
 
@@ -965,14 +990,20 @@ namespace System.Management.Automation
 
                 _lengthOfPattern = lengthOfPattern;
 
-                _isPatternPositionVisitedMarker = new int[lengthOfPattern + 1];
-                for (int i = 0; i < _isPatternPositionVisitedMarker.Length; i++)
+                _isPatternPositionVisitedMarker = ArrayPool<int>.Shared.Rent(_lengthOfPattern + 1);
+                for (int i = 0; i <= _lengthOfPattern; i++)
                 {
                     _isPatternPositionVisitedMarker[i] = -1;
                 }
 
-                _patternPositionsForFurtherProcessing = new int[lengthOfPattern];
+                _patternPositionsForFurtherProcessing = ArrayPool<int>.Shared.Rent(_lengthOfPattern);
                 _patternPositionsForFurtherProcessingCount = 0;
+            }
+
+            public void Dispose()
+            {
+                ArrayPool<int>.Shared.Return(_isPatternPositionVisitedMarker, clearArray: true);
+                ArrayPool<int>.Shared.Return(_patternPositionsForFurtherProcessing, clearArray: true);
             }
 
             public int StringPosition { private get; set; }
@@ -984,7 +1015,7 @@ namespace System.Management.Automation
                         patternPosition <= _lengthOfPattern,
                         "Caller should verify patternPosition <= this._lengthOfPattern");
 
-                // is patternPosition already visited?);
+                // is patternPosition already visited?
                 if (_isPatternPositionVisitedMarker[patternPosition] == this.StringPosition)
                 {
                     return;

@@ -60,6 +60,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -103,7 +110,7 @@ if ! hash brew 2>/dev/null; then
     exit 3
 fi
 
-# Suppress output, it's very noisy on travis-ci
+# Suppress output, it's very noisy on Azure DevOps
 echo "Refreshing Homebrew cache..."
 for count in {1..2}; do
     # Try the update twice if the first time fails
@@ -123,7 +130,7 @@ for count in {1..2}; do
     sleep 5
 done
 
-# Suppress output, it's very noisy on travis-ci
+# Suppress output, it's very noisy on Azure DevOps
 if [[ ! -d $(brew --prefix cask) ]]; then
     echo "Installing cask..."
     if ! brew tap caskroom/cask >/dev/null; then
