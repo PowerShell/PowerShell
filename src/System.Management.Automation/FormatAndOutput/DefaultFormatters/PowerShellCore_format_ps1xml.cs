@@ -304,7 +304,14 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("Source")
                         .AddPropertyColumn("Address")
-                        .AddPropertyColumn("Latency")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
                         .AddPropertyColumn("BufferSize")
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("MtuSize")
@@ -328,7 +335,14 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Hop")
                         .AddPropertyColumn("Hostname")
                         .AddPropertyColumn("Ping")
-                        .AddPropertyColumn("Latency")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("Source")
                         .AddPropertyColumn("TargetAddress")
