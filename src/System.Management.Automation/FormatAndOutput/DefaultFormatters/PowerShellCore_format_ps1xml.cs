@@ -333,7 +333,6 @@ namespace System.Management.Automation.Runspaces
                                 $_.Latency
                             }
                         ")
-                        .AddPropertyColumn("BufferSize")
                         .AddPropertyColumn("Status")
                         .AddPropertyColumn("MtuSize")
                     .EndRowDefinition()

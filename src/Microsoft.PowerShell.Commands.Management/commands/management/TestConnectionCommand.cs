@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(new PingMtuStatus(Source, targetNameOrAddress, CurrentMTUSize, replyResult));
+                WriteObject(new PingMtuStatus(Source, targetNameOrAddress, replyResult));
             }
         }
 
@@ -936,23 +936,16 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
-            /// <param name="mtuSize">The maximum transmission unit size determined.</param>
             /// <param name="reply">The response from the ping attempt.</param>
-            internal PingMtuStatus(string source, string destination, int mtuSize, PingReply reply)
+            internal PingMtuStatus(string source, string destination, PingReply reply)
                 : base(source, destination, reply, 1)
             {
-                if (mtuSize <= 0)
-                {
-                    throw new PSArgumentException(nameof(mtuSize));
-                }
-
-                MtuSize = mtuSize;
             }
 
             /// <summary>
             /// Gets the maximum transmission unit size on the network path between the source and destination.
             /// </summary>
-            public int MtuSize { get; } = -1;
+            public int MtuSize { get => BufferSize; }
         }
 
         // Count of pings sent per each trace route hop.
