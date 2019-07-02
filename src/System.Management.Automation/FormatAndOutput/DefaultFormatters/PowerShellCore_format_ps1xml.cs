@@ -282,7 +282,14 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("Ping")
                         .AddPropertyColumn("Source")
-                        .AddPropertyColumn("Address")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Address) {
+                                $_.Address
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
                         .AddScriptBlockColumn(@"
                             if ($_.Status -eq 'TimedOut') {
                                 '*'
@@ -291,7 +298,14 @@ namespace System.Management.Automation.Runspaces
                                 $_.Latency
                             }
                         ")
-                        .AddPropertyColumn("BufferSize")
+                        .AddScriptBlockColumn(@"
+                            if ($_.BufferSize -gt 0) {
+                                $_.BufferSize
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
                         .AddPropertyColumn("Status")
                     .EndRowDefinition()
                     .GroupByProperty("Destination")
@@ -345,7 +359,7 @@ namespace System.Management.Automation.Runspaces
                                 $_.HostName
                             }
                             else {
-                                '*.*.*.*'
+                                '*'
                             }
                         ")
                         .AddPropertyColumn("Ping")

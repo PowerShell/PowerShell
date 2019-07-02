@@ -897,13 +897,11 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the target address of the ping.
             /// </summary>
-            /// <value></value>
-            public IPAddress Address { get => Reply.Address; }
+            public IPAddress Address { get => Reply.Status == IPStatus.Success ? Reply.Address : null; }
 
             /// <summary>
             /// Gets the roundtrip time of the ping in milliseconds.
             /// </summary>
-            /// <value></value>
             public long Latency { get => _latency >= 0 ? _latency : Reply.RoundtripTime; }
 
             /// <summary>
