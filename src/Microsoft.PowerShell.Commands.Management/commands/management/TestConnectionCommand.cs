@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // We don't allow -Count parameter for -TraceRoute.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
-                for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
+                for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
@@ -351,7 +351,8 @@ namespace Microsoft.PowerShell.Commands
                                 reply,
                                 pingOptions,
                                 timer.ElapsedMilliseconds,
-                                buffer.Length),
+                                buffer.Length,
+                                i),
                             Source,
                             resolvedTargetName ?? targetNameOrAddress,
                             targetAddress);
@@ -551,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
-            for (int i = 1; i <= Count; i++)
+            for (uint i = 1; i <= Count; i++)
             {
                 try
                 {
@@ -588,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        WriteObject(new PingStatus(Source, resolvedTargetName, reply));
+                        WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
                     }
 
                     if (reply.Status != IPStatus.Success)
@@ -886,8 +887,9 @@ namespace Microsoft.PowerShell.Commands
                 PingReply reply,
                 PingOptions options,
                 long latency,
-                int bufferSize)
-                : this(source, destination, reply)
+                int bufferSize,
+                uint pingNum)
+                : this(source, destination, reply, pingNum)
             {
                 _options = options;
                 _latency = latency;
@@ -900,8 +902,9 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
             /// <param name="reply">The response from the ping attempt.</param>
-            internal PingStatus(string source, string destination, PingReply reply)
+            internal PingStatus(string source, string destination, PingReply reply, uint pingNum)
             {
+                Ping = pingNum;
                 Reply = reply;
                 Source = source;
                 Destination = destination ?? reply.Address.ToString();
@@ -911,6 +914,11 @@ namespace Microsoft.PowerShell.Commands
             private readonly int _bufferSize = -1;
             private readonly long _latency = -1;
             private readonly PingOptions _options;
+
+            /// <summary>
+            /// Gets the sequence number of this ping in the sequence of pings to the <see cref="Destination"/>
+            /// </summary>
+            public uint Ping { get; }
 
             /// <summary>
             /// Gets the source from which the ping was sent.
@@ -969,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="mtuSize">The maximum transmission unit size determined.</param>
             /// <param name="reply">The response from the ping attempt.</param>
             internal PingMtuStatus(string source, string destination, int mtuSize, PingReply reply)
-                : base(source, destination, reply)
+                : base(source, destination, reply, 1)
             {
                 if (mtuSize <= 0)
                 {

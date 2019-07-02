@@ -273,12 +273,14 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
                 TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
                     .AddHeader(Alignment.Left, label: "Source", width: 16)
                     .AddHeader(Alignment.Left, label: "Address", width: 15)
                     .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
                     .AddHeader(Alignment.Right, label: "BufferSize(B)", width: 10)
                     .AddHeader(Alignment.Center, label: "Status", width: 16)
                     .StartRowDefinition()
+                        .AddPropertyColumn("Ping")
                         .AddPropertyColumn("Source")
                         .AddPropertyColumn("Address")
                         .AddPropertyColumn("Latency")
@@ -431,7 +433,7 @@ namespace System.Management.Automation.Runspaces
                                 }
                                 elseif ($_.Duration.TotalMinutes -ge 1) {
                                     $formatString = ""m\:ss\.fff""
-                                } 
+                                }
                                 else {
                                     $formatString = ""s\.fff""
                                 }
