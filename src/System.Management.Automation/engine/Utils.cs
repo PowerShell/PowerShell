@@ -809,6 +809,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_cachedPoliciesFromRegistry =
             new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
+
         private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
             key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.OrdinalIgnoreCase);
 
