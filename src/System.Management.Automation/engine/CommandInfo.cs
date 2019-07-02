@@ -442,8 +442,11 @@ namespace System.Management.Automation
                 // that can mess up the runspace our CommandInfo object came from.
 
                 var runspace = (RunspaceBase)_context.CurrentRunspace;
-                if (!runspace.RunActionIfNoRunningPipelinesWithThreadCheck(
-                        () => GetMergedCommandParameterMetadata(out result)))
+                if (runspace.CanRunActionInCurrentPipeline())
+                {
+                    GetMergedCommandParameterMetadata(out result);
+                }
+                else
                 {
                     _context.Events.SubscribeEvent(
                             source: null,

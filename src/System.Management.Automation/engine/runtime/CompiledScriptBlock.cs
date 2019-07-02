@@ -322,6 +322,7 @@ namespace System.Management.Automation
         internal Guid Id { get; private set; }
 
         internal bool HasLogged { get; set; }
+        internal bool SkipLogging { get; set; }
         internal bool IsFilter { get; private set; }
 
         internal bool IsProductCode
@@ -824,6 +825,13 @@ namespace System.Management.Automation
             set { _scriptBlockData.HasLogged = value; }
         }
 
+        internal bool SkipLogging
+        {
+            get { return _scriptBlockData.SkipLogging; }
+
+            set { _scriptBlockData.SkipLogging = value; }
+        }
+
         internal Assembly AssemblyDefiningPSTypes { set; get; }
 
         internal HelpInfo GetHelpInfo(ExecutionContext context, CommandInfo commandInfo, bool dontSearchOnRemoteComputer,
@@ -1111,7 +1119,7 @@ namespace System.Management.Automation
                 {
                     if (context.EngineSessionState.CurrentScope.LocalsTuple == null)
                     {
-                        // If the locals tuple is, that means either:
+                        // If the locals tuple is null, that means either:
                         //     * we're invoking a script block for a module
                         //     * something unexpected
                         context.EngineSessionState.CurrentScope.LocalsTuple = locals;
@@ -1361,52 +1369,60 @@ namespace System.Management.Automation
 
         internal static void LogScriptBlockCreation(ScriptBlock scriptBlock, bool force)
         {
+            if (scriptBlock.HasLogged && !InternalTestHooks.ForceScriptBlockLogging)
+            {
+                // Fast exit if the script block is already logged and we are not force re-logging in tests.
+                return;
+            }
+
             ScriptBlockLogging logSetting = GetScriptBlockLoggingSetting();
             if (force || logSetting?.EnableScriptBlockLogging == true)
             {
-                if (!scriptBlock.HasLogged || InternalTestHooks.ForceScriptBlockLogging)
+                // If script block logging is explicitly disabled, or it's from a trusted
+                // file or internal, skip logging.
+                if (logSetting?.EnableScriptBlockLogging == false ||
+                    scriptBlock.ScriptBlockData.IsProductCode)
                 {
-                    // If script block logging is explicitly disabled, or it's from a trusted
-                    // file or internal, skip logging.
-                    if (logSetting?.EnableScriptBlockLogging == false ||
-                        scriptBlock.ScriptBlockData.IsProductCode)
+                    scriptBlock.SkipLogging = true;
+                    return;
+                }
+
+                string scriptBlockText = scriptBlock.Ast.Extent.Text;
+                bool written = false;
+
+                // Maximum size of ETW events is 64kb. Split a message if it is larger than 20k (Unicode) characters.
+                if (scriptBlockText.Length < 20000)
+                {
+                    written = WriteScriptBlockToLog(scriptBlock, 0, 1, scriptBlock.Ast.Extent.Text);
+                }
+                else
+                {
+                    // But split the segments into random sizes (10k + between 0 and 10kb extra)
+                    // so that attackers can't creatively force their scripts to span well-known
+                    // segments (making simple rules less reliable).
+                    int segmentSize = 10000 + (new Random()).Next(10000);
+                    int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
+                    int currentLocation = 0;
+                    int currentSegmentSize = 0;
+
+                    for (int segment = 0; segment < segments; segment++)
                     {
-                        return;
-                    }
+                        currentLocation = segment * segmentSize;
+                        currentSegmentSize = Math.Min(segmentSize, scriptBlockText.Length - currentLocation);
 
-                    string scriptBlockText = scriptBlock.Ast.Extent.Text;
-                    bool written = false;
-
-                    // Maximum size of ETW events is 64kb. Split a message if it is larger than 20k (Unicode) characters.
-                    if (scriptBlockText.Length < 20000)
-                    {
-                        written = WriteScriptBlockToLog(scriptBlock, 0, 1, scriptBlock.Ast.Extent.Text);
-                    }
-                    else
-                    {
-                        // But split the segments into random sizes (10k + between 0 and 10kb extra)
-                        // so that attackers can't creatively force their scripts to span well-known
-                        // segments (making simple rules less reliable).
-                        int segmentSize = 10000 + (new Random()).Next(10000);
-                        int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
-                        int currentLocation = 0;
-                        int currentSegmentSize = 0;
-
-                        for (int segment = 0; segment < segments; segment++)
-                        {
-                            currentLocation = segment * segmentSize;
-                            currentSegmentSize = Math.Min(segmentSize, scriptBlockText.Length - currentLocation);
-
-                            string textToLog = scriptBlockText.Substring(currentLocation, currentSegmentSize);
-                            written = WriteScriptBlockToLog(scriptBlock, segment, segments, textToLog);
-                        }
-                    }
-
-                    if (written)
-                    {
-                        scriptBlock.HasLogged = true;
+                        string textToLog = scriptBlockText.Substring(currentLocation, currentSegmentSize);
+                        written = WriteScriptBlockToLog(scriptBlock, segment, segments, textToLog);
                     }
                 }
+
+                if (written)
+                {
+                    scriptBlock.HasLogged = true;
+                }
+            }
+            else
+            {
+                scriptBlock.SkipLogging = true;
             }
         }
 
@@ -1582,6 +1598,9 @@ namespace System.Management.Automation
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
+        private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
+            () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
+            isThreadSafe: true);
 
         // Reset any static caches if the certificate has changed
         private static void ResetCertificateCacheIfNeeded(string certificate)
@@ -1596,7 +1615,12 @@ namespace System.Management.Automation
 
         private static ScriptBlockLogging GetScriptBlockLoggingSetting()
         {
-            return Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig);
+            if (InternalTestHooks.BypassGroupPolicyCaching)
+            {
+                return Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig);
+            }
+
+            return s_sbLoggingSettingCache.Value;
         }
 
         // Quick check for script blocks that may have suspicious content. If this
@@ -1919,17 +1943,16 @@ namespace System.Management.Automation
 
         internal static void LogScriptBlockStart(ScriptBlock scriptBlock, Guid runspaceId)
         {
-            // When invoking, log the creation of the script block if it has suspicious
-            // content
-            bool forceLogCreation = false;
-            if (scriptBlock._scriptBlockData.HasSuspiciousContent)
+            // Fast exit if the script block can skip logging.
+            if (!scriptBlock.SkipLogging)
             {
-                forceLogCreation = true;
-            }
+                // When invoking, log the creation of the script block if it has suspicious content
+                bool forceLogCreation = scriptBlock._scriptBlockData.HasSuspiciousContent;
 
-            // We delay logging the creation util the 'Start' so that we can be sure we've
-            // properly analyzed the script block's security.
-            LogScriptBlockCreation(scriptBlock, forceLogCreation);
+                // We delay logging the creation util the 'Start' so that we can be sure we've
+                // properly analyzed the script block's security.
+                LogScriptBlockCreation(scriptBlock, forceLogCreation);
+            }
 
             if (GetScriptBlockLoggingSetting()?.EnableScriptBlockInvocationLogging == true)
             {
