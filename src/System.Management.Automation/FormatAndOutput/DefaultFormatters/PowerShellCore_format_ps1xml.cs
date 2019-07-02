@@ -283,7 +283,14 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Ping")
                         .AddPropertyColumn("Source")
                         .AddPropertyColumn("Address")
-                        .AddPropertyColumn("Latency")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
                         .AddPropertyColumn("BufferSize")
                         .AddPropertyColumn("Status")
                     .EndRowDefinition()
