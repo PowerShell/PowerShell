@@ -1949,7 +1949,7 @@ namespace System.Management.Automation
                 // When invoking, log the creation of the script block if it has suspicious content
                 bool forceLogCreation = scriptBlock._scriptBlockData.HasSuspiciousContent;
 
-                // We delay logging the creation util the 'Start' so that we can be sure we've
+                // We delay logging the creation until the 'Start' so that we can be sure we've
                 // properly analyzed the script block's security.
                 LogScriptBlockCreation(scriptBlock, forceLogCreation);
             }
