@@ -142,7 +142,8 @@ namespace Microsoft.PowerShell.Commands
         /// or Int.MaxValue threshold reached.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPingContinue)]
-        public SwitchParameter Continues { get; set; }
+        [Alias("Continues")]
+        public SwitchParameter Repeat { get; set; }
 
         /// <summary>
         /// Set short output kind ('bool' for Ping, 'int' for MTU size ...).
@@ -507,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!Continues.IsPresent)
+            if (!Repeat.IsPresent)
             {
                 WriteVerbose(StringUtil.Format(
                     TestConnectionResources.MTUSizeDetectStart,
@@ -548,21 +549,14 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Continues.IsPresent)
+                if (Quiet.IsPresent)
                 {
-                    WriteObject(reply);
+                    // Return 'true' only if all pings have completed successfully.
+                    quietResult &= reply.Status == IPStatus.Success;
                 }
                 else
                 {
-                    if (Quiet.IsPresent)
-                    {
-                        // Return 'true' only if all pings have completed successfully.
-                        quietResult &= reply.Status == IPStatus.Success;
-                    }
-                    else
-                    {
-                        WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
-                    }
+                    WriteObject(new PingStatus(Source, resolvedTargetName, reply, i));
                 }
 
                 // Delay between ping but not after last ping.
@@ -572,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (!Continues.IsPresent)
+            if (!Repeat.IsPresent)
             {
                 WriteVerbose(TestConnectionResources.PingComplete);
             }
