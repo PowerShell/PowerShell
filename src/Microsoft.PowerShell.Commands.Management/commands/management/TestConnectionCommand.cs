@@ -395,33 +395,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WriteVerboseTraceEntry(TraceStatus traceStatus)
-        {
-            if (traceStatus.Reply.Status == IPStatus.TtlExpired
-                || traceStatus.Reply.Status == IPStatus.Success)
-            {
-                var routerAddress = traceStatus.HopAddress.ToString();
-                var routerName = traceStatus.Hostname;
-                var roundtripTime0 = traceStatus.Reply.Status == IPStatus.TimedOut
-                    ? "*"
-                    : traceStatus.Latency.ToString();
-                /*var roundtripTime1 = traceStatus.Replies[1].Status == IPStatus.TimedOut
-                    ? "*"
-                    : traceStatus.Replies[1].Latency.ToString();*/
-                WriteVerbose(StringUtil.Format(
-                    TestConnectionResources.TraceRouteReply,
-                    traceStatus.Hop,
-                    roundtripTime0,
-                    /* roundtripTime1 */ null,
-                    /* traceStatus.Replies[2].Latency.ToString() */ null,
-                    routerName, routerAddress));
-            }
-            else
-            {
-                WriteVerbose(StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceStatus.Hop));
-            }
-        }
-
         #endregion TracerouteTest
 
         #region MTUSizeTest
