@@ -340,7 +340,14 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "TargetAddress", width: 15)
                     .StartRowDefinition()
                         .AddPropertyColumn("Hop")
-                        .AddPropertyColumn("Hostname")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Hostname) {
+                                $_.HostName
+                            }
+                            else {
+                                '*.*.*.*'
+                            }
+                        ")
                         .AddPropertyColumn("Ping")
                         .AddScriptBlockColumn(@"
                             if ($_.Status -eq 'TimedOut') {

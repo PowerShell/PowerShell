@@ -773,7 +773,12 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string Hostname { get => _status.Destination; }
+            public string Hostname
+            {
+                get => _status.Destination != "0.0.0.0"
+                    ? _status.Destination
+                    : null;
+            }
 
             /// <summary>
             /// Gets the sequence number of the ping in the sequence of pings to the hop point.
