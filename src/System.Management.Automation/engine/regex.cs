@@ -53,6 +53,11 @@ namespace System.Management.Automation
         // char that escapes special chars
         private const char escapeChar = '`';
 
+        // Threshold for stack allocation.
+        // The size is less than MaxShortPath = 260.
+        private const int StackAllocThreshold = 256;
+
+        //
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
@@ -211,7 +216,6 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
 
-            const int StackAllocThreshold = 256;
             Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
@@ -236,8 +240,7 @@ namespace System.Management.Automation
             {
                 s = string.Empty;
             }
-
-            if (tempIndex == pattern.Length)
+            else if (tempIndex == pattern.Length)
             {
                 s = pattern;
             }
@@ -321,8 +324,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
-            const int StackAllocThreshold = 256;
-            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[StackAllocThreshold] : new char[pattern.Length];
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length] : new char[pattern.Length];
 
             int tempIndex = 0;
             bool prevCharWasEscapeChar = false;
@@ -373,8 +375,7 @@ namespace System.Management.Automation
             {
                 s = string.Empty;
             }
-
-            if (tempIndex == pattern.Length)
+            else if (tempIndex == pattern.Length)
             {
                 s = pattern;
             }
