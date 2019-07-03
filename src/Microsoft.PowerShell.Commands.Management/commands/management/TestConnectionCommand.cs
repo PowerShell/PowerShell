@@ -19,11 +19,10 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = PingSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingStatus),
-        ParameterSetName = new[] { PingSet, RepeatPingSet, MtuSizeDetectSet })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new[] { PingSet, RepeatPingSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new[] { TraceRouteSet })]
-    [OutputType(typeof(bool),
-        ParameterSetName = new[] { PingSet, RepeatPingSet, TcpPortSet })]
+    [OutputType(typeof(PingMtuStatus), ParameterSetName = new[] { MtuSizeDetectSet })]
+    [OutputType(typeof(bool), ParameterSetName = new[] { PingSet, RepeatPingSet, TcpPortSet })]
     [OutputType(typeof(int), ParameterSetName = new[] { MtuSizeDetectSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
@@ -32,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         private const string TraceRouteSet = "TraceRoute";
         private const string TcpPortSet = "TcpPort";
         private const string MtuSizeDetectSet = "MtuSizeDetect";
-        private const int sMaxHops = 128;
+        private const int DefaultMaxHops = 128;
 
         private readonly Ping _sender = new Ping();
         private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
@@ -41,14 +40,14 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Do ping test.
+        /// Gets or sets the Ping parameter.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
-        /// Force using IPv4 protocol.
+        /// Gets or sets whether to force use of the IPv4 protocol.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
@@ -58,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
-        /// Force using IPv6 protocol.
+        /// Gets or sets whether to force use of the IPv6 protocol.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
@@ -68,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
-        /// Do reverse DNS lookup to get names for IP addresses.
+        /// Gets or sets whether to do reverse DNS lookup to get names for IP addresses.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
@@ -78,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
-        /// Source from which to do a test (ping, trace route, ...).
+        /// Gets or sets the source hostname from which to perform a test (ping, trace route, ...).
         /// The default is Local Host.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
@@ -89,20 +88,20 @@ namespace Microsoft.PowerShell.Commands
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
-        /// The number of times the Ping data packets can be forwarded by routers.
-        /// As gateways and routers transmit packets through a network,
-        /// they decrement the Time-to-Live (TTL) value found in the packet header.
+        /// Gets or sets the number of times the Ping data packets can be forwarded by routers.
+        /// As gateways and routers transmit packets through a network, they decrement the Time-to-Live (TTL) value
+        /// found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
         [Parameter(ParameterSetName = TraceRouteSet)]
-        [ValidateRange(0, sMaxHops)]
+        [ValidateRange(0, DefaultMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
-        public int MaxHops { get; set; } = sMaxHops;
+        public int MaxHops { get; set; } = DefaultMaxHops;
 
         /// <summary>
-        /// Count of attempts.
+        /// Gets or sets the number of pings to attempt.
         /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
@@ -110,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         public int Count { get; set; } = 4;
 
         /// <summary>
-        /// Delay between attempts.
+        /// Gets or sets the delay between ping attempts.
         /// The default (from Windows) is 1 second.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
@@ -119,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         public int Delay { get; set; } = 1;
 
         /// <summary>
-        /// Buffer size to send.
+        /// Gets or sets the size of the buffer to send.
         /// The default (from Windows) is 32 bites.
         /// Max value is 65500 (limit from Windows API).
         /// </summary>
@@ -130,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         public int BufferSize { get; set; } = DefaultSendBufferSize;
 
         /// <summary>
-        /// Don't fragment ICMP packages.
+        /// Gets or sets whether to prevent fragmentation of ICMP packages.
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
@@ -138,19 +137,20 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
-        /// Continue ping until user press Ctrl-C
-        /// or Int.MaxValue threshold reached.
+        /// Gets or sets whether to ping the target endlessly, until the user presses Ctrl+C or the maximum threshold of
+        /// Int.MaxValue pings is reached.
         /// </summary>
-        [Parameter(ParameterSetName = RepeatPingSet)]
+        [Parameter(Mandatory = true, ParameterSetName = RepeatPingSet)]
         [Alias("Continues")]
         public SwitchParameter Repeat { get; set; }
 
         /// <summary>
-        /// Set short output kind ('bool' for Ping, 'int' for MTU size ...).
+        /// Gets or sets whether to return simplified output.
         /// Default is to return typed result object(s).
+        /// When used with standard -Ping parameter set or -TraceRoute, a simple $true/$false value
         /// </summary>
         [Parameter()]
-        public SwitchParameter Quiet;
+        public SwitchParameter Quiet { get; set; }
 
         /// <summary>
         /// Time-out value in seconds.
