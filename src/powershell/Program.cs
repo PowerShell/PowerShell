@@ -20,10 +20,12 @@ namespace Microsoft.PowerShell
         /// </param>
         public static int Main(string[] args)
         {
+#if UNIX
             if (HasLoginSpecified(args, out int loginIndex))
             {
                 return ExecPwshLogin(args, loginIndex);
             }
+#endif
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
