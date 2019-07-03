@@ -78,14 +78,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the source hostname from which to perform a test (ping, trace route, ...).
-        /// The default is Local Host.
+        /// The default is localhost.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
         [Parameter(ParameterSetName = PingSet)]
         [Parameter(ParameterSetName = RepeatPingSet)]
         [Parameter(ParameterSetName = TraceRouteSet)]
         [Parameter(ParameterSetName = TcpPortSet)]
-        public string Source { get; } = Dns.GetHostName();
+        public string Source { get; set; } = Dns.GetHostName();
 
         /// <summary>
         /// Gets or sets the number of times the Ping data packets can be forwarded by routers.
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets whether to return simplified output.
         /// Default is to return typed result object(s).
-        /// When used with standard -Ping parameter set or -TraceRoute, a simple $true/$false value
+        /// When used with standard -Ping parameter set or -TraceRoute, a simple $true/$false value is returned.
         /// </summary>
         [Parameter()]
         public SwitchParameter Quiet { get; set; }
@@ -175,20 +175,20 @@ namespace Microsoft.PowerShell.Commands
         public string[] TargetName { get; set; }
 
         /// <summary>
-        /// Detect MTU size.
+        /// Gets or sets whether to detect MTU size.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
         [Alias("MtuSizeDetect")]
         public SwitchParameter DetectMtuSize { get; set; }
 
         /// <summary>
-        /// Do traceroute test.
+        /// Gets or sets whether to perform a traceroute test.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = TraceRouteSet)]
         public SwitchParameter Traceroute { get; set; }
 
         /// <summary>
-        /// Do tcp connection test.
+        /// Gets or sets whether to do a tcp connection test on the specified port.
         /// </summary>
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
@@ -607,7 +607,6 @@ namespace Microsoft.PowerShell.Commands
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        //hostEntry = Dns.GetHostEntry(hostEntry.HostName);
                     }
                 }
                 catch (Exception ex)
@@ -699,6 +698,7 @@ namespace Microsoft.PowerShell.Commands
             _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
             _pingComplete.Wait();
             timer?.Stop();
+
             // Pause to let _sender's async flags to be reset properly so the next SendAsync call doesn't fail.
             Thread.Sleep(1);
             _pingComplete.Reset();
@@ -738,7 +738,7 @@ namespace Microsoft.PowerShell.Commands
         public class TraceStatus
         {
             /// <summary>
-            /// Creates a new instance of the TraceStatus class.
+            /// Initializes a new instance of the <see cref="TraceStatus"/> class.
             /// </summary>
             /// <param name="hop">The hop number of this trace hop.</param>
             /// <param name="status">The PingStatus response from this trace hop.</param>
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
             public PingReply Reply { get => _status.Reply; }
 
             /// <summary>
-            /// Retrieves the PingOptions used to send the ping to the trace hop.
+            /// Gets the PingOptions used to send the ping to the trace hop.
             /// </summary>
             public PingOptions Options { get => _status.Options; }
         }
@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.Commands
         public class PingStatus
         {
             /// <summary>
-            /// Creates a new instance of the PingStatus class.
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
             /// This constructor allows manually specifying the initial values for the cases where the PingReply
             /// object may be missing some information, specifically in the instances where PingReply objects are
             /// utilised to perform a traceroute.
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Creates a new instance of the PingStatus class.
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
             /// </summary>
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
@@ -934,8 +934,7 @@ namespace Microsoft.PowerShell.Commands
         public class PingMtuStatus : PingStatus
         {
             /// <summary>
-            /// Creates a new instance of the PingStatus class.
-            /// This constructor permits setting the MtuSize.
+            /// Initializes a new instance of the <see cref="PingMtuStatus"/> class.
             /// </summary>
             /// <param name="source">The source machine name or IP of the ping.</param>
             /// <param name="destination">The destination machine name of the ping.</param>
