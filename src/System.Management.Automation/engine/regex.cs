@@ -148,15 +148,8 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (Pattern.Length == 1 && Pattern[0] == '*')
+            StringComparison GetStringComparison()
             {
-                _isMatch = s_matchAll;
-                return;
-            }
-
-            if (Pattern.IndexOfAny(s_specialChars) == -1)
-            {
-                // No special characters present in the pattern, so we can just do a string comparison.
                 StringComparison stringComparison;
                 if (Options.HasFlag(WildcardOptions.IgnoreCase))
                 {
@@ -171,8 +164,46 @@ namespace System.Management.Automation
                         : StringComparison.CurrentCulture;
                 }
 
-                _isMatch = str => string.Equals(str, Pattern, stringComparison);
-                return;
+                return stringComparison;
+            }
+
+            if (Pattern.Length == 1)
+            {
+                switch (Pattern[0])
+                {
+                    case '*':
+                        _isMatch = s_matchAll;
+                        return;
+                    case '?':
+                    case '[':
+                    case  ']':
+                    case '`':
+                        break;
+                    default:
+                        // No special characters present in the pattern, so we can just do a string comparison.
+                        _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
+                        return;
+                }
+            }
+
+            if (Pattern.Length > 1 && Pattern.AsSpan().Slice(0, Pattern.Length - 1).IndexOfAny(s_specialChars) == -1)
+            {
+                switch (Pattern[Pattern.Length - 1])
+                {
+                    case '*':
+                        // No special characters present in the pattern before last position and last character is asterisk.
+                        _isMatch = str => str.StartsWith(Pattern, GetStringComparison());
+                        return;
+                    case '?':
+                    case '[':
+                    case  ']':
+                    case '`':
+                        break;
+                    default:
+                        // No special characters present in the pattern, so we can just do a string comparison.
+                        _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
+                        return;
+                }
             }
 
             var matcher = new WildcardPatternMatcher(this);
