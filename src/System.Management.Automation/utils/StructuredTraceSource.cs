@@ -924,6 +924,11 @@ namespace System.Management.Automation
             }
         }
 
+        internal void WriteLine(string format, string arg1)
+        {
+            WriteLine(format, arg1);
+        }
+
         internal void WriteLine(string format, bool arg1)
         {
             WriteLine(format, arg1.ToString());
