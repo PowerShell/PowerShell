@@ -204,7 +204,10 @@ namespace Microsoft.PowerShell
                 {
                     try
                     {
-                        TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                        // APIs are STA only and until issue 7216 is not resolved, PowerShell operates still in MTA mode.
+                        var thread = new Thread(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                        thread.SetApartmentState(ApartmentState.STA);
+                        thread.Start();
                     }
                     catch
                     {
