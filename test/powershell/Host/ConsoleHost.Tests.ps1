@@ -245,41 +245,59 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
-    Context "-LoadProfile Commandline switch" {
+    Context "-Login pwsh switch" {
         BeforeAll {
-            if (Test-Path $profile) {
-                Remove-Item -Path "$profile.backup" -ErrorAction SilentlyContinue
-                Rename-Item -Path $profile -NewName "$profile.backup"
+            $profilePath = "~/.profile"
+            $backupProfilePath = "profile.bak"
+            if (Test-Path $profilePath) {
+                Move-Item -Path $profilePath -Destination $backupProfilePath -Force
             }
 
-            Set-Content -Path $profile -Value "'profile-loaded'" -Force
+            $envVarName = 'PSTEST_PROFILE_LOAD'
+
+            $guid = New-Guid
+
+            Set-Content -Force -Path $profilePath -Value @"
+export $envVarName='$guid'
+"@
+
+            $pwshExe = (Get-Process -Id $PID).Path
         }
 
         AfterAll {
-            Remove-Item -Path $profile -ErrorAction SilentlyContinue
-
-            if (Test-Path "$profile.backup") {
-                Rename-Item -Path "$profile.backup" -NewName $profile
+            if (Test-Path $backupProfilePath) {
+                Move-Item -Path $backupProfilePath -Destination $profilePath -Force
             }
         }
 
-        It "Verifies pwsh will accept <switch> switch" -TestCases @(
-            @{ switch = "-l"},
-            @{ switch = "-loadprofile"}
-        ){
-            param($switch)
+        It "Doesn't run the login profile when -Login not used" {
+            $result = & $pwshExe -Command "`$env:$envVarName"
+            $result | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
 
-            if (Test-Path $profile) {
-                & pwsh $switch -command exit | Should -BeExactly "profile-loaded"
+        It "Accepts the -Login switch and behaves correctly" -TestCases @(
+            @{ LoginSwitch = '-l' }
+            @{ LoginSwitch = '-L' }
+            @{ LoginSwitch = '-login' }
+            @{ LoginSwitch = '-Login' }
+            @{ LoginSwitch = '-LOGIN' }
+            @{ LoginSwitch = '-log' }
+        ) {
+            param($LoginSwitch)
+
+            $result = & $pwshExe -Command "`$env:$envVarName"
+
+            if ($IsWindows) {
+                $result | Should -BeNullOrEmpty
+                $LASTEXITCODE | Should -Be 0
+                return
             }
-            else {
-                # In CI, may not be able to write to $profile location, so just verify that the switch is accepted
-                # and no error message is in the output
-                & pwsh $switch -command exit *>&1 | Should -BeNullOrEmpty
-            }
+
+            $result | Should -Be $guid
+            $LASTEXITCODE | Should -Be 0
         }
     }
-
 
     Context "-SettingsFile Commandline switch" {
 
