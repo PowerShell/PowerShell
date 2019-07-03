@@ -63,7 +63,7 @@ namespace System.Management.Automation
         private static readonly Predicate<string> s_matchAll = _ => true;
 
         // wildcard pattern
-        internal string Pattern { get; }
+        internal string Pattern { get; private set; }
 
         // options that control match behavior
         internal WildcardOptions Options { get; } = WildcardOptions.None;
@@ -176,7 +176,7 @@ namespace System.Management.Automation
                         return;
                     case '?':
                     case '[':
-                    case  ']':
+                    case ']':
                     case '`':
                         break;
                     default:
@@ -192,11 +192,12 @@ namespace System.Management.Automation
                 {
                     case '*':
                         // No special characters present in the pattern before last position and last character is asterisk.
-                        _isMatch = str => str.StartsWith(Pattern, GetStringComparison());
+                        var patternWithoutAsterisk = Pattern.Substring(0, Pattern.Length - 1);
+                        _isMatch = str => str.StartsWith(patternWithoutAsterisk, GetStringComparison());
                         return;
                     case '?':
                     case '[':
-                    case  ']':
+                    case ']':
                     case '`':
                         break;
                     default:
