@@ -200,30 +200,19 @@ namespace Microsoft.PowerShell
                 // The JumpList does persist as long as the filepath of the executable does not change but there
                 // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
                 // not over-optimize this and always create the JumpList as a non-blocking background task instead.
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        // APIs are STA only
-                        if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                        {
-                            TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
-                        }
-                        else
-                        {
-                            var thread = new Thread(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
-                            thread.SetApartmentState(ApartmentState.STA);
-                            thread.Start();
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        // Sporadic failures have been observed in some environments. Since the JumpList persists once it
-                        // has been registered, there is no harm suppressing the occasional failure.
-                        Console.WriteLine($"Exception '{exception}' with stack trace {exception.StackTrace} successfully caught. Please report this in issue 9295.");
-                    }
+                    // APIs are STA only and until issue 7216 is not resolved, PowerShell operates still in MTA mode.
+                    var thread = new Thread(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
                 }
-                );
+                catch (Exception exception)
+                {
+                    // Sporadic failures have been observed in some environments. Since the JumpList persists once it
+                    // has been registered, there is no harm suppressing the occasional failure.
+                    Console.WriteLine($"Exception '{exception}' with stack trace {exception.StackTrace} successfully caught. Please report this in issue 9295.");
+                }
 #endif
 
                 // First check for and handle PowerShell running in a server mode.
