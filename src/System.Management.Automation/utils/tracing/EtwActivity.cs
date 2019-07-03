@@ -271,10 +271,6 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public static event EventHandler<EtwEventArgs> EventWritten;
 
-        static EtwActivity()
-        {
-        }
-
         /// <summary>
         /// Sets the activityId provided in the current thread.
         /// If current thread already has the same activityId it does

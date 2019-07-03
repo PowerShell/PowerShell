@@ -5436,7 +5436,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
 
             if (!string.IsNullOrEmpty(this.Username))
             {
-                if (this.Username.IndexOf("\\", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (this.Username.Contains('\\'))
                 {
                     validator = null;
 

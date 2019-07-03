@@ -2958,14 +2958,14 @@ namespace Microsoft.PowerShell.Commands
         private bool HasRelativePathTokens(string path)
         {
             return (
-                (path.IndexOf("\\", StringComparison.OrdinalIgnoreCase) == 0) ||
+                path.StartsWith('\\') ||
                 path.Contains("\\.\\") ||
                 path.Contains("\\..\\") ||
                 path.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
                 path.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("~", StringComparison.OrdinalIgnoreCase));
+                path.StartsWith('~'));
         }
 
         private void GetFilteredRegistryKeyProperties(string path,
@@ -3332,12 +3332,12 @@ namespace Microsoft.PowerShell.Commands
 
                 path = NormalizePath(path);
 
-                int index = path.IndexOf("\\", StringComparison.Ordinal);
+                int index = path.IndexOf('\\');
                 if (index == 0)
                 {
                     // The user may precede a path with \
                     path = path.Substring(1);
-                    index = path.IndexOf("\\", StringComparison.Ordinal);
+                    index = path.IndexOf('\\');
                 }
 
                 if (index == -1)
@@ -3522,14 +3522,14 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                int index = path.IndexOf("\\", StringComparison.Ordinal);
+                int index = path.IndexOf('\\');
 
                 if (index == 0)
                 {
                     // The user may proceed a path with \
 
                     path = path.Substring(1);
-                    index = path.IndexOf("\\", StringComparison.Ordinal);
+                    index = path.IndexOf('\\');
                 }
 
                 if (index == -1)

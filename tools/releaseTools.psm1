@@ -159,7 +159,7 @@ function Get-ChangeLog
         ## and eventually merge the release branch back to the master branch. This will result in different commit nodes
         ## in master branch that actually represent same set of changes.
         ##
-        ## In this case, we cannot simply use the revision range "$tag_hash..HEAD" becuase it will include the original
+        ## In this case, we cannot simply use the revision range "$tag_hash..HEAD" because it will include the original
         ## commits in the master branch that were cherry-picked to the release branch -- they are reachable from 'HEAD'
         ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
         ## and only include the commits that are not in the last release into the change log.

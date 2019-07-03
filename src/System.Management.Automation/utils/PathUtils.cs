@@ -357,7 +357,7 @@ namespace System.Management.Automation
             try
             {
                 string rootedPath = Microsoft.PowerShell.Commands.ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
-                if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith('.'))
                 {
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
                     rootedPath = Path.Combine(currentPath.ProviderPath, moduleNameOrPath);
