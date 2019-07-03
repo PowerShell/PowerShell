@@ -232,8 +232,8 @@ Describe "Test-Connection" -tags "CI" {
 
             $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus"
             $result[0].Source | Should -BeExactly $hostName
-            $result[0].DestinationAddress | Should -BeExactly $realAddress
-            $result[0].DestinationHost | Should -BeExactly $hostName
+            $result[0].TargetAddress | Should -BeExactly $realAddress
+            $result[0].Target | Should -BeExactly $hostName
             $result[0].Hop | Should -Be 1
             $result[0].HopAddress | Should -BeExactly $realAddress
             $result[0].Status | Should -BeExactly "Success"

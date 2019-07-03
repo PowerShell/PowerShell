@@ -299,14 +299,7 @@ namespace System.Management.Automation.Runspaces
                                 $_.Latency
                             }
                         ")
-                        .AddScriptBlockColumn(@"
-                            if ($_.BufferSize -gt 0) {
-                                $_.BufferSize
-                            }
-                            else {
-                                '*'
-                            }
-                        ")
+                        .AddPropertyColumn("BufferSize")
                         .AddPropertyColumn("Status")
                     .EndRowDefinition()
                     .GroupByProperty("Destination")
