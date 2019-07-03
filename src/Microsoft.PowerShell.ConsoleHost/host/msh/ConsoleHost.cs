@@ -204,9 +204,19 @@ namespace Microsoft.PowerShell
                 {
                     try
                     {
-                        TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                        // APIs are STA only
+                        if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                        {
+                            TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                        }
+                        else
+                        {
+                            var thread = new Thread(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+                            thread.SetApartmentState(ApartmentState.STA);
+                            thread.Start();
+                        }
                     }
-                    catch
+                    catch (Exception exception)
                     {
                         // Sporadic failures have been observed in some environments. Since the JumpList persists once it
                         // has been registered, there is no harm suppressing the occasional failure.
