@@ -22,26 +22,26 @@ Describe "Test-Connection" -tags "CI" {
             ForEach-Object { $_.IPAddressToString }
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
-        $jobContinues = Start-Job { Test-Connection $using:targetAddress -Continues }
+        $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
     }
 
     Context "Ping" {
         It "Default parameter set is 'Ping'" {
             $result = Test-Connection $targetName
-            $replies = $result.Replies
 
-            $result.Count | Should -Be 1
-            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingReport"
+            $result.Count | Should -Be 4
+            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus"
+            $result[0].Ping | Should -Be 1
             $result[0].Source | Should -BeExactly $hostName
             $result[0].Destination | Should -BeExactly $targetName
-
-            $replies.Count | Should -Be 4
-            $replies[0] | Should -BeOfType "System.Net.NetworkInformation.PingReply"
-            $replies[0].Address | Should -BeExactly $targetAddressIPv6
-            $replies[0].Status | Should -BeExactly "Success"
+            $result[0].Address | Should -BeExactly $targetAddressIPv6
+            $result[0].Status | Should -BeExactly "Success"
+            $result[0].Latency | Should -BeOfType "long"
+            $result[0].Reply | Should -BeOfType "System.Net.NetworkInformation.PingReply"
+            $result[0].Options | Should -BeOfType "System.Net.NetworkInformation.PingOptions"
             # TODO: Here and below we skip the check on Unix because .Net Core issue
             if ($isWindows) {
-                $replies[0].Buffer.Count | Should -Be 32
+                $replies[0].BufferSize | Should -Be 32
             }
         }
 
@@ -50,8 +50,8 @@ Describe "Test-Connection" -tags "CI" {
             $result1 = Test-Connection -Ping $targetName -Count 1
             $result2 = Test-Connection $targetName -Count 2
 
-            $result1.Replies.Count | Should -Be 1
-            $result2.Replies.Count | Should -Be 2
+            $result1.Count | Should -Be 1
+            $result2.Count | Should -Be 2
         }
 
         It "Quiet works" {
@@ -65,7 +65,8 @@ Describe "Test-Connection" -tags "CI" {
 
         It "Ping fake host" {
 
-            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } | Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
+                Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
             if (!$isWindows) {
                 $Error[0].Exception.InnerException.ErrorCode | Should -Be -131073
@@ -79,10 +80,10 @@ Describe "Test-Connection" -tags "CI" {
         It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
-            $result.Replies[0].Address | Should -BeExactly $realAddress
-            $result.Replies[0].Options.Ttl | Should -BeLessOrEqual 128
+            $result[0].Address | Should -BeExactly $realAddress
+            $result[0].Options.Ttl | Should -BeLessOrEqual 128
             if ($isWindows) {
-                $result.Replies[0].Options.DontFragment | Should -BeFalse
+                $result[0].Options.DontFragment | Should -BeFalse
             }
         }
 
@@ -94,34 +95,36 @@ Describe "Test-Connection" -tags "CI" {
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Replies[0].Address | Should -BeExactly $realAddress
+            $result1[0].Address | Should -BeExactly $realAddress
             # .Net Core (.Net Framework) returns Options based on default PingOptions() constructor (Ttl=128, DontFragment = false).
             # After .Net Core fix we should have 'DontFragment | Should -Be $true' here.
-            $result1.Replies[0].Options.Ttl | Should -BeLessOrEqual 128
+            $result1[0].Options.Ttl | Should -BeLessOrEqual 128
             if (!$isWindows) {
-                $result1.Replies[0].Options.DontFragment | Should -BeNullOrEmpty
-                # depending on the network configuration any of the following should be returned
-                $result2.Replies[0].Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
+                $result1[0].Options.DontFragment | Should -BeNullOrEmpty
+                # Depending on the network configuration any of the following should be returned
+                $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
             }
             else {
-                $result1.Replies[0].Options.DontFragment | Should -BeFalse
+                $result1[0].Options.DontFragment | Should -BeFalse
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
-                $result2.Replies[0].Status | Should -BeIn "TtlExpired", "TimedOut", $null
+                $result2[0].Status | Should -BeIn "TtlExpired", "TimedOut", $null
             }
         }
 
         It "Force IPv6" -Pending {
             $result = Test-Connection $targetName -Count 1 -IPv6
 
-            $result.Replies[0].Address | Should -BeExactly $targetAddressIPv6
+            $result[0].Address | Should -BeExactly $targetAddressIPv6
             # We should check Null not Empty!
-            $result.Replies[0].Options | Should -Be $null
+            $result[0].Options | Should -Be $null
         }
 
         It "MaxHops Should -Be greater 0" {
-            { Test-Connection $targetName -MaxHops 0 } | Should -Throw -ErrorId "System.ArgumentOutOfRangeException,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -MaxHops -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -MaxHops 0 } |
+                Should -Throw -ErrorId "System.ArgumentOutOfRangeException,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -MaxHops -1 } |
+                Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "Count Should -Be greater 0" {
@@ -130,8 +133,10 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Delay Should -Be greater 0" {
-            { Test-Connection $targetName -Delay 0 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -Delay -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Delay 0 } |
+                Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Delay -1 } |
+                Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "Delay works" {
@@ -144,16 +149,18 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "BufferSize Should -Be between 0 and 65500" {
-            { Test-Connection $targetName -BufferSize 0 } | Should Not Throw
-            { Test-Connection $targetName -BufferSize -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -BufferSize 65501 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -BufferSize 0 } | Should -Not Throw
+            { Test-Connection $targetName -BufferSize -1 } |
+                Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -BufferSize 65501 } |
+                Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "BufferSize works" -Pending:(!$IsWindows) {
             $result = Test-Connection $targetName -Count 1 -BufferSize 2
 
             if ($isWindows) {
-                $result.Replies[0].Buffer.Count | Should -Be 2
+                $result.BufferSize | Should -Be 2
             }
         }
 
@@ -162,7 +169,7 @@ Describe "Test-Connection" -tags "CI" {
             $resolvedName = [System.Net.DNS]::GetHostEntry($targetAddress).HostName
 
             $result.Destination | Should -BeExactly $resolvedName
-            $result.Replies[0].Address | Should -BeExactly $targetAddress
+            $result.Address | Should -BeExactly $targetAddress
         }
 
         It "ResolveDestination for name" {
@@ -174,16 +181,18 @@ Describe "Test-Connection" -tags "CI" {
             $resolvedAddress = ([System.Net.DNS]::GetHostAddresses($resolvedName)[0] -split "%")[0]
 
             $result.Destination | Should -BeExactly $resolvedName
-            $result.Replies[0].Address | Should -BeExactly $resolvedAddress
+            $result.Address | Should -BeExactly $resolvedAddress
         }
 
         It "TimeOut works" {
-            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 1 }).TotalSeconds | Should -BeLessThan 3
-            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 4 }).TotalSeconds | Should -BeGreaterThan 3
+            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 1 }).TotalSeconds |
+                Should -BeLessThan 3
+            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 4 }).TotalSeconds |
+                Should -BeGreaterThan 3
         }
 
-        It "Continues works" {
-            # By default we do 4 ping so for '-Continues' we expect to get >4 results.
+        It "Repeat works" {
+            # By default we do 4 ping so for '-Repeat' we expect to get >4 results.
             # Also we should wait >4 seconds before check results but previous tests already did the pause.
             $result = Receive-Job $jobContinues
             Remove-Job $jobContinues -Force
@@ -192,24 +201,24 @@ Describe "Test-Connection" -tags "CI" {
             $result[0].Address | Should -BeExactly $targetAddress
             $result[0].Status | Should -BeExactly "Success"
             if ($isWindows) {
-                $result[0].Buffer.Count | Should -Be 32
+                $result[0].BufferSize | Should -Be 32
             }
         }
     }
 
-    # TODO: We skip the MTUSizeDetect tests on Unix because we expect 'TtlExpired' but get 'TimeOut' internally from .Net Core
+    # TODO: We skip the MTUSizeDetect tests on Unix because we expect 'PacketTooBig' but get 'TimeOut' internally from .Net Core
     Context "MTUSizeDetect" {
         It "MTUSizeDetect works" -pending:($IsMacOS) {
-            $result = Test-Connection $hostName -MTUSizeDetect
+            $result = Test-Connection $hostName -DetectMtuSize
 
-            $result | Should -BeOfType "System.Net.NetworkInformation.PingReply"
+            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus"
             $result.Destination | Should -BeExactly $hostName
             $result.Status | Should -BeExactly "Success"
-            $result.MTUSize | Should -BeGreaterThan 0
+            $result.MtuSize | Should -BeGreaterThan 0
         }
 
         It "Quiet works" -pending:($IsMacOS) {
-            $result = Test-Connection $hostName -MTUSizeDetect -Quiet
+            $result = Test-Connection $hostName -DetectMtuSize -Quiet
 
             $result | Should -BeOfType "Int32"
             $result | Should -BeGreaterThan 0
@@ -220,33 +229,24 @@ Describe "Test-Connection" -tags "CI" {
         It "TraceRoute works" {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
-            $replies = $result.Replies
-            # Check target host reply.
-            $pingReplies = $replies[-1].PingReplies
 
-            $result.Count | Should -Be 1
-            $result | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceRouteResult"
-            $result.Source | Should -BeExactly $hostName
-            $result.DestinationAddress | Should -BeExactly $realAddress
-            $result.DestinationHost | Should -BeExactly $hostName
-
-            $replies.Count | Should -BeGreaterThan 0
-            $replies[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceRouteReply"
-            $replies[0].Hop | Should -Be 1
-
-            $pingReplies.Count | Should -Be 3
-            $pingReplies[0].Address | Should -BeExactly $realAddress
-            $pingReplies[0].Status | Should -BeExactly "Success"
+            $result[0] | Should -BeOfType "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus"
+            $result[0].Source | Should -BeExactly $hostName
+            $result[0].DestinationAddress | Should -BeExactly $realAddress
+            $result[0].DestinationHost | Should -BeExactly $hostName
+            $result[0].Hop | Should -Be 1
+            $result[0].HopAddress | Should -BeExactly $realAddress
+            $result[0].Status | Should -BeExactly "Success"
             if (!$isWindows) {
-                $pingReplies[0].Buffer.Count | Should -Match '^0$|^32$'
+                $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
             }
             else {
-                $pingReplies[0].Buffer.Count | Should -Be 32
+                $result[0].Reply.Buffer.Count | Should -Be 32
             }
         }
 
         It "Quiet works" {
-            $result = Test-Connection $hostName -TraceRoute -Quiet 6> $null
+            $result = Test-Connection $hostName -TraceRoute -Quiet
 
             $result | Should -BeTrue
         }
@@ -261,10 +261,10 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     }
 
     It "Test connection to local host port 80" {
-        Test-Connection '127.0.0.1' -TCPPort $WebListener.HttpPort | Should -BeTrue
+        Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort | Should -BeTrue
     }
 
     It "Test connection to unreachable host port 80" {
-        Test-Connection $UnreachableAddress -TCPPort 80 -TimeOut 1 | Should -BeFalse
+        Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
     }
 }
