@@ -131,8 +131,8 @@ Type 'help' to get help.</value>
                   [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
                   [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
-                  [-Interactive] [-LoadProfile] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}]  [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
+                  [-Interactive] [-Login] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
                   [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
@@ -293,10 +293,10 @@ All parameters are case-insensitive.</value>
     Present an interactive prompt to the user. Inverse for NonInteractive
     parameter.
 
--LoadProfile | -l
+-Login | -l
 
-    Load the PowerShell profiles. This is the default behavior even if this is
-    not specified.
+    Start PowerShell as a login shell, executing the login profiles with /bin/sh.
+    On Windows this does nothing.
 
 -MTA
 

@@ -183,7 +183,6 @@ namespace Microsoft.PowerShell
             "file",
             "help",
             "inputformat",
-            "loadprofile",
             "noexit",
             "nologo",
             "noninteractive",
@@ -195,6 +194,7 @@ namespace Microsoft.PowerShell
             "windowstyle",
             "workingdirectory"
         };
+        // login also belongs in the above list but is handled much earlier
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
@@ -720,10 +720,6 @@ namespace Microsoft.PowerShell
                 {
                     _noExit = true;
                     noexitSeen = true;
-                }
-                else if (MatchSwitch(switchKey, "loadprofile", "l"))
-                {
-                    _skipUserInit = false;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
