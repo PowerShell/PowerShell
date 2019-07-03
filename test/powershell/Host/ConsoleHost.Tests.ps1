@@ -260,8 +260,6 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             Set-Content -Force -Path $profilePath -Value @"
 export $envVarName='$guid'
 "@
-
-            $pwshExe = (Get-Process -Id $PID).Path
         }
 
         AfterAll {
@@ -271,7 +269,7 @@ export $envVarName='$guid'
         }
 
         It "Doesn't run the login profile when -Login not used" {
-            $result = & $pwshExe -Command "`$env:$envVarName"
+            $result = & $powershell -Command "`$env:$envVarName"
             $result | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
@@ -286,7 +284,7 @@ export $envVarName='$guid'
         ) {
             param($LoginSwitch)
 
-            $result = & $pwshExe -Command "`$env:$envVarName"
+            $result = & $powershell -Command "`$env:$envVarName"
 
             if ($IsWindows) {
                 $result | Should -BeNullOrEmpty

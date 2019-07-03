@@ -710,7 +710,8 @@ namespace Microsoft.PowerShell
                     _noExit = false;
                     break;
                 }
-                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+
+                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _showExtendedHelp = true;
