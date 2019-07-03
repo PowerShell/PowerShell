@@ -58,7 +58,7 @@ namespace System.Management.Automation
         private static readonly Version s_psV4Version = new Version(4, 0);
         private static readonly Version s_psV5Version = new Version(5, 0);
         private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, null, null);
+        private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, preReleaseLabel: null, buildLabel: null);
         private static readonly SemanticVersion s_psSemVersion;
         private static readonly Version s_psVersion;
 
