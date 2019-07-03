@@ -3484,7 +3484,7 @@ namespace System.Management.Automation
                         validParameterSets);
             }
 
-            s_tracer.WriteLine("aParameterWasBound = {0}", aParameterWasBound.ToString());
+            s_tracer.WriteLine("aParameterWasBound = {0}", aParameterWasBound);
             return aParameterWasBound;
         }
 
