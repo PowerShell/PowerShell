@@ -997,6 +997,31 @@ namespace System.Management.Automation
             }
         }
 
+        internal void WriteLine(string format, string arg1, string arg2)
+        {
+            WriteLine(format, arg1, arg2);
+        }
+
+        internal void WriteLine(string format, string arg1, object arg2)
+        {
+            WriteLine(format, arg1, arg2);
+        }
+
+        internal void WriteLine(string format, object arg1, string arg2)
+        {
+            WriteLine(format, arg1, arg2);
+        }
+
+        internal void WriteLine(string format, bool arg1, string arg2)
+        {
+            WriteLine(format, arg1.ToString(), arg2);
+        }
+
+        internal void WriteLine(string format, int arg1, string arg2)
+        {
+            WriteLine(format, arg1.ToString(), arg2);
+        }
+
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
