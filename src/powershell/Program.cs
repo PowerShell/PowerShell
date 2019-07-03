@@ -27,10 +27,17 @@ namespace Microsoft.PowerShell
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
+        /// <summary>
+        /// Checks args to see if -Login has been specified.
+        /// </summary>
+        /// <param name="args">Arguments passed to the program.</param>
+        /// <param name="loginIndex">The arg index (in argv) where -Login was found.</param>
+        /// <returns></returns>
         private static bool HasLoginSpecified(string[] args, out int loginIndex)
         {
             loginIndex = -1;
 
+            // Parameter comparison strings, stackalloc'd for performance
             ReadOnlySpan<char> loginParam = stackalloc char[] { 'l', 'o', 'g', 'i', 'n' };
             ReadOnlySpan<char> loginParamUpper = stackalloc char[] { 'L', 'O', 'G', 'I', 'N' };
             ReadOnlySpan<char> fileParam = stackalloc char[] { 'f', 'i', 'l', 'e' };
@@ -42,39 +49,51 @@ namespace Microsoft.PowerShell
             {
                 string arg = args[i];
 
-                // Too short to be like -Login
-                if (arg.Length < 2) { continue; }
+                // Must look like '-<name>'
+                if (arg == null || arg.Length < 2 || arg[0] != '-')
+                { 
+                    continue;
+                }
 
                 // Check for "-Login" or some prefix thereof
-                if (arg[0] == '-')
+                if (IsParam(arg, in loginParam, in loginParamUpper))
                 {
-                    if (IsParam(arg, in loginParam, in loginParamUpper))
-                    {
-                        loginIndex = i;
-                        return true;
-                    }
+                    loginIndex = i;
+                    return true;
+                }
 
-                    if (IsParam(arg, in fileParam, in fileParamUpper)
-                        || IsParam(arg, in commandParam, in commandParamUpper))
-                    {
-                        return false;
-                    }
+                // After -File and -Command, all parameters are passed
+                // to the invoked file or command, so we can stop looking.
+                if (IsParam(arg, in fileParam, in fileParamUpper)
+                    || IsParam(arg, in commandParam, in commandParamUpper))
+                {
+                    return false;
                 }
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Determines if a given parameter is the one we're looking for.
+        /// Assumes any prefix determines that parameter (true for -l, -c and -f).
+        /// </summary>
+        /// <param name="arg">The argument to check.</param>
+        /// <param name="paramToCheck">The lowercase name of the parameter to check.</param>
+        /// <param name="paramToCheckUpper">The uppercase name of the parameter to check.</param>
+        /// <returns></returns>
         private static bool IsParam(
             string arg,
             in ReadOnlySpan<char> paramToCheck,
             in ReadOnlySpan<char> paramToCheckUpper)
         {
+            // Quick fail if the argument is longer than the parameter
             if (arg.Length > paramToCheck.Length + 1)
             {
                 return false;
             }
 
+            // Check arg chars in order and allow prefixes
             for (int i = 1; i < arg.Length - 1; i++)
             {
                 if (arg[i] != paramToCheck[i-1]
@@ -87,22 +106,37 @@ namespace Microsoft.PowerShell
             return true;
         }
 
+        /// <summary>
+        /// Create the exec call to /bin/sh -l -c 'pwsh "$@"' and run it.
+        /// </summary>
+        /// <param name="args">The argument vector passed to pwsh.</param>
+        /// <param name="loginArgIndex">The index of -Login in the argument vector.</param>
+        /// <returns>
+        /// The exit code of exec if it fails.
+        /// If exec succeeds, this process is overwritten so we never actually return.
+        /// </returns>
         private static int ExecPwshLogin(string[] args, int loginArgIndex)
         {
+            // We need the path to the current pwsh executable
             string pwshPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
+            // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
             string pwshInvocation = string.Create(
                 10 + quotedPwshPathLength, // exec '{pwshPath}' "$@"
                 (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
+            // Set up the arguments for /bin/sh
             var execArgs = new string[args.Length + 4];
+
+            // The command arguments
             execArgs[0] = "-l";
             execArgs[1] = "-c";
             execArgs[2] = pwshInvocation;
-            execArgs[3] = "";
+            execArgs[3] = ""; // This is required because $@ skips the first argument
 
+            // Add the arguments passed to pwsh on the end
             int i = 0;
             int j = 4;
             for (; i < args.Length; i++)
@@ -113,20 +147,19 @@ namespace Microsoft.PowerShell
                 j++;
             }
 
+            // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
 
-            int exitCode = Exec("/bin/sh", execArgs);
-
-            if (exitCode != 0)
-            {
-                int errno = Marshal.GetLastWin32Error();
-                Console.WriteLine($"Error: {errno}");
-                return errno;
-            }
-
-            return 0;
+            // Finally exec the /bin/sh command
+            return Exec("/bin/sh", execArgs);
         }
 
+        /// <summary>
+        /// Gets what the length of the given string will be if it's
+        /// quote escaped for /bin/sh.
+        /// </summary>
+        /// <param name="str">The string to quote escape.</param>
+        /// <returns>The length of the string when it's quote escaped.</returns>
         private static int GetQuotedPathLength(string str)
         {
             int length = 2;
@@ -141,15 +174,18 @@ namespace Microsoft.PowerShell
 
         private static void CreatePwshInvocation(Span<char> strBuf, (string path, int quotedLength) pwshPath)
         {
+            // "exec "
             strBuf[0] = 'e';
             strBuf[1] = 'x';
             strBuf[2] = 'e';
             strBuf[3] = 'c';
             strBuf[4] = ' ';
             
+            // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
             Span<char> pathSpan = strBuf.Slice(5, pwshPath.quotedLength);
             QuoteAndWriteToSpan(pwshPath.path, pathSpan);
 
+            // ' "$@"' the argument vector splat to pass pwsh arguments through
             int argIndex = 5 + pwshPath.quotedLength;
             strBuf[argIndex]     = ' ';
             strBuf[argIndex + 1] = '"';
@@ -158,6 +194,11 @@ namespace Microsoft.PowerShell
             strBuf[argIndex + 4] = '"';
         }
 
+        /// <summary>
+        /// Quotes (and sh quote escapes) a string and writes it to the given span.
+        /// </summary>
+        /// <param name="arg">The string to quote.</param>
+        /// <param name="span">The span to write to.</param>
         private static void QuoteAndWriteToSpan(string arg, Span<char> span)
         {
             span[0] = '\'';
@@ -170,6 +211,7 @@ namespace Microsoft.PowerShell
 
                 if (c == '\'')
                 {
+                    // /bin/sh quote escaping uses backslashes
                     span[j] = '\\';
                     j++;
                 }
@@ -180,6 +222,17 @@ namespace Microsoft.PowerShell
             span[j] = '\'';
         }
 
+        /// <summary>
+        /// The `execv` syscall we use to exec /bin/sh.
+        /// </summary>
+        /// <param name="path">The path to the executable to exec.</param>
+        /// <param name="args">
+        /// The arguments to send through to the executable.
+        /// Array must have its final element be null.
+        /// </param>
+        /// <returns>
+        /// An exit code if exec failed, but if successful the calling process will be overwritten.
+        /// </returns>
         [DllImport("libc",
             EntryPoint = "execv",
             CallingConvention = CallingConvention.Cdecl,
