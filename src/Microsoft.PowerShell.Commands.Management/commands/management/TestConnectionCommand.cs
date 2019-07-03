@@ -178,7 +178,8 @@ namespace Microsoft.PowerShell.Commands
         /// Detect MTU size.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectSet)]
-        public SwitchParameter MTUSizeDetect { get; set; }
+        [Alias("MtuSizeDetect")]
+        public SwitchParameter DetectMtuSize { get; set; }
 
         /// <summary>
         /// Do traceroute test.
@@ -191,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortSet)]
-        public int TCPPort { get; set; }
+        public int TcpPort { get; set; }
 
         #endregion Parameters
 
@@ -255,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Task connectionTask = client.ConnectAsync(targetAddress, TCPPort);
+                Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
                 var targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
