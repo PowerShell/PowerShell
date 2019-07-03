@@ -183,6 +183,7 @@ namespace Microsoft.PowerShell
             "file",
             "help",
             "inputformat",
+            "login",
             "noexit",
             "nologo",
             "noninteractive",
@@ -194,7 +195,6 @@ namespace Microsoft.PowerShell
             "windowstyle",
             "workingdirectory"
         };
-        // login also belongs in the above list but is handled much earlier
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
@@ -732,6 +732,11 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "noninteractive", "noni"))
                 {
                     _noInteractive = true;
+                }
+                else if (MatchSwitch(switchKey, "login", "l"))
+                {
+                    // This handles -Login on Windows only, where it does nothing.
+                    // On *nix, -Login is handled much earlier to improve startup performance.
                 }
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
                 {
