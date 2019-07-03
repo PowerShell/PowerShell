@@ -86,15 +86,17 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <returns>The constructed WildcardPattern object.</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
+        /// <remarks>If wildCardType == None, the pattern does not have wild cards.</remarks>
         public WildcardPattern(string pattern)
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             Pattern = pattern;
+
+            Init();
         }
 
         /// <summary>
@@ -105,13 +107,12 @@ namespace System.Management.Automation
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <param name="options">Wildcard options.</param>
         /// <returns>The constructed WildcardPattern object.</returns>
-        /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
-        public WildcardPattern(string pattern,
-                               WildcardOptions options)
+        /// <remarks>If wildCardType == None, the pattern does not have wild cards.</remarks>
+        public WildcardPattern(string pattern, WildcardOptions options)
         {
             if (pattern == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
             Pattern = pattern;
