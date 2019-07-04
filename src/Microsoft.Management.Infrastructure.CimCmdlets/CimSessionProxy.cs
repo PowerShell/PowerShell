@@ -2138,10 +2138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (context.MethodName != null)
             {
-                pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                 bool match = false;
                 if (cimClass.CimClassMethods != null)
                 {
+                    pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                     foreach (CimMethodDeclaration decl in cimClass.CimClassMethods)
                     {
                         DebugHelper.WriteLog("--- method name : {0}", 1, decl.Name);
