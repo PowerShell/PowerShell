@@ -770,11 +770,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (_pipelineThread == null)
             {
-#if CORECLR     // No ApartmentState In CoreCLR
-                _pipelineThread = new PipelineThread();
-#else
                 _pipelineThread = new PipelineThread(this.ApartmentState);
-#endif
             }
 
             return _pipelineThread;

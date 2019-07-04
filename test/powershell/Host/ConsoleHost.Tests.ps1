@@ -711,8 +711,29 @@ namespace StackTest {
             $longPipeName = [string]::new("A", 200)
 
             "`$pid" | & $powershell -CustomPipeName $longPipeName -c -
-            # 64 is the ExitCode for BadCommandLineParameter
-            $LASTEXITCODE | Should -Be 64
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+        }
+    }
+
+    Context "ApartmentState tests" {
+
+        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
+            @{ apartment = "STA"; switch = "-sta" }
+            @{ apartment = "MTA"; switch = "-mta" }
+        ) {
+            param ($apartment, $switch)
+
+            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.ApartmentState" | Should -BeExactly $apartment
+        }
+
+        It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows) -TestCases @(
+            @{ switch = "-sta" }
+            @{ switch = "-mta" }
+        ) {
+            param ($switch)
+
+            & $powershell $switch -noprofile -command exit
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
 }
