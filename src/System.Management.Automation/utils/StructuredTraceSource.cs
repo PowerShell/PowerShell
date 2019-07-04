@@ -1078,7 +1078,9 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1, arg2, arg3);
+                    arg1,
+                    arg2,
+                    arg3);
             }
         }
 
@@ -1098,7 +1100,10 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1, arg2, arg3, arg4);
+                    arg1,
+                    arg2,
+                    arg3,
+                    arg4);
             }
         }
 
@@ -1119,7 +1124,11 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1, arg2, arg3, arg4, arg5);
+                    arg1,
+                    arg2,
+                    arg3,
+                    arg4,
+                    arg5);
             }
         }
 
@@ -1167,28 +1176,28 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="classFormatter">
         /// This is the trace class formatter. For instance,
-        /// TraceError has a formatter like "ERROR: {0}"
+        /// TraceError has a formatter like "ERROR: {0}".
         /// </param>
         /// <param name="format">
-        /// Additional format string
+        /// Additional format string.
         /// </param>
         /// <param name="arg1">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         /// <param name="arg2">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         /// <param name="arg3">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         /// <param name="arg4">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         /// <param name="arg5">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         /// <param name="arg6">
-        /// Argument for the additional format string
+        /// Argument for the additional format string.
         /// </param>
         private void FormatOutputLine(
             PSTraceSourceOptions flag,
@@ -1205,7 +1214,6 @@ namespace System.Management.Automation
             {
                 // First format the class format string and the
                 // user provided format string together
-
                 StringBuilder output = new StringBuilder();
 
                 if (classFormatter != null)
@@ -1219,13 +1227,12 @@ namespace System.Management.Automation
                 }
 
                 // finally trace the output
-
                 OutputLine(flag, output.ToString());
             }
             catch
             {
                 // Eat all exceptions
-
+                //
                 // Do not assert here because exceptions can be
                 // raised while a thread is shutting down during
                 // normal operation.
@@ -1246,10 +1253,10 @@ namespace System.Management.Automation
         /// GetCallingMethodNameAndParameters.
         /// </remarks>
         /// <param name="skipFrames">
-        /// The number of frames to skip in the calling stack
+        /// The number of frames to skip in the calling stack.
         /// </param>
         /// <returns>
-        /// The name of the method on the stack
+        /// The name of the method on the stack.
         /// </returns>
         private static string GetCallingMethodNameAndParameters(int skipFrames)
         {
@@ -1401,18 +1408,19 @@ namespace System.Management.Automation
         }
 
         // used to find and blocks cyclic-loops in tracing.
+
         private bool _alreadyTracing = false;
         /// <summary>
         /// Composes a line of trace output and then writes it.
         /// </summary>
         /// <param name="flag">
-        /// The flag that caused the line to be traced
+        /// The flag that caused the line to be traced.
         /// </param>
         /// <param name="format">
-        /// The string to write with format symbols if necessary
+        /// The string to write with format symbols if necessary.
         /// </param>
         /// <param name="arg">
-        /// Arguments to the format string
+        /// Arguments to the format string.
         /// </param>
         /// <remarks>
         /// The line is composed by prefixing the process name, thread ID,
