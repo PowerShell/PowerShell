@@ -1,15 +1,14 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 Describe "Verify Markdown Links" {
     BeforeAll {
-        # WARNING: Keep markdown-link-check pinned at 3.7.2 OR ELSE...
         if(!(Get-Command -Name 'markdown-link-check' -ErrorAction SilentlyContinue))
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                    sudo yarn global add markdown-link-check@3.7.2
-                }
+                sudo yarn global add markdown-link-check@3.7.2
+            }
         }
 
         if(!(Get-Module -Name 'ThreadJob' -ListAvailable -ErrorAction SilentlyContinue))

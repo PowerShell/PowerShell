@@ -1039,11 +1039,7 @@ namespace System.Management.Automation
 
                 string moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
 
-                if (File.Exists(moduleName))
-                {
-                    moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
-                }
-                else
+                if (!File.Exists(moduleName))
                 {
                     moduleName = defaultMshSnapinInfo.AssemblyName;
                 }
