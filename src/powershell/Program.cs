@@ -20,6 +20,13 @@ namespace Microsoft.PowerShell
         /// </param>
         public static int Main(string[] args)
         {
+            /*
+            Console.WriteLine($"PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
+            while (!System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Threading.Thread.Sleep(500);
+            }
+            */
 #if UNIX
             if (HasLoginSpecified(args, out int loginIndex))
             {
@@ -102,7 +109,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create the exec call to /bin/sh -l -c 'pwsh "$@"' and run it.
+        /// Create the exec call to /bin/{ba}sh -l -c 'pwsh "$@"' and run it.
         /// </summary>
         /// <param name="args">The argument vector passed to pwsh.</param>
         /// <param name="loginArgIndex">The index of -Login in the argument vector.</param>
@@ -123,18 +130,20 @@ namespace Microsoft.PowerShell
                 CreatePwshInvocation);
 
             // Set up the arguments for /bin/sh
-            var execArgs = new string[args.Length + 4];
+            var execArgs = new string[args.Length + 5];
 
             // execArgs[0] is set below to the correct shell executable
 
             // The command arguments
+            execArgs[0] = "-"; // First argument is ignored
             execArgs[1] = "-l";
             execArgs[2] = "-c";
             execArgs[3] = pwshInvocation;
+            execArgs[4] = "-"; // Required since exec ignores $0
 
             // Add the arguments passed to pwsh on the end
             int i = 0;
-            int j = 4;
+            int j = 5;
             for (; i < args.Length; i++)
             {
                 if (i == loginArgIndex) { continue; }
@@ -149,11 +158,9 @@ namespace Microsoft.PowerShell
             // On macOS, sh doesn't support login, so we run /bin/bash
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                execArgs[0] = "/bin/bash"; // This is required because $@ skips $0
                 return Exec("/bin/bash", execArgs);
             }
 
-            execArgs[0] = "/bin/sh"; // This is required because $@ skips $0
             return Exec("/bin/sh", execArgs);
         }
 
