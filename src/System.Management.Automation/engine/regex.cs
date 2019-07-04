@@ -65,8 +65,9 @@ namespace System.Management.Automation
         // wildcard pattern
         internal string Pattern { get; }
 
-        // options that control match behavior
-        internal WildcardOptions Options { get; } = WildcardOptions.None;
+        // Options that control match behavior.
+        // Default is WildcardOptions.None.
+        internal WildcardOptions Options { get; }
 
         /// <summary>
         /// Wildcard pattern converted to regex pattern.
@@ -86,16 +87,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <returns>The constructed WildcardPattern object.</returns>
-        public WildcardPattern(string pattern)
+        public WildcardPattern(string pattern) : this(pattern, WildcardOptions.None)
         {
-            if (pattern == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
-            }
-
-            Pattern = pattern;
-
-            Init();
         }
 
         /// <summary>
