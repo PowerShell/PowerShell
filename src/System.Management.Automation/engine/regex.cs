@@ -63,7 +63,7 @@ namespace System.Management.Automation
         private static readonly Predicate<string> s_matchAll = _ => true;
 
         // wildcard pattern
-        internal string Pattern { get; private set; }
+        internal string Pattern { get; }
 
         // options that control match behavior
         internal WildcardOptions Options { get; } = WildcardOptions.None;
