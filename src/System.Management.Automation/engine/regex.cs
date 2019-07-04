@@ -167,44 +167,26 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (Pattern.Length == 1)
+            if (Pattern.Length == 1 && Pattern[0] == '*')
             {
-                switch (Pattern[0])
-                {
-                    case '*':
-                        _isMatch = s_matchAll;
-                        return;
-                    case '?':
-                    case '[':
-                    case ']':
-                    case '`':
-                        break;
-                    default:
-                        // No special characters present in the pattern, so we can just do a string comparison.
-                        _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
-                        return;
-                }
+                _isMatch = s_matchAll;
+                return;
             }
 
-            if (Pattern.Length > 1 && Pattern.AsSpan().Slice(0, Pattern.Length - 1).IndexOfAny(s_specialChars) == -1)
+            int index = Pattern.IndexOfAny(s_specialChars);
+            if (index == -1)
             {
-                switch (Pattern[Pattern.Length - 1])
-                {
-                    case '*':
-                        // No special characters present in the pattern before last position and last character is asterisk.
-                        var patternWithoutAsterisk = Pattern.Substring(0, Pattern.Length - 1);
-                        _isMatch = str => str.StartsWith(patternWithoutAsterisk, GetStringComparison());
-                        return;
-                    case '?':
-                    case '[':
-                    case ']':
-                    case '`':
-                        break;
-                    default:
-                        // No special characters present in the pattern, so we can just do a string comparison.
-                        _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
-                        return;
-                }
+                // No special characters present in the pattern, so we can just do a string comparison.
+                _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
+                return;
+            }
+
+            if (index == Pattern.Length - 1 && Pattern[index] == '*')
+            {
+                // No special characters present in the pattern before last position and last character is asterisk.
+                var patternWithoutAsterisk = Pattern.Substring(0, Pattern.Length - 1);
+                _isMatch = str => str.StartsWith(patternWithoutAsterisk, GetStringComparison());
+                return;
             }
 
             var matcher = new WildcardPatternMatcher(this);
