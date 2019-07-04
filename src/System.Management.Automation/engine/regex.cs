@@ -57,7 +57,6 @@ namespace System.Management.Automation
         // The size is less than MaxShortPath = 260.
         private const int StackAllocThreshold = 256;
 
-        //
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
