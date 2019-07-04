@@ -40,13 +40,6 @@ namespace Microsoft.PowerShell
             loginIndex = -1;
 
             // Parameter comparison strings, stackalloc'd for performance
-            ReadOnlySpan<char> loginParam = stackalloc char[] { 'l', 'o', 'g', 'i', 'n' };
-            ReadOnlySpan<char> loginParamUpper = stackalloc char[] { 'L', 'O', 'G', 'I', 'N' };
-            ReadOnlySpan<char> fileParam = stackalloc char[] { 'f', 'i', 'l', 'e' };
-            ReadOnlySpan<char> fileParamUpper = stackalloc char[] { 'F', 'I', 'L', 'E' };
-            ReadOnlySpan<char> commandParam = stackalloc char[] { 'c', 'o', 'm', 'm', 'a', 'n', 'd' };
-            ReadOnlySpan<char> commandParamUpper = stackalloc char[] { 'C', 'O', 'M', 'M', 'A', 'N', 'D' };
-
             for (int i = 0; i < args.Length; i++)
             {
                 string arg = args[i];
@@ -58,7 +51,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // Check for "-Login" or some prefix thereof
-                if (IsParam(arg, in loginParam, in loginParamUpper))
+                if (IsParam(arg, "login", "LOGIN"))
                 {
                     loginIndex = i;
                     return true;
@@ -66,8 +59,8 @@ namespace Microsoft.PowerShell
 
                 // After -File and -Command, all parameters are passed
                 // to the invoked file or command, so we can stop looking.
-                if (IsParam(arg, in fileParam, in fileParamUpper)
-                    || IsParam(arg, in commandParam, in commandParamUpper))
+                if (IsParam(arg, "file", "FILE")
+                    || IsParam(arg, "command", "COMMAND"))
                 {
                     return false;
                 }
@@ -86,8 +79,8 @@ namespace Microsoft.PowerShell
         /// <returns></returns>
         private static bool IsParam(
             string arg,
-            in ReadOnlySpan<char> paramToCheck,
-            in ReadOnlySpan<char> paramToCheckUpper)
+            string paramToCheck,
+            string paramToCheckUpper)
         {
             // Quick fail if the argument is longer than the parameter
             if (arg.Length > paramToCheck.Length + 1)
@@ -96,7 +89,7 @@ namespace Microsoft.PowerShell
             }
 
             // Check arg chars in order and allow prefixes
-            for (int i = 1; i < arg.Length - 1; i++)
+            for (int i = 1; i < arg.Length; i++)
             {
                 if (arg[i] != paramToCheck[i-1]
                     && arg[i] != paramToCheckUpper[i-1])
@@ -132,11 +125,12 @@ namespace Microsoft.PowerShell
             // Set up the arguments for /bin/sh
             var execArgs = new string[args.Length + 4];
 
+            // execArgs[0] is set below to the correct shell executable
+
             // The command arguments
-            execArgs[0] = "-l";
-            execArgs[1] = "-c";
-            execArgs[2] = pwshInvocation;
-            execArgs[3] = ""; // This is required because $@ skips the first argument
+            execArgs[1] = "-l";
+            execArgs[2] = "-c";
+            execArgs[3] = pwshInvocation;
 
             // Add the arguments passed to pwsh on the end
             int i = 0;
@@ -152,7 +146,14 @@ namespace Microsoft.PowerShell
             // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
 
-            // Finally exec the /bin/sh command
+            // On macOS, sh doesn't support login, so we run /bin/bash
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                execArgs[0] = "/bin/bash"; // This is required because $@ skips $0
+                return Exec("/bin/bash", execArgs);
+            }
+
+            execArgs[0] = "/bin/sh"; // This is required because $@ skips $0
             return Exec("/bin/sh", execArgs);
         }
 
