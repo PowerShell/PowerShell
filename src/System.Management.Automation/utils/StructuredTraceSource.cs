@@ -346,7 +346,7 @@ namespace System.Management.Automation
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tCurrent time: {0}",
-                DateTime.Now);
+                DateTime.Now.ToString());
 
             // OS build
 
@@ -429,7 +429,7 @@ namespace System.Management.Automation
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly File Timestamp: {0}",
-                    assemblyFileInfo.CreationTime);
+                    assemblyFileInfo.CreationTime.ToString());
             }
 
             StringBuilder flagBuilder = new StringBuilder();
@@ -1389,23 +1389,15 @@ namespace System.Management.Automation
             return prefixBuilder;
         }
 
-        private static void AddTab(ref StringBuilder lineBuilder)
+        private static void AddTab(StringBuilder lineBuilder)
         {
             // The Trace.IndentSize does not change at all
             // through the running of the process so there
             // are no thread issues here.
-
             int indentSize = Trace.IndentSize;
-
             int threadIndentLevel = ThreadIndentLevel;
 
-            for (
-                int index = 0;
-                index < indentSize * threadIndentLevel;
-                index++)
-            {
-                lineBuilder.Append(" ");
-            }
+            lineBuilder.Append(System.Management.Automation.Internal.StringUtil.Padding(indentSize * threadIndentLevel));
         }
 
         // used to find and blocks cyclic-loops in tracing.
@@ -1419,7 +1411,7 @@ namespace System.Management.Automation
         /// <param name="format">
         /// The string to write with format symbols if necessary
         /// </param>
-        /// <param name="args">
+        /// <param name="arg">
         /// Arguments to the format string
         /// </param>
         /// <remarks>
@@ -1431,7 +1423,7 @@ namespace System.Management.Automation
         internal void OutputLine(
             PSTraceSourceOptions flag,
             string format,
-            params object[] args)
+            string arg = null)
         {
             // if already tracing something for this current TraceSource,
             // dont trace again. This will block cyclic-loops from happening.
@@ -1453,28 +1445,18 @@ namespace System.Management.Automation
                 {
                     // Get the line prefix string which includes things
                     // like App name, clock tick, thread ID, etc.
-
                     lineBuilder.Append(GetLinePrefix(flag));
                 }
 
                 // Add the spaces for the indent
+                AddTab(lineBuilder);
 
-                AddTab(ref lineBuilder);
-
-                if (args != null && args.Length > 0)
+                if (arg != null)
                 {
-                    for (int index = 0; index < args.Length; ++index)
-                    {
-                        if (args[index] == null)
-                        {
-                            args[index] = "null";
-                        }
-                    }
-
                     lineBuilder.AppendFormat(
                         CultureInfo.CurrentCulture,
                         format,
-                        args);
+                        arg);
                 }
                 else
                 {
