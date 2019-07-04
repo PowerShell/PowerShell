@@ -4881,9 +4881,8 @@ namespace System.Management.Automation
                         LocalRunspace rs = _rsConnection as LocalRunspace;
                         if (rs != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
-#endif
+
                             if (rs.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rs.RunspaceStateInfo.State);

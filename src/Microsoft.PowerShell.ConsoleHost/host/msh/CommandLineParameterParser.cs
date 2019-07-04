@@ -1411,12 +1411,6 @@ namespace Microsoft.PowerShell
         private bool _abortStartup;
         private bool _skipUserInit;
         private string _customPipeName;
-        // Win8: 182409 PowerShell 3.0 should run in STA mode by default
-        // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
-        // if true, then sta is specified on the command line.
-        // if false, then mta is specified on the command line.
-        // if null, then none is specified on the command line..use default in this case
-        // default is sta.
         private bool? _staMode = null;
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;

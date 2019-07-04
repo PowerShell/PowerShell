@@ -1449,8 +1449,9 @@ namespace Microsoft.PowerShell
                 _runspaceRef.Runspace.Close();
                 _runspaceRef = null;
 
-                if (staMode) // don't recycle the Runspace in STA mode
+                if (staMode)
                 {
+                    // don't recycle the Runspace in STA mode
                     ShouldEndSession = true;
                 }
             }

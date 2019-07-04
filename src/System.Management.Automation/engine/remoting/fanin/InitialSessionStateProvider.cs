@@ -12,6 +12,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 
 using Microsoft.PowerShell.Commands;
@@ -66,7 +67,7 @@ namespace System.Management.Automation.Remoting
         internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
         internal PSThreadOptions? ShellThreadOptions;
-        internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
+        internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
 
@@ -124,8 +125,8 @@ namespace System.Management.Automation.Remoting
                     break;
                 case THREADAPTSTATETOKEN:
                     AssertValueNotAssigned(THREADAPTSTATETOKEN, ShellThreadApartmentState);
-                    ShellThreadApartmentState = (System.Threading.ApartmentState)LanguagePrimitives.ConvertTo(
-                        optionValue, typeof(System.Threading.ApartmentState), CultureInfo.InvariantCulture);
+                    ShellThreadApartmentState = (ApartmentState)LanguagePrimitives.ConvertTo(
+                        optionValue, typeof(ApartmentState), CultureInfo.InvariantCulture);
                     break;
                 case SESSIONCONFIGTOKEN:
                     {
