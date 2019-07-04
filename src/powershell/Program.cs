@@ -36,6 +36,7 @@ namespace Microsoft.PowerShell
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
+#if UNIX
         /// <summary>
         /// Checks args to see if -Login has been specified.
         /// </summary>
@@ -250,4 +251,5 @@ namespace Microsoft.PowerShell
             SetLastError = true)]
         private static extern int Exec(string path, string[] args);
     }
+#endif
 }
