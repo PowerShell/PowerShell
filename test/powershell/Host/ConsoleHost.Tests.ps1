@@ -274,7 +274,7 @@ export $envVarName='$guid'
             $LASTEXITCODE | Should -Be 0
         }
 
-        It "Accepts the -Login switch and behaves correctly" -TestCases @(
+        It "Accepts the <LoginSwitch> switch for -Login and behaves correctly" -TestCases @(
             @{ LoginSwitch = '-l' }
             @{ LoginSwitch = '-L' }
             @{ LoginSwitch = '-login' }
@@ -284,7 +284,7 @@ export $envVarName='$guid'
         ) {
             param($LoginSwitch)
 
-            $result = & $powershell -Command "`$env:$envVarName"
+            $result = & $powershell $LoginSwitch -Command "`$env:$envVarName"
 
             if ($IsWindows) {
                 $result | Should -BeNullOrEmpty
