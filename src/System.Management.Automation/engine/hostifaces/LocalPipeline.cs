@@ -191,10 +191,12 @@ namespace System.Management.Automation.Runspaces
                             apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartment state
                         }
 
+#if !UNIX
                         if (apartmentState != ApartmentState.Unknown)
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
+#endif
 
                         invokeThread.Start();
 
@@ -1194,10 +1196,12 @@ namespace System.Management.Automation.Runspaces
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
 
+#if !UNIX
             if (apartmentState != ApartmentState.Unknown)
             {
                 _worker.SetApartmentState(apartmentState);
             }
+#endif
         }
 
         /// <summary>
