@@ -93,6 +93,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $markdownErrors += ' (See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explanation of the error codes)'
         }
 
-        $markdownErrors -join "`n" | Should -BeExactly "--EMPTY--"
+        $combinedMarkdownErrors = $markdownErrors -join [System.Environment]::NewLine
+        $combinedMarkdownErrors | Should -BeExactly "--EMPTY--" -Because $combinedMarkdownErrors
     }
 }
