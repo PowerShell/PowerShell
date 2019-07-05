@@ -50,6 +50,12 @@ case "$1" in
 esac
 '@
 
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+echo "{0}" | sudo tee -a /etc/shells
+'@
+
     MacOSLauncherScript = @'
 #!/usr/bin/env bash
 open {0}

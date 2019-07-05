@@ -1210,6 +1210,10 @@ function New-AfterScripts
             New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
     }
+    elseif ($Environment.IsMacOS) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+    }
 
     return [PSCustomObject] @{
         AfterInstallScript = $AfterInstallScript
