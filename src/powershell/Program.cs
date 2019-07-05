@@ -20,13 +20,6 @@ namespace Microsoft.PowerShell
         /// </param>
         public static int Main(string[] args)
         {
-            /*
-            Console.WriteLine($"PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                System.Threading.Thread.Sleep(500);
-            }
-            */
 #if UNIX
             if (HasLoginSpecified(args, out int loginIndex))
             {
