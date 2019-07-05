@@ -550,7 +550,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             Select-Object -Property Name, @{
                 Name = 'ConfirmImpact'
                 Expression = {
-                    if ($t = $_.ImplementingType) {
+                    if (($t = $_.ImplementingType)) {
                         $t.GetCustomAttributes($true).Where{$_.TypeId.Name -eq 'CmdletAttribute'}.ConfirmImpact
                     }
                 }
