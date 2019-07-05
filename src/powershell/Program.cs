@@ -250,6 +250,6 @@ namespace Microsoft.PowerShell
             CharSet = CharSet.Ansi,
             SetLastError = true)]
         private static extern int Exec(string path, string[] args);
-    }
 #endif
+    }
 }
