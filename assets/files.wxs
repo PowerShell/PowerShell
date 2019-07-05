@@ -1189,9 +1189,6 @@
       <Component Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" Guid="{3383D3BD-2174-4FC4-BC14-4AB4309D3E88}">
         <File Id="fil3EEF1D08102F0A83F48EFBB44396FCBA" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-libraryloader-l1-1-1.dll" />
       </Component>
-      <Component Id="cmp09b8252b795440eca75bc6a0811a3f10" Guid="{1334ea0d-abb9-4f4d-948d-17d7602e63be}">
-        <File Id="fil0a4b944b312642a4a68181302623e0b5" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.dll" />
-      </Component>
       <Component Id="cmpf2a3c81eb19246b6be74af07e70a06f0" Guid="{678cb6a4-49e8-41be-a5cb-67a77c3cf612}">
         <File Id="fil90f9e9f09d6744f68331100e6d7da03d" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.dll" />
       </Component>
@@ -2373,6 +2370,9 @@
       <Component Id="cmp8E8AE88416D44A4CA39F23E9C825A899" Guid="{9635d266-8657-4c7e-8a9b-81d2c2b6456d}">
         <File Id="fil4954FEF58A894EA7B701DFCA7D11AF08" KeyPath="yes" Source="$(env.ProductSourcePath)\Namotion.Reflection.dll" />
       </Component>
+      <Component Id="cmpE5F62B056F174A3E8843DFE8B70E3AA9" Guid="{549fda85-f558-439b-9951-68da589bf588}">
+        <File Id="fil6B276B69CAC64F19A2A3E2A72086EF15" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.Signed.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2773,7 +2773,6 @@
       <ComponentRef Id="cmp30357FCEAC7B88BDCF0B20D55C22F61F" />
       <ComponentRef Id="cmp557A49B03E72CD07149A6CD0595C9245" />
       <ComponentRef Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" />
-      <ComponentRef Id="cmp09b8252b795440eca75bc6a0811a3f10" />
       <ComponentRef Id="cmpf2a3c81eb19246b6be74af07e70a06f0" />
       <ComponentRef Id="cmp918c5338524c41a2ac739a0ded94cc0d" />
       <ComponentRef Id="cmp75c6b7b418bb4f439dd5519c570a14e0" />
@@ -2980,6 +2979,7 @@
       <ComponentRef Id="cmp0125D538DA2E4396BC1D595250B69263" />
       <ComponentRef Id="cmp44977EB99C0647F4941AA2711A81651F" />
       <ComponentRef Id="cmp5DF3BF3BEEE34C329E690E094A3CAFA2" />
+      <ComponentRef Id="cmpE5F62B056F174A3E8843DFE8B70E3AA9" />
     </ComponentGroup>
   </Fragment>
 </Wix>
