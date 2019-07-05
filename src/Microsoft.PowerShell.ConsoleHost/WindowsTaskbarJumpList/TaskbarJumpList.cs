@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Threading;
 
@@ -20,36 +21,21 @@ namespace Microsoft.PowerShell
         // not over-optimize this and always create the JumpList as a non-blocking background task instead.
         internal static void CreateRunAsAdministratorJumpList()
         {
-            try
+            // Some COM APIs are implicitly STA only, therefore the executing thread must run in STA.
+            var thread = new Thread(() =>
             {
-                // Some COM APIs are STA only, therefore the executing thread must run in STA
-                if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                try
                 {
                     TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
                 }
-                else
+                catch
                 {
-                    var thread = new Thread(() =>
-                    {
-                        try
-                        {
-                            TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
-                        }
-                        catch
-                        {
-                            // Due to COM threading complexity there might be sporadic failures but they can
-                            // be ignored as creating the JumpList is not critical and persists after its first creation.
-                        }
-                    });
-                    thread.SetApartmentState(ApartmentState.STA);
-                    thread.Start();
+                    // Due to COM threading complexity there might still be sporadic failures but they can be
+                    // ignored as creating the JumpList is not critical and persists after its first creation.
                 }
-            }
-            catch
-            {
-                // Due to COM threading complexity there might be sporadic failures but they can
-                // be ignored as creating the JumpList is not critical and persists after its first creation.
-            }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         private static void CreateElevatedEntry(string title)
