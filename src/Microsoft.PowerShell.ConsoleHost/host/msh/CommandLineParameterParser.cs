@@ -717,6 +717,11 @@ namespace Microsoft.PowerShell
                     _showExtendedHelp = true;
                     _abortStartup = true;
                 }
+                else if (MatchSwitch(switchKey, "login", "l"))
+                {
+                    // This handles -Login on Windows only, where it does nothing.
+                    // On *nix, -Login is handled much earlier to improve startup performance.
+                }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
@@ -733,11 +738,6 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "noninteractive", "noni"))
                 {
                     _noInteractive = true;
-                }
-                else if (MatchSwitch(switchKey, "login", "l"))
-                {
-                    // This handles -Login on Windows only, where it does nothing.
-                    // On *nix, -Login is handled much earlier to improve startup performance.
                 }
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
                 {
