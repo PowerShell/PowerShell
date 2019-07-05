@@ -509,6 +509,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression InvariantCulture = Expression.Constant(CultureInfo.InvariantCulture);
         internal static readonly Expression OrdinalIgnoreCaseComparer = Expression.Constant(StringComparer.OrdinalIgnoreCase, typeof(StringComparer));
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
+        // Empty expression is used at the end of blocks to give them the void expression result
         internal static readonly Expression Empty = Expression.Empty();
         internal static Expression GetExecutionContextFromTLS =
             Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
@@ -3120,13 +3121,7 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementChain(StatementChainAst statementChainAst)
         {
-            Expression condition = statementChainAst.Operator == StatementChainOperator.AndAnd
-                ? s_getDollarQuestion
-                : Expression.Not(s_getDollarQuestion);
-
-            return Expression.Block(
-                Compile(statementChainAst.LhsStatement),
-                Expression.IfThen(condition, Compile(statementChainAst.RhsStatement)));
+            return CompileStatementChain(statementChainAst.LhsStatement, statementChainAst.RhsStatement, statementChainAst.Operator);
         }
 
         public object VisitPipelineChain(PipelineChainAst pipelineChainAst)
@@ -3139,13 +3134,198 @@ namespace System.Management.Automation.Language
                     _functionContext);
             }
 
-            Expression condition = pipelineChainAst.Operator == StatementChainOperator.AndAnd
-                ? s_getDollarQuestion
-                : Expression.Not(s_getDollarQuestion);
+            return CompileStatementChain(pipelineChainAst.LhsPipeline, pipelineChainAst.RhsPipeline, pipelineChainAst.Operator);
+        }
 
-            return Expression.Block(
-                Compile(pipelineChainAst.LhsPipeline),
-                Expression.IfThen(condition, Compile(pipelineChainAst.RhsPipeline)));
+        private Expression CompileStatementChain(
+            StatementAst lhsStatement,
+            StatementAst rhsStatement,
+            StatementChainOperator chainOperator)
+        {
+            // We want to generate code like:
+            //
+            // dispatchIndex = 0;
+            // DispatchNextStatementTarget:
+            //     try {
+            //         switch (dispatchIndex) {
+            //         case 0: goto L0;
+            //         case 1: goto L1;
+            //         case 2: goto L2;
+            //         }
+            // L0:     dispatchIndex = 1;
+            //         pipeline1;
+            // L1:     dispatchIndex = 2;
+            //         if ($?) pipeline2;
+            // L3:     dispatchIndex = 3;
+            //         if ($?) pipeline3;
+            //         ...
+            //     } catch (FlowControlException) {
+            //         throw;
+            //     } catch (Exception e) {
+            //         ExceptionHandlingOps.CheckActionPreference(functionContext, e);
+            //         goto DispatchNextStatementTarget;
+            //     }
+            // LN:
+
+            var exprs = new List<Expression>(); 
+
+            ParameterExpression trapHandlersPushed = null;
+            if (_trapNestingCount > 0)
+            {
+                // If this statement block has no traps, but a parent block does, we need to make sure that process the
+                // trap at the correct level in case we continue.  For example:
+                //     trap { continue }
+                //     if (1) {
+                //         throw 1
+                //         "Shouldn't continue here"
+                //     }
+                //     "Should continue here"
+                // In this example, the trap just continues, but we want to continue after the 'if' statement, not after
+                // the 'throw' statement.
+                // We push null onto the active trap handlers to let ExceptionHandlingOps.CheckActionPreference know it
+                // shouldn't process traps (but should still query the user if appropriate), and just rethrow so we can
+                // unwind to the block with the trap.
+
+                exprs.Add(Expression.Call(_functionContext, CachedReflectionInfo.FunctionContext_PushTrapHandlers,
+                                            ExpressionCache.NullTypeArray, ExpressionCache.NullDelegateArray, ExpressionCache.NullTypeArray));
+                trapHandlersPushed = NewTemp(typeof(bool), "trapHandlersPushed");
+                exprs.Add(Expression.Assign(trapHandlersPushed, ExpressionCache.Constant(true)));
+            }
+
+            // int chainIndex = 0;
+            ParameterExpression dispatchIndex = Expression.Variable(typeof(int), "chainIndex");
+            var temps = new ParameterExpression[] { dispatchIndex };
+            exprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(0)));
+
+            // DispatchNextTargetStatement:
+            LabelTarget dispatchNextStatementTargetLabel = Expression.Label();
+            exprs.Add(Expression.Label(dispatchNextStatementTargetLabel));
+
+            // try statement body
+            var switchCases = new List<SwitchCase>();
+            var dispatchTargets = new List<LabelTarget>();
+            var tryBodyExprs = new List<Expression>()
+            {
+                null, // Add a slot for the inital switch/case that we'll come back to
+            };
+
+            // L0: dispatchIndex = 1; pipeline1
+            LabelTarget label0 = Expression.Label();
+            dispatchTargets.Add(label0);
+            switchCases.Add(
+                Expression.SwitchCase(
+                    Expression.Goto(label0),
+                    ExpressionCache.Constant(0)));
+            tryBodyExprs.Add(Expression.Label(label0));
+            tryBodyExprs.Add(Expression.Assign(dispatchIndex, ExpressionCache.Constant(1)));
+            tryBodyExprs.Add(Compile(lhsStatement));
+
+            // Remainder of try statement body
+            // L1: dispatchIndex = 2; if ($?) pipeline2;
+            // ...
+            StatementAst rhs = rhsStatement;
+            bool stillUnrolling = true;
+            StatementChainOperator currentChainOperator = chainOperator;
+            int chainIndex = 1;
+            do
+            {
+                // Record label and switch case for later use
+                LabelTarget currentLabel = Expression.Label();
+                dispatchTargets.Add(currentLabel);
+                switchCases.Add(
+                    Expression.SwitchCase(
+                        Expression.Goto(currentLabel),
+                        ExpressionCache.Constant(chainIndex)));
+
+                // Add label and dispatchIndex for current pipeline
+                tryBodyExprs.Add(Expression.Label(currentLabel));
+                tryBodyExprs.Add(
+                    Expression.Assign(
+                        dispatchIndex,
+                        ExpressionCache.Constant(chainIndex + 1)));
+
+                // Increment chain index for next iteration
+                chainIndex++;
+
+                Expression dollarQuestionCheck = currentChainOperator == StatementChainOperator.AndAnd
+                    ? s_getDollarQuestion
+                    : Expression.Not(s_getDollarQuestion);
+
+                // Unroll next chain as required
+                switch (rhs)
+                {
+                    case PipelineChainAst pipelineChain:
+                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(pipelineChain.LhsPipeline)));
+                        rhs = pipelineChain.RhsPipeline;
+                        currentChainOperator = pipelineChain.Operator;
+                        continue;
+
+                    case StatementChainAst statementChain:
+                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(statementChain.LhsStatement)));
+                        CompileTrappableExpression(tryBodyExprs, statementChain.LhsStatement);
+                        rhs = statementChain.RhsStatement;
+                        currentChainOperator = statementChain.Operator;
+                        continue;
+
+                    default:
+                        tryBodyExprs.Add(Expression.IfThen(dollarQuestionCheck, Compile(rhs)));
+                        stillUnrolling = false;
+                        continue;
+                }
+            } while (stillUnrolling);
+
+            // Add empty expression to make the block value void
+            tryBodyExprs.Add(ExpressionCache.Empty);
+
+            // Create the final label that follows the entire try/catch
+            LabelTarget afterLabel = Expression.Label();
+            switchCases.Add(
+                Expression.SwitchCase(
+                    Expression.Goto(afterLabel),
+                    ExpressionCache.Constant(chainIndex)));
+
+            // Now set the switch/case that belongs at the top
+            tryBodyExprs[0] = Expression.Switch(dispatchIndex, switchCases.ToArray());
+
+            // Create the catch block for flow control and action preference
+            ParameterExpression exception = Expression.Variable(typeof(Exception), "exception");
+            MethodCallExpression callCheckActionPreference = Expression.Call(
+                CachedReflectionInfo.ExceptionHandlingOps_CheckActionPreference,
+                Compiler._functionContext,
+                exception);
+            CatchBlock catchAll = Expression.Catch(
+                exception,
+                Expression.Block(callCheckActionPreference,
+                Expression.Goto(dispatchNextStatementTargetLabel)));
+
+            TryExpression expr = Expression.TryCatch(Expression.Block(tryBodyExprs),
+                                            new CatchBlock[] { s_catchFlowControl, catchAll });
+
+            exprs.Add(expr);
+            exprs.Add(Expression.Label(afterLabel));
+
+            BlockExpression fullyExpandedBlock = Expression.Block(typeof(void), temps, exprs);
+
+            if (_trapNestingCount > 0)
+            {
+                var parameterExprs = new ParameterExpression[] { trapHandlersPushed };
+                var finallyBlockExprs = new Expression[]
+                {
+                    Expression.IfThen(
+                        trapHandlersPushed, 
+                        Expression.Call(
+                            _functionContext,
+                            CachedReflectionInfo.FunctionContext_PopTrapHandlers))
+                };
+
+                fullyExpandedBlock = Expression.Block(
+                    parameterExprs,
+                    Expression.TryFinally(
+                        fullyExpandedBlock,
+                        Expression.Block(finallyBlockExprs)));
+            }
+
+            return fullyExpandedBlock;
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)
