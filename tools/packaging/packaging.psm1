@@ -1211,6 +1211,8 @@ function New-AfterScripts
         }
     }
     elseif ($Environment.IsMacOS) {
+        # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
+        # Handling uninstall can be handling in Homebrew so we'll take advantage of that in the brew formula.
         $AfterInstallScript = [io.path]::GetTempFileName()
         $packagingStrings.MacOSAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
     }
