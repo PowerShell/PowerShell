@@ -53,7 +53,11 @@ esac
     MacOSAfterInstallScript = @'
 #!/bin/bash
 
-echo "{0}" | sudo tee -a /etc/shells
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
 '@
 
     MacOSLauncherScript = @'
