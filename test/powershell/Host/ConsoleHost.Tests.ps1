@@ -715,7 +715,7 @@ namespace StackTest {
         }
     }
 
-    Context "ApartmentState tests" {
+    Context "ApartmentState tests" -Tag Slow {
 
         It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
             @{ apartment = "STA"; switch = "-sta" }
