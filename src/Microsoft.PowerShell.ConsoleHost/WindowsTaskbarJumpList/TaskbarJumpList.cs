@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Threading;
 
