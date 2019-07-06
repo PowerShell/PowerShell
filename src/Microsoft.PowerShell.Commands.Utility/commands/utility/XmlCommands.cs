@@ -134,7 +134,8 @@ namespace Microsoft.PowerShell.Commands
             if (!ShouldProcess(Path))
                 return;
 
-            _helper = new ExportXmlHelper(Path, this, _isLiteralPath, Depth, _force, _noclobber, Encoding);
+            CreateFileStream();
+            _helper = new ExportXmlHelper(_sw, this, Depth);
         }
 
         /// <summary>
@@ -165,6 +166,36 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Overrides
+
+        #region file
+        /// <summary>
+        /// Handle to file stream.
+        /// </summary>
+        internal FileStream _fs;
+
+        internal FileInfo _readOnlyFileInfo;
+
+        internal StreamWriter _sw;
+
+        private void CreateFileStream()
+        {
+            Dbg.Assert(Path != null, "Path is mandatory");
+
+            PathUtils.MasterStreamOpen(
+                this,
+                this.Path,
+                this.Encoding,
+                false, // default encoding
+                false, // append
+                _force,
+                _noclobber,
+                out _fs,
+                out _sw,
+                out _readOnlyFileInfo,
+                _isLiteralPath
+                );
+        }
+        #endregion file
 
         #region IDisposable Members
 
@@ -545,59 +576,20 @@ namespace Microsoft.PowerShell.Commands
         #region constructor
 
         /// <summary>
-        /// XML file to import.
-        /// </summary>
-        private readonly string _path;
-
-        /// <summary>
         /// Reference to cmdlet which is using this helper class.
         /// </summary>
         private readonly PSCmdlet _cmdlet;
-        private bool _isLiteralPath;
-        private bool _force;
-        private bool _noClobber;
-        private Encoding _encoding;
         private readonly int _depth;
 
-        internal ExportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath, int depth, bool force, bool noClobber, Encoding encoding)
+        internal ExportXmlHelper(StreamWriter writer, PSCmdlet cmdlet, int depth)
         {
-            Dbg.Assert(fileName != null, "filename is mandatory");
             Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
-            _path = fileName;
             _cmdlet = cmdlet;
-            _isLiteralPath = isLiteralPath;
             _depth = depth;
-            _force = force;
-            _noClobber = noClobber;
-            _encoding = encoding;
-        }
+            _sw = writer;
 
-        #endregion constructor
+            _xw = CreateXmlWriter(_sw);
 
-        #region file
-
-        /// <summary>
-        /// Handle to file stream.
-        /// </summary>
-        internal FileStream _fs;
-
-        internal StreamWriter _sw;
-
-        internal FileInfo _readOnlyFileInfo;
-
-        /// <summary>
-        /// XmlReader used to read file.
-        /// </summary>
-        internal XmlWriter _xw;
-
-        private static XmlWriter CreateXmlWriter(StreamWriter sw)
-        {
-            return XmlWriter.Create(sw, InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding));
-        }
-
-        internal void Initialize()
-        {
-            CreateFileStream();
             if (_depth == 0)
             {
                 _serializer = new Serializer(_xw);
@@ -606,6 +598,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 _serializer = new Serializer(_xw, _depth, true);
             }
+        }
+
+        #endregion constructor
+
+        #region output
+
+        internal StreamWriter _sw;
+
+        /// <summary>
+        /// XmlWriter used to write the resulting document.
+        /// </summary>
+        internal XmlWriter _xw;
+
+        private static XmlWriter CreateXmlWriter(StreamWriter sw)
+        {
+            return XmlWriter.Create(sw, InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding));
         }
 
         internal void Serialize(object inputObject)
@@ -617,28 +625,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CreateFileStream()
-        {
-            PathUtils.MasterStreamOpen(
-                _cmdlet,
-                _path,
-                _encoding,
-                false, // default encoding
-                false, // append
-                _force,
-                _noClobber,
-                out _fs,
-                out _sw,
-                out _readOnlyFileInfo,
-                _isLiteralPath
-                );
-
-            _xw = CreateXmlWriter(_sw);
-        }
-
         internal void CleanUp()
         {
-            if (_fs != null)
+            if (_sw != null)
             {
                 if (_xw != null)
                 {
@@ -646,8 +635,8 @@ namespace Microsoft.PowerShell.Commands
                     _xw = null;
                 }
 
-                _fs.Dispose();
-                _fs = null;
+                _sw.Dispose();
+                _sw = null;
             }
         }
 
@@ -660,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-    #endregion file
+    #endregion output
 
     #region IDisposable Members
 
