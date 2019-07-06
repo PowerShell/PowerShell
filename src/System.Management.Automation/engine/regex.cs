@@ -215,6 +215,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
 
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
             Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
@@ -235,11 +240,7 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex == 0)
-            {
-                s = string.Empty;
-            }
-            else if (tempIndex == pattern.Length)
+            if (tempIndex == pattern.Length)
             {
                 s = pattern;
             }
@@ -323,6 +324,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
+            if (pattern == string.Empty)
+            {
+                return pattern;
+            }
+
             Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length] : new char[pattern.Length];
 
             int tempIndex = 0;
@@ -370,11 +376,7 @@ namespace System.Management.Automation
 
             string s = null;
 
-            if (tempIndex == 0)
-            {
-                s = string.Empty;
-            }
-            else if (tempIndex == pattern.Length)
+            if (tempIndex == pattern.Length)
             {
                 s = pattern;
             }
