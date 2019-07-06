@@ -27,10 +27,11 @@ namespace Microsoft.PowerShell
                 {
                     TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
                 }
-                catch
+                catch (Exception exception)
                 {
                     // Due to COM threading complexity there might still be sporadic failures but they can be
                     // ignored as creating the JumpList is not critical and persists after its first creation.
+                    Debug.Fail($"Creating 'Run as Administrator' JumpList failed. {exception}");
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
