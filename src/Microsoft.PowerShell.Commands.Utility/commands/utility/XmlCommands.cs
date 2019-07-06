@@ -214,11 +214,7 @@ namespace Microsoft.PowerShell.Commands
                 );
 
             // create xml writer
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Encoding = sw.Encoding;
-            xmlSettings.Indent = true;
-            xmlSettings.OmitXmlDeclaration = true;
+            XmlWriterSettings xmlSettings = InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding);
             _xw = XmlWriter.Create(sw, xmlSettings);
             if (Depth == 0)
             {

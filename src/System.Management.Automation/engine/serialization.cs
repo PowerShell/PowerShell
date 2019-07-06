@@ -911,6 +911,22 @@ namespace System.Management.Automation
             return (pktInfo != null);
         }
 
+        #region Getting XmlWriterSettings
+        internal static XmlWriterSettings GetXmlWriterSettingsForCliXml(Encoding encoding)
+        {
+            XmlWriterSettings xws = new XmlWriterSettings();
+
+            // The XML data needs to be in conformance to the rules for a well-formed XML 1.0 document.
+            xws.ConformanceLevel = ConformanceLevel.Document;
+            xws.CloseOutput = true;
+            xws.Encoding = encoding;
+            xws.Indent = true;
+            xws.OmitXmlDeclaration = true;
+
+            return xws;
+        }
+        #endregion
+
         /// <summary>
         /// This writes one object.
         /// </summary>
