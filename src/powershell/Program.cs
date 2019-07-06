@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell
             // On macOS, sh doesn't support login, so we run /bin/bash
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return Exec("/bin/zsh", execArgs);
+                return Exec("/bin/bash", execArgs);
             }
 
             return Exec("/bin/sh", execArgs);
