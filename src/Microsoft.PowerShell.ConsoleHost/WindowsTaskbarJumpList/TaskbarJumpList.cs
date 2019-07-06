@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell
         // we always have to execute this call because we do not know if it has been created yet.
         // The JumpList does persist as long as the filepath of the executable does not change but there
         // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
-        // not over-optimize this and always create the JumpList as a non-blocking background task instead.
+        // not over-optimize this and always create the JumpList as a non-blocking background STA thread instead.
         internal static void CreateRunAsAdministratorJumpList()
         {
             // Some COM APIs are implicitly STA only, therefore the executing thread must run in STA.
