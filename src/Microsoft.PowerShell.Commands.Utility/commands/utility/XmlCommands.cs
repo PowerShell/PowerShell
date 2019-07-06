@@ -384,10 +384,8 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (As.Equals("String", StringComparison.OrdinalIgnoreCase))
             {
-                using (StreamReader read = new StreamReader(_ms))
-                {
-                    WriteObject(read.ReadToEnd());
-                }
+                StreamReader read = new StreamReader(_ms);
+                WriteObject(read.ReadToEnd());
             }
 
             // Cleaning up
