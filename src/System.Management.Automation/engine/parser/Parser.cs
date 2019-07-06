@@ -6080,6 +6080,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.AtParen:
                     case TokenKind.AtCurly:
                     case TokenKind.LCurly:
+                    case TokenKind.AtAtCurly:
                         UngetToken(token);
                         exprAst = PrimaryExpressionRule(withMemberAccess: true);
                         Diagnostics.Assert(exprAst != null, "PrimaryExpressionRule should never return null");
@@ -6354,7 +6355,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                var ast = GetCommandArgument(context, token);
+                                var ast = GetCommandArgument(context, token); // chris: return different type of ast or how to get info out, which is an array
 
                                 // If this is the special verbatim argument syntax, look for the next element
                                 StringToken argumentToken = token as StringToken;
@@ -6859,6 +6860,7 @@ namespace System.Management.Automation.Language
                     break;
 
                 case TokenKind.AtCurly:
+                case TokenKind.AtAtCurly:
                     expr = HashExpressionRule(token, false /* parsingSchemaElement */ );
                     break;
 
@@ -6933,6 +6935,10 @@ namespace System.Management.Automation.Language
             SkipNewlines();
 
             List<KeyValuePair> keyValuePairs = new List<KeyValuePair>();
+            if (atCurlyToken.Kind == TokenKind.AtAtCurly)
+            {
+                NextToken(); // to skip the first '@' to allow the parsing of the hashtable
+            }
             while (true)
             {
                 KeyValuePair pair = GetKeyValuePair(parsingSchemaElement);

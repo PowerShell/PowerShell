@@ -4613,6 +4613,11 @@ namespace System.Management.Automation.Language
                         return ScanHereStringExpandable();
                     }
 
+                    if (c1 == '@')
+                    {
+                        return NewToken(TokenKind.AtAtCurly);
+                    }
+
                     UngetChar();
                     if (c1.IsVariableStart())
                     {
