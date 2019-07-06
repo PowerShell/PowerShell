@@ -120,6 +120,8 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command Line Parameters
 
+        ExportXmlHelper _helper;
+
         #region Overrides
 
         /// <summary>
@@ -129,7 +131,10 @@ namespace Microsoft.PowerShell.Commands
         void
         BeginProcessing()
         {
-            CreateFileStream();
+            if (!ShouldProcess(Path))
+                return;
+
+            _helper = new ExportXmlHelper(Path, this, _isLiteralPath, Depth, _force, _noclobber, Encoding);
         }
 
         /// <summary>
@@ -138,11 +143,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            if (_serializer != null)
-            {
-                _serializer.Serialize(InputObject);
-                _xw.Flush();
-            }
+            _helper.Serialize(InputObject);
         }
 
         /// <summary>
@@ -151,13 +152,8 @@ namespace Microsoft.PowerShell.Commands
         void
         EndProcessing()
         {
-            if (_serializer != null)
-            {
-                _serializer.Done();
-                _serializer = null;
-            }
-
-            CleanUp();
+            _helper.Done();
+            _helper.CleanUp();
         }
 
         /// <summary>
@@ -165,85 +161,10 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             base.StopProcessing();
-            _serializer.Stop();
+            _helper.Stop();
         }
 
         #endregion Overrides
-
-        #region file
-
-        /// <summary>
-        /// Handle to file stream.
-        /// </summary>
-        private FileStream _fs;
-
-        /// <summary>
-        /// Stream writer used to write to file.
-        /// </summary>
-        private XmlWriter _xw;
-
-        /// <summary>
-        /// Serializer used for serialization.
-        /// </summary>
-        private Serializer _serializer;
-
-        /// <summary>
-        /// FileInfo of file to clear read-only flag when operation is complete.
-        /// </summary>
-        private FileInfo _readOnlyFileInfo = null;
-
-        private void CreateFileStream()
-        {
-            Dbg.Assert(Path != null, "FileName is mandatory parameter");
-
-            if (!ShouldProcess(Path)) return;
-
-            StreamWriter sw;
-            PathUtils.MasterStreamOpen(
-                this,
-                this.Path,
-                this.Encoding,
-                false, // default encoding
-                false, // append
-                this.Force,
-                this.NoClobber,
-                out _fs,
-                out sw,
-                out _readOnlyFileInfo,
-                _isLiteralPath
-                );
-
-            // create xml writer
-            XmlWriterSettings xmlSettings = InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding);
-            _xw = XmlWriter.Create(sw, xmlSettings);
-            if (Depth == 0)
-            {
-                _serializer = new Serializer(_xw);
-            }
-            else
-            {
-                _serializer = new Serializer(_xw, Depth, true);
-            }
-        }
-
-        private
-        void
-        CleanUp()
-        {
-            if (_fs != null)
-            {
-                if (_xw != null)
-                {
-                    _xw.Dispose();
-                    _xw = null;
-                }
-
-                _fs.Dispose();
-                _fs = null;
-            }
-        }
-
-        #endregion file
 
         #region IDisposable Members
 
@@ -261,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_disposed == false)
             {
-                CleanUp();
+                _helper.Dispose();
             }
 
             _disposed = true;
@@ -615,6 +536,165 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion IDisposable Members
     }
+
+    /// <summary>
+    /// Helper class to import single XML file.
+    /// </summary>
+    internal class ExportXmlHelper : IDisposable
+    {
+        #region constructor
+
+        /// <summary>
+        /// XML file to import.
+        /// </summary>
+        private readonly string _path;
+
+        /// <summary>
+        /// Reference to cmdlet which is using this helper class.
+        /// </summary>
+        private readonly PSCmdlet _cmdlet;
+        private bool _isLiteralPath;
+        private bool _force;
+        private bool _noClobber;
+        private Encoding _encoding;
+        private readonly int _depth;
+
+        internal ExportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath, int depth, bool force, bool noClobber, Encoding encoding)
+        {
+            Dbg.Assert(fileName != null, "filename is mandatory");
+            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
+            _path = fileName;
+            _cmdlet = cmdlet;
+            _isLiteralPath = isLiteralPath;
+            _depth = depth;
+            _force = force;
+            _noClobber = noClobber;
+            _encoding = encoding;
+        }
+
+        #endregion constructor
+
+        #region file
+
+        /// <summary>
+        /// Handle to file stream.
+        /// </summary>
+        internal FileStream _fs;
+
+        internal FileInfo _readOnlyFileInfo;
+
+        /// <summary>
+        /// XmlReader used to read file.
+        /// </summary>
+        internal XmlWriter _xw;
+
+        private static XmlWriter CreateXmlWriter(StreamWriter sw)
+        {
+            return XmlWriter.Create(sw, InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding));
+        }
+
+        internal void Initialize()
+        {
+            CreateFileStream();
+            if (_depth == 0)
+            {
+                _serializer = new Serializer(_xw);
+            }
+            else
+            {
+                _serializer = new Serializer(_xw, _depth, true);
+            }
+        }
+
+        internal void Serialize(object inputObject)
+        {
+            if (_serializer != null)
+            {
+                _serializer.Serialize(inputObject);
+                _xw.Flush();
+            }
+        }
+
+        private void CreateFileStream()
+        {
+            StreamWriter sw;
+            PathUtils.MasterStreamOpen(
+                _cmdlet,
+                _path,
+                _encoding,
+                false, // default encoding
+                false, // append
+                _force,
+                _noClobber,
+                out _fs,
+                out sw,
+                out _readOnlyFileInfo,
+                _isLiteralPath
+                );
+
+            _xw = CreateXmlWriter(sw);
+        }
+
+        internal void CleanUp()
+        {
+            if (_fs != null)
+            {
+                if (_xw != null)
+                {
+                    _xw.Dispose();
+                    _xw = null;
+                }
+
+                _fs.Dispose();
+                _fs = null;
+            }
+        }
+
+        internal void Done()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Done();
+                _serializer = null;
+            }
+        }
+
+    #endregion file
+
+    #region IDisposable Members
+
+    /// <summary>
+    /// Set to true when object is disposed.
+    /// </summary>
+    private bool _disposed;
+
+        /// <summary>
+        /// Public dispose method.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed == false)
+            {
+                CleanUp();
+            }
+
+            _disposed = true;
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable Members
+
+        private Serializer _serializer;
+
+        internal void Stop()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Stop();
+            }
+        }
+    }
+
 
     /// <summary>
     /// Helper class to import single XML file.
