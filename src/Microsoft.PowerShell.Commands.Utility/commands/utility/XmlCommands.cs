@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
 
             CreateFileStream();
-            _helper = new ExportXmlHelper(_sw, this, Depth);
+            _helper = new ExportXmlHelper(_fs, this, Depth);
         }
 
         /// <summary>
@@ -308,6 +308,179 @@ namespace Microsoft.PowerShell.Commands
             base.StopProcessing();
             _helper.Stop();
         }
+    }
+
+    /// <summary>
+    /// Implementation for the ConvertTo-Clixml command.
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertTo, "Clixml", SupportsShouldProcess = false,
+        RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(XmlDocument), typeof(string))]
+    public sealed class ConvertToClixmlCommand : PSCmdlet, IDisposable
+    {
+        #region Command Line Parameters
+
+        /// <summary>
+        /// Depth of serialization.
+        /// </summary>
+        [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
+        [ValidateRange(1, int.MaxValue)]
+        public int Depth { get; set; } = 0;
+
+        /// <summary>
+        /// Input Object which is written to XML format.
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
+        [AllowNull]
+        public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Property that sets As parameter.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [ValidateSet("String", "Document")]
+        public string As { get; set; } = "Document";
+
+        #endregion Command Line Parameters
+
+        #region Overrides
+
+        /// <summary>
+        /// BeginProcessing override.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            CreateMemoryStream();
+        }
+
+        /// <summary>
+        /// Override ProcessRecord.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (_serializer != null)
+                _serializer.Serialize(InputObject);
+        }
+
+        /// <summary>
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Done();
+                _serializer = null;
+            }
+
+            // Loading to the XML Document
+            _ms.Position = 0;
+            if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
+            {
+                // this is a trusted xml doc - the cmdlet generated the doc into a private memory stream
+                XmlDocument xmldoc = new XmlDocument();
+                xmldoc.Load(_ms);
+                WriteObject(xmldoc);
+            }
+            else if (As.Equals("String", StringComparison.OrdinalIgnoreCase))
+            {
+                using (StreamReader read = new StreamReader(_ms))
+                {
+                    WriteObject(read.ReadToEnd());
+                }
+            }
+
+            // Cleaning up
+            CleanUp();
+        }
+
+        /// <summary>
+        /// StopProcessing.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _serializer.Stop();
+        }
+
+        #endregion Overrides
+
+        #region memory
+
+        /// <summary>
+        /// XmlText writer.
+        /// </summary>
+        private XmlWriter _xw;
+
+        /// <summary>
+        /// Serializer used for serialization.
+        /// </summary>
+        private Serializer _serializer;
+
+        /// <summary>
+        /// Memory Stream used for serialization.
+        /// </summary>
+        private MemoryStream _ms;
+
+        private void CreateMemoryStream()
+        {
+            // Memory Stream
+            _ms = new MemoryStream();
+
+            _xw = ExportXmlHelper.CreateXmlWriter(_ms);
+
+            if (Depth == 0)
+            {
+                _serializer = new Serializer(_xw);
+            }
+            else
+            {
+                _serializer = new Serializer(_xw, Depth, true);
+            }
+        }
+
+        /// <summary>
+        ///Cleaning up the MemoryStream.
+        /// </summary>
+        private void CleanUp()
+        {
+            if (_ms != null)
+            {
+                if (_xw != null)
+                {
+                    _xw.Dispose();
+                    _xw = null;
+                }
+
+                _ms.Dispose();
+                _ms = null;
+            }
+        }
+
+        #endregion memory
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Set to true when object is disposed.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Public dispose method.
+        /// </summary>
+        public
+        void
+        Dispose()
+        {
+            if (_disposed == false)
+            {
+                CleanUp();
+            }
+
+            _disposed = true;
+        }
+
+        #endregion IDisposable Members
     }
 
     /// <summary>
@@ -581,14 +754,14 @@ namespace Microsoft.PowerShell.Commands
         private readonly PSCmdlet _cmdlet;
         private readonly int _depth;
 
-        internal ExportXmlHelper(StreamWriter writer, PSCmdlet cmdlet, int depth)
+        internal ExportXmlHelper(Stream stream, PSCmdlet cmdlet, int depth)
         {
             Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
             _cmdlet = cmdlet;
             _depth = depth;
-            _sw = writer;
+            _stream = stream;
 
-            _xw = CreateXmlWriter(_sw);
+            _xw = CreateXmlWriter(_stream);
 
             if (_depth == 0)
             {
@@ -604,16 +777,16 @@ namespace Microsoft.PowerShell.Commands
 
         #region output
 
-        internal StreamWriter _sw;
+        internal Stream _stream;
 
         /// <summary>
         /// XmlWriter used to write the resulting document.
         /// </summary>
         internal XmlWriter _xw;
 
-        private static XmlWriter CreateXmlWriter(StreamWriter sw)
+        internal static XmlWriter CreateXmlWriter(Stream stream)
         {
-            return XmlWriter.Create(sw, InternalSerializer.GetXmlWriterSettingsForCliXml(sw.Encoding));
+            return XmlWriter.Create(stream, InternalSerializer.GetXmlWriterSettingsForCliXml(ClrFacade.GetDefaultEncoding()));
         }
 
         internal void Serialize(object inputObject)
@@ -627,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CleanUp()
         {
-            if (_sw != null)
+            if (_stream != null)
             {
                 if (_xw != null)
                 {
@@ -635,8 +808,8 @@ namespace Microsoft.PowerShell.Commands
                     _xw = null;
                 }
 
-                _sw.Dispose();
-                _sw = null;
+                _stream.Dispose();
+                _stream = null;
             }
         }
 
