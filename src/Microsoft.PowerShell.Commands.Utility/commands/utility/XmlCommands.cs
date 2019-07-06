@@ -581,6 +581,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal FileStream _fs;
 
+        internal StreamWriter _sw;
+
         internal FileInfo _readOnlyFileInfo;
 
         /// <summary>
@@ -617,7 +619,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            StreamWriter sw;
             PathUtils.MasterStreamOpen(
                 _cmdlet,
                 _path,
@@ -627,12 +628,12 @@ namespace Microsoft.PowerShell.Commands
                 _force,
                 _noClobber,
                 out _fs,
-                out sw,
+                out _sw,
                 out _readOnlyFileInfo,
                 _isLiteralPath
                 );
 
-            _xw = CreateXmlWriter(sw);
+            _xw = CreateXmlWriter(_sw);
         }
 
         internal void CleanUp()
