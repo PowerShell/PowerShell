@@ -6942,6 +6942,7 @@ namespace System.Management.Automation.Language
                 NextToken(); // to skip the first '@' to allow the parsing of the hashtable
                 splatted = true;
             }
+
             while (true)
             {
                 KeyValuePair pair = GetKeyValuePair(parsingSchemaElement);
