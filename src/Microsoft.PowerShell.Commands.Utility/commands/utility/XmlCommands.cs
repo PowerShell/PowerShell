@@ -132,7 +132,9 @@ namespace Microsoft.PowerShell.Commands
         BeginProcessing()
         {
             if (!ShouldProcess(Path))
+            {
                 return;
+            }
 
             CreateFileStream();
             _helper = new ExportXmlHelper(_fs, this, Depth);
@@ -515,6 +517,14 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(xmlString != null, "Caller should verify xmlNode != null");
             using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(xmlString)))
             using (var helper = new ImportXmlHelper(ms, this))
+            {
+                helper.Import();
+            }
+        }
+
+        private void ProcessXmlNode(XmlNode xmlNode)
+        {
+            using (var helper = new ImportXmlHelper(xmlNode, this))
             {
                 helper.Import();
             }
@@ -938,6 +948,14 @@ namespace Microsoft.PowerShell.Commands
             _xr = CreateXmlReader(stream);
         }
 
+        internal ImportXmlHelper(XmlNode xmlNode, PSCmdlet cmdlet)
+        {
+            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
+            _cmdlet = cmdlet;
+
+            _xr = CreateXmlReader(xmlNode);
+        }
+
         #endregion constructor
 
         #region file
@@ -970,12 +988,24 @@ namespace Microsoft.PowerShell.Commands
             return XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
         }
 
+        private static XmlReader CreateXmlReader(XmlNode xmlNode)
+        {
+            XmlNodeReader nodeReader = new XmlNodeReader(xmlNode);
+            return XmlReader.Create(nodeReader, InternalDeserializer.XmlReaderSettingsForCliXml);
+        }
+
         private void CleanUp()
         {
             if (_stream != null)
             {
                 _stream.Dispose();
                 _stream = null;
+            }
+
+            if (_xr != null)
+            {
+                _xr.Dispose();
+                _xr = null;
             }
         }
 
@@ -1009,10 +1039,68 @@ namespace Microsoft.PowerShell.Commands
         internal void Import()
         {
             _deserializer = new Deserializer(_xr);
-            while (!_deserializer.Done())
+            // If total count has been requested, return a dummy object with zero confidence
+            if (_cmdlet.PagingParameters.IncludeTotalCount)
             {
-                object result = _deserializer.Deserialize();
-                _cmdlet.WriteObject(result);
+                PSObject totalCount = _cmdlet.PagingParameters.NewTotalCount(0, 0);
+                _cmdlet.WriteObject(totalCount);
+            }
+
+            ulong skip = _cmdlet.PagingParameters.Skip;
+            ulong first = _cmdlet.PagingParameters.First;
+
+            // if paging is not specified then keep the old V2 behavior
+            if (skip == 0 && first == ulong.MaxValue)
+            {
+                while (!_deserializer.Done())
+                {
+                    object result = _deserializer.Deserialize();
+                    _cmdlet.WriteObject(result);
+                }
+            }
+            // else try to flatten the output if possible
+            else
+            {
+                ulong skipped = 0;
+                ulong count = 0;
+                while (!_deserializer.Done() && count < first)
+                {
+                    object result = _deserializer.Deserialize();
+                    PSObject psObject = result as PSObject;
+
+                    if (psObject != null)
+                    {
+                        ICollection c = psObject.BaseObject as ICollection;
+                        if (c != null)
+                        {
+                            foreach (object o in c)
+                            {
+                                if (count >= first)
+                                    break;
+
+                                if (skipped++ >= skip)
+                                {
+                                    count++;
+                                    _cmdlet.WriteObject(o);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (skipped++ >= skip)
+                            {
+                                count++;
+                                _cmdlet.WriteObject(result);
+                            }
+                        }
+                    }
+                    else if (skipped++ >= skip)
+                    {
+                        count++;
+                        _cmdlet.WriteObject(result);
+                        continue;
+                    }
+                }
             }
         }
 
