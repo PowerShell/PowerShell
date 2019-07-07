@@ -9601,6 +9601,11 @@ namespace System.Management.Automation.Language
         // Indicates that this ast was constructed as part of a schematized object instead of just a plain hash literal.
         internal bool IsSchemaElement { get; set; }
 
+        /// <summary>
+        /// True if inline splatting syntax (@@) was used, false otherwise.
+        /// </summary>
+        public bool Splatted { get; set;  }
+
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)

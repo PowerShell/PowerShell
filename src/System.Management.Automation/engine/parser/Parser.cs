@@ -6355,7 +6355,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                var ast = GetCommandArgument(context, token); // chris: return different type of ast or how to get info out, which is an array
+                                var ast = GetCommandArgument(context, token);
 
                                 // If this is the special verbatim argument syntax, look for the next element
                                 StringToken argumentToken = token as StringToken;
@@ -6861,7 +6861,7 @@ namespace System.Management.Automation.Language
 
                 case TokenKind.AtCurly:
                 case TokenKind.AtAtCurly:
-                    expr = HashExpressionRule(token, false /* parsingSchemaElement */ );
+                    expr = HashExpressionRule(token, parsingSchemaElement: false);
                     break;
 
                 case TokenKind.LCurly:
@@ -6935,9 +6935,12 @@ namespace System.Management.Automation.Language
             SkipNewlines();
 
             List<KeyValuePair> keyValuePairs = new List<KeyValuePair>();
+
+            bool splatted = false;
             if (atCurlyToken.Kind == TokenKind.AtAtCurly)
             {
                 NextToken(); // to skip the first '@' to allow the parsing of the hashtable
+                splatted = true;
             }
             while (true)
             {
@@ -6984,9 +6987,12 @@ namespace System.Management.Automation.Language
                 endExtent = rCurly.Extent;
             }
 
-            var hashAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs);
-            hashAst.IsSchemaElement = parsingSchemaElement;
-            return hashAst;
+            var hashtableAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs)
+            {
+                IsSchemaElement = parsingSchemaElement,
+                Splatted = splatted
+            };
+            return hashtableAst;
         }
 
         private KeyValuePair GetKeyValuePair(bool parsingSchemaElement)
