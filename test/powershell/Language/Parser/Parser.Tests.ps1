@@ -1341,4 +1341,35 @@ foo``u{2195}abc
             $tokens[1] | Should -BeExactly $lastToken
         }
     }
+
+    Describe 'Splatting' {
+        BeforeAll {
+            $tempFile = New-TemporaryFile
+        }
+        AfterAll {
+            Remove-Item $tempFile
+        }
+
+        Context 'Happy Path' {
+            It "Splatting using hashtable variable '@var'" {
+                $splattedHashTable = @{ Path = $tempFile }
+                Get-Item @splattedHashTable | Should -Not -BeNullOrEmpty
+            }
+
+            It "Splatting using inlined hashtable '@@{key=value}'" {
+                Get-Item @@{ Path = $tempFile } | Should -Not -BeNullOrEmpty
+            }
+        }
+
+        Context 'Parameter mismatches' {
+            It "Splatting using hashtable variable '@var'" {
+                $splattedHashTable = @{ ParameterThatDoesNotExist = $tempFile }
+                { Get-Item @splattedHashTable } | Should -Throw -ErrorId 'NamedParameterNotFound'
+            }
+
+            It "Splatting using inlined hashtable '@@{key=value}'" {
+                { Get-Item @@{ ParameterThatDoesNotExist = $tempFile } } | Should -Throw -ErrorId 'NamedParameterNotFound'
+            }
+        }
+    }
 }
