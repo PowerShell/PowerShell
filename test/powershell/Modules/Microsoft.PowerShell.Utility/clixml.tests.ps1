@@ -166,7 +166,8 @@ Describe "CliXml test" -Tags "CI" {
         It "test follow-up for WinBlue: 161470 - Export-CliXml errors in WhatIf scenarios" {
 
             $testPath = "testdrive:\Bug161470NonExistPath.txt"
-            Export-Clixml -Path $testPath -InputObject "string" -WhatIf
+            $faultyExport = {Export-Clixml -Path $testPath -InputObject "string" -WhatIf}
+            $faultyExport | Should -Throw
             $testPath | Should -Not -Exist
         }
 
