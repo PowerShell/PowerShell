@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command Line Parameters
 
-        ExportXmlHelper _helper;
+        private ExportXmlHelper _helper;
 
         #region Overrides
 
@@ -314,12 +314,6 @@ namespace Microsoft.PowerShell.Commands
             base.StopProcessing();
             _helper.Stop();
         }
-
-        #region file
-
-
-
-        #endregion file
     }
 
     /// <summary>
@@ -333,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Parameters
 
         /// <summary>
-        /// Depth of serialization.
+        /// Gets or sets depth of serialization.
         /// </summary>
         [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
         [ValidateRange(1, int.MaxValue)]
@@ -347,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// Property that sets As parameter.
+        /// Gets or sets the As parameter.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -449,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream.
+        /// Cleaning up the MemoryStream.
         /// </summary>
         private void CleanUp()
         {
@@ -493,9 +487,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion IDisposable Members
     }
 
-    ///<summary>
-    ///This cmdlet is used to convert cli-xml to objects.
-    ///</summary>
+    /// <summary>
+    /// This cmdlet is used to convert cli-xml to objects.
+    /// </summary>
     [Cmdlet(VerbsData.ConvertFrom, "Clixml", DefaultParameterSetName = "InputObject", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135255")]
     [OutputType(typeof(PSObject))]
     public class ConvertFromClixmlCommand : PSCmdlet
@@ -540,9 +534,9 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             XmlNode xmlNode = InputObject.BaseObject as XmlNode;
-            if (null != xmlNode)
+            if (xmlNode != null)
             {
-                ProcessXmlString(xmlNode.OuterXml);
+                ProcessXmlNode(xmlNode);
             }
             else
             {
