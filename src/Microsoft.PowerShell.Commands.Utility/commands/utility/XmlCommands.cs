@@ -295,8 +295,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in Path)
                 {
-                    _helper = new ImportXmlHelper(path, this, _isLiteralPath);
-                    _helper.Import();
+
+                    using (var stream = PathUtils.OpenFileStream(path, this, _isLiteralPath))
+                    using (var _helper = new ImportXmlHelper(stream, this))
+                    {
+                        _helper.Import();
+                    }
                 }
             }
         }
@@ -308,6 +312,12 @@ namespace Microsoft.PowerShell.Commands
             base.StopProcessing();
             _helper.Stop();
         }
+
+        #region file
+
+
+
+        #endregion file
     }
 
     /// <summary>
@@ -479,6 +489,57 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion IDisposable Members
+    }
+
+    ///<summary>
+    ///This cmdlet is used to convert cli-xml to objects.
+    ///</summary>
+    [Cmdlet(VerbsData.ConvertFrom, "Clixml", DefaultParameterSetName = "InputObject", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135255")]
+    [OutputType(typeof(PSObject))]
+    public class ConvertFromClixmlCommand : PSCmdlet
+    {
+        #region parameters
+        /// <summary>
+        /// Input Object which is written to XML format.
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
+        [AllowNull]
+        public PSObject InputObject { get; set; }
+
+        #endregion parameters
+
+        #region private
+
+        private void ProcessXmlString(string xmlString)
+        {
+            Dbg.Assert(xmlString != null, "Caller should verify xmlNode != null");
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(xmlString)))
+            using (var helper = new ImportXmlHelper(ms, this))
+            {
+                helper.Import();
+            }
+        }
+
+        #endregion private
+
+        #region override
+
+        /// <summary>
+        /// ProcessRecord method.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            XmlNode xmlNode = InputObject.BaseObject as XmlNode;
+            if (null != xmlNode)
+            {
+                ProcessXmlString(xmlNode.OuterXml);
+            }
+            else
+            {
+                ProcessXmlString(InputObject.ToString());
+            }
+        }
+        #endregion overrides
     }
 
     /// <summary>
@@ -865,23 +926,16 @@ namespace Microsoft.PowerShell.Commands
         #region constructor
 
         /// <summary>
-        /// XML file to import.
-        /// </summary>
-        private readonly string _path;
-
-        /// <summary>
         /// Reference to cmdlet which is using this helper class.
         /// </summary>
         private readonly PSCmdlet _cmdlet;
-        private bool _isLiteralPath;
 
-        internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
+        internal ImportXmlHelper(Stream stream, PSCmdlet cmdlet)
         {
-            Dbg.Assert(fileName != null, "filename is mandatory");
             Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
-            _path = fileName;
             _cmdlet = cmdlet;
-            _isLiteralPath = isLiteralPath;
+
+            _xr = CreateXmlReader(stream);
         }
 
         #endregion constructor
@@ -889,9 +943,9 @@ namespace Microsoft.PowerShell.Commands
         #region file
 
         /// <summary>
-        /// Handle to file stream.
+        /// Underlying stream
         /// </summary>
-        internal FileStream _fs;
+        internal Stream _stream;
 
         /// <summary>
         /// XmlReader used to read file.
@@ -916,18 +970,12 @@ namespace Microsoft.PowerShell.Commands
             return XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
         }
 
-        internal void CreateFileStream()
-        {
-            _fs = PathUtils.OpenFileStream(_path, _cmdlet, _isLiteralPath);
-            _xr = CreateXmlReader(_fs);
-        }
-
         private void CleanUp()
         {
-            if (_fs != null)
+            if (_stream != null)
             {
-                _fs.Dispose();
-                _fs = null;
+                _stream.Dispose();
+                _stream = null;
             }
         }
 
@@ -960,70 +1008,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal void Import()
         {
-            CreateFileStream();
             _deserializer = new Deserializer(_xr);
-            // If total count has been requested, return a dummy object with zero confidence
-            if (_cmdlet.PagingParameters.IncludeTotalCount)
+            while (!_deserializer.Done())
             {
-                PSObject totalCount = _cmdlet.PagingParameters.NewTotalCount(0, 0);
-                _cmdlet.WriteObject(totalCount);
-            }
-
-            ulong skip = _cmdlet.PagingParameters.Skip;
-            ulong first = _cmdlet.PagingParameters.First;
-
-            // if paging is not specified then keep the old V2 behavior
-            if (skip == 0 && first == ulong.MaxValue)
-            {
-                while (!_deserializer.Done())
-                {
-                    object result = _deserializer.Deserialize();
-                    _cmdlet.WriteObject(result);
-                }
-            }
-            // else try to flatten the output if possible
-            else
-            {
-                ulong skipped = 0;
-                ulong count = 0;
-                while (!_deserializer.Done() && count < first)
-                {
-                    object result = _deserializer.Deserialize();
-                    PSObject psObject = result as PSObject;
-
-                    if (psObject != null)
-                    {
-                        ICollection c = psObject.BaseObject as ICollection;
-                        if (c != null)
-                        {
-                            foreach (object o in c)
-                            {
-                                if (count >= first)
-                                    break;
-
-                                if (skipped++ >= skip)
-                                {
-                                    count++;
-                                    _cmdlet.WriteObject(o);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (skipped++ >= skip)
-                            {
-                                count++;
-                                _cmdlet.WriteObject(result);
-                            }
-                        }
-                    }
-                    else if (skipped++ >= skip)
-                    {
-                        count++;
-                        _cmdlet.WriteObject(result);
-                        continue;
-                    }
-                }
+                object result = _deserializer.Deserialize();
+                _cmdlet.WriteObject(result);
             }
         }
 
