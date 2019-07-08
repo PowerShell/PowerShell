@@ -1667,4 +1667,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="ProcessInfoNotRecoverable" xml:space="preserve">
     <value>Information about the process could not be read: '{0}'.</value>
   </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+  </data>
 </root>

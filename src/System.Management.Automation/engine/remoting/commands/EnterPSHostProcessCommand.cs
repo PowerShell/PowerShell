@@ -2,16 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting;
-using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -113,6 +115,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            // Check if system is in locked down mode, in which case this cmdlet is disabled.
+            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new PSSecurityException(RemotingErrorIdStrings.EnterPSHostProcessCmdletDisabled),
+                        "EnterPSHostProcessCmdletDisabled",
+                        ErrorCategory.SecurityError,
+                        null));
+
+                return;
+            }
+
             // Check for host that supports interactive remote sessions.
             _interactiveHost = this.Host as IHostSupportsInteractiveSession;
             if (_interactiveHost == null)
