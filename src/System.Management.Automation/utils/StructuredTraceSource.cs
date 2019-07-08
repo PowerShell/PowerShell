@@ -824,20 +824,12 @@ namespace System.Management.Automation
         /// <param name="errorMessageFormat">
         /// The format string containing the error message
         /// </param>
-        internal void TraceError(string errorMessageFormat)
-        {
-            if ((_flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Error,
-                    errorFormatter,
-                    errorMessageFormat);
-            }
-        }
-
+        /// <param name="args">
+        /// The arguments for the format string
+        /// </param>
         internal void TraceError(
             string errorMessageFormat,
-            object arg1)
+            params object[] args)
         {
             if ((_flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
             {
@@ -845,23 +837,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.Error,
                     errorFormatter,
                     errorMessageFormat,
-                    arg1);
-            }
-        }
-
-        internal void TraceError(
-            string errorMessageFormat,
-            object arg1,
-            object arg2)
-        {
-            if ((_flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Error,
-                    errorFormatter,
-                    errorMessageFormat,
-                    arg1,
-                    arg2);
+                    args);
             }
         }
 
@@ -872,20 +848,12 @@ namespace System.Management.Automation
         /// <param name="warningMessageFormat">
         /// The format string containing the error message
         /// </param>
-        internal void TraceWarning(string warningMessageFormat)
-        {
-            if ((_flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Warning,
-                    warningFormatter,
-                    warningMessageFormat);
-            }
-        }
-
+        /// <param name="args">
+        /// The arguments for the format string
+        /// </param>
         internal void TraceWarning(
             string warningMessageFormat,
-            object arg1)
+            params object[] args)
         {
             if ((_flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
             {
@@ -893,23 +861,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.Warning,
                     warningFormatter,
                     warningMessageFormat,
-                    arg1);
-            }
-        }
-
-        internal void TraceWarning(
-            string warningMessageFormat,
-            object arg1,
-            object arg2)
-        {
-            if ((_flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Warning,
-                    warningFormatter,
-                    warningMessageFormat,
-                    arg1,
-                    arg2);
+                    args);
             }
         }
 
@@ -920,14 +872,20 @@ namespace System.Management.Automation
         /// <param name="verboseMessageFormat">
         /// The format string containing the error message
         /// </param>
-        internal void TraceVerbose(string verboseMessageFormat)
+        /// <param name="args">
+        /// The arguments for the format string
+        /// </param>
+        internal void TraceVerbose(
+            string verboseMessageFormat,
+            params object[] args)
         {
             if ((_flags & PSTraceSourceOptions.Verbose) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Verbose,
                     verboseFormatter,
-                    verboseMessageFormat);
+                    verboseMessageFormat,
+                    args);
             }
         }
 
@@ -944,7 +902,8 @@ namespace System.Management.Automation
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
-                    format);
+                    format,
+                    Array.Empty<object>());
             }
         }
 
@@ -961,7 +920,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1);
+                    new object[] { arg1 });
             }
         }
 
@@ -1034,7 +993,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1, arg2);
+                    new object[] { arg1, arg2 });
             }
         }
 
@@ -1078,9 +1037,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1,
-                    arg2,
-                    arg3);
+                    new object[] { arg1, arg2, arg3 });
             }
         }
 
@@ -1100,10 +1057,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1,
-                    arg2,
-                    arg3,
-                    arg4);
+                    new object[] { arg1, arg2, arg3, arg4 });
             }
         }
 
@@ -1124,11 +1078,7 @@ namespace System.Management.Automation
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    arg1,
-                    arg2,
-                    arg3,
-                    arg4,
-                    arg5);
+                    new object[] { arg1, arg2, arg3, arg4, arg5 });
             }
         }
 
@@ -1181,34 +1131,14 @@ namespace System.Management.Automation
         /// <param name="format">
         /// Additional format string.
         /// </param>
-        /// <param name="arg1">
-        /// Argument for the additional format string.
-        /// </param>
-        /// <param name="arg2">
-        /// Argument for the additional format string.
-        /// </param>
-        /// <param name="arg3">
-        /// Argument for the additional format string.
-        /// </param>
-        /// <param name="arg4">
-        /// Argument for the additional format string.
-        /// </param>
-        /// <param name="arg5">
-        /// Argument for the additional format string.
-        /// </param>
-        /// <param name="arg6">
-        /// Argument for the additional format string.
+        /// <param name="args">
+        /// Arguments for the additional format string
         /// </param>
         private void FormatOutputLine(
             PSTraceSourceOptions flag,
             string classFormatter,
             string format,
-            object arg1 = null,
-            object arg2 = null,
-            object arg3 = null,
-            object arg4 = null,
-            object arg5 = null,
-            object arg6 = null)
+            params object[] args)
         {
             try
             {
@@ -1223,7 +1153,10 @@ namespace System.Management.Automation
 
                 if (format != null)
                 {
-                    output.AppendFormat(CultureInfo.CurrentCulture, format, arg1, arg2, arg3, arg4, arg5, arg6);
+                    output.AppendFormat(
+                        CultureInfo.CurrentCulture,
+                        format,
+                        args);
                 }
 
                 // finally trace the output
