@@ -1693,4 +1693,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
     <value>PowerShell remoting has been enabled only for PowerShell Core configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
   </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+  </data>
 </root>
