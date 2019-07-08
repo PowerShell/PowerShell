@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
@@ -548,7 +549,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
 
             VariableScopeItemSearcher searcher =
-                new VariableScopeItemSearcher(this, variablePath, origin);
+                GetVariableScopeItemSearcher(variablePath, origin);
 
             PSVariable result = null;
 
@@ -560,6 +561,42 @@ namespace System.Management.Automation
 
             return result;
         }
+
+        private VariableScopeItemSearcher GetVariableScopeItemSearcher(VariablePath lookupPath, CommandOrigin origin)
+        {
+            VariableScopeItemSearcher searcher;
+            string key = lookupPath.UserPath;
+            var cache = s_VariableScopeItemSearcherCache[origin];
+            if(cache.TryGetValue(key, out searcher))
+            {
+                searcher.Reset();
+            }
+            else
+            {
+                searcher = new VariableScopeItemSearcher(this, lookupPath, origin);
+                if (cache.Count >= VariableScopeItemSearcherCacheSize)
+                {
+                    cache.Clear();
+                }
+
+                cache.TryAdd(key, searcher);
+            }
+
+            return searcher;
+        }
+
+        VariableScopeItemSearcher NewVariableScopeItemSearcher(string key, (VariablePath lookupPath, CommandOrigin origin) arg)
+        {
+            return new VariableScopeItemSearcher(this, arg.lookupPath, arg.origin);
+        }
+
+        private const int VariableScopeItemSearcherCacheSize = 32;
+        private readonly Dictionary<CommandOrigin,ConcurrentDictionary<string, VariableScopeItemSearcher>> s_VariableScopeItemSearcherCache =new Dictionary<CommandOrigin, ConcurrentDictionary<string, VariableScopeItemSearcher>>
+        {
+            { CommandOrigin.Internal, new ConcurrentDictionary<string, VariableScopeItemSearcher>()},
+            { CommandOrigin.Runspace, new ConcurrentDictionary<string, VariableScopeItemSearcher>()}
+        };
+        //private readonly ConcurrentDictionary<string, VariableScopeItemSearcher> s_VariableScopeItemSearcherCache = new ConcurrentDictionary<string, VariableScopeItemSearcher>();
 
         /// <summary>
         /// Looks up the specified variable and returns the context under which
