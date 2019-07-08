@@ -108,8 +108,6 @@ namespace System.Management.Automation
 
             Pattern = pattern;
             Options = options;
-
-            Init();
         }
 
         private static readonly WildcardPattern s_matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
@@ -137,6 +135,11 @@ namespace System.Management.Automation
         /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
+            if (_isMatch != null)
+            {
+                return;
+            }
+
             if (Pattern.Length == 1 && Pattern[0] == '*')
             {
                 _isMatch = s_matchAll;
@@ -176,6 +179,7 @@ namespace System.Management.Automation
         /// <returns>True if the wildcard pattern finds a match; otherwise, false.</returns>
         public bool IsMatch(string input)
         {
+            Init();
             return input != null && _isMatch(input);
         }
 
