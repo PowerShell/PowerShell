@@ -129,11 +129,14 @@ namespace Microsoft.PowerShell
             // execArgs[0] is set below to the correct shell executable
 
             // The command arguments
-            execArgs[0] = "-"; // First argument is ignored
-            execArgs[1] = "-l";
-            execArgs[2] = "-c";
-            execArgs[3] = pwshInvocation;
-            execArgs[4] = "-"; // Required since exec ignores $0
+
+            // First argument is the command name.
+            // Setting this to /bin/sh enables sh emulation in zsh (which examines $0 to determine how it should behave).
+            execArgs[0] = "/bin/sh"; 
+            execArgs[1] = "-l"; // Login flag
+            execArgs[2] = "-c"; // Command parameter
+            execArgs[3] = pwshInvocation; // Command to execute
+            execArgs[4] = "-"; // Within the shell, exec ignores $0
 
             // Add the arguments passed to pwsh on the end
             int i = 0;
@@ -149,10 +152,10 @@ namespace Microsoft.PowerShell
             // A null is required by exec
             execArgs[execArgs.Length - 1] = null;
 
-            // On macOS, sh doesn't support login, so we run /bin/bash
+            // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return Exec("/bin/bash", execArgs);
+                return Exec("/bin/zsh", execArgs);
             }
 
             return Exec("/bin/sh", execArgs);
