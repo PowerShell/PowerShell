@@ -295,8 +295,9 @@ All parameters are case-insensitive.</value>
 
 -Login | -l
 
-    Start PowerShell as a login shell, executing the login profiles with /bin/sh.
-    On Windows this does nothing.
+    On Linux and macOS, starts PowerShell as a login shell,
+    using /bin/sh to execute login profiles such as /etc/profile and ~/.profile.
+    On Windows, this switch does nothing.
 
 -MTA
 
