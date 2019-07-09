@@ -218,6 +218,9 @@ function Get-ChangeLog
     # Array of PRs with general cmdlet changes.
     $clGeneral = @()
 
+    # Array of PRs tagged with 'CL-Performance' label.
+    $clPerformance = @()
+
     # Array of PRs tagged with 'CL-Test' label.
     $clTest = @()
 
@@ -281,6 +284,7 @@ function Get-ChangeLog
                 "CL-Engine" { $clEngine += $commit }
                 "CL-Experimental" { $clExperimental += $commit }
                 "CL-General" { $clGeneral += $commit }
+                "CL-Performance" { $clPerformance += $commit }
                 "CL-Test" { $clTest += $commit }
                 "CL-Tools" { $clTools += $commit }
                 "CL-Untagged" { $clUntagged += $commit }
@@ -310,6 +314,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clExperimental -sectionTitle 'Experimental Features'
     PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
     PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
+    PrintChangeLog -clSection $clPerformance -sectionTitle 'Performance'
     PrintChangeLog -clSection $clTools -sectionTitle 'Tools'
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
