@@ -2185,11 +2185,11 @@
           </Component>
         </Directory>
       </Directory>
-      <Component Id="cmpCB23399B16C44330A131745F1964EBC3" Guid="{dbb2a3cc-a4e7-44c6-b782-7199a7e86d95}">
-        <File Id="fil75A8B78920AA4D5FB5D6BC98835D401F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27617.04.dll" />
+      <Component Id="cmpF587CB8BBBAF443CA4276A2C533CB385" Guid="{e7e798f0-466c-4373-832c-6ae537c6ccc1}">
+        <File Id="fil44211B4A68AA4466A2789F540D12DDB8" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27817.01.dll" />
       </Component>
-      <Component Id="cmpB4092645985F4A62A957BDAC44E3B5D2" Guid="{51f7d6a4-9809-41aa-8842-a78d3b022623}">
-        <File Id="fil02B705FB36BA46E1ADF2FC4BB287768A" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27617.04.dll" />
+      <Component Id="cmp00E2814B5CF046F48557C7BB92458801" Guid="{6049e918-9ba1-4426-96e2-db883b2b8694}">
+        <File Id="fil0F6E2EE2838A4CBCAE56A59D954A7337" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27817.01.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2888,8 +2888,8 @@
       <ComponentRef Id="cmpC1D0D334836C4821B04087DDFE167637" />
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
-      <ComponentRef Id="cmpCB23399B16C44330A131745F1964EBC3" />
-      <ComponentRef Id="cmpB4092645985F4A62A957BDAC44E3B5D2" />
+      <ComponentRef Id="cmpF587CB8BBBAF443CA4276A2C533CB385" />
+      <ComponentRef Id="cmp00E2814B5CF046F48557C7BB92458801" />
     </ComponentGroup>
   </Fragment>
 </Wix>
