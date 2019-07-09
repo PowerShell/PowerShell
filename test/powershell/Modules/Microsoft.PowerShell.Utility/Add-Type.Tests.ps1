@@ -209,8 +209,8 @@ public class AttributeTest$guid : PSCmdlet
 
     It "Throw if the type already exists" {
         Add-Type -TypeDefinition "public class Foo$guid {}"
-        $exc = { Add-Type -TypeDefinition "public class Foo$guid { public int Bar {get {return 42;} }" -ErrorAction SilentlyContinue } | Should -PassThru -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
-        $exc.FullyQualifiedErrorId | Should -BeExactly "TYPE_ALREADY_EXISTS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -TypeDefinition "public class Foo$guid { public int Bar {get {return 42;} }" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        $error[1].FullyQualifiedErrorId | Should -BeExactly "TYPE_ALREADY_EXISTS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "OutputType parameter requires that the OutputAssembly parameter be specified." {
