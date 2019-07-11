@@ -652,9 +652,6 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
-                    // return false;
-                    // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
                 }
             }

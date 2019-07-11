@@ -240,7 +240,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 '@
             $testFilePath = Join-Path $TestDrive "test.ps1"
             Set-Content -Path $testFilePath -Value $testScript
-            $observed = echo hello | pwsh $testFilePath e -
+            $observed = echo hello | pwsh -noprofile $testFilePath e -
             $observed | Should -BeExactly "h-llo"
         }
     }
@@ -717,6 +717,10 @@ namespace StackTest {
 
     Context "ApartmentState tests" -Tag Slow {
 
+        It "Default apartment state is STA" -Skip:(!$IsWindows) {
+            [System.Threading.Thread]::CurrentThread.ApartmentState | Should -BeExactly "STA"
+        }
+
         It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
             @{ apartment = "STA"; switch = "-sta" }
             @{ apartment = "MTA"; switch = "-mta" }
@@ -726,28 +730,23 @@ namespace StackTest {
             & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.ApartmentState" | Should -BeExactly $apartment
         }
 
-        It "WPF will work when using -sta" -Skip:(!$IsWindows) {
-            $script = [scriptblock]::Create({
-                add-type -AssemblyName presentationframework
+        It "WPF requires STA and will work" -Skip:(!$IsWindows) {
+            add-type -AssemblyName presentationframework
 
-                $xaml = [xml]@"
-                <Window
-                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
-                    Width = "400" Height = "300" ShowInTaskbar = "True">
-                </Window>
+            $xaml = [xml]@"
+            <Window
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
+                Width = "400" Height = "300" ShowInTaskbar = "True">
+            </Window>
 "@
 
-                $reader = [System.Xml.XmlNodeReader]::new($xaml)
-                $Window = [System.Windows.Markup.XamlReader]::Load($reader)
-                # This will throw an exception if MTA
-                $Window.Show()
-                $Window.Close()
-            })
-
-            & $powershell -sta -noprofile -command $script
-            $LASTEXITCODE | Should -Be 0
+            $reader = [System.Xml.XmlNodeReader]::new($xaml)
+            $Window = [System.Windows.Markup.XamlReader]::Load($reader)
+            # This will throw an exception if MTA
+            { $Window.Show() } | Should -Not -Throw
+            $Window.Close()
         }
 
         It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows) -TestCases @(
@@ -900,7 +899,7 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         param ( $dirname )
         try {
             Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
-            $result = & $powershell -c '(Get-Item .).Name'
+            $result = & $powershell -noprofile -c '(Get-Item .).Name'
             $result | Should -BeExactly $dirname
         }
         finally {
