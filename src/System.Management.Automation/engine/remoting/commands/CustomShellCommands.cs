@@ -2052,7 +2052,7 @@ else
                     return threadAptState.Value;
                 }
 
-                return ApartmentState.Unknown;
+                return System.Threading.ApartmentState.Unknown;
             }
 
             set { threadAptState = value; }
