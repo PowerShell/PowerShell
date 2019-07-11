@@ -769,6 +769,10 @@ namespace System.Management.Automation
 
         internal virtual void WriteError(ErrorRecord errorRecord)
         {
+            // Since this ErrorRecord was passed to WriteError,
+            // that means it's a non-terminating ErrorRecord.
+            errorRecord.IsTerminating = false;
+
             Error.Add(errorRecord);
             if (PropagateThrows)
             {
@@ -785,6 +789,10 @@ namespace System.Management.Automation
 
         internal void WriteError(ErrorRecord errorRecord, out Exception exceptionThrownOnCmdletThread)
         {
+            // Since this ErrorRecord was passed to WriteError,
+            // that means it's a non-terminating ErrorRecord.
+            errorRecord.IsTerminating = false;
+
             this.Error.Add(errorRecord);
             this.InvokeCmdletMethodAndWaitForResults<object>(
                     delegate (Cmdlet cmdlet)

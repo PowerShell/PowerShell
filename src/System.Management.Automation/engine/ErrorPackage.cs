@@ -1632,6 +1632,11 @@ namespace System.Management.Automation
 
         private bool _serializeExtendedInfo = false;
 
+        /// <summary>
+        /// Used to determine if an ErrorRecord is terminating or non-terminating.
+        /// </summary>
+        public bool IsTerminating { get; internal set; } = true;
+
         #endregion Public Properties
 
         #region Private

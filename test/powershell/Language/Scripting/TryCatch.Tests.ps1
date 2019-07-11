@@ -516,6 +516,7 @@ Describe "Test try/catch" -Tags "CI" {
             }
 
             [int]$a.ToString() | Should -Be 42
+            $a.IsTerminating | Should -BeTrue
         }
     }
 

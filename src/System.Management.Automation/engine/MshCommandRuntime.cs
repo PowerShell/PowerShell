@@ -2728,6 +2728,15 @@ namespace System.Management.Automation
             else
                 errorRecord.SetInvocationInfo(MyInvocation);
 
+            // Since this ErrorRecord was passed to WriteError,
+            // that means it's a non-terminating ErrorRecord.
+            // For RemotingErrorRecord's IsTerminating is already set
+            // so we shouldn't overwrite it.
+            if (!(errorRecord is RemotingErrorRecord))
+            {
+                errorRecord.IsTerminating = false;
+            }
+
             // NOTICE-2004/06/08-JonN 959638
             ThrowIfWriteNotPermitted(true);
 

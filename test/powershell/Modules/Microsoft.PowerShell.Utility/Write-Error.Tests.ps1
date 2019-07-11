@@ -29,6 +29,9 @@ Describe "Write-Error Tests" -Tags "CI" {
         #InvocationInfo verification
         $e.InvocationInfo | Should -Not -BeNullOrEmpty
         $e.InvocationInfo.MyCommand.Name | Should -BeNullOrEmpty
+
+        #IsTerminating verification
+        $e.IsTerminating | Should -BeFalse
     }
 
     It "Should be works with all parameters" {
@@ -66,6 +69,9 @@ Describe "Write-Error Tests" -Tags "CI" {
         #InvocationInfo verification
         $e.InvocationInfo | Should -Not -BeNullOrEmpty
         $e.InvocationInfo.MyCommand.Name | Should -BeNullOrEmpty
+
+        #IsTerminating verification
+        $e.IsTerminating | Should -BeFalse
     }
 
     It "Should be works with all parameters" {

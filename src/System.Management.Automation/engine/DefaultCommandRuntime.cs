@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
@@ -46,6 +47,15 @@ namespace System.Management.Automation
         /// <param name="errorRecord">Error record instance to process.</param>
         public void WriteError(ErrorRecord errorRecord)
         {
+            // Since this ErrorRecord was passed to WriteError,
+            // that means it's a non-terminating ErrorRecord.
+            // For RemotingErrorRecord's IsTerminating is already set
+            // so we shouldn't overwrite it.
+            if (!(errorRecord is RemotingErrorRecord))
+            {
+                errorRecord.IsTerminating = false;
+            }
+
             if (errorRecord.Exception != null)
                 throw errorRecord.Exception;
             else
