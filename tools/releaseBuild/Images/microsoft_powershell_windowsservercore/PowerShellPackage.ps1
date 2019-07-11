@@ -93,7 +93,7 @@ try{
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -ne "fxdependent"}
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*"}
 
         if($Symbols.IsPresent)
         {
@@ -120,20 +120,20 @@ try{
         $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -notlike 'fxdependent*')
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent', 'fxdependent-win-desktop')
     {
         $pspackageParams['Type']='msix'
         Write-Verbose "Starting powershell packaging(msix)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
     {
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
@@ -148,7 +148,7 @@ try{
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
-    elseif (!$ComponentRegistration.IsPresent -and $Runtime -eq 'fxdependent')
+    elseif (!$ComponentRegistration.IsPresent -and $Runtime -like 'fxdependent*')
     {
         ## Add symbols for just like zip package.
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
