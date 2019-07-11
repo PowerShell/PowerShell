@@ -11,7 +11,7 @@ param (
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent")]
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent", "fxdependent-win-desktop")]
     [string]$Runtime = 'win7-x64',
 
     [switch] $Wait,
@@ -79,7 +79,7 @@ try{
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
         Write-Verbose "Expanding signed build..." -verbose
-        if($Runtime -eq 'fxdependent')
+        if($Runtime -like 'fxdependent*')
         {
             Expand-PSSignedBuild -BuildZip $BuildZip -SkipPwshExeCheck
         }
@@ -110,6 +110,10 @@ try{
     if ($Runtime -eq 'fxdependent')
     {
         $pspackageParams = @{'Type'='fxdependent'}
+    }
+    elseif ($Runtime -eq 'fxdependent-win-desktop')
+    {
+        $pspackageParams = @{'Type'='fxdependent-win-desktop'}
     }
     else
     {

@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -88,6 +88,9 @@ function Start-PSPackage {
         if ($Type -eq 'fxdependent') {
             $NameSuffix = "win-fxdependent"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+        } elseif ($Type -eq 'fxdependent-win-desktop') {
+            $NameSuffix = "win-fxdependent-windesktop"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
@@ -120,7 +123,7 @@ function Start-PSPackage {
             $actualParams += '-PSModuleRestore'
         }
 
-        $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
+        $precheckFailed = if ($Type -like 'fxdependent*' -or $Type -eq 'tar-alpine') {
             ## We do not check for runtime and crossgen for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
@@ -152,7 +155,7 @@ function Start-PSPackage {
             $params = @('-Clean')
 
             # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
-            if ($Type -ne 'fxdependent') {
+            if ($Type -notlike 'fxdependent*') {
                 $params += '-CrossGen'
             }
 
@@ -164,6 +167,8 @@ function Start-PSPackage {
 
             if ($Type -eq 'fxdependent') {
                 $params += '-Runtime', 'fxdependent'
+            } elseif ($Type -eq 'fxdependent-win-desktop') {
+                $params += '-Runtime', 'fxdependent-win-desktop'
             } else {
                 $params += '-Runtime', $Runtime
             }
@@ -282,7 +287,8 @@ function Start-PSPackage {
                     New-ZipPackage @Arguments
                 }
             }
-            "fxdependent" {
+
+            {"fxdependent" -or "fxdependent-win-desktop"} {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
                     Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
