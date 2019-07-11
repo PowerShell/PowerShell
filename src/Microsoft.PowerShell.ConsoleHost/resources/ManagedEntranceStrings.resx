@@ -300,7 +300,7 @@ All parameters are case-insensitive.</value>
 
 -MTA
 
-    Start the shell using a multi-threaded apartment.  This is the default.
+    Start the shell using a multi-threaded apartment.
     Only available on Windows.
 
 -NoExit | -noe
@@ -341,7 +341,7 @@ Hides the copyright banner at startup.
 
 -STA
 
-    Start the shell using a single-threaded apartment.
+    Start the shell using a single-threaded apartment.  This is the default.
     Only available on Windows.
 
 -Version | -v
