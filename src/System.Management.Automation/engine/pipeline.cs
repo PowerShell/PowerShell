@@ -1035,7 +1035,7 @@ namespace System.Management.Automation.Internal
                 // EXTRA TELEMETRY - Temporary and only for testing
                 Microsoft.PowerShell.ApplicationInsightsTelemetry.SendTelemetryMetric(
                         Microsoft.PowerShell.AITelemetryType.PipelineExecution,
-                        "CmdletName", 
+                        "CmdletName",
                         commandProcessor.Command.CommandInfo.Name != String.Empty ? commandProcessor.Command.CommandInfo.Name : commandProcessor.Command.MyInvocation.MyCommand.Definition );
 #if LEGACYTELEMETRY
                 Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.TraceExecutedCommand(commandProcessor.Command.CommandInfo, commandProcessor.Command.CommandOrigin);

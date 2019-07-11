@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
         // private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // Production
         private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // Dev
 
-        // the unique identifier for the user, when we start we 
+        // the unique identifier for the user, when we start we
         private static Guid uniqueUserIdentifier = Guid.Empty;
 
         // the session identifier
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell
             string uuidPath = Path.Join(cacheDir, "telemetry.uuid");
             Byte[] buffer = new Byte[16];
 
-            if ( ! Directory.Exists(cacheDir) ) 
+            if ( ! Directory.Exists(cacheDir) )
             {
                 Directory.CreateDirectory(cacheDir);
             }
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell
                     }
                 }
             }
-            catch ( FileNotFoundException ) 
+            catch ( FileNotFoundException )
             {
                 uniqueUserIdentifier = Guid.NewGuid();
                 File.WriteAllBytes(uuidPath, uniqueUserIdentifier.ToByteArray());
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell
                 return uniqueUserIdentifier.ToString();
             }
 
-            // this is very unlikely but we still protect it            
+            // this is very unlikely but we still protect it
             Mutex m = null;
             try {
                 m = new Mutex(true, "CreateUniqueUserId");

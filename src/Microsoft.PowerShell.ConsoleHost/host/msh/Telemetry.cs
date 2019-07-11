@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static void SendTelemetryMetric()
         {
-            
+
         }
 
         /// <summary>
