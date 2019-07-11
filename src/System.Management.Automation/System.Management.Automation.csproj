@@ -13,7 +13,7 @@
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.6.0-preview6.19303.8" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview6.19303.8" />
-    <PackageReference Include="System.DirectoryServices" Version="4.6.0-preview6.19303.8" />
+    <PackageReference Include="System.DirectoryServices" Version="4.6.0-preview.19113.10" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.6.0-preview6.19303.8" />
     <PackageReference Include="System.Management" Version="4.6.0-preview6.19303.8" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0-preview6.19303.8" />
