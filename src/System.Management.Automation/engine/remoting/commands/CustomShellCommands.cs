@@ -2043,7 +2043,7 @@ else
         /// ApartmentState of the Runspace created for the shell.
         /// </summary>
         [Parameter()]
-        public ApartmentState ThreadApartmentState
+        public System.Threading.ApartmentState ThreadApartmentState
         {
             get
             {
@@ -2058,7 +2058,7 @@ else
             set { threadAptState = value; }
         }
 
-        internal ApartmentState? threadAptState;
+        internal System.Threading.ApartmentState? threadAptState;
 
         /// <summary>
         /// ThreadOptions of the Runspace created for the shell.
