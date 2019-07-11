@@ -715,20 +715,7 @@ namespace StackTest {
         }
     }
 
-    Context "ApartmentState tests" -Tag Slow {
-
-        It "Default apartment state is STA" -Skip:(!$IsWindows) {
-            [System.Threading.Thread]::CurrentThread.ApartmentState | Should -BeExactly "STA"
-        }
-
-        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
-            @{ apartment = "STA"; switch = "-sta" }
-            @{ apartment = "MTA"; switch = "-mta" }
-        ) {
-            param ($apartment, $switch)
-
-            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.ApartmentState" | Should -BeExactly $apartment
-        }
+    Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows) {
             add-type -AssemblyName presentationframework
@@ -747,6 +734,29 @@ namespace StackTest {
             # This will throw an exception if MTA
             { $Window.Show() } | Should -Not -Throw
             $Window.Close()
+        }
+
+    }
+
+    Context "ApartmentState tests" {
+
+        It "Default apartment state for main thread is STA" -Skip:(!$IsWindows) {
+            [System.Threading.Thread]::CurrentThread.ApartmentState | Should -BeExactly "STA"
+        }
+
+        It "Default apartment state for new runspace is MTA" -Skip:(!$IsWindows) {
+            $ps = [powershell]::Create()
+            $ps.AddScript({[System.Threading.Thread]::CurrentThread.GetApartmentState()})
+            $ps.Invoke() | Should -BeExactly "MTA"
+        }
+
+        It "Should be able to set apartment state to: <apartment>" -Skip:(!$IsWindows) -TestCases @(
+            @{ apartment = "STA"; switch = "-sta" }
+            @{ apartment = "MTA"; switch = "-mta" }
+        ) {
+            param ($apartment, $switch)
+
+            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
         }
 
         It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows) -TestCases @(
