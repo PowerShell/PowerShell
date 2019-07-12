@@ -6449,12 +6449,22 @@ namespace System.Management.Automation.Language
 
                 componentAsts.Add(condition);
                 Token token = PeekToken();
+
+                // Skip newlines before question mark token to support (ternary operator)line continuance when
+                // the quetion-mark tokens start the next line of script
+                if (token.Kind == TokenKind.NewLine && _tokenizer.IsTernaryContinuance(token.Extent))
+                {
+                    SkipNewlines();
+                    token = PeekToken();
+                }
+
                 if (token.Kind != TokenKind.QuestionMark)
                 {
                     return condition;
                 }
 
                 SkipToken();
+                SkipNewlines();
 
                 ExpressionAst ifOperand = ExpressionRule();
                 if (ifOperand == null)
@@ -6493,6 +6503,8 @@ namespace System.Management.Automation.Language
 
                     return new ErrorExpressionAst(ExtentOf(condition, Before(token)), componentAsts);
                 }
+
+                SkipNewlines();
 
                 ExpressionAst elseOperand = ExpressionRule();
                 if (elseOperand == null)
