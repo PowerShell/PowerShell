@@ -14,24 +14,41 @@ namespace Microsoft.PowerShell
     /// </summary>
     public sealed class ManagedPSEntry
     {
+        /// <summary>
+        /// Exception to signify an early startup failure.
+        /// </summary>
         private class StartupException : Exception
         {
+            /// <summary>
+            /// Construct a new startup exception instance.
+            /// </summary>
+            /// <param name="callName">The name of the native call that failed.</param>
+            /// <param name="exitCode">The exit code the native call returned.</param>
             public StartupException(string callName, int exitCode)
             {
                 CallName = callName;
                 ExitCode = exitCode;
             }
 
+            /// <summary>
+            /// The name of the native call that failed.
+            /// </summary>
             public string CallName { get; }
 
+            /// <summary>
+            /// The exit code returned by the failed native call.
+            /// </summary>
             public int ExitCode { get; }
         }
 
+        // Linux p/Invoke constants
+        private const int LINUX_PATH_MAX = 4096;
+
         // MacOS p/Invoke constants
-        private const int CTL_KERN = 1;
-        private const int KERN_ARGMAX = 8;
-        private const int KERN_PROCARGS2 = 49;
-        private const int PROC_PIDPATHINFO_MAXSIZE = 4096;
+        private const int MACOS_CTL_KERN = 1;
+        private const int MACOS_KERN_ARGMAX = 8;
+        private const int MACOS_KERN_PROCARGS2 = 49;
+        private const int MACOS_PROC_PIDPATHINFO_MAXSIZE = 4096;
 
         /// <summary>
         /// Starts the managed MSH.
@@ -42,42 +59,51 @@ namespace Microsoft.PowerShell
         public static int Main(string[] args)
         {
 #if UNIX
-            System.Console.WriteLine($"PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                System.Threading.Thread.Sleep(500);
-            }
-
             AttemptExecPwshLogin(args);
 #endif
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
 #if UNIX
+        /// <summary>
+        /// Checks whether pwsh has been started as a login shell
+        /// and if so, proceeds with the login process.
+        /// This method will return early if pwsh was not started as a login shell
+        /// and will throw if it detects a native call has failed.
+        /// In the event of success, we use an exec() call, so this method never returns.
+        /// </summary>
+        /// <param name="args">The startup arguments to pwsh.</param>
         private static void AttemptExecPwshLogin(string[] args)
         {
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+            // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;
+            // The path to the executable this process was started from
             string pwshPath;
 
+            // On Linux, we can simply use the /proc filesystem
             if (isLinux)
             {
+                // Read the process name byte
                 using (FileStream fs = File.OpenRead("/proc/self/cmdline"))
                 {
                     procNameFirstByte = (byte)fs.ReadByte();
                 }
 
+                // Run login detection logic
                 if (!IsLogin(procNameFirstByte, args, out int loginArgIndex))
                 {
                     return;
                 }
 
-                IntPtr linkPathPtr = Marshal.AllocHGlobal(PROC_PIDPATHINFO_MAXSIZE);
-                ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)PROC_PIDPATHINFO_MAXSIZE);
-                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr);
+                // Read the symlink to the startup executable
+                IntPtr linkPathPtr = Marshal.AllocHGlobal(LINUX_PATH_MAX);
+                IntPtr size = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
+                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)size);
                 Marshal.FreeHGlobal(linkPathPtr);
 
-                // Attempt to exec pwsh
+                // exec pwsh
                 ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: false));
                 return;
             }
@@ -87,8 +113,8 @@ namespace Microsoft.PowerShell
             // Set up the mib array and the query for process maximum args size
             Span<int> mib = stackalloc int[3];
             int mibLength = 2;
-            mib[0] = CTL_KERN;
-            mib[1] = KERN_ARGMAX;
+            mib[0] = MACOS_CTL_KERN;
+            mib[1] = MACOS_KERN_ARGMAX;
             int size = IntPtr.Size / 2;
             int argmax = 0;
 
@@ -109,8 +135,8 @@ namespace Microsoft.PowerShell
             IntPtr execPathPtr = IntPtr.Zero;
             try
             {
-                mib[0] = CTL_KERN;
-                mib[1] = KERN_PROCARGS2;
+                mib[0] = MACOS_CTL_KERN;
+                mib[1] = MACOS_KERN_PROCARGS2;
                 mib[2] = pid;
                 mibLength = 3;
 
@@ -141,7 +167,7 @@ namespace Microsoft.PowerShell
                 // Get the pwshPath from exec_path
                 pwshPath = Marshal.PtrToStringAnsi(execPathPtr);
 
-                // Attempt to exec pwsh
+                // exec pwsh
                 ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: true));
             }
             finally
@@ -321,11 +347,19 @@ namespace Microsoft.PowerShell
             return length;
         }
 
+        /// <summary>
+        /// Implements a SpanAction&lt;T&gt; for string.Create()
+        /// that builds the shell invocation for the login pwsh session.
+        /// </summary>
+        /// <param name="strBuf">The buffer of the string to be created.</param>
+        /// <param name="path">The unquoted pwsh path.</param>
+        /// <param name="quotedLength">The length the pwsh path will have when it's quoted.</param>
+        /// <param name="supportsDashA">Indicates whether the `exec` builtin supports "-a" to change the process name.</param>
         private static void CreatePwshInvocation(
             Span<char> strBuf,
             (string path, int quotedLength, bool supportsDashA) invocationInfo)
         {
-            // "exec -a +pwsh "
+            // "exec "
             int i = 0;
             strBuf[i++]  = 'e';
             strBuf[i++]  = 'x';
@@ -335,6 +369,8 @@ namespace Microsoft.PowerShell
 
             if (invocationInfo.supportsDashA)
             {
+                // "-a +pwsh "
+                // We use this where -a is supported to prevent a second login check
                 strBuf[i++] = '-';
                 strBuf[i++] = 'a';
                 strBuf[i++] = ' ';
@@ -387,6 +423,11 @@ namespace Microsoft.PowerShell
             span[j] = '\'';
         }
 
+        /// <summary>
+        /// If the given exit code is negative, throws a StartupException.
+        /// </summary>
+        /// <param name="call">The native call that was attempted.</param>
+        /// <param name="code">The exit code it returned.</param>
         private static void ThrowIfFails(string call, int code)
         {
             if (code < 0)
@@ -413,23 +454,45 @@ namespace Microsoft.PowerShell
             SetLastError = true)]
         private static extern int Exec(string path, string[] args);
 
+        /// <summary>
+        /// The `readlink` syscall we use to read the symlink from /proc/self/exe
+        /// to get the executable path of pwsh on Linux.
+        /// </summary>
+        /// <param name="pathname">The path to the symlink to read.</param>
+        /// <param name="buf">Pointer to a buffer to fill with the result.</param>
+        /// <param name="size">The size of the buffer we have supplied.</param>
+        /// <returns>The number of bytes placed in the buffer.</returns>
+        [DllImport("libc",
+            EntryPoint="readlink",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
+
+        /// <summary>
+        /// The `getpid` POSIX syscall we use to quickly get the current process PID on macOS.
+        /// </summary>
+        /// <returns>The pid of the current process.</returns>
         [DllImport("libc",
             EntryPoint = "getpid",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi)]
         private static extern int GetPid();
 
+        /// <summary>
+        /// The `sysctl` BSD sycall used to get system information on macOS.
+        /// </summary>
+        /// <param name="*mib">The Management Information Base name, used to query information.</param>
+        /// <param name="mibLength">The length of the MIB name.</param>
+        /// <param name="*oldp">The object passed out of sysctl (may be null)</param>
+        /// <param name="*oldlenp">The size of the object passed out of sysctl.</param>
+        /// <param name="newp">The object passed in to sysctl.</param>
+        /// <param name="newlenp">The length of the object passed in to sysctl.</param>
+        /// <returns></returns>
         [DllImport("libc",
             EntryPoint = "sysctl",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi)]
         private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
-
-        [DllImport("libc",
-            EntryPoint="readlink",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
-        private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
 #endif
     }
 }
