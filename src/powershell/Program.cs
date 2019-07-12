@@ -18,6 +18,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private class StartupException : Exception
         {
+#if UNIX
             /// <summary>
             /// Construct a new startup exception instance.
             /// </summary>
@@ -48,6 +49,7 @@ namespace Microsoft.PowerShell
         private const int MACOS_KERN_ARGMAX = 8;
         private const int MACOS_KERN_PROCARGS2 = 49;
         private const int MACOS_PROC_PIDPATHINFO_MAXSIZE = 4096;
+#endif
 
         /// <summary>
         /// Starts the managed MSH.
