@@ -163,7 +163,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         $newServiceCommand.$parameter | Should -Be $value
     }
 
-    It "Set-Service can change credentials of a service" {
+    It "Set-Service can change credentials of a service" -Pending {
         try {
             $startUsername = "user1"
             $endUsername = "user2"
