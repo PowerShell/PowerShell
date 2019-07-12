@@ -1932,6 +1932,14 @@ namespace System.Management.Automation.Language
             CaptureAstContext context,
             MergeRedirectExprs generateRedirectExprs = null)
         {
+            return CaptureAstResults(Compile(ast), context, generateRedirectExprs);
+        }
+
+        private Expression CaptureAstResults(
+            Expression genCode,
+            CaptureAstContext context,
+            MergeRedirectExprs generateRedirectExprs = null)
+        {
             Expression result;
 
             // We'll generate code like:
@@ -1966,7 +1974,7 @@ namespace System.Management.Automation.Language
                 generateRedirectExprs(exprs, finallyExprs);
             }
 
-            exprs.Add(Compile(ast));
+            exprs.Add(genCode);
 
             switch (context)
             {
@@ -4972,6 +4980,22 @@ namespace System.Management.Automation.Language
                     PSBinaryOperationBinder.Get(ExpressionType.Equal, ignoreCase, scalarCompare: true))),
                 lhs.Cast(typeof(object)),
                 rhs.Cast(typeof(object)));
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var tmp = NewTemp(typeof(object), "result");
+
+            var expr = Expression.IfThenElse(
+                CaptureAstResults(
+                    CallAddPipe(
+                        Compile(ternaryExpressionAst.Condition),
+                        s_getCurrentPipe),
+                    CaptureAstContext.Condition).Convert(typeof(bool)),
+                Expression.Assign(tmp, Compile(ternaryExpressionAst.IfOperand).Convert(typeof(object))),
+                Expression.Assign(tmp, Compile(ternaryExpressionAst.ElseOperand).Convert(typeof(object))));
+
+            return Expression.Block(new[] { tmp }, expr, tmp);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)

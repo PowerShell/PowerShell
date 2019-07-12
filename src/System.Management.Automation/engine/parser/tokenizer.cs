@@ -3858,7 +3858,7 @@ namespace System.Management.Automation.Language
                 firstChar == '.' || (firstChar >= '0' && firstChar <= '9')
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
-            ReadOnlySpan<char> strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+            string strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
 
             // the token is not a number. i.e. 77z.exe
             if (strNum == null)
@@ -3900,7 +3900,7 @@ namespace System.Management.Automation.Language
         /// OR
         /// Return the string format of the number.
         /// </returns>
-        private ReadOnlySpan<char> ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
         {
             format = NumberFormat.Decimal;
             suffix = NumberSuffixFlags.None;
@@ -4129,7 +4129,7 @@ namespace System.Management.Automation.Language
                 sb[0] = '-';
             }
 
-            return GetStringAndRelease(sb).AsSpan();
+            return GetStringAndRelease(sb);
         }
 
         #endregion Numbers
@@ -4953,7 +4953,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         // check if the next token is actually a number
-                        ReadOnlySpan<char> strNum = ScanNumberHelper(c, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+                        string strNum = ScanNumberHelper(c, out _, out _, out _, out _);
                         // rescan characters after the check
                         _currentIndex = _tokenStart;
                         c = GetChar();
@@ -4983,6 +4983,9 @@ namespace System.Management.Automation.Language
                     }
 
                     return this.NewToken(TokenKind.Colon);
+
+                case '?' when InExpressionMode():
+                    return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
                     if (AtEof())
