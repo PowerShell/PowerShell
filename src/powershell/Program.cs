@@ -2,10 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.IO;
 
 namespace Microsoft.PowerShell
 {
@@ -99,8 +98,8 @@ namespace Microsoft.PowerShell
 
                 // Read the symlink to the startup executable
                 IntPtr linkPathPtr = Marshal.AllocHGlobal(LINUX_PATH_MAX);
-                IntPtr size = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
-                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)size);
+                IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
+                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
                 Marshal.FreeHGlobal(linkPathPtr);
 
                 // exec pwsh
@@ -352,9 +351,7 @@ namespace Microsoft.PowerShell
         /// that builds the shell invocation for the login pwsh session.
         /// </summary>
         /// <param name="strBuf">The buffer of the string to be created.</param>
-        /// <param name="path">The unquoted pwsh path.</param>
-        /// <param name="quotedLength">The length the pwsh path will have when it's quoted.</param>
-        /// <param name="supportsDashA">Indicates whether the `exec` builtin supports "-a" to change the process name.</param>
+        /// <param name="invocationInfo">Information used to build the required string.</param>
         private static void CreatePwshInvocation(
             Span<char> strBuf,
             (string path, int quotedLength, bool supportsDashA) invocationInfo)
@@ -385,7 +382,7 @@ namespace Microsoft.PowerShell
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
             Span<char> pathSpan = strBuf.Slice(i, invocationInfo.quotedLength);
             QuoteAndWriteToSpan(invocationInfo.path, pathSpan);
-            i += invocationInfo.quotedLength
+            i += invocationInfo.quotedLength;
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
             strBuf[i++] = ' ';
@@ -481,10 +478,10 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// The `sysctl` BSD sycall used to get system information on macOS.
         /// </summary>
-        /// <param name="*mib">The Management Information Base name, used to query information.</param>
+        /// <param name="mib">The Management Information Base name, used to query information.</param>
         /// <param name="mibLength">The length of the MIB name.</param>
-        /// <param name="*oldp">The object passed out of sysctl (may be null)</param>
-        /// <param name="*oldlenp">The size of the object passed out of sysctl.</param>
+        /// <param name="oldp">The object passed out of sysctl (may be null)</param>
+        /// <param name="oldlenp">The size of the object passed out of sysctl.</param>
         /// <param name="newp">The object passed in to sysctl.</param>
         /// <param name="newlenp">The length of the object passed in to sysctl.</param>
         /// <returns></returns>
