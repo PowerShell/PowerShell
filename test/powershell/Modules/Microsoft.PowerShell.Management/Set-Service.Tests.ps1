@@ -10,18 +10,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         if ($IsWindows) {
             $userName = "testuserservices"
-            $numbers = "0123456789"
-            $lowercase = "abcdefghijklmnopqrstuvwxyz"
-            $uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            $symbols = "!`"#$%&'()*+,-./:;<=>?[\]^_``"
-            $Password = [string]::Empty
-            # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
-            # buckets above, so we just pick one from each bucket twice
-            1..2 | ForEach-Object {
-                $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
-                    $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
-            }
-            $testPass = [Net.NetworkCredential]::new("", $Password).SecurePassword
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
             $creds    = [pscredential]::new(".\$userName", $testPass)
             $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
             $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
