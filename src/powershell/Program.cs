@@ -13,12 +13,12 @@ namespace Microsoft.PowerShell
     /// </summary>
     public sealed class ManagedPSEntry
     {
+#if UNIX
         /// <summary>
         /// Exception to signify an early startup failure.
         /// </summary>
         private class StartupException : Exception
         {
-#if UNIX
             /// <summary>
             /// Construct a new startup exception instance.
             /// </summary>
