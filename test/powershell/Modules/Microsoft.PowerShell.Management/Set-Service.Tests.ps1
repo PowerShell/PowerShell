@@ -10,8 +10,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         if ($IsWindows) {
             $userName = "testuserservices"
-            $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
-            $testPass = (New-Object -TypeName Net.NetworkCredential("", $Password)).SecurePassword
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
             $creds    = [pscredential]::new(".\$userName", $testPass)
             $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
             $WrongSecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BB)(A;;CCLCSWLOCRRC;;;SU)'
