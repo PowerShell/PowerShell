@@ -4,6 +4,8 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.IO;
 
 namespace Microsoft.PowerShell
 {
@@ -12,6 +14,12 @@ namespace Microsoft.PowerShell
     /// </summary>
     public sealed class ManagedPSEntry
     {
+        // MacOS p/Invoke constants
+        private const int CTL_KERN = 1;
+        private const int KERN_ARGMAX = 8;
+        private const int KERN_PROCARGS2 = 49;
+        private const int PROC_PIDPATHINFO_MAXSIZE = 4096;
+
         /// <summary>
         /// Starts the managed MSH.
         /// </summary>
@@ -21,25 +29,150 @@ namespace Microsoft.PowerShell
         public static int Main(string[] args)
         {
 #if UNIX
-            if (HasLoginSpecified(args, out int loginIndex))
+            System.Console.WriteLine($"PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
+            while (!System.Diagnostics.Debugger.IsAttached)
             {
-                return ExecPwshLogin(args, loginIndex);
+                System.Threading.Thread.Sleep(500);
+            }
+
+            int returnCode = AttemptExecPwshLogin(args);
+            if (returnCode < 0)
+            {
+                // TODO: Report error
             }
 #endif
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
 #if UNIX
+        private static int AttemptExecPwshLogin(string[] args)
+        {
+            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            byte procNameFirstByte;
+            bool procStartsWithMinus = false;
+            string pwshPath;
+
+            if (isLinux)
+            {
+                using (FileStream fs = File.OpenRead("/proc/self/cmdline"))
+                {
+                    procNameFirstByte = (byte)fs.ReadByte();
+                }
+
+                switch (procNameFirstByte)
+                {
+                    case 0x2B: // '+' signifies we have already done login check
+                        return 0;
+                    case 0x2D: // '-' means this is a login shell
+                        procStartsWithMinus = true;
+                        break;
+
+                    // For any other char, we check for a login parameter
+                }
+
+                int loginArgIndex = -1;
+                if (!procStartsWithMinus && !IsLogin(args, out loginArgIndex))
+                {
+                    return 0;
+                }
+
+                IntPtr linkPathPtr = Marshal.AllocHGlobal(PROC_PIDPATHINFO_MAXSIZE);
+                ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)PROC_PIDPATHINFO_MAXSIZE);
+                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr);
+                Marshal.FreeHGlobal(linkPathPtr);
+
+                return ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: false);
+            }
+
+            int pid = GetPid();
+
+            // Set up the mib array and the query for process args size
+            Span<int> mib = stackalloc int[3];
+            int mibLength = 2;
+            mib[0] = CTL_KERN;
+            mib[1] = KERN_ARGMAX;
+            int size = sizeof(int);
+            int maxargs = 0;
+
+            // Get the process args size
+            unsafe
+            {
+                fixed (int *mibptr = mib)
+                {
+                    if (SysCtl(mibptr, mibLength, &maxargs, &size, IntPtr.Zero, 0) < 0)
+                    {
+                        throw new Exception("argmax");
+                    }
+                }
+            }
+
+            // Now read the process args into the allocated space
+            IntPtr procargs = Marshal.AllocHGlobal(maxargs);
+            IntPtr execPathPtr = IntPtr.Zero;
+            try
+            {
+                size = maxargs;
+                mib[0] = CTL_KERN;
+                mib[1] = KERN_PROCARGS2;
+                mib[2] = pid;
+                mibLength = 3;
+
+                unsafe
+                {
+                    fixed (int *mibptr = mib)
+                    {
+                        if (SysCtl(mibptr, mibLength, procargs.ToPointer(), &size, IntPtr.Zero, 0) < 0)
+                        {
+                            throw new Exception("procargs");
+                        }
+                    }
+
+                    // Skip over argc, remember where exec_path is
+                    execPathPtr = IntPtr.Add(procargs, sizeof(int));
+
+                    // Skip over exec_path
+                    byte *argvPtr = (byte *)execPathPtr;
+                    while (*argvPtr != 0) { argvPtr++; }
+                    while (*argvPtr == 0) { argvPtr++; }
+
+                    // First char in argv[0]
+                    procNameFirstByte = *argvPtr;
+                }
+
+                switch (procNameFirstByte)
+                {
+                    case 0x2B: // '+' signifies we have already done login check
+                        return 0;
+                    case 0x2D: // '-' means this is a login shell
+                        procStartsWithMinus = true;
+                        break;
+
+                    // For any other char, we check for a login parameter
+                }
+
+                int loginArgIndex = -1;
+                if (!procStartsWithMinus && !IsLogin(args, out loginArgIndex))
+                {
+                    return 0;
+                }
+
+                return ExecPwshLogin(args, loginArgIndex, Marshal.PtrToStringAnsi(execPathPtr), isMacOS: true);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(procargs);
+            }
+        }
+
         /// <summary>
         /// Checks args to see if -Login has been specified.
         /// </summary>
         /// <param name="args">Arguments passed to the program.</param>
         /// <param name="loginIndex">The arg index (in argv) where -Login was found.</param>
         /// <returns></returns>
-        private static bool HasLoginSpecified(string[] args, out int loginIndex)
+        private static bool IsLogin(string[] args, out int loginIndex)
         {
             loginIndex = -1;
-
             // Parameter comparison strings, stackalloc'd for performance
             for (int i = 0; i < args.Length; i++)
             {
@@ -103,23 +236,22 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create the exec call to /bin/{ba}sh -l -c 'pwsh "$@"' and run it.
+        /// Create the exec call to /bin/{z}sh -l -c 'exec -a +pwsh pwsh "$@"' and run it.
         /// </summary>
         /// <param name="args">The argument vector passed to pwsh.</param>
         /// <param name="loginArgIndex">The index of -Login in the argument vector.</param>
+        /// <param name="isMacOS">True if we are running on macOS.</param>
+        /// <param name="pwshPath">Absolute path to the pwsh executable.</param>
         /// <returns>
         /// The exit code of exec if it fails.
         /// If exec succeeds, this process is overwritten so we never actually return.
         /// </returns>
-        private static int ExecPwshLogin(string[] args, int loginArgIndex)
+        private static int ExecPwshLogin(string[] args, int loginArgIndex, string pwshPath, bool isMacOS)
         {
-            // We need the path to the current pwsh executable
-            string pwshPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-
             // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
             string pwshInvocation = string.Create(
-                10 + quotedPwshPathLength, // exec '{pwshPath}' "$@"
+                19 + quotedPwshPathLength, // exec +pwsh '{pwshPath}' "$@"
                 (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
@@ -153,7 +285,7 @@ namespace Microsoft.PowerShell
             execArgs[execArgs.Length - 1] = null;
 
             // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (isMacOS)
             {
                 return Exec("/bin/zsh", execArgs);
             }
@@ -181,19 +313,28 @@ namespace Microsoft.PowerShell
 
         private static void CreatePwshInvocation(Span<char> strBuf, (string path, int quotedLength) pwshPath)
         {
-            // "exec "
-            strBuf[0] = 'e';
-            strBuf[1] = 'x';
-            strBuf[2] = 'e';
-            strBuf[3] = 'c';
-            strBuf[4] = ' ';
+            // "exec -a +pwsh "
+            strBuf[0]  = 'e';
+            strBuf[1]  = 'x';
+            strBuf[2]  = 'e';
+            strBuf[3]  = 'c';
+            strBuf[4]  = ' ';
+            strBuf[5]  = '-';
+            strBuf[6]  = 'a';
+            strBuf[7]  = ' ';
+            strBuf[8]  = '+';
+            strBuf[9]  = 'p';
+            strBuf[10] = 'w';
+            strBuf[11] = 's';
+            strBuf[12] = 'h';
+            strBuf[13] = ' ';
             
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
-            Span<char> pathSpan = strBuf.Slice(5, pwshPath.quotedLength);
+            Span<char> pathSpan = strBuf.Slice(14, pwshPath.quotedLength);
             QuoteAndWriteToSpan(pwshPath.path, pathSpan);
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            int argIndex = 5 + pwshPath.quotedLength;
+            int argIndex = 14 + pwshPath.quotedLength;
             strBuf[argIndex]     = ' ';
             strBuf[argIndex + 1] = '"';
             strBuf[argIndex + 2] = '$';
@@ -246,6 +387,30 @@ namespace Microsoft.PowerShell
             CharSet = CharSet.Ansi,
             SetLastError = true)]
         private static extern int Exec(string path, string[] args);
+
+        [DllImport("libc",
+            EntryPoint = "getpid",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static extern int GetPid();
+
+        [DllImport("libc",
+            EntryPoint = "sysctl",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
+
+        [DllImport("libc",
+            EntryPoint = "proc_pidpath",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static extern int ProcPidPath(int pid, IntPtr buf, int buflen);
+
+        [DllImport("libc",
+            EntryPoint="readlink",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi)]
+        private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
 #endif
     }
 }
