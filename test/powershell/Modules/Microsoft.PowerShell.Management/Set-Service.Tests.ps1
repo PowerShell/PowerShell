@@ -168,8 +168,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $startUsername = "user1"
             $endUsername = "user2"
             $servicename = "testsetcredential"
-            $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
-            $testPass = (New-Object -TypeName Net.NetworkCredential("", $Password)).SecurePassword
+            $testPass = [Net.NetworkCredential]::new("", (New-ComplexPassword)).SecurePassword
             $creds = [pscredential]::new(".\$endUsername", $testPass)
             net user $startUsername $creds.GetNetworkCredential().Password /add > $null
             net user $endUsername $creds.GetNetworkCredential().Password /add > $null
