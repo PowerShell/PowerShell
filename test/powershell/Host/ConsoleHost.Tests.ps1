@@ -282,7 +282,7 @@ export $envVarName='$guid'
 
         It "Doesn't falsely recognise -Login when used after -Command" {
             $result = & $powershell -nop -c 'Write-Output' -Login
-            $result | Should -BeExactly '-login'
+            $result | Should -BeExactly '-Login'
             $LASTEXITCODE | Should -Be 0
         }
 
