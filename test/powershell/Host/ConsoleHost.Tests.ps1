@@ -276,13 +276,13 @@ export $envVarName='$guid'
 
         It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
             $result = & $powershell -nop -c 'Write-Output "-login"'
-            $result | Should -Be '-login'
+            $result | Should -BeExactly '-login'
             $LASTEXITCODE | Should -Be 0
         }
 
         It "Doesn't falsely recognise -Login when used after -Command" {
             $result = & $powershell -nop -c 'Write-Output' -Login
-            $result | Should -Be '-login'
+            $result | Should -BeExactly '-login'
             $LASTEXITCODE | Should -Be 0
         }
 
@@ -304,7 +304,7 @@ export $envVarName='$guid'
                 return
             }
 
-            $result | Should -Be $guid
+            $result | Should -BeExactly $guid
             $LASTEXITCODE | Should -Be 0
         }
 
@@ -313,7 +313,7 @@ export $envVarName='$guid'
             $pwshCommand = "`$env:$envVarName"
             $bashCommand = "exec -a '-pwsh' '$quoteEscapedPwsh' -NoProfile -Command '`$env:$envVarName' ''"
             $result = /bin/bash -c $bashCommand
-            $result | Should -Be $guid
+            $result | Should -BeExactly $guid
             $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
         }
     }
