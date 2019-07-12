@@ -1500,4 +1500,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
   </data>
+  <data name="MissingColonInTernaryExpression" xml:space="preserve">
+    <value>Missing ':' in the ternary expression.</value>
+  </data>
 </root>

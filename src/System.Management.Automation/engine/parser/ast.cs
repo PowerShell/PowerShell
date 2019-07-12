@@ -7099,6 +7099,92 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// The ast representing a ternary expression, e.g. <c>$a ? 1 : 2</c>.
+    /// </summary>
+    public class TernaryExpressionAst : ExpressionAst
+    {
+        /// <summary>
+        /// Construct a binary expression.
+        /// </summary>
+        /// <param name="extent">The extent of the expression.</param>
+        /// <param name="condition">The condition operand.</param>
+        /// <param name="ifClause">The if clause.</param>
+        /// <param name="elseClause">The else clause.</param>
+        public TernaryExpressionAst(IScriptExtent extent, ExpressionAst condition, ExpressionAst ifClause, ExpressionAst elseClause)
+            : base(extent)
+        {
+            if (condition == null || ifClause == null || elseClause == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(condition == null ? nameof(condition) : ifClause == null ? nameof(ifClause) : nameof(elseClause));
+            }
+
+            Condition = condition;
+            SetParent(condition);
+
+            IfOperand = ifClause;
+            SetParent(ifClause);
+
+            ElseOperand = elseClause;
+            SetParent(elseClause);
+        }
+
+        /// <summary>
+        /// The ast for the condition of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst Condition { get; }
+
+        /// <summary>
+        /// The ast for the if-operand of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst IfOperand { get; }
+
+        /// <summary>
+        /// The ast for the else-operand of the ternary expression. The property is never null.
+        /// </summary>
+        public ExpressionAst ElseOperand { get; }
+
+        /// <summary>
+        /// Copy the TernaryExpressionAst instance.
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newCondition = CopyElement(Condition);
+            var newIfClause = CopyElement(IfOperand);
+            var newElseClause = CopyElement(ElseOperand);
+            return new TernaryExpressionAst(this.Extent, newCondition, newIfClause, newElseClause);
+        }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor2 = visitor as ICustomAstVisitor2;
+            return visitor2 != null ? visitor2.VisitTernaryExpression(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            if (visitor is AstVisitor2 visitor2)
+            {
+                action = visitor2.VisitTernaryExpression(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                if (action == AstVisitAction.Continue)
+                    action = Condition.InternalVisit(visitor2);
+                if (action == AstVisitAction.Continue)
+                    action = IfOperand.InternalVisit(visitor2);
+                if (action == AstVisitAction.Continue)
+                    action = ElseOperand.InternalVisit(visitor2);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
+    /// <summary>
     /// The ast representing a binary expression, e.g. <c>$a + $b</c>.
     /// </summary>
     public class BinaryExpressionAst : ExpressionAst

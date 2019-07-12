@@ -6429,6 +6429,96 @@ namespace System.Management.Automation.Language
         private ExpressionAst ExpressionRule()
         {
             // G  expression:
+            // G      ternary-expression
+            // G
+            // G  ternary-expression:
+            // G      logical-expression   '?'   new-lines:opt   ternary-expression   ':'   ternary-expression
+
+            RuntimeHelpers.EnsureSufficientExecutionStack();
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
+            {
+                SetTokenizerMode(TokenizerMode.Expression);
+
+                List<Ast> componentAsts = new List<Ast>();
+                ExpressionAst condition = BinaryExpressionRule();
+                if (condition == null)
+                {
+                    return null;
+                }
+
+                componentAsts.Add(condition);
+                Token token = PeekToken();
+                if (token.Kind != TokenKind.QuestionMark)
+                {
+                    return condition;
+                }
+
+                SkipToken();
+
+                ExpressionAst ifOperand = ExpressionRule();
+                if (ifOperand == null)
+                {
+                    // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
+                    IScriptExtent extent = After(token);
+
+                    ReportIncompleteInput(
+                        extent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        token.Text);
+                    ifOperand = new ErrorExpressionAst(extent);
+                }
+                else
+                {
+                    componentAsts.Add(ifOperand);
+                }
+
+                SkipNewlines();
+
+                token = NextToken();
+                if (token.Kind != TokenKind.Colon)
+                {
+                    // ErrorRecovery: we have done the expression parsing and should tr parsing something else.
+                    UngetToken(token);
+
+                    // Don't bother reporting this error if we already reported an empty if-operand error.
+                    if (!(ifOperand is ErrorExpressionAst))
+                    {
+                        ReportIncompleteInput(
+                            token.Extent,
+                            nameof(ParserStrings.MissingColonInTernaryExpression),
+                            ParserStrings.MissingColonInTernaryExpression);
+                    }
+
+                    return new ErrorExpressionAst(ExtentOf(condition, Before(token)), componentAsts);
+                }
+
+                ExpressionAst elseOperand = ExpressionRule();
+                if (elseOperand == null)
+                {
+                    // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
+                    IScriptExtent extent = After(token);
+
+                    ReportIncompleteInput(
+                        extent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        token.Text);
+                    elseOperand = new ErrorExpressionAst(extent);
+                }
+
+                return new TernaryExpressionAst(ExtentOf(condition, elseOperand), condition, ifOperand, elseOperand);
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
+            }
+        }
+
+        private ExpressionAst BinaryExpressionRule()
+        {
+            // G  expression:
             // G      logical-expression
             // G
             // G  logical-expression:
