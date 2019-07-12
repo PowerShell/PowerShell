@@ -218,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
         /// Script block to run for each pipeline object
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        [ValidateNotNull()]
         public ScriptBlock ScriptBlock
         {
             get;
@@ -260,6 +261,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        #region Overrides
 
         /// <summary>
         /// Execute the begin scriptblock at the start of processing.
@@ -326,21 +329,61 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Handle pipeline stop signal
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            switch (ParameterSetName)
+            {
+                case ForEachObjectCommand.ParallelParameterSet:
+                    StopParallelProcessing();
+                    break;
+            }
+        }
+
+        #endregion
+
         #region Private Methods
 
         private void InitParallelParameterSet()
         {
             // TODO:
+            // Initialize PSTaskPool
+            // Process script block Ast using variable expressions
+            //      Create usingValuesMap
+            //      or should variables be passed in as ISS entries or usingValueMap arguments?
         }
 
         private void ProcessParallelParameterSet()
         {
             // TODO:
+            // Create PSTask for each pipeline input
+            //      Hook up data streams object collect/writer and host (pass in cmdlet based object stream writer)
+            //      Need to figure out how to pass in dollarUnderbar variable
+            //          Currently no way to pass in via PowerShell object, need to find a way to do this
+            //              PowerShell -> LocalPipe -> Pipeline processing -> Scriptblock processing -> Invoke scriptblock, pass in dollarUnderbar (ScriptCommandProcessor.cs)
+            //      Create usingValuesMap parameter as needed
+            //      
+            // Sync:   Hand each pipeline input to PSTaskPool, block as necessary
+            //         Catch any exception and Write as ErrorRecord object to error data stream
+            // Async:  Create PSThreadChildJob wrapper for and add parent job, and to job queue
         }
 
         private void EndParallelParameterSet()
         {
             // TODO:
+            // Sync:   Make sure all stream objects are written (see InvokeCommandCommand)
+            // Async:  Write parent job object
+        }
+
+        private void StopParallelProcessing()
+        {
+            // TODO:
+            // Sync:  Stop processing input (PSTaskPool accepts no more input)
+            //        Send stop to all running PSTasks in PSTaskPool
+            //        Wait for all tasks to stop
+            // Async: NoOp
         }
 
         private void EndBlockParameterSet()
