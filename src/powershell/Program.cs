@@ -413,12 +413,6 @@ namespace Microsoft.PowerShell
         private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
 
         [DllImport("libc",
-            EntryPoint = "proc_pidpath",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi)]
-        private static extern int ProcPidPath(int pid, IntPtr buf, int buflen);
-
-        [DllImport("libc",
             EntryPoint="readlink",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi)]
