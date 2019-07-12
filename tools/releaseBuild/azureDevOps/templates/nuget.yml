@@ -58,9 +58,9 @@ jobs:
       destinationFolder: '$(winFxdPath)'
 
   - task: ExtractFiles@1
-    displayName: 'Extract files win-fxdependent-win-desktop'
+    displayName: 'Extract files win-fxdependentWinDesktop'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependent-win-desktop.zip'
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependentWinDesktop.zip'
       destinationFolder: '$(winFxdWinDesktopPath)'
 
   - task: ExtractFiles@1

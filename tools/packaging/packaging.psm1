@@ -89,7 +89,7 @@ function Start-PSPackage {
             $NameSuffix = "win-fxdependent"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } elseif ($Type -eq 'fxdependent-win-desktop') {
-            $NameSuffix = "win-fxdependent-windesktop"
+            $NameSuffix = "win-fxdependentWinDesktop"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
