@@ -14,6 +14,19 @@ namespace Microsoft.PowerShell
     /// </summary>
     public sealed class ManagedPSEntry
     {
+        private class StartupException : Exception
+        {
+            public StartupException(string callName, int exitCode)
+            {
+                CallName = callName;
+                ExitCode = exitCode;
+            }
+
+            public string CallName { get; }
+
+            public int ExitCode { get; }
+        }
+
         // MacOS p/Invoke constants
         private const int CTL_KERN = 1;
         private const int KERN_ARGMAX = 8;
@@ -35,21 +48,16 @@ namespace Microsoft.PowerShell
                 System.Threading.Thread.Sleep(500);
             }
 
-            int returnCode = AttemptExecPwshLogin(args);
-            if (returnCode < 0)
-            {
-                // TODO: Report error
-            }
+            AttemptExecPwshLogin(args);
 #endif
             return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
         }
 
 #if UNIX
-        private static int AttemptExecPwshLogin(string[] args)
+        private static void AttemptExecPwshLogin(string[] args)
         {
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             byte procNameFirstByte;
-            bool procStartsWithMinus = false;
             string pwshPath;
 
             if (isLinux)
@@ -59,21 +67,9 @@ namespace Microsoft.PowerShell
                     procNameFirstByte = (byte)fs.ReadByte();
                 }
 
-                switch (procNameFirstByte)
+                if (!IsLogin(procNameFirstByte, args, out int loginArgIndex))
                 {
-                    case 0x2B: // '+' signifies we have already done login check
-                        return 0;
-                    case 0x2D: // '-' means this is a login shell
-                        procStartsWithMinus = true;
-                        break;
-
-                    // For any other char, we check for a login parameter
-                }
-
-                int loginArgIndex = -1;
-                if (!procStartsWithMinus && !IsLogin(args, out loginArgIndex))
-                {
-                    return 0;
+                    return;
                 }
 
                 IntPtr linkPathPtr = Marshal.AllocHGlobal(PROC_PIDPATHINFO_MAXSIZE);
@@ -81,37 +77,38 @@ namespace Microsoft.PowerShell
                 pwshPath = Marshal.PtrToStringAnsi(linkPathPtr);
                 Marshal.FreeHGlobal(linkPathPtr);
 
-                return ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: false);
+                // Attempt to exec pwsh
+                ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: false));
+                return;
             }
 
-            int pid = GetPid();
+            // At this point, we are on macOS
 
-            // Set up the mib array and the query for process args size
+            // Set up the mib array and the query for process maximum args size
             Span<int> mib = stackalloc int[3];
             int mibLength = 2;
             mib[0] = CTL_KERN;
             mib[1] = KERN_ARGMAX;
-            int size = sizeof(int);
-            int maxargs = 0;
+            int size = IntPtr.Size / 2;
+            int argmax = 0;
 
             // Get the process args size
             unsafe
             {
                 fixed (int *mibptr = mib)
                 {
-                    if (SysCtl(mibptr, mibLength, &maxargs, &size, IntPtr.Zero, 0) < 0)
-                    {
-                        throw new Exception("argmax");
-                    }
+                    ThrowIfFails(nameof(argmax), SysCtl(mibptr, mibLength, &argmax, &size, IntPtr.Zero, 0));
                 }
             }
 
+            // Get the PID so we can query this process' args
+            int pid = GetPid();
+
             // Now read the process args into the allocated space
-            IntPtr procargs = Marshal.AllocHGlobal(maxargs);
+            IntPtr procargs = Marshal.AllocHGlobal(argmax);
             IntPtr execPathPtr = IntPtr.Zero;
             try
             {
-                size = maxargs;
                 mib[0] = CTL_KERN;
                 mib[1] = KERN_PROCARGS2;
                 mib[2] = pid;
@@ -121,10 +118,7 @@ namespace Microsoft.PowerShell
                 {
                     fixed (int *mibptr = mib)
                     {
-                        if (SysCtl(mibptr, mibLength, procargs.ToPointer(), &size, IntPtr.Zero, 0) < 0)
-                        {
-                            throw new Exception("procargs");
-                        }
+                        ThrowIfFails(nameof(procargs), SysCtl(mibptr, mibLength, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
                     }
 
                     // Skip over argc, remember where exec_path is
@@ -139,24 +133,16 @@ namespace Microsoft.PowerShell
                     procNameFirstByte = *argvPtr;
                 }
 
-                switch (procNameFirstByte)
+                if (!IsLogin(procNameFirstByte, args, out int loginArgIndex))
                 {
-                    case 0x2B: // '+' signifies we have already done login check
-                        return 0;
-                    case 0x2D: // '-' means this is a login shell
-                        procStartsWithMinus = true;
-                        break;
-
-                    // For any other char, we check for a login parameter
+                    return;
                 }
 
-                int loginArgIndex = -1;
-                if (!procStartsWithMinus && !IsLogin(args, out loginArgIndex))
-                {
-                    return 0;
-                }
+                // Get the pwshPath from exec_path
+                pwshPath = Marshal.PtrToStringAnsi(execPathPtr);
 
-                return ExecPwshLogin(args, loginArgIndex, Marshal.PtrToStringAnsi(execPathPtr), isMacOS: true);
+                // Attempt to exec pwsh
+                ThrowIfFails("exec", ExecPwshLogin(args, loginArgIndex, pwshPath, isMacOS: true));
             }
             finally
             {
@@ -167,12 +153,30 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Checks args to see if -Login has been specified.
         /// </summary>
+        /// <param name="procNameFirstByte">The first byte of the name of the currently running process.</param>
         /// <param name="args">Arguments passed to the program.</param>
         /// <param name="loginIndex">The arg index (in argv) where -Login was found.</param>
         /// <returns></returns>
-        private static bool IsLogin(string[] args, out int loginIndex)
+        private static bool IsLogin(
+            byte procNameFirstByte,
+            string[] args,
+            out int loginIndex)
         {
             loginIndex = -1;
+
+            switch (procNameFirstByte)
+            {
+                // '+' signifies we have already done login check
+                case 0x2B:
+                    return false;
+
+                // '-' means this is a login shell
+                case 0x2D:
+                    return true;
+
+                // For any other char, we check for a login parameter
+            }
+
             // Parameter comparison strings, stackalloc'd for performance
             for (int i = 0; i < args.Length; i++)
             {
@@ -368,6 +372,14 @@ namespace Microsoft.PowerShell
             }
 
             span[j] = '\'';
+        }
+
+        private static void ThrowIfFails(string call, int code)
+        {
+            if (code < 0)
+            {
+                throw new StartupException(call, code);
+            }
         }
 
         /// <summary>
