@@ -348,7 +348,7 @@ namespace System.Management.Automation
 
             // $PSCulture
             v = new PSCultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariableForce(v, this);
 
             // $PSUICulture
             v = new PSUICultureVariable();

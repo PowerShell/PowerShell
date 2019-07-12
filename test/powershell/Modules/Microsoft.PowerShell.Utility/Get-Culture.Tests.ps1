@@ -71,13 +71,17 @@ Describe "`$PSCulture" -Tags "CI" {
     }
 
     It "`$PSCulture follows the current thread culture" {
-        $old_culture = [cultureinfo]::currentculture
+        $oldCulture = [cultureinfo]::currentculture
+        $newCulture = "ru-RU"
+        if ($oldCulture -eq "ru-RU") {
+            $newCulture = "fr-FR"
+        }
         try {
-            [cultureinfo]::currentculture = 'ru-RU'
-            $PSCulture | Should -BeExactly 'ru-RU'
+            [cultureinfo]::currentculture = $newCulture
+            $PSCulture | Should -BeExactly $newCulture
             $PSCulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentCulture.Name)
         } finally {
-            [cultureinfo]::currentculture = $old_culture
+            [cultureinfo]::currentculture = $oldCulture
         }
     }
 }
