@@ -1544,13 +1544,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "StartupType".
+        /// "Set-Service -StartType" sets ServiceController.InputObject.StartType.
         /// Changes the starting mode of the service. Valid values for StartupType are:
         /// -- Automatic: Start when the system starts.
         /// -- Manual   : Starts only when started by a user or program.
         /// -- Disabled : Can.
         /// </summary>
         [Parameter]
-        [Alias("StartMode", "SM", "ST")]
+        [Alias("StartMode", "SM", "ST", "StartType")]
         [ValidateNotNullOrEmpty]
         public ServiceStartupType StartupType
         {
