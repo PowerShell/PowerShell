@@ -274,6 +274,18 @@ export $envVarName='$guid'
             $LASTEXITCODE | Should -Be 0
         }
 
+        It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
+            $result = & $powershell -nop -c 'Write-Output "-login"'
+            $result | Should -Be '-login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
+        It "Doesn't falsely recognise -Login when used after -Command" {
+            $result = & $powershell -nop -c 'Write-Output' -Login
+            $result | Should -Be '-login'
+            $LASTEXITCODE | Should -Be 0
+        }
+
         It "Accepts the <LoginSwitch> switch for -Login and behaves correctly" -TestCases @(
             @{ LoginSwitch = '-l' }
             @{ LoginSwitch = '-L' }
@@ -284,7 +296,7 @@ export $envVarName='$guid'
         ) {
             param($LoginSwitch)
 
-            $result = & $powershell $LoginSwitch -Command "`$env:$envVarName"
+            $result = & $powershell -NoProfile $LoginSwitch -Command "`$env:$envVarName"
 
             if ($IsWindows) {
                 $result | Should -BeNullOrEmpty
@@ -296,9 +308,11 @@ export $envVarName='$guid'
             $LASTEXITCODE | Should -Be 0
         }
 
-        It "Starts as a login shell with '-' prepended to name" -Skip:([bool](Get-Command -Name bash -ErrorAction Ignore)) {
-            $quoteEscapedPwsh = $powershell.Replace("'", "''")
-            $result = bash -c "exec -a +pwsh '$quoteEscapedPwsh' -Command '`$env:$envVarName'"
+        It "Starts as a login shell with '-' prepended to name" -Skip:(-not (Get-Command -Name /bin/bash -ErrorAction Ignore)) {
+            $quoteEscapedPwsh = $powershell.Replace("'", "\'")
+            $pwshCommand = "`$env:$envVarName"
+            $bashCommand = "exec -a '-pwsh' '$quoteEscapedPwsh' -NoProfile -Command '`$env:$envVarName' ''"
+            $result = /bin/bash -c $bashCommand
             $result | Should -Be $guid
             $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
         }
