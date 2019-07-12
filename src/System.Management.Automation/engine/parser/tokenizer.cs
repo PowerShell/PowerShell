@@ -1344,13 +1344,22 @@ namespace System.Management.Automation.Language
 
         internal bool IsPipeContinuance(IScriptExtent extent)
         {
-            return extent.EndOffset < _script.Length && PipeContinuanceAfterExtent(extent);
+            // If the first non-whitespace & non-comment (regular or block) character following a newline is a pipe, we have
+            // pipe continuance.
+            return extent.EndOffset < _script.Length &&
+                   ContinuanceAfterExtent(extent, continuanceChar: '|', skipComment: true);
         }
 
-        private bool PipeContinuanceAfterExtent(IScriptExtent extent)
+        internal bool IsTernaryContinuance(IScriptExtent extent)
         {
-            // If the first non-comment (regular or block) character following a newline is a pipe, we have
-            // pipe continuance.
+            // If the first non-whitespace character following a newline is a question mark, we have
+            // ternary continuance
+            return extent.EndOffset < _script.Length &&
+                   ContinuanceAfterExtent(extent, continuanceChar: '?', skipComment: false);
+        }
+
+        private bool ContinuanceAfterExtent(IScriptExtent extent, char continuanceChar, bool skipComment)
+        {
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
 
@@ -1395,24 +1404,27 @@ namespace System.Management.Automation.Language
 
                 lastNonWhitespaceIsNewline = false;
 
-                if (c == '#')
+                if (skipComment)
                 {
-                    // SkipLineComment will return the position after the comment end
-                    // which is either at the end of the file, or a cr or lf.
-                    i = SkipLineComment(i + 1);
-                    continue;
+                    if (c == '#')
+                    {
+                        // SkipLineComment will return the position after the comment end
+                        // which is either at the end of the file, or a cr or lf.
+                        i = SkipLineComment(i + 1);
+                        continue;
+                    }
+
+                    if (c == '<' && _script[i + 1] == '#')
+                    {
+                        i = SkipBlockComment(i + 2);
+                        continue;
+                    }
                 }
 
-                if (c == '<' && _script[i + 1] == '#')
-                {
-                    i = SkipBlockComment(i + 2);
-                    continue;
-                }
-
-                return c == '|';
+                return c == continuanceChar;
             }
 
-            return _script[_script.Length - 1] == '|';
+            return _script[_script.Length - 1] == continuanceChar;
         }
 
         private int SkipLineComment(int i)
