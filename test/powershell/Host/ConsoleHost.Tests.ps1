@@ -295,6 +295,13 @@ export $envVarName='$guid'
             $result | Should -Be $guid
             $LASTEXITCODE | Should -Be 0
         }
+
+        It "Starts as a login shell with '-' prepended to name" -Skip:([bool](Get-Command -Name bash -ErrorAction Ignore)) {
+            $quoteEscapedPwsh = $powershell.Replace("'", "''")
+            $result = bash -c "exec -a +pwsh '$quoteEscapedPwsh' -Command '`$env:$envVarName'"
+            $result | Should -Be $guid
+            $LASTEXITCODE | Should -Be 0 # Exit code will be PowerShell's since it was exec'd
+        }
     }
 
     Context "-SettingsFile Commandline switch" {
