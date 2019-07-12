@@ -52,7 +52,7 @@ namespace System.Management.Automation
             get
             {
                 DebuggerCheckVariableRead();
-                return System.Globalization.CultureInfo.CurrentUICulture.Name;
+                return System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
             }
         }
     }
