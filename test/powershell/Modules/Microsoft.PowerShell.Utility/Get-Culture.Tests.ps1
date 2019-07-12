@@ -66,7 +66,18 @@ Describe "Get-Culture" -Tags "CI" {
 
 Describe "`$PSCulture" -Tags "CI" {
 
-    It "Check `$PSCulture value" {
-        $PSCulture | Should -BeExactly $([System.Globalization.CultureInfo]::CurrentCulture.Name)
+    It "`$PSCulture is the current thread culture" {
+        $PSCulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentCulture.Name)
+    }
+
+    It "`$PSCulture follows the current thread culture" {
+        $old_culture = [cultureinfo]::currentculture
+        try {
+            [cultureinfo]::currentculture = 'ru-RU'
+            $PSCulture | Should -BeExactly 'ru-RU'
+            $PSCulture | Should -BeExactly $([System.Threading.Thread]::CurrentThread.CurrentCulture.Name)
+        } finally {
+            [cultureinfo]::currentculture = $old_culture
+        }
     }
 }

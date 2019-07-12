@@ -25,7 +25,7 @@ namespace System.Management.Automation
             get
             {
                 DebuggerCheckVariableRead();
-                return System.Globalization.CultureInfo.CurrentCulture.Name;
+                return System.Threading.Thread.CurrentThread.CurrentCulture.Name;
             }
         }
     }
