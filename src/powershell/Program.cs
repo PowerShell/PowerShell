@@ -254,9 +254,15 @@ namespace Microsoft.PowerShell
         {
             // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
+
+            // /bin/sh does not support the exec -a feature
+            int pwshExecInvocationLength = isMacOS
+                ? quotedPwshPathLength + 19  // exec -a +pwsh '{pwshPath}' "$@"
+                : quotedPwshPathLength + 10; // exec '{pwshPath}' "$@"
+
             string pwshInvocation = string.Create(
-                19 + quotedPwshPathLength, // exec +pwsh '{pwshPath}' "$@"
-                (pwshPath, quotedPwshPathLength),
+                pwshExecInvocationLength, 
+                (pwshPath, quotedPwshPathLength, isMacOS),
                 CreatePwshInvocation);
 
             // Set up the arguments for /bin/sh
@@ -272,7 +278,7 @@ namespace Microsoft.PowerShell
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
             execArgs[3] = pwshInvocation; // Command to execute
-            execArgs[4] = "-"; // Within the shell, exec ignores $0
+            execArgs[4] = ""; // Within the shell, exec ignores $0
 
             // Add the arguments passed to pwsh on the end
             int i = 0;
@@ -315,35 +321,42 @@ namespace Microsoft.PowerShell
             return length;
         }
 
-        private static void CreatePwshInvocation(Span<char> strBuf, (string path, int quotedLength) pwshPath)
+        private static void CreatePwshInvocation(
+            Span<char> strBuf,
+            (string path, int quotedLength, bool supportsDashA) invocationInfo)
         {
             // "exec -a +pwsh "
-            strBuf[0]  = 'e';
-            strBuf[1]  = 'x';
-            strBuf[2]  = 'e';
-            strBuf[3]  = 'c';
-            strBuf[4]  = ' ';
-            strBuf[5]  = '-';
-            strBuf[6]  = 'a';
-            strBuf[7]  = ' ';
-            strBuf[8]  = '+';
-            strBuf[9]  = 'p';
-            strBuf[10] = 'w';
-            strBuf[11] = 's';
-            strBuf[12] = 'h';
-            strBuf[13] = ' ';
+            int i = 0;
+            strBuf[i++]  = 'e';
+            strBuf[i++]  = 'x';
+            strBuf[i++]  = 'e';
+            strBuf[i++]  = 'c';
+            strBuf[i++]  = ' ';
+
+            if (invocationInfo.supportsDashA)
+            {
+                strBuf[i++] = '-';
+                strBuf[i++] = 'a';
+                strBuf[i++] = ' ';
+                strBuf[i++] = '+';
+                strBuf[i++] = 'p';
+                strBuf[i++] = 'w';
+                strBuf[i++] = 's';
+                strBuf[i++] = 'h';
+                strBuf[i++] = ' ';
+            }
             
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
-            Span<char> pathSpan = strBuf.Slice(14, pwshPath.quotedLength);
-            QuoteAndWriteToSpan(pwshPath.path, pathSpan);
+            Span<char> pathSpan = strBuf.Slice(i, invocationInfo.quotedLength);
+            QuoteAndWriteToSpan(invocationInfo.path, pathSpan);
+            i += invocationInfo.quotedLength
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            int argIndex = 14 + pwshPath.quotedLength;
-            strBuf[argIndex]     = ' ';
-            strBuf[argIndex + 1] = '"';
-            strBuf[argIndex + 2] = '$';
-            strBuf[argIndex + 3] = '@';
-            strBuf[argIndex + 4] = '"';
+            strBuf[i++] = ' ';
+            strBuf[i++] = '"';
+            strBuf[i++] = '$';
+            strBuf[i++] = '@';
+            strBuf[i++] = '"';
         }
 
         /// <summary>
