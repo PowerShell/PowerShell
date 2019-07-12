@@ -741,7 +741,7 @@ namespace StackTest {
     Context "ApartmentState tests" {
 
         It "Default apartment state for main thread is STA" -Skip:(!$IsWindows) {
-            [System.Threading.Thread]::CurrentThread.ApartmentState | Should -BeExactly "STA"
+            [System.Threading.Thread]::CurrentThread.GetApartmentState() | Should -BeExactly "STA"
         }
 
         It "Default apartment state for new runspace is MTA" -Skip:(!$IsWindows) {
