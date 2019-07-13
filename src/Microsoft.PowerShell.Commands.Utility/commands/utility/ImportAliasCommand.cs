@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private ScopedItemOptions CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
+        private static ScopedItemOptions CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
         {
             ScopedItemOptions options;
             if(!Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options))
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
             return options;
         }
 
-        private AliasInfo ConstructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
+        private static AliasInfo ConstructAlias(Collection<string> parsedLine, ScopedItemOptions options) 
         {
             AliasInfo newAlias =
                         new AliasInfo(
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
             return newAlias;
         }
 
-        private bool IsValidParsedLine(Collection<string> parsedLine, long lineNumber, string filePath) 
+        private static bool IsValidParsedLine(Collection<string> parsedLine, long lineNumber, string filePath) 
         {
             if (parsedLine.Count != 4)
             {
