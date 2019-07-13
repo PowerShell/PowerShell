@@ -407,7 +407,8 @@ namespace Microsoft.PowerShell.Commands
         private ScopedItemOptions CreateItemOptions(Collection<string> parsedLine, string filePath, long lineNumber) 
         {
             ScopedItemOptions options;
-            if(!Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options)){
+            if(!Enum.TryParse<ScopedItemOptions>(parsedLine[3], out options))
+            {
                 // if parsing is no succes
                 string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
                 ErrorRecord errorRecord =
