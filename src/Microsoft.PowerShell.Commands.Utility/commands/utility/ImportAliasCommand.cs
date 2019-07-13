@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
       
         private static Collection<string> ParseCsvLine(string csv)
         {        
-            string csvTrimmed = csv.Trim();
+            ReadOnlySpan<char> csvTrimmed = csv.Trim();
             Collection<string> result = new Collection<string>();
             StringBuilder wordBuffer = new StringBuilder();
 
