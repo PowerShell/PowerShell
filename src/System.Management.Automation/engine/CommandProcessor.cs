@@ -83,6 +83,16 @@ namespace System.Management.Automation
             Init(scriptCommandInfo);
         }
 
+        protected CommandProcessor(CmdletInfo cmdletInfo, ExecutionContext context, ForEachObjectCommand instance)
+            : base(cmdletInfo)
+        {
+            this._context = context;
+            this.Command = instance;
+            this.CommandScope = Context.EngineSessionState.CurrentScope;
+
+            InitCommon();
+        }
+
         #endregion ctor
 
         #region internal members
@@ -663,7 +673,12 @@ namespace System.Management.Automation
 
             Command.CurrentPipelineObject = inputToOperateOn;
 
-            return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
+            return this.BindPipelineParameters(inputToOperateOn);
+        }
+
+        protected virtual bool BindPipelineParameters(PSObject inputObject)
+        {
+            return this.CmdletParameterBinderController.BindPipelineParameters(inputObject);
         }
 
         private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> s_constructInstanceCache;
@@ -867,6 +882,20 @@ namespace System.Management.Automation
         }
 
         #endregion helper_methods
+    }
+
+    internal class SimpleForEachObjectCommandProcessor : CommandProcessor
+    {
+        internal SimpleForEachObjectCommandProcessor(CmdletInfo cmdletInfo, ExecutionContext context)
+            : base(cmdletInfo, context, new ForEachObjectCommand())
+        {
+        }
+
+        protected override bool BindPipelineParameters(PSObject inputObject)
+        {
+            ((ForEachObjectCommand)this.Command).InputObject = inputObject;
+            return true;
+        }
     }
 }
 

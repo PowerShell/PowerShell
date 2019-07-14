@@ -529,9 +529,6 @@ namespace System.Management.Automation
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
         /// <returns>
         /// </returns>
-        /// <exception cref="CommandNotFoundException">
-        /// If the command, <paramref name="commandName"/>, could not be found.
-        /// </exception>
         /// <exception cref="System.Management.Automation.PSSecurityException">
         /// If the security manager is preventing the command from running.
         /// </exception>
@@ -575,7 +572,15 @@ namespace System.Management.Automation
                     processor = new NativeCommandProcessor((ApplicationInfo)commandInfo, Context);
                     break;
                 case CommandTypes.Cmdlet:
-                    processor = new CommandProcessor((CmdletInfo)commandInfo, Context);
+                    var cmdletInfo = (CmdletInfo)commandInfo;
+                    if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
+                    {
+                        processor = new SimpleForEachObjectCommandProcessor(cmdletInfo, Context);
+                    }
+                    else
+                    {
+                        processor = new CommandProcessor(cmdletInfo, Context);
+                    }
                     break;
                 case CommandTypes.ExternalScript:
                     ExternalScriptInfo scriptInfo = (ExternalScriptInfo)commandInfo;

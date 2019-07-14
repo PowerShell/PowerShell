@@ -19,13 +19,6 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Default constructor.
-        /// </summary>
-        internal CommandProcessorBase()
-        {
-        }
-
-        /// <summary>
         /// Initializes the base command processor class with the command metadata.
         /// </summary>
         /// <param name="commandInfo">
