@@ -295,10 +295,18 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
-    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
-    [OutputType(typeof(MatchInfo), typeof(bool), typeof(string))]
+    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = ParameterSetFile, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
+    [OutputType(typeof(bool), typeof(MatchInfo), ParameterSetName = new string[] { ParameterSetFile, ParameterSetObject, ParameterSetLiteralFile } )]
+    [OutputType(typeof(bool), typeof(string), ParameterSetName = new string[] { ParameterSetFileRaw, ParameterSetObjectRaw, ParameterSetLiteralFileRaw } )]
     public sealed class SelectStringCommand : PSCmdlet
     {
+        private const string ParameterSetFile = "File";
+        private const string ParameterSetFileRaw = "FileRaw";
+        private const string ParameterSetObject = "Object";
+        private const string ParameterSetObjectRaw = "ObjectRaw";
+        private const string ParameterSetLiteralFile = "LiteralFile";
+        private const string ParameterSetLiteralFileRaw = "LiteralFileRaw";
+
         /// <summary>
         /// A generic circular buffer.
         /// </summary>
@@ -972,8 +980,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
-        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "ObjectRaw")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObject)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
         [AllowNull]
         [AllowEmptyString]
         public PSObject InputObject
@@ -996,8 +1004,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets files to read from.
         /// Globbing is done on these.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FileRaw")]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFile)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFileRaw)]
         [FileinfoToString]
         public string[] Path { get; set; }
 
@@ -1005,8 +1013,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets literal files to read from.
         /// Globbing is not done on these.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFileRaw")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFile)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFileRaw)]
         [FileinfoToString]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1026,9 +1034,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if only string values containing matched lines should be returned.
         /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "ObjectRaw")]
-        [Parameter(Mandatory = true, ParameterSetName = "FileRaw")]
-        [Parameter(Mandatory = true, ParameterSetName = "LiteralFileRaw")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetFileRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetLiteralFileRaw)]
         public SwitchParameter Raw { get; set; }
 
         /// <summary>
@@ -1048,9 +1056,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if the cmdlet will stop processing at the first successful match and
         /// return true.  If both List and Quiet parameters are given, an exception is thrown.
         /// </summary>
-        [Parameter(ParameterSetName = "Object")]
-        [Parameter(ParameterSetName = "File")]
-        [Parameter(ParameterSetName = "LiteralFile")]
+        [Parameter(ParameterSetName = ParameterSetObject)]
+        [Parameter(ParameterSetName = ParameterSetFile)]
+        [Parameter(ParameterSetName = ParameterSetLiteralFile)]
         public SwitchParameter Quiet { get; set; }
 
         /// <summary>
