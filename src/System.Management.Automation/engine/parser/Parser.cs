@@ -6444,14 +6444,12 @@ namespace System.Management.Automation.Language
             {
                 SetTokenizerMode(TokenizerMode.Expression);
 
-                List<Ast> componentAsts = new List<Ast>();
                 ExpressionAst condition = BinaryExpressionRule(endNumberOnTernaryOpChars);
                 if (condition == null)
                 {
                     return null;
                 }
 
-                componentAsts.Add(condition);
                 Token token = PeekToken();
 
                 // Skip newlines before question mark token to support (ternary operator)line continuance when the
@@ -6490,22 +6488,21 @@ namespace System.Management.Automation.Language
                         token.Text);
                     ifTrue = new ErrorExpressionAst(extent);
                 }
-                else
-                {
-                    componentAsts.Add(ifTrue);
-                }
 
                 SkipNewlines();
 
                 token = NextToken();
                 if (token.Kind != TokenKind.Colon)
                 {
+                    var componentAsts = new List<Ast>() { condition };
+
                     // ErrorRecovery: we have done the expression parsing and should try parsing something else.
                     UngetToken(token);
 
                     // Don't bother reporting this error if we already reported an empty 'IfTrue' operand error.
                     if (!(ifTrue is ErrorExpressionAst))
                     {
+                        componentAsts.Add(ifTrue);
                         ReportIncompleteInput(
                             token.Extent,
                             nameof(ParserStrings.MissingColonInTernaryExpression),
