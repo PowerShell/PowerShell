@@ -73,7 +73,7 @@ stages:
     parameters:
       pool: 'Hosted VS2017'
 
-  - template: templates/nanoserver.yml.yml
+  - template: templates/nanoserver.yml
 
 - stage: PackagingWin
   displayName: Packaging for Windows
