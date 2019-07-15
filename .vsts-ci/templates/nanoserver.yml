@@ -1,0 +1,53 @@
+parameters:
+  vmImage: 'win1803'
+  jobName: 'Nanoserver Tests'
+  container: 'mcr.microsoft.com/powershell:nanoserver-1803'
+  continueOnError: false
+
+jobs:
+
+- job: ${{ parameters.jobName }}
+  variables:
+    scriptName: ${{ parameters.scriptName }}
+
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  container: ${{ parameters.container }}
+
+  displayName: ${{ parameters.jobName }}
+
+  steps:
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        build/**/*
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture artifacts directory'
+    continueOnError: true
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+      $options = (Get-PSOptions)
+      $path = split-path -path $options.Output
+      Write-Verbose "Path: '$path'" -Verbose
+      $rootPath = split-Path -path $path
+      Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+      Describe "verify pwsh" {
+        it "verify version " {
+          $version = &$path -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+          $version | Should -match '^7\.'
+        }
+      }
+    displayName: Test
+    condition: succeeded()
