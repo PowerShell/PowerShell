@@ -235,6 +235,42 @@ Invoke-RestMethod -Uri $uri -Body $body -Method 'Delete'
 }
 ```
 
+### /Dos/
+
+Returns HTML designed to create denial of service against specific RegEx Expressions
+
+#### Image Parsing RegEx
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType='img'
+                dosLength='5000'
+            }
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Delete'
+```
+
+Return the following followed by 5,000 spaces.
+
+```html
+<img
+```
+
+#### Charset Parsing RegEx
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType='charset'
+                dosLength='5000'
+            }
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Delete'
+```
+
+Return the following followed by 5,000 spaces.
+
+```html
+<meta
+```
+
 ### /Encoding/Utf8/
 
 Returns page containing UTF-8 data.
