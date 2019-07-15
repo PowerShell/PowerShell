@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.1.5 - 2019-07-16
+
+### Breaking changes
+
+- Disable `Enter-PSHostProcess` cmdlet when system in lock down mode (Internal 8968)
+
+### Build and Packaging Improvements
+
+- Update DotNet SDK and runtime framework version (Internal 9087)
+- Add automated RPM signing to release build (#10013)
+- Update copyright symbol for NuGet packages (#9936)
+- Bump `System.Net.Http.WinHttpHandler` from `4.5.3` to `4.5.4` (#9790)
+- Integrate building NuGet package in the coordinated build (#8947) (#9708)
+- Bump `Newtonsoft.Json` (#9662)
+
 ## 6.1.4 - 2019-05-21
 
 ### Build and Packaging Improvements
