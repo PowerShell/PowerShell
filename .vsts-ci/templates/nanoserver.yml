@@ -1,6 +1,6 @@
 parameters:
   vmImage: 'win1803'
-  jobName: 'Nanoserver Tests'
+  jobName: 'Nanoserver_Tests'
   container: 'mcr.microsoft.com/powershell:nanoserver-1803'
   continueOnError: false
 
