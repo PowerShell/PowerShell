@@ -5824,7 +5824,7 @@ namespace System.Management.Automation.Language
 
                 // Skip newlines before pipe tokens to support (pipe)line continuance when pipe
                 // tokens start the next line of script
-                if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuance(nextToken.Extent))
+                if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuation(nextToken.Extent))
                 {
                     SkipNewlines();
                     nextToken = PeekToken();
@@ -6459,7 +6459,7 @@ namespace System.Management.Automation.Language
                 //     $varName1 -eq $varName2
                 //         ? <do-something-if-true>
                 //         : <do-something-if-false>
-                if (token.Kind == TokenKind.NewLine && _tokenizer.IsTernaryContinuance(token.Extent))
+                if (token.Kind == TokenKind.NewLine && _tokenizer.IsTernaryContinuation(token.Extent))
                 {
                     SkipNewlines();
                     token = PeekToken();
@@ -6500,7 +6500,7 @@ namespace System.Management.Automation.Language
                 token = NextToken();
                 if (token.Kind != TokenKind.Colon)
                 {
-                    // ErrorRecovery: we have done the expression parsing and should tr parsing something else.
+                    // ErrorRecovery: we have done the expression parsing and should try parsing something else.
                     UngetToken(token);
 
                     // Don't bother reporting this error if we already reported an empty 'IfTrue' operand error.

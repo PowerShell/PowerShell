@@ -7148,10 +7148,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            var newCondition = CopyElement(Condition);
-            var newIfClause = CopyElement(IfTrue);
-            var newElseClause = CopyElement(IfFalse);
-            return new TernaryExpressionAst(this.Extent, newCondition, newIfClause, newElseClause);
+            var newCondition = CopyElement(this.Condition);
+            var newIfTrue = CopyElement(this.IfTrue);
+            var newIfFalse = CopyElement(this.IfFalse);
+            return new TernaryExpressionAst(this.Extent, newCondition, newIfTrue, newIfFalse);
         }
 
         #region Visitors
