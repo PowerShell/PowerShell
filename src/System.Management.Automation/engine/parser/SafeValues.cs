@@ -383,6 +383,7 @@ namespace System.Management.Automation.Language
             throw PSTraceSource.NewArgumentException("ast");
         }
 
+        [ThreadStatic]
         private static ExecutionContext s_context;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
