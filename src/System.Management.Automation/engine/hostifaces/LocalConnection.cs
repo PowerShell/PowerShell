@@ -152,7 +152,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             bool allowed = false;
 
-                            if (Platform.IsNanoServer)
+                            if (Platform.IsNanoServer || Platform.IsIoT)
                             {
                                 allowed = value == PSThreadOptions.ReuseThread;
                             }

@@ -192,7 +192,7 @@ namespace System.Management.Automation.Runspaces
                         }
 
 #if !UNIX
-                        if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer)
+                        if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation.Runspaces
             _closed = false;
 
 #if !UNIX
-            if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer)
+            if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
             {
                 _worker.SetApartmentState(apartmentState);
             }

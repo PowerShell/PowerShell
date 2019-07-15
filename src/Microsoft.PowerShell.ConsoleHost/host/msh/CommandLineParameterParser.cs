@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
-                    if (Platform.IsNanoServer || !Platform.IsWindows)
+                    if (Platform.IsNanoServer || Platform.IsIoT || !Platform.IsWindows)
                     {
                         WriteCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
@@ -958,7 +958,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-                    if (Platform.IsNanoServer || !Platform.IsWindows)
+                    if (Platform.IsNanoServer || Platform.IsIoT || !Platform.IsWindows)
                     {
                         WriteCommandLineError(
                             CommandLineParameterParserStrings.MTANotImplemented);
